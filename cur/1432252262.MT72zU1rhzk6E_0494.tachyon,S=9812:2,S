@@ -1,0 +1,185 @@
+From cypherpunks-bounces@cpunks.org  Thu Aug 15 05:30:25 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r7F9Tdbx030815;
+	Thu, 15 Aug 2013 05:29:44 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r7F9TXMu030811
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Thu, 15 Aug 2013 05:29:36 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id A1A55543E4F; Thu, 15 Aug 2013 11:29:30 +0200 (CEST)
+Date: Thu, 15 Aug 2013 11:29:30 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: [Bitcoin-development] bitcoinj 0.10
+Message-ID: <20130815092930.GA29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 8115
+Lines: 147
+
+----- Forwarded message from Mike Hearn <mike@plan99.net> -----
+
+Date: Wed, 14 Aug 2013 14:26:27 +0200
+From: Mike Hearn <mike@plan99.net>
+To: Bitcoin Dev <bitcoin-development@lists.sourceforge.net>
+Subject: [Bitcoin-development] bitcoinj 0.10
+
+Hello,
+
+I'm pleased to announce version 0.10 of bitcoinj, a Java library for
+writing Bitcoin applications. BitcoinJ has been used to create everything
+from end-user wallet apps to network crawlers to SatoshiDice.
+
+To learn how to obtain bitcoinj 0.10, please see the following page:
+
+   https://code.google.com/p/bitcoinj/wiki/UsingMaven
+
+The v0.10 release is signed by Andreas Schildbach's GPG key. The git hash
+of the release is 777e6781d789. This paragraph is signed by the same
+Bitcoin key as with previous releases (check their release announcements to
+establish continuity).
+
+Signature: H9Nl7FPnmrUOmjhUZ0+xB4YW3q5F5gIkGdvllsDWmWYvOkNQHAE9jZE0I/qE1VfLPeMV+Rzo7geTB43uDSFSMek=
+
+*New in this release*
+
+   - An implementation of *micropayment channels* was added. There have
+   been many bugfixes and improvements since the first announcement. This
+   feature allows you to set up a 1:1 payment relationship with a remote
+   server and after a short setup process send very tiny payments, very
+   rapidly. It's suitable for metered billing applications. An article,
+   "Working with micropayments" explains how to use it. This work was a joint
+   effort between Matt and myself.
+   - A simple sublibrary has been added that provides async IO based
+   client/server classes that transmit length prefixed protocol buffers.
+   - Thanks to Matija Mazi, some classes have been added that implement *the
+   BIP 32 deterministic wallet algorithm*. Note that these classes are not
+   yet used elsewhere in the system and full deterministic wallet support is
+   therefore not available, however, a low level API is available for
+   experimentation. That API is very likely to change in future releases so
+   don't get too attached to it.
+   - Thanks to Gary Rowe, we have integrated *a new Maven plugin* that
+   checks the SHA1 hashes of downloaded dependencies against a hard-coded
+   list. This means that even if an upstream Maven repository or developer
+   were to be compromised, library dependencies could not be switched out for
+   corrupted versions without someone noticing. For 0.10 the dependency hashes
+   were just initialised based on what was already downloaded. In future,
+   reproducible builds of upstream dependencies and auditing of changes would
+   provide better security. You can and should use Gary's
+plugin<https://github.com/gary-rowe/BitcoinjEnforcerRules> in
+   your own projects to defend against a possible compromise of the bitcoinj
+   repository.
+   - *Callback handling* has been much improved. Each event listener can
+   have an Executor specified which takes responsibility for running the
+   callback. If you don't specify one they run by default on a single
+   background thread, the "user thread", instead of the origin framework
+   threads. This means your callbacks no longer need to be thread safe as
+   they're always run serially. You can also change the default executor if
+   you would like to control the thread on which callbacks run, for example to
+   marshal them into your GUI toolkit thread automatically. This fixes some of
+   the most painful parts of the pre-0.10 API, for instance that transaction
+   confidence listeners were not allowed to re-enter the library.
+   - *Exception handling* has also improved. You can assign a global
+   Thread.UncaughtExceptionHandler which receives any exceptions thrown on
+   the user thread (i.e. by your own event listeners), as well as any internal
+   exceptions thrown by network threads (like inability to parse a message
+   sent by a remote peer). Because your listeners now run on a separate thread
+   by default, you can no longer accidentally cause internal data corruption
+   or prevent other callbacks from running by leaking exceptions out of your
+   callbacks; a subtle knife-edge in the previous API.
+   - Support for *automatic wallet key rotation* has been added.
+   - We now require Bloom-capable (0.8+) peers by default and will
+   disconnect from older nodes. This avoids accidental bandwidth saturation on
+   mobile devices.
+   - The wallet now accepts timelocked transactions if it created them
+   itself.
+   - The wallet can be told to empty itself out, in which case the fee will
+   be subtracted from the total amount instead of added. This simplifies the
+   common case of wanting to send your entire balance whilst still including a
+   fee.
+   - Some JNI peers for event listeners were added. Auto-generated JNI
+   bindings are experimental and not yet merged in to the mainline codebase:
+   for now they are available as part of a separate project on github. This
+   work allows you to access the bitcoinj API using relatively natural looking
+   C++ code and an embedded JVM.
+   - You can now register custom PeerFilterProvider implementors to add
+   things to Bloom filters that aren't necessarily in wallets.
+   - We have begun adding nullity annotations to the API. Combined with a
+   strong static analysis engine like FindBugs or the IntelliJ Inspector, you
+   can find cases where you aren't handling possible null pointers. Note that
+   you should configure your static analysis system to understand the Guava
+   Preconditions assertions, as otherwise you will get false positives.
+   - You can now control how much information Wallet toString() dumps
+   contain more precisely. Extensions can contribute to a wallets debug dump
+   as well, and transaction data is now optional.
+   - Documentation: The getting started tutorial and PingService example
+   were rewritten. New articles were added that cover optimising chain sync
+   and using the library from non-Java languages. Existing articles were also
+   extended and refreshed.
+   - Many bug fixes and new methods. You should upgrade as soon as possible
+   to get the bug fixes, in particular, one that could cause transactions
+   inside the same block to be incorrectly re-ordered when using Bloom
+   filtering (which can affect the wallet). The library code now has more
+   internal annotations to help static analysis engines, and several bugs were
+   fixed as a result of that.
+
+*API Changes*
+
+   - The ScriptBuilder class now takes TransactionSignature objects, these
+   wrap a raw ECDSA signature and the SIGHASH flags together, with utility
+   methods to work with them.
+   - The Locks class has been renamed to Threading. The thread on which
+   callbacks run has been changed, see above.
+   - The WalletEventListener.onKeyAdded method became onKeysAdded and now
+   takes a list, to make processing of bulk adds more efficient.
+   - BitcoinURIParseException is now checked so you can't forget to handle
+   bogus URIs.
+   - The Wallet.toString(..) method has additional parameters now so you
+   can control what is included in the dump.
+
+*Known issues*
+*
+*
+Please see the limitations and missing
+features<https://code.google.com/p/bitcoinj/wiki/Limitations> page.
+This page has been fleshed out since the last release with common issues
+and missing features. A few issues were also fixed and removed.
+
+------------------------------------------------------------------------------
+Get 100% visibility into Java/.NET code with AppDynamics Lite!
+It's a free troubleshooting tool designed for production.
+Get down to code-level detail for bottlenecks, with <2% overhead. 
+Download for free and get started troubleshooting in minutes. 
+http://pubads.g.doubleclick.net/gampad/clk?id=48897031&iu=/4140/ostg.clktrk
+
+_______________________________________________
+Bitcoin-development mailing list
+Bitcoin-development@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/bitcoin-development
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

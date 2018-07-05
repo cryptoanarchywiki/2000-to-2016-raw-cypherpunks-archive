@@ -1,0 +1,130 @@
+From owner-cypherpunks@al-qaeda.net  Thu Dec 13 16:12:44 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id qBDL97k4029905
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 13 Dec 2012 16:09:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1355432947;
+	bh=xVQRJa6e5KiUUFbyrEhn9U4STng8ReaqiCSf69I8Rvs=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=W1dyp8/cCwaUHxSEoEWnvsNAdwX8xD8PplevyABY6acMypbU34ddQbbU5lam0jPi1
+	 lXcm1nIsmyokEO5nzZX4j8RZXL3KQnht7XgS5IYyCpT5xeKusAyv3EE5BStNla/dC1
+	 jxoJaDAL3R7gNumEGI+G+a3ePeYqyxPt6j3ChX7g=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id qBDL970d029904
+	for cypherpunks-outgoing; Thu, 13 Dec 2012 16:09:07 -0500
+Date: Thu, 13 Dec 2012 22:09:03 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: [tahoe-dev] Weekly Dev Chat notes, 2012-12-13
+Message-ID: <20121213210903.GM9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4351
+Lines: 96
+
+----- Forwarded message from Zooko Wilcox-O'Hearn <zooko@zooko.com> -----
+
+From: Zooko Wilcox-O'Hearn <zooko@zooko.com>
+Date: Thu, 13 Dec 2012 14:03:40 -0700
+To: tahoe-dev <tahoe-dev@tahoe-lafs.org>
+Subject: [tahoe-dev] Weekly Dev Chat notes, 2012-12-13
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+Folks:
+
+We decided not to do the hangout "on air" this time, as some people
+feel like they would be inhibited in their conversation if it were
+recorded and published like that. Maybe we could try an experiment in
+putting it "on air" at some point.
+
+Regards,
+
+Zooko
+
+in attendance: Zooko (scribe), Marlowe, CodesInChaos, David-Sarah, Brian
+
+On internationalization: marlowe is following up with runa to get
+instruction in how the workflow works for the Tor project and set up
+the same thing for the Tahoe-LAFS project; a man whose name I didn't
+catch will hopefully volunteer to translate it into Arabic. Brian will
+ask around Mozilla how they do it and Brian and Marlowe can compare
+notes. (Tor and Mozilla are two projects that do this sort of thing
+quite successfully.)
+
+* Zooko wants to get #1679 closed. It is a critical issue for those
+that it strikes (which includes LeastAuthority.com customers), and
+there is a patch. We just need a unit test. Zooko started writing unit
+tests for NodeMaker during the call. Brian found some extants tests
+for NodeMaker, in test_client.py.
+
+* marlowe is working on documentation improvements, hopefully to go
+into the 1.10 release.
+
+* marlowe is starting a glossary. He'll maintain it on the wiki, but
+then we'll copy a snapshot of it into the source release. Marlowe
+figured out that you can put restructured-text into trac wiki with
+"{{{#!rst". Ideally, we maintain restructured-text formatted glossary
+in the wiki, and then copy exactly the same restructured-text file
+into the docs/ directory before making a source release.
+
+Wiki vs. revctrl ? We've traditionally wanted to put docs in revision
+control to replicate them to users, make them linked to the version of
+the source code that they come with, and maintain a useful history of
+the docs. But we've also traditionally wanted to put docs on the wiki
+in order to make it easier for people to edit them. Maybe github will
+satisfy both goals! Brian pointed out that github is introducing an
+"edit right here on this page" feature so that it is even easier for
+people to contribute patches.
+
+
+Brian showed up late, but we wanted to talk to him, so we had an extra
+long call.
+
+* CoolNewHashFunction to be announced soon! The pitch is that it is a
+modern, secure hash, comparably secure to SHA-3, but it is faster than
+MD5. On the best-suited platform, with parallelized computation and
+the wind at your back, it might be up to 10 times as fast as SHA-256!
+Brian pointed out that this might not make any difference -- secure
+hashing is probably not the bottleneck in Tahoe-LAFS. Zooko laughingly
+countered that this is because our network protocol is so inefficient.
+Brian said we have some measurements of encryption and erasure coding
+(see "Recent Uploads and Downloads" in the WUI) but not of hashing
+because hashing gets interleaved with other operations so it isn't
+that easy to measure. Zooko said there was a cool Master's Thesis by
+Eirik Haver and Pel Ruud in which they attempted to measure the effect
+of the secure hash function on Tahoe-LAFS's performance:
+
+https://tahoe-lafs.org/trac/tahoe-lafs/wiki/Bibliography#HashFunctions
+
+
+Brian volunteers to be Release Manager for Tahoe-LAFS v1.10.0! Hooray!
+There was much rejoicing!
+
+* There are a few other tickets that we *really* want to get in --
+#1240, #1732, and #1767 -- either because they are already done and
+just need to be merged or because they threaten forward-compatibility
+issues if we don't fix them before the release.
+
+Next week's Tahoe-LAFS Weekly Dev Chat will be about Tahoe-LAFS v1.10.
+Be there or be square!
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

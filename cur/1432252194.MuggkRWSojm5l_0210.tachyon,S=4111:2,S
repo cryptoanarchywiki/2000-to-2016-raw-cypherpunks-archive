@@ -1,0 +1,103 @@
+From owner-cypherpunks@jfet.org  Thu Jun  2 14:22:15 2005
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.13.4/8.13.4/Debian-1) with ESMTP id j52IKk19013248
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 2 Jun 2005 14:20:46 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.4/8.13.4/Submit) id j52IKk4M013247
+	for cypherpunks-outgoing; Thu, 2 Jun 2005 14:20:46 -0400
+Date: Thu, 2 Jun 2005 14:20:33 -0400
+From: Adam Back <adam@cypherspace.org>
+To: DiSToAGe <distoage@sbbi.net>
+Cc: cypherpunks@jfet.org, Adam Back <adam@cypherspace.org>
+Subject: Re: /. [Intel Adds DRM to New Chips]
+Message-ID: <20050602182033.GA4990@bitchcake.off.net>
+References: <20050528195352.GE3361@leitl.org>
+  <1117644476.6910.181.camel@station>
+  <20050601220929.GA1869@bitchcake.off.net>
+  <1117703131.6993.73.camel@station>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1117703131.6993.73.camel@station>
+User-Agent: Mutt/1.4.1i
+X-Hashcash: 1:20:050602:distoage@sbbi.net::WFRKOUg9u0qm3tII:1CQk
+X-Hashcash: 1:20:050602:cypherpunks@jfet.org::AJbOCsO/N5DjViAZ:xYT
+X-Hashcash: 1:20:050602:adam@cypherspace.org::SxJMO39Tw9vm59k4:1KBA
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2689
+Lines: 69
+
+On Thu, Jun 02, 2005 at 11:05:30AM +0200, DiSToAGe wrote:
+> I have read infos that say that audio and video drivers will be in the
+> trusted chain. If your hardware system is used by an os (i.e. win) on
+> which you can't create drivers, and only industry signed drivers can be
+> used you can't bypass this by hacking drivers ...
+
+Right.
+
+> My though is the hardware drm can be reverse engineered ? If you use
+> cert on your DRM you must put cert and private keys on your DRM chip ...
+
+No the private key would be generated on the chip at manufacture, and
+a signed certificate of it inserted by the manufacturer.
+
+> So you can make a "soft drm" that use all the instructions of the
+> reverse engineered hard drm, you but the reverse engineered private
+> key, certs on your soft drm. 
+
+It is feasible in the following way to make a soft drm.  
+
+Step1. Get yourself a software controlled key signed by the hw
+manufacturers.  Either:
+
+1a. extract an already signed one out of the DRM hardware on your
+machine by hardware hacking.
+
+1b. find an insider at the manufacturing plant to sign a key actually
+in the control of software;
+
+1c. obtains the CA key used to do the signing (probably rather hard,
+obviously they'll be trying to keep that one secure in tamper
+resistant hardware with no key export function).
+
+Step2. share the key, or setup a service to falsely authenticate
+pure software DRM as hardware DRM with your key.
+
+Now to stop you sharing this key directly or making a p2p DRM auth
+server, they have to revoke the key.
+
+I believe their revocation model is a bit weak from what I read of the
+specs a while back.  They have a kind of challenge:
+
+- to avoid criticism of privacy invasion, they have to make the thing
+anonymous (or at least pseudonymous with lots of pseudonyms)
+
+- however you can't blacklist a truly anonymous challenge-response.
+
+(There was a protocol from Ernie Brickell with this kind of problem.)
+
+Depending on what the final details are therefore their revocation
+model might be weak.
+
+> (so seems happy futur, something you buy and use but don't own ?)
+
+Yes.  It is outrageous for the RIAA/MPAA and hardware companies to be
+trying to foist this stuff on people.
+
+
+The other way is to find a buffer overflow or such in one of these
+privileged signed drivers and then you can inject code/or bypass DRM
+restrictions in pure software.  They might at some point giving you
+signed AND encrypted drivers so you can't even reverse-engineer them,
+but I would say you have a right to know and control what is running
+on your machine.
+
+Another even more powerful buffer overflow would be one in the
+supervisor / mini-OS that is hosting the Trusted Agents in ring -1.
+
+Adam
+

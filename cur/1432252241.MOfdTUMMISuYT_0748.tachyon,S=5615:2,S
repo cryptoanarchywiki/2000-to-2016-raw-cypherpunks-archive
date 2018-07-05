@@ -1,0 +1,107 @@
+From owner-cypherpunks@Algebra.COM  Fri Dec 14 20:02:23 2001
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.mit.edu (8.11.6/8.9.3) with ESMTP id fBF12LJ14685
+	for <kwantam@positron.mit.edu>; Fri, 14 Dec 2001 20:02:21 -0500
+Received: from ak47.algebra.com (ak47.algebra.com [208.233.99.160])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id UAA09454
+	for <rsw@mit.edu>; Fri, 14 Dec 2001 20:02:03 -0500 (EST)
+Received: from ak47.algebra.com (localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id fBF0TQx8029899
+	for <cypherpunks-outgoing@ak47.algebra.com>; Fri, 14 Dec 2001 18:29:26 -0600
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id fBF0TQub029898
+	for cypherpunks-outgoing; Fri, 14 Dec 2001 18:29:26 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (dns.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id fBF0TJx8029882
+	for <cypherpunks@ak47.algebra.com>; Fri, 14 Dec 2001 18:29:20 -0600
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id fBF0TIA27359
+	for cypherpunks@ak47.algebra.com; Fri, 14 Dec 2001 16:29:18 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id fBF0TBT27352
+	for cypherpunks-goingout; Fri, 14 Dec 2001 16:29:11 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Sat, 15 Dec 2001 01:28:09 +0100
+From: Anonymous <nobody@mix.winterorbit.com>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@mix.winterorbit.com>.
+To: cypherpunks@lne.com
+Old-Subject: RE: CNN.com on Remailers
+Message-ID: <db199031d2319c88651c1b748655637f@mix.winterorbit.com>
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  RE: CNN.com on Remailers
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+X-spam: 0 
+Status: O
+Content-Length: 3249
+Lines: 58
+
+
+Lucky Green writes:
+> A popular remailer will handle some 3,500 messages a day. But this
+> includes intra remailer-network traffic. How many of those messages are
+> messages entering and leaving the cloud is any remailer operator's
+> guess, since current remailer statistics software has no means to
+> differentiate between internal and boundary traffic. Of course any
+> self-respecting TLA would know the those figures that the remail
+> operators themselves are currently unable to obtain.
+
+It's a myth that remailers don't distinguish between inter-remailer and
+outside traffic.  Actually, remailers generally have built-in knowledge
+of every other remailer, and mail from them is handled specially.
+
+The reason is because of flood detection and prevention, which is a
+feature of modern remailer software.  Attacks against the remailer network
+in the form of message floods have been a common nuisance in recent years.
+As a countermeasure, current remailer software detects and automatically
+blocks addresses which provide excessive quantities of mail.
+
+Unfortunately, the most common cause of large incoming volumes is
+that the other sender is itself a remailer.  Hence it is necessary to
+maintain a database of all extant remailers and disable flood detection
+for those addresses.  This is a common practice for remailer operators.
+
+It's also one of the main reasons why certain remailer chains
+"mysteriously" fail to work.  With the set of remailers changing
+frequently, especially in recent months, it takes time, often weeks,
+before all the remailers get around to updating their databases to
+reflect the current set of addresses.  Until then you have a failure
+with any chain which goes from a remailer to another remailer which has
+not yet added it.  You end up with these strange situations where A can
+send to B which can send to C, and C can send to A, but any chain where
+A sends to C fails.
+
+At one time there was a somewhat romantic and idealistic notion that
+remailers would all operate independently, with no need to be aware
+of each other's existence.  Experience has proven that this is not
+the case.  Remailers do know about each other, they need to know about
+each other, and they coordinate their efforts via various mailing lists
+and newsgroups.
+
+Given this reality, it is time to consider a different approach to
+remailers, one in which all remailer operators work together in a peer
+to peer network.  It's crazy for remailers to use RFC2822 email to
+communicate with each other, with all of its problems with reliability
+and the many layers of software which mail goes through to and from the
+remailing functionality.
+
+Remailer operators should have permanent encrypted links to one another,
+with constant (or at least message-uncorrelated) traffic volumes.
+They can still use latency, message pools, and other features, of course.
+But when it comes time to deliver messages to the next remailer in the
+list, that should be done with a reliable and direct connection that
+doesn't have to depend on the vagaries of sendmail, procmail, Microsoft
+servers or the many other layers that get in the way.  This would both
+increase the reliability of the remailer network and improve its security
+by hiding inter-remailer traffic.
+

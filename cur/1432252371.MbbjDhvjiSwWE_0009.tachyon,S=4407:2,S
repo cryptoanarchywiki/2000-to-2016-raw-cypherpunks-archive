@@ -1,0 +1,87 @@
+From owner-cryptography+rsw=mit.edu@metzdowd.com  Sun Jun 29 10:30:24 2003
+Return-Path: <owner-cryptography+rsw=mit.edu@metzdowd.com>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h5TEUO621850
+	for <rsw@opamp.org>; Sun, 29 Jun 2003 10:30:24 -0400
+Received: from red.metdow.com (72.muf123.nycm.n54ny05r18.dsl.att.net [12.103.123.72])
+	by fort-point-station.mit.edu (8.12.4/8.9.2) with ESMTP id h5TEUNP2027935
+	for <rsw@mit.edu>; Sun, 29 Jun 2003 10:30:23 -0400 (EDT)
+Received: by red.metdow.com (Postfix, from userid 1002)
+	id 7C479182F92; Sun, 29 Jun 2003 14:28:22 +0000 (UTC)
+X-Original-To: cryptography@metzdowd.com
+Delivered-To: cryptography@metzdowd.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by red.metdow.com (Postfix) with ESMTP id ABEC1182F8E
+	for <cryptography@metzdowd.com>; Sun, 29 Jun 2003 14:28:21 +0000 (UTC)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 5159CD97DB; Sun, 29 Jun 2003 10:28:21 -0400 (EDT)
+X-Original-To: cryptography@metzdowd.com
+Received: from mail-red.research.att.com (mail-red.research.att.com [192.20.225.110])
+	by red.metdow.com (Postfix) with ESMTP id 81816182F5C
+	for <cryptography@metzdowd.com>; Sun, 29 Jun 2003 03:15:49 +0000 (UTC)
+Received: from linux.research.att.com (unknown [135.207.24.16])
+	by mail-red.research.att.com (Postfix) with ESMTP id 7D3531AB466
+	for <cryptography@metzdowd.com>; Sat, 28 Jun 2003 22:19:29 -0400 (EDT)
+Received: from bigmail.research.att.com (bigmail.research.att.com [135.207.30.101])
+	by linux.research.att.com (8.12.8/8.12.8) with ESMTP id h5T3Q9Jh012269;
+	Sat, 28 Jun 2003 23:26:09 -0400
+Received: from berkshire.research.att.com (raptor.research.att.com [135.207.23.32])
+	by bigmail.research.att.com (8.11.6+Sun/8.11.6) with ESMTP id h5T3FkV04055;
+	Sat, 28 Jun 2003 23:15:46 -0400 (EDT)
+Received: from research.att.com (localhost [127.0.0.1])
+	by berkshire.research.att.com (Postfix) with ESMTP
+	id 83BFA7B4D; Sat, 28 Jun 2003 23:15:45 -0400 (EDT)
+X-Mailer: exmh version 2.6.3 04/04/2003 with nmh-1.0.4
+To: Bill Stewart <bill.stewart@pobox.com>
+Cc: cypherpunks@lne.com, cryptography@metzdowd.com
+Subject: Re: Attacking networks using DHCP, DNS - probably kills DNSSEC 
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Date: Sat, 28 Jun 2003 23:15:45 -0400
+From: "Steven M. Bellovin" <smb@research.att.com>
+Message-Id: <20030629031545.83BFA7B4D@berkshire.research.att.com>
+Sender: owner-cryptography@metzdowd.com
+Precedence: bulk
+Status: O
+Content-Length: 1794
+Lines: 38
+
+In message <5.1.1.6.2.20030628124252.033e5600@idiom.com>, Bill Stewart writes:
+>Somebody did an interesting attack on a cable network's customers.
+>They cracked the cable company's DHCP server, got it to provide a
+>"Connection-specific DNS suffic" pointing to a machine they owned,
+>and also told it to use their DNS server.
+>This meant that when your machine wanted to look up yahoo.com,
+>it would look up yahoo.com.attackersdomain.com instead.
+>
+>This looks like it has the ability to work around DNSSEC.
+>Somebody trying to verify that they'd correctly reached yahoo.com
+>would instead verify that they'd correctly reached
+>yahoo.com.attackersdomain.com, which can provide all the signatures
+>it needs to make this convincing.
+>
+>So if you're depending on DNSSEC to secure your IPSEC connection,
+>do make sure your DNS server doesn't have a suffix of echelon.nsa.gov...
+>
+
+No, that's just not true of DNSsec.  DNSsec doesn't depend on the 
+integrity of the connection to your DNS server; rather, the RRsets are 
+digitally signed.  In other words, it works a lot like certificates, 
+with a trust chain going back to a magic root key.  I'm not saying that 
+there can't be problems with that model, but compromised DNS servers 
+(and poisoned DNS caches) are among the major threat models it was 
+designed to deal with.  If nothing else, the existence of caching DNS 
+servers, which are not authoritative for the information they hand out, 
+makes a transmission-based solution pretty useless.
+
+
+
+		--Steve Bellovin, http://www.research.att.com/~smb (me)
+		http://www.wilyhacker.com (2nd edition of "Firewalls" book)
+
+
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+

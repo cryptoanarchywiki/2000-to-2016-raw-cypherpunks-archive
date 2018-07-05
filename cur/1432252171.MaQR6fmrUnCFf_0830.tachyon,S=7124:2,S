@@ -1,0 +1,131 @@
+From owner-cypherpunks@lne.com  Mon May 19 00:05:24 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h4J45Lt24977
+	for <rsw@jfet.org>; Mon, 19 May 2003 00:05:22 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h4J3oaFH007149
+	for cypherpunks-goingout345; Sun, 18 May 2003 20:50:36 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+From: Nomen Nescio <nobody@dizum.com>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@dizum.com>.
+To: cypherpunks@lne.com, cryptography@metzdowd.com
+Subject: Exciting new information on Palladium
+Message-ID: <b2c61e1f7a96aaf164c1b77c052b8ca4@dizum.com>
+Date: Mon, 19 May 2003 05:50:06 +0200 (CEST)
+X-Virus-Scanned: by outpost.zedz.net (amavis-20020300)
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 5941
+Lines: 104
+
+There's a huge amount of (relatively) new information available on
+Microsoft's NGSCB, aka Palladium.  Start at
+http://www.microsoft.com/resources/ngscb/ and try the links at the left.
+
+I'll mention two very exciting points here.  Clicking on the Newsgroup
+link led to some discussion of a proposal by famous security guru Ernie
+Brickell of Intel to use zero-knowledge proofs to demonstrate that
+you have a good Palladium key.  The discussion implies that Intel is
+promoting this technology for use in Palladium.  Apparently Brickell
+presented this at the RSA conference.  I can't find an online paper
+but here is an abstract pointed to by the newsgroup discussion:
+
+   We will present an efficient protocol for demonstrating that a
+   public signature verification key corresponds to a private signature
+   generation key that is contained in a certified hardware device,
+   without identifying which certified hardware device contains the
+   private signature generation key.
+
+   Each hardware device contains a unique certified key, but neither the
+   public, nor the private unique keys are ever known outside of the
+   hardware device. The protocol provides a verifier with the ability
+   to revoke a hardware device. The cryptographic assumptions required
+   are an interval RSA assumption and a Bounded Decision Diffie Hellman
+   (DDH) assumption. The proofs use the random oracle model.
+
+   We will discuss the privacy issues with cryptographic keys associated
+   with trusted computing, and motivate the privacy requirements that
+   were met in this protocol. We will also discuss potential performance
+   and capability enhancements to the protocol.
+
+We had some discussion of this idea last year, but we couldn't come up
+with an approach that would both protect privacy and allow revocation.
+Sounds like Brickell has cracked this nut!  That's good news for privacy
+advocates.  Hopefully someone can point to a copy of the paper, or perhaps
+summarize the idea if they have seen Brickell present it.
+
+
+For the next point, click on the Product Information link to get to
+several documents about Palladium.  The best one to start with (after
+the Overview and the FAQ, if you didn't previously know anything about
+this technology) is the Security Model.  But the TCB paper has probably
+got the most meat.
+
+One of the big issues about Palladium has been the issue of signed code.
+Hopefully, most people don't believe any more that only signed code will
+run, or that Microsoft or others will limit what applications you can
+run, as claimed by Lucky Green and Ross Anderson.  The whole point of
+TC is to let "trusted" applications (now called NCAs, Nexus Computing
+Agents) run side by side with legacy apps.  Virtually everything you
+can run today you will be able to run in the future.  And so far it
+still appears that Microsoft will not limit the ability of developers
+to write their own NCAs and make use of the TC technology.
+
+Where the question about signed code comes into play is with regard to
+the question of what versions of software people will choose to trust.
+One of the main functions of TC is "attestation", by which the secure
+hardware can report to a remote system a cryptographic hash of the
+running code.  Based on this hash, the remote system can decide to trust
+(or not) the code running on the local machine.  So for this to work,
+the remote system has to either have a list of acceptable hash values or
+perhaps it would rely on a (non-centralized) certificate that it chooses
+to trust for this purpose.
+
+The issue also arises with sealed storage.  Another of the TC features
+is the ability of trusted apps to encrypt code such that it is locked
+to their own identity.  Other programs, or other versions of the same
+program, would not be able to decrypt it.  So again the question arises,
+what exactly is hashed?  What happens if there are different versions
+of the software?
+
+The TCB article sheds considerable light on this.  What will be hashed is
+not the program code, but rather a Manifest.  This is an XML format file
+which includes either the program hash, or A PUBLIC KEY!  This means
+that a distributed, trusted app can base its trust not just on the
+relatively-brittle program hash, but if it chooses, on a signature
+public key which would be used specifically for the purpose of issuing
+new versions of the program.  Any software signed by that key would be
+interchangeable for Palladlium trust purposes.
+
+In addition, the Manifest can define which "code modules" (libraries?
+DLLs?) can be loaded by the program.  This is done by inclusion/exclusion
+lists, which can again be either hashes or public keys, so in other words
+your trusted app can say to use a certain version of a DLL, or to use
+any version signed by the DLL author.
+
+The Manifest also holds a DEBUG FLAG!  This means that trusted code can
+be debugged - if the Manifest says so.  And if it says not to, you can
+just edit the Manifest file to allow it - but the Palladium identity of
+the program will change, since that is based on a hash of the Manifest.
+In other words, code can be debugged, but it will not be trusted by
+other non-debugged versions of the code, and it will not be able to
+unlock data that was locked while it was undebugged.
+
+This approach seems to offer a good balance between flexibility and
+security.  And the best part is that it makes these decisions in a
+completely decentralized fashion.  Microsoft doesn't have to get involved
+at all.  Each developer and user can decide for himself what policies
+to set, how to configure the Manifest, and thus what software to trust.
+
+Well, there's more good stuff here, and I'm still reading.  This is
+all apparently the same information that was distributed at the recent
+WinHEC conference.  I would encourage those who want to know more
+about the reality of this new technology, rather than the fantasies
+being promulgated by its opponents, to study these documents closely.
+

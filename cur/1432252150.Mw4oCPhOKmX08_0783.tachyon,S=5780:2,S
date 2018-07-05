@@ -1,0 +1,132 @@
+From owner-cypherpunks@jfet.org  Fri Jan 27 09:10:00 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.5/8.13.5/Debian-3) with ESMTP id k0RE8fUR002760
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 27 Jan 2006 09:08:41 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.5/8.13.5/Submit) id k0RE8fRt002759
+	for cypherpunks-outgoing; Fri, 27 Jan 2006 09:08:41 -0500
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;         s=beta;
+  d=gmail.com;        
+  h=received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+  b=TmbDn19gUD/d5UZHypNHf5NbhrTriYyZkROq+vNyFoedcQN4aprJysefAnhSPkhZHuRNVdYL3AVjS6d3vdgf1uqUo6YgoE3vzkwBrOyF6SgzvnLqxGfDdyfpIBlvno5NdJIGBM5+9cooH3fxQGQJVOZUYVkfAiaAM9FZ/dEeQuw=
+Message-ID: <4ef5fec60601270608h7993751brec814378d7f43e21@mail.gmail.com>
+Date: Fri, 27 Jan 2006 06:08:39 -0800
+From: coderman <coderman@gmail.com>
+To: Eugen Leitl <eugen@leitl.org>
+Subject: Re: [bear@sonic.net: Re: thoughts on one time pads]
+Cc: cypherpunks@jfet.org
+In-Reply-To: <20060127074719.GU2301@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+References: <20060127074719.GU2301@leitl.org>
+Content-Transfer-Encoding: 7bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by proton.jfet.org
+  id k0RE8fVe002723
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4176
+Lines: 98
+
+On 1/26/06, Eugen Leitl <eugen@leitl.org> wrote:
+> ...
+> ----- Forwarded message from bear <bear@sonic.net> -----
+> Date: Thu, 26 Jan 2006 18:09:52 -0800 (PST)
+> To: "Travis H." <solinym@gmail.com>
+> Cc: cryptography@metzdowd.com
+> Subject: Re: thoughts on one time pads
+> ...
+> The problem is that most people will not take the care needed
+> to properly use a one-time pad.  For text communications like
+> this forum, they're great, and a (relatively) small amount of
+> keying material, as you suggest, will last for many years.
+
+agreed; it would be interesting to debate the bare minimum
+requirements for a system where pads would provide a useful
+improvement in security.  this means all those other holes bidding
+malicious peers welcome need to be closed.
+
+note that unless you have a hardware entropy source generating
+anything more than a small amount of truly random pad is going to take
+a lonnnnng time.
+
+the yarrow based /dev/random in bsd is a fucking cop out; they should
+remove it (that is what /dev/urandom is for).
+
+fortunately VIA, AMD and Intel all provide hw rng sources of varying
+capability on commodity systems.
+
+
+> But modern applications are concerned with communicating *DATA*,
+> not original text; someone on the system is going to want to
+> send their buddy a 30-minute video of the professor explaining
+> a sticky point to the class, and where is your keying material
+> going then?
+
+this is why i like pads for key distribution.  with key material pre
+distributed between the endpoints that will consume it you can
+restrict network communication so that only authenticated traffic
+(from peers whom you have exchanged pads with) is allowed into higher
+levels of the OS stack / forwarded / applications.
+
+this is really where i see a justifiable security improvement - block
+all unauthenticated traffic up front, no open ports, no complex public
+key formats / negotiation. (it would also be interesting to see all of
+the potential remote exploit vulnerabilities in common IPsec key
+daemons)
+
+in this scenario you can still transfer your huge data archives around
+without consuming the entire pad with a quickness; frequent IPsec key
+exchange to refresh SA's leverage the security and simplicity of pads
+while retaining the flexibility of a chained block cipher for bulk
+transport.
+
+
+> An OTP, as far as I'm concerned, makes a really good system,
+> but you have to respect its limits.  One of those limits is
+> a low-bandwidth medium like text-only messages, and in the
+> modern world that qualifies as "specialized."
+
+strong authentication and endpoint security are one of these critical
+components required to use a pad effectively.  at a minimum i've
+settled on the following for managing key material and endpoint
+security:
+
+- bootstrap with read-only disc media prepared by a trusted peer. 
+boot takes about 8-12 seconds for key management mode on a 1Ghz VIA
+proc.
+- passphrase protected full disk encryption with loop-AES
+- loop-AES key schedule on USB memory stick [two factor auth]
+- distinct domains / runtime instances for specific purposes.  as an
+example, key management mode (import / export of keys, generation of
+pads, creation/modification of digital identity) does not even support
+any network capabilities in the statically linked kernel.  all
+interaction in this domain is performed via file system with keys
+manually copied to external domains which are network aware or hosting
+services.
+
+this does mean that you're stuck using linux/bsd* for a secure domain,
+with grsec/lsm/selinux/pax style defenses highly suggested.  ideally a
+capability operating system would be used, but this is a challenging
+problem...
+
+
+> Of course, the obvious application for this OTP material,
+> other than text messaging itself, is to use it for key
+> distribution.
+
+yes! fixed buffer sizes, small attack surface, authentication from the
+first packet onward (rather than entering into a negotiation to
+ascertain identity).
+
+best regards,
+
+
+* both of these kernels need a good audit before they can be trusted
+(at least pertaining to the code exposed to unauthenticated attackers
+at a minimum), as do_brk() and bsd beacon overflows in ring0
+indicate...
+

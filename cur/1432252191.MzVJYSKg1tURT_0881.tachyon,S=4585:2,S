@@ -1,0 +1,105 @@
+From owner-cypherpunks@Algebra.COM  Tue Nov 27 21:09:56 2001
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.mit.edu (8.11.6/8.9.3) with ESMTP id fAS29ep04930
+	for <kwantam@positron.mit.edu>; Tue, 27 Nov 2001 21:09:40 -0500
+Received: from ak47.algebra.com (ak47.algebra.com [208.233.99.160])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id VAA01763
+	for <rsw@mit.edu>; Tue, 27 Nov 2001 21:08:49 -0500 (EST)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id fAS1HGR01610
+	for cypherpunks-outgoing; Tue, 27 Nov 2001 19:17:16 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (dns.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id fAS1HCk01589
+	for <cypherpunks@ak47.algebra.com>; Tue, 27 Nov 2001 19:17:12 -0600
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id fAS1H7C05548
+	for cypherpunks@ak47.algebra.com; Tue, 27 Nov 2001 17:17:07 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id fAS1Gvq05540
+	for cypherpunks-goingout; Tue, 27 Nov 2001 17:16:57 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Tue, 27 Nov 2001 17:13:44 -0800
+From: William Hitzke <william@25thandClement.com>
+To: cypherpunks@lne.com
+X-Orig-To: cypherpunks@lne.com
+Old-Subject: pipenet padding
+Message-ID: <20011127171344.A10681@25thandClement.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.5i
+X-Loop: cypherpunks@lne.com
+X-spam: 5 
+Subject:  pipenet padding
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+X-spam: 5 
+Status: O
+Content-Length: 2559
+Lines: 58
+
+
+i'm constructing a pipenet application and
+one of the biggest headaches is traffic padding.
+
+end-to-end traffic padding is too costly, so its outta the question.
+
+another similar problem to traffic padding is connection establishment
+and tear-down. w/o significant enough traffic, you can't
+really do it in mixmaster style.
+
+my idea for link padding (between adjacent nodes/switches)
+started w/ the idea of a bi-di 14400 bps, to make hosting an
+anonnet server (my pipenet implementation) palatable to the
+person who cuts the checks for bandwidth (such as myself).
+
+14400 connections would force people to open many connections
+for, say, looking at a website (multiple connections for the page,
+images, etc). this would help w/ the mixmaster connection requests,
+and allow hosters to better control bandwidth.
+
+then i thought about allowing multiple "virtual links" to be connected
+at the end node/receiver, so that traffic could be spread
+across them. aside from latancy and ordering issues, this could
+really up the through-put.
+
+just recently (after reading an attack from wei dai on
+the freedom network), i was thinking how these multiple "channels" could
+be used to guard against the active attacks that are exposed
+absent end-to-end padding.
+
+if the traffic did not fill all the channels, and traffic was
+randomly distributed across the channels, wouldn't/couldn't
+this make attacks on the system much more difficult. especially
+if different nodes randomly sent null packets to the receiver,
+and vice-versa (to reduce possible collusion between the end node
+and a middle node).
+
+assuming the end node is trustworthy (more so than the set
+of nodes used), then an attack on any link between the beginning
+and end gives far less information to be used in tracing
+a route, because its is unknown what the distributiuon of
+traffic is.
+
+it makes things more hairy, having to deal w/ out of
+order packets (each single channel is still mac'd and sequenced
+properly). but, it widens the security margins, no?
+
+this design seems to me to be a win-win. it makes high[er]-throughput,
+beneficial link padding possible, while (per the low
+per-channel bandwidth cost) giving the host of a pipenet/anonnet
+node more control (finer granularity) over traffic usage
+thus making hosting less costly.
+
+any comments, suggestions? i'm really looking for somebody
+to tell me whether allowing multiple channels like this
+exposts the design to more attacks than have been pointer
+out w/ link padding schemes. otherwise, at the very least
+it makes the application more practical.
+

@@ -1,0 +1,72 @@
+From owner-cypherpunks@al-qaeda.net  Wed Sep  8 14:49:49 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i88JnlJF032520
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Wed, 8 Sep 2004 14:49:47 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i88JnlBl032519
+	for cypherpunks-outgoing; Wed, 8 Sep 2004 14:49:47 -0500
+Message-ID: <413F6127.711FF78A@cdc.gov>
+Date: Wed, 08 Sep 2004 12:44:39 -0700
+From: "Major Variola (ret)" <mv@cdc.gov>
+Organization: GLODO PSYOPS
+X-Mailer: Mozilla 4.75 [en] (Win95; U)
+X-Accept-Language: en
+MIME-Version: 1.0
+To: "cypherpunks@al-qaeda.net" <cypherpunks@al-qaeda.net>
+Subject: Re: Seth Schoen's Hard to Verify Signatures
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 1967
+Lines: 44
+
+At 11:48 AM 9/8/04 -0700, Hal Finney wrote:
+>Seth Schoen of the EFF proposed an interesting cryptographic primitive
+>called a "hard to verify signature" in his blog at
+>http://vitanuova.loyalty.org/weblog/nb.cgi/view/vitanuova/2004/09/02 .
+>The idea is to have a signature which is fast to make but slow to
+verify,
+>with the verification speed under the signer's control.  He proposes
+>that this could be useful with trusted computing to discourage certain
+>objectionable applications.
+>
+>The method Seth describes is to include a random value in the signature
+
+>but not to include it in the message.  He shows a sample signature
+>with 3 decimal digits hidden.  The only way to verify it is to try all
+>possibilities for the random values.  By controlling how much data is
+>hidden in this way, the signer can control how long it will take to
+>verify the signature.
+
+This could be called a "salt-free" algorithm :-)   Basically its like
+the
+problem that a salted-password cracker has to solve when the salt has
+to be guessed.
+
+As far as a modexp() solution, I suggest this, which is as far as I can
+tell
+different from what you reference:
+
+In an RSA cryptosystem the public exponent is typically low, often
+3 or 65537 (for efficiency reasons only a few bits are set; the other
+constraint is that your message, raised to that power, wraps in your
+modulus, which makes 65537 a little better).  The private exponent
+is big.
+
+Therefore, traditional encryption is "fast", and decryption is slow;
+the reverse is that signing is slow, verifying a signature is fast.
+This can be used to achieve Seth's required "fast to make, slow
+to verify".  To achieve the required "user-controllable", the user
+gets to set the number of bits in the modulus.  One might have
+to use extraordinarily long moduli (making 4Kbits look puny), depending
+on the time-scale of "slow" and "fast", but so what, primes are free :-)
+
+and might even be re-used.
+
+If this passes group-muster pass it on..
+

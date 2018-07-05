@@ -1,0 +1,55 @@
+From cryptography-owner@c2.net  Sun Nov 19 17:26:20 2000
+Received: from MIT.EDU (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.69.0.28])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id RAA24991
+	for <kwantam@positron.mit.edu>; Sun, 19 Nov 2000 17:26:20 -0500
+Received: from blacklodge.c2.net by MIT.EDU with SMTP
+	id AA10720; Sun, 19 Nov 00 17:27:30 EST
+Received: from localhost (daemon@localhost) by blacklodge.c2.net (8.8.8/8.7.3) with SMTP id OAA13020; Sun, 19 Nov 2000 14:27:57 -0800 (PST)
+Received: by blacklodge.c2.net (bulk_mailer v1.11); Sun, 19 Nov 2000 14:25:28 -0800
+Received: (from majordom@localhost) by blacklodge.c2.net (8.8.8/8.7.3) id OAA12873 for cryptography-outgoing; Sun, 19 Nov 2000 14:25:27 -0800 (PST)
+Date: Sun, 19 Nov 2000 17:12:02 -0500
+Message-Id: <200011192212.RAA32241@tiramisu.lcs.mit.edu>
+From: "Kevin E. Fu" <fubob@MIT.EDU>
+To: Bram Cohen <bram@gawth.com>
+Cc: Lynn.Wheeler@firstdata.com, Ben Laurie <ben@algroup.co.uk>,
+        cryptography@c2.net, cypherpunks@cyberpass.net, dbs@philodox.com,
+        dcsb@ai.MIT.EDU
+In-Reply-To: "[8087] in cryptography@c2.net mail archive"
+Subject: Re: Public Key Infrastructure: An Artifact...
+Sender: owner-cryptography@c2.net
+Status: O
+Content-Length: 1264
+Lines: 31
+
+Of relevance to SSL and trust in DNS...
+
+Even without stealing keys, there are unconventional ways of
+circumventing SSL server authentication.  That is, pretending to be an
+SSL server that you are not.
+
+For instance, a client might forget to verify in a resumed SSL session
+that the server hostname matches the CN involved with the original
+connection.  If the client starts a resumable session with a server,
+that server can pretend to be other hosts.  Examples:
+http://www.cert.org/advisories/CA-2000-05.html
+http://snafu.fooworld.org/~fubob/netscape-ssl.html
+
+There is not a well-defined trust model for proxied SSL content.  SSL
+authenticates servers, not content.  Example:
+http://www.mit.edu:8008/menelaus/bt/17272
+
+Even if SSL were perfect, implementing certificate management will
+remain tricky.
+
+--------
+Kevin E. Fu (fubob@mit.edu)
+PGP key: https://snafu.fooworld.org/~fubob/pgp.html
+
+>Unless that problem is fixed, man in the middle is hardly made more
+>difficult - for example, Mallory could break into some random machine on
+>the net and steal it's public key, then hijack local DNS and when someone
+>goes to amazon.com redirect them to amazon.hackeddomain.com, and then
+>proxy to amazon.com - now even SSL says the connection is safe.
+>
+>-Bram Cohen
+

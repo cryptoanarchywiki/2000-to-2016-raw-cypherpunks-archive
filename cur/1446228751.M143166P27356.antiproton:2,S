@@ -1,0 +1,156 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t9UICLsh027339;
+	Fri, 30 Oct 2015 14:12:21 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=literati_org.20150623.gappssmtp.com header.i=@literati_org.20150623.gappssmtp.com
+	header.b=yFRHvbAr; dkim-adsp=none (unprotected policy);
+	dkim-atps=neutral
+Received: from mail-ig0-f171.google.com (mail-ig0-f171.google.com
+ [209.85.213.171])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t9UICIoE027335
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Fri, 30 Oct 2015 14:12:19 -0400
+Received: by igdg1 with SMTP id g1so17618941igd.1
+ for <cypherpunks@cpunks.org>; Fri, 30 Oct 2015 11:12:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=literati_org.20150623.gappssmtp.com; s=20150623;
+ h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+ :content-type; bh=ObcpToMs8k38GNc8N6k8OaGcr6lUAfQUW4t5SbomjRw=;
+ b=yFRHvbAribMwv0aZdwpOD6hjq07ZJCkpLTI5kLFuFpkj80kmVgXZ2Wqjz25RJj1Goj
+ F0qc54Z5XJ4iZDDb7LUjVTpwD0JTL73YllU7dUxCD3aGqsX1ZaGwbEAz6xGHd3oAgedn
+ KiNBmkxeHqBg8cL/3yc6EaPkquCwDHYWf2gSn1uLieAUUeHLWLI+cooOVGU2cHwSqUoM
+ 17ojaiPNdgssJszH+3wUdpD+tc5C5q2COWfKDdUQvECdI/wqY+Cb/XSxW1G1Dn2QSK1n
+ +o88pnQ9aN5V1SVKACVG6IfLfE8KpQ4TYPnf/63wTzqPZDhM1IArFuajbHmpLD2UyeQG
+ er0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+ :message-id:subject:to:content-type;
+ bh=ObcpToMs8k38GNc8N6k8OaGcr6lUAfQUW4t5SbomjRw=;
+ b=biVzKB589LDY7TTQcR2QpQos4PSjxXDpD3T/JmhyPVWWSE/d4lKtObRpjkgi5DkBOE
+ HhyXPs/D1py2J1mMoTRFKLgUnoOTbdnPFNcPrbf+LiNROx9ugSXpGYhIT1ToIv6IBeYr
+ kKClx/IEQr8PNzGXE0A2M4w6bp6rwlnPIbLzqDvzYJsOnuDqb/rUkfeD+8f9zzkq+TQt
+ m8CJ/JE1WchGU4ATYGW2qQ4Yu6rgiohhOWhg+LwDd3auJDpIKRx2NMKsxo13wkx+ch93
+ ADg1JLZKd3ZBwI0K99mZucQEDxd827i7DKBMBRdb2jnoqHIpT9OGg1xuC5vR1H7Stw5x
+ +AnQ==
+X-Gm-Message-State: ALoCoQmd8GAdjpvfhYK8nGGdB+7Y5RpkxWVxzybb6jTcSB+6e8tX12xKKzdpjO57UWSkX9AIxS2i
+X-Received: by 10.50.7.70 with SMTP id h6mr4471173iga.63.1446228733062; Fri,
+ 30 Oct 2015 11:12:13 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAHWD2rJNTxt2+=0rPkkc+323pTn-njkvJVgUE624LShu2xg1Eg@mail.gmail.com>
+ <150b0aeef50.276e.4d489027c0c4d0c1b1ca03a1f48f1ffb@misanthropia.org>
+ <20151028231728.1A96CC00019@frontend1.nyi.internal>
+ <CAOsGNSThwv=c9K4v4HkD27PD+wY9+XykyTNOWs=7FOwPpxctZw@mail.gmail.com>
+ <150b1290920.276e.4d489027c0c4d0c1b1ca03a1f48f1ffb@misanthropia.org>
+ <20151029013945.C7D9FC00012@frontend1.nyi.internal>
+ <CAHWD2rLJ0RgxcGZi=mKD=OfYYtCy1j9sfbzDKOVZuuX5EPCnJg@mail.gmail.com>
+ <5632417A.3070402@riseup.net>
+ <CAHWD2rL0jH=Kb=UiRArACMh49Wj_m+w8ZXWLtyVu8eU=Ruu+Cw@mail.gmail.com>
+ <20151029173517.02E5CC00016@frontend1.nyi.internal>
+ <CAHWD2rL2hoh9-=htyYbuN1OM0qviQB+zsJzjk4Bj66naP0Rpbw@mail.gmail.com>
+ <20151029182639.A6B60C00013@frontend1.nyi.internal>
+ <CAOsGNSQwQO5n8aDXsdeYqtNEtucej0GaG=2s8aiPcWGtdQUE6Q@mail.gmail.com>
+ <CAHKdp-kr39fYxC_K15OrXd0EmEnMFW+pYGKg6Y_1+Xedn7gDtA@mail.gmail.com>
+ <5633A853.2080502@riseup.net>
+ <CAHKdp-mo3zSOcRqo-NCgKG3cesSph_97h-FKBvOrkjKCvwdwjw@mail.gmail.com>
+In-Reply-To: <CAHKdp-mo3zSOcRqo-NCgKG3cesSph_97h-FKBvOrkjKCvwdwjw@mail.gmail.com>
+From: Sean Lynch <seanl@literati.org>
+Date: Fri, 30 Oct 2015 18:12:03 +0000
+Message-ID: <CAHKdp-=FaLvJLe8KcPjwVW2vUJ1c=w-m2UmQEV_Ax6+bweEOrg@mail.gmail.com>
+Subject: Re: Shiny stuff and designer societies (addenda)
+To: Razer <Rayzer@riseup.net>,
+        "cypherpunks@cpunks.org" <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=089e0111d35ee60c820523565d05
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 77
+
+--089e0111d35ee60c820523565d05
+Content-Type: text/plain; charset=UTF-8
+
+Dammit, meant to send to the list again.
+
+On Fri, Oct 30, 2015 at 11:02 AM Sean Lynch <seanl@literati.org> wrote:
+
+> On Fri, Oct 30, 2015 at 10:33 AM Razer <Rayzer@riseup.net> wrote:
+>
+>>
+>> I think there's a place for individualism within collectivism but the
+>> collective comes first.
+>>
+>>
+> This I can't really agree with. There is no collective without the
+> individual, and why should any individual be part of such a thing if it
+> doesn't benefit him or her?
+>
+> I recognize that we share the planet and that we all benefit from the
+> existence of society, but I think the only obligation that places upon us
+> is to give at least as much as we take. But at the end of the day the only
+> people qualified to make the determination of whether an individual's
+> contribution is adequate is the individual and anyone considering entering
+> into some kind of exchange/relationship/whatever with that individual. It
+> is the sum total of these decisions and interactions from which society
+> emerges.
+>
+> My longer term hope is that sharing the planet is just a temporary
+> constraint that we'll eventually overcome. There is a lot of room in the
+> galaxy and even the solar system. "If you don't like it, leave" is a lot
+> more realistic of an option when the choices and resources available are
+> practically infinite. This is not to say I'm sympathetic to the Venus
+> Project and its' ilk; I don't think they're wrong about a future of
+> abundance, I just think their language and thinking is rooted in a
+> fundamental misunderstanding of the meaning of economic scarcity.
+>
+
+--089e0111d35ee60c820523565d05
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Dammit, meant to send to the list again.<br><br><div class=
+=3D"gmail_quote"><div dir=3D"ltr">On Fri, Oct 30, 2015 at 11:02 AM Sean Lyn=
+ch &lt;<a href=3D"mailto:seanl@literati.org">seanl@literati.org</a>&gt; wro=
+te:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;b=
+order-left:1px #ccc solid;padding-left:1ex"><div dir=3D"ltr"><div class=3D"=
+gmail_quote"><div dir=3D"ltr">On Fri, Oct 30, 2015 at 10:33 AM Razer &lt;<a=
+ href=3D"mailto:Rayzer@riseup.net" target=3D"_blank">Rayzer@riseup.net</a>&=
+gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0=
+ .8ex;border-left:1px #ccc solid;padding-left:1ex"><br>
+I think there&#39;s a place for individualism within collectivism but the<b=
+r>
+collective comes first.<br><br></blockquote><div><br></div></div></div><div=
+ dir=3D"ltr"><div class=3D"gmail_quote"><div>This I can&#39;t really agree =
+with. There is no collective without the individual, and why should any ind=
+ividual be part of such a thing if it doesn&#39;t benefit him or her?</div>=
+<div><br></div><div>I recognize that we share the planet and that we all be=
+nefit from the existence of society, but I think the only obligation that p=
+laces upon us is to give at least as much as we take. But at the end of the=
+ day the only people qualified to make the determination of whether an indi=
+vidual&#39;s contribution is adequate is the individual and anyone consider=
+ing entering into some kind of exchange/relationship/whatever with that ind=
+ividual. It is the sum total of these decisions and interactions from which=
+ society emerges.</div><div><br></div><div>My longer term hope is that shar=
+ing the planet is just a temporary constraint that we&#39;ll eventually ove=
+rcome. There is a lot of room in the galaxy and even the solar system. &quo=
+t;If you don&#39;t like it, leave&quot; is a lot more realistic of an optio=
+n when the choices and resources available are practically infinite. This i=
+s not to say I&#39;m sympathetic to the Venus Project and its&#39; ilk; I d=
+on&#39;t think they&#39;re wrong about a future of abundance, I just think =
+their language and thinking is rooted in a fundamental misunderstanding of =
+the meaning of economic scarcity.</div></div></div></blockquote></div></div=
+>
+
+--089e0111d35ee60c820523565d05--
+

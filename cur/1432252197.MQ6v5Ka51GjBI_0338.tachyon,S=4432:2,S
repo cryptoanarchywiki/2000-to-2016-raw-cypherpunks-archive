@@ -1,0 +1,103 @@
+From owner-cypherpunks@al-qaeda.net  Wed Mar  2 10:26:00 2005
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.3/8.13.3/Debian-7) with ESMTP id j22GP8Lx003133
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Wed, 2 Mar 2005 10:25:08 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.3/8.13.3/Submit) id j22GP87G003131
+	for cypherpunks-outgoing; Wed, 2 Mar 2005 10:25:08 -0600
+Date: Wed, 2 Mar 2005 17:05:30 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: [FoRK] X.509 certificate collision via MD5 collisions (fwd from
+  jeff@k2.com)
+Message-ID: <20050302160529.GV13336@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.4i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3300
+Lines: 75
+
+----- Forwarded message from Jeffrey Kay <jeff@k2.com> -----
+
+From: Jeffrey Kay <jeff@k2.com>
+Date: Wed, 2 Mar 2005 11:02:42 -0500
+To: FoRK Discussion <fork@xent.com>
+Subject: [FoRK] X.509 certificate collision via MD5 collisions
+X-Mailer: Apple Mail (2.619.2)
+
+This is a pretty interesting paper -- worth reading.
+
+>Colliding X.509 Certificates version 1.0
+>1st March 2005
+>Arjen Lenstra, Xiaoyun Wang, and Benne de Weger
+>
+>http://eprint.iacr.org/2005/067
+>
+>We announce a method for the construction of pairs of valid X.509
+>certificates in which the ?to be signed? parts form a collision for
+>the MD5 hash function. As a result the issuer signatures in the
+>certificates will be the same when the issuer uses MD5 as its hash
+>function.
+
+It seems that the approach was to generate two RSA moduli that could be
+swapped but still produce the same MD5, hence the same signature.
+Another interesting question is whether, given an arbitrary modulus,
+another can be generated that produces the same MD5.  It almost seems
+like the same problem to me, so I must be missing something here.  The
+attack isn't on the public key itself since the factors necessary to
+generate the private key are still computationally hard to obtain but
+rather on the content of the certificate.  The key assumption is that
+the certificate is signed by a third party signer, which supplies the
+public key for verification.
+
+Even as posed, this is a pretty scary paper.  You could generate a
+certificate with your legitimate content in it (distinguished name,
+etc.), get that signed by a TTP and reuse that signature on another
+certificate with content in it that masqueraded as someone else.  You
+could also conceivable just recode parts of the certificate (such as
+the length of issue) and be safe.  Since you generated the pair of keys
+that causes this to happen, you could masquerade as anyone you wanted
+as long as you got your initial certificate signed.
+
+Pretty interesting attack.  Computationally intense in some areas, but
+definitely a viable attack particularly against downloadable browser
+plug-ins.  It reminds me of when Verisign signed a fraudulent Microsoft
+certificate;  this attack makes that much more possible.  This attack
+could end the usefulness of TTPs in many circumstances.
+
+-- jeff
+
+jeffrey kay
+weblog <k2.com> pgp key <www.k2.com/keys.htm> aim <jkayk2>
+share files with me -- get shinkuro -- <www.shinkuro.com>
+
+"first get your facts, then you can distort them at your leisure" --
+mark twain
+"if the person in the next lane at the stoplight rolls up the window
+and locks the door, support their view of life by snarling at them" --
+a biker's guide to life
+"if A equals success, then the formula is A equals X plus Y plus Z. X
+is work. Y is play. Z is keep your mouth shut." -- albert einstein
+
+_______________________________________________
+FoRK mailing list
+http://xent.com/mailman/listinfo/fork
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a>
+______________________________________________________________
+ICBM: 48.07078, 11.61144            http://www.leitl.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+http://moleculardevices.org         http://nanomachines.net
+
+[demime 1.01d removed an attachment of type application/pgp-signature]
+

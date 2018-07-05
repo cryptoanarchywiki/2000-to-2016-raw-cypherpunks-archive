@@ -1,0 +1,750 @@
+From owner-cypherpunks@al-qaeda.net  Sat Nov  6 22:05:37 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (majordomo@localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.1/8.13.1/Debian-16) with ESMTP id iA744XrI015147
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Sat, 6 Nov 2004 22:04:33 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.1/8.13.1/Submit) id iA744WKS015144
+	for cypherpunks-outgoing; Sat, 6 Nov 2004 22:04:32 -0600
+Date: Sun, 7 Nov 2004 06:02:15 +0200 (EET)
+From: Jei <jei@cc.hut.fi>
+To: cryptography@metzdowd.com, cypherpunks@al-qaeda.net
+Subject: Observable Elections
+Message-ID: <Pine.GSO.4.61.0411070602050.25257@vipunen.hut.fi>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
+X-TKK-Virus-Scanned: by amavisd-new-2.1.2-hutcc at putosiko.hut.fi
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+X-Keywords:                  
+X-UID: 11160
+Status: O
+Content-Length: 35857
+Lines: 723
+
+http://www.infosecwriters.com/hhworld/hh9/voting.txt
+
+                 Hitchhiker's World (Issue #9)
+              http://www.infosecwriters.com/hhworld/
+
+
+                     Observable Elections
+                     --------------------
+
+     Vipul Ved Prakash <mail@vipul.net>
+     November 2004
+
+
+     This is an interesting time for electronic voting. India,
+     the largest democracy in the world, went completely paper-
+     free for its general elections earlier this year. For the
+     first time, some 387 million people expressed their
+     electoral right electronically. Despite initial concerns
+     about security and correctness of the system, the election
+     process was a smashing success. Over a million electronic
+     voting machines (EVMs) were deployed, 8000 metric tonnes of
+     paper saved[1] and the results made public within few hours
+     of the final vote. Given the quarrelsome and heavily
+     litigated nature of Indian democracy, a lot of us were
+     expecting post-election drama, but only a few, if any,
+     fingers were found pointing.
+
+     Things didn't fare so well in the United States. The
+     Dieobold electronic machines, slated for use in many states
+     for the November 2004 Federal elections, turned out to have
+     rather large security holes. Cryptography experts, Avi Rubin
+     et al, did a formal analysis of the machines and found that
+     they could be subverted to introduce votes that were never
+     casted[2]. An independent government-backed analysis
+     confirmed this[3] and concluded that the Diebold voting
+     system "as implemented in policy, procedure, and technology,
+     is at a high risk of compromise."
+
+     It is clear, even to a cursory observer, that Diebold
+     systems are sloppily designed, never mind the sloppiness is
+     a function of incompetence or intent. The recent controversy
+     from the "Black Box Voting" security advisory titled "the
+     Diebold GEMS central tabulator contains a stunning security
+     hole"[4] has added to the confusion. It claims that a code
+     entered at a remote location can replace the real vote count
+     with a fabricated one. This security hole, discovered last
+     year, is still not fixed says the advisory. In response,
+     Diebold claims that this is possible, but only in debug
+     mode, which does little to make people confortable.
+
+     What is disturbing to me as a technologist is the
+     burgeoning public opinion that electronics is an unviable
+     medium for conducting the serious business of elections.
+     Over the last year I've seen numerous formal reports and
+     articles in popular press[5] equating the failures of
+     Diebold systems with the untenability of electronic voting.
+     This is rather silly. Diebold systems are not only poorly
+     engineered, they are also seriously flawed in design. Even
+     if they were immaculately bug-free, they are so far from
+     what electronic voting systems should be, that I have
+     trouble categorizing them as "voting systems". "Electronic
+     counters" is more accurate.
+
+     Various augmentations have been proposed to Diebold systems;
+     most revolve around parallel paper trails. Verified
+     Voting[6] for example proposes that a vote be printed based
+     on the voter's touch-screen selection, so the voter can
+     touch, feel and verify their vote before casting it into a
+     traditional ballet box. These votes would then be processed
+     with an OCR type machine to compute a cumulative result and
+     the physical votes would be saved so an independent party
+     can verify the electronic result at a latter date. This is a
+     reasonable tradeoff -- after all integrity of elections is
+     way more important than saving trees and time.
+
+     While this is the best recommendation for the upcoming
+     elections, it subtly promotes the primacy of paper and
+     distrust in electrons. We know that paper elections are no
+     more secure. The history of vote tampering in paper based
+     elections is quite illustrious (I'll simply refer the gentle
+     reader to [7]) and the reason electronics was considered in
+     the first place was to eliminate such tampering. Verified
+     Voting recommends that count of the physical votes is to be
+     considered superior than that of the electronic counterparts
+     in case of a difference. What happens if the process of this
+     count is tampered using traditional methods? We are back to
+     square one.
+
+     The central point that I want to get across in this paper is
+     that the promise of electronic voting is not merely a
+     quicker, slightly more secure and ecologically enlightened
+     replacement for paper elections. Electronic voting, if
+     implemented correctly, could be a major qualitative leap,
+     not only changing the way in which we approach democratic
+     elections, but also the the way in which we expect a
+     democratic government to function.
+
+     Cryptographic Integrity
+
+     I want to draw attention to the work done by cryptographic
+     community in the last 20 years to study, formalize and solve
+     many of the problems of Internet Voting. This area of work
+     is focused on building election systems that leave behind a
+     trail of mathematical proofs of the integrity of the voting
+     process. With mathematical solutions to the common issues of
+     vote tampering, it becomes unnecessary to trust election
+     officials and it becomes possible to build voting systems
+     that are open and universally verifiable.
+
+     A voting system for appointing a democratic government has
+     certain "ideal properties". These are rather obvious, but I
+     recount them for the purpose of this discussion. First, all
+     votes must be counted exactly like they were casted.
+     Altering a vote, or leaving one out from the final tally
+     must be impossible. Ballot stuffing, ie. artificial
+     injection of invalid votes must be impossible as well. The
+     system should reject non-eligible voters, and ensure
+     eligible users can cast only a single vote. And, finally,
+     votes must be absolutely anonymous -- even the voter should
+     be unable to prove the way in which they voted. Systems like
+     Diebold's depend on large-scale observation to uphold the
+     ideal properties. Large-scale observation is hard, and once
+     an act of tampering is done, there is little that can be
+     done to detect or correct it. The attacks such as the one
+     described by the Black Box Voting advisory are particularly
+     heinous, since they compromise the entire election process.
+
+     The ideal properties are true in paper elections when they
+     are implemented perfectly, but the nature of paper precludes
+     proofs of correctness without compromising anonymity. The
+     problems are much the same as in the "Electronic Counter"
+     systems; without correctness proofs, it is largely
+     infeasible to detect and correct tampering.
+
+     Cryptographers have been trying to emulate the property of
+     anonymity that is inherent to paper when it us used as cash
+     or votes. The research in the field has led to invention of
+     several mathematical primitives and computing systems that
+     not only model paper but go beyond to provide proofs of the
+     properties they emulate. Techniques like blind signatures,
+     homomorphic encryption, digital mixes and onion routing have
+     been used to build systems that provide strong anonymity.
+
+     The pioneering cryptographer David Chaum introduced the
+     blind signature in order to build permit truly anonymous
+     interaction on the Internet[8]. Since then, they have been
+     applied to all manner of problems from untraceable
+     electronic cash to electronic voting schemes. Blind
+     signatures are a class of digital signatures that allow a
+     document to be signed without revealing its contents. The
+     effect is similar to placing a document and a sheet of
+     carbon paper inside an envelope. When the envelope is
+     signed, the signature transfers to the document and remains
+     on it even when the envelope is removed.
+
+     In his paper, Chaum hinted that blind signatures could be
+     used for secret ballot elections. Fujioka, Okamoto, and
+     Ohta[9] created the first significant blind signature based
+     voting protocol, which made it practical to use blind
+     signatures in democratic elections. However, some problems
+     were discovered in their work, most notably the system's
+     vulnerablity to a corrupt election authority. I present a
+     system, dubbed ``Athens'', that builds on their work, but
+     solves several problems in their model. I also focus on a
+     real-world election system, rather than an Internet one, and
+     adopt a pragmatic approach, in that I make use of physical
+     resources like volunteers and physical infrastructure
+     usually available for large-scale democratic elections.
+     Athens also borrows elements and thinking from the
+     Sensus[10] system and David Chaum's recent work on Visual
+     Cryptography[11].
+
+     Design of Athens
+
+     The basic procedure for conducting a democratic election is
+     fairly standard. The procedure has four tasks: Registration,
+     Validation, Collection and Tallying. In Athens, these four
+     tasks are carried out with a few specialized machines and
+     software, most of which are connected through the Internet.
+     While Athens employs an Election Authority to oversee the
+     process of elections, it does away with the dependence on
+     trustworthiness of one. Athens philosophy is that there are
+     no truly non-partisan parties; even the Election Authority
+     can't be completely trusted. The Athens model is closer to a
+     "game" between contesting parties, such that the only way to
+     cheat in the game is for all competitors to collude - an
+     axiomatic impossibility. The Election Authority performs
+     tactical tasks to optimize the election process, but all
+     tasks performed by the Authority are open to review by
+     competing parties.
+
+     Registration
+
+     Registration is the process of determining eligible voters,
+     and is conducted by the "Registrar" -- a distributed
+     authority put in place by the Election Authority. The Athens
+     registration process involves validating voters (through
+     traditional means) and registering their "Voter Public Key"
+     in the "Register." The corresponding "Voter Secret Key"
+     remains with the voter, magnetically encoded (or bar coded
+     for cheaper implementation) on a "Voting Card".
+
+     The keys are generated through the "Voting Card Creator
+     Machine". The Card Creator Machine is also implemented as
+     software that can be used by a voter on their home computer.
+     It is not hard to imagine Card Creators installed in local
+     registration offices or even at Kinko's and shopping malls,
+     where they charge a few dollars for generating a card.
+     Fairness in design is important, because Card Creators could
+     compromise the security of the system by storing the key
+     pairs they generate.
+
+     A card creator is mostly an RSA key generator - it needs
+     computing power of a 300 Mhz PC, and is constructed fairly
+     cheaply. Once the voter enters their personal information
+     into the machine, it spits out two cards: one with the
+     public key, that is handed over to the Registrar and the
+     other with the secret key and identification information
+     required by the Election Authority (like the social security
+     number of the voter.) The second card is known as the
+     "Voting Card" and is used to validate the voter at the time
+     of elections. Both cards also contain a large random number,
+     known as the Voter Id. This is used throughout the voting
+     process to facilitate lookups in the Register without
+     compromising the privacy of the voter.
+
+     Once all voters have handed their Voter Public Key Card over
+     to the Registrar, the registration process is considered to
+     be complete. As with traditional elections, there is a cut-
+     off date for this process.
+
+     On completion of registration, the Election Authority hands
+     the Register over to all the competitors. The competitors
+     then check every 1 in 1000 entries (or more according to
+     their capacity) to ensure that they belong to a legitimate
+     voter, i.e. it isn't a fake entry inserted by a corrupt
+     competitor to stuff the ballot. This process is woefully
+     lacking in elections of today, and a hence a major vector
+     for election fraud. Mathematics can do little to alleviate
+     the dangers of registering fake voters, but competitors who
+     depend on the correctness of the Register and raise funds
+     for the purpose can easily perform this task. Register
+     verification would be a lucrative business for independent
+     professional services organizations, so it is not hard to
+     imagine such organizations sprouting up to assume delegation
+     of this responsibility.
+
+     The competitors also put the Register on the Internet before
+     the election so that voters can ensure their voter key is
+     present in all copies of the Register. When requested, each
+     competing party provides a digitally signed proof that the
+     voter is registered to vote, i.e. their key is present in
+     the Register. The voter, if denied the right to vote, can
+     take this proof to a court of law. A pre-voting verification
+     of eligibility limits the kind of fiasco that occurred in
+     Florida during the Presidential elections of 2000, where a
+     large number of people were denied vote.
+
+     Validation
+
+     In most electronic voting protocols, there exists the notion
+     of the "Validator" - a party that holds the Register and
+     validates voters during the election. In Athens, the
+     competing parties, that were handed a copy of the Register
+     in the previous step, all serve as Validators. Athens,
+     therefore, is a multi-validator system. It is reasonable to
+     assume that independents or fiscally constrained parties
+     would team up and have a single Validator represent them.
+
+     Validators are connected to the Internet and run Validation
+     software, that accepts validation requests over a TCP port.
+     The Validators are firewall'ed off to accept data only from
+     certain IP addresses. The Electronic Voting Machines talk to
+     the Validators via a Proxy. EVMs could theoretically talk
+     directly to Validators, but the reasons for using a proxy
+     will become apparent later. The Proxy is operated by the
+     Election Authority and observed by representatives from all
+     competing parties.
+
+     Validators have their own RSA key pair, the public portion
+     of which is published widely over the Internet. They also
+     maintain two lists (other than the Register). This is the
+     list of voters who have casted a vote and a list of
+     corresponding validation requests.
+
+     Before the commencement of the election, the Election
+     Authority chooses a a random number which is known as the
+     "Election Number". The only property of this number is its
+     uniqueness to the election - it should not have been used in
+     a previous election. The Election Number is distributed to
+     all Validators.
+
+     Electronic Voting Machines (EVMs) used in Athens are quite
+     unlike Diebold's or the ones used in the Indian elections.
+     Athens' EVMs are simply "agents" that vote on behalf of the
+     voter. Each EVM has an Id and a RSA key pair. The public
+     part of the EVM key is published widely over the Internet.
+     Communications initiated by the EVM are signed with EVMs
+     secret key. The elections are considered formally commenced,
+     when the Validators broadcast the Election Number and their
+     public keys to EVMs via the Proxy.
+
+     The Athens Voting Protocol
+
+     The voter enters a private booth and swipes their Voting
+     Card on the EVM. The EVM reads the secret key and the Voter
+     Id off the Card. The EVM has a little printer attached to
+     it, much like a cash register receipt printer, on which it
+     prints out the Voter Id. It the sends the voter Id off to
+     the Validators via the proxy to initiate a "voting session"
+     on behalf of the voter. If the voter has already casted a
+     vote, Validators return a "proof" of previously casted vote.
+     The proof and its implications are discussed a little later.
+     If there's no previous vote, the Validators send a positive
+     acknowledgment and the EVM asks the voter to cast a ballot.
+     The voter enters their vote using the on-screen display. The
+     EVM concatenates the Voter's choice with the Election Number
+     (EN) and the result is encrypted with a secret key (randomly
+     generated) using a symmetric cipher like AES. The encrypted
+     ballot is then blinded. At this point, the EVM has:
+
+             Voter Id +
+             Blind(Encrypted(Ballot . EN))
+
+     The blinded ballot is then signed with the voter's secret
+     key. The EVM also signs the EN with the Voter's key. The
+     EVM now has:
+
+             Voter Id +
+             VoterSignature(EN) +
+             VoterSignature(Blind(Encrypted(Ballot . EN))) +
+             Blind(Encrypted(Ballot . EN))
+
+     The EVM sends the signed, blinded ballot over to the the
+     Proxy, that sends it to all Validators. Upon receipt, a
+     Validator looks up the public key corresponding to the Voter
+     Id and uses it to check the voter signature. If the voter
+     signature is valid the Validator signs the blind with its
+     own key. It adds the Voter Id to the list of voters who have
+     casted a vote and keeps, in another list, the original
+     blinded request, the signed EN, and the timestamp of request
+     as a proof of the casted vote. It sends the signed blinded
+     ballot back to the Proxy, that forwards it to the
+     originating EVM. The data packet contains:
+
+         EVM Id +
+         Voter Id +
+         ValidatorSignature(Blind(Encrypted(Ballot . EN)))
+
+     If the Validator can't validate the signature, it sends a
+     VERIFY_FAILURE error to the EVM:
+
+         EVM Id +
+         Voter Id +
+         VERIFY_FAILURE +
+         ValidatorSignature(
+             VERIFY_FAILURE +
+             Blind(Encrypted(Ballot . EN))
+         )
+
+     If the Validator can't find the Voter Id, it sends an
+     INVALID_VOTERID_FAILURE error to the EVM:
+
+         EVM Id +
+         Voter Id +
+         INVALID_VOTERID_FAILURE +
+         ValidatorSignature(
+             INVALID_VOTERID_FAILURE +
+             Blind(Encrypted(Ballot . EN))
+         )
+
+
+     As described earlier, if the Voter has already casted a
+     vote, the Validator sends a proof of the vote, which
+     contains:
+
+         REPEAT_VOTE_FAILURE +
+         Proof
+
+         Where Proof is:
+
+         EVM Id +
+         Voter Id +
+         Request_Timestamp +
+         PreviousBlind(Encrypted(Ballot . EN)) +
+         VoterSignature(PreviousBlind(Encrypted(Ballot . EN))) +
+         VoterSignature(EN)
+
+     Once the EVM has received responses from all Validators, it
+     informs the voter that their vote was casted. If all
+     Validators sent a positive response the EVM prints out the
+     message "Vote successfully casted" (immediately following
+     the previously printed Voter Id), and instructs the voter to
+     take the printed receipt. If any of the Validators return a
+     failure, the EVM prints out all Validator responses,
+     including the steps for unblinding and decrypting the
+     original vote. A little later I will demonstrate how this
+     receipt can be used to detect various types of tampering and
+     attacks on the system. For now, we will assume validation
+     was successful. For a successful validation, the EVM removes
+     the blind and is left with ``n' validated encrypted ballots:
+
+         Validator_1_Signature(Encrypted(Ballot . EN))) ..
+         Validator_n_Signature(Encrypted(Ballot . EN))) +
+                               Encrypted(Ballot . EN)
+
+     This data encapsulates a secret vote by a voter whose
+     eligibility has been attested to by all competing
+     Validators, none of whom know the way in which the vote was
+     cast. Additionally, any independent party can now confirm
+     the integrity of the vote by checking the Validator
+     signatures.
+
+     The EVM places the signatures, the ballot and the secret key
+     used to encrypted the Ballot on a "Tally Queue". For votes
+     that failed, the failure messages are placed on the Tally
+     Queue instead.
+
+     Tallying
+
+     When the Election is over, several pieces of data are
+     published over the Internet in a public forum that has
+     properties of a Usenet group (ie. published information
+     can't be retracted). First, the Validators publish their
+     list of Voter Ids that casted a vote along with "proofs" of
+     validation request, where the proof is exactly the same as
+     one described above. This includes all the data on the two
+     lists maintained by the Validators.
+
+     Once Validators have published their lists, the proxy opens
+     up the constraints on EVM communication, such that they can
+     all talk to each other and read and write in the public
+     forum. The proxy informs EVMs of this event and sends them a
+     list of IP addresses all EVMs. The EVMs then participate in
+     an Onion Routing protocol[12] to publish the encrypted
+     ballots and Validator signatures on these ballots from their
+     Tallying Queue. Once encrypted votes and Validator
+     signatures are faithfully transmitted over to the public
+     forum, EVMs enter a second round of Onion routing to publish
+     the AES passwords to decrypt the votes. The Onion Routing
+     protocol strips the origination information, so it becomes
+     impossibly hard to corelate votes to EVMs, thereby making
+     the publication anonymous.
+
+     At this point, all data required to do a tally is available
+     publically. It should be noted that almost everything that
+     transpires during the election process, with the exception
+     of the data that links the voters to their votes, is made
+     public at the end of the election. This level of
+     transparency is one of the greatest benefits of a well
+     designed electronic voting system.
+
+     In Athens, the tallying is done by the Election Authority,
+     but anyone equiped with Tallying software can check the
+     tally independently. Athens tally is straightforward. Ballots
+     that have valid signatures from _all_ Validators are
+     selected as countable votes. These are decrypted with the
+     published AES secret keys, votes are separated from the
+     Election Number, and counted to produce a final tally.
+
+     Security of Athens
+
+     To analyse the security of Athens, I will show how various
+     common attacks are made trivially detectable by the Athens
+     architecture.
+
+     Denial of Vote Attacks
+
+     The pre-election registration verification keeps the
+     Registrar honest. If the registrar drops people from the
+     Register, there's a high probability that the drop will be
+     detected and the Registrar will be answerable in a court of
+     law. Since competing parties are independently undertaking the
+     verification, it is in everyones interest to keep the
+     process honest.
+
+     During the election, two different types of denial attacks
+     are possible. The first attack is where one of the
+     competitors know (based on the Voter Id, or region), the way
+     in which the voter will cast a vote. Outspoken supporters,
+     representatives and volunteers of a party are vulnerable to
+     this attack. A competing Validator could try to deny them
+     the vote by raising one of the three possible errors:
+     INVALID_VOTERID_FAILURE, VERIFY_FAILURE or
+     REPEAT_VOTE_FAILURE.
+
+     To protect from the INVALID_VOTERID_FAILURE denial attack, a
+     copy of the register is published widely prior to the
+     commencement of the elections. A receipt generated by the
+     EVM with a valid Voter Id and an INVALID_VOTERID_FAILURE
+     notice is an easily established proof of Validators'
+     corruption. VERIFY_FAILURE is also trivially established
+     with help of the positive validation requests from competing
+     Validators (also on the receipt), the public Register and
+     the voter's Voting Card.
+
+     The attack based on the third error, REPEAT_FAILURE is more
+     interesting. What if a Validator refuses to Validate a vote
+     by claiming that the Voter has already voted? In that case,
+     the Validator must provide a proof of the previous
+     Validation request. Since the proof contains a signature
+     made on both the EM and the Blinded ballot by Voter's secret
+     key, the Validator cannot provide such a proof with the
+     knowledge of the key - which is unavailable to the
+     Validator. This is why Athens requires Validators to keep a
+     copy of all validation requests, and conducts the validation
+     process in 2-steps, so the first validation request can't be
+     used as a proof. Also, since the Election Number is encoded
+     in the ballot, and a signed EN is part of the proof,
+     validation requests from previous elections can't be cited
+     as proofs. An incorrect proof is easily verifiable by the
+     EVM as well as the voter and a court of law with help of the
+     printed receipt.
+
+     A different kind of denial of vote attack can be mounted by
+     the EVMs. In this attack the EVMs withhold publication of
+     validated votes. However, such withholding is easily
+     discovered in Athens because the list of proofs published
+     by the Validators indicate the number of casted and
+     verified votes.
+
+     Ballot Stuffing Attacks
+
+     There are several ways in which an attacker can try to stuff
+     ballots. The first method, that was discussed earlier, is by
+     registering fake voters during the registration process.
+     Since the Register is open to independent scrutiny by all
+     competitors, the risks of adding fake voters is high and
+     hence discouraged.
+
+     Another ballot stuffing attack is to cast votes for
+     absentees. This attack is very hard in Athens, since it
+     requires the knowledge of absentees' secret keys.
+
+     The third way to stuff the ballot is for an eligible voter
+     to cast multiple votes. This is made impossible in Athens
+     with help of Validation proofs. Even when the Validators
+     of n-1 colluding parties (where n is the number of
+     competing parties), validate multiple requests from
+     Mallory (a colluding voter), the non-colluding party is
+     able to present a proof of Mallory's first vote and deny
+     all subsequent requests with impunity. The Tallying
+     process requires an affirmation from _all_ Validators, so
+     such votes are not counted.
+
+     Vote Alteration Attacks
+
+     The Athens protocol requires that EVMs act honestly on the
+     behalf of the Voter. A corrupt EVM could easily display to
+     the voter that it has casted a vote their choice, but
+     actually cast the vote for another party. This attack would
+     be impossible if the EVM was required to print out a
+     receipt of every vote that included the blinded ballot,
+     signed by Voter's secret key, the steps to unblind it and
+     the secret AES key with which the actual vote was
+     encrypted. The voter could then look up the encrypted
+     ballot after it was published and ensure the vote was cast
+     and counted correctly. Doing this, however, would leave the
+     voter with a proof of vote that could lead to vote coercion
+     or vote buying.
+
+     It is not sufficient to blindly trust the EVM either. Code
+     reviews, or open source development of the EVM software
+     (while should be encouraged) do not guarantee that the code
+     running on the deployed EVM is the one that was reviewed. To
+     keep the EVMs honest, Athens implements a sub-protocol for
+     EVM verification.
+
+     All competing parties add a few thousand fake voters to
+     their own copy of the Register, and generate corresponding
+     voting cards. These voting cards are then used by designated
+     verifiers (volunteers) to cast arbitrary votes (usually for
+     the party that runs the Validator) to test the EVMs. The
+     volunteers are normal, eligible voters with multiple voting
+     cards - they first vote with their real card, and then pull
+     out the fake ones to run a series of tests. When the
+     designated verifier casts a vote with one of the faked card,
+     the vote is verified correctly by the Verifying Validator
+     (the one who has the fake keys on it copy of the Register),
+     while other n-1 Validators decline validation with an
+     INVALID_VOTERID_FAILURE. This causes the EVM to print out
+     the entire transaction, down to the selection of the actual
+     vote that the EVM tried to validate.
+
+     If the EVM is systematically altering votes, the designated
+     verifier ends up with a receipt showing a selection that was
+     different from his actual selection. If the EVM attempts to
+     cover up its deception by printing a receipt that says "Vote
+     successfully casted", the designated verified immediately
+     knows the EVM is lying, since the n-1 Validators would have
+     failed the verification. If the EVM tries to back paddle and
+     cast a correct vote after it receives the
+     INVALID_VOTERID_FAILUREs, the duplicate vote attempt is
+     detected by (at least) the Verifying Validator, who responds
+     with a proof of the previous validation request. Unable to
+     differentiate a normal voter from a designated verifier
+     before sending a verification request, the EVM is forced to
+     act honestly.
+
+     Athens requires the physical constraint of using a proxy for
+     all communications originating from the EVMs, to ensure EVMs
+     have no out-of-bound, out-of-protocol communications with
+     Validators and other parties. This provides a single,
+     focused point of observation for the competing parties, and
+     can be performed fairly easily with a protocol decoder.
+
+     In sum, Athens uses cryptographic primitives to build an
+     electronic voting system that ties in the processes of
+     registration, voting, and tallying into a protocol that is
+     secure, anonymous and truly transparent. Since all aspects
+     of the protocol are verifiable the potential for fraud is
+     greatly reduced. Even more importantly, open systems like
+     Athens inspire confidence and promote participation in the
+     election process - the very foundation of democracy.
+
+     Partial Observability
+
+     "Participation" brings us to the one of the topics that
+     originally led to my interest in electronic voting. I know
+     many intelligent and politically sensitive Indians who have
+     never casted a vote in Indian democratic elections. I am
+     one of them. My reason for electoral inaction is not
+     apathy, but simple statistics. In a country of a billion
+     people, my vote doesn't really count. To be more precise,
+     if one party wins by 80% then my vote, in either direction,
+     is not useful. However, if a party that I don't support
+     happens to win by a small margin, my vote (and those of
+     others like me) could have made all the difference. Of
+     course, I have no way of knowing this till it is too late.
+     I could pay attention to gallop and exit polls, but those
+     can be quite wrong as demonstrated in the Indian general
+     elections earlier this year.
+
+     It is no surprise that the voter turnout in what is
+     perceived to be a hotly contested election is higher than
+     expected. A comprehensive IDEA survey[13] on voter turnout
+     failed to find corelations between turnout and various
+     factors they studied, but they found that "there does seem
+     to be a clear link between voter turnout and the
+     competitiveness of electoral politics in a political
+     system. In the 542 elections where the largest party won
+     less than half of the votes turnout was a full 10% higher
+     than the 263 elections where a single party won over 50% of
+     the popular vote."
+
+     Publishing partial results is a tactical nightmare in paper
+     based or electronic counter based elections. However, a
+     system like Athens could enter the Tally phase several times
+     during the election at no additional cost to provide an
+     "intermediate tally". The frequency and timing of the
+     intermidiate tallies could be function of the size of the
+     electorate and number of uncounted votes - large enough to
+     protect the anonymity of the voters and small enough to
+     provide an updating sense of the final result. The
+     intermediate tallies could be broadcastd on TV, Radio and
+     the Internet (much like Stock tickers), and would functions
+     as "get out the vote" campaigns, to encourage the
+     statistically informed to go out and vote.
+
+     This property of elections that I like to call "partial
+     observability", could greatly boost participation and
+     otherwise alter the dynamics of the election process. It is
+     just one of the ways in which electronic voting could
+     qualitative change the elections and democracy.
+
+
+     Bibliography
+
+     [1] Indian Election 2004, Facts and Figures
+         http://www.indian-elections.com/facts-figures.html
+         How Stuff Works, How many sheets of paper can be
+         produced from a single tree?
+         http://science.howstuffworks.com/question16.htm
+
+     [2] T. Kohno, A. Stubblefield, A. Rubin, D. Wallach, Analysis
+         of an Electronic Voting System, May 2004.
+         http://avirubin.com/vote/analysis/index.html
+
+     [3] Science Applications International Corporation (SAIC),
+         Risk Assessment Report: Diebold AccuVote-TS Voting
+         System and Processes, SAIC-6099-2003-261, 2 September 2003.
+         http://www.dbm.maryland.gov/DBM%20Taxonomy/Tech-
+         nology/Policies%20&%20Publications/State%20Voting%20-
+         System%20Report/stateVotingSystemReport.html
+
+     [4] Black Box Voting, Consumer Report Part 1: The Diebold
+         GEMS central tabulator contains a stunning security
+         hole, 26 August 2004
+         http://www.blackboxvoting.org/?q=node/view/78
+
+     [5] Paul O'Donnell, Why you are still voting on
+         paper, WIRED, August 2004.
+         http://www.wired.com/wired/archive/12.08/start.html?pg=7
+
+     [6] VerifiedVoter.org
+
+     [7] CRS Report for Congress, Election Reform and Electronic
+         Voting Systems: Analysis of Security Issues.
+         http://www.epic.org/privacy/voting/crsreport.pdf
+
+     [8] D. Chaum, Achieving Electronic Privacy
+         http://ntrg.cs.tcd.ie/mepeirce/Project/Chaum/sciam.html
+
+     [9] A. Fujioka, T. Okamoto, and K. Ohta, A Practical Secret
+         Voting Scheme for Large Scale Elections. 1992.
+         http://theory.csail.mit.edu/~rivest/voting/papers/-
+         FujiokaOkamotoOhta-APracticalSecretVotingSchemeFor-
+         LargeScaleElections.pdf
+
+     [10] L. Cranor, R. Cytron, Sensus: A security conscious
+          electronic polling system for the Internet.
+          http://lorrie.cranor.org/pubs/hicss/
+
+     [11] D. Chaum, Secret Ballot Receipts and Transparent
+          Integrity.
+          http://www.vreceipt.com/article.pdf
+
+     [12] R. Dingledine, N. Mathewson, P. Syverson, Tor: The Second-
+          Generation Onion Router.
+          http://www.freehaven.net/tor/cvs/doc/design-paper/tor-design.html
+
+     [13] IDEA, Voter Turnout: A Global Survey
+          http://www.idea.int/voter_turnout/voter_turnout.html
+

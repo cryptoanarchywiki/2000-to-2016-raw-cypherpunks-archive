@@ -1,0 +1,89 @@
+From cypherpunks-bounces@cpunks.org  Sun Aug  4 08:43:15 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r74CgmNO011252;
+	Sun, 4 Aug 2013 08:42:52 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r74Cghwm011248
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Sun, 4 Aug 2013 08:42:45 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id E7AE8543B70; Sun,  4 Aug 2013 14:42:42 +0200 (CEST)
+Date: Sun, 4 Aug 2013 14:42:42 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: [tor-dev] augmenting RSA identities/signatures with ECC and beyond
+Message-ID: <20130804124242.GO29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+----- Forwarded message from Jacob Appelbaum <jacob@appelbaum.net> -----
+
+Date: Sun, 04 Aug 2013 01:29:45 +0000
+From: Jacob Appelbaum <jacob@appelbaum.net>
+To: tor-dev@lists.torproject.org
+Subject: [tor-dev] augmenting RSA identities/signatures with ECC and beyond
+Reply-To: tor-dev@lists.torproject.org
+
+Hi,
+
+Linus and I had an interesting discussion at IETF 87 this past week in
+Berlin. We're both concerned about long term Directory Authority
+identity keys as well consensus signing with RSA keys.
+
+We've agreed that we're interested in writing a proposal whereby we add
+additional identity keys for authorities. Thus, we'll have whatever
+security may be provided by RSA and the security that should be provided
+by ECC signatures. The work on ntor should directly assist us in having
+almost all the required crypto we'll need for such augmentation.
+
+I tend to think that every directory authority should generate an
+additional and new long term ECC identity key. This will require that
+tor-gencert is extended to understand both ECC and RSA. We'll want to
+add these fingerprints to src/or/config.c for each respective DA.
+
+We'll want each directory authority to sign with both RSA and ECC. We'll
+also want to extend the consensus format to handle publication of such
+signatures. Older clients should be able to parse the consensus without
+worry and they will check RSA signatures as always. Newer clients should
+check both and report a mismatch into the logs at a high level. When
+combined with ntor, I believe that we will have significantly improved
+the cryptography in Tor.
+
+It would be nice to be able to add other signature schemes -
+specifically for pq crypto related undertakings. In an ideal world, I'd
+like to be able to sign the consensus from my directory authority with
+RSA, ECC and some kind of djb approved, tanja tested post-quantum
+computer signature construct.
+
+What do you think we should consider as we draft this proposal?
+
+All the best,
+Jacob
+_______________________________________________
+tor-dev mailing list
+tor-dev@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

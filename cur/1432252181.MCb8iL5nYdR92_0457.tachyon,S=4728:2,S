@@ -1,0 +1,94 @@
+From owner-cypherpunks@al-qaeda.net  Sat Jul  3 11:31:38 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i63GUhSG003967
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Sat, 3 Jul 2004 11:30:43 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i63GUhDr003966
+	for cypherpunks-outgoing; Sat, 3 Jul 2004 11:30:43 -0500
+Date: Sat, 3 Jul 2004 18:25:57 +0200 (CEST)
+From: Thomas Shaddack <shaddack@ns.arachne.cz>
+To: Cypherpunks <cypherpunks@al-qaeda.net>
+Subject: China about to begin realtime censoring SMS messages
+Message-ID: <0407031818050.-1275484700@somehost.domainz.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3738
+Lines: 70
+
+Mass-sending of SMS messages in China is a popular channel of spreading 
+"alternative", government-unsanctioned news. Used eg. by the Falun Gong 
+group, to spread the news about SARS, and probably in numerous other 
+cases. Some phones are even directly equipped with the functions to 
+automatically send SMS messages to a list of numbers. The government 
+already keeps statistics on number of messages sent at time period from a 
+single number, and alerts the officials when it's above the limit and then 
+the content is checked manually. Mentioned Falun Gong news campaigns 
+suffer from this.
+
+The new system, delayed by technological problems probably caused by the 
+sheer volume of data, will scan the messages for keywords, keep logs of 
+suspect ones, and automatically alert police.
+
+
+According to me, a partial solution of the problem could be deployment of 
+encrypted messaging. The SMS standard, 160-character messages, doesn't 
+offer enough space to fully use PKI (though we could sacrifice some 
+message space - then we could afford 128 bits of key and 128 bits of HMAC, 
+which is total of 32 characters, or maybe even use reduced HMAC of only 
+half size as in this threat model we don't need the message integrity as 
+much as denying the adversary access to the content, 64 bit hash could be 
+enough). We can sacrifice also signing the message, or give the choice of 
+signature vs additional content length (the signature is the message hash 
+encrypted with the sender's private key, which is about another 128 bits; 
+we could perhaps use only 64-bit of signature in this threat model). We 
+can sacrifice the identification of sender/receiver keys (or more 
+accurately, we can't even afford it in so short message space), but the 
+GSM SMS standard has the sender phone number as part of the message, which 
+can serve as identificator of the sender's key for eventual message 
+signature check.
+
+Contemporary cellphones tend to have Java in them, and should have enough 
+horsepower for 1024-bit RSA and 128-bit AES. 
+
+However, according to my consultant, there is a problem with most of the 
+cellphones; Java on them runs in sandbox, so they can only send the 
+messages (and even that only when they have access to messaging API), and 
+there is no access to message inbox. So you can merrily encrypt, but the 
+receiver then won't decrypt it. There is a solution, though - use a phone 
+with OpenAPI, eg. running Symbian, Linux, or (*shudder*) WinCE as its OS, 
+but these are so far in the higher end of price spectrum. I hoped it will 
+be possible to implement with already widely deployed cheap technology. :(
+
+Another hope lies in the advent of MMS, expensive now but bound to become 
+a standard bulk commodity service tomorrow, which offer much bigger space 
+(up to 64 or even 100 kbyte per message). Same problem as above applies.
+
+Then all the adversary can get is the pattern of traffic of the messages 
+instead of their content. (And the message content too, but only when 
+seizing the recipient's private key - I am not sure if we can avoid this 
+in this scenario, without resorting to using one-time pads and using them 
+correctly, or without using a direct handset-to-handeset connection, 
+perhaps through a proxy, with a DH key exchange. The proxy could be very 
+beneficial here, even for the traffic analysis purposes, if combined with 
+onion routing.)
+
+
+-----------------
+Yahoo News:
+http://news.yahoo.com/news?tmpl=story&cid=516&u=/ap/20040702/ap_on_re_as/china_mobile_phone_surveillance_3&printer=1
+
+BBC News:
+http://news.bbc.co.uk/1/hi/world/asia-pacific/3859403.stm
+
+The Register:
+http://www.theregister.co.uk/2004/07/02/china_text_snoop/
+
+Slashdot discussion:
+http://slashdot.org/article.pl?sid=04/07/03/0035224
+

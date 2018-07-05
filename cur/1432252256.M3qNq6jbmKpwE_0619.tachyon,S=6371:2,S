@@ -1,0 +1,149 @@
+From owner-cypherpunks@jfet.org  Mon Oct 24 12:09:57 2005
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.4/8.13.4/Debian-3) with ESMTP id j9OG9nOa019731
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 24 Oct 2005 12:09:49 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.4/8.13.4/Submit) id j9OG9n51019730
+	for cypherpunks-outgoing; Mon, 24 Oct 2005 12:09:49 -0400
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;         s=beta;  
+  d=gmail.com;          
+  h=received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+  b=nJbL+5LTZEpgr+hnVGKXZ5+injfOkjJ1Bjo16RhJR2/nMRKaXU7u7KUJ5L6xLG6YQHwMfwfyTYa4myZrlu6j36swXiyNcRl3KKCloEx0OL8Tblk8nPrVzk9SQqk9Lw3uRbpRAIsW5EI9LziwoGxKjtrHGOZQghK9nEIAjiVGsC8=
+Message-ID: <d4f1333a0510232052p66d76a6elba05314fb815f013@mail.gmail.com>
+Date: Sun, 23 Oct 2005 22:52:30 -0500
+From: "Travis H." <solinym@gmail.com>
+To: cypherpunks@jfet.org, cryptography@metzdowd.com
+Subject: Re: [smb@cs.columbia.edu: Skype security evaluation]
+Cc: berson@anagram.com
+In-Reply-To: <BAY0-SMTP02E9D5BF6AA594C89A629CAC740@phx.gbl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+References: <20051023153121.GW2249@leitl.org> 	  
+  <BAY0-SMTP02E9D5BF6AA594C89A629CAC740@phx.gbl>
+Content-Transfer-Encoding: 7bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by proton.jfet.org  
+  id j9O3qVVA005722
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4675
+Lines: 114
+
+That's a fairly interesting review, and Skype should be commended for
+hiring someone to do it.  I hope to see more evaluations from vendors
+in the future.
+
+However, I have a couple of suggestions.
+
+My understanding of the peer-to-peer key agreement protocol (hereafter
+p2pka) is based on section 3.3 and 3.4.2 and is something like this:
+
+A -> B: N_ab
+B -> A: N_ba
+B -> A: Sign{f(N_ab)}_a
+A -> B: Sign{f(N_ba)}_b
+A -> B: Sign{A, K_a}_SKYPE
+B -> A: Sign{B, K_b}_SKYPE
+A -> B: Sign{R_a}_a
+B -> A: Sign{R_b}_b
+
+Session key SK_AB = g(R_a, R_b)
+
+0) The p2pka allows us to use a peer as a signing oracle for nonces by
+performing steps 1 through 4.  Only the one-wayness of f (specified
+only as "modified in a standard way") stands in the way of arbitrary
+forgery, which would allow us to bypass the security on steps 3, 4, 7,
+and 8.  It would not stop us from knowing the session key, since there
+is no restriction on the form of R_a or R_b.
+
+1) It's not clear that the identity certificates are bound to a
+[externally visible] network [source] address at registration time. 
+IMHO, this would be a good idea.
+
+2) He implicitly ignores the fact that the skype key is a trusted CA,
+so skype can impersonate anyone (or delegate that impersonation by
+signing a bogus ID).  This is obvious to a cryptographer but should be
+mentioned for the layperson.  An evaluation should explicitly specify
+who must be trusted by whom, and everyone must trust the Skype
+registrar.
+
+3) It looks like the peer-to-peer communication involves the same key,
+SK_AB, in both directions, opening the door for keystream re-use, but
+there's 64 bits of presumably random salt so it shouldn't be very
+common.
+
+Vagueness:
+
+1) They use an unencrypted 2-byte CRC on each packet between peers. 
+Undetected modification to a packet is possible, since the CRC is
+computed over the encrypted data and stored en clair.  In this case,
+arbitrary bits can be flipped, the CRC recomputed, and no future
+packets depend on the current packet, so there's no tell-tale garbling
+afterwards like there is in most other block modes.  He alludes to
+this in section 3.4.4 but doesn't really specify the impact, merely
+compares it to WEP.
+
+2) The session established with the Skype server during registration
+is protected with a 256-bit key, which is random, but he doesn't say
+how the client and Skype agree on it.
+
+3) It's not clear why they used rc4 instead of ICM to generate key
+material, but at least it's not being used for confidentiality.
+
+4) The details of the random number generation are vague ("makes a
+number of win32 calls").
+
+5) The details of the SK_AB key composition are vague ("combined in a
+cryptographically-sound way"), shown by g in the p2pka above.
+
+6) It doesn't say who sends the nonces first --- is it the recipient
+of the connection, or the initiator?  Can we DoS people by repeated
+connections triggering digital signatures?
+
+7) It doesn't say whether it's a TCP or UDP protocol, what ports it
+uses, etc.  I'm curious if it will work through NAT at both ends.
+
+8) The skype server's timeout on login passwords can be used for a
+denial-of-service against the registration protocol and doesn't affect
+username guessing (fixed password variable username, a/k/a "reverse
+hack").
+
+9) It doesn't specify how the salts used in ICM mode are communicated.
+
+10) It doesn't specify how streams are created and numbered.
+
+It'd be nice to see the protocol clearly specified and analyzed via
+automated means (finite state analysis via murphy, etc.).
+
+Obsession with performance:
+
+He makes no fewer than six comments about performance (of the AES
+code, of the modular exponentiation, of the primality testing, of
+modular inversion, of multi-precision arithmetic libraries, and SHA-1
+implementation), which should normally be the least of anyone's
+worries, especially cryptographers.  Is this is a security evaluation,
+or a performance test?
+
+However, since we're talking about real-time audio streams, perhaps
+some discussion of the bandwidth and especially latency of the p2p
+protocol would be in order.  Unfortunately, there's no quantification
+("... performs favorably in terms of clock cycle per encryption").
+
+Trust us:
+
+Finally, the whole thing is closed source, so none of it is easily
+verifiable.  We just have to take his word on it, and often he just
+offers opinions (see the complaints of vagueness above).
+
+Summary:
+
+All that having been said, I still have more confidence in Skype than
+I did before reading the paper.
+--
+http://www.lightconsulting.com/~travis/  -><-
+"We already have enough fast, insecure systems." -- Schneier & Ferguson
+GPG fingerprint: 50A1 15C5 A9DE 23B9 ED98 C93E 38E9 204A 94C2 641B
+

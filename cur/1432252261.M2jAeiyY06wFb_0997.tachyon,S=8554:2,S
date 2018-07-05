@@ -1,0 +1,186 @@
+From owner-cypherpunks@al-qaeda.net  Wed Aug 29 16:51:46 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q7TKkHEt002416
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 29 Aug 2012 16:46:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1346273177;
+	bh=dXq6xg4Co+e6BJvJvrXaGFthC4STRYiH/LZBSXFl0rA=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=XCpG1O45w6kqy5V7xyQfon8oJkiMRFOYIVx+SwUZYp+9V84JoAOcRz24bQn3QAueb
+	 Xx0fr23KvZdU4rMM3MX/SkOQ12Gf5fzC6EO+rMFb8Q6CMp/A3kQvPAN1o37slztULt
+	 phpNrM9Dyyd643n+A2ozGSbpTFN8O/8whKE5ZwSw=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q7TKkHJ9002415
+	for cypherpunks-outgoing; Wed, 29 Aug 2012 16:46:17 -0400
+Date: Wed, 29 Aug 2012 22:46:14 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: [tahoe-dev] Tahoe-LAFS Weekly Call report 2012-08-29
+Message-ID: <20120829204614.GB12615@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 7095
+Lines: 152
+
+----- Forwarded message from Zooko Wilcox-O'Hearn <zooko@zooko.com> -----
+
+From: Zooko Wilcox-O'Hearn <zooko@zooko.com>
+Date: Wed, 29 Aug 2012 13:58:57 -0600
+To: tahoe-dev <tahoe-dev@tahoe-lafs.org>
+Subject: [tahoe-dev] Tahoe-LAFS Weekly Call report 2012-08-29
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+Folks:
+
+Here is your traditional, once-a-week, cryptic, and potentially
+inaccurate summary of the developer conference call. In what follows I
+make no attempt to explain the context. Sorry -- don't have time right
+now! However, we do try to explain contexts on tickets, so if this
+sounds interesting to you, you can probably figure out what we're
+talking about by reading #127, #615, #821, #827, #1455, #1797, and/or
+#1798.
+
+The ultimate goal is to allow you to view arbitrary content when
+loaded from your Tahoe-LAFS gateway without allowing it to spy on or
+interfere with other content also loaded from your Tahoe-LAFS gateway.
+(And by "view" content I mean execute that content as a program.) This
+is good to prevent exploits of "decentralized web apps" (such as my
+blog: B9). Note that decentralized web apps hosted on Tahoe-LAFS are
+_already_ pretty well-defended from one another. The unguessable URIs
+go a long way to preventing a lot of attacks. This work is just about
+closing off that one weird attack (which requires the user to navigate
+*from* the prize content *to* the malicious content for it to work)
+and also about providing Defense In Depth so that other unforeseen
+attacks will be defeated before we even imagine them.
+
+B9 https://lafsgateway.zooko.com/uri/URI:DIR2-RO:d73ap7mtjvv7y6qsmmwqwai4ii:tq5tqejzulg7yj4h7nxuurpiuuz5jsgvczmdamcalpk2rc6gmbsq/klog.html
+
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/127# Cap URLs leaked via
+HTTP Referer header
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/615# Can JavaScript
+loaded from Tahoe access all your content which is loaded from Tahoe?
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/821# A script in a file
+viewed through the WUI can obtain the file's read cap
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/827# Put file download
+links ('?save=true') in WUI directory listings
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1455# WUI: ambiently
+accessible pages should framebust in order to prevent UI redressing
+attacks
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1797# WUI: view content
+in an HTML5 sandboxed iframe
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1798# Segregate gateway
+HTTP ports: one for raw bytes and one for generated WUI pages
+
+
+Tahoe-LAFS Developer Conference Call
+
+2012-08-28
+
+In attendance: Zooko, David-Sarah, Brian
+
+scribe: Zooko
+
+ defense against malicious javascript
+
+Using html5 iframe sandboxing, each request to the gateway to load the
+content of a cap "$CAP" actually returns a generated HTML page
+containing a sandboxed iframe tag with src=SERVER:BYTESPORT/cap/$CAP.
+
+b" Kaminsky back-jacking
+
+b" an additional authority when the attacker knows the readcap, but we
+want to prevent him from causing your browser to execute the contents
+in certain context? / David-Sarah's weird idea of an extra key per
+gateway
+
+b" backward compatibility with scripts/apps that use the WAPI to load
+raw bytes of caps?
+
+
+What authority to I intend to extend to target content when I click on
+its link in source content?
+
+proposal: I intend for the target content to receive *no more
+authority* when I click on its link than if I had typed in its URL.
+
+Ways that this is not what the web currently does:
+
+b" Click on a little question mark next to a field, it pops open a very
+small explanation. If you go back to the original window and click the
+question mark again, it will pop open the same explanation window
+instead of a new one.
+
+b" Generate a virtual history when everything is really /app#pageid
+
+
+possible threat models:
+
+Game 1: There is a secret prize cap, and you -- the attacker -- win if
+any code of yours learns the secret cap. I will run your code, and
+navigate around however you like, as a user. (The Kaminsky
+back-jacking attack is a successful attack in this sort of game. It
+requires that the user will navigate *from* the secret prize document
+*to* attacker-controlled content.)
+
+Game 2: There is a secret prize cap, and the user has it loaded *from
+the barenakedcap port* in a window. Then the user navigates from that
+content to an attacker-provided link. The link can, at the attacker's
+discretion, point to attacker-controlled content stored in LAFS. So,
+if the link goes to a barenakedcap containing attacker-controlled
+content, then the Kaminsky back-jacking attack will work, letting that
+attacker-controlled content gain access to the prize cap. But if the
+link goes to an HTML5 sandbox wrappedcap, our use of HTML5 sandboxing
+will prevent the resulting attacker-controlled content from gaining
+the prize cap.
+
+
+David-Sarah had an idea for a defense that might help in this Game 2
+or in a related game, involving another encryption key which is known
+to this gateway and unknown to the attacker. Brian argued that the
+attacker-controlled content, that gets loaded in this gateway and
+given access to that content, will eventually learn any such key or
+any such transformation of the URL. Zooko proposed one-time barenaked
+URLs -- when the gateway receives a request to load a wrappedcap, then
+it generates an unguessable nonce, serves up the HTML5 sandbox wrapper
+which includes <iframe src="$SERVER:$BARENAKEDDATAPORT/$NONCE">, and
+over on the barenakeddata port, it will answer *only* the first
+request for $NONCE by serving up the content. (Any subsequent requests
+will get some kind of error.)
+
+
+After the call was over, I, Zooko, began to wonder what's the point of
+the barenakeddata port at all, and if the sandbox port could, instead
+of including a src= link pointing to the one-time-URL on the
+barenakeddata port,  instead include the actual content in the script
+tag. I think Brian mentioned something like that on the call, about
+having the gateway put all of the content into a data URL to put into
+the script tag, or something. One possible motivation to have the
+barenakeddata port at all is to support applications that need access
+to the pristine, bitwise exact data, such as in order to download it
+to disk. It is kind of funny that we want to have an HTTP server to
+serve up pure data, but we never, never want a full-fledged HTTP
+client (which interprets Javascript and HTML and all that) to look at
+it! Full-fledged HTTP clients should only look at the other HTTP
+server -- the one that serves up sandboxed content. Only custom
+scripts should look at the one that serves up pure bytes.
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

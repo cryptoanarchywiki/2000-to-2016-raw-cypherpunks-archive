@@ -1,0 +1,77 @@
+From owner-cypherpunks@lne.com  Tue Nov 25 02:00:19 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p3/8.11.6-03-31-03) with ESMTP id hAP70Hd18276
+	for <rsw@jfet.org>; Tue, 25 Nov 2003 02:00:17 -0500
+Received: from slack.lne.com (slack.lne.com [127.0.0.1])
+	by slack.lne.com (8.12.10/8.12.10) with ESMTP id hAP6a2JW003813
+	(version=TLSv1/SSLv3 cipher=EDH-DSS-DES-CBC3-SHA bits=168 verify=NO)
+	for <cypherpunks-goingout345@slack.lne.com>; Mon, 24 Nov 2003 22:36:02 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.10/8.12.10/Submit) id hAP6a2fD003812
+	for cypherpunks-goingout345; Mon, 24 Nov 2003 22:36:02 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Message-Id: <5.1.0.14.2.20031124152120.01cdb360@idiom.com>
+X-Sender: wcs@idiom.com
+X-Mailer: QUALCOMM Windows Eudora Version 5.1
+Date: Mon, 24 Nov 2003 16:15:32 -0800
+To: "Hallam-Baker, Phillip" <pbaker@verisign.com>
+From: Bill Stewart <bill.stewart@pobox.com>
+Subject: RE: [Asrg] Re: [Politech] Congress finally poised to vote on
+  anti -spam bill [sp]
+Cc: cypherpunks@lne.com, asrg@ietf.org
+In-Reply-To: <2A1D4C86842EE14CA9BC80474919782E01113200@mou1wnexm02.vcorp
+  .ad.vrsn.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2358
+Lines: 43
+
+At 04:20 PM 11/21/2003 -0800, Hallam-Baker, Phillip wrote:
+>We need to consider the technical workings of the do-not-spam list and the
+>requirements that we would like the FTC to meet.
+
+... [reasonable goals] ...  [hashed-form lists instead of plaintext]...
+>5) Allow domain name owners to list their domains.
+>6) Provide for authentication of listing requests
+
+Especially for domains, it's important to do some validation,
+though in the absence of widely-deployed DNSSEC, it's hard to do automatically.
+Perhaps 3-way-handshake email to postmaster@example.com or
+the whois administrative contact address.
+(This also has the side-effect of requiring people to actually use their
+postmaster addresses, at least for fifteen minutes or so :-)
+
+And while hashing has the obvious risk of dictionary attacks,
+it'll at least cut back on some of the abuses,
+especially if the list is dynamic and the spamware vendors who
+do the dictionary attacks want to charge lots of money for it.
+Also, the scale's a lot more annoying searching a million obvious names
+on each of 20 million domains with a hash that takes a second per hit,
+though Moore's Law will obviously erode the hash time.
+Obviously spammers will target popular mail systems first.
+
+However, there are two special email address forms that complicate this a bit
+- tagged addresses - username+tag@example.com
+         There are several different syntaxes for this - plusses, dashes, etc.,
+         and either you just ignore the problem
+         (let the user register  however many tagged addresses they want),
+         or else you special-case the rules so that bulk-emailers
+         who want to send mail to a plus-tagged address also must
+         check the untagged version.
+- per-user subdomains - anything@username.example.com
+         Technically this is no different than any other per-domain blocking,
+         but administratively it's different, because there's no whois record
+         and there might not be a postmaster address.
+
+There's a scalability problem that has to be solved,
+which is how to prevent a DOS-by-signing-up-too-many-addresses attack.
+An example would be a Turing test image on a web page
+(which has the downside of preventing automated signups,
+as well as annoying blind people), or else requiring a
+hashcash puzzle that takes ten times as long as the list's hash function.
+

@@ -1,0 +1,143 @@
+From owner-cypherpunks@al-qaeda.net  Fri Oct 19 11:14:25 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q9JFBVcY025280
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 19 Oct 2012 11:11:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1350659491;
+	bh=77YV1KYg1+Ej4BJZ436nRPPA80t4GJ/U9fHii9AMXy0=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=3GloPQfr1pZ3DtTxTcJOZPfz1gMhUqKh6Vi3qd5StPGV4TP28t3ai3Hbxm2Hqy3a+
+	 DDAwYonip+agnGBbiPVqKrcOzvlY3UMnJF3zpY739PEH2J1/KhEMXJXGjSCn/8Q/G5
+	 68DRS4ustShZi1HDs0sSwJhwYmYAbnK2tF80wHLo=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q9JFBVTL025279
+	for cypherpunks-outgoing; Fri, 19 Oct 2012 11:11:31 -0400
+Date: Fri, 19 Oct 2012 17:11:27 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: Re: [tor-talk] Is this a practical vulnerability?
+Message-ID: <20121019151127.GM9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5615
+Lines: 111
+
+----- Forwarded message from Anon Mus <my.green.lantern@googlemail.com> -----
+
+From: Anon Mus <my.green.lantern@googlemail.com>
+Date: Fri, 19 Oct 2012 11:25:34 +0100
+To: tor-talk@lists.torproject.org
+Subject: Re: [tor-talk] Is this a practical vulnerability?
+Reply-To: tor-talk@lists.torproject.org
+
+On 19/10/2012 04:12, Lee Whitney wrote:
+> I was reading a paper on discovering hidden service locations, and couldn't find any reason it shouldn't work in principle.
+>
+> However being that I'm a Tor novice, I wanted ask here.
+>
+> In a nutshell they propose throwing some modified Tor nodes out there that modify the protocol enough to track down the location.  It does take some time, but it doesn't seem like years.
+>
+My experience is that there s already an easy method of identifying Tor  
+hidden service nodes and this takes little time to do.
+
+Let me explain why I come to that opinion.
+
+Having  a static IP net connection, I set up a test web site as a Tor  
+service on a Tor middleman server. That server had been a middleman server 
+for about a year, no problems, no attempts to hack it in all that time.
+
+Within 24hrs of making that Tor hidden service live I could see, in my  
+firewall logs, hundreds of repeated attempts trying to hack my server,  
+directly from the internet, not via my hidden Tot service. All were  
+attempting to access various types of services/permissions which were  
+mainly focused on attempting to gain control of a "web page server". All  
+attacks were from US based places of higher education (colleges and  
+universities), most from establishments where Tor servers were situated  
+but not from Tor servers themselves.
+
+Now bearing in mind that I had only EVER requested 1 web page (a blank  
+test page - requested about 4 times) from my own Torrified web browser  
+(out and back so to speak), and no OTHER (external) page requests were  
+EVER received via the Tor hidden service, as shown by its log. Then  
+someone must have been able to immediately see the service enter and track 
+its source, who then attempted to hack the web server itself and it 
+appeared to be a group of about 3 or 4 persons, each trying different  
+attack strategy over a 12 hour period. Hundreds of commands were sent,  
+many in quick succession as if they were in some sort of script file, but 
+some were live, at one point I even watched them live as they were coming 
+in as I countered their hack attempts.
+
+As a result of this I did some serious thinking about Tor and came to the 
+conclusion that someone out there and I believe it is THE global adversary 
+(USA mil/sec) is able see with perfect transparency all Tor traffic.
+
+Consider.:
+
+Most Tor users see the Tor connections as merely a set of 3 or 4 connected 
+nodes over which their traffic is routed, e.g. Tor1 - US, Tor 2 - Germany, 
+Tor 3 France - EXIT. But in reality then internet is not like that, this is 
+only the UPPER structure level. At the lower level the packets are routed 
+over many dozens of sub-nodes, these nodes are invisible to the Tor map of 
+your traffic. You can find out this info yourself if you wish to test out a 
+single ROUTE to another IP address just by doing a traceroute url (tracert 
+url for windows) command from a command line prompt window.  As you will 
+see this is about a dozen hops to the average local url. But this is not 
+the end of the problem, as some hops are hidden and they report only a 
+virtual hop back to you.
+
+e.g. lets say a node is in a server in an IBM/US telecoms company based in 
+France, then that server will almost certainly be routing ALL its traffic 
+through the USA and back to itself (or another node in the same company) 
+before sending it on to the next external node. This diversion is NEVER 
+reported as ONLY a single "virtual node ip" is quoted. The only way you can 
+ever tell its been done is by looking at the time delay, however this is 
+also often difficult/impossible to spot because these routes are often the 
+fastest on the internet. OK - I know this goes on for certain because there 
+are internal tools used within these companies to trace the TRUE route and 
+I have seen such servers send their traffic in this manner 24/7 - 365. 
+Having discussed this as "wasted effort" with a network engineer I was told 
+there is a "payment" made somewhere to compensate. At the same time all of 
+this is camouflaged in apparently nice and legitimate reasons for it being 
+that way, but when you pull it apart you see the lie, but you can't PROVE 
+it.
+
+As about 70% of Europe's internet traffic passes through an IBM/US telco's 
+servers then it almost certain that in any one of these Tor node to Tor 
+node connections there is at least one sub-nodes that passes the traffic 
+through the USA, who is the global adversary using Total Traffic Timing 
+Tracking.
+
+
+You should be able to work the rest out for yourself.
+
+
+
+> Any comment appreciated, here's a link to the paper:
+>
+> http://www.cs.uml.edu/~xinwenfu/paper/HiddenServer.pdf
+>
+> _______________________________________________
+> tor-talk mailing list
+> tor-talk@lists.torproject.org
+> https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-talk
+>
+
+_______________________________________________
+tor-talk mailing list
+tor-talk@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-talk
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

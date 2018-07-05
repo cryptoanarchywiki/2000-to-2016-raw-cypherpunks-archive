@@ -1,0 +1,113 @@
+From owner-cypherpunks@lne.com  Thu Apr 24 18:24:03 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h3OMO0t05347
+	for <rsw@jfet.org>; Thu, 24 Apr 2003 18:24:01 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h3OMAs1O001610
+	for cypherpunks-goingout345; Thu, 24 Apr 2003 15:10:54 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Thu, 24 Apr 2003 18:12:34 -0400
+Subject: Re: double-spending prevention w. spent coins (Re:
+  [Lucrative-L] lucrative accounts revisited)
+Content-Type: text/plain; charset=US-ASCII; format=fixed
+Mime-Version: 1.0 (Apple Message framework v551)
+Cc: "R. A. Hettinga" <rah@shipwright.com>, lucrative-l@lucrative.thirdhost.com,
+   cypherpunks@lne.com
+To: Adam Back <adam@cypherspace.org>
+From: Patrick Chkoreff <patrick@fexl.com>
+In-Reply-To: <20030424222736.A7938000@exeter.ac.uk>
+Message-Id: <D9B7C19F-76A1-11D7-B4FF-000393D91E36@fexl.com>
+Content-Transfer-Encoding: 7bit
+X-Pgp-Rfc2646-Fix: 1
+X-Mailer: Apple Mail (2.551)
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 3705
+Lines: 82
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+On Thursday, April 24, 2003, at 05:27 PM, Adam Back wrote:
+
+> If the coins offer privacy, then unspent coins are unlinkable when the
+> same coin is deposited, so keeping just unspent coins doesn't work.
+>
+> Spent coins on the other hand have their blinding removed, so you
+> notice double spending by looking at spent coins.
+>
+> (There are zero-knowledge proofs of non-set membership as proposed for
+> use in ecash by Sander and Ta-Shma [1], but I think these are quite
+> computationally expensive.)
+
+
+Although I have read some material on blinding etc., I do not see a 
+need for it in my system.
+
+At Tim May's suggestion I shall avoid using the word "coin" and use the 
+more accurate financial term "note" instead.
+
+Although technically a note in my system is <32-bit file 
+position><256-bit random gibberish><64-bit amount>, I'll use a simpler 
+and abbreviated decimal notation with dashes in the quick example that 
+follows.
+
+Alice has a note "0247-223235898-00032" that entitles her to 32 grams 
+of e-bullion.  She decides to take delivery.  She presents the coin to 
+the server and the server computes the RIPEMD-160 hash.  It looks at 
+record number 247 in the data file and sees if the hash stored there 
+matches the computed hash.  If so, the server extinguishes the coin 
+(randomizing the record and chaining it to the free list) and spends 32 
+grams of e-bullion to the account that Alice designates, no questions 
+asked.  (Obviously you have to handle any errors in the e-bullion spend 
+- -- don't extinguish the coin if the spend fails.)
+
+Now Alice tries to pull a fast one.  She presents that same note 
+"0247-223235898-00032" to Bob.  Bob decides to swap the note for a new 
+one.  He presents it to the server.  The server computes the RIPEMD-160 
+hash.  It looks at record number 247 in the data file and sees that the 
+record is on the free list.  It rejects Bob's request.  Double spend 
+prevented.
+
+Now perhaps in the meantime the server has decided to reuse record 247. 
+  In that case there is a brand new note hash sitting there, and it is 
+astronomically unlikely to match the hash of the "0247-223235898-00032" 
+note.  (I have considered issuing serial numbers that are never reused 
+but for some vague reason I don't quite like that.  It might not be a 
+big deal.)  Again, double spend prevented.
+
+Quite simply, the absence of a match indicates a spent coin, or one 
+that was never issued in the first place.  It's very much like 
+GoldMoney payment keys, which simply say YES or NO when you try to 
+redeem them, with no information given about whether it was EVER a 
+valid payment key.
+
+If there is any problem of "linkability" in this scheme, please help me 
+see it.  The server does not log any socket events or transaction 
+records of any kind.  OK, if someone put a gun to my head and said "put 
+in some code to log everything" then they might be able to discern some 
+pattern like "this coin was issued to this IP address, and then three 
+days later that coin was swapped from this other IP address."  OK, that 
+sounds like a potential problem, but I don't see how you can hide this 
+information from the server ITSELF.  When you present a coin to the 
+server, it is going to know from which IP address it came, and I don't 
+see a way around that.
+
+There is no linkability of personal identity in the system because 
+there is no personal identity in the system, period.  The server has no 
+use for a public key from any user.
+
+- -- Patrick
+http://fexl.com
+
+-----BEGIN PGP SIGNATURE-----
+Version: PGP 8.0
+
+iQA/AwUBPqhhW1A7g7bodUwLEQL63gCg91lfShbCyCGQ68Bn2LAeY3Cv6wkAnAtR
+lEhm4j76EzsgzU/sdrm6TNbV
+=4OMx
+-----END PGP SIGNATURE-----
+

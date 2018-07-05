@@ -1,0 +1,200 @@
+From owner-cypherpunks@al-qaeda.net  Sun Mar 18 05:52:28 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q2I9n8lx029811
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sun, 18 Mar 2012 05:49:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1332064149;
+	bh=i0Na2IXV26pSsqf/8JXfZdohOkW0jNo60jApn51MUNk=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:In-Reply-To:Sender;
+	b=eEg6moVgCPNzmgOW09M8lhgDzM1pmeFReZ3kOBiX++19qo36G4Meo9IyqSDv+y64W
+	 aoPyiXo/2wVvn9JsM5ky4br6DgndZFPHxmP+Cr+mXSu8ClUhLiPVg54t5Vte4WlMEg
+	 HaegAVv6+QNJ1gAOMG5NkXc2eerwIRM3cdYLhxJ0=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q2I9n88x029810
+	for cypherpunks-outgoing; Sun, 18 Mar 2012 05:49:08 -0400
+Date: Sun, 18 Mar 2012 10:49:05 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: Karel =?iso-8859-1?Q?B=EDlek?= <kb@karelbilek.com>,
+        cypherpunks@al-qaeda.net
+Subject: Re: [tt] [silk] library.nu
+Message-ID: <20120318094905.GL9891@leitl.org>
+References: <20120311093151.GO9891@leitl.org>
+  <1331498371.12520.6.camel@anglachel>
+  <CAGUkT8baerLP6WAdah+eTzGk22x-qYwP5862xLYn9s0+Zi9RgQ@mail.gmail.com>
+  <CAGUkT8ZeDQCD9wnG5o-b3FqucJS8Xw8gtkZ43_5SS3gWPajo7w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAGUkT8ZeDQCD9wnG5o-b3FqucJS8Xw8gtkZ43_5SS3gWPajo7w@mail.gmail.com>
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 6075
+Lines: 160
+
+On Sun, Mar 18, 2012 at 01:16:21AM +0100, Karel Bmlek wrote:
+> nope, the torrents are the books themselves (without any metadata)
+> 
+> all the metadata is in one big csv here
+> ftp://free-books.us.to/content/
+> 
+> it should be easy to reconstruct a mirror from these
+
+You need the files themselves, the SQL DB dump (last one 261 MB,
+uncompressed 1.3 GByte), the PHP sources, and a http server with 
+PHP and an SQL dbase (there's a standalone USBWeberserv version
+which can run from an USB flash stick which is presumably Windows-only.  
+And about 8.5 TByte of disk space (789 directores, each about 
+10 GByte), of course. Can be spread over directories, the sources 
+do allow for that.
+
+The site gives the following directions to set up a mirror
+(I have not done any of the above or below, so I can't vouch it
+will all work):
+
+Creating a mirror of the Library Genesis
+
+
+The Library Genesis has three main components:
+1) book repository (book files)
+2) MySQL database (book records)
+3) Web-server (dynamic Web-pages to link the book records and book files, this is the libgen PHP source-code)
+
+As of writing this, there are just over 320,000 books in the Library Genesis repository. The book repository is broken up into directories of a 1000 books each. The name of each book is actually the MD5-hash of the file contents. This allows for robust querying and helps avoid duplicate entries. The MySQL database links book records with book in the repository. The Web-server hosts the PHP-files that request a book info from the database and serve it to the user.
+
+I. Download the libgen book repository.
+
+This is the easiest as well as the most time consuming process, as the repository is 2.5 TB!
+Going at 1.0MB/s, it would take a full month to completely download. Fortunately, the Library
+can function while incomplete!
+
+You will need a bittorrent client (e.g. utorrent for Windows or Transmission for Linux and Mac) and a RAR archive handler (e.g. 7-zip for Windows or unrar for Linux).
+
+If you do not have the unrar package on Ubuntu, you can install it easily:
+
+Code:
+$ sudo apt-get install unrar
+
+
+Then download the most recent .torrent archive of the repository from http://free-books.dontexist.com/repository_torrent/ .
+This file will have a name like 0-276.rar, meaning it has the torrents for the approximately 276000 books. Each .torrent file
+contains just one of the 1000-book directories. You can unpack this .rar:
+
+Code:
+$ unrar x 0-276.rar
+
+
+Then open up Transmission and start downloading every torrent.
+
+That's pretty much it for obtaining the repository. You may need more space, or to divide the repository up over multiple directories or hard drives. That's more than okay; libgen is robust enough to handle this.
+
+II. Install the MySQL database
+
+If you have not previously installed MySQL, you need to do that now.
+
+Code:
+$ sudo apt-get install mysql-server
+
+
+During installation, you will be asked to provide a password for the database's root user. Write this down as you will need it later.
+
+Make sure your MySQL server is running:
+
+Code:
+$ /sbin/service mysqld start
+
+
+And then you can issue commands to mysql using
+
+Code:
+$ sudo mysql
+
+
+Enter the following into the mysql prompt:
+
+Code:
+CREATE USER 'bookuser'@'localhost' IDENTIFIED BY 'bookpass';
+GRANT USAGE ON * . * TO 'bookuser'@'localhost' IDENTIFIED BY 'bookpass' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0 ;
+GRANT SELECT , LOCK TABLES ON `bookwarrior` . * TO 'bookuser'@'localhost';
+
+
+You can then exit mysql with
+Code:
+exit
+
+After this, make sure you have downloaded the most recent MySQL database dump from your preferred libgen mirror (e.g. http://dl.dropbox.com/u/3268251/backup-last.rar).
+Extract the .sql file and save it to your machine under a name you can remember (e.g. dump.sql).
+
+To set up the database:
+Code:
+$ mysql -p -u root < dump.sql
+
+
+You will be prompted for your mysql password, and then your database should be set up.
+
+III. Get the webcode up and running
+
+First, make sure you have apache2 and php5 installed. Ubuntu comes with apache2 by default, but not php5.
+
+Code:
+$ sudo apt-get install php5
+
+
+Restart apache2 after installing php5.
+
+Code:
+$ sudo /etc/init.d/apache2 restart
+
+
+Now download the source code for the website, again from your favorite mirror. (I use http://assembla.com/spaces/libgen ).
+
+Unpack it into a directory in your apache2 site directory (default /var/www). I use /var/www/libgen.
+
+Open up config.php and make the following edits:
+
+Code:
+        // mysql params
+        $dbhost = 'localhost';
+        $db = 'bookwarrior';
+        $dbtable = 'updated';
+        $dbuser = 'root';
+        $dbpass = 'My_pass_here'; // <-- Put your own MySQL password here
+
+
+Scroll down and make sure repository also points to the right place:
+
+Code:
+        $repository = array(
+                '0-300000' => '/path/to/libgen'); // <-- Put path to your libgen repository here.
+
+
+Last, but not least, create a file called index.php. It's contents should simply be:
+
+Code:
+<?php
+    header('Location:search.php');
+    die();
+?>
+
+
+And then just load up your web browser and navigatee to yourdomain.com/libgen/
+
+And bam, there it is.
+
+IV. Things that can go wrong
+A few things can go wrong:
+1) If you can get to the site but see nothing at all (blank page), it probably means you forgot to restart apache2 after installing php5.
+2) If you don't have access to the site, your problem is probably with apache2 settings or web server settings. Try navigating to the site using http://127.0.0.1/libgen/. If you can get the site like this, but not through the Internet, make sure your network permissions are set up correctly.
+3) If you try to download a book and get a File not found error, your apache2 probably can't access your books. Make sure apache has read access to all the books. You can do this by going to your repository directory and typing
+Code:
+chmod -R 755 *
+
+4) A host of other things. Post on the forums if you have questions. They're really helpful there.
+
+The manual has grown from this topic.
+

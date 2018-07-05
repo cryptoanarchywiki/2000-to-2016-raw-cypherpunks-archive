@@ -1,0 +1,108 @@
+From cypherpunks-bounces@cpunks.org  Fri Aug 23 07:08:17 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r7NB7jJi003436;
+	Fri, 23 Aug 2013 07:07:49 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r7NB7e4Y003432
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Fri, 23 Aug 2013 07:07:42 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 0CC155417FD; Fri, 23 Aug 2013 13:07:40 +0200 (CEST)
+Date: Fri, 23 Aug 2013 13:07:39 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: [liberationtech] Open Whisper Systems' neat asynch FPS "pre-keying"
+Message-ID: <20130823110739.GK29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 2902
+Lines: 69
+
+----- Forwarded message from Joseph Lorenzo Hall <joe@cdt.org> -----
+
+Date: Thu, 22 Aug 2013 14:03:55 -0400
+From: Joseph Lorenzo Hall <joe@cdt.org>
+To: liberationtech <liberationtech@lists.stanford.edu>
+Subject: [liberationtech] Open Whisper Systems' neat asynch FPS "pre-keying"
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:17.0) Gecko/20130801 Thunderbird/17.0.8
+Reply-To: liberationtech <liberationtech@lists.stanford.edu>
+
+https://whispersystems.org/blog/asynchronous-security/
+
+...
+
+The TextSecure Protocol
+
+TextSecure’s upcoming iOS client (and Android data channel client) uses
+a simple trick to provide asynchronous messaging while simultaneously
+providing forward secrecy.
+
+At registration time, the TextSecure client preemptively generates 100
+signed key exchange messages and sends them to the server. We call these
+“prekeys.” A client that wishes to send a secure message to a user for
+the first time can now:
+
+1.  Connect to the server and request the destination’s next “prekey.”
+2.  Generate its own key exchange message half.
+3.  Calculate a shared secret with the prekey it received and its own
+key exchange half.
+4.  Use the shared secret to encrypt the message.
+5.  Package up the prekey id, the locally generated key exchange
+message, and the ciphertext.
+6.  Send it all in one bundle to the destination client.
+
+The user experience for the sender is ideal: they type a message, hit
+send, and an encrypted message is immediately sent.
+
+The destination client receives all of this as a single push
+notification. When the user taps it, the client has everything it needs
+to calculate the key exchange on its end, immediately decrypt the
+ciphertext, and display the message.
+
+With the initial key exchange out of the way, both parties can then
+continue communicating with an OTR-style protocol as usual. Since the
+server never hands out the same prekey twice (and the client would never
+accept the same prekey twice), we are able to provide forward secrecy in
+a fully asynchronous environment.
+
+-- 
+Joseph Lorenzo Hall
+Senior Staff Technologist
+Center for Democracy & Technology
+1634 I ST NW STE 1100
+Washington DC 20006-4011
+(p) 202-407-8825
+(f) 202-637-0968
+joe@cdt.org
+PGP: https://josephhall.org/gpg-key
+fingerprint: BE7E A889 7742 8773 301B 4FA1 C0E2 6D90 F257 77F8
+
+
+-- 
+Liberationtech is a public list whose archives are searchable on Google. Violations of list guidelines will get you moderated: https://mailman.stanford.edu/mailman/listinfo/liberationtech. Unsubscribe, change to digest, or change password by emailing moderator at companys@stanford.edu.
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

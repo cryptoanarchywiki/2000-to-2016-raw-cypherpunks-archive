@@ -1,0 +1,96 @@
+From cypherpunks-bounces@cpunks.org  Thu Oct 17 02:15:12 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9H6E6lV021352;
+	Thu, 17 Oct 2013 02:14:16 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9H6Dxbp021348
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Thu, 17 Oct 2013 02:14:02 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 510C9543E75; Thu, 17 Oct 2013 08:13:57 +0200 (CEST)
+Date: Thu, 17 Oct 2013 08:13:57 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: Re: [Cryptography] /dev/random is not robust
+Message-ID: <20131017061357.GU10405@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 5340
+Lines: 57
+
+----- Forwarded message from Jerry Leichter <leichter@lrw.com> -----
+
+Date: Wed, 16 Oct 2013 13:58:31 -0400
+From: Jerry Leichter <leichter@lrw.com>
+To: Sandy Harris <sandyinchina@gmail.com>
+Cc: Cryptography <cryptography@metzdowd.com>
+Subject: Re: [Cryptography] /dev/random is not robust
+Message-Id: <D3EECDC9-C637-48F5-B3E6-458F93E1C0A4@lrw.com>
+X-Mailer: Apple Mail (2.1510)
+
+On Oct 16, 2013, at 8:49 AM, Sandy Harris <sandyinchina@gmail.com> wrote:
+> From the paper:
+> 
+> " Several security notions have been defined:
+> " – Resilience: an adversary must not be able to predict future PRNG
+> outputs even if he can influence the entropy source used to initialize
+> or refresh the internal state of the PRNG;
+> " – Forward security ( resp. backward security): an adversary must not
+> be able to predict past (resp. future) outputs even if he can
+> compromise the internal state of the PRNG.
+> " ... Barak and Halevi [BH05] model a PRNG with input ... and define a
+> new security property called robustness that implies resilience,
+> forward and backward security. This property actually assesses the
+> behavior of a PRNG after compromise of its internal state ...
+> 
+> None of this matters much if the enemy does not already have root on
+> your system.
+Backwards security is a prerequisite for building PFS, among other things.  Without it, if an attacker seizes your system, he can (in principle, but we're considering *potential capabilities*, not what we know how to do in detail today) "run the random number generator backwards", which would allow any keys that were created using the RNG - like those created in "secure" DH negotiations, for example - to be generated.  (But keep in mind the adage:  Attacks only get better.)
+
+> If an enemy does have root, he has far better targets
+> than the RNG available and the defenders have bigger worries. Without
+> root, he cannot see the internal state and, if you use the typical
+> setup where some saved entropy from last time is pumped in by the boot
+> scripts, he cannot read that file and using it seems to complicate the
+> state enough for security.... Also, the definition of resilience mentions an adversary who "can influence the entropy source" but the random(4) driver uses multiple sources so the degree of influence is generally limited....
+I'm amazed and disturbed by the nature of the responses to this paper.  They are *indistinguishable* from the typical PR blather we get from every commercial operation out there when someone reports a potential attack:  It's just theory, it can't be translated into practice, we have multiple layers of security so even if one of them can be attacked the others still protect you, yadda yadda yadda.
+
+Yes, this is a theoretical attack.  Yes, the Linux RNG is much more complex than the attackers assume in their model.  (Complexity is a good thing?)  No, no one is likely to be able to be able to use the attack actually get much out of the Linux RNG.  But attacks only get better.  The fact is, the Linux RNG, like all the "stir entropy into the pool" RNG's out there, were developed in an essentially ad hoc fashion, without even a solid idea of what the desired properties of such a primitive are supposed to be.  This paper is a step along a path begun in 2005 by Barak and Halevi (the instant paper has extensive references), and, frankly, it's about time.  For such RNG's we've been in about the same position we were in for ciphers in the 1980's and even beyond, before a great deal of theoretical effort got us to characterizations like IND-CPA and all sorts of excellent work on tight reductions and concrete security.
+
+There's always been a strain of anti-academy bias - even anti-intellectualism - in the OSS community.  It's highly undesirable.  There's good academic academic work, and there's bad academic work.  Even with the domain of good academic work, some is of practical interest today, and some isn't.  (And some that isn't of interest today may be tomorrow.)
+
+This kind of "shoot the messenger" approach is just plain wrong.  Look at the definition of robustness they come up with and tell me what parts of it aren't things you'd *like* to get in your RNG, if you could.  Can you come up with anything beyond hand-waving to show that the Linux RNG actually provides you with those properties?  Suppose someone was able to build on the current paper's work and design a Linux RNG that actually *did* provide those properties, with performance comparable to what we have today?  That's how, for example, we've gotten beyond the old, ineffective Modes of Operation to modern ones that have actual security techniques.  Wouldn't it be nice to be able to make the same transition for RNG's?  How will we ever do so without the initial work of the theoreticians to provide a target to aim for?
+                                                        -- Jerry
+
+
+_______________________________________________
+The cryptography mailing list
+cryptography@metzdowd.com
+http://www.metzdowd.com/mailman/listinfo/cryptography
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

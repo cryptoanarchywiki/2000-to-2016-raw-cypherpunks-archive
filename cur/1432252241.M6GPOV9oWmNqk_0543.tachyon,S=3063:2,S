@@ -1,0 +1,80 @@
+From owner-cypherpunks@lne.com  Thu Jul 31 13:36:58 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h6VHatA04642
+	for <rsw@jfet.org>; Thu, 31 Jul 2003 13:36:56 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h6VGFG1d015384
+	for cypherpunks-goingout345; Thu, 31 Jul 2003 09:15:16 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Fri, 1 Aug 2003 03:23:39 +1200
+Message-Id: <200307311523.h6VFNdB25085@medusa01.cs.auckland.ac.nz>
+From: pgut001@cs.auckland.ac.nz (Peter Gutmann)
+To: cypherpunks@lne.com, pgut001@cs.auckland.ac.nz, ptrei@rsasecurity.com
+Subject: RE: Secure IDE?
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2161
+Lines: 58
+
+"Trei, Peter" <ptrei@rsasecurity.com> writes:
+
+>It's a move in the right direction, but I wish they had followed through and
+>done the right things:
+>
+>* [AES | 3DES]/CBC 
+
+I get the feeling they use ECB for speed (heavy pipelining) rather than
+cluelessness.
+
+>with a good distribution of IVs
+
+Where would you store them?  The feature of this is that it's fully
+transparent, so you can't store IVs anywhere.
+
+>* User-generated keys (before initial disk setup, of course).
+
+That one's the only thing I can't find a good technical reason for... perhaps
+it's just commercial, since they see the dongles as a revenue source and will
+sell you software to set up n dongles yourself, where price is proportional to
+n.
+
+>* Some kind of PIN or password protection on the dongle.
+
+How would you do this without a custom BIOS (remember that their general
+product is for dropping into any PC)?
+
+>40 bit DES is not secure against your kid sister (if she's a cypherpunk :-),
+>much less industrial espionage.
+
+I'm more worried about key backup - it's bad enough having cheapest-possible-
+components IDE drives without complicating it further with a second point of
+failure.  In the meantime a better option is still the triumvirate of:
+
+- Sensitive data saved only to RAM disk.
+
+- 3DES-encrypted volume mounted as a filesystem, which I can back up in
+  encrypted form if necessary, and with all crypto done in software with per-
+  sector random IVs, user-generated keys, and all the other stuff you asked
+  for.
+
+- Encrypted swap.
+
+(Oh yeah, and a UPS so you're not tempted to temporarily save stuff to disk
+ elsewhere in case the RAM drive goes away suddenly).
+
+>"40-bit DES (US Data Encryption Standard) is adequate for general users"
+>
+>Yeah. Right.
+
+If you're worried about Joe Burglar grabbing your laptop (for the value of the
+laptop) and your business data being leaked as collateral damage, or someone
+stumbling across your warez or pr0n, then it's probably adequate.  Since this
+is what general users would be worried about, I'd agree with the statement.
+Anyone worried about more than that (probably about 0.01% of the market) isn't
+a general user any more.
+
+Peter.
+

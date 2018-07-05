@@ -1,0 +1,354 @@
+From owner-cypherpunks@Algebra.COM  Sun Dec 31 05:06:44 2000
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.72.0.53])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id FAA06030
+	for <kwantam@positron.mit.edu>; Sun, 31 Dec 2000 05:06:40 -0500
+Received: from ak47.algebra.com (root@ak47.algebra.com [208.233.99.160])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id FAA10767
+	for <rsw@mit.edu>; Sun, 31 Dec 2000 05:06:39 -0500 (EST)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id eBV9Rv421402
+	for cypherpunks-outgoing; Sun, 31 Dec 2000 03:27:57 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from sirius.infonex.com (sirius.infonex.com [216.34.245.2])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id eBV9Rlv21388
+	for <cypherpunks@algebra.com>; Sun, 31 Dec 2000 03:27:49 -0600
+Received: (from cpunks@localhost) by sirius.infonex.com (8.8.8/8.8.8) id BAA20177; Sun, 31 Dec 2000 01:27:42 -0800 (PST)
+Received: from cyberpass.net (cyberpass.net [216.34.245.3]) by sirius.infonex.com (8.8.8/8.8.8) with ESMTP id BAA20171 for <cpunks@sirius.infonex.com>; Sun, 31 Dec 2000 01:27:34 -0800 (PST)
+Received: from hcs.harvard.edu (hcs.harvard.edu [140.247.73.252]) by cyberpass.net (8.8.8/8.7.3) with ESMTP id BAA15339 for <cypherpunks@cyberpass.net>; Sun, 31 Dec 2000 01:30:11 -0800 (PST)
+Received: from localhost (dmolnar@localhost)
+	by hcs.harvard.edu (8.9.3/8.9.3) with ESMTP id EAA31303;
+	Sun, 31 Dec 2000 04:22:30 -0500 (EST)
+Date: Sun, 31 Dec 2000 04:22:30 -0500 (EST)
+From: dmolnar <dmolnar@hcs.harvard.edu>
+To: Tim May <tcmay@got.net>
+cc: cypherpunks@cyberpass.net
+Old-Subject: Re: That 70's Crypto Show (Re: Dude!  It's wired!)
+In-Reply-To: <a05010407b66e8f029d68@[207.111.241.178]>
+Message-ID: <Pine.OSF.4.05.10012280023050.28042-100000@hcs.harvard.edu>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Subject:  Re: That 70's Crypto Show (Re: Dude!  It's wired!)
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 14486
+Lines: 314
+
+
+
+
+On Tue, 26 Dec 2000, Tim May wrote:
+
+> Has there really been much progress in the last ten years? I remember 
+> the flurry of ground-breaking work in the mid-80s, and it was much in 
+> the air at the first "Crypto Conference" I attended in 1988 (also the 
+> last such conference I attended, for various reasons).
+
+Some things come to mind:
+
+1) Efficient realizations of provably secure cryptosystems.
+
+	- Optimal Asymmetric Encryption Padding (OAEP) 1994 
+	Bellare and Rogaway show a way to do secure RSA encryption
+	without falling victim to any of the nasty padding attacks
+	found by Coppersmith, Hastad, and others.
+	
+	- Probabilistic Signature Scheme (PSS) 1996
+	How to properly pad your signatures. Again Bellare and Rogaway.
+	
+	Both OAEP and PSS rely on the so-called "random oracle assumption"
+	which needs its own message to explain. Suffice to say that if
+	you buy that assumption, you end up with schemes which are 
+	99% as efficient as the "naive" way of doing things.
+	
+	Of course, there *were* padding methods arround before 
+	OAEP and PSS. Recent events have shown that some of them
+	weren't a good idea - in particular the padding in 
+	the old PKCS #1 1.5 standard has come in for a beating. 
+
+	More recently, people have come up with methods which don't
+	need the "random oracle assumption" (Cramer and Shoup most
+	notedly), but they're still not as efficient as OAEP and PSS.
+
+	This is a big deal because it opens the way for
+	"practice-oriented provable security" -- all that beautiful
+	theory people were excited about in 1988 makes its way into
+	real products.
+ 	
+2) 	Commercialization and availability of SSL/TLS
+
+	Ten years ago, we didn't have a good engineering-level spec for
+	a protocol to encrypt streams. Now, three or four iterations of
+	SSL later, we do. Plus the www.openssl.org effort makes this 
+	easy to use - some random undergrad can knock together an
+	SSL-enabled application in a short time. 
+	Now that we're *finally* going to get some good documentation
+	in the form of Eric Rescorla's book, maybe more people will
+	take advantage of OpenSSL...
+
+	In addition, the failures of SSL 1.0 and 2.0 (should have)
+	taught us about what Not To Do when designing protocols.
+	Like "protect your protocol negotiation"...
+
+3) 	Differential Cryptanlysis, Linear Cryptanalysis, Block 
+	Cipher Design
+
+	Not particularly cypherpunkish or protocol-ish, but needs
+	mentioning. Academic cryptographers rediscover NSA techniques
+	and start us on the path to an AES competition. Look also at
+	the analysis of Skipjack and how it was determined that 16 rounds
+	were "just enough" -- we could not have done that in 1988 or 1990,
+	I think. Although I should really leave that determination
+	to someone with more experience in that area than I have.  
+
+4) 	Practical and Theoretical advances in Digital Cash
+
+	Today, I can go pick up the -lucre library - either version,
+	or Magic Money and produce a "Pretty Good Digital Cash" 
+	enabled application. There's still no reason on earth why I 
+	should do so, alas, but I can. Also now the Mojo Nation stuff
+	may take off. To this you may add the various smart card and 
+	digital cash experiments and projects which went on.
+
+	Stefan Brands' techniques take the old "credential without
+	identity" idea and make it practical and flexible. Plus his thesis
+	and advocacy for an alternative to a hierarchical PKI will be
+	useful in heading off the advent of "digital driver's licenses."
+
+
+None of these are as fundamental as creating the first real definition of
+security for a cryptosystem or as ground-breaking. But they follow up on
+those first efforts and make it easier to do what we want with
+cryptography.
+
+> 
+> Something I expected to have happened long ago was the 
+> encapsulization of these protocols into building blocks into 
+> libraries/classes/reusable objects that could be bolted together by 
+> those building systems. ("Let's take EncryptStream and throw in 
+> EscrowService and then add ObliviousTransfer...").
+
+There have been two major problems, as far as I see, which have held this
+up. First, the theory has not always been cooperative. Second, despite the
+myriad of amazing special protocols which have appeared over the years,
+we have only a few core protocols which people seem to want badly enough
+to justify moving from the CRYPTO paper to the engineering stage. You can
+point the finger at patents, too, if you like - but they may have helped
+as well as hurt (I'll explain why in a bit). 
+
+When I say "the theory has not always been cooperative," I mean such
+things as the fact that zero-knowledge proofs are not zero-knowledge under
+parallel composition or in a concurrent setting. That is, you "can't" 
+take a ZKP out of a textbook and stick it in a situation where thousands
+of clients are interacting with a server all at once. At best you lose a
+security guarantee, at worst you get killed. 
+
+Composing two different kinds of protocols can have similar problems; one
+example of this would be an "anonymous" digital cash scheme which uses
+zero-knowledge proofs to prove coins are "well-formed"...and the
+withdrawer's identity is included in the ZKP. (Pfitzmann and Waidner, "How
+to Break Another 'Provably Secure' Payment Scheme" ..and for fairness I
+should mention that there is a rebuttal)
+
+Then there's the fact that while we have a general result which tells us
+that "any function can be computed in secure multiparty computation," the
+constructions used to establish this result are impractical - it takes
+more work to find a particular protocol to do what you actually *want*,
+and there's no guarantee that it will be acceptably efficient. This is
+changing; people are finding more efficient ways to do "CryptoComputing" 
+(Donald Beaver for one) and we have some cute new toys like
+ring-homomorphic commitments (Cramer and Damgard 1998, used in the
+"Distribution Chain Security" paper I cited previously), but we don't seem
+to be at the point yet where it's straightforward. *Each* new efficient 
+protocol still yields a new paper. 
+
+(that may be overstating things a bit; I have no idea how many protocol
+papers are rejected from conferences)
+
+Ideally we'd have a situation akin to where complexity theory is with
+NP-completeness. You can't get new NP-completeness results published any
+more because the techniques have become standard things taught in
+introductory undergrad courses. If and when we get to that point,
+it'll be easier to just build the protocol yourself instead of trying to
+look it up somewhere. 
+
+I mentioned the problem of "only a few protocols that people actually
+want" in a separate e-mail. Face it, as cool as the Dining Cryptographers
+in the Disco is, who's going to implement it? and who besides cypherpunks
+would want to use it?
+
+This is why the commercial research labs are important - they seem to
+actually implement and occasionally release their protocols. Bell Labs
+released PAK and PAK-X clients; I know that some of their other work has
+at least been prototyped. This wouldn't have happened without the
+incentive of patents to fund that research and development.
+
+Unfortunately, the flip side is that none of us are ever going to get to
+use that material, or at least not without selling our souls in a
+licensing deal. :-(
+
+ > 
+> This is partly what I mean by "devolving back to basic ciphers." It 
+> seems that when all is said is done, the only real "core module" we 
+> have is basic encryption. And even that is not treated as a module 
+> (yeah, I know that RSA is only recently unencumbered by patents).
+> 
+> Some stuff with signatures, too, but basically very similar.
+> 
+> In short, the world doesn't look very different than it did in 1990. 
+> The Web is different, but not in how users send messages and files 
+> back and forth.
+
+I agree -- but remember that the Web, and the "e-commerce" craze that came
+with it, has only been in widespread play since 1995 or 1996. That means
+we've only had 5 or 6 years in which nearly any idea with "crypto"
+associated with it could get funded. 
+
+
+> A digression: One of the conventional models for a cryptographic 
+> attack is that an attacker gets to take a problem back to his lab and 
+> torture it to death, i.e., throw as much computer power against a 
+> cipher as he wishes. This is a reasonable model for ciphers.
+
+There's also another point - it's supposed to be an "easier" model to deal
+with than the one you outline below. The famous question of
+Goldwasser and Micali is 
+
+	"Should a cryptosystem which leaks the last bit of the plaintext
+	be considered 'secure'?"
+
+Their answer is twofold. First, "no." Second, *it doesn't matter*, since
+we can 
+
+	1) state a better definition of security which captures the
+	notion that "no information" leaks from the ciphertext
+	2) give a cryptosystem which seems to meet this definition
+	3) actually give a *proof* (assuming a polynomial time
+	limited adversary and the hardness of some problem) that 
+	it does meet this definition. 
+
+The thing to notice, however, is that if you can show that the last bit of
+the plaintext is _all_ the cryptosytem leaks, AND you can prove that your
+application doesn't need the last bit of the plaintext, then you don't
+need to go through these steps. The system is secure - for you. 
+But figuring out what exactly you need is tough. The idea is that by
+considering a maximally powerful adversary, you can avoid having to
+analyse every protocol to see if it needs the last bit to be secure or 
+not. 
+
+The point Greg Broiles raises later is that as powerful as this adversary
+is, it is not "powerful enough" - for instance, it doesn't torture people.
+Part of that seems to be a split between the cryptographic "science" of
+protocol design and the "engineering" of protocol implementation.
+Without passing judgement on whether this split is a Good Thing or not,
+I'll just note that the engineering is in its infancy compared to even
+ordinary software engineering.
+
+ > 
+> However, mix-nets and such need to have some economic considerations. 
+> It costs money and effort to subvert certain nodes and alter message 
+> padding, times of sending, etc. An attack on a mix-net is not the 
+> same as taking the whole net back into NSA basements and proceeding 
+> to diddle it to death.
+> 
+> Chaum, Pfitzman, et. al. of course refer to n-out-of-m sorts of 
+> collaborations, but left unsaid is the cost of such collaborations. A 
+> start, but missing a lot.
+
+Yes - even today, most people seem to consider models with a threshold of
+failure. If the adversary has less than n/2 of the nodes, you're safe. If
+it has more, you're toast. I can't think of a model which allows gradual
+failure or probabilistic failure off the top of my head.
+
+> 
+> (Nodes in different countries, nodes operated more-or-less on 
+> automatic pilot, nodes which mail to _themselves_, nodes which are 
+> "middleman only," etc.)
+> 
+
+Note that each of these speaks to different problems facing a remailer
+network. The different countries is for jurisdictional arbitrage and so
+against a geographically local adversary. The automatic pilot works
+against an adversary which is observing users and trying to see which are
+operators. Self-mailing nodes are tied up with traffic analysis. The
+middleman only nodes seem to be tied up with the abuse problem...and so
+on. 
+
+All of which are separate attacks to be pulled out and inspected, and
+then those techniques can be evaluated...
+
+
+ > Crypto does encompass the idea of a "work factor," of course.
+Usually 
+> expressed as MIPS-years or somesuch. This needs to be extended in 
+> some rough way to include the costs of soliciting cooperation or 
+> collusion, etc. Without such inputs, how could a heterogeneous mix of 
+> remailers be analyzed?
+
+By assuming the worst about all of them - you turn it into a homogenous
+mix by assuming the worst. Pow - no more heterogenous problem, but with
+the drawbacks we all know... Pulling back from that is difficult. 
+First, it may be hard to model, especially for those of us without
+economics background. Second, it runs counter to the way "things are
+done"(but you knew that). 
+
+An aside -- from what I've seen, mostly the symmetric cipher people deal
+with "work factor" in MIPS-years. When you move to the public-key and
+protocol side of things, it's back to the "polynomial-time adversary."
+This didn't change until Bellare and Rogaway started asking about "exact
+security" in which they wanted to know what the exact probability of an
+adversary to recover information would be if it could invert RSA or some
+such in a given amount of time.
+
+
+
+> >This may have to wait until liability issues in general for software are
+> >straightened out, won't it?
+> 
+>   It could happen absent any action on the legal front. Pure 
+> anarcho-capitalism, a la the Law Merchant (law of the seas, with no 
+> nation having legal jurisdiction). Lloyds of London was underwriting 
+> shipping before there was much concern about international legal 
+> dispute resolution. Computer security and information theft is not 
+> the same thing as ships going down, so the evolution will be 
+> different.
+
+Oh, OK. I was thinking about it in terms of the software vendor being
+insured against lawsuit in case its software failed. You seem to be
+referring to insurance issued to a business against its transaction
+failing. I hadn't considered that - it is indeed plausible. 
+
+
+
+> Indeed, I cited economics in a major way. Hal Varian at Berkeley is 
+> also interested in such issues, and a former Cypherpunks list member, 
+> Robin Hanson, got his Ph.D. at Caltech on these kinds of issues. 
+> (Robin is the main "idea futures" guy.)
+
+Indeed, now that I look at the page with the "list of research groups in
+crypto & economics", Varian is on it. There's also L. Jean Camp here at
+the Kennedy School - although he's more interested in the intersection of
+politics and cryptography, I think. 
+
+> 
+> One key issue is that not a lot of econ folks are good at crypto-type 
+> protocols, and vice versa. Different departments, different standards 
+> for advancement and academic fame.
+
+I don't know about anyone else, but it takes me a while to learn,
+and an undergraduate education is only so long. I do have a number
+of friends in economics (sometimes it seems like all my friends from high
+school are in econ...) but we don't talk about this. It's hard for me to
+know how to frame these questions to them. Plus I still have the naive
+hope that the right protocols will end up provable in the end...
+
+-David
+
+
+
+
+
+

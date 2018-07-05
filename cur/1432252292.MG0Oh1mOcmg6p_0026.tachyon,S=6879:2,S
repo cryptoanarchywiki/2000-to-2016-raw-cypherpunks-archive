@@ -1,0 +1,164 @@
+From owner-cypherpunks@al-qaeda.net  Wed Aug 18 15:38:57 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i7IKcfve014411
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Wed, 18 Aug 2004 15:38:41 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i7IKcfmK014410
+	for cypherpunks-outgoing; Wed, 18 Aug 2004 15:38:41 -0500
+Date: Wed, 18 Aug 2004 16:33:12 -0400
+From: Adam Back <adam@cypherspace.org>
+To: hashcash@freelists.org
+Cc: Cryptography <cryptography@metzdowd.com>,
+        Cypherpunks
+  <cypherpunks@minder.net>,
+        Adam Back <adam@cypherspace.org>
+Subject: hash attacks and hashcash (SHA1 partial preimage of 0^160)
+Message-ID: <20040818203312.GB27766@bitchcake.off.net>
+References: <4122A971.1030903@harvee.org>
+  <4122AE14.9070108@silveronion.com>
+  <20040818134313.GL2192@certainkey.com>
+  <20040818163216.GA449@arion.soze.net>
+  <20040818180309.GA5806@certainkey.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20040818180309.GA5806@certainkey.com>
+User-Agent: Mutt/1.4.1i
+X-Hashcash: 1:20:040818:hashcash@freelists.org::ef9a018ac7098cc1:44739
+X-Hashcash: 1:20:040818:cryptography@metzdowd.com::990d257d870f4a98:10 
+  b14a                                                          
+X-Hashcash: 1:20:040818:cypherpunks@minder.net::47fe7772be7053c3:cc04e
+X-Hashcash: 1:20:040818:adam@cypherspace.org::fdd97f56f9f4722c:3a09b8 
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5154
+Lines: 124
+
+(This discussion from hashcash list is Cc'd to cryptography and
+cypherpunks.)
+
+Hashcash uses SHA1 and computes a partial pre-image of the all 0bit
+string (0^160).
+
+Following is a discussion of what the recent results from Joux, Wang
+et al, and Biham et al on SHA0, MD5, SHA1 etc might imply for hashcash
+SHA1 (and for hypothetical hashcash SHA0, MD5 etc by way of seeing
+what it will mean if SHA1 eventually suffers similar fate to SHA0).
+
+(All as far as I understand so far).
+
+Hashcash stresses the SHA1 function in a different direction than
+sigantures and MACs -- in assuming partial pre-images are hard (ie an
+k-bit partial pre-image should take about 2^k operations).  (Partial
+2nd pre-images are also "interesting" against hashcash -- see below).
+
+(As a security argument if partial pre-images say up to m<n bits were
+to turn out to be easy (take much less than 2^m work effort) then this
+could be used to find full pre-images with < 2^n effort, and full
+birthday collisions with < 2^(n/2) effort -- where n is the hash
+output size).
+
+
+Hashcash is computing partial preimages (of the all 0 bit string).
+
+The original hashcash (alpha format) computed partial 2nd-preimages as
+follows:
+
+H( time || resource ) =partial H( time || resource || random )
+
+so the image is H( time || resource ), the pre-image is time ||
+resource, and the (partial) 2nd pre-image is time || resource ||
+random, and the images 
+
+H( time || resource ) and H( time || resource || random )
+
+partially match.
+
+Then several people independently (Hal Finney, Thomas Boschloo)
+suggested using a fixed image (0^160, ie all 0 bits) instead of the
+image H( time || resource ).  (Hashcash version 0 and version 1
+formats use the all 0 bits approach.)  ie so one is looking for:
+
+H( time || resource || random ) =partial 0^160
+
+As long as SHA1 is a good hash function this should be just as "fair"
+a string to find partial pre-images of.
+
+
+So with the last days news: as I read it the MD5 attack can find
+relatively arbitrary pairs of pre-images (which differ in a few
+well-chosen bits).  As a birthday attack, or perhaps with some more
+work as a 2nd pre-image attack (2nd pre-image unclear).
+
+Birthday style attacks don't help against hashcash as the atacker has
+limited control over the H( time || resource ) in the alpha format and
+no control over the 0^160 in v0 and v1 format hashcash.
+
+
+So the way to apply a 2nd pre-image attack (if general 2nd pre-image
+is possible with the approach) is to find one partial hash collision
+the usual way (brute force), then re-use the work a bit and use it to
+get subsequent collisions.  As far as hashcash is concerned these will
+be of approximately the same value as the original (and not full
+collisions) because they are against 0^n and the partial hash
+collision (which a full collision was found against) only has 0^k bits
+of leading 0s.
+
+
+So I think if hashcash were using SHA-0, the following attack should
+work: spend lots of work create eg a 50-bit hashcash token, use the
+SHA-0 attack (Wang et al attack has work order 2^40 hash operations)
+to find another (and maybe a small family of) hashcash stamps which
+are full collisions with the 40-bit partial collision we just created.
+
+I have not seen any indication if there is a family of collisions that
+come more cheaply after the initial 2^40 operations of the Wang et al
+approach.
+
+As long as the work to create each 2nd pre-image in the family that
+can be derived from one starting stamp is less than the value of the
+stamp, the spammer wins in some way.  He can get some economies of
+scale (up to the family size) in creating multiple stamps for the same
+recipient.  However this is not so interesting to the spammer he would
+sooner have economies of scale in sending to _everyone_ not DoSing one
+user.  Also until we know the family size we do not know how bad even
+a DoS advantage there would be.
+
+
+For SHA-1 so far none of the above holds.  If someone manages to
+extend the Biham attack to the full 80 rounds then the similar
+argument to the SHA-0 based hashcash would presumably hold.
+
+But this is based on what has been said so far about how the attacks
+work.  Perhpas the same or related techniques now people have seen how
+they work could be adapted to provide partial pre-images more
+efficiently than brute force directly.
+
+Adam
+
+On Wed, Aug 18, 2004 at 02:03:09PM -0400, Jean-Luc Cooke wrote:
+> To be clear:
+>   MD5 is borken.  The whole thing:
+>     http://www.md5crk.com/md5col.zip
+>   SHA-0 is broken.  The whole thing:
+>     http://www.md5crk.com/sha0col
+>   HAVAL-128 and RIPEMD-128 and MD4 are also broken using the same techniques.
+> 
+> 56 round SHA-1 (out of a possible 80) is broken.
+> 
+> The event of the pasat week cast heavy doubt on the current common techniques
+> used in hash algorithms.  MD4 was the first to use this unblanced Fiezel
+> network.
+> 
+> Wirlpool and Tiger are sometimes called "wide-trail" hashs.  Different beasts
+> entirly.
+> 
+> I suspect even SHA-256 and SHA-384/512 may be vulnerable to these attacks to
+> some extent.
+> 
+> I expect there to be a flurry of new hashs proposed and adopted as
+> industry/government/international standards.
+

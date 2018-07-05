@@ -1,0 +1,89 @@
+From owner-cypherpunks@lne.com  Wed May 21 22:16:06 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h4M2G4Z04673
+	for <rsw@jfet.org>; Wed, 21 May 2003 22:16:04 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h4M27Ft0028970
+	for cypherpunks-goingout345; Wed, 21 May 2003 19:07:15 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Wed, 21 May 2003 21:07:11 -0500
+From: John Bethencourt <bethenco@upl.cs.wisc.edu>
+To: cypherpunks@lne.com
+Subject: Re: idea for OTP system, comments desired
+Message-ID: <20030522020711.GC4688@upl.cs.wisc.edu>
+References: <b9d71a2eb136df326b2b1f74d742b462@dizum.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b9d71a2eb136df326b2b1f74d742b462@dizum.com>
+User-Agent: Mutt/1.3.28i
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2684
+Lines: 61
+
+Thanks for responding.
+
+Nomen Nescio wrote:
+> 
+> One thing that is unclear in your protocol is whether s, which I think
+> is the same as initialpass, is stored permanently on the server.
+
+Oh, no, that's not what I meant. s is not the same as initialpass, and s
+is not stored anywhere. The server never knows what s is, and the client
+only uses it during an authentication and then forgets it.
+
+> If so, then when the server receives h(s.r_x), it can do two checks.
+> The check you described is that the hash of this matches the value the
+> client sent previously, h(h(s.r_x)).  The other is that the server can
+> construct s.r_x since it knows both of these values, and then compare
+> h(s.r_x) with what the client sent.
+> 
+> This has two problems.  First, it makes the sending of h(h(s.r_x))
+> unnecessary since the server can verify the client's response just
+> using s.  And second, s is a sensitive value which if stolen could be
+> used at some later time to impersonate the user.
+
+Right, that would be horribly wrong.
+
+> So I will assume that the server doesn't store s, in which case I don't
+> see why it needs to see initialpass in the first place.
+
+It isn't really needed; it's just for setting up an account. The
+alternative would be for the user to pick s and r_0 and give the sysadmin
+h(h(s.r_0)) right off the bat. I just thought this would be more
+convenient.
+
+> In that case the protocol basically says, each time you log on you provide
+> a hash value for which you will provide the hash input next time you
+> log on.  The purpose of the r_x values is to keep the user from having
+> to save state; he can compute h(h(s.r_y)) and then forget it, because
+> next time he logs on the server will remind him of what r_y is.
+
+Yes, that's the idea.
+
+> The main security problem I see is that an eavesdropper sees r_x and
+> h(s.r_x), allowing him to do a dictionary attack on s.  You could use
+> a really slow hash function to slow this attack down, but it is a serious
+> vulnerability.
+
+Good point; that is a big flaw. A precomputed dictionary attack won't
+work, but if a user picks a weak password, guessing it would be feasible.
+I guess you could also do a dictionary attack against S/Key, but it would
+take longer since for each trial you would have to compute the, say, 50th
+hash.
+
+> Given that you are using client software to authenticate, I suggest
+> pursuing SPEKE-style password-authenticated key exchange.  There are
+> a number of these systems (some patented) which feature immunity to
+> dictionary attacks on the password.
+
+Cool; thanks for the pointer. I hadn't heard of SPEKE before. Dictionary
+attack immunity is a really nice feature.
+
+Cheers,
+John Bethencourt
+

@@ -1,0 +1,89 @@
+From owner-cypherpunks@lne.com  Sun Jun 29 21:05:35 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h5U15X623016
+	for <rsw@jfet.org>; Sun, 29 Jun 2003 21:05:33 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h5U0v1t6016650
+	for cypherpunks-goingout345; Sun, 29 Jun 2003 17:57:01 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+To: cypherpunks@lne.com
+X-Orig-To: Bill Stewart <bill.stewart@pobox.com>
+Cc: cypherpunks@lne.com, cryptography@metzdowd.com,
+   "Steven M. Bellovin"
+  <smb@research.att.com>
+Subject: Re: Attacking networks using DHCP, DNS - probably kills DNSSEC
+References: <5.1.1.6.2.20030629132842.033e71d0@idiom.com>
+From: Simon Josefsson <jas@extundo.com>
+X-Payment: hashcash 1.2 0:030629:bill.stewart@pobox.com:6e443101f1cb0b67
+X-Hashcash: 0:030629:bill.stewart@pobox.com:6e443101f1cb0b67
+X-Payment: hashcash 1.2 0:030629:cypherpunks@lne.com:5ca1b8d6ff44bb25
+X-Hashcash: 0:030629:cypherpunks@lne.com:5ca1b8d6ff44bb25
+X-Payment: hashcash 1.2
+  0:030629:cryptography@metzdowd.com:774f75ec4a1de622
+X-Hashcash: 0:030629:cryptography@metzdowd.com:774f75ec4a1de622
+X-Payment: hashcash 1.2 0:030629:smb@research.att.com:9d1e1da39aedfcec
+X-Hashcash: 0:030629:smb@research.att.com:9d1e1da39aedfcec
+Date: Sun, 29 Jun 2003 23:49:05 +0200
+In-Reply-To: <5.1.1.6.2.20030629132842.033e71d0@idiom.com> (Bill
+  Stewart's message of "Sun, 29 Jun 2003 14:19:51 -0700")
+Message-ID: <iluof0gh7vy.fsf@latte.josefsson.org>
+User-Agent: Gnus/5.1003 (Gnus v5.10.3) Emacs/21.3.50 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+X-Spam-Status: No, hits=-32.4 required=5.0
+  tests=EMAIL_ATTRIBUTION,IN_REP_TO,QUOTED_EMAIL_TEXT,REFERENCES,
+  REPLY_WITH_QUOTES,USER_AGENT_GNUS_UA autolearn=ham	version=2.50
+X-Spam-Checker-Version: SpamAssassin 2.50 (1.173-2003-02-20-exp)
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2276
+Lines: 44
+
+Bill Stewart <bill.stewart@pobox.com> writes:
+
+> At 11:15 PM 06/28/2003 -0400, Steven M. Bellovin wrote:
+>>In message <5.1.1.6.2.20030628124252.033e5600@idiom.com>, Bill Stewart writes:
+>> >This looks like it has the ability to work around DNSSEC.
+>> >Somebody trying to verify that they'd correctly reached yahoo.com
+>> >would instead verify that they'd correctly reached
+>> >yahoo.com.attackersdomain.com, which can provide all the signatures
+>> >it needs to make this convincing.
+>> >
+>> >So if you're depending on DNSSEC to secure your IPSEC connection,
+>> >do make sure your DNS server doesn't have a suffix of echelon.nsa.gov...
+>>
+>>No, that's just not true of DNSsec.  DNSsec doesn't depend on the
+>>integrity of the connection to your DNS server;
+>>rather, the RRsets are digitally signed.
+>>In other words, it works a lot like certificates,
+>>with a trust chain going back to a magic root key.
+>
+> I thought about that, and I think this is an exception,
+> because this attack tricks your machine into using the
+> trust chain yahoo.com.attackersdomain.com., which it controls,
+> instead of the trust chain yahoo.com., which DNSSEC protects adequately.
+> So you're getting a trustable answer to the wrong query.
+
+No, I believe only one of the following situations can occur:
+
+* Your laptop see and uses the name "yahoo.com", and the DNS server
+  translate them into yahoo.com.attackersdomain.com.  If your laptop
+  knows the DNSSEC root key, the attacker cannot spoof yahoo.com since
+  it doesn't know the yahoo.com key.  This attack is essentially a
+  man-in-the-middle attack between you and your recursive DNS server.
+
+* Your laptop see and uses the name "yahoo.com.attackersdomain.com".
+  You may be able to verify this using your DNSSEC root key, if the
+  attackersdomain.com people have set up DNSSEC for their spoofed
+  entries, but unless you are using bad software or judgment, you will
+  not confuse this for the real "yahoo.com".
+
+Of course, everything fails if you ALSO get your DNSSEC root key from
+the DHCP server, but in this case you shouldn't expect to be secure.
+I wouldn't be surprised if some people suggest pushing the DNSSEC root
+key via DHCP though, because alas, getting the right key into the
+laptop in the first place is a difficult problem.
+

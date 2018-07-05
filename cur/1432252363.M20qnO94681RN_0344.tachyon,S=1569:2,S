@@ -1,0 +1,39 @@
+From owner-cypherpunks@al-qaeda.net  Sat Mar 20 02:22:31 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: (from majordomo@localhost)
+	by POSITRON.MIT.EDU (8.11.6p3/8.11.6-03-31-03) id i2K7LWG08098
+	for cypherpunks-outgoing; Sat, 20 Mar 2004 02:21:32 -0500
+X-Authentication-Warning: positron.mit.edu: majordomo set sender to owner-cypherpunks@al-qaeda.net using -f
+Date: Sat, 20 Mar 2004 08:21:26 +0100 (CET)
+From: Thomas Shaddack <shaddack@ns.arachne.cz>
+To: Cypherpunks <cypherpunks@al-qaeda.net>
+Subject: Challenge-response port knocking for TCP
+Message-ID: <0403200814060.-1196695644@somehost.domainz.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 768
+Lines: 18
+
+The idea of advertising opportunistic crypto presence in TCP/SYN inspired
+me to another one: authenticated connection handshake for TCP protocol.
+
+Scenario: Application listening on port P of server S, only for
+authenticated users.
+
+Unknown user sends TCP/SYN to S:P, gets back TCP/RST, with challenge in
+MD5 field of TCP options. The user doesn't support this scheme, so
+considers the port closed.
+
+Unknown-now known user sends TCP/SYN, gets back TCP/RST with the
+challenge, sends another TCP/SYN, this time with calculated response using
+a shared secret, again in TCP MD5 option field, gets back TCP/SYNACK.
+
+The random challenge should be sent back in all TCP/RST packets, otherwise
+port scanning will still be possible.
+
+Is it a good idea? Could it work? Why not?
+

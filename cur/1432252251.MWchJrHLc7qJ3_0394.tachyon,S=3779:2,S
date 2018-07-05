@@ -1,0 +1,92 @@
+From owner-cypherpunks@lne.com  Wed May 14 11:15:36 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h4EFFWt25425
+	for <rsw@jfet.org>; Wed, 14 May 2003 11:15:33 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h4EEq9Nd004472
+	for cypherpunks-goingout345; Wed, 14 May 2003 07:52:09 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Wed, 14 May 2003 14:49:34 +0000
+From: Justin <justin@soze.net>
+To: cypherpunks@einstein.ssz.com
+Subject: what fields to hash with hashcash (Re: A Trial Balloon to Ban
+  Email?)
+Message-ID: <20030514144934.GE16362@dreams.soze.net>
+References: <Pine.LNX.4.40.0305121022230.16578-100000@bolt.sonic.net>
+  <018801c31807$1f991670$0b01a8c0@whitestar>
+  <017f01c318e4$b0ff7e50$6701a8c0@JOSEPHAS>
+  <20030513045258.6B70910F75@rant-central.com>
+  <20030514062743.A9342491@exeter.ac.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; x-action=pgp-signed
+Content-Disposition: inline
+In-Reply-To: <20030514062743.A9342491@exeter.ac.uk>
+X-Message-Flag: The contents of this message are known to the state of
+  California to cause cancer.
+X-PGP-Fingerprint: 9AE2 9FC3 D98B 9AE2 EE83  15CC 9C7D 1925 4568 5243
+User-Agent: Mutt/1.5.4i
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2237
+Lines: 55
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Adam Back (2003-05-14 05:27Z) wrote:
+
+> Well there are different things you could hash.  This simplest is just
+> to hash the recipient address and the current time (to a day
+> resolution).
+> 
+> The recipient looks at the token and knows it is addressed to him
+> because it's his address.  He stores it in his double spend database
+> and won't accept the same token twice.
+
+This is just broken.
+
+How do you know what address the sender was sending to?  You have no
+reliable access to envelope to: addresses.
+
+Joe bcc's james@nowhere.net, politely generating a hashcash token over
+james@nowhere.net and the mesID.  Nowhere.net expands that alias to
+james.t.doe@treas.gov.  Whoops.  Hashcash is now invalid, as there's no
+reliable mechanism MTAs use to note the original address before the
+change.  Some might note it with Delivered-To:, others note it in
+received headers, others (qmail, ahem) don't note it at all.
+
+Worse, even if there were a reliable mechanism, all it takes is one
+loose cannon with an open mass-mail list and as long as it doesn't
+delete whatever header (maybe delivered-to:, maybe something else) that
+indicates the list was an envelope to: address, one hashcash token works
+for one email to the entire list.
+
+> After the validity period of a token has expired he can remove it from
+> his double-psend database to avoid the database growing indefinately.
+> (He can reject out-of-date mail based purely on it's date).
+
+Isn't it simpler to use message IDs for replay detection?  No need to
+look for replays using another mechanism when there's already one that
+works fine, and that many people use for dup detection today.
+
+> Hashing the message body is generally a bad idea because of minor
+> transformations that happen as mail traverses MTAs and gateways.
+
+No argument there.
+
+- -- 
+Freedom's untidy, and free people are free to make mistakes and commit
+crimes and do bad things.  They're also free to live their lives and do
+wonderful things.   --Rumsfeld, 2003-04-11
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.2rc2 (GNU/Linux)
+
+iEYEARECAAYFAj7CV34ACgkQnH0ZJUVoUkPNkACeJBwnnFNrk7aipazqOVDxaNa2
+KRwAoMGCd4CtMkJhZD7zC3sy0mBWiSTK
+=EEDd
+-----END PGP SIGNATURE-----
+

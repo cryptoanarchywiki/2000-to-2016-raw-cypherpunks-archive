@@ -1,0 +1,116 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u3TITNDY028240;
+	Fri, 29 Apr 2016 14:29:27 -0400
+Authentication-Results: antiproton.jfet.org; dkim=fail
+	reason="verification failed; unprotected key"
+	header.d=openmailbox.org header.i=@openmailbox.org
+	header.b=dftTLGn4; dkim-adsp=fail (unprotected policy);
+	dkim-atps=neutral
+Received: from smtp8.openmailbox.org (smtp8.openmailbox.org [62.4.1.42])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u3TITJA5028236
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Fri, 29 Apr 2016 14:29:21 -0400
+Received: by mail2.openmailbox.org (Postfix, from userid 1004)
+ id B98C82AC54D5; Fri, 29 Apr 2016 20:29:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=openmailbox.org;
+ s=openmailbox; t=1461954557;
+ bh=SgborXw3zJtSPhUu7O/HneKVy232gIRbT+WpKZ4oe70=;
+ h=To:From:Subject:Date:From;
+ b=dftTLGn4x27wpXUH0G++bnaDZ4SyqiFydfgjWdRw1QdpzD/A3CaNSEDvRGjNfl2AM
+ R3O+61PRfGa7iD1f0VGWtCIOHwdnSM96QhS8/STQMNqiszllUnKPAbnkf/vfuRJFMC
+ daMhv+CcWsB4uckjC5ihZUsczHvQ/6uQFy//7CLw=
+To: cypherpunks@cpunks.org
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=openmailbox.org;
+ s=openmailbox; t=1461954547;
+ bh=SgborXw3zJtSPhUu7O/HneKVy232gIRbT+WpKZ4oe70=;
+ h=To:From:Subject:Date:From;
+ b=r7119un9HM5kJcP1hSRB+20XikSpQGdiV6SuA3YRKaWSDa1NOB+BenccZtlU5FONV
+ yDgoIdEfkUHf5EZe9ESvoGmbnR2fp7kLSE7cM89DdSQueHKPBrRif8r+l7R/Henm4w
+ HtjK+wJNny7NhweEKrUYRHMqXm3XyuZfOpWSBFgE=
+From: Anton Nesterov <komachi@openmailbox.org>
+Subject: Somebody logged into Telegram accounts of some Russian opposition
+ activists
+Message-ID: <5723A7EE.701@openmailbox.org>
+Date: Fri, 29 Apr 2016 18:29:02 +0000
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 64
+
+Russian activists Georgy Alburov (member of Anti-corruption Foundation)
+and Oleg Kozlovsky (member of Solidarnost movement) found their Telegram
+accounts accessed from same NY IP address 162.247.72.27 (which is Tor
+exit relay running by The Calyx Institute
+https://globe.torproject.org/#/relay/6C143720FFF8469EF6A5C5B4066366340CF6C0D1
+) using telegram-cli. They did not have two-factor authentication
+enabled (Telegram by default uses one-time passwords received by SMS,
+but you can also enable "two-factor authentication" which is asking a
+password when you try to login with new device) and they didn't received
+the SMS message, so it's looks like SS7 attack. Russian government known
+for it's exploiting SS7 vulnerabilities (and those are not really
+vulnerabilities which can be easily fixed, those vuls exists because SS7
+was designed that way).
+
+MTS, telecom provider used by Alburov and Kozlovsky, commented that SMS
+receiving was disabled on their accounts for some time.
+
+I also have some evidence that Russian authorities uses same method for
+logging into Facebook accounts (Facebook also have a feature called
+"one-time password" https://www.facebook.com/help/447046021986895 which
+allows to send SMS with text "otp" to Facebook number and receive a code
+which is enough to login into Facebook).
+
+SS7 designed such way so this is not required for attacked to be in same
+country as you. It's not required for your telecom provider to
+cooperate. All you need is an access to SS7. Security services have it,
+private spies have it, and you can have it: there is plenty of companies
+selling SS7 access.
+
+So if you use Telegram, enable two-factor authentification.
+
+If you use Facebook, turn on login approvals
+https://www.facebook.com/help/148233965247823
+
+If you using any service which allows you to login just with code
+received by SMS, find out a way to turn off this or stop using this service.
+
+If you thinking about such feature in your service, please don't do so.
+
+See also:
+
+News report
+https://meduza.io/news/2016/04/29/aktivisty-oppozitsii-pozhalovalis-na-vzlom-telegram-s-odnogo-ip-adresa
+(in Russian)
+
+Kozlovsky's post with details received from MTS
+https://www.facebook.com/kozlovsky/posts/10208948934790884 (in Russian)
+
+The Critical Hole at the Heart of Our Cell Phone Networks
+https://www.wired.com/2016/04/the-critical-hole-at-the-heart-of-cell-phone-infrastructure/
+which covers some previous SS7 attacks by Russian govt and SS7 design
+
+SS7: Locate. Track. Manipulate
+https://www.youtube.com/watch?v=lQ0I5tl0YLY great talk by Tobias Engel
+on 31c3 about SS7
+
+SS7map https://ss7map.p1sec.com map covering SS7 issues
+
+-- 
+https://nesterov.pw
+GPG key: 0CE8 65F1 9043 2B11 25A5 74A7 1187 6869 67AA 56E4
+https://keybase.io/komachi/key.asc
+

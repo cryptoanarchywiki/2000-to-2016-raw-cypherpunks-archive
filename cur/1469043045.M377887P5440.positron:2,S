@@ -1,0 +1,156 @@
+Return-path: <cypherpunks-bounces@cpunks.org>
+Envelope-to: rsw@positron.jfet.org
+Delivery-date: Wed, 20 Jul 2016 12:30:44 -0700
+Received: from antiproton.jfet.org ([209.141.47.85])
+	by positron.jfet.org with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.87)
+	(envelope-from <cypherpunks-bounces@cpunks.org>)
+	id 1bPxCd-0001PU-S3
+	for rsw@positron.jfet.org; Wed, 20 Jul 2016 12:30:44 -0700
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u6KJHxfv024351;
+	Wed, 20 Jul 2016 15:17:59 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=literati-org.20150623.gappssmtp.com header.i=@literati-org.20150623.gappssmtp.com
+	header.b=IwBEtLlo; dkim-adsp=none (unprotected policy);
+	dkim-atps=neutral
+Received: from mail-oi0-f42.google.com (mail-oi0-f42.google.com
+ [209.85.218.42])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u6KJGk0a024342
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Wed, 20 Jul 2016 15:16:47 -0400
+Received: by mail-oi0-f42.google.com with SMTP id l65so85586938oib.1
+ for <cypherpunks@cpunks.org>; Wed, 20 Jul 2016 12:16:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=literati-org.20150623.gappssmtp.com; s=20150623;
+ h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+ bh=BV/qHbr1clVRohzMRvWxBE3+/66aKPNxFR11lwF9wOc=;
+ b=IwBEtLloaRWhgjwxMMk8IHt5Jh1TUgbUuAuUNIsRphz4ldBLI/DdW+mnEyjBPrZNdE
+ Ojiuzq/+bgIzkCxmFJ+j1uP+A7syKsmj7GimSQ0LxHU0K9EHcu88W3XqdMu6MtI64JqA
+ PiCfZyT9nxh+8kB9ZnfGEe1LVHOBEkHZG1ZsqsNag8klJdwmYZQ570iHXXw4ajzIFSij
+ yGYQ5nLEhGl5sDnJsdlUfkHOnzIsNiNpB7bGP7BO2DK4yXAhSW7l6lizESX+8ALKqyuG
+ uuqox0ttRapBEOtWEQSYGqvdtyOZbJ6w7IjmVy7LRWe9NPOAuBVkija6Bjidh4XS3P0Y
+ 407g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+ :message-id:subject:to;
+ bh=BV/qHbr1clVRohzMRvWxBE3+/66aKPNxFR11lwF9wOc=;
+ b=AqeK/Vy3K4DUJBtZdYdjzKaNCtquqDxz/z89WG34R8PsmhCANJ6pnVDPbjIgUt6VM/
+ JQOhH+1RTL2H5yBpySO35GmlYTToeZC4wL61rCYHOEsyeTKs5IWAtYr7FqVY+xMT+7Vv
+ cg5r0DDuz1rrMMnq5D7yE94DNGeWURZrij7ovDxewT+7DgVO5C3LUbhdj+i2VSNCK1m8
+ Hmto7oT/P3WAYyukbpu73F1OPv69VVwyiXlbZZIfzwnXt7pNEjnhsQUvlTrUclJSgNgr
+ 7Cudf/a15h3rextjy2LFeKgkE13/qiCUCWDYhk9+WLelnvYN1zMhEEnO7ceSIkPboRAw
+ RhOw==
+X-Gm-Message-State: ALyK8tJMXdOiM+iEqN7zLdbGYxa3yH1BURRcJrBpsI2zzjGzMb9SUK3GJS9gVJe5T2rQtHrHkv4Uy1LyyCKADg==
+X-Received: by 10.157.7.202 with SMTP id 68mr24753966oto.133.1469042201221;
+ Wed, 20 Jul 2016 12:16:41 -0700 (PDT)
+MIME-Version: 1.0
+References: <20160719091530.GR16437@x220-a02> <578DF584.8030003@riseup.net>
+ <578e9d29.1724c80a.2784a.da4d@mx.google.com> <578F2DAB.9010206@riseup.net>
+ <CAHKdp-mHM85uz_5RfrFnCGM+PVVozxkDoD9ofEF_WZW-9xyyGA@mail.gmail.com>
+ <db91e4a9-99a4-a59f-cc5c-4079161f44eb@riseup.net>
+ <CAHKdp-nwZwccBEjVNyQm9eYhQeFK-mBf_FERZRmf=GBRzsXj9A@mail.gmail.com>
+ <0b7e4e8d-64b9-5af2-dcec-1bdef4509c77@riseup.net>
+ <CAEm6Kb+gHqALGtqd36SmS1hLpA4XcQqS-hVMu8Cyy_oLAfLKEA@mail.gmail.com>
+In-Reply-To: <CAEm6Kb+gHqALGtqd36SmS1hLpA4XcQqS-hVMu8Cyy_oLAfLKEA@mail.gmail.com>
+From: Sean Lynch <seanl@literati.org>
+Date: Wed, 20 Jul 2016 19:16:31 +0000
+Message-ID: <CAHKdp-nCA=NFnCTziON7=s4v=oNONMW9PQJ78ECEhpYbO6r5-g@mail.gmail.com>
+Subject: Re: the most annoying thing about Juan
+To: =?UTF-8?B?0JDQu9C10LrRgdCw0L3QtNGA?= <afalex169@gmail.com>,
+        Rayzer <rayzer@riseup.net>, CypherPunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=94eb2c031310908e040538160aa8
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 78
+
+--94eb2c031310908e040538160aa8
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Jul 20, 2016 at 11:27 AM =D0=90=D0=BB=D0=B5=D0=BA=D1=81=D0=B0=D0=BD=
+=D0=B4=D1=80 <afalex169@gmail.com> wrote:
+
+> 2016-07-20 20:32 GMT+03:00 Rayzer <rayzer@riseup.net>:
+>
+>> Sorry Passion is no excuse for rumor-mongering.
+>>
+> I just happen to know WAY TOO MANY PEOPLE who have been falsely accused
+>> like this.
+>>
+> +1!
+>
+>
+> Innocent until proven guilty. That's the way it's supposed to work in
+>> 'Merica.
+>>
+> that's the way it MUST work in any normal society/person's head. Otherwis=
+e
+> it's medieval inquisition. Period.
+>
+
+So you're saying you'd do business with someone that several people said
+robbed them? Let an accused child molester be alone with your kids because
+they were never convicted?
+
+There are different standards of proof for different functions. "Beyond a
+reasonable doubt" is not necessary for "we don't want this person
+associated with our project/company/etc". No standard whatsoever is
+required for an individual deciding with whom to do business, who to trust
+to watch their kids or housesit, etc.
+
+--94eb2c031310908e040538160aa8
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div class=3D"gmail_quote"><div dir=3D"ltr">On Wed, Jul 20=
+, 2016 at 11:27 AM =D0=90=D0=BB=D0=B5=D0=BA=D1=81=D0=B0=D0=BD=D0=B4=D1=80 &=
+lt;<a href=3D"mailto:afalex169@gmail.com">afalex169@gmail.com</a>&gt; wrote=
+:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;bor=
+der-left:1px #ccc solid;padding-left:1ex"><div dir=3D"ltr"><div class=3D"gm=
+ail_extra"><div class=3D"gmail_quote">2016-07-20 20:32 GMT+03:00 Rayzer <sp=
+an dir=3D"ltr">&lt;<a href=3D"mailto:rayzer@riseup.net" target=3D"_blank">r=
+ayzer@riseup.net</a>&gt;</span>:<br></div></div></div><div dir=3D"ltr"><div=
+ class=3D"gmail_extra"><div class=3D"gmail_quote"><blockquote class=3D"gmai=
+l_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,20=
+4,204);padding-left:1ex"><div bgcolor=3D"#FFFFFF" text=3D"#000000">Sorry Pa=
+ssion is no excuse for rumor-mongering.<br></div></blockquote></div></div><=
+/div><div dir=3D"ltr"><div class=3D"gmail_extra"><div class=3D"gmail_quote"=
+><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border=
+-left:1px solid rgb(204,204,204);padding-left:1ex"><div bgcolor=3D"#FFFFFF"=
+ text=3D"#000000">
+   =20
+    I just happen to know WAY TOO MANY PEOPLE who have been falsely
+    accused like this.</div></blockquote></div>+1!</div></div><div dir=3D"l=
+tr"><div class=3D"gmail_extra"><br><br><blockquote style=3D"margin:0px 0px =
+0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex" class=3D=
+"gmail_quote">Innocent until proven guilty. That&#39;s the way it&#39;s sup=
+posed to work
+    in &#39;Merica. <br clear=3D"all"></blockquote></div></div><div dir=3D"=
+ltr"><div class=3D"gmail_extra">that&#39;s the way it MUST work in any norm=
+al society/person&#39;s head. Otherwise it&#39;s medieval inquisition. Peri=
+od.<br></div></div></blockquote><div><br></div><div>So you&#39;re saying yo=
+u&#39;d do business with someone that several people said robbed them? Let =
+an accused child molester be alone with your kids because they were never c=
+onvicted?</div><div><br>There are different standards of proof for differen=
+t functions. &quot;Beyond a reasonable doubt&quot; is not necessary for &qu=
+ot;we don&#39;t want this person associated with our project/company/etc&qu=
+ot;. No standard whatsoever is required for an individual deciding with who=
+m to do business, who to trust to watch their kids or housesit, etc.</div><=
+/div></div>
+
+--94eb2c031310908e040538160aa8--
+

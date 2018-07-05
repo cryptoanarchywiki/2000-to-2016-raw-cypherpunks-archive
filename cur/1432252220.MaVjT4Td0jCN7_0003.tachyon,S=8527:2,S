@@ -1,0 +1,150 @@
+From owner-cypherpunks@jfet.org  Thu Sep 28 21:26:49 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.7/8.13.7/Debian-1) with ESMTP id k8T1Q3VA012194
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 28 Sep 2006 21:26:03 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.7/8.13.7/Submit) id k8T1Q3am012193
+	for cypherpunks-outgoing; Thu, 28 Sep 2006 21:26:03 -0400
+From: "Anonymous Remailer (austria)" <mixmaster@remailer.privacy.at>
+Comments: This message did not originate from the Sender address above. 
+  It was remailed automatically by anonymizing remailer software. 
+  Please report problems or inappropriate use to the 	remailer
+  administrator at <abuse@remailer.privacy.at>.
+To: cypherpunks@jfet.org
+Subject: Palladium is back. And this time, it's...
+Message-ID: <48d6727413a51f4e33894b1d944e78f4@remailer.privacy.at>
+Date: Fri, 29 Sep 2006 03:25:57 +0200 (CEST)
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 7370
+Lines: 124
+
+In the past few weeks new information has come out on the Trusted
+Computing (TC) front which provides clues to where this powerful
+and controversial technology may be heading.  Much of this has come
+from Intel, which has revealed more information about their LaGrande
+technology, now un-codenamed to Trusted Execution Technology.  A good
+source of links is the Hack the Planet blog, http://wmf.editthispage.com/
+- scroll down to the September 25 entry.
+
+LaGrande was originally designed as the hardware support for Microsoft's
+now-defunct Palladium, relating to the differences between Palladium and
+TCPA (now called TCG).  Both technologies relied on the TPM chip to take
+measurements of running software, report those measurements remotely via
+trusted attestations, and lock encrypted data to those measurements so
+that other software configurations could not decrypt it.  These are the
+core capabilities which give TC its power.  But there were important
+differences in the two approaches.
+
+TCPA was focused on a measured boot process.  As the system boots,
+each stage would measure (i.e. hash into the TPM) the next stage before
+switching control to it.  At the end of this process the TPM's Platform
+Configuration Registers would hold a "fingerprint" of the software
+configuration that had booted.  With a TPM-aware OS the PCRs could be
+further updated as each program launches to keep an up-to-date picture
+of what is running.
+
+Palladium instead wanted to be able to switch to "trusted" mode in mid
+stream, after booting; and wanted to continue to run the legacy OS while
+new applications ran in the trusted area.  LaGrande Technology (LT,
+now TET), in conjunction with new TPM capabilities offered in the 1.2
+chips now available, would provide the support for this "late launch"
+concept.  Palladium is now gone but Intel has continued to develop
+LaGrande and has now released documentation on how it will work, at
+http://www.intel.com/technology/security/.
+
+Late launch starts with the OS or the BIOS executing one of the new
+LT instructions.  This triggers a complex sequence of operations
+whose purpose is to load, measure (ie hash into the TPM) and launch a
+hypervisor, that is, a Virtual Machine Monitor (VMM).  The hypervisor can
+then repackage the state of the launching OS as a Virtual Machine (VM)
+and transfer control back to it.  The OS has now become transparently
+virtualized and is running on top of the VMM.  The VMM can then launch
+secure VMs which execute without being molested by the legacy OS.
+
+Another enhancement of LT is that the chipset can be programmed to prevent
+DMA access to specified memory areas.  This will close a loophole in
+existing VMM systems, that VMs can program DMA devices to overwrite other
+VMs' memory.  This protection is necessary for the TC goal of protected
+execution environments.
+
+Both VMWare and Xen are getting involved with this technology.  As the
+blog entry above says, Intel donated code to Xen a few days ago to support
+much of this functionality, so that Xen will be able to launch in this
+way on TET machines.  Another link from the blog entry is an amazing
+Intel presentation showing how excited the NSA is about this technology.
+Within a couple of years they will be able to acquire Commercial Off
+the Shelf (COTS) systems configured like this, that will allow running
+multiple instances of OS's with different security classifications.
+The slides show a system running two versions of Windows, one for Secret
+and one for Top Secret data, appearing in separate windows on the screen.
+Xen or VMWare with TET will be able to do this very soon if not already.
+
+Here's Intel's description of how software might be configured to use
+this capability, from their "Trusted Execution Technology Architectural
+Overview" linked from the LaGrande page above:
+
+> Trusted Execution Technology provides a set of capabilities that can be
+> utilized in many different operating environments (Figure 2). One proposed
+> architecture provides a protection model similar to the following:
+>
+> A standard partition that provides an execution environment that is
+> identical to today's IA-32 environment. In this environment, users will be
+> able to run applications and other software just as they do on today's
+> PC. The standard partition's obvious advantage is that it preserves
+> the value of the existing code base (i.e. existing software does not
+> need modification to run in the standard partition) and potential future
+> software that is less security conscious. Unfortunately, it also retains
+> the inherent vulnerabilities of today's environment.
+>
+> A protected partition provides a parallel and co-existing environment
+> that will run hardened software that makes use of the hardware-based
+> security foundation enabled by Trusted Execution Technology. Within this
+> environment, different applications can run in isolation, free from being
+> observed or compromised by software running in the standard partition
+> and other applications running in the protected partition. A protected
+> partition requires a Trusted Execution-capable processor, chipset, and
+> a domain manager to provide domain separation. The TPM device protects
+> secrets stored in a Trusted Execution platform when the protected
+> partition is not running. The Trusted Execution Technology protection
+> model can support any domain manager, and future, enhanced OS kernel.
+>
+> Applications can be written to execute within the protected partition or,
+> in most cases, make use of both partitions. In the latter case, much of
+> the application code could still reside within the standard partition
+> (this code manages the human interface and handles I/0) and services
+> written to manipulate secure or sensitive information, would move to
+> modules written for the protected partition.
+
+To anyone who studied what was known as Palladium, this will sound
+strangely familiar.  It is exactly how Microsoft described their system,
+with the legacy side and the secure side, and applications that would
+somehow straddle the two.
+
+So we see, with Intel's release of LaGrande (4Q06), Palladium is back.
+And this time, it's Xen!  Xen is already enhanced to virtualize the TPM
+chip, and has further plans to add capabilities to measure VMs as they
+load and execute.  TET will only improve this functionality and allow
+for full Palladium capabilities in the near future.
+
+It's ironic that opponents of TC frequently claimed that one of its goals
+was to destroy open source software, when here today we see that it is
+in the open source world that TC is thriving.  Xen has support for it,
+the 2.6 Linux kernel has built-in TPM drivers, the trousers.sf.net project
+provides a robust Trusted Software Stack implementation for TPM access,
+and numerous research projects have investigated adding other TPM hooks
+within the Linux kernel.  See also the recent controversy over Linus
+Torvalds' break with the FSF over their efforts to put anti-TC clauses
+into the new GPLv3.
+
+Now it appears that all the capabilities of Palladium, the technology
+people thought was going to be so evil, will be present in the friendly
+face of Linux and Xen.  Maybe this will finally cause the unwashed masses
+to stop believing the easy lies which have been fed to them for so long
+about the nature of TC, and look a little deeper at a technology with
+great power and potential.
+

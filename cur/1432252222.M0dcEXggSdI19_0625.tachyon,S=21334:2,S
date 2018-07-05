@@ -1,0 +1,395 @@
+From owner-cypherpunks@jfet.org  Wed Jun 15 03:06:46 2005
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.13.4/8.13.4/Debian-3) with ESMTP id j5F73bLx011526
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 15 Jun 2005 03:03:37 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.4/8.13.4/Submit) id j5F73bSC011525
+	for cypherpunks-outgoing; Wed, 15 Jun 2005 03:03:37 -0400
+Date: Wed, 15 Jun 2005 09:03:08 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@jfet.org
+Subject: [arma@mit.edu: Tor 0.1.0.10 is released]
+Message-ID: <20050615070308.GY25947@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.5.9i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 20259
+Lines: 368
+
+----- Forwarded message from Roger Dingledine <arma@mit.edu> -----
+
+From: Roger Dingledine <arma@mit.edu>
+Date: Tue, 14 Jun 2005 17:59:34 -0400
+To: or-announce@freehaven.net
+Subject: Tor 0.1.0.10 is released
+User-Agent: Mutt/1.5.9i
+Reply-To: or-talk@freehaven.net
+
+Tor 0.1.0.10, the first stable release of the 0.1.0.x branch, is
+finally ready.
+
+This release features cleanup on Windows, including making NT
+services work; many performance improvements, including libevent to
+use poll/epoll/kqueue when available, and pthreads and better buffer
+management to avoid so much memory bloat; better performance and
+reliability for hidden services; automated self-reachability testing by
+servers; http and https proxy support for clients; and much more support
+for the Tor controller protocol.
+
+http://tor.eff.org/download.html
+
+  o Fixes on Win32:
+    - Make NT services work and start on startup on Win32 (based on
+      patch by Matt Edman). See the FAQ entry for details.
+    - Make 'platform' string in descriptor more accurate for Win32
+      servers, so it's not just "unknown platform".
+    - REUSEADDR on normal platforms means you can rebind to the port
+      right after somebody else has let it go. But REUSEADDR on Win32
+      means you can bind to the port _even when somebody else already
+      has it bound_! So, don't do that on Win32.
+    - Clean up the log messages when starting on Win32 with no config
+      file.
+    - Allow seeding the RNG on Win32 even when you're not running as
+      Administrator. If seeding the RNG on Win32 fails, quit.
+
+  o Assert / crash bugs:
+    - Refuse relay cells that claim to have a length larger than the
+      maximum allowed. This prevents a potential attack that could read
+      arbitrary memory (e.g. keys) from an exit server's process.
+    - If unofficial Tor clients connect and send weird TLS certs, our
+      Tor server triggers an assert. Stop asserting, and start handling
+      TLS errors better in other situations too.
+    - Fix a race condition that can trigger an assert when we have a
+      pending create cell and an OR connection attempt fails.
+
+  o Resource leaks:
+    - Use pthreads for worker processes rather than forking. This was
+      forced because when we forked, we ended up wasting a lot of
+      duplicate ram over time.
+      - Also switch to foo_r versions of some library calls to allow
+        reentry and threadsafeness.
+      - Implement --disable-threads configure option. Disable threads on
+        netbsd and openbsd by default, because they have no reentrant
+        resolver functions (!), and on solaris since it has other
+        threading issues.
+    - Fix possible bug on threading platforms (e.g. win32) which was
+      leaking a file descriptor whenever a cpuworker or dnsworker died.
+    - Fix a minor memory leak when somebody establishes an introduction
+      point at your Tor server.
+    - Fix possible memory leak in tor_lookup_hostname(). (Thanks to
+      Adam Langley.)
+    - Add ./configure --with-dmalloc option, to track memory leaks.
+    - And try to free all memory on closing, so we can detect what
+      we're leaking.
+
+  o Protocol correctness:
+    - When we've connected to an OR and handshaked but didn't like
+      the result, we were closing the conn without sending destroy
+      cells back for pending circuits. Now send those destroys.
+    - Start sending 'truncated' cells back rather than destroy cells
+      if the circuit closes in front of you. This means we won't have
+      to abandon partially built circuits.
+    - Handle changed router status correctly when dirserver reloads
+      fingerprint file. We used to be dropping all unverified descriptors
+      right then. The bug was hidden because we would immediately
+      fetch a directory from another dirserver, which would include the
+      descriptors we just dropped.
+    - Revise tor-spec to add more/better stream end reasons.
+    - Revise all calls to connection_edge_end to avoid sending 'misc',
+      and to take errno into account where possible.
+    - Client now retries when streams end early for 'hibernating' or
+      'resource limit' reasons, rather than failing them.
+    - Try to be more zealous about calling connection_edge_end when
+      things go bad with edge conns in connection.c.
+
+  o Robustness improvements:
+    - Better handling for heterogeneous / unreliable nodes:
+      - Annotate circuits with whether they aim to contain high uptime
+        nodes and/or high capacity nodes. When building circuits, choose
+        appropriate nodes.
+      - This means that every single node in an intro rend circuit,
+        not just the last one, will have a minimum uptime.
+      - New config option LongLivedPorts to indicate application streams
+        that will want high uptime circuits.
+      - Servers reset uptime when a dir fetch entirely fails. This
+        hopefully reflects stability of the server's network connectivity.
+      - If somebody starts his tor server in Jan 2004 and then fixes his
+        clock, don't make his published uptime be a year.
+      - Reset published uptime when we wake up from hibernation.
+    - Introduce a notion of 'internal' circs, which are chosen without
+      regard to the exit policy of the last hop. Intro and rendezvous
+      circs must be internal circs, to avoid leaking information. Resolve
+      and connect streams can use internal circs if they want.
+    - New circuit pooling algorithm: keep track of what destination ports
+      we've used recently (start out assuming we'll want to use 80), and
+      make sure to have enough circs around to satisfy these ports. Also
+      make sure to have 2 internal circs around if we've required internal
+      circs lately (and with high uptime if we've seen that lately too).
+    - Turn addr_policy_compare from a tristate to a quadstate; this should
+      help address our "Ah, you allow 1.2.3.4:80. You are a good choice
+      for google.com" problem.
+    - When a client asks us for a dir mirror and we don't have one,
+      launch an attempt to get a fresh one.
+    - First cut at support for "create-fast" cells. Clients can use
+      these when extending to their first hop, since the TLS already
+      provides forward secrecy and authentication. Not enabled on
+      clients yet.
+
+  o Reachability testing.
+    - Your Tor server will automatically try to see if its ORPort and
+      DirPort are reachable from the outside, and it won't upload its
+      descriptor until it decides at least ORPort is reachable (when
+      DirPort is not yet found reachable, publish it as zero).
+    - When building testing circs for ORPort testing, use only
+      high-bandwidth nodes, so fewer circuits fail.
+    - Notice when our IP changes, and reset stats/uptime/reachability.
+    - Authdirservers don't do ORPort reachability detection, since
+      they're in clique mode, so it will be rare to find a server not
+      already connected to them.
+    - Authdirservers now automatically approve nodes running 0.1.0.2-rc
+      or later.
+
+  o Dirserver fixes:
+    - Now we allow two unverified servers with the same nickname
+      but different keys. But if a nickname is verified, only that
+      nickname+key are allowed.
+    - If you're an authdirserver connecting to an address:port,
+      and it's not the OR you were expecting, forget about that
+      descriptor. If he *was* the one you were expecting, then forget
+      about all other descriptors for that address:port.
+    - Allow servers to publish descriptors from 12 hours in the future.
+      Corollary: only whine about clock skew from the dirserver if
+      he's a trusted dirserver (since now even verified servers could
+      have quite wrong clocks).
+    - Require servers that use the default dirservers to have public IP
+      addresses. We have too many servers that are configured with private
+      IPs and their admins never notice the log entries complaining that
+      their descriptors are being rejected.
+
+  o Efficiency improvements:
+    - Use libevent. Now we can use faster async cores (like epoll, kpoll,
+      and /dev/poll), and hopefully work better on Windows too.
+      - Apple's OS X 10.4.0 ships with a broken kqueue API, and using
+        kqueue on 10.3.9 causes kernel panics. Don't use kqueue on OS X.
+      - Find libevent even if it's hiding in /usr/local/ and your
+        CFLAGS and LDFLAGS don't tell you to look there.
+      - Be able to link with libevent as a shared library (the default
+        after 1.0d), even if it's hiding in /usr/local/lib and even
+        if you haven't added /usr/local/lib to your /etc/ld.so.conf,
+        assuming you're running gcc. Otherwise fail and give a useful
+        error message.
+    - Switch to a new buffer management algorithm, which tries to avoid
+      reallocing and copying quite as much. In first tests it looks like
+      it uses *more* memory on average, but less cpu.
+    - Switch our internal buffers implementation to use a ring buffer,
+      to hopefully improve performance for fast servers a lot.
+    - Reenable the part of the code that tries to flush as soon as an
+      OR outbuf has a full TLS record available. Perhaps this will make
+      OR outbufs not grow as huge except in rare cases, thus saving lots
+      of CPU time plus memory.
+    - Improve performance for dirservers: stop re-parsing the whole
+      directory every time you regenerate it.
+    - Keep a big splay tree of (circid,orconn)->circuit mappings to make
+      it much faster to look up a circuit for each relay cell.
+    - Remove most calls to assert_all_pending_dns_resolves_ok(),
+      since they're eating our cpu on exit nodes.
+    - Stop wasting time doing a case insensitive comparison for every
+      dns name every time we do any lookup. Canonicalize the names to
+      lowercase when you first see them.
+
+  o Hidden services:
+    - Handle unavailable hidden services better. Handle slow or busy
+      hidden services better.
+    - Cannibalize GENERAL circs to be C_REND, C_INTRO, S_INTRO, and S_REND
+      circ as necessary, if there are any completed ones lying around
+      when we try to launch one.
+    - Make hidden services try to establish a rendezvous for 30 seconds
+      after fetching the descriptor, rather than for n (where n=3)
+      attempts to build a circuit.
+    - Adjust maximum skew and age for rendezvous descriptors: let skew
+      be 48 hours rather than 90 minutes.
+    - Reject malformed .onion addresses rather then passing them on as
+      normal web requests.
+
+  o Controller:
+    - More Tor controller support. See
+      http://tor.eff.org/doc/control-spec.txt for all the new features,
+      including signals to emulate unix signals from any platform;
+      redirectstream; extendcircuit; mapaddress; getinfo; postdescriptor;
+      closestream; closecircuit; etc.
+    - Encode hashed controller passwords in hex instead of base64,
+      to make it easier to write controllers.
+    - Revise control spec and implementation to allow all log messages to
+      be sent to controller with their severities intact (suggested by
+      Matt Edman). Disable debug-level logs while delivering a debug-level
+      log to the controller, to prevent loop. Update TorControl to handle
+      new log event types.
+
+  o New config options/defaults:
+    - Begin scrubbing sensitive strings from logs by default. Turn off
+      the config option SafeLogging if you need to do debugging.
+    - New exit policy: accept most low-numbered ports, rather than
+      rejecting most low-numbered ports.
+    - Put a note in the torrc about abuse potential with the default
+      exit policy.
+    - Add support for CONNECTing through https proxies, with "HttpsProxy"
+      config option.
+    - Add HttpProxyAuthenticator and HttpsProxyAuthenticator support
+      based on patch from Adam Langley (basic auth only).
+    - Bump the default BandwidthRate from 1 MB to 2 MB, to accommodate
+      the fast servers that have been joining lately. (Clients are now
+      willing to load balance over up to 2 MB of advertised bandwidth
+      capacity too.)
+    - New config option MaxAdvertisedBandwidth which lets you advertise
+      a low bandwidthrate (to not attract as many circuits) while still
+      allowing a higher bandwidthrate in reality.
+    - Require BandwidthRate to be at least 20kB/s for servers.
+    - Add a NoPublish config option, so you can be a server (e.g. for
+      testing running Tor servers in other Tor networks) without
+      publishing your descriptor to the primary dirservers.
+    - Add a new AddressMap config directive to rewrite incoming socks
+      addresses. This lets you, for example, declare an implicit
+      required exit node for certain sites.
+    - Add a new TrackHostExits config directive to trigger addressmaps
+      for certain incoming socks addresses -- for sites that break when
+      your exit keeps changing (based on patch from Mike Perry).
+    - Split NewCircuitPeriod option into NewCircuitPeriod (30 secs),
+      which describes how often we retry making new circuits if current
+      ones are dirty, and MaxCircuitDirtiness (10 mins), which describes
+      how long we're willing to make use of an already-dirty circuit.
+    - Change compiled-in SHUTDOWN_WAIT_LENGTH from a fixed 30 secs to
+      a config option "ShutdownWaitLength" (when using kill -INT on
+      servers).
+    - Fix an edge case in parsing config options: if they say "--"
+      on the commandline, it's not a config option (thanks weasel).
+    - New config option DirAllowPrivateAddresses for authdirservers.
+      Now by default they refuse router descriptors that have non-IP or
+      private-IP addresses.
+    - Change DirFetchPeriod/StatusFetchPeriod to have a special "Be
+      smart" default value: low for servers and high for clients.
+    - Some people were putting "Address  " in their torrc, and they had
+      a buggy resolver that resolved " " to 0.0.0.0. Oops.
+    - If DataDir is ~/.tor, and that expands to /.tor, then default to
+      LOCALSTATEDIR/tor instead.
+    - Implement --verify-config command-line option to check if your torrc
+      is valid without actually launching Tor.
+
+  o Logging improvements:
+    - When dirservers refuse a server descriptor, we now log its
+      contactinfo, platform, and the poster's IP address.
+    - Only warn once per nickname from add_nickname_list_to_smartlist()
+      per failure, so an entrynode or exitnode choice that's down won't
+      yell so much.
+    - When we're connecting to an OR and he's got a different nickname/key
+      than we were expecting, only complain loudly if we're an OP or a
+      dirserver. Complaining loudly to the OR admins just confuses them.
+    - Whine at you if you're a server and you don't set your contactinfo.
+    - Warn when exit policy implicitly allows local addresses.
+    - Give a better warning when some other server advertises an
+      ORPort that is actually an apache running ssl.
+    - If we get an incredibly skewed timestamp from a dirserver mirror
+      that isn't a verified OR, don't warn -- it's probably him that's
+      wrong.
+    - When a dirserver causes you to give a warn, mention which dirserver
+      it was.
+    - Initialize libevent later in the startup process, so the logs are
+      already established by the time we start logging libevent warns.
+    - Use correct errno on win32 if libevent fails.
+    - Check and warn about known-bad/slow libevent versions.
+    - Stop warning about sigpipes in the logs. We're going to
+      pretend that getting these occassionally is normal and fine.
+
+  o New contrib scripts:
+    - New experimental script tor/contrib/exitlist: a simple python
+      script to parse directories and find Tor nodes that exit to listed
+      addresses/ports.
+    - New experimental script tor/contrib/ExerciseServer.py (needs more
+      work) that uses the controller interface to build circuits and
+      fetch pages over them. This will help us bootstrap servers that
+      have lots of capacity but haven't noticed it yet.
+    - New experimental script tor/contrib/PathDemo.py (needs more work)
+      that uses the controller interface to let you choose whole paths
+      via addresses like
+      "<hostname>.<path,separated by dots>.<length of path>.path"
+    - New contributed script "privoxy-tor-toggle" to toggle whether
+      Privoxy uses Tor. Seems to be configured for Debian by default.
+    - Have torctl.in/tor.sh.in check for location of su binary (needed
+      on FreeBSD)
+
+  o Misc bugfixes:
+    - chdir() to your datadirectory at the *end* of the daemonize process,
+      not the beginning. This was a problem because the first time you
+      run tor, if your datadir isn't there, and you have runasdaemon set
+      to 1, it will try to chdir to it before it tries to create it. Oops.
+    - Fix several double-mark-for-close bugs, e.g. where we were finding
+      a conn for a cell even if that conn is already marked for close.
+    - Stop most cases of hanging up on a socks connection without sending
+      the socks reject.
+    - Fix a bug in the RPM package: set home directory for _tor to
+      something more reasonable when first installing.
+    - Stop putting nodename in the Platform string in server descriptors.
+      It doesn't actually help, and it is confusing/upsetting some people.
+    - When using preferred entry or exit nodes, ignore whether the
+      circuit wants uptime or capacity. They asked for the nodes, they
+      get the nodes.
+    - Tie MAX_DIR_SIZE to MAX_BUF_SIZE, so now directory sizes won't get
+      artificially capped at 500kB.
+    - Cache local dns resolves correctly even when they're .exit
+      addresses.
+    - If we're hibernating and we get a SIGINT, exit immediately.
+    - tor-resolve requests were ignoring .exit if there was a working circuit
+      they could use instead.
+    - Pay more attention to the ClientOnly config option.
+    - Resolve OS X installer bugs: stop claiming to be 0.0.9.2 in certain
+      installer screens; and don't put stuff into StartupItems unless
+      the user asks you to.
+
+  o Misc features:
+    - Rewrite address "serifos.exit" to "externalIP.serifos.exit"
+      rather than just rejecting it.
+    - If our clock jumps forward by 100 seconds or more, assume something
+      has gone wrong with our network and abandon all not-yet-used circs.
+    - When an application is using socks5, give him the whole variety of
+      potential socks5 responses (connect refused, host unreachable, etc),
+      rather than just "success" or "failure".
+    - A more sane version numbering system. See
+      http://tor.eff.org/cvs/tor/doc/version-spec.txt for details.
+    - Change version parsing logic: a version is "obsolete" if it is not
+      recommended and (1) there is a newer recommended version in the
+      same series, or (2) there are no recommended versions in the same
+      series, but there are some recommended versions in a newer series.
+      A version is "new" if it is newer than any recommended version in
+      the same series.
+    - Report HTTP reasons to client when getting a response from directory
+      servers -- so you can actually know what went wrong.
+    - Reject odd-looking addresses at the client (e.g. addresses that
+      contain a colon), rather than having the server drop them because
+      they're malformed.
+    - Stop publishing socksport in the directory, since it's not
+      actually meant to be public. For compatibility, publish a 0 there
+      for now.
+    - Since we ship our own Privoxy on OS X, tweak it so it doesn't write
+      cookies to disk and doesn't log each web request to disk. (Thanks
+      to Brett Carrington for pointing this out.)
+    - Add OSX uninstall instructions. An actual uninstall script will
+      come later.
+    - Add "opt hibernating 1" to server descriptor to make it clearer
+      whether the server is hibernating.
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a>
+______________________________________________________________
+ICBM: 48.07100, 11.36820            http://www.leitl.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+
+[demime 1.01d removed an attachment of type application/pgp-signature which had a name of signature.asc]
+

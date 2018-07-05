@@ -1,0 +1,203 @@
+From owner-cypherpunks@al-qaeda.net  Mon Jul  2 08:39:05 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q62CaDZd017509
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 2 Jul 2012 08:36:13 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q62CaDc0017508
+	for cypherpunks-outgoing; Mon, 2 Jul 2012 08:36:13 -0400
+Date: Mon, 2 Jul 2012 14:36:10 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: Re: [tahoe-dev] switching from introducers to gossip?
+Message-ID: <20120702123610.GR12615@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Brian <warner@lothar.com> -----
+
+From: Brian <warner@lothar.com>
+Date: Sun, 01 Jul 2012 17:51:30 -0700
+To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+Subject: Re: [tahoe-dev] switching from introducers to gossip?
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6;
+	rv:13.0) Gecko/20120614 Thunderbird/13.0.1
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+On 6/14/12 1:02 PM, Zooko Wilcox-O'Hearn wrote:
+
+> Brian has been posting patches that move away from using introducers
+> at all in favor of "gossip". Now if I understand correctly, gossip is
+> simply "every node is an introducer (in addition to whatever other
+> jobs it does)".
+
+Yeah, the general idea is that all nodes provide the "grid-control"
+service, in addition to the "storage" service they might be providing
+right now. Nodes announce both "grid-control" and "storage" via the same
+introducer Announcements as before. The old Introducer becomes a node
+that only provides "grid-control", on a pre-published FURL.
+
+"grid-control" lets you publish Announcements (either your own or ones
+you're forwarding from others), and subscribe to the same.
+
+Once that is in place, and we have some code to prevent infinite
+flooding loops, there are several different approaches you could take:
+
+* fully-connected mesh: every node makes a Foolscap connection to every
+  grid-control provider they hear about, subscribe to hear about all
+  announcements, and publish any announcements that the other side
+  doesn't already know about.
+* opportunistic: clients only connect to storage servers, and storage
+  servers don't make outbound connections to anybody, but if you *do*
+  happen to be connected to someone who also offers "grid-control", then
+  connect to their grid-control object too and exchange Announcements
+* cluster-of-Introducers: normal nodes don't offer grid-control, but
+  multiple Introducers do, and all of them know about each other. All
+  nodes connect to all grid-control providers (which means all
+  Introducers).
+* one Introducer: this is just a degenerate cluster-of-Introducers
+
+> Hrm. This idea of gossip conflicts with my idea that each server
+> should attempt to connect to all clients -- and only to clients -- and
+> that each client should attempt to connect to all servers -- and only
+> to servers (#344, #1086).
+
+I think we can probably accomodate that. I'm optimizing for our two main
+use cases: friendnet and paid-service.
+
+In the friendnet, nearly all nodes are both a client *and* a server.
+Client-only nodes (like the one I occasionally connect to VG2 to
+investigate bug reports), or server-only nodes (imagine a paid storage
+server, the "rent-a-friend" idea I've talked about before) are rare. So
+ruling out C->C or S->S connections doesn't change very much.
+
+In the paid-service case (allmydata), we don't want clients talking to
+each other (they're all behind NAT anyways). But we could allow S->S
+connections without problems, and if all servers know about all other
+servers, then we could add new servers to the grid by just connecting
+them to at least one existing server, and knowledge of them would flood
+quickly and reliably to everyone else.
+
+> It would also interact somewhat poorly with #444
+
+Note that we don't need active+online connections to all other nodes all
+the time. Connecting with less than 100% duty cycle would still get the
+information distributed eventually. What I'm really expecting is that
+we'll use Zooko's clever log-scaling flooding techniques (from Mnet) to
+limit the amount of traffic and connections but still achieve
+rapid+reliable diffusion of knowledge.
+
+> In fact, why do we need to switch from introducers to gossip at all?
+> Could we finish the rest of the #466 new-introduction-protocol and
+> related accounting infrastructure while leaving the current
+> centralized introducer (or the #68 multiple introducers) alone?
+
+They aren't interdependent, for sure. Now that #466 is in trunk, we've
+got a handle on Announcements (i.e. the node key that signs each one) so
+recipients can make decisions about whether they'll accept the thing
+being introduced or not, independently of the channel by which they
+received the announcement. *That* is important to unlock alternate
+introduction topologies: without signed announcements, the only form of
+grid control you can get is to limit who gets access to the Introducer
+(as the VG2 folks accomplish by changing the introducer.furl each time
+it is accidentally leaked). But with signed announcements, you don't
+need control over the channel to retain control over which servers your
+client uses, or over which clients your server will serve. You could
+even safely use a single massive universe-spanning broadcast channel, if
+you could make it efficient enough.
+
+And the first steps of Accounting don't require changes to introduction
+at all. These steps will enable tracking of who-uses-what, and manual
+control (probably by pasting nodeids into tahoe.cfg) over both
+which-servers-should-I-use and which-clients-should-I-accept. This needs
+signed announcements (to get a strong nodeid of a server) and signed
+accounting-facet-of-storage-server FURLification messages (so clients
+can demonstrate control of a key). The main question is whether nodes
+which are both clients and servers should have a single key, or two
+separate keys (I prefer a single key, because it makes reciprocal
+storage-permission grants easier).
+
+The second steps of Accounting, where we try to make things easy and
+automatic for our common use cases, is where we start getting into my
+Invitation scheme, and is where gossip becomes more interesting. What I
+really want is to make it super-easy for a new user to get their node
+running and connected to their friend's existing grid. And, more
+importantly, for that *first* friend to set up that grid.
+
+Imagine for a moment that we have a nicely-packaged OS-X or debian app,
+already distributed via the mac App Store or through apt/etc. And also
+imagine that we've got uPnP working (or something equivalent, maybe
+involving a relay or some helper service that we run), so NAT isn't a
+problem. Then this is my goal:
+
+  The first friend (Alice) hears about Tahoe from her favorite blog, and
+  installs it with her favorite package manager. She lauches it for the
+  first time, and it asks "start your own grid, or join someone
+  else's?", and she picks "start your own". Her node starts up,
+  establishes an external IP address, sets itself up to restart at
+  reboot, and announces that Alice is now the proud member of a 1-node
+  grid, and that she should invite a few friends to join before she'll
+  get more than educational value out of the system. She hits the
+  "Invite A Friend" button, types Bob's (pet)name and email address into
+  the box, and the node sends Bob a message with links to the
+  application, instructions, and an invitation code.
+
+  Bob gets Alice's email, downloads+installs the app, and pastes in the
+  invitation code. The next thing he sees is a picture of the two-node
+  grid, with the Alice and Bob nodes labeled, and he can upload files
+  and either retrieve them locally or share them with Alice.
+
+  Later, Alice and Bob invite other people to join in their grid. The
+  only grid-specific coordinates that each new member needs is a
+  single-use invitation code like "d77hbsmkgeufjpwacu3ywkbwem".
+  Eventually, Alice leaves the grid, but her departure doesn't affect
+  the remaining members: they can still connect and exchange shares as
+  usual.
+
+  All grid members get a control panel where they can see who else is
+  using their storage, allow/deny access, and control where their own
+  node places shares. By default, anyone who gets invited to join the
+  grid gets full access to storage on all members' servers, but access
+  can be revoked at any time.
+
+The corresponding story with an AllMyData-like paid-service is:
+
+  Alice visits allmydata.com, signs up for the service with a credit
+  card, downloads the client app and gets an invitation code for her
+  account. She pastes the invitation code into the "accept an
+  invitation" box when her app starts up.
+
+  Her app connects to all AllMyData storage servers and is allowed
+  storage access. New servers can be added without Alice's involvement.
+  Any subset of the servers can go away without affecting her ability to
+  connect to (or learn about) the rest.
+
+To support those stories, I don't want Alice (or AllMyData) to be
+running a single Introducer, or even a cluster of Introducers. Alice,
+Bob, and the other members of the friendnet should *all* be helping each
+other connect to the rest of their grid.. otherwise they have to pay
+attention to how many Introducers are present, and who's responsible for
+them, and make sure there are enough left available to accomodate
+changes.
+
+Does that help explain my interest in gossip-based introduction?
+
+cheers,
+ -Brian
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

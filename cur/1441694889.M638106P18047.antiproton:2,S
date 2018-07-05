@@ -1,0 +1,78 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t886lj72018028;
+	Tue, 8 Sep 2015 02:47:48 -0400
+Received: from cannabis.dataforce.net (cannabis.dataforce.net [195.42.160.49])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id
+ t886lhT8018024
+ for <cypherpunks@cpunks.org>; Tue, 8 Sep 2015 02:47:44 -0400
+Received: by cannabis.dataforce.net (Postfix, from userid 12794)
+ id 37C524A1999; Tue,  8 Sep 2015 09:47:41 +0300 (MSK)
+Date: Tue, 8 Sep 2015 09:47:38 +0300
+From: Georgi Guninski <guninski@guninski.com>
+To: Peter Gutmann <pgut001@cs.auckland.ac.nz>
+Subject: Re: Possible crypto backdoor in RFC-2631 Diffie-Hellman Key
+ Agreement Method
+Message-ID: <20150908064738.GA2715@sivokote.iziade.m$>
+References: <20150903112721.GA2732@sivokote.iziade.m$>
+ <9A043F3CF02CD34C8E74AC1594475C73F4AF0463@uxcn10-5.UoA.auckland.ac.nz>
+ <20150904082605.GA2705@sivokote.iziade.m$>
+ <20150904113437.GB2705@sivokote.iziade.m$>
+ <20150904120816.GC2705@sivokote.iziade.m$>
+ <20150905052803.GA2661@sivokote.iziade.m$>
+ <CA+bTbPDoQi030MN4j8E4fmx_KOQP48xsbJjGM4X2rk=_E3zgZQ@mail.gmail.com>
+ <20150905070749.GC2661@sivokote.iziade.m$>
+ <CA+bTbPCHKm_n8ei9qw6yx=VVbHh+z8jQ1GNYa+gs6ZLC0AfxyQ@mail.gmail.com>
+ <9A043F3CF02CD34C8E74AC1594475C73F4AF36EE@uxcn10-5.UoA.auckland.ac.nz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9A043F3CF02CD34C8E74AC1594475C73F4AF36EE@uxcn10-5.UoA.auckland.ac.nz>
+header: best read with a sniffer
+User-Agent: Mutt/1.5.20 (2009-06-14)
+Cc: "cypherpunks@cpunks.org" <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 31
+
+On Sat, Sep 05, 2015 at 11:45:07AM +0000, Peter Gutmann wrote:
+> So if you generate them yourself, you're OK.  If you get them from a CA then
+> you don't need to care because if the CA wants to attack you then they can
+> just issue a forged cert in your name and don't need to worry about
+> backdooring the params (in any case using shared params is a bad idea because
+> they allow forgery of signatures on certificates. Suppose that the certificate
+> contains a copy of the certificate signer's DSA parameters, and the verifier
+> of the certificate has a copy of the signer's public key but not the signer's
+> DSA parameters (which are shared with other keys). If the verifier uses the
+> DSA parameters from the certificate along with the signer's public key to
+> verify the signature on the certificate, then an attacker can create bogus
+> certificates by choosing a random u and finding its inverse v modulo q (uv is
+> congruent to 1 modulo q).  Then take the certificate signer's public key g^x
+> and compute g' = (g^x)^u. Then g'^v = g^x.  Using the DSA parameters p, q, g',
+> the signer's public key corresponds to the private key v, which the attacker
+> knows.  The attacker can then create a bogus certificate, put parameters (p,
+> q, g') in it, and sign it with the DSA private key v to create an apparently
+> valid certificate).
+>
+
+Sorry but I don't understand the final stage of the attack.
+
+If I follow correctly, you start from public DSA key
+with strong parameters and produce another keypair,
+which is related to the original key, but is distinct
+from it.
+
+What is the final stage of the attack?
+
+

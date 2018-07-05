@@ -1,0 +1,118 @@
+From owner-cypherpunks@lne.com  Mon Aug 11 11:28:09 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h7BFS7o13242
+	for <rsw@jfet.org>; Mon, 11 Aug 2003 11:28:07 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h7BFBo2d018671
+	for cypherpunks-goingout345; Mon, 11 Aug 2003 08:11:50 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Mon, 11 Aug 2003 17:04:56 +0200 (CEST)
+From: Thomas Shaddack <shaddack@ns.arachne.cz>
+X-X-Sender: <shad@Zeta>
+To: cypherpunks <cypherpunks@lne.com>
+Subject: Idea: Homemade Passive Radar System (GNU/Radar)
+Message-ID: <Pine.LNX.4.33.0308111538000.23560-100000@Zeta>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 4829
+Lines: 93
+
+The current developments in international politics, mainly the advent of
+rogue states attacking sovereign countries from air, causes a necessity of
+proliferation of cheap air defense solutions. Key part of air defense is
+the awareness, usually maintained by a network of ground radar stations.
+
+In the end of 50's, Czech Republic developed a passive radar system called
+PRP-1/Kopac (Korelacni Patrac, Correlation Seeker), which was later
+replaced by more advanced system Ramona and even more advanced Tamara.
+Then the Revolution came, bringing the inevitable international pressures
+that led to the bankrupcy of the Tamara developer company, following false
+indictments of its top managements which lead to revocation of the
+company's arms sale licence. Shortly after this, articles in the world
+press appeared about "groundbreaking" passive radar system being developed
+by - guess who? Lockheed. (After "15 years of research", good part of
+which consisted from reverse-engineering of seized shipment of I am not
+sure if Ramonas or Tamaras.)
+
+See also http://www.techtydenik.cz/tt1998/tt10/panoram5.htm
+
+The system allows locating and identification of aerial, ground, and (when
+installed on the shore) sea-based EM sources.
+
+The passive radar system consists from four main parts. Three are wideband
+receivers, listening for any characteristical transmitting activity. They
+talk to the fourth one, where a correlator is located - an electronic
+system calculating the position of the signal sources from the differences
+of times when the listening posts received their signals.
+
+The civilian sector electronics is developing fast; component prices fall
+down, computing power goes up, anybody can buy a machine that just few
+decades ago would make everyone in Pentagon salivating. Naturally, this
+opens interesting possibilities.
+
+The threat rogue states with overwhelming air force pose to other
+countries makes it a necessity to develop a cheap, open passive radar
+system, effectively bringing a key part of air defense down to easy
+affordability on a municipiality level. Let's call it GNU/Radar.
+
+We need the four stations: three listening ones, and the correlating one.
+
+The correlating station (CS) may be built as a MOSIX or Beowulf cluster.
+Its job is to handle signals from LPs, identifying the targets, and
+tracking their position.
+
+The listening posts (LPs) need a receiver - a suitably wideband one, a
+digitizer (a fast ADC card), optionally a DSP board to take some
+calculations off the shoulders of the CPU, a source of precise timebase
+for synchronizations (may be a GPS, which also provides information about
+the location of the listening post which is what the CS needs to know, or
+may be a receiver of a time synchronization signal broadcasted from
+somewhere if we want a backup for case of GPS being shut down. The
+receiver may be possibly adapted from the GNU/Radio project. The timing
+pulses can be also delivered optically, eg. by a modification in the Ronja
+unit mentioned later.
+
+The LPs crunch the received signals, isolate the interesting-looking ones,
+mark the precise moments of their reception, and send their arrival times
+and key characteristics to CS. The transmission channel may be anything
+with sufficient bandwidth - from an Internet leased line to Ronja-based
+10Mbps optical links in case of direct visibility between LPs and CS.
+
+As an active twist, we can also use a separate unit, Illuminating
+Transceiver (IT), periodically broadcasting a pulse of known
+characteristics, easy to recognize by the LPs when it bounces from an
+aerial target. This unit has to be cheap and expendable - it's easy to
+locate and to destroy by a HARM missile. As a bonus, forcing the adversary
+to waste a $250,000+ AGM-88 missile on a sub-$100 transmitter may be quite
+demoralizing. There can be a whole hierarchy of ITs; when one of them
+transmits, the other ones sleep - when the transmitting one is destroyed,
+one of the sleeping units wakes up and continues in illuminating the
+airspace. This is within reach of capabilities of a simple
+microcontroller.
+
+Even other sources can serve as involuntary ITs. The landscape is littered
+with cellular base stations and civilian TV and radio transmitters. Just
+pick the suitable frequency and listen on.
+
+Remember that Kopac was built about 50 years ago, on vacuum tubes. It
+should be far from impossible to replicate it with contemporary COTS
+electronics.
+
+Using lower frequencies than the gigahertz band usual for modern military
+radars reduces accuracy, but also dramatically reduces the effectivity of
+aircraft stealth features.
+
+There are already prototype results in this field:
+http://www.wired.com/news/print/0,1294,16762,00.html
+
+Some other sources:
+http://ronja.twibright.com/
+http://slashdot.org/articles/01/06/11/1617239.shtml
+
+Opinions, comments, ideas?
+

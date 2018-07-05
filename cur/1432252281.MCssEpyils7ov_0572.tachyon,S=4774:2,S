@@ -1,0 +1,97 @@
+From coderman@gmail.com  Fri Sep 21 07:19:38 2007
+Return-Path: <coderman@gmail.com>
+Received: from mu-out-0910.google.com (mu-out-0910.google.com [209.85.134.191])
+	by proton.jfet.org (8.13.8/8.13.8/Debian-3) with ESMTP id l8LBJam6022064
+	for <rsw@jfet.org>; Fri, 21 Sep 2007 07:19:38 -0400
+Received: by mu-out-0910.google.com with SMTP id w1so944537mue
+        for <rsw@jfet.org>; Fri, 21 Sep 2007 04:19:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=beta;
+        h=domainkey-signature:received:received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+        bh=eXNGVMLhBPPl1jfxmRG+uFVgZ/NQmaXzx5cOvkxcy9g=;
+        b=lrG2HWjc79yBN9JMCqfI2fWlqMnak8YkHseA7WV6Dtr13pK4EuOsqjjnX4UFRfyntyOy7tqBNSB61l77eUtBrR5INMynchaltAlk+G3Cr/6TmGPUp3WLkBnB3nhbS+U5gPHzKZJjuHh9fTFaqIg+0oQjmpOaMnPZhkvMEJaCUvM=
+DomainKey-Signature: a=rsa-sha1; c=nofws;
+        d=gmail.com; s=beta;
+        h=received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+        b=oD8rjvHxFJgfOZ6kZ3QltcuRUy9ejU8U7worPKk39j6+q6PUb7pwHFQX9/UQ8H9AdCeohGMKX2LikyNVM985OFQMksMg3CUviAgX4gTob/y2Lto33gdb7HQ+HvBdoOePoZ9cMEmxLXlK0gTmADtBgqZ3eqYTjFNdL7zIZgiDcqU=
+Received: by 10.82.170.2 with SMTP id s2mr4506915bue.1190373574394;
+        Fri, 21 Sep 2007 04:19:34 -0700 (PDT)
+Received: by 10.82.149.15 with HTTP; Fri, 21 Sep 2007 04:19:34 -0700 (PDT)
+Message-ID: <4ef5fec60709210419q9390f83qeb8fae6d56b4e0e9@mail.gmail.com>
+Date: Fri, 21 Sep 2007 04:19:34 -0700
+From: coderman <coderman@gmail.com>
+To: "Tyler Durden" <camera_lumina@hotmail.com>
+Subject: Re: cpunks downtime
+Cc: "Riad S. Wahby" <rsw@jfet.org>, cypherpunks@jfet.org
+In-Reply-To: <BLU116-W8D16721473E69BC389AA49BBA0@phx.gbl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+References: <20070917143957.GA13305@proton.jfet.org>
+	 <BLU116-W8D16721473E69BC389AA49BBA0@phx.gbl>
+Status: O
+Content-Length: 2655
+Lines: 60
+
+On 9/20/07, Tyler Durden wrote:
+> ...
+> Meanwhile, I suppose everyone on the list is familiar with the nifty Tor hack
+> done recently?
+
+the exit wall of sheep (embassy passwds) was lame but the control port
+opener was nifty.
+
+sequence for the control port payload injection:
+
+- two vectors for form payload, a third for ip leakage across three
+proxies on broadband
+
+- javascript posts form automatically to localhost:9051 using:
+ action="http://127.0.0.1:9051/" method="post"
+enctype="multipart/form-data" target="stylearea"  [that last to keep
+the response from the tor control part spewing over the current page -
+this puts it in a hidden iframe]
+
+- all existing <FORM's in exit requests modified via proxies to inject
+the TEXTAREA with payload into a hidden form element while leaving the
+appearance of a legitimate form page (so any submit pwns, too late.
+even lynx on openbsd if your control port is on 127.0.0.1:9051 (or any
+accessible port if you've got a motivated attacker...))
+
+- IP leakage for all IE on win32 users that aren't using a transparent
+proxy (janusvm) via SMB/NetBIOS and WebDAV to external host with
+tracking nonce directory name.  even if the control port is not open,
+this will leak the origin of the request as webdav is below the
+browser, interpreted in the file system / win32 api context. (SMB is
+not nearly as useful as webdav since most ISPs filter NetBIOS and
+SMB/CIFS traffic even if you explicitly allow at the router.)
+
+- the purpose of the payload was an interesting 150-200k+ command set
+for the control port to apply.  among various things this performed
+the following:
+
+- redirect the notice log to /dev/null on *nix like systems or to a
+webdav path on one of the proxies. (this leaks ip immediately on win32
+in addition to routing ongoing notices messages to the proxy directly.
+
+- invalidate all known authentic nodes on the existing Tor network via
+ExcludeNodes with digests, configure three new rogue nodes as
+authoritative directories and exits, and finally starting a hidden
+service and posting the .onion name to the proxy server.
+
+- map local ports to the hidden service onion allowing an anonymous
+user on the rogue Tor network to arbitrarily connect to the client
+onion and interface with their Tor control port in real time.
+
+- vulnerable Tor clients (not using transparent proxy like janusvm)
+start falling by the thousands into the rogue Tor network for the
+duration of a few hours while the attack was being tested...
+
+
+of course, vmware just got their asses handed to them recently as well:
+http://secunia.com/advisories/26909/
+
+
+qemu/virtual box looks much more promising; perhaps supported soon...
+

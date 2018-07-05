@@ -1,0 +1,114 @@
+From cypherpunks-bounces@cpunks.org  Sun Jul 21 06:07:08 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r6LA6tJn003589;
+	Sun, 21 Jul 2013 06:06:57 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r6LA6qLX003585
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Sun, 21 Jul 2013 06:06:54 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 8D75E54442F; Sun, 21 Jul 2013 12:06:52 +0200 (CEST)
+Date: Sun, 21 Jul 2013 12:06:52 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: Re: [cryptography] [liberationtech] Random number generator failure
+ in Rasperri Pis?
+Message-ID: <20130721100652.GC29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 3384
+Lines: 74
+
+----- Forwarded message from Russell Leidich <pkejjy@gmail.com> -----
+
+Date: Sat, 20 Jul 2013 16:17:32 +0000
+From: Russell Leidich <pkejjy@gmail.com>
+To: cryptography@randombit.net
+Subject: Re: [cryptography] [liberationtech] Random number generator failure in Rasperri Pis?
+
+I agree, in theory. But:
+
+1. How many register reads would one need in order to show Birthday
+compliance? (It's not the usual "root of the state space", because a single
+collision isn't convincing.) These reads tend to be slow, because the
+circuit designers generally need to guardband their entropy accrual to meet
+some particular minimum. In particular, we're looking for "good" evidence
+of a Poisson distribution, so we're up against a "lot" of reads relative to
+what Birthday attacks would suggest. If we don't have enough bits in memory
+to map the whole entropy register state space with acceptable access
+latency, then we have to do a realtime index-and-lookup of historical
+values, which is increasingly expensive over time. Even having generated
+said distribution successfully, the temperature and EMI background change
+with the wind. So wash, rinse, repeat.
+
+2. More simply, we could generate a PRNG with a nice Poisson profile. While
+the initial read might be somewhat random in order to spoof a decent TRNG,
+subsequent reads would just iterate the PRNG, facilitating differential
+attacks. But this wouldn't be easy to detect if, say, I had 128 bits of
+state backing up a 32-bit fake TRNG register.
+
+3. The hardware TRNG characterization process cannot be parallelized,
+because we need to determine the trustworthiness of the particular CPU in
+question. By contrast, an individual userspace TRNG (UTRNG) can be verified
+by simply comparing a hash of its executable code against expected public
+values. But we can't take the hash of a physical circuit.
+
+4. Having verified that an individual UTRNG instance is identical to what's
+expected, the only remaining question is how fast it can generate entropy
+in the least entropic possible use case. That's not a trivial question to
+answer, but at least, parallel processing can accelerate this
+characterization. If it turns out to be a "good" TRNG, then at runtime, we
+can simply check the hash, rather than repeating the characterization
+because the physical environment is different.
+
+Again, I'm no quantum denialist. There's plenty of noise out there. But
+it's always nice to keep the trust radius to a manageable minimum.
+
+On Sat, Jul 20, 2013 at 12:59 PM, Dean, James <Jdean@lsuhsc.edu> wrote:
+>
+> Ø  If my 64-bit hardware TRNG can only generate 1% of 64-bit numbers
+(probably because I hacked it), how are you going to discover that anytime
+soon?
+>
+>
+>
+> Test for more collisions than predicted by the birthday paradox.
+>
+>
+> _______________________________________________
+> cryptography mailing list
+> cryptography@randombit.net
+> http://lists.randombit.net/mailman/listinfo/cryptography
+>
+
+_______________________________________________
+cryptography mailing list
+cryptography@randombit.net
+http://lists.randombit.net/mailman/listinfo/cryptography
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

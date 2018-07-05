@@ -1,0 +1,164 @@
+From owner-cypherpunks@jfet.org  Tue Feb 27 03:25:46 2007
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.8/8.13.8/Debian-2) with ESMTP id l1R8P8q2015412
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 27 Feb 2007 03:25:08 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.8/8.13.8/Submit) id l1R8P8Vg015410
+	for cypherpunks-outgoing; Tue, 27 Feb 2007 03:25:08 -0500
+Date: Tue, 27 Feb 2007 09:25:03 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@jfet.org
+Subject: [arma@mit.edu: Tor 0.1.2.8-beta is out]
+Message-ID: <20070227082503.GR3288@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.5.9i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 6777
+Lines: 137
+
+----- Forwarded message from Roger Dingledine <arma@mit.edu> -----
+
+From: Roger Dingledine <arma@mit.edu>
+Date: Tue, 27 Feb 2007 01:45:28 -0500
+To: or-talk@freehaven.net
+Subject: Tor 0.1.2.8-beta is out
+User-Agent: Mutt/1.5.9i
+Reply-To: or-talk@freehaven.net
+
+This is the eighth development snapshot for the 0.1.2.x series. You'll
+notice that it's a beta -- more mature than an alpha but not yet a
+release candidate. It fixes a few crash bugs, and generally continues
+to clean things up. We're getting close!
+
+The bundles also come with Vidalia 0.0.11.
+
+http://tor.eff.org/download.html
+
+Changes in version 0.1.2.8-beta - 2007-02-26
+  o Major bugfixes (crashes):
+    - Stop crashing when the controller asks us to resetconf more than
+      one config option at once. (Vidalia 0.0.11 does this.)
+    - Fix a crash that happened on Win98 when we're given command-line
+      arguments: don't try to load NT service functions from advapi32.dll
+      except when we need them. (Bug introduced in 0.1.2.7-alpha;
+      resolves bug 389.)
+    - Fix a longstanding obscure crash bug that could occur when
+      we run out of DNS worker processes. (Resolves bug 390.)
+
+  o Major bugfixes (hidden services):
+    - Correctly detect whether hidden service descriptor downloads are
+      in-progress. (Suggested by Karsten Loesing; fixes bug 399.)
+
+  o Major bugfixes (accounting):
+    - When we start during an accounting interval before it's time to wake
+      up, remember to wake up at the correct time. (May fix bug 342.)
+
+  o Minor bugfixes (controller):
+    - Give the controller END_STREAM_REASON_DESTROY events _before_ we
+      clear the corresponding on_circuit variable, and remember later
+      that we don't need to send a redundant CLOSED event.  (Resolves part
+      3 of bug 367.)
+    - Report events where a resolve succeeded or where we got a socks
+      protocol error correctly, rather than calling both of them
+      "INTERNAL".
+    - Change reported stream target addresses to IP consistently when
+      we finally get the IP from an exit node.
+    - Send log messages to the controller even if they happen to be very
+      long.
+
+  o Minor bugfixes (other):
+    - Display correct results when reporting which versions are
+      recommended, and how recommended they are. (Resolves bug 383.)
+    - Improve our estimates for directory bandwidth to be less random:
+      guess that an unrecognized directory will have the average bandwidth
+      from all known directories, not that it will have the average
+      bandwidth from those directories earlier than it on the list.
+    - If we start a server with ClientOnly 1, then set ClientOnly to 0
+      and hup, stop triggering an assert based on an empty onion_key.
+    - On platforms with no working mmap() equivalent, don't warn the
+      user when cached-routers doesn't exist.
+    - Warn the user when mmap() [or its equivalent] fails for some reason
+      other than file-not-found.
+    - Don't warn the user when cached-routers.new doesn't exist: that's
+      perfectly fine when starting up for the first time.
+    - When EntryNodes are configured, rebuild the guard list to contain,
+      in order: the EntryNodes that were guards before; the rest of the
+      EntryNodes; the nodes that were guards before.
+    - Mask out all signals in sub-threads; only the libevent signal
+      handler should be processing them. This should prevent some crashes
+      on some machines using pthreads. (Patch from coderman.)
+    - Fix switched arguments on memset in the implementation of
+      tor_munmap() for systems with no mmap() call.
+    - When Tor receives a router descriptor that it asked for, but
+      no longer wants (because it has received fresh networkstatuses
+      in the meantime), do not warn the user.  Cache the descriptor if
+      we're a cache; drop it if we aren't.
+    - Make earlier entry guards _really_ get retried when the network
+      comes back online.
+    - On a malformed DNS reply, always give an error to the corresponding
+      DNS request.
+    - Build with recent libevents on platforms that do not define the
+      nonstandard types "u_int8_t" and friends.
+
+  o Minor features (controller):
+    - Warn the user when an application uses the obsolete binary v0
+      control protocol.  We're planning to remove support for it during
+      the next development series, so it's good to give people some
+      advance warning.
+    - Add STREAM_BW events to report per-entry-stream bandwidth
+      use. (Patch from Robert Hogan.)
+    - Rate-limit SIGNEWNYM signals in response to controllers that
+      impolitely generate them for every single stream. (Patch from
+      mwenge; closes bug 394.)
+    - Make REMAP stream events have a SOURCE (cache or exit), and
+      make them generated in every case where we get a successful
+      connected or resolved cell.
+
+  o Minor bugfixes (performance):
+    - Call router_have_min_dir_info half as often. (This is showing up in
+      some profiles, but not others.)
+    - When using GCC, make log_debug never get called at all, and its
+      arguments never get evaluated, when no debug logs are configured.
+      (This is showing up in some profiles, but not others.)
+
+  o Minor features:
+    - Remove some never-implemented options.  Mark PathlenCoinWeight as
+      obsolete.
+    - Implement proposal 106: Stop requiring clients to have well-formed
+      certificates; stop checking nicknames in certificates. (Clients
+      have certificates so that they can look like Tor servers, but in
+      the future we might want to allow them to look like regular TLS
+      clients instead. Nicknames in certificates serve no purpose other
+      than making our protocol easier to recognize on the wire.)
+    - Revise messages on handshake failure again to be even more clear about
+      which are incoming connections and which are outgoing.
+    - Discard any v1 directory info that's over 1 month old (for
+      directories) or over 1 week old (for running-routers lists).
+    - Do not warn when individual nodes in the configuration's EntryNodes,
+      ExitNodes, etc are down: warn only when all possible nodes
+      are down. (Fixes bug 348.)
+    - Always remove expired routers and networkstatus docs before checking
+      whether we have enough information to build circuits. (Fixes
+      bug 373.)
+    - Put a lower-bound on MaxAdvertisedBandwidth.
+
+
+
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820            http://www.ativel.com
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+
+[demime 1.01d removed an attachment of type application/pgp-signature which had a name of signature.asc]
+

@@ -1,0 +1,139 @@
+From owner-cypherpunks@al-qaeda.net  Tue Sep 11 16:08:38 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q8BK5E57001347
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 11 Sep 2012 16:05:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1347393914;
+	bh=sLZQ1o7xrWSK+2vWXH4uc56HIgujKB0pY1QxWXLcltA=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=DoUOY0Hcs2XCUp8ojuZS4EqLEiWnlwUzJ+eZBl+1ItKM3wC6LTUUgU3dljtoAOZub
+	 QwnsPP5NIiZiYXmPBweIAtT6IKtlChFwoY/ktshytvcMR8hnX21oqMaiGNeA6Ggj27
+	 r/8SytpyQ03UuBMIdmdWzL7Tr6Ppyj3OOdn1fvzQ=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q8BK5E1I001346
+	for cypherpunks-outgoing; Tue, 11 Sep 2012 16:05:14 -0400
+Date: Tue, 11 Sep 2012 22:05:10 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: [tahoe-dev] notes from the Tahoe-LAFS Weekly Dev Call,
+  2012-09-11
+Message-ID: <20120911200510.GB9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4916
+Lines: 104
+
+----- Forwarded message from Zooko Wilcox-O'Hearn <zooko@zooko.com> -----
+
+From: Zooko Wilcox-O'Hearn <zooko@zooko.com>
+Date: Tue, 11 Sep 2012 10:59:55 -0600
+To: tahoe-dev <tahoe-dev@tahoe-lafs.org>
+Subject: [tahoe-dev] notes from the Tahoe-LAFS Weekly Dev Call, 2012-09-11
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+Folks:
+
+As usual, I'm not taking the time to contextualize and vet all these
+notes. Caveat lector! Also, I've maintained my tradition of adding
+some of my own thoughts that weren't actually expressed out loud in
+the discussion. (In particular the advocacy for adding padding and the
+ideas about how to do so.)
+
+
+in attendance: Brian, David-Sarah, Andrew, Zooko (scribe)
+
+b" topic: The compression attack on HTTPS.
+
+(Not really relevant to Tahoe-LAFS, but interesting.)
+
+Brian says one possible defense against this is to move your secrets from
+cookies to the URL. This makes the attack impossible unless your secrets are
+sharing a compression context with the attack.
+
+Does anyone actually use TLS compression? Is it turned off by default? Does
+anyone configure it on? A similar attack is possible on HTTP encryption, if the
+higher-layer protocol includes attacker-controlled data in the payload.
+
+This would be relevant to Tahoe-LAFS if we added compression. However,
+even if we added compression, we would never mix attacker-controlled
+data with attacker-unknown data in the same file. However, a higher-layer
+protocol might mix them.
+
+One caveat: convergent encryption could allow compression between
+attacker-controlled and attacker-unknown data! In fact, there is a deep
+connection between the adaptive-chosen-plaintext-compression-
+violates-confidentiality ("CRIME") attack and the drewp "learn the
+remaining information" attack!
+
+The drewp defense -- the Added Convergence Secret -- is exactly the thing
+that creates independent compression contexts in order to limit the scope for
+attack.
+
+Zooko and (perhaps to a lesser degree) Brian are uncomfortable with the fact
+that LAFS currently exposes the length of your plaintext, to the byte level
+of precision. Zooko wants to add padding. That would probably help against
+the convergent-encryption-based CRIME attack which currently exists in hazy
+nascent form in Zooko's mind. Also, it enhances general privacy, for example
+an attacker might be able to recognize what files you are storing and reading
+just from the lengths of the files. Padding could help against that. Padding
+out to fixed boundary (e.g. to the next 16 bytes, or to the next 4096 bytes,
+or whatever) helps but the information can still leak if there are a number
+of files. For example, suppose you're browsing or downloading a directory
+containing hundreds of files of varying lengths. The attacker knows the
+lengths of some files that he suspects you might be browsing. Even if the
+ciphertext is padded out to fixed sizes, thus "coarsening" or discretizing
+the information, he might still be able to recognize the pattern. A better
+defense is to add a random amount of padding, where the random amount is
+determined by the (possibly convergently generated) encryption key.
+
+b" topic: engineering tools and practices
+
+We talked about usage of git. David-Sarah likes git-gui. Andrew asked if he
+should rebase patches when submitting pull requests and Brian said yes. Brian
+said always first rebase -- bring everything up to trunk -- and then rerecord
+it as a set of logical commits. It is not necessary to squash it all down
+into a single commit, unless that's what makes sense. Definitely squash out
+ephemeral stuff like "Oops, made a typo, oops test didn't pass, let me go
+back and fix that.". It often makes sense to make four patches: First
+refactor the code so that there is no actual functional changes, second
+cosmetic changes like whitespace, third update the unit tests, fourth the new
+code.
+
+Ideally, the revision history tells a story.
+
+b" topic: When do we kill off darcs?
+
+David-Sarah still has some patches that need to be darcs pushed. But they
+could diff-and-patch those to git.
+
+At some point soon we'll all agree to stop pushing patches into darcs.
+
+LeastAuthority.com's Cloud Backend is currently in darcs. We are scheduled to
+merge the cloud backend to trunk within three weeks.
+
+There is still the question of how to handle hyperlinks into
+https://tahoe-lafs.org
+that point at darcs patches and history.
+
+b" topic: Will Cloud Backend, leasedb, and accounting go into Tahoe-LAFS v1.11?
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

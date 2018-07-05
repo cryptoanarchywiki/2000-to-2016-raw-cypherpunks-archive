@@ -1,0 +1,133 @@
+From owner-cypherpunks@al-qaeda.net  Mon Feb 23 19:32:55 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id n1O0Wmia030609
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 23 Feb 2009 19:32:48 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id n1O0WmMr030608
+	for cypherpunks-outgoing; Mon, 23 Feb 2009 19:32:48 -0500
+Message-ID: <49A33FF9.6060204@systemics.com>
+Date: Tue, 24 Feb 2009 01:31:53 +0100
+From: Ian G <iang@systemics.com>
+User-Agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5; en-GB;
+  rv:1.9.1b3pre) Gecko/20081204 Thunderbird/3.0b1
+MIME-Version: 1.0
+To: Jerry Leichter <leichter@lrw.com>
+Cc: Cryptography <cryptography@metzdowd.com>,
+        "R.A. Hettinga"
+  <rah@shipwright.com>, cypherpunks@al-qaeda.net,
+        gold-silver-crypto@rayservers.com
+Subject: Re: SHA-3 Round 1: Buffer Overflows
+References: <2DDB4C4E-31CE-47AF-B0AF-155086347F3A@shipwright.com>
+  <49A30AAF.8090709@systemics.com>
+  <E70DA3B1-3B9E-4FF5-92F5-632AAD98477D@lrw.com>
+In-Reply-To: <E70DA3B1-3B9E-4FF5-92F5-632AAD98477D@lrw.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4341
+Lines: 98
+
+On 23/2/09 23:41, Jerry Leichter wrote:
+> On Feb 23, 2009, at 3:44 PM, Ian G wrote:
+
+>> However I think it is not really efficient at this stage to insist on
+>> secure programming for submission implementations. For the simple
+>> reason that there are 42 submissions, and 41 of those will be thrown
+>> away, more or less. There isn't much point in making the 41 secure;
+>> better off to save the energy until "the one" is found. Then
+>> concentrate the energy, no?
+> I disagree here. If there's a reason to submit running implementations
+> at all - and one can certainly argue that there isn't, at least in early
+> phases where we are nominally looking at the algorithms, not particular
+> bindings to code - then those implementations should be of reasonable
+> quality.
+
+
+How can that be?  If you don't know the reason to provide the C, how can 
+you argue that it has to be of a "reasonable quality" ?  What's the 
+security / business / purpose / anything model here?
+
+
+> In this day and age, most of these errors - buffer overflows,
+> null dereferences, out-of-bound reads - simply cannot be part of code of
+> reasonable quality. I can live with memory leaks - at least they don't
+> affect correctness, and in non-parallel algorithms (which these
+> presumably are) they can generally be found and fixed later. But the
+> others represent some fundamental problems with the translation of the
+> algorithm pseudo-code into actual C code. So we have two presentations
+> of the "algorithm", one in pseudo-code, one in C - which are different.
+> Which is "right"? Again, if only the pseudo-code has to be "right",
+
+
+Well, this is all good and fine if there is a purpose to this code that 
+needs the above.  But this is a *competition for an algorithm.*  So far, 
+quality of code is not anything more than a distraction;  if I recall 
+the last time, the first AES contender was broken out before the end of 
+its presentation at the first conference!
+
+
+> why
+> is the C there at all?
+
+
+OK, I admit here, I do not know why there is C at all.  Thinking back to 
+my Java/AES experiences, I don't recall why there was code, either.  I 
+can only hypothesise that it increased exposure, and gave a little bit 
+more experience, also a sense of "proving it is at least minimally 
+practical."
+
+(Luckily, Java makes writing "reasonable quality" code easy, so I didn't 
+have to answer it.  I recall that Rijndael team was very lucky to have 
+good solid C help though.)
+
+
+> The fact of the matter is that code, once it's
+> public, takes on a life of its own. People will go look at the reference
+> implementations for guidance - and in some cases they will find these
+> initial reference implementations. Further, if the AES competition is
+> any guide, some of the algorithms proposed but no selected will survive
+> and see use for multiple reasons, most probably bad, some perhaps
+> reasonable. The initial reference implementations, in that case, may be
+> all that ever gets published.
+
+
+This is their lookout.  Frankly, this is taking code and placing it on a 
+pedestal.  If these "people" go download stuff from the net and build it 
+into security implementations, well, they need to do a little "risk 
+management" about what stuff found on the net is all about.
+
+
+> It's also been pointed out that performance of actual implementations
+> will form part of the selection criteria. I can always make my code
+> faster if I don't have to make it right! Based on this data, we can't
+> use the current crop of C code for *any* comparisons - not even to
+> estimate the sizes of temporary data needed for an implementation (since
+> the cause of one of the memory reference errors is a buffer half the
+> size it needs to be).
+
+
+OK, here I can comment:  I would predict most of the performance 
+discussions are likely to be based on hardware issues.  They will be 
+talking about gate counts and so forth, and if they get "soft" they'll 
+be talking about instruction cycles and register sizes.  The C code 
+won't really help there, and the Java will likely be totally ignored.
+
+(YMMV, of course.)
+
+
+> Putting examples of incorrect code out there for people to look at is
+> never a good idea! We have way too much of it already.
+
+
+Then a little more won't hurt :)  Let them have their fun;  once we get 
+to the last round (5 algorithms?) then make it better.
+
+
+
+iang
+

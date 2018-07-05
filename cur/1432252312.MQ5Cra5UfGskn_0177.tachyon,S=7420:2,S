@@ -1,0 +1,183 @@
+From owner-cypherpunks@al-qaeda.net  Tue Jan 18 02:15:30 2005
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (majordomo@localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.2/8.13.2/Debian-1) with ESMTP id j0I8Dfxt004860
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Tue, 18 Jan 2005 02:13:41 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.2/8.13.2/Submit) id j0I8Df06004859
+	for cypherpunks-outgoing; Tue, 18 Jan 2005 02:13:41 -0600
+Date: Tue, 18 Jan 2005 09:09:26 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, Cryptography List
+  <cryptography@metzdowd.com>
+Subject: [i2p] Tunnel cryptography for I2P 0.5 (corrected typo) (fwd
+  from barnesc@engr.orst.edu)
+Message-ID: <20050118080926.GD9221@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.4i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+X-Keywords:                  
+X-UID: 18778
+Status: O
+Content-Length: 6172
+Lines: 152
+
+----- Forwarded message from barnesc@engr.orst.edu -----
+
+From: barnesc@engr.orst.edu
+Date: Mon, 17 Jan 2005 22:15:33 -0800
+To: i2p@i2p.net
+Subject: [i2p] Tunnel cryptography for I2P 0.5 (corrected typo)
+User-Agent: Internet Messaging Program (IMP) 3.2.6
+
+
+Citizens of I2P,
+
+The following is a discussion of tunnel cryptography plans for
+I2P 0.5.  There are two options; one will be chosen.
+
+[1] and [2] offer more complete discussion of these plans.  Note that
+the cryptographic methods discussed in [2] are incomplete.  They are
+complete in this message.
+
+ - Connelly
+
+----------------------------------------------------------------------
+Tunnel cryptography for I2P 0.5
+----------------------------------------------------------------------
+
+Currently when I2P 0.4.x passes an (end-to-end encrypted) message M
+down a tunnel, it is easy for two attackers in different locations of
+the tunnel to observe the same message M.  This makes I2P highly
+vulnerable to the predecessor attack.
+
+Can this situation be improved?
+
+The best implementations we currently know of fit in two categories,
+and use symmetric cryptography.  The categories are:
+
+1. The inbound tunnel gateway knows all symmetric private keys used by
+   other hops in the tunnel.  The outbound tunnel endpoint knows only
+   its own symmetric private key.  Messages are checksummed to prevent
+   modification.
+
+   Pros: Tagging attacks are defeated.
+   Cons: Attacking an N-length inbound tunnel won't be much harder
+         than attacking a 2-length inbound tunnel.  If the gateway is
+         malicious, then the gateway can collude with a malicious hop
+         at any other position in the tunnel; thus the two can
+         identify that they are in the same tunnel.
+         => Predecessor attack.
+
+   This was one plan by jrandom.  A proposed implementation is given
+   [1].  This implementation could be subject to tagging attacks in
+   certain cases.  I have a revised scheme in mind that may be safe
+   from these attacks.
+
+2. The inbound tunnel gateway has only its own symmetric private key.
+   Likewise for the outbound tunnel endpoint.  No messages are
+   checksummed in the tunnel.  All messages have the same size in
+   the tunnel to prevent tagging.  Synchronized PRNGs may be used as
+   described at [2] to help prevent tunnel loops (where an attacker
+   DoSes several peers by placing them a "looped" tunnel).
+
+   Pros: Attacking an N-length inbound tunnel is not easy (one must do
+         timing or message counting analysis).
+   Cons: Tagging (this can be done, but not detected), tunnel loops
+         can be created, extra packets can be generated within the
+         tunnel.
+
+   This plan was originally drafted in [2] based on a discussion by
+   jrandom and ???.  However, this document has pending modifications
+   because it is not a complete cryptosystem.  A full implementation
+   plan is appended to the end of this document, based on a discussion
+   by jrandom and Connelly.
+
+
+One of these options will (presumably) be used in I2P 0.5.  If you
+discover a flaw or improvement for either implementation, let us
+know.  If you have other useful input, drop by IRC or post a message
+to this maillist.
+
+We have not found a complete cryptographic analysis for either option.
+We are using standard cryptographic primitives and methods when
+possible.
+
+Option 2 is known as a "non-checksummed tunnel."
+
+----------------------------------------------------------------------
+Proposed Implementation (non-checksummed tunnels)
+----------------------------------------------------------------------
+
+Leaving out the PRNGs.
+
+As part of a tunnel, we receive and send messages which contain
+{preIV, payload}.  Here preIV is a single block from which the
+initialization vector (IV) is derived, and payload is a sequence of
+blocks containing the message which is being delivered down the
+tunnel.  Here 'block' is any string which the symmetric block cipher
+can operate on.  The preIV and the payload are successively wrapped
+in layers of encryption as a message travels down an inbound tunnel,
+and messages are successively unwrapped for outbound tunnels.
+
+Encryption at hop i:
+1. Drop packet (with warning) if we've seen preIV before
+   for a previous message in this tunnel [3].
+2. IV             := hash(preIV + hop i's secret key 1)
+3. preIV          := ecb_encrypt(preIV, hop i's secret key2)
+4. payload        := cbc_encrypt(payload, hop i's secret key3, IV)
+5. Return {preIV, payload}.
+
+Decryption at hop i:
+1. preIV          := ecb_decrypt(preIV, hop i's secret key2)
+2. IV             := hash(preIV + hop i's secret key1)
+3. payload        := cbc_decrypt(payload, hop i's secret key3, IV)
+4. Return {preIV, payload}.
+
+Inbound tunnel:
+ * Message M arrives at the inbound gateway, aka hop 1.
+ * Hops 1, 2, ..., N successively encrypt.
+ * We are the tunnel endpoint, and we have everyone's secret keys,
+   so we can use decrypt(N), decrypt(N-1), ...decrypt(1) to unwrap
+   the encryption made by others.  We recover message M.
+
+Outbound tunnel:
+ * We have a message M we want to send.
+ * We are the tunnel creator, so we have everyone's secret keys.
+   We build M* by doing encrypt(N), encrypt(N-1), ..., encrypt(1).
+ * We send M* to hop 1.  Hops 1, 2, ..., N successively decrypt.
+ * The outbound tunnel endpoint recovers M.
+
+
+[1]. http://dev.i2p.net/cgi-bin/cvsweb.cgi/i2p/router/doc/
+     tunnel.html?rev=HEAD
+[2]. http://dev.i2p.net/~jrandom/tunnel-alt.html
+[3]. A hash table or alternatively a bloom filter can be used to
+     detect whether we have previously seen a preIV.
+
+
+This document has been placed in the public domain by Connelly
+Barnes, 2005-01-17.
+
+
+_______________________________________________
+i2p mailing list
+i2p@i2p.net
+http://i2p.dnsalias.net/mailman/listinfo/i2p
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a>
+______________________________________________________________
+ICBM: 48.07078, 11.61144            http://www.leitl.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+http://moleculardevices.org         http://nanomachines.net
+
+[demime 1.01d removed an attachment of type application/pgp-signature]
+

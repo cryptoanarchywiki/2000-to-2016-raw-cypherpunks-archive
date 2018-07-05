@@ -1,0 +1,31 @@
+From kwantam Sat Aug  4 12:39:00 2001
+Date: Sat, 4 Aug 2001 12:39:00 -0400
+To: cypherpunks@einstein.ssz.com
+Subject: Re: CodeRed Fix B
+Message-ID: <20010804123900.A13409@positron.mit.edu>
+Mail-Followup-To: cypherpunks@einstein.ssz.com
+References: <3.0.3.32.20010803184843.0154af78@ct2.nai.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.5i
+In-Reply-To: <3.0.3.32.20010803184843.0154af78@ct2.nai.net>; from Wilfred@Cryogen.com on Fri, Aug 03, 2001 at 06:48:43PM -0400
+Status: RO
+Content-Length: 506
+Lines: 14
+
+Wilfred L. Guerin wrote:
+> Can someone please prepare an instruction of how to set apache and other
+> servers up to route /*n.threat requests to a cgi/script/module/etc so we
+> can immediately release this remedy...
+
+Add the following lines to httpd.conf:
+
+<Location /default.ida*>
+    Deny from all
+    ErrorDocument 403 http://stable.host.foo/abuse-log.cgi
+</Location>
+
+Replace http://stable.host.foo/abuse-log.cgi with the abuse logger.
+Make sure to include the full URL in the ErrorDocument statement.
+

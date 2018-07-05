@@ -1,0 +1,333 @@
+From owner-cypherpunks@al-qaeda.net  Wed Mar  9 02:05:38 2005
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.3/8.13.3/Debian-8) with ESMTP id j2983nuq021218
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Wed, 9 Mar 2005 02:03:50 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.3/8.13.3/Submit) id j2983nUU021217
+	for cypherpunks-outgoing; Wed, 9 Mar 2005 02:03:49 -0600
+Date: Wed, 9 Mar 2005 08:47:14 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: transhumantech@yahoogroups.com, cypherpunks@al-qaeda.net
+Subject: [p2p-hackers] good-bye, Mnet, and good luck. I'm going
+  commercial! plus my last design doc (fwd from zooko@zooko.com)
+Message-ID: <20050309074714.GC13336@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.4i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 16191
+Lines: 305
+
+----- Forwarded message from Zooko O'Whielacronx <zooko@zooko.com> -----
+
+From: "Zooko O'Whielacronx" <zooko@zooko.com>
+Date: Tue, 8 Mar 2005 17:04:46 -0400
+To: "Peer-to-peer development." <p2p-hackers@zgp.org>
+Subject: [p2p-hackers] good-bye, Mnet,
+	and good luck. I'm going commercial! plus my last design doc
+X-Mailer: Apple Mail (2.619.2)
+Reply-To: "Peer-to-peer development." <p2p-hackers@zgp.org>
+
+contents of this message: "good-bye, Mnet", "The Fully Connected
+Topology", "Rate-Limited Structured Flood", "A Nice Slow Network", "Did
+you say 'BROADCAST SEARCH'?" "Persistent Tit-for-Tat == Bilateral
+Accounting"
+
+
+Dear mnet-devel and p2p-hackers:
+
+I am about to accept an exciting job that will preclude me from
+contributing to open source projects in the distributed file-system
+space.
+
+I will miss the Mnet project!  Good luck without me!
+
+I'm writing the following as a record of the most advanced design that
+I have thought of for Mnet.  (See Acknowledgements section below.)
+Most or all of the design written below has previously been published
+in different web pages, e-mail messages, and IRC transcripts, and a
+brief presentation I made at Privacy Enhancing Technologies Workshop
+2004.
+
+The design described below is almost but not quite what is currently
+implemented, by myself and others, in Mnet v0.7, available at [1].
+
+ *** Design of Mnet v0.7+:
+
+I.  Network connectivity -- the Fully Connected Topology
+
+I.A.  Local peer database.  Each node remembers the nodeId of for each
+node that it has ever heard of or received a message from.  There is a
+maximum number of nodeIds, in deference to memory and computation costs
+(your local memory and your local computation).  I don't know what that
+maximum number should be.  If you have more than the maximum number of
+nodeIds in your database, you can flush some of the
+least-recently-alive ones.
+
+I.B.  Exponential Backoff.  With every peer in your db is stored a
+"deadness level".  When the deadness level is equal to 0, that means
+that the most recent thing that happened is that you receive a message
+from that peer -- whether it was a reponse to a request of yours or if
+it were a request from him to you.  We say that the peers with deadness
+level 0 are "the live peers".  If a peer has deadness level 1, then
+that means that the most recent time that you sent a request to that
+peer, he didn't write back.  Now, whenever you want to choose from a
+set of peers in order to send a request to one of them, the set you
+choose from is all of the deadness level 0 peers, plus with 50%
+probability all of the deadness level 1 peers, plus with 25%
+probability all of the deadness level 2 peers, and so on.  Deadness
+level 2 means that the peer was in deadness level 1, and you chose to
+query him (with 50% probability), and he didn't write back again.
+
+I.C.  Lookup of Peer Contact Info.  When you want to find the current
+contact info (i.e. current IP address+port number, or current Relay
+Server) for a peer, you send a query to a certain number of other peers
+(called "MetaTrackers" when they are serving this purpose) -- a "lookup
+contact info" query.  How many peers?  Approximately log(N) where N is
+the number of peers in your local peer database.  Which peers?  You use
+the Chord distribution -- you query the peer closest to your target,
+the one closest to the point halfway around the circle from your
+target, the one closest to the point a quarter of the way around the
+circle, and cetera.
+
+Obviously, you need to publish your current contact info to *your*
+MetaTrackers whenever you join the network or whenever your contact
+info changes.  Your MetaTrackers are the peer in your db which is
+closest to you, the peer in your db which is closest to the point
+halfway around the circle, etc.
+
+I.D.  Discovery of New Peers.  Rate-Limited Structured Flood.  Every 60
+minutes, you send an update to each of your MetaTrackers.  That update
+contains the list of the peerIds of every new peer.  A "new peer" for
+this purpose is defined as follows: you've never before announced this
+peer to MetaTrackers, and this peer currently has deadness level 0 in
+your local db.  If the complete (compressed) message containing the
+information about the new peers would exceed 256 KB, then select a
+random subset of the new peers to announce in this announcement so that
+the message doesn't exceed 256 KB.  This is a rate-limited structured
+flood.  The flooding nature of it means that eventually you will find
+out about the arrival of every new peer.  The structured nature of it
+means that it will take only log(N) time intervals before you find out,
+and you will receive only (;-)) log(N) separate notifications of the
+arrival of a new peer.  (And you will send log(N) separate
+announcements of new peers -- one announcement to each of your
+MetaTrackers.)  The rate-limited nature of it means that if new peers
+are arriving so fast  that these notifications would take more than
+log(N)*256 KB per hour bandwidth, that instead they take up only
+log(N)*256 KB per hour and it takes longer for you to find out about
+the arrival of every new peer.
+
+I.E.  Relay.  You choose some peer which you can make a TCP connection
+to and appoint it to be your RelayServer.  How you choose it, and
+dynamically update your choice, is complicated -- see the
+implementation in RelayClient.py.  Whenever someone wants to send a
+message to you and they find it impossible to open a TCP connection to
+you (which is all the time when you are behind a NAT or firewall that
+prevents incoming TCP connections) then they send the message to your
+RelayServer instead.  See also [2, 3, 4].
+
+II.  Filesystem.
+
+II.A.  Encoding of a file.  This is already described fully and
+succinctly in [5].  Here is a capsule summary:  1.  Erasure code the
+file, 2.  Encrypt the blocks, 3.  Put the list of the Ids of the
+encrypted blocks into a new file named the inode, 4.  Encrypt the
+inode, 5.  The Id of the inode, combined with the secret key used for
+encryption are the mnetURI of the file.
+
+II.B.  Push each block to the BlockServer which has an nodeId closest
+to the blockId (in the Chord metric).
+
+II.C.  In order to download a file, given its mnetURI, you first have
+to download the inode, and then you have to download a sufficient
+number of the erasure coded blocks.  For each block that you want to
+download, you query the BlockServer whose Id is closest to that block's
+Id.  If he doesn't have it, then you ask the BlockServer whose Id is
+the next-closest.  Etc.  If the file is not actually reconstructable at
+all because there are not enough blocks present at all on the network,
+then this search algorithm devolves to a broadcast search.
+
+This concludes the basic description of the design of Mnet v0.7+.
+There are other aspects of the design that are not included here,
+including a metadata search facility invented by Myers Carpenter.  In
+addition, there are many specifics or added features in the core
+network+filestore that are excluded from this description for brevity.
+
+ *** Discussion:
+
+III.  A Nice Slow Network.  The deliberate pace of announcement of new
+peers is a feature, not a bug.  For starters it is convenient to
+implement, because for various reasons it is easier to efficiently
+manage 256 KB every hour than 72 bytes every second even though they
+amount to the same bandwidth over the long term.
+
+However, beyond it being convenient, it is also useful for
+discriminating among our peers, because we don't want to start using
+new peers until they've been around for a while anyway.  Fresh peers
+are more likely to disappear than older ones.  In earlier versions of
+this system, we heard about new peers more quickly, and then we had to
+add logic to avoid using them until time had passed.
+
+However, beyond it being convenient and useful, it is also desirable to
+me, because I wanted Mnet to be more amenable to deliberate and
+long-term use than to urgent and impulsive use.  Brad Templeton argued
+to me in the year 2002 that if a distributed filesystem were primarily
+for acquiring novelty videos, pop songs, and porn, then instant
+gratification would be important, but if it were primarily for
+acquiring classic works of literature, political and historical
+documents, or backup copies of your own data, then instant
+gratification isn't so important.  His argument made an impression on
+me.
+
+IV.  Scalability Issues and other problems.
+
+IV.A.  Size of the local Peer DB.  One limitation on scale is the size
+of the local peer db.  For a modernish desktop machine, the local peer
+db could probably be on the order of 2^20 entries with no noticeable
+problem.  The limit could probably be made much higher by optimizing
+the db.  The current db is trivial -- it consists of a Python dict in
+memory which gets serialized by Python pickle and then written to a
+file every hour or so.
+
+IV.A.i.  In practice, almost all peers which fall into high deadness
+levels will never revive.  If you purge a peer from your local db and
+then that peer does revive and reconnect to the network, and if he
+sends you a request, then you will re-add him to your db just as if he
+were a brand new peer.  So if your local peer db is too big, you could
+purge peers, starting with the most dead ones.
+
+IV.B.  Announcement of New Peers.  Each newly arrived peer will be
+announced to each current peer.  If the rate of arrivals of new peers
+is sufficiently small, then it will take log(N) time intervals for all
+peers to learn about the new peer.  My estimate is that "sufficiently
+small" is about 2000 new peers per hour, with the current
+implementation.  It could doubled or quadrupled by better compression
+of the announcement messages.  If the rate of arrival of new peers
+exceeds this, then the time before all peers have heard about the new
+peer increases proportionally to the rate.
+
+IV.C.  Block store churn.  There is currently no way for a block server
+to indicate that its store of blocks is full and that it refuses to
+accept new blocks being pushed into it, so you should give them to
+someone else.  Absent this "back pressure", the stores of nodes with
+small storage capacity are likely to get flushed out by new
+publications even while the stores of nodes with large  capacity are
+underutilized.  This inefficient distribution reduces the half-life of
+files by some unknown constant.
+
+IV.D.  Did you say "BROADCAST SEARCH"?  Well, consider what would
+happen if you stopped searching for a block after your first query.
+Then we would similar likelihood of finding a block as in e.g. the
+Chord File System, with minimal message complexity -- a single query.
+The problem is that maybe the block isn't on that node but is on a
+nearby node (either because that node joined the network after the
+block was published, or because the publisher of the block wasn't yet
+aware of that node when he published the block).  This problem can be
+solved in one of three ways:
+
+1.  When a new node arrives, it requests copies of all of the relevant
+blocks from the node(s) that it shadows.  This is a bad idea for this
+system.
+2.  As nodes arrive and leave, they keep track of which other nodes
+they shadow, then they forward requests which might be satisfied by
+other nodes.  Interesting possibility, but I couldn't figure out how to
+do it in a way that wouldn't be very complicated and still end up
+falling in the worst case to the third approach:
+3.  When a downloader doesn't find the desired block on the server
+closest to the blockId, it chooses whether to broaden the search and
+query other servers that are further from the blockId.
+
+The interesting thing about 3 is that the decision about how broad to
+make the search is made by the agent who has the most information about
+its importance (such as whether other erasure coded blocks have been
+found that can replace the missing block, or whether the user considers
+downloading this file important enough to impose additional burden on
+the network).  This same agent that has the most information is also
+the one that has the incentive to want the download to succeed, so it
+is this agent who should choose whether or not to impose the additional
+burden on the network of a broader search.  See also section V --
+"Persistent Tit-for-Tat == Bilateral Accounting".
+
+V.  Persistent Tit-for-Tat == Bilateral Accounting.  Mnet v0.7+ lacks
+something -- an incentive mechanism to limit excessive costs imposed on
+the network and simultaneously to motivate users to contribute
+resources to the network.  I was always deeply impressed with the
+simplicity and robustness of Bram Cohen's "Tit-for-tat" incentive
+mechanism for BitTorrent.  Suppose we wanted a similar "tit-for-tat"
+mechanism for Mnet v0.7++, but we wanted the peer relationships to
+extend through time and across multiple files and multiple user
+operations.  Then we would probably invent a bilateral accounting
+scheme for each node to keep track of how much goodness each of its
+peers has done for it, and to reward helpful peers.  This would then
+turn out to be more or less identical to the "bilateral accounting"
+scheme that was originally invented by Jim McCoy and Doug Barnes in
+Mojo Nation [footnote *].
+
+
+ *** Acknowledgements
+
+I know that I am doomed before I start to accidentally exclude
+important and deserving people from this section.  Sorry.  This is in
+roughly chronological order of their earliest contributions to this
+design, as far as I can remember.
+
+Obviously this design owes a great debt to the original designers of
+its direct ancestor Mojo Nation: Jim McCoy and Doug Barnes, as well as
+to the Evil Geniuses -- especially Greg Smith, Bram Cohen, and Drue
+Lowenstern.  Also: Raph Levien, Sergei Osokine, the Freenet folks --
+Ian Clarke, Oskar Sandberg, and Adam Langley among others -- Justin
+Chapweske of Swarmcast, Brandon Wiley, Martin Peck, the Chord folks,
+the Pastry folks, the CAN ("Content-Addressable Network") folks, the
+OceanStore folks, The Mnet Hackers [7] -- Hauke Johannknecht, Jukka
+Santala, Myers Carpenter, Oscar Haegar, Arno Waschk, Luke Nelson --
+Mark S. Miller, Bram Cohen again (and Drue Lowenstern again) with
+BitTorrent, the Kademlia folks, numerous contributors to the
+p2p-hackers mailing list and the #p2p-hackers IRC channel.  Like I said
+-- sorry about those omissions.
+
+[footnote *]  Once upon a time there was digital cash, as pioneered by
+David Chaum.  When Jim McCoy and Doug Barnes invented Mojo Nation, they
+used digital cash, and added bilateral accounting so that a pair of
+peers wouldn't require a transaction with a central token server in
+order to incentivize each other.  The first three employees they hired
+to implement Mojo Nation in 1999 were Greg Smith, Bram Cohen, and
+myself.  (Greg might have started in 1998 -- I'm not sure.)  Several of
+the ideas in BitTorrent -- which Bram started writing in 2001 -- can be
+understood as radical simplifications of ideas in Mojo Nation.  One
+such perspective is to think of BitTorrent's tit-for-tat incentives as
+being time-limited, file-specific, and non-transferrable bilateral
+accounting.  This is not condemnation of BitTorrent's ideas, but praise
+of them -- they demonstrate the virtue of radical simplification.
+
+[1] http://mnetproject.org/
+[2] http://mnetproject.org/repos/mnet/doc/network_overview.html
+[3] http://mnetproject.org/repos/mnet/doc/EGTPv1_Architecture.txt
+[4] http://mnetproject.org/repos/mnet/doc/messages_overview.html
+[5] http://mnetproject.org/repos/mnet/doc/new_filesystem.html
+[6] http://mnetproject.org/repos/mnet/CREDITS
+
+_______________________________________________
+p2p-hackers mailing list
+p2p-hackers@zgp.org
+http://zgp.org/mailman/listinfo/p2p-hackers
+_______________________________________________
+Here is a web page listing P2P Conferences:
+http://www.neurogrid.net/twiki/bin/view/Main/PeerToPeerConferences
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a>
+______________________________________________________________
+ICBM: 48.07078, 11.61144            http://www.leitl.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+http://moleculardevices.org         http://nanomachines.net
+
+[demime 1.01d removed an attachment of type application/pgp-signature]
+

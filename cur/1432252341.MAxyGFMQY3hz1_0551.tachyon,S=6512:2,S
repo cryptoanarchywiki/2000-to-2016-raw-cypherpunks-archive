@@ -1,0 +1,140 @@
+From owner-cypherpunks@Algebra.COM  Fri Nov 30 21:00:23 2001
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.mit.edu (8.11.6/8.9.3) with ESMTP id fB120MK08115
+	for <kwantam@positron.mit.edu>; Fri, 30 Nov 2001 21:00:22 -0500
+Received: from ak47.algebra.com (ak47.algebra.com [208.233.99.160])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id VAA09307
+	for <rsw@mit.edu>; Fri, 30 Nov 2001 21:00:17 -0500 (EST)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id fB11SKa17779
+	for cypherpunks-outgoing; Fri, 30 Nov 2001 19:28:20 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from einstein.ssz.com (cpunks@einstein.ssz.com [204.96.2.99])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id fB11SIZ17761
+	for <cypherpunks@algebra.com>; Fri, 30 Nov 2001 19:28:18 -0600
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id TAA30490
+	for cypherpunks@algebra.com; Fri, 30 Nov 2001 19:31:32 -0600
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id TAA30469
+	for cypherpunks-outgoing; Fri, 30 Nov 2001 19:29:49 -0600
+Received: from mercury.ex.ac.uk (mercury.ex.ac.uk [144.173.6.26])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id TAA30465
+	for <cypherpunks@einstein.ssz.com>; Fri, 30 Nov 2001 19:29:46 -0600
+Received: from cronus ([144.173.6.20] helo=cronus.ex.ac.uk)
+	by mercury.ex.ac.uk with esmtp (Exim 3.33 #1)
+	id 169ytr-00DVEB-00; Sat, 01 Dec 2001 01:25:03 +0000
+Received: from ABack by cronus.ex.ac.uk with local (Exim 3.33 #2)
+	id 169ytn-00XmEW-00; Sat, 01 Dec 2001 01:24:59 +0000
+Date: Sat, 1 Dec 2001 01:24:58 +0000
+From: Adam Back <adam@cypherspace.org>
+To: cypherpunks@einstein.ssz.com
+Cc: cypherpunks@einstein.ssz.com, georgemw@speakeasy.net, weidai@eskimo.com
+Old-Subject: CDR: Re: Moving beyond "Reputation"--the Market View of Reality
+Message-ID: <20011201012458.A7077901@exeter.ac.uk>
+References: <20011130154754.B15620@weathership.homeport.org> <Pine.BSO.4.21.0111301332370.6294-100000@anon7.arachelian.com> <20011130162857.A16247@weathership.homeport.org> <20011130135652.D11032@eskimo.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <20011130135652.D11032@eskimo.com>; from weidai@eskimo.com on Fri, Nov 30, 2001 at 01:56:52PM -0800
+Reply-To: cypherpunks@einstein.ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Acceptable-Languages: English, Russian, German, French, Spanish
+Subject:  Re: Moving beyond "Reputation"--the Market View of Reality
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+X-spam: 5 
+Status: O
+Content-Length: 3472
+Lines: 80
+
+
+I think you'd want to have a regular public key change, where the user
+creates a new public key, signs it with their old key.  This way key
+change does not suggest possible ownership change.
+
+Then to effect a nym transfer, the new public key is instead chosen by
+the new owner, and the old owner signs it.
+
+This still leaves the problem of the old nym revealing a previously
+unpublished identity revocation, or simply some signed statements
+which are damaging to the nyms reputation.  
+
+Some ideas on this:
+
+- introduce a time-stamping service for certification signatures only
+  (explicitly not for documents)
+
+- re-define valid certificate signatures to be signatures made on
+  public key and identity pairs within the validity period of a key
+
+- publish signature private keys after expiry.
+
+Now anyone can create nym revocation with old keys, and so no
+reputational damage can be done by the old owner with nym revocations.
+
+The time-stamper will not assist in signing arbitrary documents, and
+so the old nym owner can not use it to prove a document was signed
+during the validity period of the key.  (Were it signed after the
+validity period it would anyway not be considered a valid signature).
+
+Where general document signing time-stamping is used, to prevent
+post-sale nym reputation suicide, the new owner could demand all past
+signed messages and verify them against the merkle hash tree master
+hash maintained by the time-stamper, and vet the messages as not
+damaging to the nyms reputation.
+
+For private encrypted messages the nym would not like to share, even
+after nym sale, a non-transferable signature scheme could be used,
+with the time-stamper having a separate hash-tree for such signatures.
+
+The new owner would be somewhat assured that the old owner could not
+have any signatures that he can both prove the time of authorship of
+and transfer.  
+
+The availability of third party time-stamping services, and other
+simple methods of dating documents (pre-published hash, 3rd party
+vouching for time of authorship) limits the assurances provided by the
+above approaches.
+
+Another avenue might be designated verifier signatures where the
+signature sheme necessarily requires collaboration of a verifier, and
+the verifier will take instructions from the current owner.
+
+Or better where only the current owner in collaboration with the
+designated verifier can assist a user in verifying a signature.  (eg
+using pro-active security to re-split the key on nym sale so the old
+owner isn't able to collaborate in verification).
+
+In this way the new owner gets to vet which signatures the public can
+verify.
+
+Adam
+
+On Fri, Nov 30, 2001 at 01:56:52PM -0800, Wei Dai wrote:
+> 
+> On Fri, Nov 30, 2001 at 04:28:58PM -0500, Adam Shostack wrote:
+> > Following which, Alice pulls out the pre-dated revocation certificate, 
+> > and generates confusion as to the validity of Bob's key change message.
+> 
+> I guess we would need a distributed public registry of key
+> change/revocation messages that guarantees only one such message will be
+> posted per key, and any revocation messages not posted to this registry
+> would be ignored.
+> 
+> Again, I don't think reputation capital is the best solution to the
+> problem that it tries to solve. I'm just trying to defend it against the
+> charge that it's a nonsensical idea. I still propose b-money as a better
+> alternative. Maybe Tim has found an even better solution, and if so I
+> certainly look forward to seeing it.
+> 
+

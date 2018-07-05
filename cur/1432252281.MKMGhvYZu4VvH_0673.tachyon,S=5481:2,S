@@ -1,0 +1,116 @@
+From cypherpunks-bounces@cpunks.org  Tue Jul 30 08:23:33 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r6UCNFqb013325;
+	Tue, 30 Jul 2013 08:23:17 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r6UCNAXA013321
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Tue, 30 Jul 2013 08:23:12 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 6F5B2540030; Tue, 30 Jul 2013 14:23:09 +0200 (CEST)
+Date: Tue, 30 Jul 2013 14:23:09 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is,
+        cryptography@randombit.net
+Subject: Re: [bitcoin-list] [Bitcoin-development] BitMail - p2p Email 0.1. beta
+Message-ID: <20130730122309.GF29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 3685
+Lines: 77
+
+----- Forwarded message from Mike Hearn <mike@plan99.net> -----
+
+Date: Tue, 30 Jul 2013 14:12:51 +0200
+From: Mike Hearn <mike@plan99.net>
+To: Wendell <w@grabhive.com>
+Cc: Bitcoin Dev <bitcoin-development@lists.sourceforge.net>, Gregory Maxwell <gmaxwell@gmail.com>, bitcoin-list@lists.sourceforge.net
+Subject: Re: [bitcoin-list] [Bitcoin-development] BitMail - p2p Email 0.1. beta
+
+The TPM is a piece of secure* hardware that provides various cryptographic
+services to the host system. It is important to understand that it is not a
+crypto accelerator. It is a place to store keys and small pieces of data
+(like hashes, counters) where it's difficult for someone to extract them
+even if they have physical access.
+
+The TPM is designed to support trusted computing, a rather splendid set of
+extensions to the x86 architecture that let you do remote attestation,
+software sealing and other things. Or at least it would be splendid if it
+had been really finished off and pushed to completion by the designers.
+Unfortunately due to various political issues it exists in a
+quasi-finished, semi-broken state which only experts can use. Without a
+doubt you have never run any software in a TC environment.
+
+As part of that role, the TPM provides some permanent storage in the form
+of NVRAM. Because the TPM is designed to be as cheap as possible, it has a
+limited number of write cycles. Normally you're meant to store Intel TXT
+launch control policies and sealed keys there, but Pond uses it in a
+different way by storing keys there that it encrypts local data with. By
+erasing the key in the TPM chips memory area, the data on disk is
+effectively destroyed too.
+
+This is useful because modern "disks" are often SSD drives, or physical
+metal disks that use log structured file systems. Because flash memory has
+a limited number of write cycles per cell, internally SSDs have firmware
+that remap writes from logical addresses to different physical addresses,
+the goal is to avoid wearing down the drive and extend its useful life.
+Normally it doesn't matter, but if you want to delete data such that it's
+really really gone, it obviously poses a problem. Using TPM NVRAM solves
+it, albiet, at a high usability cost.
+
+
+
+*note: actual tamper resistance of real-world TPM chips is not something
+that seems to have been studied much
+
+
+On Tue, Jul 30, 2013 at 1:27 PM, Wendell <w@grabhive.com> wrote:
+
+> Can you explain this process for those of us not too familiar with TPM
+> chips?
+>
+> -wendell
+>
+> grabhive.com | twitter.com/grabhive | gpg: 6C0C9411
+>
+> On Jul 30, 2013, at 10:40 AM, Mike Hearn wrote:
+>
+> > As a testament to the seriousness with which Pond takes forward
+> security, it can use the NVRAM in a TPM chip to reliably destroy keys for
+> data that an SSD device might have otherwise made un-erasable.
+>
+------------------------------------------------------------------------------
+Get your SQL database under version control now!
+Version control is standard for application code, but databases havent 
+caught up. So what steps can you take to put your SQL databases under 
+version control? Why should you start doing it? Read more to find out.
+http://pubads.g.doubleclick.net/gampad/clk?id=49501711&iu=/4140/ostg.clktrk
+_______________________________________________
+bitcoin-list mailing list
+bitcoin-list@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/bitcoin-list
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

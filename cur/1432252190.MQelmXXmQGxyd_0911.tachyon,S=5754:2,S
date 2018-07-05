@@ -1,0 +1,132 @@
+From owner-cypherpunks@al-qaeda.net  Sun May  9 22:53:27 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.mit.edu (localhost [127.0.0.1])
+	by positron.mit.edu (8.12.11/8.12.11/Debian-3) with ESMTP id i4A2oVZ7030504
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.mit.edu>; Sun, 9 May 2004 22:50:32 -0400
+Received: (from majordomo@localhost)
+	by positron.mit.edu (8.12.11/8.12.11/Debian-3) id i4A2oVCQ030503
+	for cypherpunks-outgoing; Sun, 9 May 2004 22:50:31 -0400
+Date: Mon, 10 May 2004 02:42:04 +0000 (UTC)
+From: Jason Holt <jason@lunkwill.org>
+X-X-Sender: jason@potato.zayda.com
+To: Adam Back <adam@cypherspace.org>
+Cc: cryptography@metzdowd.com, Cypherpunks <cypherpunks@minder.net>
+Old-Subject: Re: Brands' private credentials
+In-Reply-To: <20040509100431.GA24611@bitchcake.off.net>
+Message-ID: <Pine.LNX.4.44.0405100141220.6916-100000@potato.zayda.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Subject: Re: Brands' private credentials
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4589
+Lines: 104
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+
+On Sun, 9 May 2004, Adam Back wrote:
+
+> and seeing that it is a completely different proposal essentially
+> being an application of IBE, and extension of the idea that one has
+> multiple "identities" encoding attributes.  (The usual attribute this
+> approach is used for is time-period of receipt .. eg month of receipt
+> so the sender knows which key to encrypt with).
+
+Right, good summary.
+
+
+> One claim is that the system should hide sensitive attributes from
+> disclosure during a showing protocol.  So the example given an AIDs
+> patient could authenticate to an AIDS db server without revealing to
+> an outside observer whether he is an AIDs patient or an authorised
+> doctor.
+> 
+> However can't one achieve the same thing with encryption: eg an SSL
+> connection and conventional authentication?  
+
+How would you use SSL to prove fulfillment without revealing how?  You could
+get the CA to issue you a "patient or doctor" SSL cert, likewise for every
+possible combination of things somebody might ask you for, but that's not very
+practical.  Presumably this is why the other systems also allow proof of
+expressions without revealing all the attributes you used to do so.
+
+
+> Outside of this, the usual approach to this is to authenticate the
+> server first, then authenticate the client so the client's privacy is
+> preserved.
+
+If you can trust the server to do so.  Firstly, hidden credentials limit what
+the server learns, so you don't *have* to trust the server as much.  But
+secondly, they also solve the problem which shifts to the server when it goes
+first: now the server has to reveal attributes to a complete stranger.  For
+sensitive systems, it's easy to get circular dependencies where neither side
+wants to go first.  Hidden credentials let you enforce the policy in the
+ciphertext: "if you can read this, let's talk.  if not, I didn't want to talk
+to you anyway (and you won't learn why)".  (Incidentally, two other similar
+systems came out at about the same time as mine, both geared less toward
+extreme policy/credential paranoia and more toward resolving such circular
+dependencies: OSBE (Li, Du, Boneh) and Secret Handshakes (Balfanz et al)).
+
+
+> Further more there seems to be no blinding at issue time.  So to
+> obtain a credential you would have to identify yourself to the CA /
+> IBE identity server, show paper credentials, typically involving True
+> Name credentials, and come away with a private key.  So it is proposed
+> in the paper the credential would be issued with a pseudonym.  However
+> the CA can maintain a mapping between True Name and pseudonym.
+> 
+> However whenever you show the credential the event is traceable back
+> to you by collision with the CA.
+
+Right, that is a big consideration with my system; CAs can be nosy.  Of
+course, any CA will want you to show paper credentials or some other
+real-world proof that they should give you a credential.  But you're right
+that the Chaum/Brands/L&C family do have a big advantage in limiting the risks
+of big-brother CAs once they've issued it to you.
+
+
+> I would not say your Hidden Credential system _is_ an anonymous
+> credential system.  There is no blinding in the system period.  All is
+> gated via a "trust-me" CA that in this case happens to be an IBE
+> server, so providing the communication pattern advantages of an IBE
+> system.
+
+If your definition requires anonymity wrt the CA, then you're right.  My
+system lets folks:
+
+* authenticate based on attributes rather than identity
+* access resources without the server even knowing whether they fulfill the
+policy
+* hide policies from people who don't fulfill them
+
+So it's definitely in the realm of other privacy systems.  We could define a
+new term just to exclude my system from the others, but at this point I don't
+think naming confusion is any worse for my system; they all have lots of
+different nonorthogonal features.  I have to write a survey paper for my Ph.D.
+requirements, and I've been thinking I should write a big feature table as
+part of it.
+
+
+> In particular I don't see any way to implement an anonymous epayment
+> system using Hidden Credentials.  As I understand it is simply not
+
+I've never really considered it as a payment system.  It's geared more toward
+systems which use extremely sensitive resources, and their corresponding
+sensitive policies and credentials.
+
+						-J
+
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.3 (GNU/Linux)
+
+iD8DBQFAnuwCnwLgjivV2NERAs/lAKC2B9R0EQJY+fgh46QpjkdmsdjbMwCgziHw
+VRCNzAhIdnIImHMyu7Lpvwk=
+=wpJ0
+-----END PGP SIGNATURE-----
+

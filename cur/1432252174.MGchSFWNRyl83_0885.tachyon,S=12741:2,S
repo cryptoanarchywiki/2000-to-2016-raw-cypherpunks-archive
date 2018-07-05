@@ -1,0 +1,268 @@
+From owner-cypherpunks@Algebra.COM  Thu Aug 15 18:51:57 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7FMpuP11970
+	for <rsw@opamp.org>; Thu, 15 Aug 2002 18:51:56 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id SAA14385
+	for <rsw@mit.edu>; Thu, 15 Aug 2002 18:51:55 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7FGwFkV022000
+	for <cypherpunks-outgoing@ak47.algebra.com>; Thu, 15 Aug 2002 11:58:15 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g7FGwFgH021999
+	for cypherpunks-outgoing; Thu, 15 Aug 2002 11:58:15 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from locust.minder.net (locust.minder.net [66.92.53.74])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7FGwCkV021972
+	for <cypherpunks@algebra.com>; Thu, 15 Aug 2002 11:58:12 -0500
+Received: from waste.minder.net (daemon@waste [66.92.53.73])
+	by locust.minder.net (8.11.6/8.11.6) with ESMTP id g7FGw4J80392
+	for <cypherpunks@algebra.com>; Thu, 15 Aug 2002 12:58:08 -0400 (EDT)
+	(envelope-from cpunks@waste.minder.net)
+Received: (from cpunks@localhost)
+	by waste.minder.net (8.11.6/8.11.6) id g7FGw3J06723
+	for cypherpunks@algebra.com; Thu, 15 Aug 2002 12:58:03 -0400
+Received: (from majordom@localhost)
+	by waste.minder.net (8.11.6/8.11.6) id g7FGuTE06620
+	for cypherpunks-outgoing; Thu, 15 Aug 2002 12:56:29 -0400
+Received: from locust.minder.net (locust.minder.net [66.92.53.74])
+	by waste.minder.net (8.11.6/8.11.6) with ESMTP id g7FGuSR06616
+	for <cypherpunks@minder.net>; Thu, 15 Aug 2002 12:56:28 -0400
+Received: from mercury.ex.ac.uk (mercury.ex.ac.uk [144.173.6.26])
+	by locust.minder.net (8.11.6/8.11.6) with ESMTP id g7FGuRJ80337
+	for <cypherpunks@minder.net>; Thu, 15 Aug 2002 12:56:27 -0400 (EDT)
+	(envelope-from A.Back@exeter.ac.uk)
+Received: from cronus ([144.173.6.20] helo=cronus.ex.ac.uk)
+	by mercury.ex.ac.uk with esmtp (Exim 3.33 #1)
+	id 17fNv7-002PzH-00
+	for cypherpunks@minder.net; Thu, 15 Aug 2002 17:56:25 +0100
+Date: Thu, 15 Aug 2002 17:56:25 +0100
+From: Adam Back <adam@cypherspace.org>
+To: Cypherpunks <cypherpunks@minder.net>
+Old-Subject: TCPA not virtualizable during ownership change (Re: Overcoming the potential downside of TCPA)
+Message-ID: <20020815175625.A961146@exeter.ac.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+Old-Subject:  TCPA not virtualizable during ownership change (Re: Overcoming the potential downside of TCPA)
+Subject:   TCPA not virtualizable during ownership change (Re: Overcoming the potential downside of TCPA)
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 9571
+Lines: 207
+
+
+[resend via different node: cypherpunks@lne.com seems to be dead --
+primary MX refusing connections]
+
+Phew... the document is certainly tortuous, and has a large number of
+similarly and confusingly named credentials, certificates and keys,
+however from what I can tell this is what is going on:
+
+Summary: I think the endorsement key and it's hardware manufacturers
+certificate is generated at manufacture and is not allowed to be
+changed.  Changing ownership only means (typically) deleting old
+identities and creating new ones.
+
+The longer version...
+
+- endorsement key generation and certification - There is one
+endorsement key per TPM which is created and certified during
+manufacture.  The creation and certification process is 1) create
+endorsement key pair, 2) export public key endorsement key, 3)
+hardware manufacturer signs endorsement public key to create an
+endorsement certificate (to certify that that endorsement public key
+belongs to this TPM), 4) the certificate is stored in the TPM (for
+later use in communications with the privacy CA.)
+
+- ownership - Then there is the concept of ownership.  The spec says
+the TPM MUST ship with no Owner installed.  The owner when he wishes
+to claim ownership choose a authentication token which is sent into
+the TPM encrypted with the endorsement key.  (They give the example of
+the authentication token being the hash of a password).  Physical
+presence tests apply to claiming ownership (eg think BIOS POST with no
+networking enabled, or physical pin on motherboard like BIOS flash
+enable).  The authentication token and ownership can be changed.  The
+TPM can be reset back to a state with no current owner.  BUT _at no
+point_ does the TPM endorsement private key leave the TPM.  The
+TPM_CreateEndorsementKeyPair function is allowed to be called once
+(during manufacture) and is thereafter disabled.
+
+- identity keys - Then there is the concept of identity keys.  The
+current owner can create and delete identities, which can be anonymous
+or pseudonymous.  Presumably the owner would delete all identity keys
+before giving the TPM to a new owner.  The identity public key is
+certified by the privacy CA.
+
+- privacy ca - The privacy CA accepts identity key certification
+requests which contain a) identity public key b) a proof of possession
+(PoP) of identity private key (signature on challenge), c) the
+hardware manufacturers endorsement certificate containing the TPM's
+endorsement public key.  The privacy CA checks whether the endorsement
+certificate is signed by a hardware manufacturer it trusts.  The
+privacy CA sends in response an identity certificate encrypted with
+the TPM's endorsement public key.  The TPM decrypts the encrypted
+identity certifate with the endorsement private key.
+
+- remote attestation - The owner uses the identity keys in the remote
+attestation functions.  Note that the identity private keys are also
+generated on the TPM, the private key also never leaves the TPM.  The
+identity private key is certified by the privacy CA as having been
+requested by a certified endorsement key.
+
+
+The last two paragraphs imply something else interesting: the privacy
+CA can collude with anyone to create a virtualized environment.  (This
+is because the TPM endorsement key is never directly used in remote
+attestation for privacy reasons.)  All that is required to virtualize
+a TPM is an attestation from the privacy CA in creating an identity
+certificate.
+
+So there are in fact three avenues for FBI et al to go about obtaining
+covert access to the closed space formed by TCPA applications: 
+
+(A) get one of the hardware manufacturers to sign an endorsement key
+generated outside a TPM (or get the endorsement CA's private key), or
+
+(B) get a widely used and accepted privacy CA to overlook it's policy
+of demanding a hardware manufacturer CA endorsed endorsement public
+key and sign an identity public key created outside of a TPM (or get
+the privacy CA's private key).
+
+(C) create their own privacy CA and persuade an internet server they
+wish to investigate the users of to accept it.  Create themselves a
+virtualized client using their own privacy CA, look inside.
+
+
+I think to combat problem C) as a user of a service you'd want the
+remote attestation of software state to auditably include it's
+accepted privacy CA database to see if there are any strange "Privacy
+CAs" on there.
+
+I think you could set up and use your own privacy CA, but you can be
+sure the RIAA/MPAA will never trust your CA.  A bit like self-signing
+SSL site keys.  If you and your friends add your CA to their trusted
+root CA database it'll work.  In this case however people have to
+trust your home-brew privacy CA not to issue identity certificates
+without having seen a valid hardware-endorsement key if they care
+about preventing virtualization for the privacy or security of some
+network application.
+
+Also, they seem to take explicit steps to prevent you getting multiple
+privacy CA certificates on the same identity key.  (I'm not sure why.)
+It seems like a bad thing as it forces you to trust just one CA, it
+prevents web of trust which could reduce your chances of getting
+caught in attack scenarios B) and C) by demanding multiple
+certificates.
+
+
+This section from the spec on trusting the privacy CA is interesting
+also:
+
+section 8.3.1 p 195
+| A TPM identity key may be used to certify non-migratable keys but is
+| not permitted to certify migratory keys. As such, it allows the TPM
+| to make the statement this key is held in a TCPA-shielded location,
+| and it will never be revealed.  For this statement to have veracity,
+| the Challenger must trust the policies used by the Privacy CA that
+| issued the identity and the maintenance policy of the TPM
+| manufacturer.
+
+(not sure what the maintenance policy of the TPM is or what it has to
+do with trusting privacy CAs -- it is not otherwise discussed).
+
+also the text on p268 relates to trusting the privacy CA.
+
+
+Below is some text from the spec which tends to confirm the above.
+
+(Anonymous may have some comments as he seemed to have read the TCPA
+spec in more detail than I have.)
+
+Here is an indicative quote from the spec:
+
+informative comment:
+
+| section 5.11 TPM Ownership p 133
+| 
+| "The function to insert the owner must provide the following:
+| 
+| Confidentiality. The shared secret (or authorization data) must remain
+| confidential to all eavesdroppers that intercept any of the
+| messages. The confidentiality comes from encrypting the shared secret
+| using the TPM PUBEK. The Owner trusts that only the TPM has the PRIVEK
+| that can decrypt the shared secret.
+
+normative text:
+
+| The TPM MUST ship with no Owner installed. The TPM MUST use the
+| ownership-control protocol.
+
+
+Anyway Occam's razor suggests that the intent is:
+
+1. the TPM endorsement private key never leaves the TPM
+
+2. the identity private keys never leave the TPM
+
+3. the privacy CA will never issue identity private keys unless the
+request is made in relation to a manufacturer certified endorsement
+public key.
+
+Note: The endorsement key has key usage restrictions and is marked as
+encrypt only, so the assurance the privacy CA gets is not that it
+receives a identity certificate request signed by the endorsement
+private key, but rather that the issued certificate is encrypted with
+the endorsement public key and so could only be decrypted by the TPM
+which contains the corresponding private endorsement key.  (I suppose
+the motivation might have been that then the privacy CA couldn't prove
+to third parties that your endorsement key and identity key are bound
+together.)
+
+Adam
+--
+http://www.cypherspace.org/adam/
+
+On Wed, Aug 14, 2002 at 03:10:44PM -0700, Joseph Ashwood wrote:
+> ----- Original Message -----
+> From: "Ben Laurie" <ben@algroup.co.uk>
+> > Joseph Ashwood wrote:
+> > > There is nothing stopping a virtualized version being created.
+> 
+> > What prevents this from being useful is the lack of an appropriate
+> > certificate for the private key in the TPM.
+> 
+> Actually that does nothing to stop it. Because of the construction of TCPA,
+> the private keys are registered _after_ the owner receives the computer,
+> this is the window of opportunity against that as well. The worst case for
+> cost of this is to purchase an additional motherboard (IIRC Fry's has them
+> as low as $50), giving the ability to present a purchase. The
+> virtual-private key is then created, and registered using the credentials
+> borrowed from the second motherboard. Since TCPA doesn't allow for direct
+> remote queries against the hardware, the virtual system will actually have
+> first shot at the incoming data. That's the worst case. The expected case;
+> you pay a small registration fee claiming that you "accidentally" wiped your
+> TCPA. The best case, you claim you "accidentally" wiped your TCPA, they
+> charge you nothing to remove the record of your old TCPA, and replace it
+> with your new (virtualized) TCPA. So at worst this will cost $50. Once
+> you've got a virtual setup, that virtual setup (with all its associated
+> purchased rights) can be replicated across an unlimited number of computers.
+> 
+> The important part for this, is that TCPA has no key until it has an owner,
+> and the owner can wipe the TCPA at any time. From what I can tell this was
+> designed for resale of components, but is perfectly suitable as a point of
+> attack.
+>                     Joe
+> 
+> 
+> ---------------------------------------------------------------------
+> The Cryptography Mailing List
+> Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

@@ -1,0 +1,104 @@
+From owner-cypherpunks@al-qaeda.net  Thu Nov  4 17:03:24 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (majordomo@localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.1/8.13.1/Debian-16) with ESMTP id iA4N20Qm002397
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Thu, 4 Nov 2004 17:02:00 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.1/8.13.1/Submit) id iA4N201J002396
+	for cypherpunks-outgoing; Thu, 4 Nov 2004 17:02:00 -0600
+To: camera_lumina@hotmail.com, cryptography@metzdowd.com,
+        cypherpunks@al-qaeda.net, rah@shipwright.com
+Subject: RE: Your source code, for sale
+Message-Id: <20041104230115.6A1CD57E2A@finney.org>
+Date: Thu,  4 Nov 2004 15:01:15 -0800 (PST)
+From: hal@finney.org ("Hal Finney")
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+X-Keywords:                  
+X-UID: 10748
+Status: O
+Content-Length: 4387
+Lines: 79
+
+"Tyler Durden" writes:
+> So my newbie-style question is, is there an eGold that can be verified, but 
+> not accessed, until a 'release' code is sent?
+>
+> In other words, say I'm buying some hacker-ed code and pay in egold. I don't 
+> want them to be able to 'cash' the gold until I have the code. Meanwhile, 
+> they will want to see that the gold is at least "there", even if they can't 
+> cash it yet.
+>
+> Is there a way to send a 'release' to an eGold (or other) payment? Better 
+> yet, a double simultaneous release feature makes thing even more 
+> interesting.
+
+I've been thinking about how to do this kind of thing with ecash.
+One project I'm hoping to work on next year is a P2P gambling game (like
+poker or something) using my rpow.net which is a sort of play-money ecash.
+You'd like to be able to do bets and have some kind of reasonable
+assurance that the other guy would pay up if he loses.
+
+In the case of your problem there is the issue of whether the source
+code you are buying is legitimate.  Only once you have inspected it and
+satisfied yourself that it will suit your needs would you be willing
+to pay.  But attaining that assurance will require examing the code in
+such detail that maybe you will decide that you don't need to pay.
+
+You could imagine a trusted third party who would inspect the code and
+certify it, saying "the source code with hash XXX appears to be legitimate
+Cisco source code".  Then they could send you the code bit by bit and
+incrementally show that it matches the specified hash, using a crypto
+protocol for gradual release of secrets.  You could simultaneously do
+a gradual release of some payment information in the other direction.
+
+If you don't have a TTP, one idea for using ecash is Markus Jakobsson's
+"Ripping Coins for a Fair Exchange".  Basically you withdraw ecash from
+your account and in effect "rip it in half" and give half to the seller.
+Now he gives you the product and you give him the other half of the coin.
+The idea is that once you have given him the "ripped" ecash ("torn"
+would be a better word because ripping means something else today),
+you are out the value of the cash.  You have no more incentive to cheat,
+as giving him the other half won't cost you anything additional.
+
+(Even without ecash, a service like egold could mimic this functionality.
+You'd create an escrow account with two passwords, one known to each
+party.  Only with both passwords could data be withdrawn from the account.
+Then the buyer would transfer funds into this account.  After receiving
+the goods, the buyer would send his password to the seller.)
+
+The problem is that if the source code you are purchasing is bogus,
+or if the other side doesn't come through, you're screwed because you've
+lost the value of the torn cash.  The other side doesn't gain anything
+by this fraud, but they harm you, and if they are malicious that might
+be enough.  And likewise you might be malicious and harm them by refusing
+to give them your half of the coin even after you have received the goods.
+Again, this doesn't benefit you, you're still out the money, but maybe
+you like causing trouble.
+
+Another idea along these lines is gradual payment for gradual release
+of the goods.  You pay 10% of the amount and they give you 10% of the
+source code.  You pay another 10% and you get the next 10% of the source,
+and so on.  (Or it could be nonlinear; maybe they give out half the code
+for free, but the final 10% requires a large payment.)  The idea is that
+you can sample and make sure they do appear to have the real thing with
+a fairly small investment.
+
+If there is some mechanism for the seller to have a reputation (like
+Advogato's perhaps, with some spoofing immunity) then the problem is
+easier; the seller won't want to screw buyers because it hurts his rep.
+In that case it may be reasonable to ask the buyer to pay in advance,
+perhaps using the partial payment system just discussed.
+
+These various ideas all have tradeoffs, and in general this kind of
+problem is hard to solve because of the complexity of what constitutes a
+successful transaction.  A reputation system helps a great deal to resolve
+the issues, but opens up problems of its own.  The betting problem I
+want to work on is relatively easy because there is no ambiguity about
+who wins, but even then it is hard to make sure that neither party can
+maliciously harm the other.
+
+Hal F.
+

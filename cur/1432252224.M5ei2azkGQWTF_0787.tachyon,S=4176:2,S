@@ -1,0 +1,102 @@
+From owner-cypherpunks@lne.com  Wed Nov 26 16:21:53 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p3/8.11.6-03-31-03) with ESMTP id hAQLLod00747
+	for <rsw@jfet.org>; Wed, 26 Nov 2003 16:21:50 -0500
+Received: from slack.lne.com (slack.lne.com [127.0.0.1])
+	by slack.lne.com (8.12.10/8.12.10) with ESMTP id hAQL3wqX028555
+	(version=TLSv1/SSLv3 cipher=EDH-DSS-DES-CBC3-SHA bits=168 verify=NO)
+	for <cypherpunks-goingout345@slack.lne.com>; Wed, 26 Nov 2003 13:03:58 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.10/8.12.10/Submit) id hAQL3wss028554
+	for cypherpunks-goingout345; Wed, 26 Nov 2003 13:03:58 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Message-ID: <3FC51539.8030409@charter.net>
+Date: Wed, 26 Nov 2003 13:03:53 -0800
+From: coderman <coderman@charter.net>
+User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.3)
+  Gecko/20030313
+X-Accept-Language: en-us, en
+MIME-Version: 1.0
+To: cypherpunks@lne.com
+Subject: RE: C3 Nehemia C5P with better hardware RNG and AES support
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2814
+Lines: 70
+
+... delayed response
+
+ > From: Peter Gutmann
+
+> "Lucky Green" <[EMAIL PROTECTED]> writes:
+> >...
+> >I fail to understand why VIA bothered adding AES support into the CPU. When
+> >was AES last the bottleneck on a general-purpose CPU? 
+> 
+> Apart from the obvious "what cool thing can we fit in -> <- this much spare
+> die space?", the obvious target is SOHO routers/firewall boxes.  My spies tell
+> me that it's already being used in a number of products like this, and the
+> addition of AES will help the process.
+
+I am working on a linux distribution that is using the hardware RNG for
+seeding/rng in number of things (IPSEC, ssh, ssl, gpg, etc) and this is
+definitely the angle I am excited about.
+
+A 1Ghz proc goes a long way, but in a media intensive system (video,
+audio, streaming over wireless) you want to keep CPU load as light as
+possible so that latency is minimal.
+
+With the C5P you can now do VPN with AES, rng via the hardware entropy,
+and video offload via the CLE266.  This leaves the CPU free to handle
+various interrupts for the wireless network, disk i/o, etc.
+
+Very nice move, I think.
+
+I have written some poor code and info regarding the C5XL (nehemiah)
+and linux:
+
+    http://peertech.org/hardware/viarng/
+
+[ I'll be cleaning code up and releasing new patches/srcs soon ]
+
+
+ 
+> Hardware SHA-1 in the next rev makes
+> it even better, since you can now do IPsec and SSL tunneling purely in
+> hardware (and then you lose it all again in the crappy Rhine II NIC, but
+> that's another story).
+
+A lot of peer networking applications use SHA digests for securely
+identifying resources in a network.  The overhead of this for large
+volumes of content will make this a welcome addition :-)
+
+Also, Centaur indicated that with the SHA on die, they can produce
+statistically perfect RNG output.  The von neumann whitener does let
+a small bias through for very large data sets IIRC (i.e. a
+statistical bias is detectable in 1G or more data)
+
+If you are using the hardware rng via a user space daemon feeding
+/dev/random then this is no longer an issue.
+
+
+
+> >The bottleneck tends to be modular exponentiations, yet VIA failed to include
+> >a modular exponentiation engine. Strange.
+> 
+> Not for SOHO use it isn't, the initial handshake overhead is negligible
+> compared to the constant link encryption overhead.  The alternative is to do
+> the crypto externally, for which you're paying for an expensive and power-
+> hungry crypto core capable of doing a zillion DH/RSA ops/sec that gets used
+> once every few hours.  The alternative is to load or load your standard
+> firewall firmware into a Nehemiah and offload all the crypto and RNG stuff.
+
+I am also curious about crypto-loop file system acceleration / CPU offload.
+There are a number of uses I am anxious to try with this hardware.
+
+Best regards,
+

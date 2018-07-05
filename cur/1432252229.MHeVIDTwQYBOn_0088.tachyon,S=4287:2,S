@@ -1,0 +1,102 @@
+From owner-cypherpunks@al-qaeda.net  Wed Jan  5 17:18:48 2005
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (majordomo@localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.2/8.13.2/Debian-1) with ESMTP id j05NHTgh020015
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Wed, 5 Jan 2005 17:17:29 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.2/8.13.2/Submit) id j05NHSPw020014
+	for cypherpunks-outgoing; Wed, 5 Jan 2005 17:17:28 -0600
+X-POP-User: hettinga.covad.net
+Mime-Version: 1.0
+X-Sender: rah@localhost
+Message-Id: <p06110447be0225d87f68@[68.167.57.91]>
+Date: Wed, 5 Jan 2005 18:16:51 -0500
+To: cypherpunks@al-qaeda.net
+From: "R.A. Hettinga" <rah@shipwright.com>
+Subject: Re: FreeBSD's urandom versus random
+Content-Type: text/plain; charset="us-ascii"
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+X-Keywords:                  
+X-UID: 17394
+Status: O
+Content-Length: 3233
+Lines: 74
+
+--- begin forwarded text
+
+
+Delivered-To: cryptography@metzdowd.com
+To: Ian G <iang@systemics.com>
+Cc: cryptography@metzdowd.com
+Subject: Re: FreeBSD's urandom versus random
+From: "Perry E. Metzger" <perry@piermont.com>
+Date: Wed, 05 Jan 2005 18:08:31 -0500
+User-Agent: Gnus/5.1006 (Gnus v5.10.6) Emacs/21.3 (berkeley-unix)
+Sender: owner-cryptography@metzdowd.com
+
+
+Ian G <iang@systemics.com> writes:
+> While we're on the subject of /dev/[u]random, has anyone
+> looked at the new FreeBSD 5.3 version?
+
+Not the 5.3 version but I have looked a bit at earlier versions. I was
+pretty scared, frankly.
+
+The author gave a talk at a BSDCon where he displayed both a profound
+set of misunderstandings about what the papers he had read meant and
+an extremely strong amount of arrogance. Among other things, he
+claimed that Schneier and Co. had proven the security of Yarrow (which
+of course they never had claimed), and that his changes to Yarrow made
+it better (very dubious). He also obviously didn't understand crypto
+very well. I wouldn't have minded so much if he hadn't been extremely
+belligerent about defending his beliefs.
+
+Anyway, after the talk I took a look at the code, and I didn't feel
+very comfortable with it. It has been too many years now for me to
+remember specifics, and it may have been changed a lot in the interim
+-- in any case, you may want to examine it if you are contemplating
+using it in something where it would be dangerous not to have very
+solid random numbers available.
+
+FreeBSD has some other crypto toys that I'm dubious about. It now has
+a crypto file system widget that uses a bunch of odd ad hoc modes
+invented by the author. Some quick analysis shows that most of the
+complexity they add does not add actual cryptographic strength and
+does add possible attack vectors, which is worrisome.  I'm always
+against attempting to be clever under such circumstances, but a lot of
+people don't seem to have the same fear of innovating in cryptography
+without very careful analysis that I do.  It also doesn't protect very
+well against brute forcing of the file system passphrase, which is (in
+most cases) the likely way people will break such a thing. (Actually
+the author claims that you would have to do tremendous disk i/o to
+break the passphrase, but you can do a time/space tradeoff with RAM
+that bypasses his hack.)
+
+None of this should say that I'm entirely comfortable with the
+security of, say, NetBSD's /dev/random. Even though I should have,
+I've never properly audited the whole thing, which is more than mildly
+embarrassing. Shades of the shoemaker's children and such. For all I
+know, we've got big flaws, too.
+
+
+Perry
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+
+--- end forwarded text
+
+
+-- 
+-----------------
+R. A. Hettinga <mailto: rah@ibuc.com>
+The Internet Bearer Underwriting Corporation <http://www.ibuc.com/>
+44 Farquhar Street, Boston, MA 02131 USA
+"... however it may deserve respect for its usefulness and antiquity,
+[predicting the end of the world] has not been found agreeable to
+experience." -- Edward Gibbon, 'Decline and Fall of the Roman Empire'
+

@@ -1,0 +1,480 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u75K8utE017485;
+	Fri, 5 Aug 2016 16:08:57 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=xO/nLQkD;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-io0-f179.google.com (mail-io0-f179.google.com
+ [209.85.223.179])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u75K8qIH017481
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Fri, 5 Aug 2016 16:08:54 -0400
+Received: by mail-io0-f179.google.com with SMTP id 38so309751531iol.0
+ for <cypherpunks@cpunks.org>; Fri, 05 Aug 2016 13:08:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+ :cc; bh=lNTVdfk8PdYuvDTPvqyQBTwGv0WT5GMEff21vB9Cg9g=;
+ b=xO/nLQkDUaXMuDYsyA9xuVYhrVKMcyBqQ7EtAM2v+MYojiSFAGk5OZR+SLZD8Lsi2e
+ 88ewRCrSmYkPxfKHrUBlylZS3N8ZyTsfAZdYomLcRLGIenm/YYXcfl5kBYr9bwVh1EAy
+ PDWJUKAcOfOru19pE2Z7uwEV4qs8eud55RYBRF7bC8h3AT7iF4mzS0rdh3aE7kdo8bof
+ uk+tq8zCN+wM7gHzRze0Pw6cwbUdA5tZ7rEyIh7Mlx4XRD4G2nZg/0eVYyxqIv5il+hk
+ uRs8efCcbFHFbNl+D08TrR9P5AO9jmO1OkXh9rjtuDNIv+1VoaZbSIVdUtkhfDpir2OZ
+ qg0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+ :message-id:subject:to:cc;
+ bh=lNTVdfk8PdYuvDTPvqyQBTwGv0WT5GMEff21vB9Cg9g=;
+ b=C8d/kMje/5LvmC7XkoMoma5JavlVQy6VLekvY8Agj3OQ2+Ld8tCjYpY9540575A4Gt
+ No1ImpkodppUr4XrjTkESTtQuZTZVUPMstdA7DTtovVFG3YwlayueDuYfCHjlocwGYAh
+ pqeRJDJJ6BtcavEKg7q34+FwXGICv+/kQeL74H7r2okuDbe8GD6y6NkHEDX3dU3TnmiB
+ C0EAk50xrVQBMALq31SM7/uZqqRWIYbFWDVBSDXWrv1799TywYz8OZZ7i73moDfIQmY/
+ by8QdiWD3DJSOPHXAIoT/3cEMEGAq/CpSXmLpJsn+238sMzrqXljHByo0MgaLCVjNh8O
+ h06g==
+X-Gm-Message-State: AEkoouuqsRDqXXAVPcB2P+AAFXJqq9bi2fjUk+wzsOCZMLhR6EjqtSH/PEAGgBGwgHG17w2WfPQ5Bs8OTxzWFg==
+X-Received: by 10.107.34.212 with SMTP id i203mr95467755ioi.8.1470427727283;
+ Fri, 05 Aug 2016 13:08:47 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.107.170.26 with HTTP; Fri, 5 Aug 2016 13:08:26 -0700 (PDT)
+In-Reply-To: <830025cc-6289-baee-b864-1de7858cf046@mail.com>
+References: <CAG2tMp6-KfNr0VgiddoLxHcHw6CzyU=uLJCdCsvo9EsBE8gTeQ@mail.gmail.com>
+ <CAG2tMp5dWWyBcRUmO8EEoUjPZLGnBqBCX-B8mpzKKNsGsGWhUg@mail.gmail.com>
+ <CAG2tMp7R2Lo0RN11qkC_iC9-4=2gHzpbcZEOoLtRFkCJ6Cf_KA@mail.gmail.com>
+ <CAG2tMp70VXbY+0GJs3HApMq71TcBympeLg3QUuDDdHwmC6Cqwg@mail.gmail.com>
+ <CAG2tMp4=q0aFUjcS8Gei2J9FqYfQnsWg0E5Vh_OtGjVuJ-_V0Q@mail.gmail.com>
+ <CAG2tMp55nML9+v0hnLVfe+OqPsCMUNiB66FR-VjmTn3pkGSTRw@mail.gmail.com>
+ <CAG2tMp7M3BpOUOcv6fkOYK=cYvYCWmg3nFrL8QSGBF0JPr5pjg@mail.gmail.com>
+ <CAG2tMp5A5AxiYHR4JQ-ECFCy80nsa8-xxYw5gs5vMEfHtHKRgg@mail.gmail.com>
+ <CAG2tMp4HdMnuXO7K5OvAie1+f1bsU5_iDg-nEcy=PTvJfV+XFA@mail.gmail.com>
+ <CAG2tMp6sd1r-FwLWd2SmQTQ-JJJpCPyU9hDKKKkew8symGGtJQ@mail.gmail.com>
+ <CAG2tMp5CmWA9rzgwDpe9XDYbOcKooAq15PrDD1UtorcnPZo--Q@mail.gmail.com>
+ <CAG2tMp5VUSFrJJXVXU35VBkY4trmH8K+7yECpnQAvfX7iRF3qQ@mail.gmail.com>
+ <8f115fae-5655-ca28-0250-dab17c397cbe@pilobilus.net>
+ <33853580.4670357.1470346666605.JavaMail.yahoo@mail.yahoo.com>
+ <830025cc-6289-baee-b864-1de7858cf046@mail.com>
+From: Cari Machet <carimachet@gmail.com>
+Date: Fri, 5 Aug 2016 23:08:26 +0300
+Message-ID: <CAGRDzQUgxBfT9V_cAejkFGt8u6XGq+oCsyh7ZBdBB15W3Rmfzg@mail.gmail.com>
+Subject: Re: Anarchist Bibliography, please? (was Re: Deconstructing an
+ Institutional Slander...)
+To: No <nonomos@mail.com>
+Content-Type: multipart/alternative; boundary=001a11462f3a5a523b053958a22e
+Cc: cpunks <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 402
+
+--001a11462f3a5a523b053958a22e
+Content-Type: text/plain; charset=UTF-8
+
+translating anarchy
+
+http://www.pucsp.br/ecopolitica/documentos/penalizacao_a_ceu_aberto/docs/livro-mark-bray-translating-anarchy-2013.pdf
+
+On Fri, Aug 5, 2016 at 3:37 AM, No <nonomos@mail.com> wrote:
+
+> Stirner has opened my eyes on quite a few levels, you could categorize his
+> book under individualistic anarchism (though categories seem irrelevant).
+>
+> https://theanarchistlibrary.org/library/max-stirner-the-ego-and-his-own
+> This text has helped me and some others, trying to not drift off in
+> endless cynicism and nihilism:
+>
+> https://theanarchistlibrary.org/library/peter-lamborn-
+> wilson-the-new-nihilism
+>
+>
+> On 08/04/2016 11:37 PM, jim bell wrote:
+>
+>
+>
+> *From:* Steve Kinney <admin@pilobilus.net> <admin@pilobilus.net>
+>
+> On 08/04/2016 03:00 AM, Cecilia Tanaka wrote:
+> >> I asked Steve some suggestions in private, but it's better to ask
+> >> publicly, so more people can profit the clues.  Oh, you know, he
+> >> loves books, uses cute emoticons and makes oink oink.  He's a good
+> >> reference for me, hahaha!!  ;)
+>
+> >When dredging the Internet for information, I am sure you won't have
+> >much trouble picking out the State sponsored anarchist literature and
+> >pseudo-radical propaganda fronts:
+>
+>
+> I hope people will forgive me for tooting my own horn.  I was a minarchist
+> Libertarian in 1994,
+> not an anarchist Libertarian.  But it wasn't because I somehow wanted to
+> keep around some
+> minimal government.  Rather, it was because I couldn't figure out a
+> logically-consistent method'
+> to entirely get rid of those last vestiges of government.  Lacking such an
+> plausible method,
+> I chose the intellectually-honest route of accepting (at the time) that
+> some residual government
+> would be necessary.
+>
+> While not specifically aware of David Friedman's (son of famous economist
+> Milton Friedman)
+> "Hard Problem"  http://econlog.econlib.org/archives/2009/04/will_david_
+> frie.html   , from his
+> book, "The Machinery of Freedom" (1973; revised in 1989; again 2014),  I
+> was effectively
+> aware of the  same barrier, and like Friedman, I could not see any
+> solution.  Anarchy, I
+> concluded, was impractical, and unachievable.
+>
+> It's a good thing that I wasn't aware of Friedman's "Hard Problem", or the
+> idea it was "hard".
+> In January 1995 I because to contemplate the idea that turned into my
+> "Assassination
+> Politics" essay.   https://cryptome.org/ap.htm
+>
+>   I wasn't intending to solve that problem:  Rather, I was trying to
+> figure out how
+> an otherwise-powerless public could defend itself from bad acts, mostly
+> from government
+> employees.  I realized that to combine the contributions of anonymous
+> individuals,  allows
+> that public can deter and prevent those bad acts.  I further realized that
+> this system would
+> be extremely economical, allowing (for instance) the region known as
+> "America" to defend
+> itself, not merely from external threats, but also internal crime,
+> probably for a total cost of
+> under $1 billion per year, far less than the $600 billion in defense
+> spending currently done.
+>
+> A simplistic, initial analysis (which I initially assumed, even before I
+> wrote the first part of the
+> AP essay) was that AP would simply fix government.  But the ultimate "fix"
+> was actually far
+> more powerful than I'd initially realized, not merely fixing governments,
+> but destroying all
+> governments, and thus protecting an anarchist or minarchist region from
+> threatening
+> neighbors.
+>
+> Put simply, I solved David Friedman's "Hard Problem".  I haven't yet seen
+> the 2014 revision
+> of his book, Machinery of Freedom, to see if he has acknowledged this yet.
+>    I think it would
+> be extraordinarily strange if he doesn't do so:  After all, ostensibly we
+> are on the same side
+> of this matter.  He advocates a zero-government solution:  Why wouldn't he
+> cite a proof
+> that a zero-government solution is actually possible, contrary to his
+> apparent previous
+> opinion?
+>
+> <https://en.wikipedia.org/wiki/The_Machinery_of_Freedom>
+> https://en.wikipedia.org/wiki/The_Machinery_of_Freedom
+>
+> But in effect, I think I was quite correct, pre-1995, for me  to believe
+> that anarchy was
+>  impractical.   I don't know how people who labelled themselves as
+> 'anarchists'  resolved
+> the apparent contradiction.  Were they aware that anarchy wasn't stable?
+>  (At least not
+> absent my 1995 invention, AP).   Most likely I think they were simply
+> unaware that anarchy
+> wasn't going to be stable.  Or, perhaps they assumed that then-future
+> events would somehow
+> solve the problem.  As, ultimately, they did, but it didn't have to be
+> that way.  I, virtually by
+> accident, solved that problem.  But things could have been very different.
+>
+>                 Jim Bell
+>
+>
+>
+>
+>
+
+
+-- 
+Cari Machet
+NYC 646-436-7795
+carimachet@gmail.com
+AIM carismachet
+Syria +963-099 277 3243
+Amman +962 077 636 9407
+Berlin +49 152 11779219
+Reykjavik +354 894 8650
+Twitter: @carimachet <https://twitter.com/carimachet>
+
+7035 690E 5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187
+
+Ruh-roh, this is now necessary: This email is intended only for the
+addressee(s) and may contain confidential information. If you are not the
+intended recipient, you are hereby notified that any use of this
+information, dissemination, distribution, or copying of this email without
+permission is strictly prohibited.
+
+--001a11462f3a5a523b053958a22e
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">translating anarchy=C2=A0<div><br></div><div><a href=3D"ht=
+tp://www.pucsp.br/ecopolitica/documentos/penalizacao_a_ceu_aberto/docs/livr=
+o-mark-bray-translating-anarchy-2013.pdf">http://www.pucsp.br/ecopolitica/d=
+ocumentos/penalizacao_a_ceu_aberto/docs/livro-mark-bray-translating-anarchy=
+-2013.pdf</a><br></div></div><div class=3D"gmail_extra"><br><div class=3D"g=
+mail_quote">On Fri, Aug 5, 2016 at 3:37 AM, No <span dir=3D"ltr">&lt;<a hre=
+f=3D"mailto:nonomos@mail.com" target=3D"_blank">nonomos@mail.com</a>&gt;</s=
+pan> wrote:<br><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex=
+;border-left:1px #ccc solid;padding-left:1ex">
+ =20
+   =20
+ =20
+  <div bgcolor=3D"#FFFFFF" text=3D"#000000">
+    <p>Stirner has opened my eyes on quite a few levels, you could
+      categorize his book under individualistic anarchism (though
+      categories seem irrelevant). <br>
+    </p>
+    <p><a href=3D"https://theanarchistlibrary.org/library/max-stirner-the-e=
+go-and-his-own" target=3D"_blank">https://theanarchistlibrary.<wbr>org/libr=
+ary/max-stirner-the-<wbr>ego-and-his-own</a><br>
+    </p>
+    This text has helped me and some others, trying to not drift off in
+    endless cynicism and nihilism:<br>
+    <br>
+<a href=3D"https://theanarchistlibrary.org/library/peter-lamborn-wilson-the=
+-new-nihilism" target=3D"_blank">https://theanarchistlibrary.<wbr>org/libra=
+ry/peter-lamborn-<wbr>wilson-the-new-nihilism</a><div><div class=3D"h5"><br=
+>
+    <br>
+    <div>On 08/04/2016 11:37 PM, jim bell wrote:<br>
+    </div>
+    <blockquote type=3D"cite">
+      <div style=3D"color:#000;background-color:#fff;font-family:HelveticaN=
+eue,Helvetica Neue,Helvetica,Arial,Lucida Grande,sans-serif;font-size:13px"=
+>
+        <div><br>
+          <br>
+        </div>
+        <div style=3D"display:block">
+          <div style=3D"font-family:HelveticaNeue,Helvetica Neue,Helvetica,=
+Arial,Lucida Grande,sans-serif;font-size:13px">
+            <div style=3D"font-family:HelveticaNeue,Helvetica Neue,Helvetic=
+a,Arial,Lucida Grande,sans-serif;font-size:16px">
+              <div dir=3D"ltr"><font size=3D"2" face=3D"Arial"> <b><span st=
+yle=3D"font-weight:bold">From:</span></b>
+                  Steve Kinney <a href=3D"mailto:admin@pilobilus.net" targe=
+t=3D"_blank">&lt;admin@pilobilus.net&gt;</a><br>
+                </font></div>
+              <div><br clear=3D"none">
+                On 08/04/2016 03:00 AM, Cecilia Tanaka wrote:<br clear=3D"n=
+one">
+                &gt;&gt; I asked Steve some suggestions in private, but
+                it&#39;s better to ask <br clear=3D"none">
+                &gt;&gt; publicly, so more people can profit the clues.=C2=
+=A0
+                Oh, you know, he<br clear=3D"none">
+                &gt;&gt; loves books, uses cute emoticons and makes oink
+                oink.=C2=A0 He&#39;s a good<br clear=3D"none">
+                &gt;&gt; reference for me, hahaha!!=C2=A0 ;)<br clear=3D"no=
+ne">
+                <br clear=3D"none">
+                &gt;When dredging the Internet for information, I am
+                sure you won&#39;t have<br clear=3D"none">
+                &gt;much trouble picking out the State sponsored
+                anarchist literature and<br clear=3D"none">
+                &gt;pseudo-radical propaganda fronts:=C2=A0<br clear=3D"non=
+e">
+                <br>
+              </div>
+              <div><br>
+              </div>
+              <div dir=3D"ltr">I
+                hope people will forgive me for tooting my own horn.=C2=A0 =
+I
+                was a minarchist Libertarian in 1994,</div>
+              <div dir=3D"ltr">not
+                an anarchist Libertarian.=C2=A0 But it wasn&#39;t because I
+                somehow wanted to keep around some</div>
+              <div dir=3D"ltr">minimal
+                government.=C2=A0 Rather, it was because I couldn&#39;t fig=
+ure
+                out a logically-consistent method&#39;</div>
+              <div dir=3D"ltr">to
+                entirely get rid of those last vestiges of government.
+                =C2=A0Lacking such an plausible method,</div>
+              <div dir=3D"ltr">I
+                chose the intellectually-honest route of accepting (at
+                the time) that some residual government</div>
+              <div dir=3D"ltr">would
+                be necessary.</div>
+              <div dir=3D"ltr"><br>
+              </div>
+              <div dir=3D"ltr">While
+                not specifically aware of David Friedman&#39;s (son of
+                famous economist Milton Friedman)</div>
+              <div dir=3D"ltr">&quot;Hard
+                Problem&quot; =C2=A0<a href=3D"http://econlog.econlib.org/a=
+rchives/2009/04/will_david_frie.html" target=3D"_blank">http://econlog.econ=
+lib.org/<wbr>archives/2009/04/will_david_<wbr>frie.html</a>=C2=A0
+                =C2=A0, from his=C2=A0</div>
+              <div dir=3D"ltr">book,
+                &quot;The Machinery of Freedom&quot; (1973; revised in 1989=
+; again
+                2014), =C2=A0I was effectively</div>
+              <div dir=3D"ltr">aware
+                of the =C2=A0same barrier, and like Friedman, I could not s=
+ee
+                any solution.=C2=A0 Anarchy, I=C2=A0</div>
+              <div dir=3D"ltr">concluded,
+                was impractical, and unachievable.=C2=A0</div>
+              <div dir=3D"ltr"><br>
+              </div>
+              <div dir=3D"ltr">It&#39;s
+                a good thing that I wasn&#39;t aware of Friedman&#39;s &quo=
+t;Hard
+                Problem&quot;, or the idea it was &quot;hard&quot;.</div>
+              <div dir=3D"ltr">In
+                January 1995 I because to contemplate the idea that
+                turned into my &quot;Assassination</div>
+              <div dir=3D"ltr">Politics&quot;
+                essay. =C2=A0 <a href=3D"https://cryptome.org/ap.htm" targe=
+t=3D"_blank">https://cryptome.org/ap.htm</a>=C2=A0=C2=A0</div>
+              <div dir=3D"ltr"><br>
+              </div>
+              <div dir=3D"ltr">=C2=A0=C2=A0I
+                wasn&#39;t intending to solve that problem: =C2=A0Rather, I=
+ was
+                trying to figure out how</div>
+              <div dir=3D"ltr">an
+                otherwise-powerless public could defend itself from bad
+                acts, mostly from government</div>
+              <div dir=3D"ltr">employees.
+                =C2=A0I realized that to combine the contributions of
+                anonymous individuals, =C2=A0allows</div>
+              <div dir=3D"ltr">that
+                public can deter and prevent those bad acts.=C2=A0 I furthe=
+r
+                realized that this system would</div>
+              <div dir=3D"ltr">be
+                extremely economical, allowing (for instance) the region
+                known as &quot;America&quot; to defend</div>
+              <div dir=3D"ltr">itself,
+                not merely from external threats, but also internal
+                crime, probably for a total cost of=C2=A0</div>
+              <div dir=3D"ltr">under
+                $1 billion per year, far less than the $600 billion in
+                defense spending currently done.<br>
+              </div>
+              <div dir=3D"ltr"><br>
+              </div>
+              <div dir=3D"ltr">A
+                simplistic, initial analysis (which I initially assumed,
+                even before I wrote the first part of the</div>
+              <div dir=3D"ltr">AP
+                essay) was that AP would simply fix government.=C2=A0 But t=
+he
+                ultimate &quot;fix&quot; was actually far</div>
+              <div dir=3D"ltr">more
+                powerful than I&#39;d initially realized, not merely fixing
+                governments, but destroying all</div>
+              <div dir=3D"ltr">governments,
+                and thus protecting an anarchist or minarchist region
+                from threatening=C2=A0</div>
+              <div dir=3D"ltr">neighbors.</div>
+              <div dir=3D"ltr"><br>
+              </div>
+              <div dir=3D"ltr">Put
+                simply, I solved David Friedman&#39;s &quot;Hard Problem&qu=
+ot;.=C2=A0 I
+                haven&#39;t yet seen the 2014 revision</div>
+              <div dir=3D"ltr">of
+                his book, Machinery of Freedom, to see if he has
+                acknowledged this yet. =C2=A0 =C2=A0I think it would</div>
+              <div dir=3D"ltr">be
+                extraordinarily strange if he doesn&#39;t do so: =C2=A0Afte=
+r all,
+                ostensibly we are on the same side</div>
+              <div dir=3D"ltr">of
+                this matter.=C2=A0 He advocates a zero-government solution:
+                =C2=A0Why wouldn&#39;t he cite a proof</div>
+              <div dir=3D"ltr">that
+                a zero-government solution is actually possible,
+                contrary to his apparent previous</div>
+              <div dir=3D"ltr">opinion?</div>
+              <div dir=3D"ltr"><br>
+              </div>
+              <div dir=3D"ltr"><a href=3D"https://en.wikipedia.org/wiki/The=
+_Machinery_of_Freedom" target=3D"_blank"></a><a href=3D"https://en.wikipedi=
+a.org/wiki/The_Machinery_of_Freedom" target=3D"_blank">https://en.wikipedia=
+.org/wiki/<wbr>The_Machinery_of_Freedom</a>=C2=A0</div>
+              <div dir=3D"ltr"><br>
+              </div>
+              <div dir=3D"ltr">But
+                in effect, I think I was quite correct, pre-1995, for me
+                =C2=A0to believe that anarchy was</div>
+              <div dir=3D"ltr">=C2=A0impractical.
+                =C2=A0 I don&#39;t know how people who labelled themselves =
+as
+                &#39;anarchists&#39; =C2=A0resolved</div>
+              <div dir=3D"ltr">the
+                apparent contradiction.=C2=A0 Were they aware that anarchy
+                wasn&#39;t stable? =C2=A0(At least not</div>
+              <div dir=3D"ltr">absent
+                my 1995 invention, AP). =C2=A0 Most likely I think they wer=
+e
+                simply unaware that anarchy</div>
+              <div dir=3D"ltr">wasn&#39;t
+                going to be stable.=C2=A0 Or, perhaps they assumed that
+                then-future events would somehow</div>
+              <div dir=3D"ltr">solve
+                the problem.=C2=A0 As, ultimately, they did, but it didn&#3=
+9;t
+                have to be that way.=C2=A0 I, virtually by</div>
+              <div dir=3D"ltr">accident,
+                solved that problem.=C2=A0 But things could have been very
+                different.</div>
+              <div dir=3D"ltr"><br>
+              </div>
+              <div dir=3D"ltr">=C2=A0 =C2=A0
+                =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 Jim Bell</div>
+              <div dir=3D"ltr"><br>
+              </div>
+              <div dir=3D"ltr"><br>
+              </div>
+              <div dir=3D"ltr"><br>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </blockquote>
+    <br>
+  </div></div></div>
+
+</blockquote></div><br><br clear=3D"all"><div><br></div>-- <br><div class=
+=3D"gmail_signature" data-smartmail=3D"gmail_signature"><div dir=3D"ltr"><d=
+iv>Cari Machet<br>NYC 646-436-7795<br><a href=3D"mailto:carimachet@gmail.co=
+m" target=3D"_blank">carimachet@gmail.com</a><br>AIM carismachet<br>Syria +=
+963-099 277 3243<br>Amman +962 077 636 9407<br>Berlin +49 152 11779219 <br>=
+Reykjavik +354 894 8650<br>Twitter: @carimachet &lt;<a href=3D"https://twit=
+ter.com/carimachet" target=3D"_blank">https://twitter.com/carimachet</a>&gt=
+;<br><br></div>7035 690E 5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187<br><div><b=
+r>Ruh-roh, this is now necessary: This email is intended only for the <br>a=
+ddressee(s) and may contain confidential information. If you are not the <b=
+r>intended recipient, you are hereby notified that any use of this <br>info=
+rmation, dissemination, distribution, or copying of this email without <br>=
+permission is strictly prohibited.<br><br><br></div></div></div>
+</div>
+
+--001a11462f3a5a523b053958a22e--
+

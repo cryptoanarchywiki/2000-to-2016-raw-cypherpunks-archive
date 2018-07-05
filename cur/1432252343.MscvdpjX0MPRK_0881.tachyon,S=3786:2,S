@@ -1,0 +1,87 @@
+From owner-cypherpunks@Algebra.COM  Fri Nov  8 17:39:16 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id gA8MdGH14534
+	for <rsw@opamp.org>; Fri, 8 Nov 2002 17:39:16 -0500
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id RAA11701
+	for <rsw@mit.edu>; Fri, 8 Nov 2002 17:39:14 -0500 (EST)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id gA8KpqvZ031115
+	for <cypherpunks-outgoing@ak47.algebra.com>; Fri, 8 Nov 2002 14:51:52 -0600
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id gA8KpqaV031114
+	for cypherpunks-outgoing; Fri, 8 Nov 2002 14:51:52 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id gA8KplvZ031092
+	for <cypherpunks@ak47.algebra.com>; Fri, 8 Nov 2002 14:51:48 -0600
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id gA8KpjgS005964
+	for cypherpunks@ak47.algebra.com; Fri, 8 Nov 2002 12:51:46 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id gA8Ko0Lm005949
+	for cypherpunks-goingout345; Fri, 8 Nov 2002 12:50:00 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Fri, 8 Nov 2002 15:33:03 -0500 (est)
+From: Sunder <sunder@sunder.net>
+X-Sender: sunder@anon7.arachelian.com
+To: Bill Frantz <frantz@pwpconsult.com>
+cc: cypherpunks@lne.com, cryptography@wasabisystems.com
+Old-Subject: Re: Did you *really* zeroize that key?
+In-Reply-To: <v03110703b9f0d9918384@[192.168.1.5]>
+Message-ID: <Pine.BSO.4.21.0211081507520.10168-100000@anon7.arachelian.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Re: Did you *really* zeroize that key?
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 1436
+Lines: 38
+
+
+> Back in the early days of compiler benchmarks, one fancy compiler noticed
+> that the result of a lengthy calculation wasn't being used, and dutifully
+> removed the calculations.  That calculation was, of course, the kernel of
+> the benchmark.  The solution was to print the result.
+
+Or you do something like using binary OR from both ends of the
+memory chunk simultaneously, so when they finish, you're guaranteed to
+have 0xff (all 1's) all over your memory.
+
+
+This is off the top of my head, so bugs may exist, etc.
+
+int zapmem(uint8 *mem, size_t size)
+{
+
+int i,j,a,b;
+
+ for (a=0xaa,b=0x55,i=0, j=size-1; i<size, i++,j--)
+  {
+   a|=mem[i]; mem[i]=a;
+   b|=mem[j]; mem[j]=b;
+  }
+return a|b;
+}
+
+At the end of the loop, mem will be 0xff.  Why?  Because we use OR, and
+since one half is using 010101 and the other half is using 10101010, as
+i,j pass each other and OR themselves, you're guaranteed to have 0xff
+(11111111) as output.  You could also use 0xf0 and 0x0f or any other
+complementary values for the initial a and b values.
+
+There's a return value, the compiler has to return it, and thus can't
+easily optimize it out.  I don't think there exist smart compilers that
+will figure out what this does - if you can write such a compiler that can
+figure out what you indend in all cases, you will be a very rich man.  Of
+course if some compiler writer decides to make the above a special case
+and optimize it out, all bets are off.
+

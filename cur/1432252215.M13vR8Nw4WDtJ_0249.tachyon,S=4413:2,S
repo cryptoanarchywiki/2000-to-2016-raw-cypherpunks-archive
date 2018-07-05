@@ -1,0 +1,91 @@
+From owner-cypherpunks@jfet.org  Sat Dec 16 03:28:25 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.8/8.13.8/Debian-2) with ESMTP id kBG8Rrww003041
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sat, 16 Dec 2006 03:27:53 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.8/8.13.8/Submit) id kBG8RrR6003038
+	for cypherpunks-outgoing; Sat, 16 Dec 2006 03:27:53 -0500
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;         s=beta;
+  d=gmail.com;        
+  h=received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+  b=SeV0jO4lS7LgLKJb2WV9y0bTifoiMdOa8IuN5nt++W0Yb59NTIcb6SAZHuwFLGCaOD+3oixlYIqGBs/4i9TQH8Vy5Td7W5Ii5sfXqG1vxcQnXlr4VvAt95gTlR4KtFefyNcVHtDcSXPv24Be+0ZvyrZrfD4jXcex2qCzLpte820=
+Message-ID: <4ef5fec60612160027h65f5a502jf40007dac7ffd6a6@mail.gmail.com>
+Date: Sat, 16 Dec 2006 00:27:50 -0800
+From: coderman <coderman@gmail.com>
+To: "Eugen Leitl" <eugen@leitl.org>
+Subject: Re: Disguising a Tor node?
+Cc: "Tyler Durden" <camera_lumina@hotmail.com>, cypherpunks@jfet.org
+In-Reply-To: <20061215131012.GH6974@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+References: <458137D1.3080300@meshmx.com> 	
+  <BAY116-F255F2868A82B97867B3B889BD40@phx.gbl> 	
+  <20061215131012.GH6974@leitl.org>
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2780
+Lines: 57
+
+On 12/15/06, Eugen Leitl <eugen@leitl.org> wrote:
+> On Fri, Dec 15, 2006 at 06:43:55AM -0500, Tyler Durden wrote:
+> > OK, more dumb questions about hiding a Tor node.
+>
+> Not dumb at all, it's just the Tor designers went for a public approach.
+> However, as persecution seems to have started tightening thumbscrews on
+> Tor operators, a slide into illegality (and a redesign towards more
+> resilience) might be soon required. Of course, that's the whole idea
+> behind harassing Tor operators -- move them into a dark niche, where
+> they will be insigificant as providers of anonymity for the masses.
+
+see http://tor.eff.org/svn/trunk/doc/design-paper/blocking.pdf
+
+
+> I would be very surprised to learn that no TLAs are running nodes, or at
+> least tap nodes (when you run a colo, you don't have a lot of control about
+> physical security, so you have no idea whether there's a rootkit after
+> it comes up after a yet another "outage").
+
+there are effective ways to manage this risk.  i'm not keen on posting
+details here but perhaps off the record or at a later date.  you do
+need to be willing to drop a suspect host, so mitigation is mainly
+centered on secure initialization and subsequent vigilant monitoring
+to decide when to cut out.  there are probably a thousand more
+significant risks from host and application security angles, but
+physical security is indeed tricky/severely limited in a remote
+dedicate server scenario.
+
+
+> A much better idea is to make Tor a payload for a worm vector.
+
+heheh, curious yellow raises its head again...  this has always been a
+favorite for censorship resistance and plausible deniability.
+
+
+> Btw, there's a Tor package for OpenWRT -- I have not verified it's
+> working as adverized however -- the hardware *is* a bit tight. It would a
+> perfect disposable node, meshable, and with no wires to trace.
+
+it works ok; the processor struggles with the crypto (read: latency
+and constant max load) but otherwise tolerable.  i've thought about
+making a "Tor spot" configuration for access points, where transparent
+http/tcp and dns proxy through Tor is provided for all associated
+clients.  how useful would such a thing be?  (perhaps
+personaltelco-free / personaltelco-anon dual service?)
+
+
+> You'd need a redesign where servers with only partical network knowledge
+> can randomly redirect packets, while still unable to gnaw off all the
+> onion layers. Topologically, routing in random high-N spaces is not
+> difficult.
+> However, the network better be of considerable size. Enter the worm.
+
+the trade-off's and design constraints are more complicated and
+context dependant.  read the draft blocking resistant Tor design
+paper, it covers all these topics and provides a mostly reasonable
+approach (the devil is in the details, as always...)
+

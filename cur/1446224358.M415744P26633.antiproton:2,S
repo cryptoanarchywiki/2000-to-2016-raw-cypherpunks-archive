@@ -1,0 +1,153 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t9UGxFKp026616;
+	Fri, 30 Oct 2015 12:59:15 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=literati_org.20150623.gappssmtp.com header.i=@literati_org.20150623.gappssmtp.com
+	header.b=qw32xQVh; dkim-adsp=none (unprotected policy);
+	dkim-atps=neutral
+Received: from mail-io0-f182.google.com (mail-io0-f182.google.com
+ [209.85.223.182])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t9UGus8X026578
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Fri, 30 Oct 2015 12:56:55 -0400
+Received: by ioll68 with SMTP id l68so86662852iol.3
+ for <cypherpunks@cpunks.org>; Fri, 30 Oct 2015 09:56:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=literati_org.20150623.gappssmtp.com; s=20150623;
+ h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+ :content-type; bh=XvJ8nDKfB1aC2EItLXssX18ovSe8iLsPZaL0vpq5UA4=;
+ b=qw32xQVh9K4/v13zaT9V2oEJS/cwqcpZEdzLlvPyIX3O9XVGQ6VyhcfgajtcAZozTy
+ L2QegkCo7e0+QtLKzYjF/i81Tqohh6WjcYrHGX9TvSzfLrWHsZ5oj/bfazMbJRLhbtoe
+ 0nnMWkJHEbRO2V9WYQGr6wfNkK2GtWmCJWqCkOXAjxl9o26w/Xylm0goHUx2Ng5Rk6iS
+ GJqHIIOCERpaG3xm1iqFdVNTccha7Tm/J1UrFIKXuKxRKCLSVAVTuI1ZCHWgjz/hST4Z
+ 0qYooDzcoOqYW4PMudC9Fzu3oA8a5jdtoEaK2hPE3Z6CX3V+FYTAvEnIXJwTBqoMbMoI
+ cJ+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+ :message-id:subject:to:content-type;
+ bh=XvJ8nDKfB1aC2EItLXssX18ovSe8iLsPZaL0vpq5UA4=;
+ b=PpVdBMd4Yt2REUUhbKeQoKr1JJZJIEkd3346cIBqbmzU6A8Y4bu3PHLBh8FK7KSMNm
+ ONXupG5sj8DZRk2H8iRO3FxZ5tZV+GPikICvjrnqZBA8nlrxkcQM5W5rmnZ11w6wubU6
+ e5BTn/F+sT5AX5298zwk2GZG0R88mQ+N2tPWqTQM7jKhWwzsVO2cU+W9FpZIDVMlwcSr
+ ChLs3OA/0RZNC3WHnH7+6C9xIaAC8F84KFTxKPsbBTR4bfJrxlGjqJJvI1JXkhHp8Jp+
+ atSYVpO+BvG1vGmEgpDzXtGmv6+14MGDcOxWMZHZ7YQUFVC+dE6l9ywFh5SLPXkRhA2u
+ t1Xg==
+X-Gm-Message-State: ALoCoQnvXPl9Gy9Ibh+qbmGjv1dQGT6IePGdUoMpmXpbElEduZI1n2THIknS2XQhsx368LLTWKeH
+X-Received: by 10.107.16.38 with SMTP id y38mr10685193ioi.73.1446224209106;
+ Fri, 30 Oct 2015 09:56:49 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAHWD2rJNTxt2+=0rPkkc+323pTn-njkvJVgUE624LShu2xg1Eg@mail.gmail.com>
+ <150b0aeef50.276e.4d489027c0c4d0c1b1ca03a1f48f1ffb@misanthropia.org>
+ <20151028231728.1A96CC00019@frontend1.nyi.internal>
+ <CAOsGNSThwv=c9K4v4HkD27PD+wY9+XykyTNOWs=7FOwPpxctZw@mail.gmail.com>
+ <150b1290920.276e.4d489027c0c4d0c1b1ca03a1f48f1ffb@misanthropia.org>
+ <20151029013945.C7D9FC00012@frontend1.nyi.internal>
+ <CAHWD2rLJ0RgxcGZi=mKD=OfYYtCy1j9sfbzDKOVZuuX5EPCnJg@mail.gmail.com>
+ <5632417A.3070402@riseup.net>
+ <CAHKdp-=YBD8ZokGvWOc0s359nESwXQMkR_3RnVJD0saWUZOA-A@mail.gmail.com>
+ <5632A554.60601@riseup.net>
+ <CAHKdp-kzwaD8u9+P2y=zrVvPOu64sZLdL6kw9y9ZhByz_B1sNg@mail.gmail.com>
+In-Reply-To: <CAHKdp-kzwaD8u9+P2y=zrVvPOu64sZLdL6kw9y9ZhByz_B1sNg@mail.gmail.com>
+From: Sean Lynch <seanl@literati.org>
+Date: Fri, 30 Oct 2015 16:56:39 +0000
+Message-ID: <CAHKdp-=e0c-0LwHskoe10unQEuBtm28JdcfCSSZoi5hajSKzvw@mail.gmail.com>
+Subject: Re: Shiny stuff and designer societies (addenda)
+To: Razer <Rayzer@riseup.net>,
+        "cypherpunks@cpunks.org" <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=001a113f1e2e3feaee0523555034
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 79
+
+--001a113f1e2e3feaee0523555034
+Content-Type: text/plain; charset=UTF-8
+
+Sorry, meant to send this to the list, too.
+
+On Fri, Oct 30, 2015 at 9:52 AM Sean Lynch <seanl@literati.org> wrote:
+
+> On Thu, Oct 29, 2015 at 4:08 PM Razer <Rayzer@riseup.net> wrote:
+>
+>>
+>>
+>> On 10/29/2015 03:27 PM, Sean Lynch wrote:
+>> > On Thu, Oct 29, 2015 at 9:02 AM Razer <Rayzer@riseup.net> wrote:
+>> >
+>> >     You use the word "I" a lot. I aim for a society where "We" is
+>> primary.
+>> >
+>> >
+>> > I aim for the heads of people who aim for such a society, because "we"
+>> > is a fiction. It is just a way of saying "I" while pretending you have
+>> > others' interests in mind. You can only speak for yourself. Trying to
+>> > speak for anyone else who has not asked you to is just another form of
+>> > coercion.
+>>
+>> Who said I speak for anyone but me? Or care to.
+>>
+>> You're reading a lot into my interest in social equality. Perhaps it's
+>> because of your own world view?
+>>
+>
+> Something that one might call "societal equality" is of interest to me,
+> too. But different people have different ideas of what that means.
+>
+
+--001a113f1e2e3feaee0523555034
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Sorry, meant to send this to the list, too.<br><br><div cl=
+ass=3D"gmail_quote"><div dir=3D"ltr">On Fri, Oct 30, 2015 at 9:52 AM Sean L=
+ynch &lt;<a href=3D"mailto:seanl@literati.org">seanl@literati.org</a>&gt; w=
+rote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex=
+;border-left:1px #ccc solid;padding-left:1ex"><div dir=3D"ltr"><div class=
+=3D"gmail_quote"><div dir=3D"ltr">On Thu, Oct 29, 2015 at 4:08 PM Razer &lt=
+;<a href=3D"mailto:Rayzer@riseup.net" target=3D"_blank">Rayzer@riseup.net</=
+a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0 =
+0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"><br>
+<br>
+On 10/29/2015 03:27 PM, Sean Lynch wrote:<br>
+&gt; On Thu, Oct 29, 2015 at 9:02 AM Razer &lt;<a href=3D"mailto:Rayzer@ris=
+eup.net" target=3D"_blank">Rayzer@riseup.net</a>&gt; wrote:<br>
+&gt;<br>
+&gt;=C2=A0 =C2=A0 =C2=A0You use the word &quot;I&quot; a lot. I aim for a s=
+ociety where &quot;We&quot; is primary.<br>
+&gt;<br>
+&gt;<br>
+&gt; I aim for the heads of people who aim for such a society, because &quo=
+t;we&quot;<br>
+&gt; is a fiction. It is just a way of saying &quot;I&quot; while pretendin=
+g you have<br>
+&gt; others&#39; interests in mind. You can only speak for yourself. Trying=
+ to<br>
+&gt; speak for anyone else who has not asked you to is just another form of=
+<br>
+&gt; coercion.<br>
+<br>
+Who said I speak for anyone but me? Or care to.<br>
+<br>
+You&#39;re reading a lot into my interest in social equality. Perhaps it&#3=
+9;s<br>
+because of your own world view?<br></blockquote><div><br></div></div></div>=
+<div dir=3D"ltr"><div class=3D"gmail_quote"><div>Something that one might c=
+all &quot;societal equality&quot; is of interest to me, too. But different =
+people have different ideas of what that means.=C2=A0<br></div></div></div>=
+</blockquote></div></div>
+
+--001a113f1e2e3feaee0523555034--
+

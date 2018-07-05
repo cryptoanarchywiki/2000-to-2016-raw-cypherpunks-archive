@@ -1,0 +1,87 @@
+From owner-cypherpunks@Algebra.COM  Fri Nov  8 15:12:51 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id gA8KCpk13710
+	for <rsw@opamp.org>; Fri, 8 Nov 2002 15:12:51 -0500
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id PAA06574
+	for <rsw@mit.edu>; Fri, 8 Nov 2002 15:12:49 -0500 (EST)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id gA8JOYNf022267
+	for <cypherpunks-outgoing@ak47.algebra.com>; Fri, 8 Nov 2002 13:24:34 -0600
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id gA8JOYmv022266
+	for cypherpunks-outgoing; Fri, 8 Nov 2002 13:24:34 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id gA8JOCNf022204
+	for <cypherpunks@ak47.algebra.com>; Fri, 8 Nov 2002 13:24:25 -0600
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id gA8JO9mo004590
+	for cypherpunks@ak47.algebra.com; Fri, 8 Nov 2002 11:24:09 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id gA8JLVJU004502
+	for cypherpunks-goingout345; Fri, 8 Nov 2002 11:21:31 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Message-Id: <5.1.1.6.0.20021108133739.00b15e30@loom.cc>
+X-Sender: patrick@loom.cc
+X-Mailer: QUALCOMM Windows Eudora Version 5.1.1
+Date: Fri, 08 Nov 2002 14:01:25 -0500
+To: "Vincent Penquerc'h" <vincent.penquerch@artworks.co.uk>
+From: Patrick Chkoreff <patrick@loom.cc>
+Old-Subject: Re: Did you *really* zeroize that key?
+Cc: vincent.penquerch@artworks.ftech.co.uk,
+   Digital Bearer Settlement
+  List <dbs@philodox.com>,
+   cryptography@wasabisystems.com, cypherpunks@lne.com
+In-Reply-To: <20021108142226.A1204@BLENDER>
+References: <5.1.1.6.0.20021108082748.00b15e30@loom.cc>
+  <5.1.1.6.0.20021107192236.04242008@loom.cc>
+  <p05200e1fb9f07d122771@[66.149.49.6]>
+  <5.1.1.6.0.20021107192236.04242008@loom.cc>
+  <20021108102049.E1136@BLENDER>
+  <5.1.1.6.0.20021108082748.00b15e30@loom.cc>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Re: Did you *really* zeroize that key?
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 920
+Lines: 28
+
+
+At 02:22 PM 11/8/2002 +0000, Vincent Penquerc'h wrote:
+
+>while (!is_all_memory_zero(ptr)) zero_memory(ptr);
+
+
+Right, unfortunately the compiler might be insightful enough just to 
+optimize that whole thing to skip() -- Dijkstra's null statement.
+
+Even Welschenbach calls "ispurged" immediately after "purgevars" to make 
+sure the memory is actually zero.  The ispurged routine is also defined 
+using va_list, and if you turn on assertion checking it dies if the memory 
+is nonzero.
+
+The problem is you NEVER KNOW if the compiler is just being clever and 
+optimizing the assertion away, e.g.:
+
+sensitive = 0;
+if (sensitive) abort();
+
+The compiler will simply "know" to optimize this whole thing to skip().
+
+However, it is highly unlikely the compiler will be able to see through 
+va_list manipulations.  This problem is a real bear.  I guess you just have 
+to check the assembler output, eh?
+
+-- Patrick
+http://fexl.com
+

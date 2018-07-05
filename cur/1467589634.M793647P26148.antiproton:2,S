@@ -1,0 +1,145 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u63Nkbxt026132;
+	Sun, 3 Jul 2016 19:46:39 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=NMj18ALt;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-vk0-f54.google.com (mail-vk0-f54.google.com
+ [209.85.213.54])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u63NkYS3026128
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Sun, 3 Jul 2016 19:46:35 -0400
+Received: by mail-vk0-f54.google.com with SMTP id k68so126981150vkb.0
+ for <cypherpunks@cpunks.org>; Sun, 03 Jul 2016 16:46:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to;
+ bh=i7i6xzjuaopgs4Exa2m32DHEk7+gHXFHZg+CX/Y6Rkk=;
+ b=NMj18ALtDvdo189eCc68T7SUaOD+jApzyP7HGt6FnQa2o7uxhWeKwv0kgqbl5xYdF2
+ Q7EqzGoTrohTcF75wd35lvOC8kDNoyFrN0kFU+A+dEqty2w63DThQ7SERVqG/ojU+MaG
+ OeHkIzygESS0ETHjq8eTi4vD6WOye5PNhs8XsDnu7g9pInrlqmSPfYpQThRHUGdSa/2O
+ Xm973HbecD3QXtp7v95Enk2klwIeHeW0vkDruWNplY+OX0U7GCYJN7DkifKgmrEYyh+h
+ KcdKFRlIBcs+8uADUokUr4VR1s7MVR7auHdaGRNheY3M0dWwDzzZ0uZodD1uDgraaOrT
+ /TCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to;
+ bh=i7i6xzjuaopgs4Exa2m32DHEk7+gHXFHZg+CX/Y6Rkk=;
+ b=OcK2934APv0NApf8u+YkDbNcSqYxjMu8paePfW7hjd/p6d+DMG9054Dqydtqes/lfn
+ 5arJnI/blEzAL8v7bjVWe620qGjEcn+Xty8nv5Pk3DI56+52jCef1/KxIt3sY91OvGnV
+ H/EXbDfUODX42vvtCZ2+9OScV55uB8JNaDFcZrb1SKde/7VAtPBM0wTaC3+2cMHvRmMj
+ qrABmeYsHjYozrN5OfSDUMJy7WjI5daiP4Ee0Ar3PBau/iU4gGlPG/zGV4QFrONqKKt0
+ KZO4F7v3916SfHIufqZONAYA7bIMi0FjUtTRY4bG8xn50ddSFwWzvko1oE4WV1tAVl3G
+ xfVg==
+X-Gm-Message-State: ALyK8tLouShS6inSAJfnhwggQHPL2ywUWech+s4YVAWNi1M3yeuFrmb3+3QelxIjAXdDj5SYdsfGLHMeB2TrSg==
+MIME-Version: 1.0
+X-Received: by 10.176.0.180 with SMTP id 49mr365234uaj.107.1467589587864; Sun,
+ 03 Jul 2016 16:46:27 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Sun, 3 Jul 2016 16:46:26 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Sun, 3 Jul 2016 16:46:26 -0700 (PDT)
+In-Reply-To: <57799b9a.6c2cc80a.ba252.ffffa466@mx.google.com>
+References: <CAG2tMp40-3DpsEx=6Z5+XjoVKR7oCqQBJqxNSHaqPejOcBZN4A@mail.gmail.com>
+ <CAG2tMp5EWsXDPKcU_goW=ApqRdNFdEqMX3r05KfrEYsijgtfqA@mail.gmail.com>
+ <CAG2tMp77DA1Dwbz_Cq_A3yo2Th+NH6A2gp+D0Q=3ERgpM8RUgQ@mail.gmail.com>
+ <CAG2tMp7Fj73uvndcSLG3JqgM+x8P5DFNiZhOq3BYaYYxqs=X-Q@mail.gmail.com>
+ <CAG2tMp5t9Po62LYcAOJFvopjaeYQgQY4KpqaSkDqniX5ePoVTQ@mail.gmail.com>
+ <CAG2tMp64E2enGMFxO+Q2P44zmm-KbkAnjtWf4xhMbO5rDFaS+g@mail.gmail.com>
+ <CAG2tMp4iwP8vVW5qo-2h62km8ceZ_akrJCqKY+kaw47_3av-AA@mail.gmail.com>
+ <CAG2tMp6gygObFZvLY41H7jVjP27w-1ikBPUe7gE5t2ns35N+kg@mail.gmail.com>
+ <5771DEBD.7000803@riseup.net>
+ <CAG2tMp5us0ZWyeN6=kmdzapZN-UuXCnGtBrXFWhthHcQR5J3oQ@mail.gmail.com>
+ <20160628081344.GJ70912@r4>
+ <CAG2tMp5EZLzJOjNPKJuFhrvFnFKFBr15wWEWhPToPs-90L9dtg@mail.gmail.com>
+ <CAG2tMp55CVHU2uR1xuvqtHgomFSnWx99Mo6+JJUhHzHF-LDGdg@mail.gmail.com>
+ <57799b9a.6c2cc80a.ba252.ffffa466@mx.google.com>
+Date: Sun, 3 Jul 2016 20:46:26 -0300
+Message-ID: <CAG2tMp7KSHY7jC+JhiPvSAO+HE8gbJJsDXv0Cp01hFz2WpDWmQ@mail.gmail.com>
+Subject: Re: [OT] Five Simple Rules
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=001a113dc4160f96890536c3d42b
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 69
+
+--001a113dc4160f96890536c3d42b
+Content-Type: text/plain; charset=UTF-8
+
+On Jul 3, 2016 8:18 PM, "juan" <juan.g71@gmail.com> wrote:
+>
+>         american fascist propaganda endorsed by clinton, wsj, the
+'economist' and a bunch of other high ranking pieces of shit.
+>
+>         Congrats Cecilia.
+>
+>         "Today is the best times of all"
+>
+>         Yep. Now that the americunt global police state is almost fully
+functional. Finally the democrats can drone the enemies of humanity with
+the push of a button. We all should praise american science.
+
+My dear Juan,
+
+Please, consider seriously to have some sex or masturbation or, at least,
+eat carbohydrates like a crazy.  You do need serotonin and endorphins with
+urgence!!!  :P
+
+God, my mood is horrible, but you are becoming a 'mal amado', very bitter
+and much grumpier than me!  :P
+
+Please, search for 'mal amado' and 'mimimi'.  It's Brazilian slang and I
+don't know how to translate these expressions, but they mean you need some
+love urgently and that you don't stop complaining about everything!  :(((
+
+I love science.  All sciences, not just "American science".  And I love
+books much more than you can imagine.  Much more, I swear.
+
+--001a113dc4160f96890536c3d42b
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p>On Jul 3, 2016 8:18 PM, &quot;juan&quot; &lt;<a href=3D"mailto:juan.g71@=
+gmail.com">juan.g71@gmail.com</a>&gt; wrote:<br>
+&gt;<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 american fascist propaganda endorsed by cl=
+inton, wsj, the &#39;economist&#39; and a bunch of other high ranking piece=
+s of shit.<br>
+&gt;<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 Congrats Cecilia.<br>
+&gt;<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;Today is the best times of all&quot;=
+<br>
+&gt;<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 Yep. Now that the americunt global police =
+state is almost fully functional. Finally the democrats can drone the enemi=
+es of humanity with the push of a button. We all should praise american sci=
+ence.</p>
+<p>My dear Juan, </p>
+<p>Please, consider seriously to have some sex or masturbation or, at least=
+, eat carbohydrates like a crazy.=C2=A0 You do need serotonin and endorphin=
+s with urgence!!!=C2=A0 :P</p>
+<p>God, my mood is horrible, but you are becoming a &#39;mal amado&#39;, ve=
+ry bitter and much grumpier than me!=C2=A0 :P</p>
+<p>Please, search for &#39;mal amado&#39; and &#39;mimimi&#39;.=C2=A0 It&#3=
+9;s Brazilian slang and I don&#39;t know how to translate these expressions=
+, but they mean you need some love urgently and that you don&#39;t stop com=
+plaining about everything!=C2=A0 :(((</p>
+<p>I love science.=C2=A0 All sciences, not just &quot;American science&quot=
+;.=C2=A0 And I love books much more than you can imagine.=C2=A0 Much more, =
+I swear.</p>
+
+--001a113dc4160f96890536c3d42b--
+

@@ -1,0 +1,108 @@
+From cypherpunks-bounces@cpunks.org  Sat Oct 19 07:35:58 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9JBZS1r032351;
+	Sat, 19 Oct 2013 07:35:33 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9JBZM5r032347
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Sat, 19 Oct 2013 07:35:24 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id BE9D0543E1B; Sat, 19 Oct 2013 13:35:21 +0200 (CEST)
+Date: Sat, 19 Oct 2013 13:35:21 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, cryptography@randombit.net
+Subject: Re: [zfs] [Review] 4185 New hash algorithm support
+Message-ID: <20131019113521.GT10405@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 3234
+Lines: 70
+
+----- Forwarded message from Pawel Jakub Dawidek <pjd@FreeBSD.org> -----
+
+Date: Sat, 19 Oct 2013 13:26:08 +0200
+From: Pawel Jakub Dawidek <pjd@FreeBSD.org>
+To: zfs@lists.illumos.org
+Subject: Re: [zfs] [Review] 4185 New hash algorithm support
+Message-ID: <20131019112608.GF1408@garage.freebsd.pl>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+Reply-To: zfs@lists.illumos.org
+
+On Mon, Oct 07, 2013 at 11:18:21PM +0100, Saso Kiselkov wrote:
+> On 10/7/13 10:17 PM, Zooko Wilcox-OHearn wrote:
+> > So, before I go on with my pitch for why you should consider BLAKE2,
+> > first please clarify for me whether ZFS really needs a
+> > collision-resistant hash function, or whether it needs only a MAC. I
+> > had thought until now that ZFS doesn't need a collision-resistant hash
+> > unless dedup is turned on, and that if dedup is turned on it needs a
+> > collision-resistant hash.
+> 
+> The reason is purely for dedup and pretty much nothing else. As such, we
+> only need a hash with a good pseudo-random output distribution and
+> collision resistance. We don't specifically need it to be super-secure.
+> The salted hashing support I added was simply to silence the endless
+> stream of wild hypotheticals on security.
+
+Just FYI, Richard Yao just proposed providing VM images with existing
+ZFS pool also for production use. This is great idea, but also a nice
+proof why making assumptions on how exactly a general purpose software
+will be used is bad. In this case your salted hashing is pointless as
+everyone knows about the salt in those images. And we are back to square
+one.
+
+Saso, there are countless examples where so called hypothetical security
+bugs turned out to be exploitable in practise. Which is especially true
+for general purpose software that we have no control over how it is
+being used.
+
+As Zooko mentioned cryptoanalysis of the Edon-R algorithm stopped at the
+point where we know it is not cryptographically secure and this is
+unlikely we will see any further work in the subject, which in my eyes
+is even worse, as we don't know how bad is it.
+
+To sum up. Even if the OpenZFS community will agree to integrate Edon-R,
+I'll strongly oppose having it in FreeBSD. In my opinion it is just
+asking for trouble. I still like your change very much and would love to
+see new, cryptographically secure hash algorithms for dedup in ZFS.
+Currently there is no alternative, which is bad for security too.
+
+-- 
+Pawel Jakub Dawidek                       http://www.wheelsystems.com
+FreeBSD committer                         http://www.FreeBSD.org
+Am I Evil? Yes, I Am!                     http://mobter.com
+
+
+
+-------------------------------------------
+illumos-zfs
+Archives: https://www.listbox.com/member/archive/182191/=now
+RSS Feed: https://www.listbox.com/member/archive/rss/182191/22842876-6fe17e6f
+Modify Your Subscription: https://www.listbox.com/member/?member_id=22842876&id_secret=22842876-a25d3366
+Powered by Listbox: http://www.listbox.com
+
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

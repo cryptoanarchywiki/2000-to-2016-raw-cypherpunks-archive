@@ -1,0 +1,117 @@
+From owner-cypherpunks@al-qaeda.net  Thu Feb 14 17:03:22 2013
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id r1ELq0YR030429
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 14 Feb 2013 16:52:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1360878720;
+	bh=im1PJYWG8g5VK4MRGWpHPa4a9sXrVkPj574SyU37OBo=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=t9HgPh61g0u9QLtet4Ug/Oc7h2+a57egvbeLuVYAErSXijT8pNPmQ5xGrvlkSqqr1
+	 xht243d39MWe6tsQs0Dq5WNr1ERsC0qjEGl9nt54slZghGQchcOeA6zls3bq0AD3Px
+	 RB1HoHJNf3JGmf8AyXZh87IsKaoqdH4lcZVVuPhs=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id r1ELq04l030428
+	for cypherpunks-outgoing; Thu, 14 Feb 2013 16:52:00 -0500
+Date: Thu, 14 Feb 2013 22:51:55 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com,
+        cryptography@randombit.net
+Subject: Re: [zfs] Edon-R hashing and dedup
+Message-ID: <20130214215155.GB6172@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3831
+Lines: 82
+
+----- Forwarded message from Matthew Ahrens <mahrens@delphix.com> -----
+
+From: Matthew Ahrens <mahrens@delphix.com>
+Date: Thu, 14 Feb 2013 13:32:35 -0800
+To: zfs@lists.illumos.org
+Subject: Re: [zfs] Edon-R hashing and dedup
+Reply-To: zfs@lists.illumos.org
+
+On Mon, Feb 11, 2013 at 6:22 AM, SaE!o Kiselkov <skiselkov.ml@gmail.com>wrote:
+
+> So I've been talking to some people around storage and found out that
+> SHA-256 hashing *is* a significant cost in implementing dedup.
+
+
+I know  I'm arriving late to this discussion.  For my own understanding,
+I'd like to attempt to summarize the various positions and get everyone's
+feedback.
+
+SHA-256 is slow; we'd like to find a faster algorithm to replace it, which
+will use less CPU.  Such a replacement must be usable for dedup without
+verification.  (Performance and behavior with verification is a secondary
+concern to the points outlined here.)
+
+Dedup inherently relies on probabilistic correctness: if there is a hash
+collision, incorrect data will be returned.  This is true even with the
+best hash algorithms (including SHA-256), and even without the possibility
+of storing malicious data.  However, the probability involved is
+exceedingly small.  Given 2^64 bytes (16 exabytes) in 8KB blocks, the odds
+of a collision are approximately 1/2^155. This is less likely than
+consecutively buying 5 jackpot-winning lottery tickets (assuming lottery
+odds 1/100 million).
+
+Dedup is sometimes used with user-generated data (i.e. untrusted, possibly
+malicious users provide the data to store).  In the case, the hash
+algorithm should be such that it is infeasible to find a block which hashes
+to a given value.  Otherwise an untrusted user may cause ZFS to return
+incorrect data.
+
+Dedup is sometimes used only with trusted data (i.e. none of the data can
+be maliciously generated).  In this case, the algorithm need only
+distribute input blocks evenly over all 2^256 possible hash values.  It is
+OK if it is feasible to find a block with a given hash value, because the
+risk associated is no worse than the ideal case (e.g 1/2^155 chance of
+returning incorrect data with the workload described above).
+
+SHA-256 is currently used for both of these use cases (trusted and
+untrusted data).  So a replacement should also be usable for both.
+
+Optionally, we could implement a third, even faster, algorithm for use only
+in the trusted case.  Some people believe that this choice may be misused
+(i.e. used even when the data can not be trusted), and therefore this
+option should not be offered.
+
+I'm not an expert in crypto algorithms; I've only read the wikipedia page
+on the SHA-3 competition (
+http://en.wikipedia.org/wiki/NIST_hash_function_competition).  Being fairly
+paranoid mainly due to my lack of expertise in this area, I would prefer to
+choose one of the finalists as a replacement for SHA-256.  It sounds like
+BLAKE and Skein have reasonable performance.
+
+I think that the easiest way forward will be to first agree on a
+high-performance replacement for SHA-256, which is usable in all cases that
+SHA-256 is, including with untrusted data. We can then evaluate demand for
+an even faster algorithm to be used only with trusted data.
+
+--matt
+
+
+
+-------------------------------------------
+illumos-zfs
+Archives: https://www.listbox.com/member/archive/182191/=now
+RSS Feed: https://www.listbox.com/member/archive/rss/182191/22842876-6fe17e6f
+Modify Your Subscription: https://www.listbox.com/member/?member_id=22842876&id_secret=22842876-a25d3366
+Powered by Listbox: http://www.listbox.com
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

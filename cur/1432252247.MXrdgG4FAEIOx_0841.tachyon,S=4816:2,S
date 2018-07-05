@@ -1,0 +1,102 @@
+From owner-cypherpunks@al-qaeda.net  Wed Mar 14 16:33:23 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q2EKUaV7019490
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 14 Mar 2012 16:30:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1331757036;
+	bh=Oz7QMhiztHUP6m0x5JJHHBJobYHJLkELh/7dFsJ7RtA=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=NdvDFRePHfdd1lYIXongfDk7l5ob4qUMrPyIIJGacScVAQ34cFr5KPNEJ6T0K9WJh
+	 hRvRzf3ScjZ+66pBHAb9XstxzWwpL87lMrWeWGRF8Zn6C0fcvz2i1DqH+DHuHgD/ab
+	 MUlQwe/90GlC6nJMth6V8/PaFbK1sBG8UmSUxeeo=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q2EKUac9019489
+	for cypherpunks-outgoing; Wed, 14 Mar 2012 16:30:36 -0400
+Date: Wed, 14 Mar 2012 21:30:33 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: [tahoe-dev] keeping private grids private
+Message-ID: <20120314203033.GI9891@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3424
+Lines: 70
+
+----- Forwarded message from Brian Warner <warner@lothar.com> -----
+
+From: Brian Warner <warner@lothar.com>
+Date: Wed, 14 Mar 2012 13:25:36 -0700
+To: tahoe-dev@tahoe-lafs.org
+Subject: Re: [tahoe-dev] keeping private grids private
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6;
+	rv:10.0.2) Gecko/20120216 Thunderbird/10.0.2
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+On 3/9/12 7:39 PM, Vladimir Arseniev wrote:
+
+> Let's say that we have a private grid, with both local and hosted
+> servers. But our introducer.furl falls into the wrong hands, and
+> uninvited nodes start appearing. Maybe they're just leeching storage.
+> Maybe they're disrupting the grid through flapping, running deep-check
+> all the time, or whatever. Maybe they're actively attacking the grid.
+> 
+> How do we exclude them? Can introducers be configured to accept only
+> known nodes? Could we create a new introducer, and circulate its furl
+> to authorized nodes? Or would that just create a new grid?
+
+Like Markus said, we're getting closer, but we aren't quite there yet.
+The most important fix is to make the introducer.furl actually secret
+(currently it's guessable by anyone who knows the tubid): ticket #860 is
+related (but I can't find the actual ticket). Once fixed, then keeping
+the introducer.furl from falling into those wrong hands will work. It
+gives you a sort of secret-frat-party security system: anyone who's in
+the club can invite anyone they like, and there's no way to kick someone
+out (knowledge of the introducer.furl is irrevocable).
+
+We don't want to add new security measures to the Introducer itself
+(like giving it a list of "good" clients so it can ignore the rest),
+because we want to get rid of the Introducer entirely. We want to
+replace it with a distributed gossip-based system (#68), and you can't
+rely on a bunch of gossiping nodes to enforce access-control policies.
+So we're looking in different directions to provide the sort of control
+you're looking for.
+
+The next step is the explicit-server-selection work: #467. When that's
+done, each client will be able to indicate which servers they want to
+use, ignoring rogue servers. That will fix the availability problems
+(servers connecting, accepting shares, then disappearing). The
+configuration of this is still a matter of debate: one approach is to
+list the pubkey of the servers you want to use, but that can be
+labor-intensive for larger grids, and makes it hard to share files if
+the uploader uses a different list than the downloader. Another approach
+is to delegate membership to a "grid manager" of some sort: more moving
+pieces but probably easier to use.
+
+The step after that is part of Accounting (#666), in which servers
+reject operations by unauthorized clients. This would include both
+storage (leeching) and network bandwidth (downloading shares, running
+deep-check, etc, but not basic DoS).
+
+But for now, yeah, IP-address filtering is a good quick answer.
+
+cheers,
+ -Brian
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+http://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

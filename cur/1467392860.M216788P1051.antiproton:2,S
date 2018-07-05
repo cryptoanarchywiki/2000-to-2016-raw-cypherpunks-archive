@@ -1,0 +1,168 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u61H72Ug001023;
+	Fri, 1 Jul 2016 13:07:04 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=otnNXtX2;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-vk0-f45.google.com (mail-vk0-f45.google.com
+ [209.85.213.45])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u61H6xkg001019
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Fri, 1 Jul 2016 13:07:00 -0400
+Received: by mail-vk0-f45.google.com with SMTP id c2so161178490vkg.1
+ for <cypherpunks@cpunks.org>; Fri, 01 Jul 2016 10:07:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to;
+ bh=MH5+aL6/Z142Q0GWmFow6Ue8IFlpu1I/ZTEcQJ9z1Hk=;
+ b=otnNXtX2JfLuClMYaj1M60ypoQRAroA/ePTgQYHLu+0ILfc7kA4+AfBfrYebvfr02k
+ O9oXdvwh19JgvbS3FggrUFwxV9WmC6H2MolnkTUVeoKkyaNbOKZgwBhbJRc1tyL/Iux8
+ z1Sp6+0wuqHXBoynkHI6DN/N6DKLxGIsshjkG6w3N2k1nXBP0jnGwQjH67eEaQkJ9Zlu
+ Fn4PNWebi1IK29mNRURFunc6+NBr0X4OzILhFogREj3927RMsIJ97WBn2Rbr0FUutBzD
+ bLPT6VZ9IKgNzOruXQBMRD78qDJiTIKnyLN4aZlkpF7KI/flNhQ5V2IFjwsa3BXiq7GG
+ xkgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to;
+ bh=MH5+aL6/Z142Q0GWmFow6Ue8IFlpu1I/ZTEcQJ9z1Hk=;
+ b=jCEJwsHzjO4lNqY6rTYYedzYsQzK47PD4BUmEL0TrTeAk3WV4RwM/UvK9N+lYv4JfJ
+ CDcb1EwmZYum8hqo9JYzGh9ZpwThGzikm9gmWO5TsBGZ3N8gq49poaxBwUc2Dbu0ZbJd
+ 2zPpyPVmmZorAuLmx+lcC5NiQCbrWfkCc1X585vdVBrzlywP0wNpN1Ns9SX7luuxpzVE
+ oGeVdUkhrDph5Wvue9UWvCiqmsc09fX92p1GUg5jdOyiS/rgUAb77hgoIg/RsLAvuOdy
+ hVgG1uaMqz7jBgDMshyrA0QOVvilTe+m44p258HRbLvVRn/RGJd3gfu8SXQ9AYIzkdq0
+ EoDw==
+X-Gm-Message-State: ALyK8tJHeJVwaNsbfoif5tsf/KHPSbfIW8pYTeJaXgrCzayqBvTJq+ZfUxLZjte9pPn4itJDNX7anKLxCAchMA==
+MIME-Version: 1.0
+X-Received: by 10.176.7.1 with SMTP id h1mr9630477uah.97.1467392812924; Fri,
+ 01 Jul 2016 10:06:52 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Fri, 1 Jul 2016 10:06:52 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Fri, 1 Jul 2016 10:06:52 -0700 (PDT)
+In-Reply-To: <CAG2tMp5fv=0eeQ5Uf5tsUJ+nhmCmJ5XmJ=54VRs23RMy1FnDUQ@mail.gmail.com>
+References: <CAG2tMp6cZFocww-TrrqgQrFjyFYehKkNx+v+jzeomWxuHfrjpw@mail.gmail.com>
+ <CAG2tMp7uhRP3mrz+Pok1qB_f4adpsTk4US-xSwbbOJbLtQVxWA@mail.gmail.com>
+ <CAG2tMp5efswpyzxptdMpP9JnQp4iJRfN_2BBq3ypK868+p2rwg@mail.gmail.com>
+ <CAG2tMp7q6o10jvSVa6-AUMQK8deJfsqEf9j6s07nX+=4skkLhg@mail.gmail.com>
+ <CAG2tMp6vYnphaiLT2moAJNTjV-ncz2J_jM-TjOjyoVkkzuMbmA@mail.gmail.com>
+ <CAG2tMp7aKz-H4ZYpqE4L8qnaZT1TmmSM_DyACUR9dhSqce4NKA@mail.gmail.com>
+ <CAG2tMp4s=wxZX-ywknfvzupKuwc7QY_8r5ASdFF610h3cQdwHA@mail.gmail.com>
+ <CAG2tMp7UBGAfax1gyiSUn5cDagh18aqJQOFvQBfwRta82r3ftA@mail.gmail.com>
+ <CAG2tMp5xFMGWcJ29cyJwEEyqnXuN3e+mLjR3ySrWRrvN_nZ-zQ@mail.gmail.com>
+ <CAG2tMp5nCnv7oG1nZSZS9xgmfp5sTU_pf3pFn_xbHbWrL+U5zQ@mail.gmail.com>
+ <CAG2tMp7R1BwX+QRBFOaQb402LJuogqRPB9SWuzWvdJhFyk8Jnw@mail.gmail.com>
+ <CAG2tMp6CpeEMXj6mrVgM83J-+fWjOtZOQfBj_1k0C0ByJ0erpg@mail.gmail.com>
+ <CAG2tMp7SXU24DNjiE9=M4RY2q--533mFm5RzcwJpxsxa4+OD8A@mail.gmail.com>
+ <CAG2tMp5fv=0eeQ5Uf5tsUJ+nhmCmJ5XmJ=54VRs23RMy1FnDUQ@mail.gmail.com>
+Date: Fri, 1 Jul 2016 14:06:52 -0300
+Message-ID: <CAG2tMp6O+28Kja3hbro78R1quSTSPqVeNST5q=u5UX+=B+OZDA@mail.gmail.com>
+Subject: Re: [OT] Fwd: [Programming] Tutoriais de Diversas Linguagens
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=94eb2c1248105c47940536960308
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 92
+
+--94eb2c1248105c47940536960308
+Content-Type: text/plain; charset=UTF-8
+
+[OT]  [Friday silly message]
+
+Definitely, without any doubt, I am the world's worst programmer, but this
+kind of thing is pure love, ow!  *-*
+
+http://helloworldcollection.de
+
+I love esoteric programming languages and "hello world" using ArnoldC is
+pretty cute!  I didn't know this language!  <3
+
+https://github.com/lhartikk/ArnoldC/wiki/ArnoldC
+
+But this is my favorite language, the only one that makes me feel like a
+great ninja programmer, yay!!!  :D
+
+http://yiap.nfshost.com/esoteric/unnecessary/unnecessary.html
+
+Unnecessary is an esoteric programming language. The language is named
+'Unnecessary' because of the method this programming language works: the
+source file is unnecessary; in fact the existence of source code file leads
+to critical error. In case of critical error the interpreter must stop
+immediately and report the error.
+
+Unnecessary has no instructions/commands. You can do nothing with this
+language, so using it is unnecessary as well. The whole Unnecessary program
+is NOP. Or actually, there should be no Unnecessary programs, since only
+valid Unnecessary program is a non-existing source code file.
+
+The goal was to create a programming language that is easy to learn, not
+very useful, doesn't require input or do output, has no memory, has no
+instructions. Only an interpreter is required. As well, good thing is that
+distributing Unnecessary programs is extremely easy, and can be done
+without computers. As well, storage is no problem: you can have infinite
+amount of Unnecessary programs in a memory bit. Actually, storing them
+requires less memory than a bit.
+
+Every valid program, however, is a quine. That's the only possible program,
+and the only valid form of program. In Unnecessary creating a null quine
+doesn't even require the existence of the empty program file, as in other
+languages. Has programming ever been easier?(Not to mention that it isn't
+even possible to write anything else than bug-free code!)
+
+Oh, and the valid Unnecessary program file extension is "unn".
+
+--94eb2c1248105c47940536960308
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p>[OT]=C2=A0 [Friday silly message] </p>
+<p>Definitely, without any doubt, I am the world&#39;s worst programmer, bu=
+t this kind of thing is pure love, ow!=C2=A0 *-* </p>
+<p><a href=3D"http://helloworldcollection.de">http://helloworldcollection.d=
+e</a> </p>
+<p>I love esoteric programming languages and &quot;hello world&quot; using =
+ArnoldC is pretty cute!=C2=A0 I didn&#39;t know this language!=C2=A0 &lt;3<=
+/p>
+<p><a href=3D"https://github.com/lhartikk/ArnoldC/wiki/ArnoldC">https://git=
+hub.com/lhartikk/ArnoldC/wiki/ArnoldC</a> </p>
+<p>But this is my favorite language, the only one that makes me feel like a=
+ great ninja programmer, yay!!!=C2=A0 :D</p>
+<p><a href=3D"http://yiap.nfshost.com/esoteric/unnecessary/unnecessary.html=
+">http://yiap.nfshost.com/esoteric/unnecessary/unnecessary.html</a></p>
+<p>Unnecessary is an esoteric programming language. The language is named &=
+#39;Unnecessary&#39; because of the method this programming language works:=
+ the source file is unnecessary; in fact the existence of source code file =
+leads to critical error. In case of critical error the interpreter must sto=
+p immediately and report the error.</p>
+<p>Unnecessary has no instructions/commands. You can do nothing with this l=
+anguage, so using it is unnecessary as well. The whole Unnecessary program =
+is NOP. Or actually, there should be no Unnecessary programs, since only va=
+lid Unnecessary program is a non-existing source code file.</p>
+<p>The goal was to create a programming language that is easy to learn, not=
+ very useful, doesn&#39;t require input or do output, has no memory, has no=
+ instructions. Only an interpreter is required. As well, good thing is that=
+ distributing Unnecessary programs is extremely easy, and can be done witho=
+ut computers. As well, storage is no problem: you can have infinite amount =
+of Unnecessary programs in a memory bit. Actually, storing them requires le=
+ss memory than a bit.</p>
+<p>Every valid program, however, is a quine. That&#39;s the only possible p=
+rogram, and the only valid form of program. In Unnecessary creating a null =
+quine doesn&#39;t even require the existence of the empty program file, as =
+in other languages. Has programming ever been easier?(Not to mention that i=
+t isn&#39;t even possible to write anything else than bug-free code!)</p>
+<p>Oh, and the valid Unnecessary program file extension is &quot;unn&quot;.=
+</p>
+
+--94eb2c1248105c47940536960308--
+

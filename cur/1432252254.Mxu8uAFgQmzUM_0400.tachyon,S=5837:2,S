@@ -1,0 +1,137 @@
+From cypherpunks-bounces@cpunks.org  Wed Sep  4 16:14:02 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r84KE0J0027543;
+	Wed, 4 Sep 2013 16:14:01 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r84KDvas027539
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Wed, 4 Sep 2013 16:13:59 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 6A4A4543E5D; Wed,  4 Sep 2013 22:13:56 +0200 (CEST)
+Date: Wed, 4 Sep 2013 22:13:56 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: Re: [Cryptography] Popular curves (was: NSA and cryptanalysis)
+Message-ID: <20130904201356.GF29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 4076
+Lines: 99
+
+----- Forwarded message from Jose Luis Gomez Pardo <gomez.pardo@usc.es> -----
+
+Date: Wed, 04 Sep 2013 18:35:52 +0200
+From: Jose Luis Gomez Pardo <gomez.pardo@usc.es>
+To: ianG <iang@iang.org>
+Cc: Phillip Hallam-Baker <hallam@gmail.com>, cryptography@metzdowd.com
+Subject: Re: [Cryptography] Popular curves (was: NSA and cryptanalysis)
+X-Mailer: QUALCOMM Windows Eudora Version 7.1.0.9
+
+At 08:20 04/09/2013, ianG wrote:
+> On 3/09/13 18:13 PM, Phillip Hallam-Baker wrote:
+> ....
+>> Do we have an ECC curve that is (1) secure and (2) has a written
+>> description prior to 1 Sept 1993?
+> 
+> 
+> (Not answering your direct question.)  Personally, I was happy to
+> plan on using DJB's Curve25519.  He's done the research and says it
+> is good.  Comments?
+> 
+> iang
+
+Curve25519 was designed for elliptic Diffie-Hellman taking care of
+both security and efficiency aspects and seems very strong in both of
+them. Some comments on its usage for other purposes can be found in
+
+http://stackoverflow.com/questions/2515948/use-of-curve25519
+
+This curve was originally written for x86 32-bit platforms and a
+64-bit implementation can be found in the following links:
+
+https://code.google.com/p/curve25519-donna/
+
+https://github.com/agl/curve25519-donna
+
+In addition to this curve and to the NIST curves, another source for
+elliptic curves that can be (according to the developers) freely used
+is:
+
+http://certivox.org/display/EXT/CertiVox+Standard+Curves
+
+where cuves over 384 and 512-bit prime fields can be found which are
+likely secure. Of course, in all these cases you have to trust the
+curve developers somewhat although you can also check these curves for
+possible vulnerabilities.
+
+Alternatively,  one can build one's own curve and  for  this one needs
+to have access to an implementation of the SEA point counting
+algorithm. A little while ago I was writing a cryptography book that
+uses Maple to implement both cryptographic schemes and cryptanalytic
+algorithms and, for a while, I contemplated the idea of programming
+SEA in Maple. However, I soon discarded it because there are already
+some freely available excelent implementations in compiled languages
+and my Maple implementation would necessarily be much slower. Thus,
+for some computations in the examples in my book I ended using MIRACL,
+a C/C++ library with excellent support for ECC which was recently
+adquired by CertiVox and can be found in the following  links:
+
+http://www.certivox.com/miracl/
+
+https://github.com/CertiVox/MIRACL
+
+Using the SEA algorithm one can readily find elliptic curves of prime
+order (or with a very small cofactor)  which, additionally, can be
+tested to ensure that they satisfy some important conditions such as
+not having small embedding degree (to prevent the MOV reduction
+attack) or not having trace one (anomalous curves) which makes them
+also vulnerable. Of course, if the curves are (pseudo)randomly
+generated, it is very unlikely that they suffer from these
+vulnerabilities. Methods for verifiably random generation of such
+curves can be found in:
+
+http://www.secg.org/download/aid-780/sec1-v2.pdf
+
+and some recommended elliptic curves generated using these methods
+(including curves over 384-bit and 521-bit prime fields) are available
+from:
+
+http://www.secg.org/download/aid-784/sec2-v2.pdf
+
+Of course, I don't know whether these curves are completely free from
+IP concerns but, according to the sources where these curves are
+published, this seems to be the case  (I am far from expert in the IP
+subject but, as a mathematician, the idea of someone "owning" an
+elliptic curve in some sense, seems to me very strange).
+
+Jose Luis.
+
+_______________________________________________
+The cryptography mailing list
+cryptography@metzdowd.com
+http://www.metzdowd.com/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

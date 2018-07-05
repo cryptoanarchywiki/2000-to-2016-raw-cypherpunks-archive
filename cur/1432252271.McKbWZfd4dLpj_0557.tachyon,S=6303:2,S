@@ -1,0 +1,131 @@
+From cypherpunks-bounces@cpunks.org  Thu Oct 17 17:12:35 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9HLCYGt000494;
+	Thu, 17 Oct 2013 17:12:34 -0400
+Received: from mail-02.1984.is (mail-02.1984.is [93.95.224.7])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9HLCUZw000490
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 17 Oct 2013 17:12:33 -0400
+Received: from [79.97.71.97] (helo=Neptune)
+ by mail-02.1984.is with esmtpsa (TLSv1.2:DHE-RSA-AES128-SHA:128)
+ (Exim 4.80) (envelope-from <cathalgarvey@cathalgarvey.me>)
+ id 1VWuro-0003bE-H8
+ for cypherpunks@cpunks.org; Thu, 17 Oct 2013 21:12:24 +0000
+Date: Thu, 17 Oct 2013 22:12:11 +0100
+From: Cathal Garvey <cathalgarvey@cathalgarvey.me>
+To: cypherpunks@cpunks.org
+Subject: Re: Curious RNG stalemate [was: use of cpunks]
+Message-ID: <20131017221211.3b81105d@Neptune>
+In-Reply-To: <20131017204727.B32E8EB07@a-pb-sasl-quonix.pobox.com>
+References: <CAD2Ti2_Y4V+d_kLEmoyUmUXLXvA8CCg8Hi50GW2ZGAZZ+eb0Rg@mail.gmail.com>
+ <20131017204727.B32E8EB07@a-pb-sasl-quonix.pobox.com>
+X-Mailer: Claws Mail 3.8.1 (GTK+ 2.24.10; i486-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=PGP-SHA512;
+ boundary="Sig_/MoxAYeWnu0Ie7T7H2Zzo9lp"; protocol="application/pgp-signature"
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 4149
+Lines: 87
+
+--Sig_/MoxAYeWnu0Ie7T7H2Zzo9lp
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+> If you want slow, you can get a geiger counter from Sparkfun/etc. for
+> ~$99, but you're not going to get anything intentionally radioactive=20
+> shipped cheap from China.
+
+Could you hack a smoke detector? They use (IIRC) Americanium decay to
+ionise an air path to a detector. You might be able to use the voltage
+variation in that circuit with very little modification, without even
+opening the case perhaps (which is good, because Americanium is
+supposedly somewhat toxic)?
+
+Of course, then you'd have to watch out that an attacker doesn't smoke
+in the same room as your entropy source... ;)
+
+On Thu, 17 Oct 2013 13:45:10 -0700
+Bill Stewart <bill.stewart@pobox.com> wrote:
+
+> At 09:56 AM 10/17/2013, grarpamp wrote:
+> >I'd guess that with good sources, today's prng code is sufficiently
+> >strong and at least some unix systems do save state across reboot.
+>=20
+> >Now if someone would just sell a completely open discrete logic
+> >serial port hw entropy source for under $50... that would end
+> >a lot of the talk. Even with a more costly radiation source rather
+> >than other phenomena you'd still likely make good profit in quantity
+> >from China at that price.
+>=20
+> First of all, lots of important hardware doesn't have ports on it,
+> particularly virtual machines, which have a whole raft of issues
+> even if you're running them on a server you physically control rather
+> than somebody else's cloud service.  The server has some ports,
+> but you need to make sure your hypervisor and clients have drivers
+> that will let the client access the hypervisor's /dev/random or
+> equivalent. VMware will have to do their own; you might contribute to
+> OpenStack.
+>=20
+> Another important kind of hardware where that doesn't work are
+> home routers, because the market price of $29-99 can't support much
+> extra money for randomness hardware; if it's not in the ARM core
+> or whatever other low-power cheap CPU, then it's only going to be
+> able to extract entropy from timing and network traffic,
+> and there's unlikely to be a high-precision clock chip.
+> Maybe you can get the manufacturer to burn a pseudo-random number
+> into the box along with the ethernet MAC or something,
+> but otherwise it's going to have to be software.
+> (So maybe you can augment Tomato/WRT-11/etc to listen for traffic
+> for a while before starting, and write an app for your PC
+> that beacons some entropy for the router to listen to?)
+>=20
+> As far as your entropy dongle goes, the only way to get it cheap
+> is to make large volumes, which means you need a device that's
+> intended for some other application, like a $20 TV tuner/audio frob
+> or a webcam in a dark can getting CCD noise, or a webcam you wave at.
+> If you want speed, you need USB, not serial, but that's fine,
+> because almost nobody's including real serial ports these days.
+> If you want slow, you can get a geiger counter from Sparkfun/etc. for
+> ~$99, but you're not going to get anything intentionally radioactive=20
+> shipped cheap from China.
+>=20
+
+
+--Sig_/MoxAYeWnu0Ie7T7H2Zzo9lp
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCgAGBQJSYFKrAAoJEL0iNgSYi5CZmKIQAKsPHTUiKZy03a0wkCUjutoh
+PllASqq+lh6Sps1u7t4wfi+3+UdDN4BWokfgTtofOooag1t2s47Ji5L1cfNDoMSV
+kKxqZJSXVAYFh87Egu0kJeeZRopCBDOJWWJ9eeSEDhuJV02CGtWzd4M/GiJR4vGd
+RW0R91dZKehxs5Q+sZXnY4xjCmpAxr+cmC7IAAUdK3q0KL2eDyKQiKJs1V4BApJf
+yTklTrEwkX/sL/s3UTIZrb/zge3C+FYeZarPlzKkyu+bxdyPfrvvO1f80VYZx1Jj
+fAyL6deYogFQJjjCaQFCZ9emGEZt8fASFOOO5rfnIpMGpHzTV7paUHADraeqW3xx
+0/nupg50GvNmL0zWxaohptDGdSJUtJr03ZqOefgqtxIGvg75kPBVEPUTZoYBwffe
+wfqemNllvAnr1gBzxcyLEesS3Rx5CgQBfUma4/miq7Z7+cR3+3+JCF1BXymw4AMN
+PGj2MRX9q/ma6cWM0AnmK2uvASuLxetCJK+BYF5sJHbRh1Ol016mmr7KozNMZcMH
+jOtbNtVrcB67Uwst+rcyevJqhKj4qV+i+khEpE285y+8ZPHIf6m/me+uyIA5hcZv
+9DVDZAVVRbQNpwbbh7ioCs/WG0hSsBCQT9lDmbeUg7FeZO3KTdS8w6+z63cYODY/
+2gy7IChFotJmcSPIBdyU
+=NqAc
+-----END PGP SIGNATURE-----
+
+--Sig_/MoxAYeWnu0Ie7T7H2Zzo9lp--
+

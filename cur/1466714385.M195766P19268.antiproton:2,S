@@ -1,0 +1,178 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u5NKdA3n019252;
+	Thu, 23 Jun 2016 16:39:12 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=njZSHrlN;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-vk0-f45.google.com (mail-vk0-f45.google.com
+ [209.85.213.45])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u5NKd6VB019248
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 23 Jun 2016 16:39:08 -0400
+Received: by mail-vk0-f45.google.com with SMTP id j2so123606959vkg.2
+ for <cypherpunks@cpunks.org>; Thu, 23 Jun 2016 13:39:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to;
+ bh=N8+SH4GHNh46b3mDkCcps30ByF3iEsj9t6OTDZXulFc=;
+ b=njZSHrlN2AFhIUwXBJFPA+fwKFBMwkiK4XOR7IqUsRbL7G/FDMjEdQWEeIh8ynajpT
+ fJbv9K7N5+q/bzCiZ6I0YQ3oNbw8rq4Ar5QCaM34wamufMnd4Wpyvg+zTxv5BdTkCwk1
+ BIpjpsHaX3fJpKAiVcEa2IMGWQBji1HAtsFNJVvwRg9o1x0HC4W3P2QqUuYnqnkop6C+
+ ZOCWhEbGQ9vCBhnY/RkvU8FwLso3/esDLfgm+70tVdCMUKCF927WZJfJW3i/iFwYjT2h
+ ewaTG/gGW2bV56gMFo0vl9WPREhRhRYVqH5Uc51wmyWkOqRsJDqza9/rfQNZvueae0DV
+ CvBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to;
+ bh=N8+SH4GHNh46b3mDkCcps30ByF3iEsj9t6OTDZXulFc=;
+ b=IfpZC/fqenkop1zk4l30jt/lsh5enO06q8325sg+v1LjhBDWhlDuw6lrEYsHe8ZjMj
+ pjU/6H8yrm8zumOVUx6H1PxsWSDQhiGKY2omh/BFEeUAoaa6obzvnwF1bNvnfBawtQzo
+ 0GrN/m38HNOxoyTXq1qZdADgjf50/2gIdHQT7fVUYfEqwKSchOkeDana/ncFzXIqtLkQ
+ VsUJnQ8Ys8ZJaTBIoBil851m1j3N+NH8ljsBk+1key4Ps+uAxCNo9Y9867KwqesGnJVX
+ lIZbZKERVuAv3rB7ijJXDefYhmjJRVGarYQagr6e+83FE52sORx3jSSBCGTvfFhuo6m9
+ LGhw==
+X-Gm-Message-State: ALyK8tLY95Vu+PWGIvIM9FovcFWpyNo84OnMzwWPmyKOXbfvnfvLW7sq/lDfq4YWKIBK8veEkiPnfBaGT4XLAA==
+MIME-Version: 1.0
+X-Received: by 10.31.139.139 with SMTP id n133mr364771vkd.71.1466714340145;
+ Thu, 23 Jun 2016 13:39:00 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Thu, 23 Jun 2016 13:38:59 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Thu, 23 Jun 2016 13:38:59 -0700 (PDT)
+In-Reply-To: <576c39b5.e701b00a.58eed.66e1@mx.google.com>
+References: <CAG2tMp6ifHKNoP6cfF7gMWp5eHVEwOJuBsGYVoGSvpPn72Vcbw@mail.gmail.com>
+ <d0e6db7279148f9eafdda74678adb972@cryptolab.net>
+ <CAG2tMp7EY3UtEE+eZZQJ_rvHFnM77dcjR-kAgQOK0KSV8LfhbA@mail.gmail.com>
+ <CAG2tMp5pyWsG_6doHL8i4yO+NN2X2fkENAJ0Qkz5=yidE-R2nQ@mail.gmail.com>
+ <576b0d29.c8249f0a.fdc44.32aa@mx.google.com>
+ <CAG2tMp5Yw4k2WQ05FEcQfQYtdvMqEve85XxinNmZ7bus6jqavg@mail.gmail.com>
+ <576b20a2.e701b00a.1d4b5.415d@mx.google.com>
+ <CAG2tMp4s1HTNOHw5Or7OKwcox1u9FPp9oUKJjcanb8Hb2rHi2w@mail.gmail.com>
+ <20160623122746.GA6268@x220-a02>
+ <576c2c08.cd00b00a.2f0e3.54f3@mx.google.com>
+ <CAG2tMp7t1xi2PJStDZSdXRDFc--REG+nmiT7pdBi1xvrRh1Hmw@mail.gmail.com>
+ <576c39b5.e701b00a.58eed.66e1@mx.google.com>
+Date: Thu, 23 Jun 2016 17:38:59 -0300
+Message-ID: <CAG2tMp4RYoKuHnZO2oOCyz0ogBZbAiqt-ZqWHxt2k-fwWRM--A@mail.gmail.com>
+Subject: Re: Hi, Boyce! (was Fwd: tor-talk subscription update)
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=001a11442a643b46860535f80bd1
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 104
+
+--001a11442a643b46860535f80bd1
+Content-Type: text/plain; charset=UTF-8
+
+On Jun 23, 2016 4:38 PM, "juan" <juan.g71@gmail.com> wrote:
+>
+>         And you can read the list.
+>
+>         https://lists.torproject.org/pipermail/tor-talk/
+>
+>         You don't need to be subscribed to read it.
+
+Thank you, my dear, but it is not the same thing.  I want to be formaly
+subscribed and receive aaaall the lovely messages in my inbox.  You know me
+enough to understand my personal position, Juan.  :)
+
+If the people behind ja.group are still subscribed, even after using two
+fake accounts to humilliate and harass a person, why can't I be subscribed
+too?  :)
+
+Some of the people behind the lynch mob already told their names and they
+are still in the tor-talk list.  Only two fake accounts were banned.  The
+real accounts are normally subscribed.  Not fair, not reasonable.  It says
+a lot about the moderation team's preferences.
+
+If I had told lies using a fake account, my personal account would be still
+protected and subscribed.  Instead, I decided to expose myself in an honest
+way and I am being punished for not using a fake account to defend Jake.
+You know, being sincere and transparent is not a valuable thing for
+hypocrite people.
+
+Do you remember the jokes that I told about my personal convictions, Juan?
+I am millions of times more hard headed than you, my dear.  Just wait,
+hihi!  :)
+
+>         boyce is just a left-wing fascist. It's now fashionable
+among left-wing fascists to pretend to care oh so much about women, while
+ignoring cases where women are actually hurt.
+
+Yeah, I confess I was waiting for formal excuses because he is pretending
+to be politically correct.  I am pretty disappointed.  He is a bad actor
+and not much smart.  The lies about banned people using threats to
+subscribe again were stranger than his disgusting offenses about rape
+apology.  Sick guy, really disturbing, eeck!  :-/
+
+Well, hope he learns how to fake better with his friends of ja.group.  It
+is pretty stupid, Juan, but I was trying to sing a bit of Bob Marley,
+hihi...  ;)
+
+Bad Boyce, bad Boyce, whatcha gonna do, whatcha gonna do when they come for
+you?
+Bad Boyce, bad Boyce, whatcha gonna do?
+Whatcha gonna do, whatcha gonna do when they come for you?
+
+--001a11442a643b46860535f80bd1
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p>On Jun 23, 2016 4:38 PM, &quot;juan&quot; &lt;<a href=3D"mailto:juan.g71=
+@gmail.com">juan.g71@gmail.com</a>&gt; wrote:<br>
+&gt;<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 And you can read the list.<br>
+&gt;<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 <a href=3D"https://lists.torproject.org/pi=
+permail/tor-talk/">https://lists.torproject.org/pipermail/tor-talk/</a><br>
+&gt;<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 You don&#39;t need to be subscribed to rea=
+d it.</p>
+<p>Thank you, my dear, but it is not the same thing.=C2=A0 I want to be for=
+maly subscribed and receive aaaall the lovely messages in my inbox.=C2=A0 Y=
+ou know me enough to understand my personal position, Juan.=C2=A0 :)</p>
+<p>If the people behind ja.group are still subscribed, even after using two=
+ fake accounts to humilliate and harass a person, why can&#39;t I be subscr=
+ibed too?=C2=A0 :)</p>
+<p>Some of the people behind the lynch mob already told their names and the=
+y are still in the tor-talk list.=C2=A0 Only two fake accounts were banned.=
+=C2=A0 The real accounts are normally subscribed.=C2=A0 Not fair, not reaso=
+nable.=C2=A0 It says a lot about the moderation team&#39;s preferences.</p>
+<p>If I had told lies using a fake account, my personal account would be st=
+ill protected and subscribed.=C2=A0 Instead, I decided to expose myself in =
+an honest way and I am being punished for not using a fake account to defen=
+d Jake.=C2=A0 You know, being sincere and transparent is not a valuable thi=
+ng for hypocrite people.</p>
+<p>Do you remember the jokes that I told about my personal convictions, Jua=
+n?=C2=A0 I am millions of times more hard headed than you, my dear.=C2=A0 J=
+ust wait, hihi!=C2=A0 :)</p>
+<p>&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 boyce is just a left-wing fascist. It&#=
+39;s now fashionable among=C2=A0left-wing fascists to pretend to care oh so=
+ much about women, while ignoring cases where women are actually hurt.</p>
+<p>Yeah, I confess I was waiting for formal excuses because he is pretendin=
+g to be politically correct.=C2=A0 I am pretty disappointed.=C2=A0 He is a =
+bad actor and not much smart.=C2=A0 The lies about banned people using thre=
+ats to subscribe again were stranger than his disgusting offenses about rap=
+e apology.=C2=A0 Sick guy, really disturbing, eeck!=C2=A0 :-/</p>
+<p>Well, hope he learns how to fake better with his friends of ja.group.=C2=
+=A0 It is pretty stupid, Juan, but I was trying to sing a bit of Bob Marley=
+, hihi...=C2=A0 ;)</p>
+<p>Bad Boyce, bad Boyce, whatcha gonna do, whatcha gonna do when they come =
+for you?<br>
+Bad Boyce, bad Boyce, whatcha gonna do?<br>
+Whatcha gonna do, whatcha gonna do when they come for you? </p>
+
+--001a11442a643b46860535f80bd1--
+

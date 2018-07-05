@@ -1,0 +1,197 @@
+From owner-cypherpunks@al-qaeda.net  Tue Nov 27 02:15:45 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id qAR7Cu1c004133
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 27 Nov 2012 02:12:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1354000376;
+	bh=mEnTJB8XYX1AdcrPjxYNvp8hZlztwHWFNMaSLQ90+jc=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=OZmCtlSIm79KiRk56ik7RhQaFjVWWhlQqhHGb3BdVdMPHxzN8LMO4ywzW1z4sLRIj
+	 WY44JcZ2rKGBxMYjjj495wTjhAC0yjZdxcBjUdU3hCuosui8gmYgpe8imQIAlV0WCz
+	 lcqeboyj8m7D6ezbcPwp9ha+D3WdmM9LNU5rjO84=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id qAR7CuhJ004132
+	for cypherpunks-outgoing; Tue, 27 Nov 2012 02:12:56 -0500
+Date: Tue, 27 Nov 2012 08:12:52 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, zs-p2p@googlegroups.com
+Subject: Re: [serval-project-dev] Re: Adding GPS location to IPv6 header
+Message-ID: <20121127071252.GI9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 7511
+Lines: 165
+
+----- Forwarded message from Jeremy Lakeman <jeremy@servalproject.org> -----
+
+From: Jeremy Lakeman <jeremy@servalproject.org>
+Date: Tue, 27 Nov 2012 11:10:26 +1030
+To: serval-project-developers@googlegroups.com
+Subject: Re: [serval-project-dev] Re: Adding GPS location to IPv6 header
+Reply-To: serval-project-developers@googlegroups.com
+
+Allocate an IPv6 private network range using a scheme like this;
+http://tools.ietf.org/html/draft-hain-ipv6-geo-addr-01
+Probably with around 36 bits (100m) of precision, leaving the rest of
+the /64 to flag that it's private and geographically based.
+
+Internet gateways have their own "real" /64. Internet traffic would be
+routed to the correct gateway based on the network of the source
+address.
+
+If each device uses the same 64bit host id on each network. Local mesh
+route calculations can be based on a single main address per device,
+with an additional routing entry added for each network we believe
+that host should have.
+
+A protocol like SCTP will also allow both parties to change networks
+without needing to re-establish links.
+
+Then the biggest scalability problem for routing packets world-wide to
+an individual is a directory service for publishing and resolving
+current network locations.
+
+On Tue, Nov 27, 2012 at 9:40 AM, Eugen Leitl <eugen@leitl.org> wrote:
+> ----- Forwarded message from George Herbert <george.herbert@gmail.com> -----
+>
+> From: George Herbert <george.herbert@gmail.com>
+> Date: Mon, 26 Nov 2012 14:51:57 -0800
+> To: William Herrin <bill@herrin.us>
+> Cc: Eugen Leitl <eugen@leitl.org>, nanog@nanog.org
+> Subject: Re: Adding GPS location to IPv6 header
+>
+> The utility of this is somewhat moderated by limited geographical
+> mobility while a phone's active in a single session.  One rarely
+> drives from San Francisco to LA typing all the way on their smartphone
+> data connection, for example.
+>
+> To the extent that you may apply IP ranges to wider geographical
+> areas, and limit the search space to a few % of the total, beyond
+> which devices get a new address pushed as they travel, this is
+> entirely manageable without the new header.
+>
+> Some services dislike the endpoint renumbering like that, and some
+> connections go kerfluey, but most web based activities handle the
+> endpoint getting a new IP just fine; this is what cookies are for.
+> Your SSH connections will remind you that you should be using screen,
+> or not type and drive.  But the CHP and road hazards will already do
+> that.
+>
+> Eventually being allowed to use air-to-ground cell data on airliners
+> will be slightly worse, but again, most protocols shrug at this
+> problem.
+>
+>
+> -george
+>
+> On Mon, Nov 26, 2012 at 2:36 PM, William Herrin <bill@herrin.us> wrote:
+>> On Mon, Nov 26, 2012 at 10:20 AM, Eugen Leitl <eugen@leitl.org> wrote:
+>>> On Mon, Nov 26, 2012 at 12:56:52PM -0200, Carlos M. Martinez wrote:
+>>>> Just for redundancy's sake: No, L3 is **not** the place for this kind of
+>>>> information. L3 is supposed to be simple, easy to implement, fast to
+>>>
+>>> I agree. You need to put it into L2, and the core usage would
+>>> be for wireless meshes. Consider cases like Serval or cjdns,
+>>> which run on Android headsets and equivalent embeddeds.
+>>> Technically you wouldn't need GPS everywhere if you could
+>>> do ~m scale time domain reflectometry in free space.
+>>> It is possible to build a local contiguous map via
+>>> mutual time of flight triangulation (actually, just visibility
+>>> gives you a very good hint).
+>>
+>> Actually, I think you just articulated the first use for Ammar's idea
+>> that's not either wrong, absurd on its face or obviously better
+>> handled at a different location within the protocol stack.
+>>
+>> Suppose you have a large single-owner mesh network, such as a folks
+>> walking around with cell phones. If you want them to have a stable
+>> layer 3 address (and you do) then you're handling what amounts to /128
+>> routes for tens of millions of devices. If you can guarantee that any
+>> packet *to* that address also contains a rough geographic location
+>> then you can discard any routes internally once they're more than a
+>> short geographic distance from the origin and route on the geography
+>> until you're close enough to find a specific /128 route. Tens of
+>> millions of routes is no problem if no single router needs to know
+>> more than a few thousand of them.
+>>
+>> By putting geographic location at layer 3, you're also handling it end
+>> to end which means you don't need a stateful border device to track
+>> the current location of all of those /128 routes. The device itself
+>> doesn't need to add location if it doesn't have the data; it's good
+>> enough for the receiving tower to attach a rough location.
+>>
+>> There are some assumptions in this model which are problematic. Key ones are:
+>>
+>> 1. Only valid as an interior gateway protocol (IGP). Geographic
+>> routing has been proven false for an EGP because it induces traffic to
+>> cross links for which neither source nor destination has permitted
+>> access.
+>>
+>> 2. Requires the application at the landed end to copy the IP option
+>> information into the outbound packets as well. This behavior is not
+>> presently guaranteed.
+>>
+>> 3. Assumes that the device will originate communication, receiving
+>> only replies from the landed end, or will use some intermediary to
+>> communicate current geographic information if inbound origination is
+>> required.
+>>
+>>
+>> At any rate, I think that discussion of adding a geographic option
+>> header to IPv6 should be tied up in the discussion of a routing
+>> protocol which critically depends on its presence and can't reasonably
+>> be built another way. Otherwise when a needful use case finally comes
+>> along, you'll discover that the option's rules of operation don't
+>> adequately enable it.
+>>
+>> Regards,
+>> Bill Herrin
+>>
+>>
+>>
+>> --
+>> William D. Herrin ................ herrin@dirtside.com  bill@herrin.us
+>> 3005 Crane Dr. ...................... Web: <http://bill.herrin.us/>
+>> Falls Church, VA 22042-3004
+>>
+>
+>
+>
+> --
+> -george william herbert
+> george.herbert@gmail.com
+>
+> ----- End forwarded message -----
+> --
+> Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+> ______________________________________________________________
+> ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+> 8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+>
+> --
+> You received this message because you are subscribed to the Google Groups "Serval Project Developers" group.
+> To post to this group, send email to serval-project-developers@googlegroups.com.
+> To unsubscribe from this group, send email to serval-project-developers+unsubscribe@googlegroups.com.
+> For more options, visit this group at http://groups.google.com/group/serval-project-developers?hl=en.
+>
+
+-- 
+You received this message because you are subscribed to the Google Groups "Serval Project Developers" group.
+To post to this group, send email to serval-project-developers@googlegroups.com.
+To unsubscribe from this group, send email to serval-project-developers+unsubscribe@googlegroups.com.
+For more options, visit this group at http://groups.google.com/group/serval-project-developers?hl=en.
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

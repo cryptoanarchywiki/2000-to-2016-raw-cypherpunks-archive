@@ -1,0 +1,209 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u61F8qqi031522;
+	Fri, 1 Jul 2016 11:08:55 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=s13E+oum;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-vk0-f53.google.com (mail-vk0-f53.google.com
+ [209.85.213.53])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u61F8mTs031518
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Fri, 1 Jul 2016 11:08:50 -0400
+Received: by mail-vk0-f53.google.com with SMTP id u68so114175360vkf.2
+ for <cypherpunks@cpunks.org>; Fri, 01 Jul 2016 08:08:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to;
+ bh=PjCn71B7c/ZyjnJZIuAhIygUzYfKTUcz3E+RSL6HKbk=;
+ b=s13E+oum5rsqE+cf/BJe/2iUXkMFlG5maEsX81J7gxRZQcPJavbE46+eov/AvvVJsQ
+ Ul7S3CQIf1nxjCbK90SgOplMrthLxYYI+UdDOile/xntUArs6HHujX4yxFfq2lUmz4yZ
+ C13KzjtU7u40fs9NpH+gF/j4VFONZJoXg/WjSup77y1nnyvDsWqCQ+NHQ22QEikFrIlj
+ ATSe1IFiH+YTYK2UFo7PsUo+alLnQMq7ufDiGbJAqBOTk+6H5jUXM629P/HQ982ovQ4J
+ V0tXRhDuIQwycb40kBAl2OWovgAiXHAyEo+TqqhyQXOgjSdCLAhOLUhORyerGnTRWnlQ
+ YiZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to;
+ bh=PjCn71B7c/ZyjnJZIuAhIygUzYfKTUcz3E+RSL6HKbk=;
+ b=OrJgL+YuU5hAXIU6OE1AHlmnBJvQpgylIOe/s2aCb+zZkV4YH95Wto8+lTi02cdwex
+ D/xrpgDmY+dUrAmgZldvhc25k3K1hK1aM8cIuHzPlUHEWbWB+Bfg3okY2ctCPWNQyzu/
+ 65B6xA4sByfxZGUAUXK/ZrIfY1H2wndNlaH1EqKQHHaWUOV/AmihdjXRQkQ9TEG6Bd2N
+ ydrUo5Y8KUKCxXW5f6qWSl+BGsbjqqiZVPS138HBpXNaS5fEPt55oG/jVfhgJWuKAaFK
+ IaEF0TerjnCENxzm3UzvGOHlzNTfuE04m5QS78rWNvqR/nitqTumiEG9Pq11t8Hj7wrs
+ +TIA==
+X-Gm-Message-State: ALyK8tKJboZb+7+oaRXdA6xJkL8wV5FwfEoxZ3slA2QXJKyBslg3Ly2uPZLMR56vAchPFY7UqDYELUaIQCKL/w==
+MIME-Version: 1.0
+X-Received: by 10.159.32.67 with SMTP id 61mr10169890uam.39.1467385722342;
+ Fri, 01 Jul 2016 08:08:42 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Fri, 1 Jul 2016 08:08:41 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Fri, 1 Jul 2016 08:08:41 -0700 (PDT)
+In-Reply-To: <CAG2tMp7SXU24DNjiE9=M4RY2q--533mFm5RzcwJpxsxa4+OD8A@mail.gmail.com>
+References: <CAG2tMp6cZFocww-TrrqgQrFjyFYehKkNx+v+jzeomWxuHfrjpw@mail.gmail.com>
+ <CAG2tMp7uhRP3mrz+Pok1qB_f4adpsTk4US-xSwbbOJbLtQVxWA@mail.gmail.com>
+ <CAG2tMp5efswpyzxptdMpP9JnQp4iJRfN_2BBq3ypK868+p2rwg@mail.gmail.com>
+ <CAG2tMp7q6o10jvSVa6-AUMQK8deJfsqEf9j6s07nX+=4skkLhg@mail.gmail.com>
+ <CAG2tMp6vYnphaiLT2moAJNTjV-ncz2J_jM-TjOjyoVkkzuMbmA@mail.gmail.com>
+ <CAG2tMp7aKz-H4ZYpqE4L8qnaZT1TmmSM_DyACUR9dhSqce4NKA@mail.gmail.com>
+ <CAG2tMp4s=wxZX-ywknfvzupKuwc7QY_8r5ASdFF610h3cQdwHA@mail.gmail.com>
+ <CAG2tMp7UBGAfax1gyiSUn5cDagh18aqJQOFvQBfwRta82r3ftA@mail.gmail.com>
+ <CAG2tMp5xFMGWcJ29cyJwEEyqnXuN3e+mLjR3ySrWRrvN_nZ-zQ@mail.gmail.com>
+ <CAG2tMp5nCnv7oG1nZSZS9xgmfp5sTU_pf3pFn_xbHbWrL+U5zQ@mail.gmail.com>
+ <CAG2tMp7R1BwX+QRBFOaQb402LJuogqRPB9SWuzWvdJhFyk8Jnw@mail.gmail.com>
+ <CAG2tMp6CpeEMXj6mrVgM83J-+fWjOtZOQfBj_1k0C0ByJ0erpg@mail.gmail.com>
+ <CAG2tMp7SXU24DNjiE9=M4RY2q--533mFm5RzcwJpxsxa4+OD8A@mail.gmail.com>
+Date: Fri, 1 Jul 2016 12:08:41 -0300
+Message-ID: <CAG2tMp5fv=0eeQ5Uf5tsUJ+nhmCmJ5XmJ=54VRs23RMy1FnDUQ@mail.gmail.com>
+Subject: [OT] Fwd: [Programming] Tutoriais de Diversas Linguagens
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=94eb2c03eb62ba93b80536945c88
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 134
+
+--94eb2c03eb62ba93b80536945c88
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+Hi everybody!  :)
+
+I was thinking about sending this message only for Juan because it was
+written in Portuguese, but these links are interesting for everybody who
+wants to learn a bit more about programming in several languages.  #love  <=
+3
+
+Sorry, my strong migraine is killing me now, so I won't translate my
+original message, but, yes, even feeling pain, the links made me really
+happy and I had lots of sincere laughs writing that e-mail and reading the
+manifesto, hihi...  ;))
+
+Hope it can make you smile too.
+
+Lots of love and kisses!!!  <3
+
+Ceci
+
+PS 1:  -  Mirimir, I love you!  Migraine, lots of pain, neck tension,
+fever, my lovely insomnia...  but I have electricity, internet, water and
+music, so life is still fun, yay!!!  <3
+
+PS 2:  -  Juan, the word "fuderosa" doesn't exist.  I mixed a Brazilian bad
+word and the adjetive "poderosa".  It means that Samuel Jackson has a
+f*cking powerful voice, hihi...  :)
+
+Hey, I am helping a MIT researcher with an open repository of lyrics, a
+pretty cute project!  Would you like to help her?  She also needs lyrics in
+Spanish and more references of artists from Spain, Mexico, Argentina,
+etc...  :D
+---------- Forwarded message ----------
+From: "Cecilia Tanaka" <cecilia.tanaka@gmail.com>
+Date: Jul 1, 2016 11:37 AM
+Subject: [Programming] Tutoriais de Diversas Linguagens
+To: "hackerspaces-brasil@googlegroups.com" <
+hackerspaces-brasil@googlegroups.com>
+Cc: "thackday@googlegroups.com" <thackday@googlegroups.com>
+
+Queridos,
+
+Dezenas de tutoriais de diversas linguagens, porque =C3=A9 essencial "Becom=
+e a
+Programmer, Motherfucker", hahaha!!!  ;D
+
+http://programming-motherfucker.com/become.html
+
+O Manifesto "Programming Motherfucker", uma par=C3=B3dia do "Agile Manifest=
+o",
+me fez rir mais do que deveria, admito, hahaha!!!  ;D
+
+http://programming-motherfucker.com/
+
+Perd=C3=A3o, queridos, realmente n=C3=A3o consigo parar de imaginar a voz f=
+uderosa do
+Samuel Jackson dizendo "Programming Motherfucker" enquanto escrevo esta
+mensagem, hahahaha!!!  ;D
+
+Estou LOLando alegremente at=C3=A9 agora, hahaha!!!  Perd=C3=A3o, Agile Lov=
+ers, Devs
+e todos que detestam palavr=C3=B5es, mas risadas e material de estudo *semp=
+re*
+s=C3=A3o =C3=BAteis, eeee!!!  :D  :D  :D
+
+Beijos, amor e muitas risadas para todos!!!  Excelente final de semana,
+eeee!!!  <3
+
+Ceci, bobaaa...  :D
+
+--94eb2c03eb62ba93b80536945c88
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p>Hi everybody!=C2=A0 :)</p>
+<p>I was thinking about sending this message only for Juan because it was w=
+ritten in Portuguese, but these links are interesting for everybody who wan=
+ts to learn a bit more about programming in several languages.=C2=A0 #love=
+=C2=A0 &lt;3</p>
+<p>Sorry, my strong migraine is killing me now, so I won&#39;t translate my=
+ original message, but, yes, even feeling pain, the links made me really ha=
+ppy and I had lots of sincere laughs writing that e-mail and reading the ma=
+nifesto, hihi...=C2=A0 ;))</p>
+<p>Hope it can make you smile too.=C2=A0 </p>
+<p>Lots of love and kisses!!!=C2=A0 &lt;3</p>
+<p>Ceci</p>
+<p>PS 1:=C2=A0 -=C2=A0 Mirimir, I love you!=C2=A0 Migraine, lots of pain, n=
+eck tension, fever, my lovely insomnia...=C2=A0 but I have electricity, int=
+ernet, water and music, so=C2=A0life is still fun, yay!!!=C2=A0 &lt;3</p>
+<p>PS 2:=C2=A0 -=C2=A0 Juan, the word &quot;fuderosa&quot; doesn&#39;t exis=
+t.=C2=A0 I mixed a Brazilian bad word and the adjetive &quot;poderosa&quot;=
+.=C2=A0 It means that Samuel Jackson has a f*cking powerful voice, hihi...=
+=C2=A0 :)</p>
+<p>Hey, I am helping a MIT researcher with an open repository of lyrics, a =
+pretty cute project!=C2=A0 Would you like to help her?=C2=A0 She also needs=
+ lyrics in Spanish and more references of artists from Spain, Mexico, Argen=
+tina, etc...=C2=A0 :D</p>
+<div class=3D"gmail_quote">---------- Forwarded message ----------<br>From:=
+ &quot;Cecilia Tanaka&quot; &lt;<a href=3D"mailto:cecilia.tanaka@gmail.com"=
+ target=3D"_blank">cecilia.tanaka@gmail.com</a>&gt;<br>Date: Jul 1, 2016 11=
+:37 AM<br>Subject: [Programming] Tutoriais de Diversas Linguagens<br>To: &q=
+uot;<a href=3D"mailto:hackerspaces-brasil@googlegroups.com" target=3D"_blan=
+k">hackerspaces-brasil@googlegroups.com</a>&quot; &lt;<a href=3D"mailto:hac=
+kerspaces-brasil@googlegroups.com" target=3D"_blank">hackerspaces-brasil@go=
+oglegroups.com</a>&gt;<br>Cc: &quot;<a href=3D"mailto:thackday@googlegroups=
+.com" target=3D"_blank">thackday@googlegroups.com</a>&quot; &lt;<a href=3D"=
+mailto:thackday@googlegroups.com" target=3D"_blank">thackday@googlegroups.c=
+om</a>&gt;<br><br type=3D"attribution"><p>Queridos,</p>
+<p>Dezenas de tutoriais de diversas linguagens, porque =C3=A9 essencial &qu=
+ot;Become a Programmer, Motherfucker&quot;, hahaha!!!=C2=A0 ;D</p>
+<p><a href=3D"http://programming-motherfucker.com/become.html" target=3D"_b=
+lank">http://programming-motherfucker.com/become.html</a> </p>
+<p>O Manifesto &quot;Programming Motherfucker&quot;, uma par=C3=B3dia do &q=
+uot;Agile Manifesto&quot;, me fez rir mais do que deveria, admito, hahaha!!=
+!=C2=A0 ;D</p>
+<p><a href=3D"http://programming-motherfucker.com/" target=3D"_blank">http:=
+//programming-motherfucker.com/</a></p>
+<p>Perd=C3=A3o, queridos, realmente n=C3=A3o consigo parar de imaginar a vo=
+z fuderosa do Samuel Jackson dizendo &quot;Programming Motherfucker&quot; e=
+nquanto escrevo esta mensagem, hahahaha!!!=C2=A0 ;D</p>
+<p>Estou LOLando alegremente at=C3=A9 agora, hahaha!!!=C2=A0 Perd=C3=A3o, A=
+gile Lovers, Devs e todos que detestam palavr=C3=B5es, mas risadas e materi=
+al de estudo *sempre* s=C3=A3o =C3=BAteis, eeee!!!=C2=A0 :D=C2=A0 :D=C2=A0 =
+:D</p>
+<p>Beijos, amor e muitas risadas para todos!!!=C2=A0 Excelente final de sem=
+ana, eeee!!!=C2=A0 &lt;3</p>
+<p>Ceci, bobaaa...=C2=A0 :D</p>
+</div>
+
+--94eb2c03eb62ba93b80536945c88--
+

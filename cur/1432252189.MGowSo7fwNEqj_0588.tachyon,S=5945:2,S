@@ -1,0 +1,148 @@
+From owner-cypherpunks@jfet.org  Wed May 31 02:40:05 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.6/8.13.6/Debian-1) with ESMTP id k4V6dxuw016269
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 31 May 2006 02:39:59 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.6/8.13.6/Submit) id k4V6dxPB016268
+	for cypherpunks-outgoing; Wed, 31 May 2006 02:39:59 -0400
+Date: Wed, 31 May 2006 08:39:35 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@jfet.org
+Subject: [jamesd@echeque.com: Re: Status of opportunistic encryption]
+Message-ID: <20060531063935.GD28956@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.5.9i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4861
+Lines: 121
+
+----- Forwarded message from "James A. Donald" <jamesd@echeque.com> -----
+
+From: "James A. Donald" <jamesd@echeque.com>
+Date: Wed, 31 May 2006 08:56:53 +1000
+To: cryptography@metzdowd.com
+Subject: Re: Status of opportunistic encryption
+User-Agent: Thunderbird 1.5.0.2 (Windows/20060308)
+
+    --
+> > It seems to me opportunistic encryption has moved to
+> > the application layer, at least as far as Internet
+> > mail is concerned.  Many MTAs use TLS automatically
+> > with whatever certificates they can get.  Of course,
+> > this only guards against active attacks, but it
+> > seems to me that this is a reasonable threat model.
+
+Victor Duchovni wrote:
+> It only guards against *passive* eavesdropping. Active
+> attacks can forge DNS MX records, inject BGP routes,
+> ... Actual MITM resistant peer authentication with
+> SMTP+TLS is extremely rare. I know it happens
+> sometimes because I have it running for a small number
+> of destinations, otherwise I would suspect that nobody
+> is doing it.
+
+Active attacks are rare, possibly nonexistent except for
+Wifi.  If NSA and the other TLAs were doing active
+attacks, they would be detected some of the time.  They
+don't like being detected.
+
+If anyone does an active attack, this is a one off
+event.  If someone routinely and regularly does active
+attacks, the attack will be detected, the point where
+they are modifying messages will be detected, and will
+be bypassed.
+
+> I should also note that once one abandons the (still)
+> unrealistic assumption of a secure DNS, it is not just
+> SMTP + TLS that runs into trouble.
+>
+> For example, many Kerberos client libraries do a
+> forward lookup (to alias- expand CNAMEs) and some
+> perversely a reverse lookup (often the owner of the IP
+> address is the worst source of the machine's name),
+> and then give you a mutually authenticated channel to
+> whatever principal they construct from now rather
+> questionable data. This carries over to SASL GSSAPI,
+> where GSSAPI abstraction makes working around this (in
+> practice nobody tries even with native Kerberos) even
+> harder.
+>
+> Consequently, also SSH with GSS KEX, is not MITM
+> resistant when the attacker can tamper with DNS
+> responses.
+
+My understanding is that SSH when using GSS KEX does not
+cache the keys, which strikes me as a amazingly stupid
+idea, particularly when SSH key caching has been so
+successful, and when the user thinks he knows his
+security comes from key caching.  The experience with
+PKI suggests that it is very difficult to have security
+without durable cached keys.
+
+> Ultimately, to close similar security issues in many
+> other protocols, we need a secure DNS, but I am
+> somewhat pessimistic about the likelihood of this
+> happening soon.
+
+Attacks on DNS are common, though less common than other
+attacks, but they are by scammers, not TLA agencies,
+perhaps because they are so easily detected.
+
+All logons should move to SRP to avoid the phishing
+problem, as this is the most direct and strongest
+solution for phishing for shared secrets, and phishing
+for shared secrets is the biggest problem we now have.
+
+Encrypting DNS is unacceptable, because the very large
+number of very short messages make public key encryption
+an intolerable overhead.  A DNS message also has to fit
+in a single datagram.
+
+To accommodate these constraints, we need DNS
+certificates sent in the clear, and signed with elliptic
+curve public keys (which allow both signatures and
+certificates to be short enough to fit in a datagram).
+The client walks the  certificate chain from time to
+time and it caches the certificates, to avoid
+excessively loading the issuers of higher level
+certificates.
+
+But this is all theoretical at this stage, for DNS
+attacks are not our biggest problem.  Once we have
+deployed systems that make it difficult to snoop and
+scam without attacking DNS, *then* we will see DNS come
+under heavy attack, and *then* there will be motivation
+to change the DNS system.
+
+After all, we have not fixed or replaced PKI, despite
+the enormous phishing attack that renders it useless and
+irrelevant, so we are going to be slower still fixing
+DNS.
+
+    --digsig
+         James A. Donald
+     6YeGpsZR+nOTh/cGwvITnSR3TdzclVpR0+pr3YYQdkG
+     cwXK8++rEMivkYVd+uiumb8CD2CVphnQhorYYVxx
+     4KsvRJfxM5XZMseazJM4sjSoGS386TnYrCiBhfQuF
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820            http://www.ativel.com
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+
+[demime 1.01d removed an attachment of type application/pgp-signature which had a name of signature.asc]
+

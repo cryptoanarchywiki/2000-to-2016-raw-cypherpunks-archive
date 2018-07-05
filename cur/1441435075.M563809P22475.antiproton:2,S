@@ -1,0 +1,97 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t856bJev022458;
+	Sat, 5 Sep 2015 02:37:22 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=dJwnka0s;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-lb0-f180.google.com (mail-lb0-f180.google.com
+ [209.85.217.180])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t856bGEg022454
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Sat, 5 Sep 2015 02:37:18 -0400
+Received: by lbbmp1 with SMTP id mp1so20855230lbb.1
+ for <cypherpunks@cpunks.org>; Fri, 04 Sep 2015 23:37:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :cc:content-type;
+ bh=9DS6M5ZZSBj19zG1GiBKrCnI63YOgdqKDrc2/mtuA+g=;
+ b=dJwnka0s8PFVWgIHp9SBMq+JqjOeRl5tD/YayF9MN0EeX5sY+9mh+dylIylLkWPrNN
+ 98A+h78dFhAfH2CbQbxdHGrSOgWG0jWn0jSFqoPhFr6j6vaqFSAMMECZP3gCLIa2bEi3
+ KhD33vYuCORelfiecNYJXmMglSyi1z6H7qOTaMu08jK1cf20fogAF9UFLCveZP3ry8DA
+ c6FGS8Nul1KKihJB24xgb0Rgzo49BL8HoohNK+SxBMAnHb6C6FWSy+qBMpDw85nisvYu
+ BUqKT23k5zK4nXLE8jS7dm4nbAQflWPBDjx3Nm+8k9T1GWIIZGMfoT3U8/Elzh7ntNrU
+ n9ug==
+MIME-Version: 1.0
+X-Received: by 10.112.138.37 with SMTP id qn5mr1291078lbb.52.1441435029486;
+ Fri, 04 Sep 2015 23:37:09 -0700 (PDT)
+Received: by 10.112.38.104 with HTTP; Fri, 4 Sep 2015 23:37:09 -0700 (PDT)
+In-Reply-To: <20150905052803.GA2661@sivokote.iziade.m$>
+References: <20150903112721.GA2732@sivokote.iziade.m$>
+ <9A043F3CF02CD34C8E74AC1594475C73F4AF0463@uxcn10-5.UoA.auckland.ac.nz>
+ <20150904082605.GA2705@sivokote.iziade.m$>
+ <20150904113437.GB2705@sivokote.iziade.m$>
+ <20150904120816.GC2705@sivokote.iziade.m$>
+ <20150905052803.GA2661@sivokote.iziade.m$>
+Date: Sat, 5 Sep 2015 06:37:09 +0000
+Message-ID: <CA+bTbPDoQi030MN4j8E4fmx_KOQP48xsbJjGM4X2rk=_E3zgZQ@mail.gmail.com>
+Subject: Re: Possible crypto backdoor in RFC-2631 Diffie-Hellman Key Agreement
+ Method
+From: Alfonso De Gregorio <alfonso.degregorio@gmail.com>
+To: Georgi Guninski <guninski@guninski.com>
+Content-Type: text/plain; charset=UTF-8
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 39
+
+On Sat, Sep 5, 2015 at 5:28 AM, Georgi Guninski <guninski@guninski.com> wrote:
+...
+> This works with openssl 1.0.1p over SSL.
+>
+> Attached is self signed cert and the priv. key.
+>
+> Session:
+>  ./apps/openssl s_server -accept 8080 -cert ./cacert2.pem -key
+>  ./key-comp2.key -HTTP
+>
+>  openssl s_client -connect localhost:8080
+>
+>  Server public key is 1204 bit
+>  Verify return code: 18 (self signed certificate)
+>
+>
+>  sage: q=0x008000000000000000001d8000000000000000012b
+>  sage: factor(q)
+>  604462909807314587353111 * 1208925819614629174706189
+
+Georgi,
+
+just a quick note to thank you for sharing your research and taking
+time to verify your findings against OpenSSL.
+
+I've been researching cryptographic backdoors -- you may want to
+review this http://illusoryTLS.com/ -- and the lack of checks on group
+parameters, malicious or otherwise (*), is to me yet another cause for
+concern. Great catch!
+
+(*) It would be interesting to look at the story of RFC-2631, as
+Bernstein, Lange, and Niederhagen did for the Dual EC standard
+https://projectbullrun.org/dual-ec/
+
+Cheers,
+
+-- Alfonso
+

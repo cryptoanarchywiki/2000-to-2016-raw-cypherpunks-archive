@@ -1,0 +1,122 @@
+From owner-cypherpunks@al-qaeda.net  Fri Jun 10 10:25:49 2011
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id p5AEJbh7026108
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 10 Jun 2011 10:19:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1307715578;
+	bh=ciLdOeZ1yhDMfTFDubqiLwMOQKHKJfjpmU9i447RiZE=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=FPswR6tJy5IckuhDSqbhdAqvRN2niUytJdRPrzHtWbsgwJVfvwK1DvAHpBWgRdK5C
+	 57jvDtlyO0gtv07rvQBqmJLPoaVyhwbbz02P+YVW3uyx18SWzMUt7h3C1y2mjxhw3/
+	 dnbdxQRlQwR1bygWFLy7yKDF+T/h47FVggqFGtPQ=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id p5AEJb0q026107
+	for cypherpunks-outgoing; Fri, 10 Jun 2011 10:19:37 -0400
+Date: Fri, 10 Jun 2011 16:19:34 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: Re: [cryptography] Current state of brute-forcing random keys?
+Message-ID: <20110610141934.GU19622@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4190
+Lines: 88
+
+----- Forwarded message from Marsh Ray <marsh@extendedsubset.com> -----
+
+From: Marsh Ray <marsh@extendedsubset.com>
+Date: Thu, 09 Jun 2011 16:22:16 -0500
+To: Crypto discussion list <cryptography@randombit.net>
+Subject: Re: [cryptography] Current state of brute-forcing random keys?
+User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US;
+	rv:1.9.2.17) Gecko/20110424 Thunderbird/3.1.10
+Reply-To: Crypto discussion list <cryptography@randombit.net>
+
+On 06/09/2011 12:14 PM, Paul Hoffman wrote:
+>
+> What is the current state of brute-force attacks on AES-128 blobs?
+> Are there recent results where we can estimate the cost of
+> brute-forcing 64-bit and 80-bit keys?
+
+The article is behind a paywall, but Google quotes the relevant statistic:
+http://scholar.google.com/scholar?cluster=14788671232027796805
+"The standard-cell implementation on a 0.35 B5m CMOS process from Philips  
+Semiconductors occupies an area of only 0.25 mm"
+
+Let's assume:
+* the attacker has only one file for which he wishes to find the key
+* you generate the key using a method for which the attacker can do no  
+better than brute force for the nominal key size.
+* the attacker can do no better than brute force against AES
+* the attacker has ASICs using an AES implementation similar in chip area 
+to Philips' standard cell
+* the attacker can run his chips at a rate of 1 GHz
+
+The last two assumptions are probably wrong. The Philips standard cell may 
+not be optimized rapid re-keying and one that is might be larger in area. 
+But the estimate of 1 GHz is probably conservative and there's an inherent 
+output rate vs. area tradeoff in the pipelining of the design. But I think 
+these assumptions are probably within a factor of 10x, i.e., a few bits of 
+key size.
+
+So we're close to a nice round figure... 2^32 trials per mm2-second. Now  
+you just have to find out how many mm2 of silicon the attacker is going to 
+commit to decrypting your file! But obviously that's not the real metric, 
+in large systems power and cooling is the limiting factor. How big of an 
+air conditioner will he use?
+
+Looking up a random modern Intel chip (Core i5-650 4M Cache, 3.20 GHz), it 
+has a die size of 81 mm2 and a max TDP of 73 W. A recent Nvidia chip (GTX 
+480) is 529 mm2 and said to be 250W TDP. The bruteforce algorithm need not 
+spend any time at all waiting for data, so it seems like it could easily be 
+pushing the limits of power density. 1 W per mm2 seems like a reasonable 
+guess, but unless the data center will be built underwater you could 
+probably double it to account for the cost of heat removal.
+
+Which neatly fits 2^32 trials per watt-second. A real engineer would  
+probably design the chips to minimize energy-per-trial, but I think our  
+estimate is probably still within an order of magnitude or two.
+
+Last I checked, in the US electric power is around $0.07 per kWh in areas 
+considered "cheap". So each trial costs $4.53eb18 in electric power.
+
+For an 64-bit key, you expect the adversary to need 2^63 trials for which 
+he might pay a power bill of $597.
+
+For an 80-bit key, you expect the adversary to need 2^79 trials for which 
+he might pay a power bill of $2.7M.
+
+For a 128-bit key, you expect the adversary to need 2^127 trials for which 
+he might pay a power bill of $11.0e21.
+
+Note that some botnet operators control millions of nodes and they do not 
+usually pay their own power bills. But they probably don't have the  
+efficiency of our specialized ASIC attacker either.
+
+As others have said, you need a real key derivation function (like PBKDF2) 
+with a at least a little added work factor for this. If the password is 
+going to be human-chosen or human-remembered it's not likely to have even 
+this much entropy in practice.
+
+- Marsh
+_______________________________________________
+cryptography mailing list
+cryptography@randombit.net
+http://lists.randombit.net/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

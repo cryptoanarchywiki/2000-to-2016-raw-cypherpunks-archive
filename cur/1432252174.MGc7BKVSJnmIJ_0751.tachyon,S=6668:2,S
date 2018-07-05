@@ -1,0 +1,141 @@
+From owner-cypherpunks@Algebra.COM  Wed Jun  5 20:55:37 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.mit.edu (8.11.6/8.9.3) with ESMTP id g560tbU22787
+	for <rsw@jfet.org>; Wed, 5 Jun 2002 20:55:37 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id UAA20815
+	for <rsw@mit.edu>; Wed, 5 Jun 2002 20:54:25 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g55MtLho013776
+	for <cypherpunks-outgoing@ak47.algebra.com>; Wed, 5 Jun 2002 17:55:21 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g55MtL8X013775
+	for cypherpunks-outgoing; Wed, 5 Jun 2002 17:55:21 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (dns.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g55MtFho013752
+	for <cypherpunks@ak47.algebra.com>; Wed, 5 Jun 2002 17:55:16 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id g55MtET12018
+	for cypherpunks@ak47.algebra.com; Wed, 5 Jun 2002 15:55:14 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id g55MoGs12009
+	for cypherpunks-goingout; Wed, 5 Jun 2002 15:50:16 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+From: Nomen Nescio <nobody@dizum.com>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@dizum.com>.
+To: cypherpunks@lne.com
+Old-Subject: Re: Laurie's blinding w/cut and choose?
+Message-ID: <34a8ec156656e9ebd1650e7bd9281e53@dizum.com>
+Date: Thu,  6 Jun 2002 00:50:07 +0200 (CEST)
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Re: Laurie's blinding w/cut and choose?
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+X-spam: 10 
+Status: O
+Content-Length: 4308
+Lines: 92
+
+
+Jason Holt writes:
+> 	In his paper on Lucre ("2nd defence" against marking):
+> http://anoncvs.aldigital.co.uk/lucre/
+>
+> 	Ben Laurie gives this as a (possibly patent-free) blinding technique,
+> where h is the message, and g is the public generator:
+>
+> r = blind(h) = h^y * g^b (mod p)
+>
+> 	To "sign",
+>
+> s = sign(r) = m^h
+>
+> 	To unblind,
+>
+> (s/g^k^b)^(1/y) (mod p)
+>
+> 	(where k is the signer's secret exponent. Of course, nobody but the
+> signer can verify the signature).  Unfortunately, this doesn't work with cut
+> and choose where the signer signs the product of unrevealed documents, since 
+> the 1/y exponent above would distribute to all the internal terms:
+
+Boy, you've got a lot of faith asking this question on cypherpunks.
+It's not exactly the intellectual center of the crypto freedom movement
+these days, you know.  The average IQ is rapidly descending into double
+digits, even not counting Choate.  But let's see what we can do for you.
+
+First, let's fix your notation.
+
+r = blind(h) = h^y * g^b  OK
+s = sign(r) = r^k, not m^h.
+unblind(s) = (s/g^k^b)^(1/y) = h^k = sign(h).
+
+That's what you want to end up with, h^k, as the pseudo-signature on h.
+
+Now for a credential system, you apparently want to create a bunch
+of values which have some structure, and get a signature on a product
+of them.  Using cut and choose, the client will prepare blinded forms
+of all of the values, then the server will ask for half of the blinding
+factors to be revealed.  This exposes the raw values to be signed and
+the server can make sure they are in the right form.  If so, it then
+signs the product of the remaining values, which the client unblinds to
+get back a good signature on the product of the unblinded values.
+
+The fundamental problem with this is that the blinding factors have to
+be different for each of the values.  If they are all the same, then
+when they are revealed for some of the values during cut and choose,
+that will reveal them for all of them, and so none of them will be
+effectively blinded any more.
+
+But if the blinding factors are all different, we can't unblind since
+we don't have a unique power 1/y to raise to.
+
+That's your problem, right?
+
+Here are a couple of possible solutions.  First, you could do a cut and
+choose in which all but one of the blinded values are revealed, and only
+the remaining (unrevealed) one is signed.  This has the problem that it
+has only a 1/n security factor with n values.  That is, the client can
+just guess which one the server won't ask to check, and if it sent say 100
+values, it has a 1/100 chance of getting lucky, which might seem too high.
+
+However since credential issuing usually occurs in a non-anonymous
+context, you can afford to penalize people very heavily if they are
+caught in this manner.  (Cutting the connection and refusing to resume
+with the previous values has to count as cheating.)
+
+Another approach is as follows.  Go back to the 50-50 cut and choose
+with signature on the product.  However, use the same y blinding factor
+for all of the values.  Now when the client has to reveal during cut and
+choose, it keeps the y value secret but reveals all of the h and b values.
+It then proves in zero knowledge that there exists a y such that the h^y
+equals the required value.  This is a standard ZK proof of knowledge
+of a discrete logarithm.  It is similar to the example Ben's paper gives
+of how the bank can prove it is raising to the right power.
+
+Since you don't have to reveal y, you can use the same y for all of them
+and successfully perform the unblind operation, getting back the signature
+on the product of the h's as required.
+
+But actually another solution is much simpler, which is to do blinding
+as just h * g^b, without a y factor.  That works fine as long as the
+bank is known not to be misbehaving.  Ben's paper shows how the bank
+can use a ZK proof to show that it is raising to the same power k every
+time, basically again that same ZK proof regarding discrete logarithms.
+If the bank uses such a proof then you can use simpler blinding without
+a y factor, and you can recover the signature on the product of your h
+values by dividing by g^k^(sum of b's).
+
+So there you go.  A little technical for cypherpunks, but unfortunately
+coderpunks, like the little old lady, has fallen and it can't get up.
+

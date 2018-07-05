@@ -1,0 +1,157 @@
+From owner-cypherpunks@al-qaeda.net  Mon Feb 20 10:57:29 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q1KFsbY8029207
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 20 Feb 2012 10:54:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1329753277;
+	bh=5vuoJ955kv0N575O0EqH5DNurPAbAxIdTcwvkAZf1Pk=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=0z8GW9FEXwxK8Hrt1+XTI9pJPSc/H5A3JstMuo45IlCecd6sz03My1Rz7p2RSuQHe
+	 r/Zd49VNpuewH8mAM7jSf0PsquEj80wE8vFgcsG/dZXkdoff6QdC4WKGT9LmfDexJZ
+	 CDNljGH22osSuxhjSc5703otXA9/IXHrQk1OSuXA=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q1KFsbQb029206
+	for cypherpunks-outgoing; Mon, 20 Feb 2012 10:54:37 -0500
+Date: Mon, 20 Feb 2012 16:54:34 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: [tor-talk] Tor Browser Bundle 2.2.x Ubuntu AppArmor Profile
+Message-ID: <20120220155434.GU7343@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5372
+Lines: 125
+
+----- Forwarded message from Number Six <number6@elitemail.org> -----
+
+From: Number Six <number6@elitemail.org>
+Date: Sun, 12 Feb 2012 15:41:49 -0800
+To: tor-talk@lists.torproject.org
+Subject: [tor-talk] Tor Browser Bundle 2.2.x Ubuntu AppArmor Profile
+X-Mailer: MessagingEngine.com Webmail Interface
+Reply-To: tor-talk@lists.torproject.org
+
+Hello,
+
+I've spent some time creating Ubuntu AppArmor profiles for the Tor
+Browser Bundle and its components and related apps. I've based them upon
+publicly available profiles that needed some dusting off, updating, and
+adapting to Tor.
+
+For the unfamiliar, AppArmor is a least privilege access control system
+that attempts to prevent exploited applications from accessing system
+resources that they shouldn't normally need. It is similar to SELinux,
+but it is much easier to create, understand and modify AppArmor profiles
+than SELinux policies.
+
+The profiles are not perfect, and they really need the new features in
+the AppArmor dev series to make them awesome. In my opinion, the biggest
+advantage of non-dev AppArmor right now is that it gives you the ability
+to watch your logs for audit messages that could indicate
+botched+blocked exploit attempts or bad behavior, and to protect your
+personal files from exploited applications.
+
+For information on working with AppArmor in Ubuntu (including how to
+load these profiles), see: https://help.ubuntu.com/community/AppArmor
+
+Here's a rundown of the policies I've created and their security
+properties. The profiles themselves are at the pastebin links.
+
+1. Tor Browser Bundle 2.2.x Profile: http://pastebin.com/La6C8tZJ
+
+This profile isolates Tor, Vidalia, and Firefox to least privilege.
+However, some AppArmor shortcomings mean that it is not as good as it
+could be.  According to the AppArmor wiki, it looks like the features we
+really want won't be available until AppArmor 2.8 or 3.0.
+
+In particular, the profile will *not* have the ability to restrict
+connections from Firefox to prevent non-Tor connections until AppArmor
+supports more rule commands. Obviously this is a big issue if the prime
+goal of an exploit is to learn your IP address, and if bugs of this sort
+still exist in Firefox. Until AppArmor provides the ability to write
+rules like 'network tcp connect from 127.0.0.1 on lo to 127.0.1:9050'
+or even just 'network tcp dst 127.0.0.1', any arbitrary code exploit 
+against Vidalia or Firefox can still connect to arbitrary IPs outside of 
+Tor :/.
+
+See
+http://wiki.apparmor.net/index.php/AppArmor_Core_Policy_Reference#Note:_about_AppArmor_2.3__2.6_network_rules 
+for more details.
+
+Additionally, Tor and Firefox are still free to perform UDP datagram
+traffic, due to the desire on my part to squelch the audit log traffic
+down to a minimum. (The AppArmor in Ubuntu currently has a bug that
+causes it to always log UDP violations, even if you tell it to silence
+with a 'deny'). Since I think watching audit logs closely is one of the
+most useful properties of AppArmor, and since noise makes this
+substantially harder, the profiles currently allow UDP.
+
+Despite these major issues, the profile is significantly better than
+nothing. The main benefit you get is that all file read and write access
+is restricted to ~/Downloads and ~/Public, and TBB can't launch outside
+apps, use ptrace, access /dev/, /tmp/, or interact with the desktop.
+
+As a result, you will get a lot of permission denied errors from Firefox
+when trying to download and upload files, because the TBB folder
+defaults are screwy. Click through the errors and navigate to
+~/Downloads/. Or change the directory in the AppArmor profile to
+something you like.
+
+2. Tor Profile: http://pastebin.com/u2AXYWLJ
+
+A separate profile for the system Tor binary, which some might find
+useful for proxying non-browser activity.
+
+3. Vidalia Profile: http://pastebin.com/4ZKHnVRY
+
+Same deal for the system Vidalia binary.
+
+4. Pidgin Profile: http://pastebin.com/0Ycn4Bgy
+
+This profile is based on the profile at
+http://bazaar.launchpad.net/~jpds/apparmor/pidgin-profile/view/head:/usr.bin.pidgin
+but with some additional restrictions.
+
+In particular, I forbid ptrace. It was explicitly allowed by the profile
+and still occasionally attempted by my client, but did not seem needed
+to load plugins or otherwise function.
+
+I also removed access to a lot of X window resources, and restricted
+homedir access in a similar manner as to the TBB Firefox profile.
+
+
+
+If you're interested in editing these profiles, see
+http://wiki.apparmor.net/index.php/QuickProfileLanguage and
+http://wiki.apparmor.net/index.php/AppArmor_Core_Policy_Reference.
+
+If you know basic UNIX, AppArmor is surprisingly easy to pick up and
+customize with the documentation in-hand. Please let me know if you
+make any improvements or figure out workarounds for current limitations.
+
+-- 
+  Number Six
+  number6@elitemail.org
+
+-- 
+http://www.fastmail.fm - Send your email first class
+
+_______________________________________________
+tor-talk mailing list
+tor-talk@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-talk
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

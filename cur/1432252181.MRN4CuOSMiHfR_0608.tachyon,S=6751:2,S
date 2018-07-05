@@ -1,0 +1,80 @@
+From cypherpunks-bounces@cpunks.org  Mon Sep  9 02:12:27 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r896AlCM009064;
+	Mon, 9 Sep 2013 02:10:48 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r896AgN5009060
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Mon, 9 Sep 2013 02:10:44 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id BEE09541F9C; Mon,  9 Sep 2013 08:10:41 +0200 (CEST)
+Date: Mon, 9 Sep 2013 08:10:41 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: Re: [Cryptography] Why prefer symmetric crypto over public key crypto?
+Message-ID: <20130909061041.GV29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by antiproton.jfet.org id
+ r896AgN5009060
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 4856
+Lines: 39
+
+----- Forwarded message from Jerry Leichter <leichter@lrw.com> -----
+
+Date: Sun, 8 Sep 2013 07:32:14 -0400
+From: Jerry Leichter <leichter@lrw.com>
+To: Christian Huitema <huitema@huitema.net>
+Cc: 'John Kelsey' <crypto.jmk@gmail.com>, 'Crypto' <cryptography@metzdowd.com>, 'Jon Callas' <jon@callas.org>, "'Naif
+	M. Otaibi'" <otaibinm@gmail.com>, 'Jaap-Henk Hoepman' <jhh@cs.ru.nl>
+Subject: Re: [Cryptography] Why prefer symmetric crypto over public key crypto?
+X-Mailer: Apple Mail (2.1283)
+
+On Sep 7, 2013, at 11:06 PM, Christian Huitema wrote:
+
+>> Pairwise shared secrets are just about the only thing that scales worse than public key distribution by way of PGP key fingerprints on business cards.  > The equivalent of CAs in an all-symmetric world is KDCs....  If we want secure crypto that can be used by everyone, with minimal trust, public key is the only way to do it.  
+> 
+> I am certainly not going to advocate Internet-scale KDC. But what if the application does not need to scale more than a "network of friends?"
+Indeed, that was exactly what I had in mind when I suggested we might want to do without private key cryptography on another stream.
+
+Not every problem needs to be solved on Internet scale.  In designing and building cryptographic systems simplicity of design, limitation to purpose, and humility are usually more important the universality.  Most of the email conversations I have are with people I've corresponded with in the past, or somehow related to people I've corresponded with in the past.  In the first case, I already have their keys - the only really meaningful notion of "the right key" is key continuity (combined with implied verification if we also have other channels of communication - if someone manages to slip me a bogus key for someone who I talk to every day, I'm going to figure that out very quickly.)  In the second case - e.g., an email address from a From field in a message on this list - the best I can possibly hope for initially is that I can be certain I'm corresponding with whoever sent that message to the list.  There's no way I can bind that to a particular person in the real world wit
+ hout something more.
+
+Universal schemes, when (not if - there's no a single widely fielded system that hasn't been found to have serious bugs over its operation lifetime, and I don't expect to see one in *my* lifetime) they fail, lead to universal attacks.  I need some kind of universal scheme for setting up secure connections to buy something from a vendor I never used before, but frankly the NSA doesn't need to break into anything to get that information - the vendor, my bank, my CC company, credit agencies are call collecting and selling it anyway.
+
+The other thing to keep in mind - and I've come back to this point repeatedly - is that the world we are now designing for is very different from the world of the mid- to late-1990's when the current schemes were designed.  Disk is so large and so cheap that any constraint in the old designs that was based on a statement like "doing this would require the user to keep n^2 keys pairs, which is too much" just doesn't make any sense any more - certainly not for individuals, not even for small organizations:  If n is determined by the number of correspondents you have, then squaring it still gives you a small number relative to current disk sizes.  Beyond that, everyone today (or in the near future) can be assumed to carry with them computing power that rivals or exceeds the fastest machines available back in the day - and to have an always-on network connection whose speed rivals that of *backbone* links back then.
+
+Yes, there are real issues about how much you can trust that computer you carry around with you - but after the recent revelations, is the situation all that different for the servers you talk to, the routers in the network between you, the crypto accelerators many of the services use - hell, every piece of hardware and software.  For most people, that will always be the situation:  They will not be in a position to check their hardware, much less build their own stuff from the ground up.  In this situation, about all you can do is try to present attackers with as many *different* targets as possible, so that they need to split their efforts.  It's guerrilla warfare instead of a massed army.
+
+                                                        -- Jerry
+
+_______________________________________________
+The cryptography mailing list
+cryptography@metzdowd.com
+http://www.metzdowd.com/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

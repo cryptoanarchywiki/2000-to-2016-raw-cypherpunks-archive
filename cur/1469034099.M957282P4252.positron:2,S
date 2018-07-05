@@ -1,0 +1,280 @@
+Return-path: <cypherpunks-bounces@cpunks.org>
+Envelope-to: rsw@positron.jfet.org
+Delivery-date: Wed, 20 Jul 2016 10:01:39 -0700
+Received: from antiproton.jfet.org ([209.141.47.85])
+	by positron.jfet.org with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.87)
+	(envelope-from <cypherpunks-bounces@cpunks.org>)
+	id 1bPusM-00016K-Pc
+	for rsw@positron.jfet.org; Wed, 20 Jul 2016 10:01:38 -0700
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u6KGsnGl023331;
+	Wed, 20 Jul 2016 12:54:50 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=literati-org.20150623.gappssmtp.com header.i=@literati-org.20150623.gappssmtp.com
+	header.b=jomPElBn; dkim-adsp=none (unprotected policy);
+	dkim-atps=neutral
+Received: from mail-oi0-f52.google.com (mail-oi0-f52.google.com
+ [209.85.218.52])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u6KGm9n9023284
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Wed, 20 Jul 2016 12:48:10 -0400
+Received: by mail-oi0-f52.google.com with SMTP id l65so79704517oib.1
+ for <cypherpunks@cpunks.org>; Wed, 20 Jul 2016 09:48:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=literati-org.20150623.gappssmtp.com; s=20150623;
+ h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+ bh=difLmYQ6Gn1co05YMQ5TJdhFOMCBjgsHReRjPBwDTqY=;
+ b=jomPElBnxvNZWb4oB6EGnPL1HTs5tiQydPoaSn/tokQxB29afPml87lHDyqbCmaMEy
+ 1sgHJ/CUcBbOsok4tSk6HEMHxha7rLvsfZHEokEyvFfpA6qZekjVwDz2JP9AGLiTccBB
+ gmS7+AH/GjKYrxO7CzwlH2shQotBDPKlLGqsY/8mwHPhcKK9+8dH850sSpRcB2Qz2cqo
+ JH7tclmeMthTDMwYwGm2rKgCI7E5ZOzQtFMWfc405S+asij5niQRkB3XSsu1CXtvkZWl
+ ZvyMneBbO7a8r2LVEskvg6MqQvMuaVGehHYIg8RjY7tULMXIhlfqxRRaEre+GuP8R6W/
+ Jaug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+ :message-id:subject:to;
+ bh=difLmYQ6Gn1co05YMQ5TJdhFOMCBjgsHReRjPBwDTqY=;
+ b=aYhhobASPu2qtBl4k7LB+RDVOlA8Zy2RP0bLSV/vyrrmso5/C3RKjueGkG2RgNsDsU
+ ueVDMGuIMBO2Tkgb2D/TQobkSR9W73uK/HfGrdN3kd5QrikC1ZHGYR80tgdSSkO3W+jM
+ 0YcRQB1xHYVbHlHbXtmJqercmBQxp1q2B+ZXyoxHtqYsGQ+7b3wTix35Qj1eaQ80WkL5
+ u9WOtoPwI5zcoPjfB+iYX7yAHfUJSYJxT174or71X+4cnqLQMgTiw7IeDxNdRN2M6wh5
+ ex8oV6uh8au39nZZPyyzgS3Zc+25Sx/WqlCUWiDu0lo9bO0TzExpg8NrKviV9a1tTHJW
+ 5zzQ==
+X-Gm-Message-State: ALyK8tL52Hq7gfSv0Jp7+m5N0SSAAWI3n769aevsriVwoOPvI95DbIdI/ztT8pHYO0yfIL4a0Jgl/pEhQnspNw==
+X-Received: by 10.202.80.16 with SMTP id e16mr22508421oib.28.1469033283696;
+ Wed, 20 Jul 2016 09:48:03 -0700 (PDT)
+MIME-Version: 1.0
+References: <20160719120241.GW16437@x220-a02>
+ <CAHKdp-ncBVQF8pO1B6aO=fGVDxw8HkJePTGkmKCZMB-6guGumw@mail.gmail.com>
+ <20160719230217.GZ16437@x220-a02>
+ <CAHKdp-m0qQQV+cJA_t6AhzSay0RF1qcYqHRtvs62e-uWFmQUdQ@mail.gmail.com>
+In-Reply-To: <CAHKdp-m0qQQV+cJA_t6AhzSay0RF1qcYqHRtvs62e-uWFmQUdQ@mail.gmail.com>
+From: Sean Lynch <seanl@literati.org>
+Date: Wed, 20 Jul 2016 16:47:54 +0000
+Message-ID: <CAHKdp-k4ZeXXgoUSD=nyp_fyka9=jAwsn1yQCCJdT9sNWQ+QGQ@mail.gmail.com>
+Subject: Re: IAAF, USA and Canada demand Russian athletes represent "no
+ country" at Olympic games
+To: Zenaan Harkness <zen@freedbms.net>, CypherPunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=001a113d855c0a4523053813f79a
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 205
+
+--001a113d855c0a4523053813f79a
+Content-Type: text/plain; charset=UTF-8
+
+On Wed, Jul 20, 2016 at 9:47 AM Sean Lynch <seanl@literati.org> wrote:
+
+> On Tue, Jul 19, 2016 at 4:09 PM Zenaan Harkness <zen@freedbms.net> wrote:
+>
+>> So you're American, and some rogue trainers, agency guys and atheletes
+>> have been doping, like say your cyclists, sprinters and the odd swimmer.
+>>
+>> Since this doping scandal is "systemic" in North Amerika, it is
+>> evidently appropriate to ban all American's from participating at the
+>> games, unless they can prove their innocence.
+>>
+>> Oh, and just to teach a lesson, those atheletes that have never been
+>> involved in doping, if and only if they can prove they never doped their
+>> bodies, well they can participate in the upcoming Olympics, but they are
+>> not allowed to represent North America, and if the get a gold medal, the
+>> American national anthem will NOT be played - since Russia is hosting
+>> the Olympics, the Russian national anthem will be played instead.
+>>
+>> That is definitely fair and appropriate to the North American athletes
+>> who have always done the right thing - a little bit of healthy
+>> national and personal punishment before any trial and before any
+>> conviction.
+>>
+>> Yep, that's how a democratic world should definitely work. Just the way
+>> I thought of it too there Sean.
+>>
+>
+>
+> I am pretty sure I understand your position, and I'm sympathetic to it,
+> but as an unpatriotic (in the sense that I do not support the government
+> and I feel physically ill when I see people waving flags) American, I'm
+> afraid that swapping America for Russia helps me see it better.
+>
+
+Err, *doesn't* help me see it better.
+
+
+>
+> I think this points out a fundamental flaw in the Olympics, and in fact in
+> the entire international system: Individuals do not exist as entities in
+> the international system. There is absolutely nothing democratic about
+> the Olympics. The games exist to glorify states over individuals. The
+> Western media do highlight superstars, but for the most part only American
+> athletes get highlighted in the US.
+>
+> I gave up on the Olympics years ago. It is a fundamentally corrupt and
+> hypocritical institution. And as you can see, it's being used as a tool of
+> the West to try to punish Russia.
+>
+> So I totally agree with you, that's not the way a democratic world should
+> work. But I'd add that the Olympics are not the way a democratic world
+> should work. In a democratic system, states exist to serve the people. They
+> should be at the bottom, not at the top.
+>
+> Not!
+>>
+>>
+>> Western schooled persons (no point calling them humans) have lost touch
+>> with empathy, justice, don't even comprehend the rule of law and checks
+>> and balances, innocence until proven guilty and all that democratic
+>> "rubbish".
+>>
+>
+> I agree, though I think most people have always just followed the herd.
+> Most people have always thought "rule of law" has meant "order", and that a
+> powerful government unconstrained itself by law, as long as it was tying to
+> do "the right thing" was the way to maintain "rule of law." Never mind that
+> precisely the opposite is true.
+>
+> Which means the line has been being held by... what, exactly? Inertia,
+> probably. The West has been essentially coasting on the inertia of WWII and
+> then on the Cold War, which kept lots of people employed in a system that
+> is unsuited to anything but mass construction for mass destruction. The old
+> corporate/crony capitalist system is breaking down because the only thing
+> it's good for is war. The "war on terror" is the wrong kind of war to keep
+> it going, because high tech weapons are for the most part useless.
+> Terrorism requires political, policy, *human* solutions. But the system is
+> not evolved to put the kind of people in power who are capable of creating
+> those kinds of solutions.
+>
+> Ironically, as undemocratic as it was, the system that existed in Europe
+> prior to WWI was probably better suited to small scale conflicts than our
+> current system. The French Revolution introduced the concept of "total war"
+> to Europe, and the old system was not adapted to that.
+>
+> Now "total war" would likely destroy us all, but we're also pretty shitty
+> at small scale wars. As you've said before, we need to have a multipolar
+> system again. Such a system would reward diplomacy over saber-rattling.
+> Doesn't matter so much if there's still a lot of tension, as long as it
+> doesn't escalate to war. As long as individuals don't get too caught up in
+> the tension, because the only reason to have states in the first place is
+> to let individuals conduct their lives in relative stability and peace.
+>
+
+--001a113d855c0a4523053813f79a
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><br><br><div class=3D"gmail_quote"><div dir=3D"ltr">On Wed=
+, Jul 20, 2016 at 9:47 AM Sean Lynch &lt;<a href=3D"mailto:seanl@literati.o=
+rg">seanl@literati.org</a>&gt; wrote:<br></div><blockquote class=3D"gmail_q=
+uote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1e=
+x"><div dir=3D"ltr"><div class=3D"gmail_quote"><div dir=3D"ltr">On Tue, Jul=
+ 19, 2016 at 4:09 PM Zenaan Harkness &lt;<a href=3D"mailto:zen@freedbms.net=
+" target=3D"_blank">zen@freedbms.net</a>&gt; wrote:<br></div><blockquote cl=
+ass=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;p=
+adding-left:1ex">So you&#39;re American, and some rogue trainers, agency gu=
+ys and atheletes<br>
+have been doping, like say your cyclists, sprinters and the odd swimmer.<br=
+>
+<br>
+Since this doping scandal is &quot;systemic&quot; in North Amerika, it is<b=
+r>
+evidently appropriate to ban all American&#39;s from participating at the<b=
+r>
+games, unless they can prove their innocence.<br>
+<br>
+Oh, and just to teach a lesson, those atheletes that have never been<br>
+involved in doping, if and only if they can prove they never doped their<br=
+>
+bodies, well they can participate in the upcoming Olympics, but they are<br=
+>
+not allowed to represent North America, and if the get a gold medal, the<br=
+>
+American national anthem will NOT be played - since Russia is hosting<br>
+the Olympics, the Russian national anthem will be played instead.<br>
+<br>
+That is definitely fair and appropriate to the North American athletes<br>
+who have always done the right thing - a little bit of healthy<br>
+national and personal punishment before any trial and before any<br>
+conviction.<br>
+<br>
+Yep, that&#39;s how a democratic world should definitely work. Just the way=
+<br>
+I thought of it too there Sean.<br></blockquote><div>=C2=A0</div><div><br><=
+/div></div></div><div dir=3D"ltr"><div class=3D"gmail_quote"><div>I am pret=
+ty sure I understand your position, and I&#39;m sympathetic to it, but as a=
+n unpatriotic (in the sense that I do not support the government and I feel=
+ physically ill when I see people waving flags) American, I&#39;m afraid th=
+at swapping America for Russia helps me see it better.</div></div></div></b=
+lockquote><div><br></div><div>Err, *doesn&#39;t* help me see it better.</di=
+v><div><span style=3D"line-height:1.5">=C2=A0</span></div><blockquote class=
+=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padd=
+ing-left:1ex"><div dir=3D"ltr"><div class=3D"gmail_quote"><div><br></div><d=
+iv>I think this points out a fundamental flaw in the Olympics, and in fact =
+in the entire international system: Individuals do not exist as entities in=
+ the international system.=C2=A0<span style=3D"line-height:1.5">There is ab=
+solutely nothing democratic about the Olympics. The games exist to glorify =
+states over individuals. The Western media do highlight superstars, but for=
+ the most part only American athletes get highlighted in the US.</span></di=
+v><div><span style=3D"line-height:1.5"><br></span></div><div><span style=3D=
+"line-height:1.5">I gave up on the Olympics years ago. It is a fundamentall=
+y corrupt and hypocritical institution. And as you can see, it&#39;s being =
+used as a tool of the West to try to punish Russia.</span></div><div><span =
+style=3D"line-height:1.5"><br></span></div><div><span style=3D"line-height:=
+1.5">So I totally agree with you, that&#39;s not the way a democratic world=
+ should work. But I&#39;d add that the Olympics are not the way a democrati=
+c world should work. In a democratic system, states exist to serve the peop=
+le. They should be at the bottom, not at the top.</span></div></div></div><=
+div dir=3D"ltr"><div class=3D"gmail_quote"><div><br></div><blockquote class=
+=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padd=
+ing-left:1ex">
+Not!<br>
+<br>
+<br>
+Western schooled persons (no point calling them humans) have lost touch<br>
+with empathy, justice, don&#39;t even comprehend the rule of law and checks=
+<br>
+and balances, innocence until proven guilty and all that democratic<br>
+&quot;rubbish&quot;.<br></blockquote><div><br></div></div></div><div dir=3D=
+"ltr"><div class=3D"gmail_quote"><div>I agree, though I think most people h=
+ave always just followed the herd. Most people have always thought &quot;ru=
+le of law&quot; has meant &quot;order&quot;, and that a powerful government=
+ unconstrained itself by law, as long as it was tying to do &quot;the right=
+ thing&quot; was the way to maintain &quot;rule of law.&quot; Never mind th=
+at precisely the opposite is true.=C2=A0</div><div><br></div><div>Which mea=
+ns the line has been being held by... what, exactly? Inertia, probably. The=
+ West has been essentially coasting on the inertia of WWII and then on the =
+Cold War, which kept lots of people employed in a system that is unsuited t=
+o anything but mass construction for mass destruction. The old corporate/cr=
+ony capitalist system is breaking down because the only thing it&#39;s good=
+ for is war. The &quot;war on terror&quot; is the wrong kind of war to keep=
+ it going, because high tech weapons are for the most part useless. Terrori=
+sm requires political, policy, *human* solutions. But the system is not evo=
+lved to put the kind of people in power who are capable of creating those k=
+inds of solutions.</div><div><br></div><div>Ironically, as undemocratic as =
+it was, the system that existed in Europe prior to WWI was probably better =
+suited to small scale conflicts than our current system. The French Revolut=
+ion introduced the concept of &quot;total war&quot; to Europe, and the old =
+system was not adapted to that.</div><div><br></div><div>Now &quot;total wa=
+r&quot; would likely destroy us all, but we&#39;re also pretty shitty at sm=
+all scale wars. As you&#39;ve said before, we need to have a multipolar sys=
+tem again. Such a system would reward diplomacy over saber-rattling. Doesn&=
+#39;t matter so much if there&#39;s still a lot of tension, as long as it d=
+oesn&#39;t escalate to war. As long as individuals don&#39;t get too caught=
+ up in the tension, because the only reason to have states in the first pla=
+ce is to let individuals conduct their lives in relative stability and peac=
+e.</div></div></div></blockquote></div></div>
+
+--001a113d855c0a4523053813f79a--
+

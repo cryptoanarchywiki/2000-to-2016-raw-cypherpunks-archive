@@ -1,0 +1,169 @@
+From owner-cypherpunks@al-qaeda.net  Fri Jul 16 15:00:30 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i6GK0S41032659
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Fri, 16 Jul 2004 15:00:29 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i6GK0SBx032658
+	for cypherpunks-outgoing; Fri, 16 Jul 2004 15:00:28 -0500
+Subject: Blast from the past: USENET Transport Binding for SOAP 1.1 
+Date: Fri, 16 Jul 2004 15:53:18 -0400
+From: Nostra2004@SAFe-mail.net
+To: cypherpunks@al-qaeda.net
+X-SMType: Regular
+X-SMRef: N1-LkCASUu-
+Message-Id: <N1-LkCASUu-@SAFe-mail.net>
+MIME-Version: 1.0
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+X-SMSignature: swNr4SecJeEHSRp+Tr3OsAA8CuWsMqvr6/sZJicDa942fVyhNDahl+yzFhTmKGImchtEsEYrWjvAM6Gn
+  	Ihy+ylpU42B5zrG81bNZ/ACsHFWp73+nU+j1VadroelLxhX90XnAdzDocQ9MeKaxn6LjTXq9CGXE7LtS
+  	MjGmrk1L9VU=
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 6703
+Lines: 139
+
+USENET Transport Binding for SOAP 1.1 
+10 February 2002 
+Authors (alphabetically): 
+Sister Tornado 
+
+Copyright) 2002 Sister Tornado. Reproduce with credit at will. 
+
+
+-------------------------------------------------------------------------------- 
+
+Abstract 
+SOAP [1] is a lightweight protocol for exchange of information in a decentralized, distributed environment, using XML. This document details transporting SOAP messages over the USENET. [2] 
+
+Status 
+This is a draft. 
+
+Table of Contents 
+1. Introduction 
+1.1 Notational Conventions 
+2. Use Of USENET Message body 
+2.1 Encoding 
+3. Identifying USENET transports in WSDL 
+4. Request / Response semantics 
+5. Examples 
+6. Security Considerations 
+7. References 
+
+1. Introduction 
+By binding SOAP to USENET, we can take advantage of USENET's store and forward messaging to provide an asynchronous, broadcast, one way transport for SOAP. Two one way messages can be correlated to provide request / response semantics (this closely follows the SOAP model). This allows SOAP to be used in a number of scenarios where HTTP is not suitable (partially connected nodes, one way notifications etc.) 
+
+The author wishes to acknowledge that the shameless cribbing of much of the text from "SMTP Transport Binding for SOAP 1.1 
+" [0]. 
+
+
+1.1 Notational Conventions 
+The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC-2119 [3]. 
+
+
+
+2. Use of USENET Standard 
+
+2.1 Use of USENET Message Headers 
+The USENET Message standard requires the use of a Subject field. This field SHOULD be used to identify the service being called. 
+
+For example: 
+
+Subject: SoapRobot 
+
+2.2 Use of USENET Message body 
+SOAP payloads in USENET MUST be packaged into the body of the USENET message. 
+2.3 Encoding 
+A content transfer encoding of base64 is RECOMMENDED. A content transfer encoding of Quoted-Printable MAY be used if the SOAP payload meets the requirements of RFC-1036 [2]. 
+
+
+3. Identifying USENET transports in WSDL 
+The URI http://schemas.xmlsoap.com/soap/usenet/ SHOULD be used to identify USENET transports compliant with this specification in the transport attribute of the soap:binding element of a WSDL [4] document (see section 3.3 of the WSDL spec.) 
+
+The address of the SOAP service in the soap:address element of a WSDL document SHOULD be the name or handle of the intended recipient and a comma-delimitedlist of newsgroups where a request may be posted. For example: 
+
+<soap:address location="DarkNet@example.alt.soap.messages.trendy,example.alt.soap.messages.fake"> 
+
+4. Request / Response semantics 
+SOAP applications requiring request / response semantics will need to perform some sort of message correlation. This SHOULD be achieved via the standard Message-Id and Followup-To USENET headers [2]. The request will include a Message-Id header, and the associated response should include a Followup-To header that contains the Message-Id of the request, and a new Message-Id header. 
+
+The responder SHOULD also reflect the incoming subject header into the response, prefixing it with "Re: ". 
+
+5. Example 
+A request destined for SoapRobot@example.soap.messages 
+
+Path: server.example/unknown.site2.example@site2.example/relay.site.example/site.example/injector.site.example%jsmith 
+Message-ID: <1F75D4D515C3EC3F34FEAB51237675B5@example.com> 
+From: soap@client.example.com 
+Date: Mon, 11 February 2002 23:27:00 -0700 
+Subject: SoapRobot 
+Newsgroups: example.alt.comp.rec.foo 
+
+<?xml version=3D"1.0" encoding=3D"UTF-8"?> 
+<SOAP-ENV:Envelope SOAP-ENV:encodingStyle=3D"http://schemas.xmlsoap.org/soap/encoding/" 
+xmlns:SOAP-ENC=3D"http://schemas.xmlsoap.org/soap/encoding/" 
+xmlns:SOAP-ENV=3D"http://schemas.xmlsoap.org/soap/envelope/" 
+xmlns:xsd=3D"http://www.w3.org/2001/XMLSchema" 
+xmlns:xsi=3D"http://www.w3.org/2001/XMLSchema-instance"> 
+<SOAP-ENV:Body> 
+<m:echoString xmlns:m=3D"http://soapinterop.org/"> 
+<inputString>A human being should be able to change a diaper, plan an invasion, 
+butcher a hog, conn a ship, design a building, write a sonnet, balance 
+accounts, build a wall, set a bone, comfort the dying, take orders, give 
+orders, cooperate, act alone, solve equations, analyze a new problem, 
+pitch manure, program a computer, cook a tasty meal, fight efficiently, 
+die gallantly. Specialization is for insects. --Robert A. Heinlein</inputString> 
+</m:echoString> 
+</SOAP-ENV:Body> 
+</SOAP-ENV:Envelope> 
+
+
+The resulting response from SoapRobot 
+
+Path: server.example/unknown.site2.example@site2.example/relay.site.example/site.example/injector.site.example%jsmith 
+Message-Id: <FF75D4D515C3EC3F34FEAB51237675B5@soap.example.org> 
+From: SoapRobot@server.example.com 
+Date: Mon, 11 February 2002 23:51:00 -0700 
+Subject: Re: SoapRobot 
+Newsgroups: example.alt.comp.rec.foo 
+References: <1F75D4D515C3EC3F34FEAB51237675B5@client.com> 
+
+<?xml version=3D"1.0" encoding=3D"UTF-8"?> 
+<SOAP-ENV:Envelope SOAP-ENV:encodingStyle=3D"http://schemas.xmlsoap.org/soap/encoding/" 
+xmlns:SOAP-ENC=3D"http://schemas.xmlsoap.org/soap/encoding/" 
+xmlns:SOAP-ENV=3D"http://schemas.xmlsoap.org/soap/envelope/" 
+xmlns:xsd=3D"http://www.w3.org/2001/XMLSchema" 
+xmlns:xsi=3D"http://www.w3.org/2001/XMLSchema-instance"> 
+<SOAP-ENV:Body> 
+<m:echoStringResponse xmlns:m=3D"http://soapinterop.org/"> 
+<return>A human being should be able to change a diaper, plan an invasion, 
+butcher a hog, conn a ship, design a building, write a sonnet, balance 
+accounts, build a wall, set a bone, comfort the dying, take orders, give 
+orders, cooperate, act alone, solve equations, analyze a new problem, 
+pitch manure, program a computer, cook a tasty meal, fight efficiently, 
+die gallantly. Specialization is for insects. --Robert A. Heinlein</return> 
+</m:echoStringResponse> 
+</SOAP-ENV:Body> 
+</SOAP-ENV:Envelope> 
+
+
+6. Security Considerations 
+Clients may wish to authenticate the sender's response in some API-specific way, as there is no direct connection between client and server and the server's response is trivially spoofed. 
+
+
+7. References 
+
+[0] Cunnings R., Fell S., Kulchenko P., "SMTP Transport Binding for SOAP 1.1", 2001 
+
+[1] Box, D., Ehnebuske, D., Kakivaya, G., Layman, A., Mendelsohn, N., Nielsen, H. F., Thatte, S. and D. Winer, "Simple Object Access Protocol (SOAP) 1.1", May 2000. 
+
+[2] Horton M., Adams R., "Standard for Interchange of USENET Messages" RFC1036, December 1987 
+
+[3] Bradner S., "Key words for use in RFCs to Indicate Requirement Levels", RFC 2119, Harvard University, March 1997 
+
+[4] Christensen E., Curbera F., Meredith G., Weerawarana S. "Web Services Description Language (WSDL) 1.1", March 2001.  
+

@@ -1,0 +1,199 @@
+From owner-cypherpunks@al-qaeda.net  Wed Mar 14 16:16:08 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q2EKChor018982
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 14 Mar 2012 16:12:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1331755963;
+	bh=VjpgCDQp79/NMs0ePPPJCFTltBsfW8IgeArhkvhK+2c=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=BlDBDWpczznW4ZUgiDbFuOBlZKro+EBuF3lDw0hVLW67p5gIX1CERvimhvog6i4LL
+	 hMNyRy9roioNbtDZVQarxlGtHsgR1DmS7wdC828mYDAs+qd7qBGX5iqTUQRQ+QLkFl
+	 qzlwiD0d+rUB6eVBfdQg/1chlEWw075z54oyVorU=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q2EKChoi018981
+	for cypherpunks-outgoing; Wed, 14 Mar 2012 16:12:43 -0400
+Date: Wed, 14 Mar 2012 21:12:39 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org,
+        freedombox-discuss@lists.alioth.debian.org
+Subject: [tahoe-dev] #466 (signed-introducer-announcements) landed!
+Message-ID: <20120314201239.GF9891@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 7996
+Lines: 166
+
+----- Forwarded message from Brian Warner <warner@lothar.com> -----
+
+From: Brian Warner <warner@lothar.com>
+Date: Wed, 14 Mar 2012 13:06:37 -0700
+To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+Subject: [tahoe-dev] #466 (signed-introducer-announcements) landed!
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6;
+	rv:10.0.2) Gecko/20120216 Thunderbird/10.0.2
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+
+Thanks to Zooko's hard work in getting pycryptopp-0.6.0.(mumble)
+released yesterday, I was finally able to land the #466
+signed-introducer code last night. What does this mean for users?
+
+* tahoe now depends upon the new pycryptopp: next time you update,
+  you'll need to do 'setup.py build' so it will pick up 0.6.0
+
+* the first time your node wakes up with the new code, it will create a
+  NODEDIR/private/server.privkey file, containing the new Ed25519
+  private signing key. This is a binary file, not meant for copy/paste
+  or human interaction.
+
+* server IDs are changing. The old (foolscap-based) IDs look like
+  "rkybwv7hpuwpnyqhwjz43v727orr7fqd". Once everything is upgraded, the
+  Welcome page will show new server IDs that look like
+  "v0-fcmgu663rdyshncihts4e45rtwjwvc7ebcrtlaiv345yyps667pq". (the old
+  ones are a SHA1 hash of the tub's public SSL certificate, the new ones
+  are an Ed25519 public verifying key)
+
+
+Internally, this opens up the door for a bunch of stuff:
+
+* Introducer announcements are now extensible dictionaries, instead of
+  fixed-size tuples. This allows servers to cleanly advertise new
+  services, and include additional metadata like how much space they
+  have available. This will be used by the upcoming Accounting work to
+  advertise an alternate storage-server object from which per-account
+  connections can be obtained. #666
+
+* Announcements are signed, which means the Introducer doesn't get to
+  modify the metadata, reducing its authority a little bit. This gets us
+  one step closer to having a distributed introduction mechanism (the
+  signed announcements can simply be flooded, without worrying about
+  what the other nodes might do to them in transit). #68
+
+* Server nodes are known by their Ed25519 public verifying key, rather
+  than by their Foolscap SSL TubID. This enables secure non-SSL
+  messaging (sign a request instead of sending unsigned requests over a
+  validated-SSL connection), so we can switch from Foolscap to e.g. HTTP
+  for share transport, which should make the Tahoe protocol easier to
+  port to other languages (Foolscap offers more features than we really
+  need, and its need to check the SSL certificate is an implementation
+  hassle). #510
+
+* Clients can securely reference a server by its pubkey, which will be
+  the basis for explicit "which servers am I willing to use"
+  configuration. #467, #295
+
+
+What about compatibility? All combinations of V1/V2 client/introducer
+should work as expected:
+
+* new (V2) clients can talk to old (V1) Introducers just fine: they'll
+  detect the lack of V2 methods and talk down to the introducer (sending
+  it unsigned V1-format tuples instead of signed V2-format
+  dictionaries).
+
+* old V1 clients can talk to new V2 introducers: they send announcements
+  to the old method name, the Introducer will upgrade the tuples to
+  dictionaries (unsigned, of course) for distribution to V2 clients, and
+  distributes the original tuple to V1 clients
+
+* new V2 Introducers can talk to old V1 clients just fine: the client
+  will subscribe with the old V1 method, causing the Introducer to
+  downgrade new-style announcements for the V1 client
+
+* V1 clients always get tuples, V2 clients always get dictionaries.
+  *Signed* announcements will only happen when all three participants
+  (announcing client, Introducer, subscribing client) are V2.
+
+
+What about serverid compatibility?
+
+* over the last few months we've refactored the way clients use storage
+  servers, to split their notion of "serverid" (aka "peerid") into
+  several pieces. V2 announcements provide specific values for these
+  different pieces, so that some can remain the same as before, while
+  others are new. (this process is about 80% complete)
+
+* "serverid" will be used to mean the Ed25519 pubkey (but some code
+  still uses it to mean the tubid.. this will eventually be fixed). This
+  is the servers's long-term secure identifier, suitable for #467-style
+  server designation. Old V1 nodes won't have serverids, so it won't be
+  possible to securely reference a V1 node, so using #467 will depend
+  upon upgraded servers and an upgraded Introducer.
+
+* "name" is used to describe servers on the Welcome page, and is either
+  the pubkey (if available) or the tubid. It is not secure, in the sense
+  that it could be spoofed, and so shouldn't be used for #467-style
+  server designation.
+
+* "permutation seed" is used by the server-selection algorithm. It is
+  provided by the server (which can use anything it likes). Brand new V2
+  servers use the ed25519 serverid. Old V1 servers use the foolscap
+  tubid (i.e. when V1 tuples are upgraded by the Introducer to V2 dicts,
+  it adds a "permutation-seed-base32" key derived from the tubid). V2
+  servers which wake up with existing shares will use their tubid
+  forevermore, since that probably means other clients have known them
+  by the tubid, so they'll be expecting share placement based upon the
+  old tubid. This allows backwards compatibility for old shares while
+  allowing brand new empty servers to live in the future, not the past.
+
+* "lease seed" is always the tubid, and continues to be used to generate
+  the per-share per-server lease-renew/cancel secrets. To safely use a
+  shared secret, you have to send that secret over a very specific
+  channel, which means they're tied to a transport protocol and a
+  verifiable endpoint. So they won't be usable in a post-Foolscap world
+  anyways. The plan (as part of #666) is to replace shared-secrets with
+  per-lease Ed25519 keypairs.
+
+* "foolscap write enabler seed" is also the tubid, for exactly the same
+  reasons. We'll need to replace both lease-management and mutable-file
+  write-management before we can move from Foolscap to unencrypted HTTP.
+
+
+Open questions:
+
+* serverids currently include a short version marker: the "v0-" in
+  "v0-fcmgu663rdyshncihts4e45rtwjwvc7ebcrtlaiv345yyps667pq". Does that
+  get in the way of cut-and-paste? Would it be better to use something
+  like "v0fcmgu663rdyshncihts4e45rtwjwvc7ebcrtlaiv345yyps667pq"? When we
+  abbreviate these in places like the FileChecker results page (to
+  identify specific servers), is there a way to get the v0- out of the
+  abbreviated form? (maybe use a "-v0"/"v0" suffix? maybe define the
+  abbreviated form to skip the prefix, so this example appears as just
+  "fcmgu"?)
+
+* are there places where I've missed the tubid-to-serverid transition? I
+  spotted one just now, the "My nodeid" field on the welcome page.
+
+* Next steps: push forward on the Accounting work, specifically looking
+  for ways to display (to clients) which servers you're using, and then
+  maybe to exert some control over that list. There are some UI
+  questions to figure out: I can imagine managing this config with both
+  tahoe.cfg (have a config key with a list of serverids) and via a web
+  page (a <table> with enable/disable checkboxes), but the latter
+  requires some web-security frameworking that we don't have in place
+  yet (and might not want to rely upon anyways).
+
+Let me know if you have an questions.. I imagine some of this is as
+clear as mud.
+
+cheers,
+ -Brian
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+http://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

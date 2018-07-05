@@ -1,0 +1,117 @@
+From owner-cryptography+rsw=mit.edu@metzdowd.com  Wed Jun  4 08:34:05 2003
+Return-Path: <owner-cryptography+rsw=mit.edu@metzdowd.com>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h54CY5q00986
+	for <rsw@opamp.org>; Wed, 4 Jun 2003 08:34:05 -0400
+Received: from red.metdow.com (72.muf123.nycm.n54ny05r18.dsl.att.net [12.103.123.72])
+	by fort-point-station.mit.edu (8.12.4/8.9.2) with ESMTP id h54CY2E1015532
+	for <rsw@mit.edu>; Wed, 4 Jun 2003 08:34:02 -0400 (EDT)
+Received: by red.metdow.com (Postfix, from userid 1002)
+	id 4BD2218301F; Wed,  4 Jun 2003 12:28:09 +0000 (UTC)
+X-Original-To: cryptography@metzdowd.com
+Delivered-To: cryptography@metzdowd.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by red.metdow.com (Postfix) with ESMTP id 23A87183016
+	for <cryptography@metzdowd.com>; Wed,  4 Jun 2003 12:28:08 +0000 (UTC)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 6C4BCD97C5; Wed,  4 Jun 2003 08:28:07 -0400 (EDT)
+X-Original-To: cryptography@metzdowd.com
+Received: from hermes.cs.auckland.ac.nz (hermes.cs.auckland.ac.nz [130.216.35.151])
+	by red.metdow.com (Postfix) with ESMTP id CBB4B182FB9
+	for <cryptography@metzdowd.com>; Wed,  4 Jun 2003 04:33:15 +0000 (UTC)
+Received: from medusa01.cs.auckland.ac.nz (medusa01.cs.auckland.ac.nz [130.216.34.33])
+	by hermes.cs.auckland.ac.nz (8.12.9/8.12.9) with ESMTP id h544WQYb012433;
+	Wed, 4 Jun 2003 16:32:26 +1200
+Received: (from pgut001@localhost)
+	by medusa01.cs.auckland.ac.nz (8.11.6/8.11.6) id h544WNQ03298;
+	Wed, 4 Jun 2003 16:32:23 +1200
+Date: Wed, 4 Jun 2003 16:32:23 +1200
+Message-Id: <200306040432.h544WNQ03298@medusa01.cs.auckland.ac.nz>
+From: pgut001@cs.auckland.ac.nz (Peter Gutmann)
+To: jamesd@echeque.com, pgut001@cs.auckland.ac.nz
+Subject: Re: Maybe It's Snake Oil All the Way Down
+Cc: bill.stewart@pobox.com, cryptography@metzdowd.com, cypherpunks@lne.com,
+   ekr@rtfm.com, rsalz@datapower.com, sguthery@mobile-mind.com
+Sender: owner-cryptography@metzdowd.com
+Precedence: bulk
+Status: O
+Content-Length: 4502
+Lines: 76
+
+"James A. Donald" <jamesd@echeque.com> writes:
+
+>I never figured out how to use a certificate to authenticate a client to a
+>web server, how to make a web form available to one client and not another.
+>Where do I start?
+
+There's a two-level answer to this problem.  At an abstract level, doing
+client certs isn't hard, there are various HOWTOs around for Apache, Microsoft
+have Technet/MSDN papers on it for IIS, etc etc.  At a practical level, it's
+almost never used because it's just Too Hard.  That's not the SSL client-cert
+part, it's the using-X.509 part.  To save having to type in a long
+explanation, I'll lift a representative paragraph from a (not-yet-published,
+don't ask :-) paper on PKI usability:
+
+  There is considerable evidence from mailing lists, Usenet newsgroups and web
+  forums, and directly from the users themselves, that acquiring a certificate
+  is the single biggest hurdle faced by users [1].  For example various user
+  comments indicate that it takes a skilled technical user between 30 minutes
+  and 4 hours work to obtain a certificate from a public CA that performs
+  little to no verification, depending on the CA and the procedure being
+  followed.  Obtaining one from non-public CAs that carry out various levels
+  of verification before issuing the certificate can take as long as a month.
+  A representative non-technical user who tried to obtain an (unverified)
+  certificate from a public CA took well over an hour for the process, which
+  involved [...] eventually the user gave up.
+
+and that doesn't even get into the mess of managing private keys, handling
+revocation, etc etc etc ad nauseum:
+
+  The problems that this creates are demonstrated by what happens when
+  technically skilled users are required to work with certificates.  The
+  OpenSSL toolkit [2][3] includes a Perl script CA.pl that allows users to
+  quickly generate so-called clown suit certificates (ones that 'have all the
+  validity of a clown suit' when used for identification purposes [4]), which
+  is widely-used in practice.  The cryptlib toolkit [5][6] contains a similar
+  feature in the form of Xyzzy certificates (added with some resistance and
+  only after the author grew tired of endless requests for it), ones with
+  dummy X.500 names, an effectively infinite lifetime, and no restrictions on
+  usage.  Most commercial toolkits include similar capabilities, usually
+  disguised as 'test certificates' for development purposes only, which end up
+  being deployed in live environments because it.s too difficult to do it the
+  way X.509 says it should be done.  Certificates used with mailers that
+  support the STARTTLS option consist of ones that are 'self-signed, signed-by
+  the default Snake Oil CA, signed by an unknown test CA, expired, or have the
+  wrong DN' [7].  The producer of one widely-used Windows MUA reports that in
+  their experience 90% of the STARTTLS-enabled servers that they encounter use
+  self-signed certificates [8].  This reduces the overall security of the
+  system to that of unauthenticated Diffie-Hellman key exchange, circa 1976.
+  In all of these cases, the entire purpose of certificates has been
+  completely short-circuited by users because it.s just too difficult to do
+  the job properly.  The problematic nature of X.509 is echoed in publications
+  both technical and non-technical, with conference papers and product
+  descriptions making a feature of the fact that their design or product works
+  without requiring a PKI.  For example, one recent review of email security
+  gateways made a requirement for consideration in the review that the product
+  'have no reliance on PKI' [9].  As an extreme example of this, the inaugural
+  PKI Research Workshop, attended by expert PKI users, required that
+  submitters authenticate themselves with plaintext passwords because of the
+  lack of a PKI to handle the task [10][11].
+
+>As a result we each have a large number of shared secret passwords, whereby
+>we each log into a large number of webservers.  Was this what the people who
+>created this protocol intended?
+
+The assumption of the protocol's creators was that someone would figure out
+how to make X.509 PKI work by the time SSL took off, and everyone would have
+their own certificates and whatnot.
+
+At least they got *most* of the design right :-).
+
+Peter.
+
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+

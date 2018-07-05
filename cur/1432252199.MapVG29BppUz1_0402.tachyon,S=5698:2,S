@@ -1,0 +1,135 @@
+From owner-cypherpunks@Algebra.COM  Wed Dec 20 00:13:58 2000
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.72.0.53])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id AAA03445
+	for <kwantam@positron.mit.edu>; Wed, 20 Dec 2000 00:13:52 -0500
+Received: from ak47.algebra.com (root@[208.233.99.160])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id AAA00853
+	for <rsw@mit.edu>; Wed, 20 Dec 2000 00:13:51 -0500 (EST)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id eBK4rFJ24086
+	for cypherpunks-outgoing; Tue, 19 Dec 2000 22:53:15 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from sirius.infonex.com (sirius.infonex.com [216.34.245.2])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id eBK4r9624073
+	for <cypherpunks@algebra.com>; Tue, 19 Dec 2000 22:53:09 -0600
+X-Relay-IP: 216.34.245.2
+Received: (from cpunks@localhost) by sirius.infonex.com (8.8.8/8.8.8) id UAA29831; Tue, 19 Dec 2000 20:52:52 -0800 (PST)
+Received: from cyberpass.net (cyberpass.net [216.34.245.3]) by sirius.infonex.com (8.8.8/8.8.8) with ESMTP id UAA29825 for <cpunks@sirius.infonex.com>; Tue, 19 Dec 2000 20:52:43 -0800 (PST)
+Received: from toad.com (toad.com [140.174.2.1]) by cyberpass.net (8.8.8/8.7.3) with ESMTP id UAA20633 for <cypherpunks@cyberpass.net>; Tue, 19 Dec 2000 20:55:16 -0800 (PST)
+Received: (from majordom@localhost) by toad.com (8.7.5/8.7.3) id UAA18395 for cypherpunks-unedited-outgoing; Tue, 19 Dec 2000 20:47:05 -0800 (PST)
+Received: from smtp.email.msn.com (cpimssmtpu01.email.msn.com [207.46.181.26]) by toad.com (8.7.5/8.7.3) with ESMTP id UAA18389 for <cypherpunks@toad.com>; Tue, 19 Dec 2000 20:47:03 -0800 (PST)
+Received: from josephas - 63.36.205.179 by email.msn.com with Microsoft SMTPSVC;
+	 Tue, 19 Dec 2000 20:46:29 -0800
+Message-ID: <00c001c06a2e$d648a9a0$b3cd243f@josephas>
+From: "Joseph Ashwood" <ashwood@msn.com>
+To: "Scoville, Chad" <CScoville@thrupoint.net>, <cypherpunks@toad.com>
+Cc: <tech777_2000@yahoo.com>
+References: <000601c069d1$62ca7290$a91819ac@NDBCap.com>
+Old-Subject: Re: Crypto questions
+Date: Tue, 19 Dec 2000 20:44:46 -0600
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+X-MSMail-Priority: Normal
+X-Mailer: Microsoft Outlook Express 5.50.4133.2400
+X-MimeOLE: Produced By Microsoft MimeOLE V5.50.4133.2400
+Subject:  Re: Crypto questions
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 3026
+Lines: 87
+
+
+Honestly, it's pretty easy to take care of everything you need. Since you're
+using SMTP you obviously know how long the message is so you can use fairly
+well anything. Also because it's going over SMTP you need to be aware that
+you should base-64 encode everything, and the other issues. However what you
+need is simply:
+a random number generator
+an implementation of RSA-OAEP
+a good block cipher with a good chaining method (Rijndael, CBC is great)
+a signature scheme
+
+do the following
+generate a 128-bit number K
+D = RSA-OAEP(K)
+B = data | signature(data)
+S = D | RijndaelCBC(K, B)
+send(base-64(S))
+
+Toss in some markers, something along the lines of "---Begin PGP encrypted
+message---" and it should work wonderfully. The reverse should be obvious,
+but just to make sure
+T = receive()
+S = base-64Decode(T)
+(D, B)= Parse(S)BasedOnMarking
+K = RSA-OAEPDecrypt(D)
+data = RijndaelCBCDecrypt(K, B)
+
+You can send anything you want this way. You can also add compression to the
+data before encryption, and decompress after decryption. It's not bleeding
+edge, but it's dependable, it's fast, it's secure, and if you're really
+paranoid about security, move to SHA-256 with RSA-OAEP, and use a 256-bit
+Rijndael key. You'll also need to make sure you use properly sized RSA keys.
+
+If you want something closer to bleeding edge, go with XTR in place of RSA,
+and well Rijndael is just an all around great cipher. If you want to strive
+for exotic, use XTR and Serpent. Of course if you want the tried and true
+use 3DES instead of Rijndael. If you want the most buzzwords for you
+condition use half-ephemeral ECC like this:
+do the following
+generate a random private key
+generate the public key to go with it, P
+Compute the shared secret, K
+B = data | signature(data)
+S = P | RijndaelCBC(K, B)
+send(base-64(S))
+Decryption is left as an exercise. If you'd like more help there are plenty
+of people on the cypherpunks list (myself included) that are capable of
+consulting to determine what parameters you need to use.
+                        Joe
+
+----- Original Message -----
+From: "Scoville, Chad" <CScoville@thrupoint.net>
+To: <cypherpunks@toad.com>
+Cc: <tech777_2000@yahoo.com>
+Sent: Tuesday, December 19, 2000 9:35 AM
+Subject: Crypto questions
+
+
+> I've been actively reading posts on this list for about two years now, and
+> I'm in he process of actually trying to design/implement a data network
+> where security is of the utmost priority. Where is a good starting point
+to
+> find out about packages using algorithms which are unbreakable as of yet.
+> All of the traffic will remain domestically within the US. The traffic
+will
+> be SMTP.
+>
+> It would be illmatic if someone could reccomend a good reading list
+> (current) on the bleeding edge of cryptography.
+>
+> Tks. in advance.
+>
+> CK$
+>
+> Chad K. Scoville
+> Internetwork Solutions Engineer
+> Thrupoint, Inc. formerly Total Network Solutions
+> 545 Fifth Avenue, 14th Floor
+> New York, NY
+> 10017
+> v 212.542.5451
+> p 800.555.9172
+> cscoville@thrupoint.net
+> www.thrupoint.net
+>
+>
+
+

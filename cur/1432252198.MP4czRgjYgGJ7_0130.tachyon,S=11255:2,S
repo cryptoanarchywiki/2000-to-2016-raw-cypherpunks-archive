@@ -1,0 +1,203 @@
+From owner-cypherpunks@Algebra.COM  Sat Aug  3 14:25:36 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g73IPaM07668
+	for <rsw@opamp.org>; Sat, 3 Aug 2002 14:25:36 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id OAA00957
+	for <rsw@mit.edu>; Sat, 3 Aug 2002 14:25:35 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g73HuIKe009749
+	for <cypherpunks-outgoing@ak47.algebra.com>; Sat, 3 Aug 2002 12:56:18 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g73HuIne009748
+	for cypherpunks-outgoing; Sat, 3 Aug 2002 12:56:18 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g73HuCKe009732
+	for <cypherpunks@ak47.algebra.com>; Sat, 3 Aug 2002 12:56:13 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g73HuBka030498
+	for cypherpunks@ak47.algebra.com; Sat, 3 Aug 2002 10:56:11 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g73HtWIi030485
+	for cypherpunks-goingout345; Sat, 3 Aug 2002 10:55:32 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Sat, 3 Aug 2002 10:55:19 -0700
+From: AARG! Anonymous <remailer@aarg.net>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@aarg.net>.
+To: cypherpunks@lne.com, cryptography@wasabisystems.com,
+   mail2news@anon.lcs.mit.edu
+Old-Subject: Privacy-enhancing uses for TCPA
+Newsgroups: sci.crypt,talk.politics.crypto
+Message-ID: <aadf496ee383b772e24d13a2adc02d78@aarg.net>
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Privacy-enhancing uses for TCPA
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 8814
+Lines: 152
+
+
+Here are some alternative applications for TCPA/Palladium technology which
+could actually promote privacy and freedom.  A few caveats, though: they
+do depend on a somewhat idealized view of the architecture.  It may be
+that real hardware/software implementations are not sufficiently secure
+for some of these purposes, but as systems become better integrated
+and more technologically sound, this objection may go away.  And these
+applications do assume that the architecture is implemented without secret
+backdoors or other intentional flaws, which might be guaranteed through
+an open design process and manufacturing inspections.  Despite these
+limitations, hopefully these ideas will show that TCPA and Palladium
+actually have many more uses than the heavy-handed and control-oriented
+ones which have been discussed so far.
+
+To recap, there are basically two technologies involved.  One is "secure
+attestation".  This allows machines to securely receive a hash of the
+software which is running remotely.  It is used in these examples to
+know that a trusted client program is running on the remote machine.
+The other is "secure storage".  This allows programs to encrypt data
+in such a way that no other program can decrypt it.
+
+In addition, we assume that programs are able to run "unmolested";
+that is, that other software and even the user cannot peek into the
+program's memory and manipulate it or learn its secrets.  Palladium has
+a feature called "trusted space" which is supposed to be some special
+memory that is immune from being compromised.  We also assume that
+all data sent between computers is encrypted using something like SSL,
+with the secret keys being held securely by the client software (hence
+unavailable to anyone else, including the users).
+
+The effect of these technologies is that a number of computers across
+the net, all running the same client software, can form their own
+closed virtual world.  They can exchange and store data of any form,
+and no one can get access to it unless the client software permits it.
+That means that the user, eavesdroppers, and authorities are unable to
+learn the secrets protected by software which uses these TCPA features.
+(Note, in the sequel I will just write TCPA when I mean TCPA/Palladium.)
+
+Now for a simple example of what can be done: a distributed poker game.
+Of course there are a number of crypto protocols for playing poker on the
+net, but they are quite complicated.  Even though they've been around
+for almost 20 years, I've never seen game software which uses them.
+With TCPA we can do it trivially.
+
+Each person runs the same client software, which fact can be tested
+using secure attestation.  The dealer's software randomizes a deck and
+passes out the cards to each player.  The cards are just strings like
+"ace of spades", or perhaps simple numerical equivalents - nothing fancy.
+Of course, the dealer's software learns in this way what cards every
+player has.  But the dealer himself (i.e. the human player) doesn't
+see any of that, he only sees his own hand.  The software keeps the
+information secret from the user.  As each person makes his play, his
+software sends simple messages telling what cards he is exposing or
+discarding, etc.  At the end each person sends messages showing what
+his hand is, according to the rules of poker.
+
+This is a trivial program.  You could do it in one or two pages of code.
+And yet, given the TCPA assumptions, it is just as secure as a complex
+cryptographically protected version would be that takes ten times as
+much code.
+
+Of course, without TCPA such a program would never work.  Someone would
+write a cheating client which would tell them what everyone else's cards
+were when they were the dealer.  There would be no way that people could
+trust each other not to do this.  But TCPA lets people prove to each
+other that they are running the legitimate client.
+
+So this is a simple example of how the secure attestation features of
+TCPA/Palladium can allow a kind of software which would never work today,
+software where people trust each other.  Let's look at another example,
+a P2P system with anonymity.
+
+Again, there are many cryptographic systems in the literature for
+anonymous communication.  But they tend to be complicated and inefficient.
+With TCPA we only need to set up a simple flooding broadcast network.
+Let each peer connect to a few other peers.  To prevent traffic
+analysis, keep each node-to-node link at a constant traffic level using
+dummy padding.  (Recall that each link is encrypted using SSL.)
+
+When someone sends data, it gets sent everywhere via a simple routing
+strategy.  The software then makes the received message available to the
+local user, if he is the recipient.  Possibly the source of the message
+is carried along with it, to help with routing; but this information is
+never leaked outside the secure communications part of the software,
+and never shown to any users.
+
+That's all there is to it.  Just send messages with flood broadcasts,
+but keep the source locked inside the secure part.  Messages can be
+sent and received, and neither participants nor outsiders can tell
+what the source of any message is.
+
+As with the earlier example, such a system would never work without TCPA.
+Rogue software would easily determine which direction messages were coming
+from, and the anonymity provided would be extremely limited at best.
+But by eliminating rogues using secure attestation, and keeping the
+sensitive data safe from molestation, we are able to achieve using a
+very simple system what otherwise takes tremendous complexity.
+
+Here's one more example, which I think is quite amazing: untraceable
+digital cash with full anonymity, without blinding or even any
+cryptography at all! (Excepting of course the standard TCPA pieces like
+SSL and secure storage and attestation.)
+
+The idea is, again, trivial.  Making a withdrawal, the client sends the
+user's password and account ID to the bank (this information is kept in
+secure storage).  The bank approves, and the client increments the local
+"wallet" by that amount (also kept in secure storage).  To make a payment,
+use the anonymous network for transport, and just send a message telling
+how much is being paid!  The recipient increments his wallet by that
+amount and the sender decrements his.  Deposit works analogously to
+withdrawal.
+
+Again, that's all there is to it.  Nothing could be simpler.  Yet it
+provides for secure (assuming TCPA is secure), anonymous, untraceable
+payments.  The secure attestation is crucial, of course, to make sure
+that people are running legitimate clients, otherwise cheating would
+be rampant.  And the secure storage is equally crucial, otherwise any
+software could increment the sum stored in the wallet and everyone would
+accept and believe those payments.
+
+I understand, of course, that this specific example is not very practical
+unless we have an extremely secure version of TCPA.  If anyone who
+can break the security can give themselves unlimited money, it means
+that the security has to be essentially perfect.  So this is more of a
+proof of concept than a realistic proposal.  But eventually, with TCPA
+technology integrated into a tamper-proof, nanotech CPU with molecular
+sensors and built-in self-destructs, possibly this might be good enough.
+
+Or you could augment this solution with some crypto, similar with the
+"wallets with observers" proposals from Chaum and from Brands.  Note that
+we can make the client open-source, allowing anyone to verify that it
+has no back doors or cheating potentials, which allows all users to
+trust that it is not going to hurt them (a problem that takes great
+complexity to solve with the observer protocols).  But still the bare
+simplicity of the system should make clear how powerful something like
+TCPA can be for this kind of application.
+
+I could go on and on, but the basic idea is always the same, and hopefully
+once people see the pattern they will come up with their own ideas.
+Being able to write software that trusts other computers allows for an
+entirely new approach to security software design.  TCPA can enhance
+freedom and privacy by closing off possibilities for surveillance and
+interference.  The same technology that protects Sony's music content
+in a DRM application can protect the data exchanged by a P2P system.
+As Seth Schoen of the EFF paraphrases Microsoft, "So the protection of
+privacy was the same technical problem as the protection of copyright,
+because in each case bits owned by one party were being entrusted to
+another party and there was an attempt to enforce a policy."
+(http://vitanuova.loyalty.org/2002-07-05.html, 3rd bullet point)
+
+In fact, TCPA and Palladium have tremendous potential for enhancing
+and protecting privacy, if people will just look at them with an
+open mind.
+

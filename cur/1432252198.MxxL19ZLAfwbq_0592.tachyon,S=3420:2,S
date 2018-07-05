@@ -1,0 +1,79 @@
+From owner-cypherpunks@lne.com  Wed May 21 17:58:21 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h4LLwIZ01682
+	for <rsw@jfet.org>; Wed, 21 May 2003 17:58:18 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h4LLeQcc027419
+	for cypherpunks-goingout345; Wed, 21 May 2003 14:40:26 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+From: Nomen Nescio <nobody@dizum.com>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@dizum.com>.
+To: bethenco@upl.cs.wisc.edu, cypherpunks@lne.com
+Subject: Re: idea for OTP system, comments desired
+Message-ID: <b9d71a2eb136df326b2b1f74d742b462@dizum.com>
+Date: Wed, 21 May 2003 23:40:04 +0200 (CEST)
+X-Virus-Scanned: by outpost.zedz.net (amavis-20020300)
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2235
+Lines: 52
+
+John Bethencourt writes:
+
+> Here's the protocol in a more concise form:
+>
+> [first authentication]
+>
+> Client -->       username      --> Server
+> Client <-- 'initial password?' <-- Server
+> Client -->      initialpass    --> Server
+> Client <--          r_0        <-- Server
+> Client -->      h(h(s.r_0))    --> Server
+>
+> [subsequent authentications]
+>
+> Client -->       username      --> Server
+> Client <--          r_x        <-- Server
+> Client -->       h(s.r_x)      --> Server
+> Client <--          r_y        <-- Server
+> Client -->      h(h(s.r_y))    --> Server
+
+One thing that is unclear in your protocol is whether s, which I think
+is the same as initialpass, is stored permanently on the server.
+
+If so, then when the server receives h(s.r_x), it can do two checks.
+The check you described is that the hash of this matches the value the
+client sent previously, h(h(s.r_x)).  The other is that the server can
+construct s.r_x since it knows both of these values, and then compare
+h(s.r_x) with what the client sent.
+
+This has two problems.  First, it makes the sending of h(h(s.r_x))
+unnecessary since the server can verify the client's response just
+using s.  And second, s is a sensitive value which if stolen could be
+used at some later time to impersonate the user.
+
+So I will assume that the server doesn't store s, in which case I don't
+see why it needs to see initialpass in the first place.
+
+In that case the protocol basically says, each time you log on you provide
+a hash value for which you will provide the hash input next time you
+log on.  The purpose of the r_x values is to keep the user from having
+to save state; he can compute h(h(s.r_y)) and then forget it, because
+next time he logs on the server will remind him of what r_y is.
+
+The main security problem I see is that an eavesdropper sees r_x and
+h(s.r_x), allowing him to do a dictionary attack on s.  You could use
+a really slow hash function to slow this attack down, but it is a serious
+vulnerability.
+
+Given that you are using client software to authenticate, I suggest
+pursuing SPEKE-style password-authenticated key exchange.  There are
+a number of these systems (some patented) which feature immunity to
+dictionary attacks on the password.
+

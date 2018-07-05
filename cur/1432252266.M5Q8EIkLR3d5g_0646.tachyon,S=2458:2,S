@@ -1,0 +1,60 @@
+From owner-cypherpunks@lne.com  Tue Dec  2 04:21:01 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p3/8.11.6-03-31-03) with ESMTP id hB29L0J04836
+	for <rsw@jfet.org>; Tue, 2 Dec 2003 04:21:00 -0500
+Received: from slack.lne.com (slack.lne.com [127.0.0.1])
+	by slack.lne.com (8.12.10/8.12.10) with ESMTP id hB29Ab0f023087
+	(version=TLSv1/SSLv3 cipher=EDH-DSS-DES-CBC3-SHA bits=168 verify=NO)
+	for <cypherpunks-goingout345@slack.lne.com>; Tue, 2 Dec 2003 01:10:37 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.10/8.12.10/Submit) id hB29AbZT023086
+	for cypherpunks-goingout345; Tue, 2 Dec 2003 01:10:37 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+X-Authentication-Warning: waste.minder.net: majordom set sender to
+  owner-cypherpunks@minder.net using -f
+From: Eric Cordian <emc@artifact.psychedelic.net>
+Message-Id: <200312020909.hB299Vaf010508@artifact.psychedelic.net>
+Old-Subject: Silly Linux Kernel Bug
+To: cypherpunks@minder.net
+Date: Tue, 2 Dec 2003 01:09:31 -0800 (PST)
+X-Mailer: ELM [version 2.4ME+ PL100 (25)]
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Subject: Silly Linux Kernel Bug
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 1028
+Lines: 27
+
+As reported today on Slashdot, in linux kernels prior to 2.4.23, it is
+possible to map the kernel into user space with brk(), since apparently no
+one ever bothered to check that the argument passed was in the lower 3 gig
+of the address space.
+
+This is almost as funny as early linux kernels in which the LDT was user
+writable.
+
+In any case, the patch is to stick the following check in do_brk() in
+/mm/mmap.c
+
+  if ((addr + len) > TASK_SIZE || (addr + len) < addr) 
+           return -EINVAL;
+
+This is of course a serious bug, since anyone on a vulnerable machine has
+access to kernel memory by writing a terse no-brainer C program, of which
+I will not give an example, because enough people on the Internet hate me
+already. :)
+
+An interesting occurrence, because it demonstrates that massive numbers of
+open source participants auditing the code aren't sufficient to ferret out
+every giant coding blunder.
+
+-- 
+Eric Michael Cordian 0+
+O:.T:.O:. Mathematical Munitions Division
+"Do What Thou Wilt Shall Be The Whole Of The Law"
+

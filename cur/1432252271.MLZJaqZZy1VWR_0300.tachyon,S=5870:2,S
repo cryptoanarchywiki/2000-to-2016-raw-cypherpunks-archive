@@ -1,0 +1,120 @@
+From owner-cypherpunks@al-qaeda.net  Sat Nov  8 14:31:04 2008
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id mA8JU3fx013791
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sat, 8 Nov 2008 14:30:03 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id mA8JU2kp013790
+	for cypherpunks-outgoing; Sat, 8 Nov 2008 14:30:02 -0500
+Message-Id: <024A2C9D-1D32-4610-81BF-BCD7B84F35CE@shipwright.com>
+From: "R.A. Hettinga" <rah@shipwright.com>
+To: gold-silver-crypto@rayservers.com, cypherpunks@al-qaeda.net
+Content-Type: text/plain; charset=US-ASCII; format=flowed; delsp=yes
+Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Apple Message framework v929.2)
+Subject: Fwd: Bitcoin P2P e-cash paper
+Date: Sat, 8 Nov 2008 15:29:56 -0400
+References: <20081107234012.6F46F14F6E3@finney.org>
+X-Mailer: Apple Mail (2.929.2)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4718
+Lines: 93
+
+Begin forwarded message:
+
+From: hal@finney.org ("Hal Finney")
+Date: November 7, 2008 7:40:12 PM GMT-04:00
+To: satoshi@vistomail.com
+Cc: cryptography@metzdowd.com
+Subject: Re: Bitcoin P2P e-cash paper
+
+Bitcoin seems to be a very promising idea. I like the idea of basing
+security on the assumption that the CPU power of honest participants
+outweighs that of the attacker. It is a very modern notion that exploits
+the power of the long tail. When Wikipedia started I never thought it
+would work, but it has proven to be a great success for some of the
+same reasons.
+
+I also do think that there is potential value in a form of unforgeable
+token whose production rate is predictable and can't be influenced
+by corrupt parties. This would be more analogous to gold than to fiat
+currencies. Nick Szabo wrote many years ago about what he called "bit
+gold"[1] and this could be an implementation of that concept. There have
+also been proposals for building light-weight anonymous payment  
+schemes on
+top of heavy-weight non-anonymous systems, so Bitcoin could be leveraged
+to allow for anonymity even beyond the mechanisms discussed in the  
+paper.
+
+Unfortunately I am having trouble fully understanding the system. The
+paper describes key concepts and some data structures, but does not
+clearly specify the various rules and verifications that the  
+participants
+in the system would have to follow.
+
+In particular I don't understand exactly what verifications P2P nodes
+perform when they receive new blocks from other nodes, and how they
+handle transactions that have been broadcast to them. For example, it
+is mentioned that if a broadcast transaction does not reach all nodes,
+it is OK, as it will get into the block chain before long. How does this
+happen - what if the node that creates the "next" block (the first node
+to find the hashcash collision) did not hear about the transaction,
+and then a few more blocks get added also by nodes that did not hear
+about that transaction? Do all the nodes that did hear it keep that
+transaction around, hoping to incorporate it into a block once they get
+lucky enough to be the one which finds the next collision?
+
+Or for example, what if a node is keeping two or more chains around as
+it waits to see which grows fastest, and a block comes in for chain A
+which would include a double-spend of a coin that is in chain B? Is that
+checked for or not? (This might happen if someone double-spent and two
+different sets of nodes heard about the two different transactions with
+the same coin.)
+
+This kind of data management, and the rules for handling all the packets
+that are flowing around is largely missing from the paper.
+
+I also don't understand exactly how double-spending, or cancelling
+transactions, is accomplished by a superior attacker who is able to  
+muster
+more computing power than all the honest participants. I see that he can
+create new blocks and add them to create the longest chain, but how can
+he erase or add old transactions in the chain? As the attacker sends out
+his new blocks, aren't there consistency checks which honest nodes can
+perform, to make sure that nothing got erased? More explanation of this
+attack would be helpful, in order to judge the gains to an attacker from
+this, versus simply using his computing power to mint new coins  
+honestly.
+
+As far as the spending transactions, what checks does the recipient of a
+coin have to perform? Does she need to go back through the coin's entire
+history of transfers, and make sure that every transaction on the list  
+is
+indeed linked into the "timestamp" block chain? Or can she just do the
+latest one? Do the timestamp nodes check transactions, making sure that
+the previous transaction on a coin is in the chain, thereby enforcing
+the rule that all transactions in the chain represent valid coins?
+
+Sorry about all the questions, but as I said this does seem to be a
+very promising and original idea, and I am looking forward to seeing
+how the concept is further developed. It would be helpful to see a more
+process oriented description of the idea, with concrete details of the
+data structures for the various objects (coins, blocks, transactions),
+the data which is included in messages, and algorithmic descriptions
+of the procedures for handling the various events which would occur in
+this system. You mentioned that you are working on an implementation,
+but I think a more formal, text description of the system would be a
+helpful next step.
+
+Hal Finney
+
+[1] http://unenumerated.blogspot.com/2005/12/bit-gold.html
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+

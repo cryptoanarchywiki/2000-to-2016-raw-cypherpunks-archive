@@ -1,0 +1,75 @@
+From owner-cypherpunks@lne.com  Sat Sep  6 11:42:10 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h86FfsH26670
+	for <rsw@jfet.org>; Sat, 6 Sep 2003 11:42:00 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h86FHxMh007708
+	for cypherpunks-goingout345; Sat, 6 Sep 2003 08:17:59 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Sat, 6 Sep 2003 08:17:57 -0700
+From: Eric Murray <ericm@lne.com>
+To: cypherpunks@lne.com
+Subject: more SSH MITM
+Message-ID: <20030906081757.A7502@slack.lne.com>
+References: <3F58F14E.6332.4CB5B84@localhost>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <3F58F14E.6332.4CB5B84@localhost>; from jamesd@echeque.com
+  on Fri, Sep 05, 2003 at 08:25:50PM -0700
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 1738
+Lines: 46
+
+On Fri, Sep 05, 2003 at 08:25:50PM -0700, James A. Donald wrote:
+
+> Eric Murray:
+> > > > ..which means that it [ssh-- ericm] still requires an OOB 
+> > > > authentication. (or blinding typing 'yes' and ignoring
+> > > > the consequences). But that's another subject.
+> 
+> James A. Donald:
+> > > Not true.   Think about what would happen if you tried a
+> > > man in the middle attack on an SSH server.
+> 
+> On 5 Sep 2003 at 10:47, Eric Murray wrote:
+> > you'd get the victim's session:
+> 
+> No you will not, because the "victim"'s ssh client will
+> immediately detect that the uncertified public key is different
+> from the last time he logged in
+
+
+By checking the key against the IP address of the server.
+This is easily spoofed.  The links I included in my last post
+pointed to a tool to do just that (plus MITM the ssh protocol).
+
+But even worse, there is no way to ensure that the key
+the client has is really the server's key in the first place.
+The client gets that key the first time it connects....the
+user is shown a fingerprint of the key and asked to
+type 'yes' if the user thinks that it's the server's key.
+
+What the user is supposed to do here is to have obtained
+the key or its fingerprint in a secure fashion outside
+the ssh protocol.  But very few people do.  They
+just type 'yes' and accept it.  Hence my original statement.
+
+This makes a MITM attack easy, the attacker simply needs to have his
+attack in place when the victim expects the server to have a new key.
+He gives his key in place of the servers key, the victim never checks,
+and away we go.
+
+
+Certificates have their own problems, but bare public keys are weak
+unless your system provides a good useable OOB authentication.
+SSH as normally used doesn't.
+
+
+Eric
+

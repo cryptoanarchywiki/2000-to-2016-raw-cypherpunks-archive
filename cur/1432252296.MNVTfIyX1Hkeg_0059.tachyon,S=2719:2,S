@@ -1,0 +1,100 @@
+From owner-cypherpunks@lne.com  Mon Aug 11 01:00:18 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h7B50Go11282
+	for <rsw@jfet.org>; Mon, 11 Aug 2003 01:00:17 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h7B4hNrq016003
+	for cypherpunks-goingout345; Sun, 10 Aug 2003 21:43:23 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+X-Authentication-Warning: tango.gombos.name: jgombos set sender to
+  mindfuq@comcast.net using -f
+Date: Sun, 10 Aug 2003 22:44:33 -0700
+From: mindfuq@comcast.net
+To: cypherpunks@lne.com
+Subject: Cypherpunks procmail filter
+Message-ID: <20030811054433.GC32609@tango.gombos.name>
+Mail-Followup-To: cypherpunks@lne.com
+References: <200308110300.h7B300Pc015493@gw.lne.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <200308110300.h7B300Pc015493@gw.lne.com>
+User-Agent: Mutt/1.4.1i
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 1532
+Lines: 69
+
+* cpunk@lne.com <cpunk@lne.com> [2003-08-10 21:37]:
+> # mailing lists:
+> # filter all cypherpunks mail into its own cypherspool folder, discarding
+> # mail from loons.  All CDRs set their From: line to 'owner-cypherpunks'.
+> # /dev/null is unix for the trash can.
+> :0
+> * ^From.*owner-cypherpunks@.*
+> {
+>     :0:
+>     * (^From:.*ravage@ssz\.com.*|\
+>     ^From:.*jchoate@dev.tivoli.com.*|\
+>     ^From:.*mattd@useoz.com|\
+>     ^From:.*proffr11@bigpond.com|\
+>     ^From:.*jei@cc.hut.fi)
+> 	/dev/null
+> 
+>     :0:
+>     cypherspool
+> }
+
+I thought I'd post an alternative procmail script for anyone interested:
+
+XLOOP_ML=cypherpunks@[a-z0-9.-]*(lne.com|ssz.com)
+
+# X-Loop mailing lists
+#
+:0 :
+*$ ^X-Loop:.*$XLOOP_ML
+* ^X-Loop:.*\/[a-z0-9.-]+@
+* MATCH ?? ()\/[^@]+
+mailing_lists/$MATCH
+
+The idea is to generalize the recipe so if you're on other mailing
+lists that use the "X-Loop" header, you can just add them to the XLOOP
+variable.
+
+And I guess if you still want to filter out sociopaths, this would be
+that version of it:
+
+XLOOP_ML=cypherpunks@[a-z0-9.-]*(lne.com|ssz.com)
+
+SPC="[ ]"
+FROM_="(From${SPC}|(Old-|X-)?(Resent-)?\
+(From|Reply-To|Sender):)(.*\<)?"
+
+SOCIOPATHS=(\
+ravage@ssz\.com.*|\
+jchoate@dev.tivoli.com.*|\
+mattd@useoz.com|\
+proffr11@bigpond.com|\
+jei@cc.hut.fi)
+
+#SOCIO_PATH=/dev/null
+SOCIO_PATH=sociopaths
+
+# X-Loop mailing lists
+#
+:0 
+*$ ^X-Loop:.*$XLOOP_ML
+* ^X-Loop:.*\/[a-z0-9.-]+@
+* MATCH ?? ()\/[^@]+
+{     
+     :0:
+     *$ ^${FROM_}$SOCIOPATHS
+     SOCIO_PATH
+ 
+     :0:
+     mailing_lists/$MATCH     
+}
+

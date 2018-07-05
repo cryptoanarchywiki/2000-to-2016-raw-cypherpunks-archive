@@ -1,0 +1,361 @@
+From owner-cypherpunks@al-qaeda.net  Wed Jul 25 05:09:26 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q6P95rE4016966
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 25 Jul 2012 05:05:53 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q6P95rx8016965
+	for cypherpunks-outgoing; Wed, 25 Jul 2012 05:05:53 -0400
+Date: Wed, 25 Jul 2012 11:05:49 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, zs-p2p@googlegroups.com, info@postbiota.org
+Subject: [tahoe-dev] notes from the Tahoe-LAFS Weekly Call
+Message-ID: <20120725090549.GD12615@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Zooko Wilcox-O'Hearn <zooko@zooko.com> -----
+
+From: Zooko Wilcox-O'Hearn <zooko@zooko.com>
+Date: Tue, 24 Jul 2012 19:56:44 -0300
+To: tahoe-dev <tahoe-dev@tahoe-lafs.org>
+Subject: [tahoe-dev] notes from the Tahoe-LAFS Weekly Call
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+notes from Tahoe-LAFS Weekly Call, 2012-07-24
+In attendance: David-Sarah, Brian, Zooko
+
+http://titanpad.com/zuldkxdVX5
+
+(appending a copy below)
+
+Summary of the summary: Brian and David-Sarah are hard at work on the
+accounting and lease database development, part of which goes to
+satisfy Least Authority Enterprises's obligations to DARPA, and we're
+planning to start the process of making Tahoe-LAFS v1.10 soon
+thereafter.
+
+Regards,
+
+Zooko
+
+
+notes from Tahoe-LAFS Weekly Call, 2012-07-24
+
+In attendance: David-Sarah, Brian, Zooko (first scribe -- pinkish
+purplish words)
+
+David-Sarah updated (merged) cloud-backend to current trunk. It would
+be helpful if Brian would bring accounting-2 up to date with trunk.
+
+David-Sarah needs to thoroughly go through Brian's code.
+
+David-Sarah has a better mental model of the statemachine of the lease
+db than Brian has, so David-Sarah will start writing that code.
+
+One of the next things to do is to make the backend fully asynchronous
+without yet making the other changes.
+
+Brian will take David-Sarah's patches to asynchrify the local storage
+and merge those to trunk and review them and finish them as needed.
+
+A ShareSet is a set of shares from the same file, stored on a single
+server. (This was formerly known in the code, but inconsistently, as a
+"Bucket".)
+
+The order we're doing things in:
+
+1. some combination of:
+ 1a: Make the storage/crawler tests asynchronous.
+ 1b: split the storage server into frontend (Referenceable) and
+backend (disk/S3) pieces
+ 1c: make the backend interfaces async (return Deferred from everything)
+ 1d: make all the tests work again
+2: split frontend into even-more-fronty Accounts (Referenceable,
+implements RIStorageServer) and slightly-less-fronty Server (not
+Referenceable, takes Account object as arg of each request)
+3: create leasedb, crawler + share-state-machine
+4: publish a single shared "Anonymous" account to clients
+5: DARPA milestone: all accesses use the Anonymous account, external
+behavior is same as before
+6: add Account-acquisition (furlification) process, client keys. New
+clients will now use non-anonymous accounts (old clients, if
+permitted, will still use the anonymous account).
+7: add some kind of UI to display per-account usage
+8: add UI to control per-account usage (enable/disable)
+
+Currently mutable files are exempt from storage limits.
+
+The lease db will store the size of each mutable share. We don't mind
+if the leasedb trusts its stored share size instead of inspecting the
+filesystem to see if that changed out from under it.
+
+Q: What does the cloud backend do when you modify a mutable share?
+
+A: Modification of each chunk is atomic (thanks to S3's semantics) but
+the change of multiple chunks at once in a given share is not atomic.
+
+D-S and Zooko, at least, prefer not to try to write changes to mutable
+share atomically for now, but just to overwrite them simply and
+efficiently and non-atomically. (Ultimately we want end-to-end
+two-phase commit!)
+
+Mutable-share storage backend writev() method will be changed to
+return the new share size (backend bytes consumed) in the Deferred
+that fires when the write finishes. The server will then update the
+leasedb with the new size. So out-of-band share *modifications* (not
+creations/deletions) will result in inaccurate accounting data until
+the share is next modified, at which point it will be fixed. We're ok
+with that inaccuracy. (the share-crawler will make sure that
+creation/deletion is noticed sooner).
+
+What about the 1.10 release?
+
+Brian needs to look at the current trunk and see if he's content with
+the introducer changes. In particular, changing server key to node
+key.
+
+Need to follow-up on the bigger discussion about peer-to-peer vs.
+client-server, and to what extent the changes we're doing now interact
+with that.
+
+For the most part, the changes we're deploying now don't constrain
+those future design decisions.
+
+
+The question of reciprocal accounting agreement: my server will hold
+data for your client, *because* your server is holding data for my
+client. Should we implement that specifically, by making your client
+and server use the same private key, and my server uses that fact to
+decide whether to give your client storage? Or should we implement the
+more general case?
+
+David-Sarah and Zooko are a bit skeptical of the utility of that
+specific reciprocal case. Brian, too.
+
+When I last dove into accounting about 6-12 months ago, I got stuck
+trying to figure out how servers would express "please give any
+reciprocal benefit for the data I'm holding for you to that client
+over there, because I'm working for him". Something like client1 pays
+server2 to hold data (in the "rent-a-friend" case), client3 runs
+server4, server2 is holding data for client3, so client1 ought to be
+able to store data on server4. Each server needs a number of "credit
+goes to client X" pointers, and clients probably need something
+similar. It got too hairy to think about. The simpler
+every-node-is-both-client-and-server case was easier to handle. But
+this may be a simplification that we can't afford to make.. maybe we
+just have to figure out the full case.
+
+
+Maybe at the next Summit we could look at accounting from the user
+experience perspective -- how do people turn it on, how do they
+express their intent about which of their friends to give service to.
+
+
+Brian told a story about an economist for a MMORPG, who investigated
+why some trades had prices way out of market range. He decided that
+some of them were people giving items to their friends. The economist
+said that money can't pay all debts. Suppose Grandma hosts
+Thanksgiving dinner and puts on a feast, and she expects the kids to
+do the dishes and cleanup. There is no polite way to ask how much
+money would you have to pay to get out of doing the dishes. Similarly,
+there are at least two major use cases that we're already supporting:
+Friendnets and pay-for-usage services like LAE. If we made a new thing
+in which the question of "Why does my server give you service?" can
+*only* be answered with money then that would probably exclude Tahoe
+from being used in those friendnets. (Zooko joked that he has already
+tried that and it didn't work -- alluding to Mojo Nation.)
+ (I'm trying to find the blog post this story came from, it probably
+came across my twitter stream in the last two weeks, maybe from
+amiller or another economics fan. The point was that "money is a
+universal exchange medium" isn't actually true).
+
+So, Brian went on, the first steps into the new world of accounting
+should include providing visibility to the user about what resources
+are being offered by who to whom and so on.
+https://tahoe-lafs.org/trac/tahoe-lafs/wiki/Ostrom . Second step is
+coarse control over usage (accept/deny/delete). Then comes
+finer-grained control (gradations of sanctions), more public
+information about usage, more social visibility+control. *then*
+economics.
+
+
+In the last couple of minutes of the call there was a brief discussion
+of XSalsa20 in Tahoe-LAFS v1.10.0. Zooko is keen to get XSalsa20b
+AES
+in ASAP, but David-Sarah (Release Manager for v1.10.0) says that v1.10
+is supposed to be only things that are already ready and in trunk when
+we are ready to begin making a new release (i.e., after the Milestone
+3 delivery to DARPA). Zooko conceded that XSalsa20b
+AES is not already
+ready and in trunk...
+
+
+
+notes from Tahoe-LAFS Weekly Call, 2012-07-24
+
+In attendance: David-Sarah, Brian, Zooko (first scribe -- pinkish
+purplish words)
+
+David-Sarah updated (merged) cloud-backend to current trunk. It would
+be helpful if Brian would bring accounting-2 up to date with trunk.
+
+David-Sarah needs to thoroughly go through Brian's code.
+
+David-Sarah has a better mental model of the statemachine of the lease
+db than Brian has, so David-Sarah will start writing that code.
+
+One of the next things to do is to make the backend fully asynchronous
+without yet making the other changes.
+
+Brian will take David-Sarah's patches to asynchrify the local storage
+and merge those to trunk and review them and finish them as needed.
+
+A ShareSet is a set of shares from the same file, stored on a single
+server. (This was formerly known in the code, but inconsistently, as a
+"Bucket".)
+
+The order we're doing things in:
+
+1. some combination of:
+ 1a: Make the storage/crawler tests asynchronous.
+ 1b: split the storage server into frontend (Referenceable) and
+backend (disk/S3) pieces
+ 1c: make the backend interfaces async (return Deferred from everything)
+ 1d: make all the tests work again
+2: split frontend into even-more-fronty Accounts (Referenceable,
+implements RIStorageServer) and slightly-less-fronty Server (not
+Referenceable, takes Account object as arg of each request)
+3: create leasedb, crawler + share-state-machine
+4: publish a single shared "Anonymous" account to clients
+5: DARPA milestone: all accesses use the Anonymous account, external
+behavior is same as before
+6: add Account-acquisition (furlification) process, client keys. New
+clients will now use non-anonymous accounts (old clients, if
+permitted, will still use the anonymous account).
+7: add some kind of UI to display per-account usage
+8: add UI to control per-account usage (enable/disable)
+
+Currently mutable files are exempt from storage limits.
+
+The lease db will store the size of each mutable share. We don't mind
+if the leasedb trusts its stored share size instead of inspecting the
+filesystem to see if that changed out from under it.
+
+Q: What does the cloud backend do when you modify a mutable share?
+
+A: Modification of each chunk is atomic (thanks to S3's semantics) but
+the change of multiple chunks at once in a given share is not atomic.
+
+D-S and Zooko, at least, prefer not to try to write changes to mutable
+share atomically for now, but just to overwrite them simply and
+efficiently and non-atomically. (Ultimately we want end-to-end
+two-phase commit!)
+
+Mutable-share storage backend writev() method will be changed to
+return the new share size (backend bytes consumed) in the Deferred
+that fires when the write finishes. The server will then update the
+leasedb with the new size. So out-of-band share *modifications* (not
+creations/deletions) will result in inaccurate accounting data until
+the share is next modified, at which point it will be fixed. We're ok
+with that inaccuracy. (the share-crawler will make sure that
+creation/deletion is noticed sooner).
+
+What about the 1.10 release?
+
+Brian needs to look at the current trunk and see if he's content with
+the introducer changes. In particular, changing server key to node
+key.
+
+Need to follow-up on the bigger discussion about peer-to-peer vs.
+client-server, and to what extent the changes we're doing now interact
+with that.
+
+For the most part, the changes we're deploying now don't constrain
+those future design decisions.
+
+
+The question of reciprocal accounting agreement: my server will hold
+data for your client, *because* your server is holding data for my
+client. Should we implement that specifically, by making your client
+and server use the same private key, and my server uses that fact to
+decide whether to give your client storage? Or should we implement the
+more general case?
+
+David-Sarah and Zooko are a bit skeptical of the utility of that
+specific reciprocal case. Brian, too.
+
+When I last dove into accounting about 6-12 months ago, I got stuck
+trying to figure out how servers would express "please give any
+reciprocal benefit for the data I'm holding for you to that client
+over there, because I'm working for him". Something like client1 pays
+server2 to hold data (in the "rent-a-friend" case), client3 runs
+server4, server2 is holding data for client3, so client1 ought to be
+able to store data on server4. Each server needs a number of "credit
+goes to client X" pointers, and clients probably need something
+similar. It got too hairy to think about. The simpler
+every-node-is-both-client-and-server case was easier to handle. But
+this may be a simplification that we can't afford to make.. maybe we
+just have to figure out the full case.
+
+
+Maybe at the next Summit we could look at accounting from the user
+experience perspective -- how do people turn it on, how do they
+express their intent about which of their friends to give service to.
+
+
+Brian told a story about an economist for a MMORPG, who investigated
+why some trades had prices way out of market range. He decided that
+some of them were people giving items to their friends. The economist
+said that money can't pay all debts. Suppose Grandma hosts
+Thanksgiving dinner and puts on a feast, and she expects the kids to
+do the dishes and cleanup. There is no polite way to ask how much
+money would you have to pay to get out of doing the dishes. Similarly,
+there are at least two major use cases that we're already supporting:
+Friendnets and pay-for-usage services like LAE. If we made a new thing
+in which the question of "Why does my server give you service?" can
+*only* be answered with money then that would probably exclude Tahoe
+from being used in those friendnets. (Zooko joked that he has already
+tried that and it didn't work -- alluding to Mojo Nation.)
+ (I'm trying to find the blog post this story came from, it probably
+came across my twitter stream in the last two weeks, maybe from
+amiller or another economics fan. The point was that "money is a
+universal exchange medium" isn't actually true).
+
+So, Brian went on, the first steps into the new world of accounting
+should include providing visibility to the user about what resources
+are being offered by who to whom and so on.
+https://tahoe-lafs.org/trac/tahoe-lafs/wiki/Ostrom . Second step is
+coarse control over usage (accept/deny/delete). Then comes
+finer-grained control (gradations of sanctions), more public
+information about usage, more social visibility+control. *then*
+economics.
+
+
+In the last couple of minutes of the call there was a brief discussion
+of XSalsa20 in Tahoe-LAFS v1.10.0. Zooko is keen to get XSalsa20b
+AES
+in ASAP, but David-Sarah (Release Manager for v1.10.0) says that v1.10
+is supposed to be only things that are already ready and in trunk when
+we are ready to begin making a new release (i.e., after the Milestone
+3 delivery to DARPA). Zooko conceded that XSalsa20b
+AES is not already
+ready and in trunk...
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

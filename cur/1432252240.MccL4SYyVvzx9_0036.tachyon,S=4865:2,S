@@ -1,0 +1,103 @@
+From owner-cypherpunks@lne.com  Wed Aug  6 10:13:40 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h76EDcP11368
+	for <rsw@jfet.org>; Wed, 6 Aug 2003 10:13:38 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h76E1eQ7012749
+	for cypherpunks-goingout345; Wed, 6 Aug 2003 07:01:40 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Subject: Re: Slow but interesting sender-hiding covert channel program
+From: Simple Nomad <loveless@bos.bindview.com>
+To: cypherpunks@lne.com
+X-Orig-To: Bill Stewart <bill.stewart@pobox.com>
+Cc: cypherpunks@lne.com, lemos@cnet.com
+In-Reply-To: <5.1.1.6.2.20030805003511.02eaee38@idiom.com>
+References: <5.1.1.6.2.20030805003511.02eaee38@idiom.com>
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+X-Mailer: Ximian Evolution 1.0.8 (1.0.8-9.7x.1) 
+Date: 05 Aug 2003 15:11:41 -0500
+Message-Id: <1060114304.1749.54.camel@hell>
+Mime-Version: 1.0
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 3667
+Lines: 73
+
+On Tue, 2003-08-05 at 03:07, Bill Stewart wrote:
+> Rob Lemos reports on the following presentation at Blackhat
+> by Mark Loveless of Bindview; I've got some comments.
+> -----------------
+> PROGRAM WOULD HIDE NET COMMUNICATIONS
+> CNET reports about a program called NCovert, which uses
+> spoofing techniques to hide the source of communications and
+> the data that travels over the network.  The technique makes
+> it almost impossible to track where the original message
+> came from, because the data holds only the addresses of the
+> recipient and the third-party server.
+> http://news.com.com/2100-1002-5058535.html
+> --------------------------------
+> 
+> The technique works by hiding four bytes of data in the
+> TCP header's ISN field, bouncing packets off one or more
+> innocent third-party machines, setting your destination IP address
+> to the third-party and forging your recipient's IP as the source,
+> so the recipient appears connection accepts or rejects
+> from real, fake, or random locations, and the real message
+> is hidden in the header fields.  The connection type can be
+> something credible like email or http.
+> 
+> Of course, there _are_ ISPs that do spoof-proofing,
+> so if your ISP does this, you won't be able to forge the
+> recipient's address on your outgoing packets usefully.
+> Spoof-proofing usually limits you to addresses in the
+> subnet used by your internet connection - if you've got a /24,
+> you can impersonate one of 254 locations near yours,
+> but if anybody's seriously trying to track you, you're busted.
+> There's also the problem that, unless it's sending call setups
+> that the recipient is rejecting, there'll be a lot of half-open
+> TCP connections on the recipients, which is a DOS problem.
+> It's cute, though.
+
+Well, I was going for cute. Actually, this is simply an expanded version
+of covert_tcp. The main things I do differently is make sure the file
+size is loaded into the IP ID field in the first packet, and am using
+ISNs. This limits your file size to 64K, and sticks out like a sore
+thumb if your sender's OS doesn't do random IP IDs.
+
+If the sender sets the source port to a closed port on the target
+system, the target system will receive an unsolicited SYN-ACK and
+(assuming RFC compliance) should send a RST to the system bouncing off
+of. This assumes firewalls and other network devices are not doing other
+things.
+
+> Also, Bindview's security tools site does have an interesting
+> spoofing-detection program that works by looking at TTL values
+> for packets you receive that are suspected of being spoofed -
+> it traces a connection to/from the purported source IP address
+> and sees whether the time-to-live field on the suspicious packet
+> is close enough to one from the real route to be believable
+> or declares it to be bogus if it's too far off.
+
+It would help if you can specify the TTL for ncovert just to avoid this
+type of detection. Yes, I wrote the despoof tool as well, so I was aware
+of that possibility.
+
+Quite frankly I was truly going for the "idea" of covert communications,
+to kind of get some of the Black Hat crowd thinking about it. I'm
+already started on the next version, which should include a checksum
+signature scheme that allows for better tracking of packets (so the
+speed can be improved), forging multiple sources and using multiple
+bounce locations, and randomized timing of the sending of packets -- all
+ideas brought up during the Q&A as well as over beers afterward.
+
+The tool can be retrieved from
+http://www.nmrc.org/~thegnome/ncovert-1.1.tgz for those interested.
+Bitches, complaints, but especially patches that address said bitches
+and complaints are welcome.
+
+-SN
+

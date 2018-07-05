@@ -1,0 +1,292 @@
+From owner-cypherpunks-outgoing@ssz.com  Sat Nov  4 16:15:02 2000
+Received: from MIT.EDU (SOUTH-STATION-ANNEX.MIT.EDU [18.72.1.2])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id QAA13586
+	for <kwantam@positron.mit.edu>; Sat, 4 Nov 2000 16:15:02 -0500
+Received: from einstein.ssz.com by MIT.EDU with SMTP
+	id AA24024; Sat, 4 Nov 00 16:14:37 EST
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id PAA15244
+	for cypherpunks-outgoing; Sat, 4 Nov 2000 15:10:48 -0600
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id PAA15234
+	for cypherpunks@ssz.com; Sat, 4 Nov 2000 15:10:46 -0600
+Received: from mail.virtual-estates.net (cpunks@video-collage.com [160.79.196.177])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id PAA15210
+	for <cpunks@ssz.com>; Sat, 4 Nov 2000 15:10:41 -0600
+Received: (from cpunks@localhost)
+	by mail.virtual-estates.net (8.9.3+3.2W/8.9.1) id QAA02523;
+	Sat, 4 Nov 2000 16:01:25 -0500 (EST)
+X-Authentication-Warning: video-collage.com: Processed from queue /var/spool/mqueue-majordomo
+X-Authentication-Warning: video-collage.com: Processed by cpunks with -C /usr/local/majordomo/sendmail.cf
+Received: from always.got.net (always.got.net [207.111.232.11])
+	by mail.virtual-estates.net (8.9.3+3.2W/8.9.3) with ESMTP id QAA02513
+	for <cypherpunks@algebra.com>; Sat, 4 Nov 2000 16:01:23 -0500 (EST)
+X-Relay-Ip: 207.111.232.11
+Received: from [207.111.242.246] (dyn-207-111-242-246.sjc.got.net [207.111.242.246])
+	by always.got.net (8.9.3/8.9.3) with ESMTP id NAA66912;
+	Sat, 4 Nov 2000 13:06:31 -0800 (PST)
+Mime-Version: 1.0
+X-Sender: tcmay@mail.got.net
+Message-Id: <a05010400b62a17489453@[207.111.241.116]>
+In-Reply-To: <Pine.OSF.4.05.10011041310080.11460-100000@hcs.harvard.edu>
+References: <Pine.OSF.4.05.10011041310080.11460-100000@hcs.harvard.edu>
+Date: Sat, 4 Nov 2000 13:05:07 -0800
+To: cypherpunks@algebra.com
+From: Tim May <tcmay@got.net>
+Old-Subject: An Introduction to Complexity, Hamiltonian Cycles, and Zero
+ Knowledge Proofs--Part 1
+Cc: Olav <he-who-watches@gmx.de>
+Content-Type: text/plain; charset="us-ascii" ; format="flowed"
+Subject: CDR: An Introduction to Complexity, Hamiltonian Cycles, and Zero
+ Knowledge Proofs--Part 1
+Sender: owner-cypherpunks@ssz.com
+Precedence: bulk
+Reply-To: cypherpunks@ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Language: English, Russian, German
+Status: O
+Content-Length: 11268
+Lines: 239
+
+At 2:20 PM -0500 11/4/00, dmolnar wrote:
+>On Sat, 4 Nov 2000, Jim Choate wrote:
+>
+>>
+>>  On Sat, 4 Nov 2000, Declan McCullagh wrote:
+>>
+>>  > "NP" problems, on the other hand, are those that can be solved in
+>>  > nondeterministic polynomial time (think only by guessing). NP
+>>  > includes P.
+>>
+>>  Actualy any time that can't be described using a polynomial (i.e. a0 +
+>>  a1x + a2x^2 + ...) is NP. For example something that executes in factorial
+>>  or exponential time is NP.
+>
+>I'm sorry - by the definitions I know, Declan has it closer.
+>I'm not sure what you're getting at with "any time that can't be
+>described..." or "something that executes in factorial or exponential
+>time." As far as I know, NP is a class of *problems*, not a
+>class of running times or even a class of algorithms.
+
+
+And I'm going to give a completely informal, but I hope useful, 
+introduction. Though formalism is very important, and jargon is 
+useful, I suspect that all the talk of "succinct certificates," 
+"oracles," "reducibility," "nondeterministic polynomial time," 
+"Co-NP," etc., isn't very useful to someone just coming to this stuff 
+for the first time.
+
+I figure understanding math comes from thinking about specific 
+problems, drawing pictures, mulling things over, drawing more 
+pictures, and basically just "becoming one with the problem." Formal 
+definitions then begin to make a lot more sense. While Bourbaki may 
+favor only the tersest of explanations, I think they are dead wrong.
+
+(Fair warning: I knew a lot more about this stuff in 1992 when I was 
+reading Garey and Johnson, Harel, etc. and trying to figure out the 
+zero knowledge papers of Goldwasser and her colleagues. These days, 
+terms like "Co-NP" are not in my daily repertoire of concepts I have 
+a good handle on. But the basic ideas don't need such formal 
+definitions. It's more important to have some _intuition_ about 
+common problems and then see the obvious connections with crypto. 
+David Molnar and others are much better versed in the current lingo.)
+
+So, the German guy, Olav, who asked about what P and NP and all that 
+stuff means should think of a specific problem. The "Travelling 
+Salesman Problem" is one problem that's a lot of fun to think about, 
+for complexity issues (and also for specific algorithms, like 
+"simulated annealing," "heuristic search," "genetic programming," 
+etc.). However, I'm going to pick the "Hamiltonian Path" (or 
+Hamiltonian Circuit) problem for most of my discussion.
+
+It's equally fun, and is one of the canonical "NP-complete" examples. 
+It turns out that these problems are all similar in a deep way to 
+each other. Though there may not be obvious links between Hamiltonian 
+paths, tiling problems in the plane, Go problems on generalized Go 
+boards, grammar problems, "Monkey puzzles," the Minesweeper game 
+mentioned in this thread, and so on, it turns out that they share 
+deep similarities. In fact, with some effort ("polynomial time 
+effort," so to speak) one problem can be converted to another. Hence 
+the notion that if one could find an "easy" algorithm to solve one, 
+one would have solved all of them.
+
+(And always keep in mind that these problems are considered in their 
+_general_ forms, with something like N cities, M x N tile arrays, a 
+Go board of N x N grid points, and so on. Any _specific_ instance is 
+not the essence, though of course a specific instance may still be 
+hideously complicated to solve. And slight factors of 2 or 20 or even 
+20 million, or, indeed, anything short of "exponential in N," are not 
+important. This is often called "Big O" notation, e.g, the 
+complexity/effort goes as "O (N^3)" or "O (N!)". For exact 
+definitions of these kinds of terms, consult any of the many books on 
+this stuff; I'm just trying to provide the motivation and basic ideas 
+here.)
+
+TRAVELLING SALESMAN PROBLEM
+
+Take 10 cities in Europe. For example: Berlin, Paris, Madrid, Rome, 
+Marseilles, Hannover, Geneva, Amsterdam, Warsaw, and London.
+
+The TSP (Travelling Salesman Problem) would be to find the shortest 
+path that connects all cities. Exhaustive search finds the shortest 
+path on the order of (N -1)! calculations, where N is the number of 
+cities. Actually, (N -1)! divided by two. Neither the direction of 
+the path (the factor of 2) nor the starting city (the N -1) matters. 
+For 10 cities, this is trivial to solve exhaustively: a mere 180,440 
+paths to be computed. However, for 20 cities the number of paths to 
+be computed is about 6 x 10^16. For 50 cities, 3 x 10^62 paths. Whew.
+
+Are their better algorithms than exhaustive search over all paths? 
+There may be many algorithms which give "pretty good" results. 
+Dividing the cities into regions and optimizing each one, then 
+stitching the results together works pretty well. (Used in a lot of 
+algorithms, developed at Los Alamos for bomb designs...the Metropolis 
+algorithm, for example.). Simulated annealing works pretty well. And 
+so on.
+
+But these are all just approximations, not actual solutions. Good 
+enough for engineering, and evolution (which is why a rabbit trying 
+to get from his burrow to a food source to another food source 
+doesn't die of starvation while he's trying to solve the Travelling 
+Rabbit Problem exactly).
+
+One of the characteristics of this kind of problem is that there is 
+often/usually no way to really measure "convergence on a solution." 
+In a maze, for example, as one travels down various maze passages one 
+may know that the goal is "just a few meters away," but this does 
+little good: one may have to backtrack, or undo, ALL moves all the 
+way back to the beginning of the maze search to take another branch 
+point! "Close doesn't count."
+
+(The similarities with most modern crypto should be getting obvious. 
+Most modern crypto only falls to "brute force" -- exhaustive search, 
+trying all the paths, trying to factor a modulus, etc. There is no 
+"getting closer" in most modern ciphers.)
+
+
+HAMILTONIAN PATH PROBLEM
+
+Find a path or cycle on a graph which passes through each node once 
+and only once. (Or demonstrate whether any such cycle exists, a 
+slightly different form.)
+
+I said I would also use the Hamiltonian Path Problem, HPP. This one 
+is worth spending an hour or two drawing pictures and trying to find 
+clever solutions. It will make the ideas much clearer, I think. And 
+will also lead to a good understanding of "zero knowledge proofs" and 
+the applications of them to things like pass phrases and security 
+systems which don't leak information to wiretappers or even to the 
+system being accessed! (Quite a feat, that.)
+
+OK, go back to those 10 cities in Europe. As we know, some of those 
+cities have direct rail connections to other of the cities, some 
+don't. Berlin and Paris are connected (ignore trivial issues of their 
+perhaps being intermediate cities and towns...). Madrid and London 
+are not connected directly by rail lines.
+
+The HPP is to take a graph, the set of cities and the links between 
+them, and find a path or cycle which passes through each node (city) 
+once and only once. And returns to the starting node. For example, 
+one such path might look like:
+
+Rome to Marseilles to Madrid to Geneva to Warsaw to Berlin to 
+Hannover to Amsterdam to Paris to London...whoops, London is only 
+connected to Paris, so we're stuck in London.
+
+(This isn't the essence of a HPP, and one could stipulate that all 
+cities must be connected to at least two other cities.)
+
+Let's throw London out and only consider N cities with connections to 
+at least two other cities.
+
+How many possible paths need to be calculated depends on the number 
+of interconnections. Some time spent with a pencil and paper will be 
+invaluable.
+
+As the number of cities increases, the number of paths to consider 
+goes up roughly as N! (N factorial, as above with the TSP). This is 
+not polynomial in the number of cities. (Hence, for newcomers, one 
+starts to get the idea of "nonpolynomial time," though there are some 
+nuances and quibbles to deal with.)
+
+However, suppose someone presented a purported Hamiltonian cycle for 
+a graph? That is, a claimed path through the N cities that passed 
+through each city once and only once?
+
+This could be verified in practically no time, just by eyeballing the 
+purported cycle.
+
+And thus one gets at the idea of an "oracle," a machine or god which 
+can "guess" the solution. (Hence the idea behind "nondeterministic 
+polynomial time." Again, there are nuances and formal issues, but 
+this is the general idea.)
+
+(The intuition goes like this: For a large graph, of, say, 100 
+cities, the calculations required to compute the O (100!) paths would 
+be vastly greater than all the computers that will ever be built 
+could ever do in a billion universes, blah blah. If someone presents 
+a solution, they must have "oracular" powers. Well, not really, as we 
+shall see.)
+
+
+ZERO KNOWLEDGE--APPLYING THIS TO PASS PHRASES
+
+"I am Tim May and I present my proof of this: I know a Hamiltonian 
+cycle for this particular graph which is my signature graph."
+
+So I present a graph with 100 cities on it, linked in various ways, 
+and show a Hamiltonian cycle. Proof.
+
+Except that now I've given this proof to anyone watching, including 
+the system or person I just showed the proof to.
+
+Is there a way to prove beyond any doubt that I know the Hamiltonian 
+cycle without actually revealing it. There is. Wow. Trippy stuff. 
+I'll wait a day or two to explain.
+
+However, related to our above discussion of HOW FREAKING HARD it is 
+to compute such a Hamiltonian cycle on a reasonably large graph, HOW 
+DID I EVER FIND ONE?
+
+Well, I have no oracular or magical abilities to "guess" 
+("non-deterministic polynomial time"). Instead, I constructed the 
+Hamiltonian cycle from scratch!
+
+I took N cities, with no specified links, and connected them in some 
+Hamiltonian cycle. Very easy to do. Just draw N cities or nodes and 
+draw lines connecting them, satisfying the once and only once 
+criterion.
+
+Ah, but then draw in a bunch of _other_ links between the nodes.
+
+The full graph, nodes and links, is VERY HARD for anyone else to find 
+a Hamiltonian cycle for, but trivial for _me_ to find a Hamiltonian 
+cycle for!
+
+So I can use the fact that I know a Hamiltonian cycle for "my" 
+"signature graph" as a pass phrase, or other proof of identity. The 
+trick to be able to prove that I know it without actually revealing 
+it. As I said, I'll describe the trick later today or tomorrow.
+
+By the way, my favorite book on this is David Harel's "Algorithmics." 
+Not exactly intended for a beginning student, but much more 
+descriptive and basic than _most_ of the books on complexity theory. 
+Lots of pictures, lots of descriptions of actual problems (tiling 
+puzzles, my favorites).
+
+I confess that I only skimmed the sections on "Presburger arithmetic" 
+and why it is "beyond NP" in some weird sense.
+
+Have fun,
+
+
+--Tim May
+-- 
+---------:---------:---------:---------:---------:---------:---------:----
+Timothy C. May              | Crypto Anarchy: encryption, digital money,
+ComSec 3DES:   831-728-0152 | anonymous networks, digital pseudonyms, zero
+W.A.S.T.E.: Corralitos, CA  | knowledge, reputations, information markets,
+"Cyphernomicon"             | black markets, collapse of governments.
+

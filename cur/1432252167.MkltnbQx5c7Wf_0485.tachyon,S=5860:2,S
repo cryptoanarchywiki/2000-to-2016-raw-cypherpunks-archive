@@ -1,0 +1,132 @@
+From owner-cypherpunks@al-qaeda.net  Tue Mar 27 16:42:06 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q2RKclf9020278
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 27 Mar 2012 16:38:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1332880727;
+	bh=sOw+afU6LqvO613tnEYqaLhcjDTbzAfkbHWDaIDlsx0=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=kV8kIoMwcivuOoou+xtlJgw8oiUOQzleLi5AXYksqbrYNKm8z/7P8chu7myuEZMYM
+	 +RAq9xrnypIVQneK1M+IyAdvmoRAS0ildR9PNtNIyCb2qhGwUp4Sd0GVbMxmFVe/e0
+	 guaW1cismVxOM5G6UIk8paaCHQ77Yep+oZjt87fg=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q2RKclYq020277
+	for cypherpunks-outgoing; Tue, 27 Mar 2012 16:38:47 -0400
+Date: Tue, 27 Mar 2012 22:38:42 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: [tahoe-dev] erasure coding makes files more fragile, not less
+Message-ID: <20120327203842.GV17245@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Zooko Wilcox-O'Hearn <zooko@zooko.com> -----
+
+From: Zooko Wilcox-O'Hearn <zooko@zooko.com>
+Date: Tue, 27 Mar 2012 13:06:37 -0600
+To: tahoe-dev <tahoe-dev@tahoe-lafs.org>
+Subject: [tahoe-dev] erasure coding makes files more fragile, not less
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+Folks:
+
+I've heard many stories of people losing their files from a Tahoe-LAFS
+grid even though they had erasure coding parameters that provide
+massive fault tolerance such as 3-of-10 or 4-of-8. In fact, I think
+approximately 90% of all files that have ever been stored on a
+Tahoe-LAFS grid have died. (That's excluding all of the files of all
+of the customers of allmydata.com, which went out of business.)
+
+I've been musing on this, and I just read this excellent blog rant by
+the original author of VoldemortbJay Kreps. I came up with this
+provocative slogan (I know Brian loves my provocative slogans):
+"erasure coding makes files more fragile, not less".
+
+The idea behind that is that erasure coding lulls people into a false
+sense of security. If K=N=1, or even if K=1 and N=2 (which is the same
+fault tolerance as RAID-1), then people understand that they need to
+constantly monitor and repair problems as they arise. But if K=3 and
+N=10, then the beautiful combinatorial math tells you that your file
+has lots of "9's" of reliability. The beautiful combinatorial math
+lies! That's because it is assuming each server has some fixed and
+independent chance of surviving, which is always false. ("90%" is
+always a good number to use for that fixed and independent chance.
+Plug in "90%" into the beautiful combinatorial math with K=3 and N=10
+and you'll get more "9's" than you can shake a stick at!)
+
+Here's the excellent blog rant:
+
+http://blog.empathybox.com/post/19574936361/getting-real-about-distributed-system-reliability
+
+"""
+Where is the flaw in the reasoning?
+b&
+The problem is the assumption that failures are independent.
+b&
+Surely no belief could possibly be more counter to our own experience
+or just common sense than believing that there is no correlation
+between failures of machines in a cluster.
+b&
+The actual reliability of your system depends largely on how bug free
+it is, how good you are at monitoring it, and how well you have
+protected against the myriad issues and problems it has. This isnbt
+any different from traditional systems, except that the new software
+is far less mature.
+"""
+
+Now let's apply this idea to my empirical observations about the
+longevity of files stored in Tahoe-LAFS. If almost all of the files
+that have ever been stored on Tahoe-LAFS have died, this implies one
+of two things:
+
+1. The "reliability" of the storage servers must have been below K/N.
+I.e. if a file was stored with 3-of-10 encoding, but if each storage
+server had a 75% chance of dying, then the file would be *more* likely
+to die due to the erasure coding, rather than less likely to die,
+because a 75% chance of dying, a.k.a. a 25% chance of staying alive,
+is worse than the 30% number of shares required to recover the file.
+
+or
+
+2. The behavior of storage servers must not have been *independent*.
+I.e. if enough of the servers failed *at once*, then the file died,
+even if the chance of any individual server failing was lower than the
+erasure coding ratio.
+
+My conclusion: if you care about the longevity of your files, forget
+about erasure coding and concentrate on monitoring. (Go ahead and use
+3-of-10 because everyone does, and it adds a reasonably low level of
+storage overhead.)
+
+Not coincidentally, Least Authority Enterprises (our startup company)
+has been spending most of our engineering effort on monitoring,
+measurements, and fault detection for the last couple of months. Our
+service is still not functional enough to advertise it as non-alpha.
+This monitoring and operations engineering is a lot of work!
+
+Regards,
+
+Zooko
+
+P.S. But if you want to help us alpha-test our service, by all means
+let us know! :-)
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+http://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

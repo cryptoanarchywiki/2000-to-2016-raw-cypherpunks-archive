@@ -1,0 +1,538 @@
+From rswatjfet.org+caf_=rsw=jfet.org@gmail.com  Fri Mar 13 16:05:19 2015
+Return-Path: <rswatjfet.org+caf_=rsw=jfet.org@gmail.com>
+Received: from mail-pa0-f51.google.com (mail-pa0-f51.google.com [209.85.220.51])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id t2DK5Hf4013396
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <rsw@jfet.org>; Fri, 13 Mar 2015 16:05:18 -0400
+Received: by padfa1 with SMTP id fa1so31923751pad.9
+        for <rsw@jfet.org>; Fri, 13 Mar 2015 13:05:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20130820;
+        h=x-original-authentication-results:delivered-to:message-id:date
+         :user-agent:mime-version:to:subject:references:in-reply-to
+         :content-type:cc:precedence:list-id:list-unsubscribe:list-archive
+         :list-post:list-help:list-subscribe:errors-to:sender:from;
+        bh=v2C0351CIqT9tMmGzqssL9Jhepc5MDMZj8F+Knq/jIY=;
+        b=MX6T0omGa7eE+xgsNve19CWV2K1ePehplzUiuIWIb87ZHlAHAZHqdfOlFw+YutXsvu
+         uI6xqrMGB9a+KCLssZo/+jTYPD5jssFCQbJDO9hta5KGYFbHmzehVrGRxkXhq75ZvPrY
+         62PHASG0+MQT1x0IBEcf3bGpgQlkS0coU3+qV7EzzX79Ku6iRWiagV6bJT4KCKPqub5T
+         utQ+mJ8p9W/FdaCfWmLMjtxuKTbbYfYxlJFoyXlzpEFFgxpl32CBNEVgxS0VFfFV2PMk
+         eoBrvjrjgJAsvVk4nlyx+tnXRqz1UuvkYfnhcFvwYb9lPyLbYYbD26WzMcna1QO407y/
+         EYuA==
+X-Original-Authentication-Results: mx.google.com;       spf=neutral (google.com: 209.141.47.85 is neither permitted nor denied by domain of rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net) smtp.mail=rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net
+X-Received: by 10.70.96.204 with SMTP id du12mr97243500pdb.151.1426277110663;
+        Fri, 13 Mar 2015 13:05:10 -0700 (PDT)
+X-Forwarded-To: rsw@jfet.org
+X-Forwarded-For: rswatjfet.org@gmail.com rsw@jfet.org
+Delivered-To: rswatjfet.org@gmail.com
+Received: by 10.70.71.228 with SMTP id y4csp1088907pdu;
+        Fri, 13 Mar 2015 13:05:09 -0700 (PDT)
+X-Received: by 10.66.142.100 with SMTP id rv4mr107020665pab.84.1426277109143;
+        Fri, 13 Mar 2015 13:05:09 -0700 (PDT)
+Received: from localhost (antiproton.jfet.org. [209.141.47.85])
+        by mx.google.com with ESMTPS id j17si5883461pdl.116.2015.03.13.13.05.08
+        for <rswATjfet.org@gmail.com>
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 13 Mar 2015 13:05:09 -0700 (PDT)
+Received-SPF: neutral (google.com: 209.141.47.85 is neither permitted nor denied by domain of rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net) client-ip=209.141.47.85;
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 209.141.47.85 is neither permitted nor denied by domain of rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net) smtp.mail=rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id t2DK4jDI013375;
+	Fri, 13 Mar 2015 16:04:47 -0400
+Received: from ligemail.lig.net (lig.net [64.69.38.223])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id t2DK4fkk013371
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Fri, 13 Mar 2015 16:04:43 -0400
+Received: from localhost (localhost [127.0.0.1])
+ by ligemail.lig.net (Postfix) with ESMTP id 19B36E2CA20;
+ Fri, 13 Mar 2015 12:52:52 -0700 (PDT)
+X-Virus-Scanned: Debian amavisd-new at lig.net
+Received: from ligemail.lig.net ([127.0.0.1])
+ by localhost (lig.lig.net [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id 27H8bPFG11eb; Fri, 13 Mar 2015 12:52:49 -0700 (PDT)
+Received: from MacBook-Pro.local (unknown [73.170.87.105])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+ (No client certificate requested) (Authenticated sender: sdw)
+ by ligemail.lig.net (Postfix) with ESMTPSA id BE0CDE2CA14;
+ Fri, 13 Mar 2015 12:52:48 -0700 (PDT)
+Message-ID: <550342D5.3090906@lig.net>
+Date: Fri, 13 Mar 2015 13:04:37 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10;
+ rv:31.0) Gecko/20100101 Thunderbird/31.5.0
+MIME-Version: 1.0
+To: jim bell <jdb10987@yahoo.com>, Eugen Leitl <eugen@leitl.org>
+Subject: Re: Computer-stored encryption keys are not safe from side-channel
+ attacks
+References: <20150313101055.GM10743@leitl.org>
+ <2053241658.6061768.1426270891028.JavaMail.yahoo@mail.yahoo.com>
+In-Reply-To: <2053241658.6061768.1426270891028.JavaMail.yahoo@mail.yahoo.com>
+Content-Type: multipart/alternative;
+ boundary="------------010404030307070806010305"
+Cc: Cpunks <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+From: "Stephen D. Williams" <sdw@lig.net>
+X-Gspam-Loop: antiproton.jfet.org
+Status: O
+Content-Length: 22494
+Lines: 446
+
+This is a multi-part message in MIME format.
+--------------010404030307070806010305
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+If you didn't patent it and you published it publicly, you effectively gave it away for anyone to use.  It is also now prior art, so 
+finding a link that proves it was published would be useful.  And you have bragging rights to inventing it if you were first.
+
+So, the $5000 would have been a good deal since you didn't have any value to sell, since everyone already "owns" a license to use it.
+
+sdw
+
+On 3/13/15 11:21 AM, jim bell wrote:
+> Approximately December 24, perhaps it was 1996, I published an idea on a USENET area (maybe it was SCI.CRYPT) that proposed an 
+> idea that clock oscillators used in computers could be frequency-modulated with a long-period pseudo-random (linear feedback shift 
+> register) value to smear the output of the signal (and everything that depends on it) over a range of frequencies.
+> Curiously, in early 2007 (When I was at United States Penitentiary, Florence Colorado) I received a letter from a law firm 
+> offering me $5,000 for ownership of this idea.  (They had apparently figured out who I was, and had traced me down at my 
+> then-current address.)  I presumed that around that time, there was probably a lawsuit challenging a patent on this matter, and 
+> the law firm was doing 'due diligence' looking for ammunition.  I counter-offered that if they pay me 1/3 of the value of this 
+> idea, I would settle for that.  Never heard back from them.
+>  Jim Bell
+>
+>
+> On Friday, March 13, 2015 3:56 AM, Eugen Leitl <eugen@leitl.org> wrote:
+>
+>
+>
+> http://www.techrepublic.com/article/computer-stored-encryption-keys-are-not-safe-from-side-channel-attacks/
+>
+> Computer-stored encryption keys are not safe from side-channel attacks
+>
+> By Michael Kassner March 11, 2015, 1:25 PM PST
+>
+> Using side-channel technology, researchers at Tel Aviv University can extract
+> decryption keys from RSA and ElGamal implementations without altering or
+> having control of a computer.
+>
+> Figure A: Tel Aviv University researchers built this self-contained PITA
+> receiver.  Image courtesy of Daniel Genkin, Lev Pachmanov, Itamar Pipman,
+> Eran Tromer, and Tel Aviv University
+>
+> Not that long ago, grabbing information from air-gapped computers required
+> sophisticated equipment. In my TechRepublic column Air-gapped computers are
+> no longer secure, researchers at Georgia Institute of Technology explain how
+> simple it is to capture keystrokes from a computer just using spurious
+> electromagnetic side-channel emissions emanating from the computer under
+> attack.
+>
+> Daniel Genkin, Lev Pachmanov, Itamar Pipman, and Eran Tromer, researchers at
+> Tel Aviv University, agree the process is simple. However, the scientists
+> have upped the ante, figuring out how to ex-filtrate complex encryption data
+> using side-channel technology.
+>
+> The process In the paper Stealing Keys from PCs using a Radio: Cheap
+> Electromagnetic Attacks on Windowed Exponentiation (PDF), the researchers
+> explain how they determine decryption keys for mathematically-secure
+> cryptographic schemes by capturing information about secret values inside the
+> computation taking place in the computer.
+>
+> "We present new side-channel attacks on RSA and ElGamal implementations that
+> use the popular sliding-window or fixed-window (m-ary) modular exponentiation
+> algorithms," the team writes. "The attacks can extract decryption keys using
+> a low measurement bandwidth (a frequency band of less than 100 kHz around a
+> carrier under 2 MHz) even when attacking multi-GHz CPUs."
+>
+> If that doesn't mean much, this might help: The researchers can extract keys
+> from GnuPG in just a few seconds by measuring side-channel emissions from
+> computers. "The measurement equipment is cheap, compact, and uses
+> readily-available components," add the researchers. Using that philosophy the
+> university team developed the following attacks.
+>
+> Software Defined Radio (SDR) attack: This comprises of a shielded loop
+> antenna to capture the side-channel signal, which is then recorded by an SDR
+> program installed on a notebook.
+>
+> Portable Instrument for Trace Acquisition (PITA) attack: The researchers,
+> using available electronics and food items (who says academics don't have a
+> sense of humor?), built the self-contained receiver shown in Figure A. The
+> PITA receiver has two modes: online and autonomous.
+>
+> Online: PITA connects to a nearby observation station via Wi-Fi, providing
+> real-time streaming of the digitized signal. Autonomous: Similar to online
+> mode, PITA first measures the digitized signal, then records it on an
+> internal microSD card for later retrieval by physical access or via Wi-Fi.
+>
+> Consumer radio attack: To make an even cheaper version, the team leveraged
+> knowing that side-channel signals modulate at a carrier frequency near 1.7
+> MHz, which is within the AM radio frequency band. "We used a plain
+> consumer-grade radio receiver to acquire the desired signal, replacing the
+> magnetic probe and SDR receiver," the authors explain. "We then recorded the
+> signal by connecting it to the microphone input of an HTC EVO 4G smartphone."
+>
+> Cryptanalytic approach
+>
+> This is where the magic occurs. I must confess that paraphrasing what the
+> researchers accomplished would be a disservice; I felt it best to include
+> their cryptanalysis description verbatim:
+>
+> "Our attack utilizes the fact that, in the sliding-window or fixed window
+> exponentiation routine, the values inside the table of ciphertext powers can
+> be partially predicted. By crafting a suitable ciphertext, the attacker can
+> cause the value at a specific table entry to have a specific structure.
+>
+> "This structure, coupled with a subtle control flow difference deep inside
+> GnuPG's basic multiplication routine, will cause a noticeable difference in
+> the leakage whenever a multiplication by this structured value has occurred.
+> This allows the attacker to learn all the locations inside the secret
+> exponent where the specific table entry is selected by the bit pattern in the
+> sliding window. Repeating this process across all table indices reveals the
+> key."
+>
+> Figure B is a spectrogram displaying measured power as a function of time and
+> frequency for a recording of GnuPG decrypting the same ciphertext using
+> different randomly generated RSA keys. The research team's explanation:
+>
+> "It is easy to see where each decryption starts and ends (yellow arrow).
+> Notice the change in the middle of each decryption operation, spanning
+> several frequency bands. This is because, internally, each GnuPG RSA
+> decryption first exponentiates modulo the secret prime p and then modulo the
+> secret prime q, and we can see the difference between these stages.
+>
+> "Each of these pairs looks different because each decryption uses a different
+> key. So in this example, by observing electromagnetic emanations during
+> decryption operations, using the setup from this figure, we can distinguish
+> between different secret keys."
+>
+>
+> Figure B: A spectrogram Image courtesy of Daniel Genkin, Lev Pachmanov,
+> Itamar Pipman, Eran Tromer, and Tel Aviv University
+>
+> Any way to prevent the leakage?
+>
+> One solution, albeit unwieldy, is operating the computer in a Faraday cage,
+> which prevents any spurious emissions from escaping. "The cryptographic
+> software can be changed, and algorithmic techniques used to render the
+> emanations less useful to the attacker," mentions the paper. "These
+> techniques ensure the behavior of the algorithm is independent of the inputs
+> it receives."
+>
+> Interestingly, the research paper tackles a question about side-channel
+> attacks that TechRepublic readers commented on in my earlier article, "It's a
+> hardware problem, so why not fix the equipment?"
+>
+> Basically the researchers mention that the emissions are at such a low level,
+> prevention is impractical because:
+>
+> Any leakage remnants can often be amplified by suitable manipulation as we do
+> in our chosen-ciphertext attack; and Leakage is often an inevitable side
+> effect of essential performance-enhancing mechanisms.
+>
+> Something else of interest: the National Institute of Standards and
+> Technology (NIST) considers resistance to side-channel attacks an important
+> evaluation consideration in its SHA-3 competition.
+>
+>
+
+
+
+--------------010404030307070806010305
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+<html>
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+  </head>
+  <body bgcolor="#FFFFFF" text="#000066">
+    <div class="moz-cite-prefix">If you didn't patent it and you
+      published it publicly, you effectively gave it away for anyone to
+      use.  It is also now prior art, so finding a link that proves it
+      was published would be useful.  And you have bragging rights to
+      inventing it if you were first.<br>
+      <br>
+      So, the $5000 would have been a good deal since you didn't have
+      any value to sell, since everyone already "owns" a license to use
+      it.<br>
+      <br>
+      sdw<br>
+      <br>
+      On 3/13/15 11:21 AM, jim bell wrote:<br>
+    </div>
+    <blockquote
+cite="mid:2053241658.6061768.1426270891028.JavaMail.yahoo@mail.yahoo.com"
+      type="cite">
+      <div style="color:#000; background-color:#fff;
+        font-family:HelveticaNeue, Helvetica Neue, Helvetica, Arial,
+        Lucida Grande, sans-serif;font-size:16px">
+        <div id="yui_3_16_0_1_1426269135591_10536" dir="ltr"><span
+            id="yui_3_16_0_1_1426269135591_12933">Approximately December
+            24, perhaps it was 1996, I published an idea on a USENET
+            area (maybe it was SCI.CRYPT) that proposed an idea that
+            clock oscillators used in computers could be
+            frequency-modulated with a long-period pseudo-random (linear
+            feedback shift register) value to smear the output of the
+            signal (and everything that depends on it) over a range of
+            frequencies.</span></div>
+        <div id="yui_3_16_0_1_1426269135591_10536" dir="ltr">Curiously,
+          in early 2007 (When I was at United States Penitentiary,
+          Florence Colorado) I received a letter from a law firm
+          offering me $5,000 for ownership of this idea.  (They had
+          apparently figured out who I was, and had traced me down at my
+          then-current address.)  I presumed that around that time,
+          there was probably a lawsuit challenging a patent on this
+          matter, and the law firm was doing 'due diligence' looking for
+          ammunition.  I counter-offered that if they pay me 1/3 of the
+          value of this idea, I would settle for that.  Never heard back
+          from them.</div>
+        <div id="yui_3_16_0_1_1426269135591_10536" dir="ltr">       
+           Jim Bell</div>
+        <div class="qtdSeparateBR"><br>
+          <br>
+        </div>
+        <div class="yahoo_quoted" style="display: block;">
+          <div style="font-family: HelveticaNeue, Helvetica Neue,
+            Helvetica, Arial, Lucida Grande, sans-serif; font-size:
+            16px;">
+            <div style="font-family: HelveticaNeue, Helvetica Neue,
+              Helvetica, Arial, Lucida Grande, sans-serif; font-size:
+              16px;">
+              <div dir="ltr"> <font face="Arial" size="2"> On Friday,
+                  March 13, 2015 3:56 AM, Eugen Leitl
+                  <a class="moz-txt-link-rfc2396E" href="mailto:eugen@leitl.org">&lt;eugen@leitl.org&gt;</a> wrote:<br>
+                </font> </div>
+              <br>
+              <br>
+              <div class="y_msg_container"><br>
+                <a moz-do-not-send="true"
+href="http://www.techrepublic.com/article/computer-stored-encryption-keys-are-not-safe-from-side-channel-attacks/"
+                  target="_blank">http://www.techrepublic.com/article/computer-stored-encryption-keys-are-not-safe-from-side-channel-attacks/</a><br>
+                <br>
+                Computer-stored encryption keys are not safe from
+                side-channel attacks<br>
+                <br>
+                By Michael Kassner March 11, 2015, 1:25 PM PST<br>
+                <br>
+                Using side-channel technology, researchers at Tel Aviv
+                University can extract<br>
+                decryption keys from RSA and ElGamal implementations
+                without altering or<br>
+                having control of a computer. <br>
+                <br>
+                Figure A: Tel Aviv University researchers built this
+                self-contained PITA<br>
+                receiver.  Image courtesy of Daniel Genkin, Lev
+                Pachmanov, Itamar Pipman,<br>
+                Eran Tromer, and Tel Aviv University<br>
+                <br>
+                Not that long ago, grabbing information from air-gapped
+                computers required<br>
+                sophisticated equipment. In my TechRepublic column
+                Air-gapped computers are<br>
+                no longer secure, researchers at Georgia Institute of
+                Technology explain how<br>
+                simple it is to capture keystrokes from a computer just
+                using spurious<br>
+                electromagnetic side-channel emissions emanating from
+                the computer under<br>
+                attack.<br>
+                <br>
+                Daniel Genkin, Lev Pachmanov, Itamar Pipman, and Eran
+                Tromer, researchers at<br>
+                Tel Aviv University, agree the process is simple.
+                However, the scientists<br>
+                have upped the ante, figuring out how to ex-filtrate
+                complex encryption data<br>
+                using side-channel technology.<br>
+                <br>
+                The process In the paper Stealing Keys from PCs using a
+                Radio: Cheap<br>
+                Electromagnetic Attacks on Windowed Exponentiation
+                (PDF), the researchers<br>
+                explain how they determine decryption keys for
+                mathematically-secure<br>
+                cryptographic schemes by capturing information about
+                secret values inside the<br>
+                computation taking place in the computer.<br>
+                <br>
+                "We present new side-channel attacks on RSA and ElGamal
+                implementations that<br>
+                use the popular sliding-window or fixed-window (m-ary)
+                modular exponentiation<br>
+                algorithms," the team writes. "The attacks can extract
+                decryption keys using<br>
+                a low measurement bandwidth (a frequency band of less
+                than 100 kHz around a<br>
+                carrier under 2 MHz) even when attacking multi-GHz
+                CPUs."<br>
+                <br>
+                If that doesn't mean much, this might help: The
+                researchers can extract keys<br>
+                from GnuPG in just a few seconds by measuring
+                side-channel emissions from<br>
+                computers. "The measurement equipment is cheap, compact,
+                and uses<br>
+                readily-available components," add the researchers.
+                Using that philosophy the<br>
+                university team developed the following attacks.<br>
+                <br>
+                Software Defined Radio (SDR) attack: This comprises of a
+                shielded loop<br>
+                antenna to capture the side-channel signal, which is
+                then recorded by an SDR<br>
+                program installed on a notebook.<br>
+                <br>
+                Portable Instrument for Trace Acquisition (PITA) attack:
+                The researchers,<br>
+                using available electronics and food items (who says
+                academics don't have a<br>
+                sense of humor?), built the self-contained receiver
+                shown in Figure A. The<br>
+                PITA receiver has two modes: online and autonomous.<br>
+                <br>
+                Online: PITA connects to a nearby observation station
+                via Wi-Fi, providing<br>
+                real-time streaming of the digitized signal. 
+                Autonomous: Similar to online<br>
+                mode, PITA first measures the digitized signal, then
+                records it on an<br>
+                internal microSD card for later retrieval by physical
+                access or via Wi-Fi.<br>
+                <br>
+                Consumer radio attack: To make an even cheaper version,
+                the team leveraged<br>
+                knowing that side-channel signals modulate at a carrier
+                frequency near 1.7<br>
+                MHz, which is within the AM radio frequency band. "We
+                used a plain<br>
+                consumer-grade radio receiver to acquire the desired
+                signal, replacing the<br>
+                magnetic probe and SDR receiver," the authors explain.
+                "We then recorded the<br>
+                signal by connecting it to the microphone input of an
+                HTC EVO 4G smartphone."<br>
+                <br>
+                Cryptanalytic approach<br>
+                <br>
+                This is where the magic occurs. I must confess that
+                paraphrasing what the<br>
+                researchers accomplished would be a disservice; I felt
+                it best to include<br>
+                their cryptanalysis description verbatim:<br>
+                <br>
+                "Our attack utilizes the fact that, in the
+                sliding-window or fixed window<br>
+                exponentiation routine, the values inside the table of
+                ciphertext powers can<br>
+                be partially predicted. By crafting a suitable
+                ciphertext, the attacker can<br>
+                cause the value at a specific table entry to have a
+                specific structure.<br>
+                <br>
+                "This structure, coupled with a subtle control flow
+                difference deep inside<br>
+                GnuPG's basic multiplication routine, will cause a
+                noticeable difference in<br>
+                the leakage whenever a multiplication by this structured
+                value has occurred.<br>
+                This allows the attacker to learn all the locations
+                inside the secret<br>
+                exponent where the specific table entry is selected by
+                the bit pattern in the<br>
+                sliding window. Repeating this process across all table
+                indices reveals the<br>
+                key."<br>
+                <br>
+                Figure B is a spectrogram displaying measured power as a
+                function of time and<br>
+                frequency for a recording of GnuPG decrypting the same
+                ciphertext using<br>
+                different randomly generated RSA keys. The research
+                team's explanation:<br>
+                <br>
+                "It is easy to see where each decryption starts and ends
+                (yellow arrow).<br>
+                Notice the change in the middle of each decryption
+                operation, spanning<br>
+                several frequency bands. This is because, internally,
+                each GnuPG RSA<br>
+                decryption first exponentiates modulo the secret prime p
+                and then modulo the<br>
+                secret prime q, and we can see the difference between
+                these stages.<br>
+                <br>
+                "Each of these pairs looks different because each
+                decryption uses a different<br>
+                key. So in this example, by observing electromagnetic
+                emanations during<br>
+                decryption operations, using the setup from this figure,
+                we can distinguish<br>
+                between different secret keys."<br>
+                <br>
+                <br>
+                Figure B: A spectrogram Image courtesy of Daniel Genkin,
+                Lev Pachmanov,<br>
+                Itamar Pipman, Eran Tromer, and Tel Aviv University<br>
+                <br>
+                Any way to prevent the leakage?<br>
+                <br>
+                One solution, albeit unwieldy, is operating the computer
+                in a Faraday cage,<br>
+                which prevents any spurious emissions from escaping.
+                "The cryptographic<br>
+                software can be changed, and algorithmic techniques used
+                to render the<br>
+                emanations less useful to the attacker," mentions the
+                paper. "These<br>
+                techniques ensure the behavior of the algorithm is
+                independent of the inputs<br>
+                it receives."<br>
+                <br>
+                Interestingly, the research paper tackles a question
+                about side-channel<br>
+                attacks that TechRepublic readers commented on in my
+                earlier article, "It's a<br>
+                hardware problem, so why not fix the equipment?"<br>
+                <br>
+                Basically the researchers mention that the emissions are
+                at such a low level,<br>
+                prevention is impractical because:<br>
+                <br>
+                Any leakage remnants can often be amplified by suitable
+                manipulation as we do<br>
+                in our chosen-ciphertext attack; and Leakage is often an
+                inevitable side<br>
+                effect of essential performance-enhancing mechanisms.<br>
+                <br>
+                Something else of interest: the National Institute of
+                Standards and<br>
+                Technology (NIST) considers resistance to side-channel
+                attacks an important<br>
+                evaluation consideration in its SHA-3 competition.<br>
+                <br>
+                <br>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </blockquote>
+    <br>
+    <br>
+  </body>
+</html>
+
+--------------010404030307070806010305--
+

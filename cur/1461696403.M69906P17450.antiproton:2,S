@@ -1,0 +1,163 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u3QIiB4L017342;
+	Tue, 26 Apr 2016 14:44:12 -0400
+Authentication-Results: antiproton.jfet.org; dkim=fail
+	reason="verification failed; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=iz0/abZx;
+	dkim-adsp=none (unprotected policy); dkim-atps=neutral
+Received: from mail-ig0-f176.google.com (mail-ig0-f176.google.com
+ [209.85.213.176])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u3QIi8s9017338
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Tue, 26 Apr 2016 14:44:09 -0400
+Received: by mail-ig0-f176.google.com with SMTP id m9so21274400ige.1
+ for <cypherpunks@cpunks.org>; Tue, 26 Apr 2016 11:44:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+ :cc; bh=bWCQXqz+lU52aymgoOEX8E2pK0utCVoX9iP0dmZVI2c=;
+ b=iz0/abZxxxxlRMbY43pnWQi0lDFLDmGrOKVzjrB24es57qVKsMgzcZBTWftBiRm0mW
+ Js5JdR5RK+2l7RbZRlZDecvZRo53kpKwYvO0MPPbi3S4QX7S4BSm9nDBeW44gECduks+
+ 1vVG/ufDUQDpKc6KbFuzr0LrdvuZJJuM59Vy/B96yrF5miNQvs+aenr4P0kAjGHKU1EL
+ 2caa+AfTYcQqzZz0+ESQ59ZA7OjjvUrd3wIATU15feu8TmRIq6GwFrLxbJuowq0b1UlI
+ BqDsc526JQKvHY/bjSykYvvJCGpSR92OwZLyp2tPIPPbtlmOnhX7fPJBif+D71kDRy1m
+ Zm6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+ :message-id:subject:to:cc;
+ bh=bWCQXqz+lU52aymgoOEX8E2pK0utCVoX9iP0dmZVI2c=;
+ b=Yf238kEnja74UlgKm+8oV6dVOyxvJ7Vj3sY/M9z5A1gEq5RgNcrBPPqskzknrMph/8
+ JJtax4xkziNSZv9ATQBrb1arz/ESZKV+Bc6xuG+vRPi5Mimt6T4gjxCskiAA2rUjVPmg
+ lRME9EyvYZKkID32XvsfS7z0Lvf5c2TOxqsche13EkV15dK/2PW0lCWJQZEmLO/luUjW
+ Zz+6DOSnc4wTbEBPu2sj6HUbb4NK9aFpg3TdW86ZAHIDwoBZJTvWlqmw5oBqjDFTO6Sb
+ 4xhct5odbIECEMKk30i5LKmrEcDYInHVjy4PI86ZWgsWqs1wdPSzdWWhXKH0JSfnkXzq
+ o+hg==
+X-Gm-Message-State: AOPr4FXVQX/2NSp7eJ6UPTwZRokYvF/IC/ToxXTZMdWoxNeZVOBt1ZPFs80MRZvOZvuOcb1WNfmkeP75Ego9fg==
+X-Received: by 10.50.77.5 with SMTP id o5mr20373422igw.33.1461696243128; Tue,
+ 26 Apr 2016 11:44:03 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.107.128.18 with HTTP; Tue, 26 Apr 2016 11:43:43 -0700 (PDT)
+In-Reply-To: <EDD32FC6-B2BB-4F2F-9B5A-818C3AB8A6A9@gmail.com>
+References: <20160406124923.GA677@sivokote.iziade.m$>
+ <57053FB4.9070109@riseup.net>
+ <20160420094943.GA1309@sivokote.iziade.m$>
+ <C8643470-3EF6-42EB-BFE4-B7C91EAD46D4@synfin.org>
+ <571D73E8.40400@echeque.com> <20160425121604.GA683@sivokote.iziade.m$>
+ <571e601b.a84d420a.26607.ffffdac2@mx.google.com>
+ <CAOsGNSTAMWfKAxo12DwPbBU1hTO5kimEvqU3WhTGkU3tZfHyPw@mail.gmail.com>
+ <CAOsGNSSdxaEMb8inmedOjppU8Wp7U4VBihG0LG51WZKspr3kMA@mail.gmail.com>
+ <CAD2Ti28-OPEh6=PAQfB_imo8NFyOvG4YiRfajTd9UPBbLYWBMg@mail.gmail.com>
+ <571efc1d.4952620a.d8b33.400a@mx.google.com>
+ <E1av2WM-0006te-2G@elasmtp-mealy.atl.sa.earthlink.net>
+ <571F9ED1.6090906@riseup.net>
+ <E1av6sn-0003Xg-Op@elasmtp-mealy.atl.sa.earthlink.net>
+ <571FAC4A.6010400@nrk.com> <EDD32FC6-B2BB-4F2F-9B5A-818C3AB8A6A9@gmail.com>
+From: Cari Machet <carimachet@gmail.com>
+Date: Tue, 26 Apr 2016 20:43:43 +0200
+Message-ID: <CAGRDzQUpNEqXRCzv-R8cVd6z56E_fny_WTD16rgYUYQ5Vrp8ow@mail.gmail.com>
+Subject: Re: vintage cpunk
+To: Robert Hettinga <hettinga@gmail.com>
+Content-Type: multipart/alternative; boundary=047d7bdc0ce85760d5053167ad74
+Cc: cpunks <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 87
+
+--047d7bdc0ce85760d5053167ad74
+Content-Type: text/plain; charset=UTF-8
+
+all fucking rich fucks hate the camping hippies?
+
+On Tue, Apr 26, 2016 at 8:33 PM, Robert Hettinga <hettinga@gmail.com> wrote:
+
+>
+> > On Apr 26, 2016, at 1:58 PM, David <wb8foz@nrk.com> wrote:
+> >
+> > Wow, all the times I went through there on the way up Eureka Canyon to
+> Rider Road or Summmit, and I had no idea....
+>
+> Like Heinlein before him, and as John has already observed, Tim hates
+> having hippies camp out on his driveway.
+>
+> Cheers,
+> RAH
+>
+>
+>
+
+
+-- 
+Cari Machet
+NYC 646-436-7795
+carimachet@gmail.com
+AIM carismachet
+Syria +963-099 277 3243
+Amman +962 077 636 9407
+Berlin +49 152 11779219
+Reykjavik +354 894 8650
+Twitter: @carimachet <https://twitter.com/carimachet>
+
+7035 690E 5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187
+
+Ruh-roh, this is now necessary: This email is intended only for the
+addressee(s) and may contain confidential information. If you are not the
+intended recipient, you are hereby notified that any use of this
+information, dissemination, distribution, or copying of this email without
+permission is strictly prohibited.
+
+--047d7bdc0ce85760d5053167ad74
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">all fucking rich fucks hate the camping hippies?<img src=
+=3D"http://t.sidekickopen04.com/e1t/o/5/f18dQhb0S7ks8dDMPbW2n0x6l2B9gXrN7sK=
+j6v5dfb6W5vwkZs7fZjrnW2BpKgF2zlZNzW8v-hnY1k1H6H0?si=3D5459291358625792&amp;=
+pi=3D09648954-b6f7-4f05-a4dd-77dc2c386034" style=3D"display:none!important"=
+ height=3D"1" width=3D"1"></div><div class=3D"gmail_extra"><br><div class=
+=3D"gmail_quote">On Tue, Apr 26, 2016 at 8:33 PM, Robert Hettinga <span dir=
+=3D"ltr">&lt;<a href=3D"mailto:hettinga@gmail.com" target=3D"_blank">hettin=
+ga@gmail.com</a>&gt;</span> wrote:<br><blockquote class=3D"gmail_quote" sty=
+le=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"><span =
+class=3D""><br>
+&gt; On Apr 26, 2016, at 1:58 PM, David &lt;<a href=3D"mailto:wb8foz@nrk.co=
+m">wb8foz@nrk.com</a>&gt; wrote:<br>
+&gt;<br>
+&gt; Wow, all the times I went through there on the way up Eureka Canyon to=
+ Rider Road or Summmit, and I had no idea....<br>
+<br>
+</span>Like Heinlein before him, and as John has already observed, Tim hate=
+s having hippies camp out on his driveway.<br>
+<br>
+Cheers,<br>
+RAH<br>
+<br>
+<br>
+</blockquote></div><br><br clear=3D"all"><div><br></div>-- <br><div class=
+=3D"gmail_signature"><div dir=3D"ltr"><div>Cari Machet<br>NYC 646-436-7795<=
+br><a href=3D"mailto:carimachet@gmail.com" target=3D"_blank">carimachet@gma=
+il.com</a><br>AIM carismachet<br>Syria +963-099 277 3243<br>Amman +962 077 =
+636 9407<br>Berlin +49 152 11779219 <br>Reykjavik +354 894 8650<br>Twitter:=
+ @carimachet &lt;<a href=3D"https://twitter.com/carimachet" target=3D"_blan=
+k">https://twitter.com/carimachet</a>&gt;<br><br></div>7035 690E 5E47 41D4 =
+B0E5 B3D1 AF90 49D6 BE09 2187<br><div><br>Ruh-roh, this is now necessary: T=
+his email is intended only for the <br>addressee(s) and may contain confide=
+ntial information. If you are not the <br>intended recipient, you are hereb=
+y notified that any use of this <br>information, dissemination, distributio=
+n, or copying of this email without <br>permission is strictly prohibited.<=
+br><br><br></div></div></div>
+</div>
+
+--047d7bdc0ce85760d5053167ad74--
+

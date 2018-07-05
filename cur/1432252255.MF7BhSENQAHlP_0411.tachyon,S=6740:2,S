@@ -1,0 +1,171 @@
+From owner-cypherpunks@al-qaeda.net  Thu Jun 10 11:31:06 2010
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-5+lenny1) with ESMTP id o5AFUbOR017933
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 10 Jun 2010 11:30:37 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id o5AFUbOo017932
+	for cypherpunks-outgoing; Thu, 10 Jun 2010 11:30:37 -0400
+Date: Thu, 10 Jun 2010 17:30:33 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: [tahoe-announce] ANNOUNCING =?utf-8?Q?Taho?= 
+  =?utf-8?Q?e-LAFS_v1=2E7=CE=B2!?= Please test!
+Message-ID: <20100610153033.GU1964@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5681
+Lines: 144
+
+----- Forwarded message from Zooko O'Whielacronx <zookog@gmail.com> -----
+
+From: Zooko O'Whielacronx <zookog@gmail.com>
+Date: Wed, 9 Jun 2010 09:27:45 -0600
+To: tahoe-dev@allmydata.org, tahoe-announce@allmydata.org,
+	"General discussions concerning capability systems." <cap-talk@mail.eros-os.org>
+Subject: [tahoe-announce] ANNOUNCING Tahoe-LAFS v1.7N2! Please test!
+Reply-To: tahoe-dev@allmydata.org
+
+Folks:
+
+The Tahoe-LAFS volunteer hackers have done a superb job for the last
+few weeks, iteratively testing and refining the major new features of
+Tahoe-LAFS v1.7.
+
+The current version passes our comprehensive test suite on many
+platforms (see the Buildbot [1] especially the "Supported Platforms"
+section).
+
+This is officially Tahoe-LAFS v1.7.0N2!
+
+The plan is that this version will become v1.7.0 final except for
+improving the documentation and packaging, and fixing any critical
+bugs that turn up.
+
+Tahoe-LAFS v1.7 is going to be a major new release, adding important
+features and continuing our strong tradition of reliability and
+compatibility.
+
+
+WHAT'S NEW
+
+There are three major new features (not counting various small
+bugfixes and improvements): SFTP support, support for non-ASCII
+character encodings, and Servers of Happiness.
+
+* SFTP support
+
+Your Tahoe-LAFS gateway now acts like a full-fledged SFTP server. It
+has been tested with sshfs to provide a virtual filesystem in Linux.
+Many users have asked for this feature. We hope that it serves them
+well! See the FTP-and-SFTP.txt document [2] to get started.
+
+* support for non-ASCII character encodings
+
+Tahoe-LAFS now correctly handles filenames containing non-ASCII
+characters on all supported platforms:
+
+ - when reading files in from the local filesystem (such as when you
+run "tahoe backup" to back up your local files to a Tahoe-LAFS grid);
+ - when writing files out to the local filesystem (such as when you
+run "tahoe cp -r" to recursively copy files out of a Tahoe-LAFS grid);
+ - when displaying filenames to the terminal (such as when you run
+"tahoe ls"), subject to limitations of the terminal and locale;
+ - when parsing command-line arguments, except on Windows (to be fixed
+on Windows in a future release)
+
+* Servers of Happiness
+
+Tahoe-LAFS now measures during immutable file upload to see how well
+distributed it is across multiple servers. It aborts the upload if the
+pieces of the file are not sufficiently well-distributed.
+
+This behavior is controlled by a configuration parameter called
+"servers of happiness". With the default settings for its erasure
+coding, Tahoe-LAFS generates 10 shares for each file, such that any 3
+of those shares are sufficient to recover the file. The default value
+of "servers of happiness" is 7, which means that Tahoe-LAFS will
+guarantee that there are at least 7 servers holding
+some of the shares, such that any 3 of those servers can completely
+recover your file.
+
+The new upload code also distributes the shares better than the
+previous version in some cases and takes better advantage of
+pre-existing shares (when a file has already been previously
+uploaded). See the architecture.txt document [3] for details.
+
+
+HOW TO GET STARTED
+
+Follow the instructions in the quickstart.html document [4].
+
+
+CAVEATS
+
+Do not be too disappointed if you discover the following performance issue.
+
+While this release makes it possible to use Tahoe-LAFS as a mostly
+POSIX-compliant filesystem (thanks to FUSE and sshfs), it will have
+very bad performance for some cases which have good performance on
+your traditional local filesystem. In particular it is bad at making
+small changes to large files (it actually stores the new file contents
+every time you write to the file and re-uploads the entire file every
+time you close it after having written to it). On the other hand it
+has some nice scalability and load-balancing characteristics compared
+to traditional POSIX filesystemsbyou will be able to easily add tens
+or hundreds of computers to your distributed, shared Tahoe-LAFS
+filesystem and it will take advantage of them in a nice distributed
+pattern without going noticeably slower than if you had a single
+Tahoe-LAFS server.
+
+So, you should not assume that the POSIX emulation of Tahoe-LAFS v1.7
+will perform sufficiently well at a particular use case or load
+pattern until you've tried it, but if you do try it and it does
+perform acceptably well then you can feel confident that it will
+continue to perform that well as you scale out your filesystem.
+
+Improving the performance in some dimensions is one of the goals of
+the Google Summer of Code Project which will result in Tahoe-LAFS v1.8
+this Fall (northern hemisphere).
+
+
+COMPATIBILITY
+
+This release continues the tradition of full backward-compatibility.
+Use it without fear.
+
+
+ENJOY!
+
+We think Tahoe-LAFS is a really cool hack with great potential. That's
+why we spend our time on it as a labor of love. We hope you find good
+uses for it.
+
+
+Regards,
+
+Zooko, release manager of v1.7
+
+[1] http://tahoe-lafs.org/buildbot/
+[2] http://tahoe-lafs.org/trac/tahoe-lafs/browser/docs/frontends/FTP-and-SFTP.txt
+[3] http://tahoe-lafs.org/trac/tahoe-lafs/browser/docs/architecture.txt
+[4] http://tahoe-lafs.org/source/tahoe-lafs/trunk/docs/quickstart.html
+_______________________________________________
+tahoe-announce mailing list
+tahoe-announce@allmydata.org
+http://allmydata.org/cgi-bin/mailman/listinfo/tahoe-announce
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

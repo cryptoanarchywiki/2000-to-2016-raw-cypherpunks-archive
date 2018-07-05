@@ -1,0 +1,106 @@
+From owner-cypherpunks@al-qaeda.net  Thu Apr  4 07:07:11 2013
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id r34B165c029965
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 4 Apr 2013 07:01:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1365073266;
+	bh=kYARmfrgi708tGozJeDyPPv88towPtLqVfGzSPmt89M=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=u9uOA6dDb6qhpAEt0XUm/cN1Pnc4cFxT4AyMJpRzGsZoSyr9Ydfl8pxgoaNl6qMpR
+	 WvaVr3BJBlkKJCIZsOmv3nvz3AwniUEJUtf/3i1a+pL0z7PBjXmZvwilCB1+MPpErp
+	 SNMpg9IkQoZX1EeKW5RYYki82AtT4DchLptXOEpI=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id r34B16IU029964
+	for cypherpunks-outgoing; Thu, 4 Apr 2013 07:01:06 -0400
+Date: Thu, 4 Apr 2013 13:01:01 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: [liberationtech] suggestions for a remote wipe software for
+  	Windows?
+Message-ID: <20130404110101.GA6172@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Seth David Schoen <schoen@eff.org> -----
+
+From: Seth David Schoen <schoen@eff.org>
+Date: Wed, 3 Apr 2013 12:54:07 -0700
+To: liberationtech <liberationtech@lists.stanford.edu>
+Subject: Re: [liberationtech] suggestions for a remote wipe software for
+	Windows?
+User-Agent: Mutt/1.5.21 (2010-09-15)
+Reply-To: liberationtech <liberationtech@lists.stanford.edu>
+
+Griffin Boyce writes:
+
+>   Well, http://preyproject.com/ would be better for a layperson who doesn't
+> have the time/interest to encrypt.  But it's not impossible to disable or
+> anything.  And in the meantime the thief would have access to your data.
+>  Depends on whether you are more looking to get it back (no guarantees), or
+> protect your info (all but guaranteed if encrypted).
+
+I think Prey is a pretty compelling choice for a lot of cases, but looking
+briefly at the documentation it seems that their "remote wipe" functionality
+for laptops is currently quite limited.  And that's confirmed by looking at
+the "secure" module in the Prey source code.
+
+https://github.com/prey/prey-bash-client-modules
+
+https://github.com/prey/prey-bash-client-modules/blob/master/secure/platform/windows/functions
+https://github.com/prey/prey-bash-client-modules/blob/master/secure/core/functions
+https://github.com/prey/prey-bash-client-modules/blob/master/secure/core/run
+
+I've suggested Prey to people before for tracking stolen devices in order to
+recover them, but I don't think I could recommend it for remote wipe.  It seems
+to mainly use plain rm to delete the contents of a small number of directories,
+and to call an API to clear MSIE browser history data.  For many users, this is
+a pretty incomplete notion of "wipe", and most of the content deleted this way
+will be recoverable by forensics.
+
+A further problem that comes to mind is that sending a signal to a phone (that
+uses 3G networks) to wipe itself is going to be easier in a lot of cases than
+to a laptop (that uses mainly wifi, and maybe not opportunistically).  The
+laptop will likely be offline by default if someone removes it from its normal
+environment, so it won't hear the wipe signal.  Solutions like Prey for laptops
+mainly work because thieves or downstream purchasers may voluntarily connect
+stolen laptops to networks to use them without reinstalling them (at least if
+the laptops don't require, or seem not to require, a login password!).
+
+Mike Cardwell actually uses a decoy operating system (with Prey) on his laptop
+in order to tempt thieves to use it:
+
+https://grepular.com/Protecting_a_Laptop_from_Simple_and_Sophisticated_Attacks
+
+I'm quite impressed with his setup, which took him a great deal of time and
+thought.  He relies entirely on encryption to get the equivalent of remote
+wiping; his Prey install is there just to increase his chances of finding the
+laptop if it's taken by "common thieves".
+
+This is some ways away from the original poster's question about remote wiping
+a Windows installation.   I guess I want to agree with Eugen Leitl (and Mike
+Cardwell) that disk encryption ultimately does that job better, mainly since a
+sophisticated or targeted attacker wouldn't connect the laptop to a network
+before making a copy of the hard drive.  For Windows users who've been denied
+BitLocker by Microsoft's price discrimination, there's TrueCrypt.
+
+-- 
+Seth Schoen  <schoen@eff.org>
+Senior Staff Technologist                       https://www.eff.org/
+Electronic Frontier Foundation                  https://www.eff.org/join
+454 Shotwell Street, San Francisco, CA  94110   +1 415 436 9333 x107
+--
+Too many emails? Unsubscribe, change to digest, or change password by emailing moderator at companys@stanford.edu or changing your settings at https://mailman.stanford.edu/mailman/listinfo/liberationtech
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

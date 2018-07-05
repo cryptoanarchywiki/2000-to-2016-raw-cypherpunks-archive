@@ -1,0 +1,77 @@
+From owner-cypherpunks@lne.com  Wed Jul  9 20:59:35 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h6A0xX632192
+	for <rsw@jfet.org>; Wed, 9 Jul 2003 20:59:33 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h6A0gOwM001520
+	for cypherpunks-goingout345; Wed, 9 Jul 2003 17:42:24 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Wed, 9 Jul 2003 19:52:08 -0500 (CDT)
+From: Jim Choate <ravage@einstein.ssz.com>
+To: <hangar18-general@open-forge.org>
+cc: <cypherpunks@einstein.ssz.com>, <austin-cpunks@einstein.ssz.com>,
+   <hell@einstein.ssz.com>
+Subject: [9fans] security hole (fwd)
+Message-ID: <Pine.LNX.4.33.0307091951510.20063-100000@einstein.ssz.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2217
+Lines: 50
+
+---------- Forwarded message ----------
+Date: Wed, 9 Jul 2003 20:07:05 -0400
+From: David Presotto <presotto@closedmind.org>
+To: 9fans@cse.psu.edu
+Subject: [9fans] security hole
+
+I plugged a security hole in Plan 9.  It involved the state of
+a process after it did a newns().  Newns() is used to create
+a new namespace, usually after a process has changed uid
+(like when someone attaches to a server: telnet, ssh, ...).
+Newns opens a file, called a namespace file, that describes
+the new namespace and then follows the instructions inside
+(see /lib/namespace).
+
+Newns(2) creates a new namespace, but until the process calling
+newns does a chdir through /, it's local directory is still in the old
+name space.  If the process then navigates the name space
+using relative commands (chdir(".."), open("../lib/profile"))
+it is walking the space using the priviledges of the OLD user id.
+
+Because of the way namespaces are usually set up, this doesn't
+normally happen.  All the normal namespace files themselves
+do a chdir to /usr/$user effectively leaving the old namespace
+before newns returns.  However, if either
+
+   there wasn't such a chdir in the namespace file, i.e., if you've removed it
+   for your installation
+
+or
+
+   /usr/$user (and also /usr/none) doesn't exist
+
+then it was possible for a user to log in (for example via telnet or ssh)
+and end up in a directory like /usr/bootes in which they still had
+the rights of bootes.  Neither situation applied to the labs
+since we have a /usr/none but one user in Japan (YAMANASHI Takeshi
+<uncover@beat.cc.titech.ac.jp>) discovered it when he created an
+account with no home dir.
+
+I changed newns() to fix the problem.  It now always leaves you
+chdir'd into a directory in the current namespace.  It does that
+by first seeing if the namespace file has already caused a chdir
+through the root.  If not, it effectively does a chdir(getpwd).
+If that fails, it does a chdir("/").
+
+This is a change in semantics.  I haven't found (by inspection)
+any programs that would be bothered by it but please tell me if
+you see anything fishy since I'm about to update sources with the
+change.  I've been running our servers here with the change for a
+few days and all seems well.
+

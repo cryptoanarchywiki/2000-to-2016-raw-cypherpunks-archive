@@ -1,0 +1,113 @@
+From owner-cypherpunks@al-qaeda.net  Wed Jul 11 09:48:30 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q6BDixKZ010213
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 11 Jul 2012 09:44:59 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q6BDixpt010212
+	for cypherpunks-outgoing; Wed, 11 Jul 2012 09:44:59 -0400
+Date: Wed, 11 Jul 2012 15:44:54 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: zs-p2p@googlegroups.com, info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: [tahoe-dev] weekly Tahoe dev call report: 2012-07-10
+Message-ID: <20120711134454.GQ12615@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Zooko Wilcox-O'Hearn <zooko@zooko.com> -----
+
+From: Zooko Wilcox-O'Hearn <zooko@zooko.com>
+Date: Wed, 11 Jul 2012 10:09:56 -0300
+To: tahoe-dev <tahoe-dev@tahoe-lafs.org>
+Subject: [tahoe-dev] weekly Tahoe dev call report: 2012-07-10
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+b" 1.9.2 release! Yay David-Sarah, Release Manager. Thanks to everyone
+who contributed bug reports, patches, testing, packaging, etc.
+
+b" Add-only sets: Can servers exercise "editorial power" over add-only
+sets, remixing different legitimate adder-signed sets to form new
+sets? Zooko thinks this could be a problem, and that add-only sets
+should be designed against it, but he can't remember why he thinks
+that. Brian thinks that it is hardly a problem because the presence of
+other servers giving answers renders any one server's ability to
+select among legitimate answers almost moot. Andrew and David-Sarah
+both think that the notion of a *set* as opposed to a fully serialized
+sequence must surely require that readers accept unions. We agreed to
+drop the subject for now and move on to lease database.
+
+b" lease database
+
+   b" keep information about leases in some separate location instead
+of bundled with each share
+
+   b" let's use a sqlite db through the pysqlite API, like we do with backupdb
+
+   b" for the cloud backend (that Least Authority Enterprises is
+building), the leasedb will be stored on persistent storage e.g Amazon
+Elastic Block Store (EBS), while the shares are stored on cloud
+storage, e.g. Amazon Simple Storage Service (S3).
+
+   b" people can manually add shares, such as by just dropping a share
+file into a disk backend filesystem, or uploading a share object to
+Amazon S3, and the lease system will eventually discover them and
+maintain them as long as they are leased, and then delete them when
+they are no longer leased.
+
+   b" people can manually delete shares, such as by just rm'ing a share
+file from a disk backend filesystem, or deleting a share object to
+Amazon S3, and the lease system will not break when it discovers that
+it is gone.
+
+   b" There can be race conditions between such external actions and
+the progress of the crawler which is inspecting leases. A state
+machine must be carefully analyzed to see that in handles all such
+possible sequences of events. See
+https://tahoe-lafs.org/trac/tahoe-lafs/wiki/Summit2Day4#leasedbcrawler
+for initial notes about that. A state transition diagram would be a
+good way to analyze and communicate that.
+
+   b" Brian was about to write a new lease database as the next step in
+his Accounting work, and Least Authority Enterprises is about to write
+a new lease database as the next step in our DARPA research grant
+contract, with a deadline of July 26. So, let's cooperate. We need to
+agree on separation of responsibilities.
+
+   b" The crawler can be a "background task" that doesn't take up
+resources (CPU) for too long at a time, so there's a configurable knob
+for "how many seconds in a row do I run" and "how many seconds do I
+idle in between runs", and another knob for "how soon should I start a
+new pass after I've already finished the last pass".
+
+   b" Should "account ids" or "lease-owner ids" be public keys or
+things derived from symmetric secrets? Brian wisely suggests
+decoupling that question from the rest of the lease db design. But,
+then Brian and David-Sarah agreed that the lease-owner ids should be
+small integers. Zooko disagrees, but nobody asked him.
+
+   b" Least Authority Enterprises might someday want to store their
+lease databases in funky cloud databases things like Amazon's Cloud
+SQL DB or Microsoft's Cloud SQL DB. But for now we're just going to
+use pysqlite and local storage such as Amazon EBS.
+
+Brian will review his branch and write up some stuff about how the
+accounting branch ought to go. Brian and David-Sarah will
+synchronously work on it Tuesday and Thursday.
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

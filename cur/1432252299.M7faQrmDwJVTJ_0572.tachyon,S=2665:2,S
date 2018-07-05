@@ -1,0 +1,78 @@
+From owner-cypherpunks@al-qaeda.net  Thu Jul  8 18:52:13 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i68Nq4C5024887
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Thu, 8 Jul 2004 18:52:04 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i68Nq40j024886
+	for cypherpunks-outgoing; Thu, 8 Jul 2004 18:52:04 -0500
+Date: Fri, 9 Jul 2004 01:46:26 +0200 (CEST)
+From: Thomas Shaddack <shaddack@ns.arachne.cz>
+To: Justin <justin-cypherpunks@soze.net>
+cc: Cypherpunks <cypherpunks@al-qaeda.net>
+Subject: Re: Querying SSL/TLS capabilities of SMTP servers
+In-Reply-To: <20040708215044.GA20069@arion.soze.net>
+Message-ID: <0407090137550.0@somehost.domainz.com>
+References: <0407081735340.-1275484700@somehost.domainz.com> 
+  <20040708215044.GA20069@arion.soze.net>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 1490
+Lines: 50
+
+It fails on hotmail.com; my script has problems there as well (and with 
+couple others, the cure seems to be adding delays between the lines sent 
+to the server; it makes the program slow, but more reliable).
+
+In my case I added "-i 3" to the netcat options. Isn't a panacea, but 
+helped in most cases. In the rest, I have to resort to telnet.
+
+Thanks a lot. Seems I have to learn perl. Looks powerful.
+
+
+On Thu, 8 Jul 2004, Justin wrote:
+
+> On 2004-07-08T17:50:57+0200, Thomas Shaddack wrote:
+> > I cobbled up together a small bash shell script that does this. It lists 
+> > the MX records for a domain, and then tries to connect to each of them, 
+> > issue an EHLO command, disconnect, then list the output of the server, 
+> ..
+> 
+> Or, in perl... though I wonder if there's a way to get capabilities with
+> Net::SMTP.  Might make this cleaner.
+> 
+> 
+> #!/usr/bin/perl
+> 
+> use IO::Socket;
+> use Net::DNS;
+> 
+> for ($i = 0; $i <= $#ARGV; $i++) {
+>     my @mx = mx($ARGV[$i]);
+>     foreach $record (@mx) {
+> 	my $hastls = 0;
+> 	my $mhost = IO::Socket::INET->new (
+>  		Proto => "tcp",
+> 		PeerAddr => $record->exchange,
+> 		PeerPort => "25",
+> 		Timeout => "10"
+> 	);
+> 	print $mhost "EHLO I-love-my-country.whitehouse.gov\n";
+> 	print $mhost "QUIT\n";
+> 	while (<$mhost>) {
+> 	    if (/STARTTLS/) {
+> 		$hastls = 1;
+> 		last;
+> 	    }
+> 	}
+> 	print "$ARGV[$i] " . $record->preference . " " . $record->exchange;
+> 	print $hastls ? " adv-tls\n" : " no-tls\n";
+> 	close $mhost;
+>     }
+> }
+

@@ -1,0 +1,326 @@
+From owner-cypherpunks@al-qaeda.net  Tue Nov 27 02:54:08 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id qAR7pUWv004715
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 27 Nov 2012 02:51:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1354002690;
+	bh=Xt0+BfHQ1Fs4a8AxN99K/O3euQkP7m3qeatfx2L5WXE=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=xKNHAE1RE8TsRDTrz5xqYCzx7Yjw/AGjpIkUJeWh9inBcTaI4ijMc1Kfkz2CkDkDB
+	 p1xr5LxAl3vvy5tPXbW2QwxnRPllNDnA4jQtIRte9pH3p8MxG9UAnxN7vCqHENf8oC
+	 6J1Jo3YyTuO2LGuR9yT/9Ec1gZl3bZXPVVKDxUVk=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id qAR7pUQt004714
+	for cypherpunks-outgoing; Tue, 27 Nov 2012 02:51:30 -0500
+Date: Tue, 27 Nov 2012 08:51:26 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: ipv6-ops@lists.cluenet.de, info@postbiota.org, cypherpunks@al-qaeda.net,
+        zs-p2p@googlegroups.com
+Subject: Re: OT: cheap colo space in Southern Germany/Munich
+Message-ID: <20121127075126.GQ9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 12616
+Lines: 293
+
+----- Forwarded message from Caleb James DeLisle <calebdelisle@lavabit.com> -----
+
+From: Caleb James DeLisle <calebdelisle@lavabit.com>
+Date: Mon, 26 Nov 2012 23:26:32 -0500
+To: Nick Hilliard <nick@foobar.org>
+CC: Eugen Leitl <eugen@leitl.org>, info@postbiota.org
+Subject: Re: OT: cheap colo space in Southern Germany/Munich
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:13.0) Gecko/20120614 Thunderbird/13.0.1
+
+I really appreciate your expert opinion.
+It's helpful to know what I should be concentrating on.
+
+On 11/25/2012 08:22 AM, Nick Hilliard wrote:
+> I don't really want to get into a detailed discussion about this because
+> it's sunday and I have a pile of other family related things planned for
+> the day, but briefly:
+>
+>>>> - scaling issues
+>>
+>> It's incumbent on me to prove that it scales but if there are obvious theoretical
+>> scaling inadequacies then maybe you would care to bring them up?
+>
+> it looks like the design proposes a 4 bit router identifier (but flexible),
+> offering at most a network radius of 16 hops and a theoretical maximum of
+> 16 connected nodes per router.  You can slide the numbers one way or
+> another (i.e. 32 connected nodes, at the cost of losing another bit in your
+> routing domain), but you can't hide from the problem that your routing
+> domain is too small and your bitfield allocation mechanism is far too
+> generous given the resource constraints inherent to it.
+
+Definitely valid.
+Code wise, it's pretty trivial to modify the protocol to stack headers ala MPLS.
+IMO we're still in an experimental stage and we need to be able to break the
+protocol for things just like this.
+
+>
+> you also have the problem that your routers are not uniquely identifiable
+> on any particular closed network.  turns out that if they aren't uniquely
+> identifiable, then you open up a bunch of reachability and security problems.
+
+Routers identify each other by internal ip6 (hash of key).
+
+>
+>>>>
+>>>> - point to multipoint networking
+>>
+>> Grandma doesn't use it.
+>
+> i don't understand what you mean by this.  what I mean here is that there
+> is no apparent mechanism for a router to talk to multiple other routers on
+> the same l2 broadcast domain. this is a glaring omission from the protocol.
+>
+> you also lack a link-local resolution protocol (e.g. arp / nd)
+
+It's a fair critique that that the switch layer for not offering anything remotely
+similar to the interface provided by Ethernet. That said, I think there's a risk
+in trying to analyze it in terms of Ethernet.
+
+>
+>>>>
+>>>> - that deterministic reachability is usually considered a good thing
+>>
+>> I'd love for it to be more deterministic but I don't see how to make the design do that.
+>
+> my gut feeling is that deterministic reachability can be disproved given
+> your design.  you probably want deterministic reachability to be provable.
+
+Valid point, there is no math backing up any of this. Fortunately a router can
+forward to anyone it wants as long their address is numerically closer to the
+destination than it's own so routers in a network can experiment with different
+forwarding algorithms without fear of loops.
+
+>
+>>>>
+>>>> - non-local connectivity lookup introduces hilarious denial of service
+>>>> mechanisms
+>>
+>> Yeap, DoS is a serious issue with this design.
+>> It's also a serious issue (although less serious) with the Internet as it is today.
+>> My plan is to introduce a market based flood management system integrated with congestion control logic.
+>> What's your plan?
+>> Just hoping that that botnets never reach terrabit capacity isn't an answer.
+>
+> botnets will reach terabit capacity within the next 2-3 years.  they're
+> currently at low hundreds of gigabits.
+>
+> re: ddos management, you're confusing a layer 9 issue (i.e. what to do with
+> traffic) with a layer 2 issue (i.e. how to get bits from a to b).  i don't
+> think you can solve one problem by tweaking with the other.
+>
+>>>>
+>>>> - the value of bitfield qos
+>>
+>> Grandma doesn't use it.
+>>
+>>>>
+>>>> - that the use of bEncoding for connectivity lookup is a degree or two
+>>>> worse than using TLVs for the same means
+>>
+>> bEncoding sucks. But it sucks less than the alternatives which I saw at the time.
+>> What's necessary is simplicity and ability to add keys to a message without breaking old nodes.
+>
+> then at least use binary encoded tlvs, which have only a single layer of
+> indirection/translation (i.e. interpretation of what the message contains)
+> instead of multiple (i.e. parsing an ascii encoded message, followed by
+> transformation from ascii to binary, then interpretation of what the
+> message contains).
+>
+>>>> - full independence from traditional ip protocols ("Router messages are
+>>>> sent as normal UDP/IPv6 packets except that their UDP source and
+>>>> destination port numbers are zero and the hop limit (TTL) field in the IPv6
+>>>> header is set to zero.")
+>>
+>> It's probably not the best design but it's an asthetic issue, cjdns weeds the control packets
+>> out of the stream en route, it doesn't "bind to port 0".
+>
+> this isn't an aesthetic issue: you haven't decoupled your transport
+> protocol from the underlying carrier protocol.  I.e. native cjdns is not
+> possible according to your current design.
+
+
+Not the underlying protocol, the overlay protocol. Cjdns control messages
+are basically a bastardized form of an ipv6 packet. On the outside anything
+that carries frames is ok.
+
+There's an module which links nodes over raw Ethernet and I'm told it works well.
+
+
+>
+>>>>
+>>>> - that strictly symmetric routing is a bug, not a feature
+>>
+>> Good to hear that cjdns isn't missing a feature.
+>>
+>>>>
+>>>> - that 64 bits as a routing path mechanism is woefully insufficient for
+>>>> modern networking
+>>
+>> /me snickers at the fact that it was said on an IPv6 mailing list.
+>
+> i think you misunderstand what I'm saying here.  I'm not talking about 64
+> bits of addressing space (which is more than enough to handle global
+> addressing requirements); i'm talking about 64 bits as a routing mechanism,
+> which will break on even relatively small networks.
+
+My mistake, indeed 64 is not a lot but as I said, we can expand by stacking with
+minimal protocol changes.
+
+>
+>>>> - that separation of control plane and data plane on a router is probably a
+>>>> good idea
+>>
+>> If you mean what I think you mean, that's already done ("cjdns weeds the packets out of
+>> the stream").
+>
+> no it's not.  you propose a remote forwarding lookup mechanism which mixes
+> up the forwarding plane of your routers (i.e. the mechanism which handles
+> traffic going _through_ the router) with the control plane (i.e. the
+> mechanism which handles traffic going _to_ the router).
+>
+> the idea of remote lookups for your forwarding mechanism is also
+> fundamentally broken because if there is one thing you need, it's a fast
+
+LISP ;)
+
+> forwarding lookup engine.  this is one of the things which makes commercial
+> routers expensive: you need to be deterministic and fast about making
+> decisions on which interface to send your packet to, which means that it
+> needs to be local to the box making the decision.  if you decouple these
+> two things, you're on a road to nowhere.
+
+Sending a DHT query and waiting a roundtrip to decide where to forward
+would be insane. Instead of sending a DHT query to a node, cjdns sends
+them the packet. Obviously it favors nodes which are physically nearby.
+
+What concerns me is if you had 1 billion nodes and the average node had a
+routing table with 500 physically close nodes and 500 numerically close..
+You would need 2 million "nearby" nodes, otherwise your packets are going
+to travel a long way before reaching a node which knows a full route to
+the destination.
+
+However, if you only have 200k prefixes to forward to, this same
+partitioning trick might come in handy for forwarding ip4 on multicore
+commodity processors.
+
+>
+>>>> - throwing out the book on existing networking models is only valid if the
+>>>> proposed replacement is measurably better
+>>
+>> Bullshit.
+>>
+>> Throwing out the book is always valid, at best you invent the next big thing, at worst
+>> you have a great learning experience. In the middle, the good ideas are integrated into
+>> existing technologies and the bad ideas serve as a case study.
+>
+> green-field designs are fine from a research point of view, except that for
+> some reason which is entirely unclear to me, eugen was proposing cjdns as a
+> potential replacement for ipv4 / ipv6.  throwing out ipv4 / ipv6 is only
+> valid if the proposed replacement is measurably better than them, which
+> cjdns isn't.
+
+Time will tell.
+
+>
+>>>> What's left in cjdns is a poorly specified mishmash of curious ideas which
+>>>> will work fine on the author's playpen network and which will break
+>>>> horribly on large networks, regardless of how hard the author waves the
+>>>> "hey look at me, i'm having a revolution" flag.
+>>
+>> If I was in charge of a major AS, I wouldn't implement *anything* which was developed
+>> with an R&D budget of 0. There are some potentially interesting components but as a whole,
+>> cjdns is not intended to work on large networks.
+>>
+>> In places like where I live, it's not cost effective for cable and phone companies to
+>> provide fast internet.
+>>
+>> I believe that people are willing to spend money on a pole and a few directional radio
+>> links if they can install the equipment and it will just work. I also think they'll be willing
+>> to share the data downstream if they can get a discount on their bill for the data they shared.
+>
+> speaking as someone who owns a rural house with this exact form of
+> connectivity problem, i'm not getting why ipv6 + igp + bgp + nat64 wouldn't
+> be a better solution for what you're proposing here - but even still, why
+> is this better from having a local ISP with public ipv4 / ipv6 addresses
+> and not depending on nat / protocol translation at all?  i don't get it.
+
+The switch layer will happily carry any kind of traffic you like, including
+IPv4 packets so natting is unnecessary, you just pop the switch header and
+decrypt.
+
+Ever since the end of dialup I haven't seen a single new local ISP and I
+would never try it myself. The only way I see telephone/cable losing their
+control is if we can provide people with a kit ISP that anyone can setup.
+
+>
+> also, don't confuse transport speed and transport protocol.  the two are
+> completely different.
+>
+>> What I need is a way to separate infrastructure, billing, and IP4 gateway provision.
+>> I want to put up a pole, make a directional radio link to my neighbor, sign up with a billing
+>> provider that takes major credit cards, and be online. I don't want to worry about my neighbor
+>> spying on my traffic and if someone links to my pole, I want a discount for carrying their bits.
+>
+> the cjdns-ipv4 (or ipv6->ipv4, e.g. nat64) translation router will offer
+> ample opportunities for spying if you're concerned about this.  personally,
+
+The problem is if someone wants to compromise you, it's hard for them to
+infiltrate your IPv4 gateway provider but it's easy for them to set up a
+node in the network and begin carrying your traffic.
+
+> i use higher layer transport security where possible because you cannot in
+> general be guaranteed about anything relating to the underlying transport
+> mechanism.
+>
+>> IMO the most important role of cjdns is not in offering an answer but in introducing a question.
+>
+> yep, certainly does that.  interesting design, but it won't work on
+> anything other than very small networks, and it doesn't offer any material
+> advantages over e.g. ipv6 + (ospf / isis) + bgp + nat64, which is already
+> standardised to the point that it will work using off the shelf components
+> with stock windows / linux / mac end user boxes.
+
+This is my solution, I realize it's not the only one and I'd love to see some
+competition in the field.
+
+My 3 main requirements are:
+* No single point of failure.
+* Anyone can start a node with little to no technical skill.
+* It must not be fruitful to start a node with the intention of committing
+Espionage/Forgery against a given target. Of course DoS should difficult.
+
+
+Again I appreciate your comments and right now I'm adding to my TODO list:
+- Stacking of switch headers.
+- Provable algorithms or at least simulations.
+
+
+Thanks,
+Caleb
+
+>
+> nick
+>
+>
+>
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

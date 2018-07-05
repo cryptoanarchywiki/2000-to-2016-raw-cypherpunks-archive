@@ -1,0 +1,156 @@
+From owner-cypherpunks@Algebra.COM  Fri Jul  5 15:10:55 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g65JAso19642
+	for <rsw@opamp.org>; Fri, 5 Jul 2002 15:10:54 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id TAA14414
+	for <rsw@mit.edu>; Fri, 5 Jul 2002 19:14:04 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g65LoQ4l030135
+	for <cypherpunks-outgoing@ak47.algebra.com>; Fri, 5 Jul 2002 16:50:26 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g65LoPWC030134
+	for cypherpunks-outgoing; Fri, 5 Jul 2002 16:50:25 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (dns.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g65LoB4l030101
+	for <cypherpunks@ak47.algebra.com>; Fri, 5 Jul 2002 16:50:12 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id g65LoAQ02045
+	for cypherpunks@ak47.algebra.com; Fri, 5 Jul 2002 14:50:10 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id g65LjeT02022
+	for cypherpunks-goingout; Fri, 5 Jul 2002 14:45:40 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Fri, 5 Jul 2002 14:45:21 -0700
+From: AARG! Anonymous <remailer@aarg.net>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@aarg.net>.
+To: cryptography@wasabisystems.com, schoen@eff.org, cypherpunks@lne.com
+Old-Subject: Re: Ross's TCPA paper
+Message-ID: <2c5c299114a1b1c1c9219ad45fb4aa90@aarg.net>
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Re: Ross's TCPA paper
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 5709
+Lines: 108
+
+
+Seth Schoen writes:
+> The Palladium security model and features are different from Unix, but
+> you can imagine by rough analogy a Unix implementation on a system
+> with protected memory.  Every process can have its own virtual memory
+> space, read and write files, interact with the user, etc.  But
+> normally a program can't read another program's memory without the
+> other program's permission.
+>
+> The analogy starts to break down, though: in Unix a process running as
+> the superuser or code running in kernel mode may be able to ignore
+> memory protection and monitor or control an arbitrary process.  In
+> Palladium, if a system is started in a trusted mode, not even the OS
+> kernel will have access to all system resources.
+
+Wouldn't it be more accurate to say that a "trusted" OS will not peek
+at system resources that it is not supposed to?  After all, since the
+OS loads the application, it has full power to molest that application
+in any way.  Any embedded keys or certs in the app could be changed by
+the OS.  There is no way for an application to protect itself against
+the OS.
+
+And there is no need; a trusted OS by definition does not interfere with
+the application's use of confidential data.  It does not allow other
+applications to get access to that data.  And it provides no back doors
+for "root" or the system owner or device drivers to get access to the
+application data, either.
+
+At http://vitanuova.loyalty.org/2002-07-03.html you provide more
+information about your meeting with Microsoft.  It's an interesting
+writeup, but the part about the system somehow protecting the app from the
+OS can't be right.  Apps don't have that kind of structural integrity.
+A chip in the system cannot protect them from an OS virtualizing that
+chip.  What the chip does do is to let *remote* applications verify that
+the OS is running in trusted mode.  But local apps can never achieve
+that degree of certainty, they are at the mercy of the OS which can
+twiddle their bits at will and make them "believe" anything it wants.
+Of course a "trusted" OS would never behave in such an uncouth manner.
+
+
+> That limitation
+> doesn't stop you from writing your own application software or scripts.
+
+Absolutely.  The fantasies which have been floating here of filters
+preventing people from typing virus-triggering command lines are utterly
+absurd.  What are people trying to prove by raising such nonsensical
+propositions?  Palladium needs no such capability.
+
+
+> Interestingly, Palladium and TCPA both allow you to modify any part of
+> the software installed on your system (though not your hardware).  The
+> worst thing which can happen to you as a result is that the system
+> will know that it is no longer "trusted", or will otherwise be able to
+> recognize or take account of the changes you made.  In principle,
+> there's nothing wrong with running "untrusted"; particular applications
+> or services which relied on a trusted feature, including sealed
+> storage (see below), may fail to operate.
+
+Right, and you can boot untrusted OS's as well.  Recently there was
+discussion here of HP making a trusted form of Linux that would work with
+the TCPA hardware.  So you will have options in both the closed source and
+open source worlds to boot trusted OS's, or you can boot untrusted ones,
+like old versions of Windows.  The user will have more choice, not less.
+
+
+> Palladium and TCPA both allow an application to make use of
+> hardware-based encryption and decryption in a scheme called "sealed
+> storage" which uses a hash of the running system's software as part of
+> the key.  One result of this is that, if you change relevant parts of
+> the software, the hardware will no longer be able to perform the
+> decryption step.  To oversimplify slightly, you could imagine that the
+> hardware uses the currently-running OS kernel's hash as part of this
+> key.  Then, if you change the kernel in any way (which you're
+> permitted to do), applications running under it will find that they're
+> no longer able to decrypt "sealed" files which were created under the
+> original kernel.  Rebooting with the original kernel will restore the
+> ability to decrypt, because the hash will again match the original
+> kernel's hash.
+
+Yes, your web page goes into somewhat more detail about how this would
+work.  This way a program can run under a secure OS and store sensitive
+data on the disk, such that booting into another OS will then make it
+impossible to decrypt that data.
+
+Some concerns have been raised here about upgrades.  Did Microsoft
+discuss how that was planned to work, migrating from one version of a
+secure OS to another?  Presumably they have different hashes, but it
+is necessary for the new one to be able to unseal data sealed by the
+old one.
+
+One obvious solution would be for the new OS to present a cert to the chip
+which basically said that its OS hash should be treated as an "alias"
+of the older OS's hash.  So the chip would unseal using the old OS hash
+even when the new OS was running, based on the fact that this cert was
+signed by the TCPA trusted root key.
+
+This seems to put more power than we would like into a single trusted
+key, though.  It would be interesting to hear what Microsoft has in mind
+along these lines.
+
+> (I've been reading TCPA specs and recently met with some Microsoft
+> Palladium team members.  But I'm still learning about both systems and
+> may well have made some mistakes in my description.)
+
+If you've read the TCPA specs you're way ahead of most of the commentators
+here.  You have undoubtedly noted how little connection there is between
+the flights of fancy and speculation which have appeared recently and
+the actual functionality of the TCPA system.
+

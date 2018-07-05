@@ -1,0 +1,167 @@
+From owner-cryptography+rsw=mit.edu@metzdowd.com  Tue Jun  3 17:52:23 2003
+Return-Path: <owner-cryptography+rsw=mit.edu@metzdowd.com>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h53LqNq30516
+	for <rsw@opamp.org>; Tue, 3 Jun 2003 17:52:23 -0400
+Received: from red.metdow.com (72.muf123.nycm.n54ny05r18.dsl.att.net [12.103.123.72])
+	by pacific-carrier-annex.mit.edu (8.12.4/8.9.2) with ESMTP id h53LqKdL006427
+	for <rsw@mit.edu>; Tue, 3 Jun 2003 17:52:20 -0400 (EDT)
+Received: by red.metdow.com (Postfix, from userid 1002)
+	id C5E35183017; Tue,  3 Jun 2003 21:48:34 +0000 (UTC)
+X-Original-To: cryptography@metzdowd.com
+Delivered-To: cryptography@metzdowd.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by red.metdow.com (Postfix) with ESMTP id 5E586183013
+	for <cryptography@metzdowd.com>; Tue,  3 Jun 2003 21:48:33 +0000 (UTC)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 9EA41D97CE; Tue,  3 Jun 2003 17:48:32 -0400 (EDT)
+X-Original-To: cryptography@metzdowd.com
+Received: from mallard.mail.pas.earthlink.net (mallard.mail.pas.earthlink.net [207.217.120.48])
+	by red.metdow.com (Postfix) with ESMTP id 7D872182F85
+	for <cryptography@metzdowd.com>; Tue,  3 Jun 2003 20:45:54 +0000 (UTC)
+Received: from dialup-67.31.153.43.dial1.denver1.level3.net ([67.31.153.43] helo=lynnpc)
+	by mallard.mail.pas.earthlink.net with esmtp (Exim 3.33 #1)
+	id 19NIeX-0001wM-00; Tue, 03 Jun 2003 13:45:05 -0700
+Message-Id: <4.2.2.20030603143759.00c5c280@mail.earthlink.net>
+X-Sender: lynnnet@mail.earthlink.net
+X-Mailer: QUALCOMM Windows Eudora Pro Version 4.2.2 
+Date: Tue, 03 Jun 2003 14:46:27 -0600
+To: pgut001@cs.auckland.ac.nz (Peter Gutmann)
+From: Anne & Lynn Wheeler <lynn@garlic.com>
+Subject: Re: Maybe It's Snake Oil All the Way Down
+Cc: ericm@lne.com, iang@systemics.com, bill.stewart@pobox.com,
+   cryptography@metzdowd.com, cypherpunks@lne.com, ekr@rtfm.com,
+   rsalz@datapower.com, sguthery@mobile-mind.com
+In-Reply-To: <200306031304.h53D4dl25250@medusa01.cs.auckland.ac.nz>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Sender: owner-cryptography@metzdowd.com
+Precedence: bulk
+Status: O
+Content-Length: 5859
+Lines: 123
+
+On Tue, 2003-06-03 at 07:04, Peter Gutmann wrote:
+ > That's a red herring.  It happens to use X.509 as its preferred bit-bagging
+ > format for public keys, but that's about it.  People use self-signed certs,
+ > certs from unknown CAs [0], etc etc, and you don't need certs at all if you
+ > don't need them, <blatant self-promotion>I've just done an RFC draft 
+that uses
+ > shared secret keys for mutual authentication of client and server, with no
+ > need for certificates of any kind</blatant self-promotion>, so the use of
+ > certs, and in particular a hierarchical PKI, is merely an optional extra.
+ > It's no more required in SSL than it is in SSHv2.
+
+the pk-init draft for kerberos allows public keys .... allowing both
+cert & cert-less implementation
+
+<blatant aads-promotion>
+the scenario allows for public key registration in lieu of shared secret
+registration. the scenario is that r/o access, divulging, sniffing, etc
+doesn't result in compromise.
+
+in the token form ....
+http://www.garlic.com/~lynn/index.html#aadsstraw
+http://www.asuretee.com/
+
+the key-pair is gen'ed in the chip and never leaves the chip.
+
+as part of 3-factor authentication
+* something you have
+* something you know
+* something you are
+
+the chip in the token purely provides "something you have"
+authentication ... and the digital signature done by the token is purely
+to prove  that you have that particular token. It doesn't prove who you
+are, it just proves that you have a specific (extremely difficult to
+counterfeit) token as part of "something you have" authentication.
+
+if the token is augmented with a pin/password for its correct operation,
+then there can be 2-factor authentication. It doesn't involved
+shared-secrets since the pin/password is purely between the person and
+the hardware token.
+
+The business process validates that the token is of the type requiring
+PIN and/or biometric for
+correct operation.
+
+The ecdsa digital signature authentication protocol for kerberos,
+radius, x9.59 for all retail financial transactions, or ssh can be
+identical regardless of the integrity level.
+
+The ecdsa digital signature authentication protocol can be ubiquitous
+regardless of the authentication integrity level required.
+
+The business process to meet integrity requirements then can require
+sofware key-pair or hardware token key-pair, the level of integrity of
+the hardware token, and/or the operational characteristics of the
+hardware token (no-pin, pin, biometrics, etc) w/o changing the protocol.
+
+If the protocol is independent of the business process integrity issue
+then either the business and/or the end-user may be able to having
+personal choice about the level of integrity required. Furthermore, the
+person might even have personal choice whether they need a unique token
+per security environment, a single token for all security environment,
+and/or a small number of tokens selectively applied to different
+security environments
+
+the digital signature has nothing at all to do directly with the person,
+it is purely related to demonstrating the possession of the token (as
+part of something you have authentication) and possibly the integrity
+level of the token.
+
+The issue of the authentication protocol  is getting the bits and bytes for
+transmission correct but doesn't normally say what it means ... i.e. secret,
+shared-secret, one factor authentication, two-factor authentication,
+something you have authentication, something you know authentication,
+etc. ... although frequently the protocol is envisioned to be a specific
+implementation of a specific kind of authentication and trust/integrity level.
+
+recent token discussions
+http://www.garlic.com/~lynn/2003i.html#1 Two-factor authentication with SSH?
+http://www.garlic.com/~lynn/2003i.html#2 Two-factor authentication with SSH?
+http://www.garlic.com/~lynn/2003i.html#35 electronic-ID and key-generation
+http://www.garlic.com/~lynn/2003i.html#36 electronic-ID and key-generation
+older token discussions
+http://www.garlic.com/~lynn/aadsm10.htm#bio6 biometrics
+http://www.garlic.com/~lynn/aadsm10.htm#keygen2 Welome to the Internet, 
+here's your private key
+http://www.garlic.com/~lynn/aadsm11.htm#5 Meaning of Non-repudiation
+http://www.garlic.com/~lynn/aadsm12.htm#24 Interests of online banks and 
+their users [was Re: Cryptogram:  Palladium Only for DRM]
+http://www.garlic.com/~lynn/aadsm7.htm#rhose12 when a fraud is a sale, Re: 
+Rubber hose attack
+http://www.garlic.com/~lynn/aepay10.htm#65 eBay Customers Targetted by 
+Credit Card Scam
+http://www.garlic.com/~lynn/2000f.html#65 Cryptogram Newsletter is off the 
+wall?
+http://www.garlic.com/~lynn/2001c.html#39 PKI and Non-repudiation 
+practicalities
+http://www.garlic.com/~lynn/2001g.html#1 distributed authentication
+http://www.garlic.com/~lynn/2001g.html#11 FREE X.509 Certificates
+http://www.garlic.com/~lynn/2001j.html#52 Are client certificates really 
+secure?
+http://www.garlic.com/~lynn/2001k.html#61 I-net banking security
+http://www.garlic.com/~lynn/2002c.html#7 Opinion on smartcard security 
+requested
+http://www.garlic.com/~lynn/2002e.html#18 Opinion  on smartcard security 
+requested
+http://www.garlic.com/~lynn/2002e.html#36 Crypting with Fingerprints ?
+http://www.garlic.com/~lynn/2002h.html#41 Biometric authentication for 
+intranet websites?
+http://www.garlic.com/~lynn/2002i.html#65 privileged IDs and non-privileged IDs
+http://www.garlic.com/~lynn/2002n.html#30 Help! Good protocol for national 
+ID card?
+http://www.garlic.com/~lynn/2002o.html#57 Certificate Authority: Industry 
+vs. Government
+
+</blatent aads promotion>
+--
+Anne & Lynn Wheeler    http://www.garlic.com/~lynn/
+Internet trivia 20th anv http://www.garlic.com/~lynn/rfcietff.htm
+   
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+

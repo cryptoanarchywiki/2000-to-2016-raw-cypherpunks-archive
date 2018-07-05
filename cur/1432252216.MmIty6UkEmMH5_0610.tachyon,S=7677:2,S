@@ -1,0 +1,172 @@
+From owner-cypherpunks@jfet.org  Fri May 19 15:10:58 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.6/8.13.6/Debian-1) with ESMTP id k4JJA6hg011308
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 19 May 2006 15:10:06 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.6/8.13.6/Submit) id k4JJA5Qd011307
+	for cypherpunks-outgoing; Fri, 19 May 2006 15:10:05 -0400
+Date: Fri, 19 May 2006 21:10:01 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@jfet.org
+Subject: [schoen@eff.org: Threats to anonymity set at and above the
+  application layer; HTTP headers]
+Message-ID: <20060519191001.GQ26713@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.5.9i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 6560
+Lines: 144
+
+----- Forwarded message from Seth David Schoen <schoen@eff.org> -----
+
+From: Seth David Schoen <schoen@eff.org>
+Date: Fri, 19 May 2006 11:51:54 -0700
+To: or-talk@seul.org
+Subject: Threats to anonymity set at and above the application layer; HTTP
+headers
+User-Agent: Mutt/1.5.11
+Reply-To: or-talk@freehaven.net
+
+It's pretty well understood that anonymity can be lost at higher protocol
+layers even when it's well protected at lower layers.
+
+One eye-opening paper on this point is "Can Pseudonymity Really Guarantee
+Privacy?" by Rao and Rohatgi (in the Freehaven Anonymity Bibliography):
+
+http://www.usenix.org/publications/library/proceedings/sec2000/full_papers/ra
+o/rao.pdf
+
+This is a philosophically interesting problem; it prompts the question "if
+pseudonymity can't guarantee privacy, what _can_?".  (Rao and Rohatgi
+remind us that the authors of the Federalist Papers used pseudonyms and
+were still identified solely from the evidence of their writing.)
+
+There is also the scary field of timing attacks on users' typing:
+
+http://www.cs.berkeley.edu/~daw/papers/ssh-use01.pdf
+http://www.cs.berkeley.edu/~tygar/papers/Keyboard_Acoustic_Emanations_Revisit
+ed/ccs.pdf
+
+(The Tygar paper is not really relevant for network surveillance, but
+it shows the scariness of statistical methods for figuring out what
+users are doing based on seemingly irrelevant information.)
+
+In a sense, there are many privacy-threatening features in and above the
+application layer (some of them depending on the nature and latency of a
+communication):
+
+* timing of access (what time zone are you in, when do you usually do
+something?) -- for communications with non-randomized latency < 1 day
+
+* typing patterns (cf. Cliff Stoll's _Cuckoo's Egg_ and the Song et al.
+paper)
+
+* typing speed
+
+* language comprehension and selection
+
+* language proficiency
+
+* idiosyncratic language use
+
+* idiosyncratic language errors (cf. Rao and Rohatgi)
+
+* cookies and their equivalents (cf. Martin Pool's "meantime", a cookie
+equivalent using client-side information that was intended for a
+totally different purpose -- cache control)
+
+* unique browser or other application headers or behavior (distinguishing
+MSIE from Firefox from Opera? not just based on User-agent but based on
+request patterns, e.g. for inline images, and different interpretations
+of HTTP standards and perhaps CSS and JavaScript standards)
+
+* different user-agent versions (including leaked information about the
+platform)
+
+* different privoxy versions and configurations
+
+I'm not sure what to do to mitigate these things.  The Rao paper alone
+strongly suggests that providing privacy up to the application layer
+will not always make communications unlinkable (and then there is the
+problem of insulating what pseudonymous personae are supposed to know
+about or not know about, and the likelihood of correlations between
+things they mention).
+
+These problems are alluded to in on the Tor web site:
+
+   Tor can't solve all anonymity problems. It focuses only on protecting
+   the transport of data. You need to use protocol-specific support
+   software if you don't want the sites you visit to see your identifying
+   information. For example, you can use web proxies such as Privoxy
+   while web browsing to block cookies and withhold information about
+   your browser type.
+
+   Also, to protect your anonymity, be smart. Don't provide your name
+   or other revealing information in web forms. Be aware that, like
+   all anonymizing networks that are fast enough for web browsing, Tor
+   does not provide protection against end-to-end timing attacks: If
+   your attacker can watch the traffic coming out of your computer,
+   and also the traffic arriving at your chosen destination, he can
+   use statistical analysis to discover that they are part of the same
+   circuit.
+
+However, the recommendation to use Privoxy, by itself, is far from
+solving the problem of correlations between user and user sessions.
+I think a low-hanging target is the uniqueness of HTTP headers sent by
+particular users of HTTP and HTTPS over Tor.  Accept-Language, User-Agent,
+and a few browser-specific features are likely to reveal locale and OS
+and browser version -- sometimes relatively uniquely, as when someone
+uses a Linux distribution that ships with a highly specific build of
+Firefox -- and this combination may serve to make people linkable or
+distinguishable in particular contexts.  Privoxy does _not_, depending on
+its configuration, necessarily remove or rewrite all of the potentially
+relevant HTTP protocol headers.  Worse, different Privoxy configurations
+may actually introduce _new_ headers or behaviors that further serve to
+differentiate users from one another.
+
+One example is that some Privoxy configurations insert headers specifically
+identifying the user as a Privoxy user and taunting the server operator;
+but if some users do this and other users don't, the anonymity set is
+chopped up into lots of little bitty anonymity sets.  For instance:
+
++add-header{X-User-Tracking: sucks}
+
+User tracking does suck, but adding an optional header saying so has the
+obvious effect of splitting the anonymity set in some circumstances into
+people who send the X-User-Tracking: sucks header and people who don't.
+Any variation in practice here is potentially bad for the size of the
+anonymity set.
+
+A remedy for this would be to try to create a standardized Privoxy
+configuration and set of browser headers, and then try to convince as
+many Tor users as possible to use that particular configuration.  (One
+way to do this is to try to convince everyone who makes a Tor+Privoxy
+distribution or product to use the agreed-upon default configuration.)
+The goal is not to prevent people from controlling their own Privoxy
+configurations or doing more things to protect their privacy; rather,
+it is to try to reduce the variety in headers and behaviors seen by
+web servers contacted by Tor users on different platforms.
+
+--
+Seth Schoen
+Staff Technologist                                schoen@eff.org
+Electronic Frontier Foundation                    http://www.eff.org/
+454 Shotwell Street, San Francisco, CA  94110     1 415 436 9333 x107
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820            http://www.ativel.com
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+
+[demime 1.01d removed an attachment of type application/pgp-signature which had a name of signature.asc]
+

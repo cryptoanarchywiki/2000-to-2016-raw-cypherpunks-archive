@@ -1,0 +1,221 @@
+From owner-cypherpunks@al-qaeda.net  Mon Feb 23 19:00:34 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id n1NNxlc9028710
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 23 Feb 2009 18:59:47 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id n1NNxlBF028709
+	for cypherpunks-outgoing; Mon, 23 Feb 2009 18:59:47 -0500
+Message-Id: <7D8DA461-3392-40BE-9230-EDE3211DEA96@shipwright.com>
+From: "R.A. Hettinga" <rah@shipwright.com>
+To: cypherpunks@al-qaeda.net
+Content-Type: text/plain; charset=US-ASCII; format=flowed; delsp=yes
+Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Apple Message framework v930.3)
+Subject: Re: Shamir secret sharing and information theoretic security
+Date: Mon, 23 Feb 2009 18:59:14 -0500
+X-Mailer: Apple Mail (2.930.3)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 7975
+Lines: 195
+
+Begin forwarded message:
+
+> From: Jerry Leichter <leichter@lrw.com>
+> Date: February 22, 2009 2:37:13 PM EST
+> To: R.A.Hettinga <rah@shipwright.com>
+> Cc: Cryptography <cryptography@metzdowd.com>
+> Subject: Re: Shamir secret sharing and information theoretic security
+>
+> On Feb 17, 2009, at 6:03 PM, R.A. Hettinga wrote:
+>
+>> Begin forwarded message:
+>>
+>> From: Sarad AV <jtrjtrjtr2001@yahoo.com>
+>> Date: February 17, 2009 9:51:09 AM EST
+>> To: cypherpunks@al-qaeda.net
+>> Subject: Shamir secret sharing and information theoretic security
+>>
+>> hi,
+>>
+>>
+>> I was going through the wikipedia example of shamir secret sharing
+>> which says it is information theoretically secure.
+>>
+>> http://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing
+>>
+>> In the example in that url, they have a polynomial
+>> f(x) = 1234 + 166.x + 94.x^2
+>>
+>> they construct 6 points from the polynomial
+>> (1,1494);(2,1942);(3,2578);(4,3402);(5,4414);(6,5615)
+>>
+>> the secret here is S=1234. The threshold k=3 and the number of
+>> participants n=6.
+>>
+>> If say, first two users collude then
+>> 1494 = S + c1 .1 + c2.1
+>> 1942 = S + c1 .2 + c2.2
+>>
+>> clearly, one can start making inferences about the sizes of the
+>> unknown co-efficients c1 and c2 and S.
+>>
+>>
+>> However, it is said in the URL above that Shamir secret is
+>> information theoretically secure
+> It is.  Knowing some of the coefficients, or some constraints on
+> some of the coefficients, is just dual to knowing some of the
+> points.  Neither affects the security of the system, because the
+> coefficients *aren't secrets* any more than the values of f() at
+> particular points are.  They are *shares* of secrets, and the
+> security claim is that without enough shares, you have no
+> information about the remaining shares.
+>
+> The argument for information-theoretic security is straightforward:
+> An n'th degree polynomial is uniquely specified if you know its
+> value at n+1 points - or, dually, if you know n+1 coefficients.  On
+> the other hand, *any* set of n+1 points (equivalently, any set of n
+> +1 coefficients) corresponds to a polynomial.  Taking a simple
+> approach where the secret is the value of the polynomial at 0, given
+> v_1, v_2, ..., v_n and *any* value v, there is a (unique) polynomial
+> of degree at most n with p(0) = v and p(i) = v_i for i from 1 to n.
+> Dually, the value p(0) is exactly the constant term in the
+> polynomial.  Given any fixed set of values c_1, c_2, ..., c_n, and
+> any other value c there is obviously a polynomial p(x) = Sum_{0 to n}
+> (c_i x^i), where c_0 = c, and indeed p(0) = c.
+>
+> Or ... in terms of your problem:  Even if I give you, not just a
+> pair of linear equations in c1, c2, and S, but the actual values c1
+> and c2 - the constant term (the secret) can still be anything at all.
+>
+> The description above is nominally for polynomials over the reals.
+> It works equally for polynomials over any field - like the integers
+> mod some prime, for example.  For a finite field, there is an
+> obvious interpretation of probability (the uniform probability
+> distribution), and given that, "no information" can be interpreted
+> in terms of the difference between your a priori and a posterio
+> estimates of the probability that p(0) takes on any particular
+> value, the values of p(1), ..., p(n) (and that differences is
+> exactly 0).  Because there can be no uniform probability
+> distribution over all the reals, you can't state things in quite the
+> same way, and "information theoretic security" is a bit of a vague
+> notion.  Then again, no one does computations over the reals.  FP
+> values - say, IEEE single precision - aren't a field and there are
+> undoubtedly big biases if you try to use Shamir's technique there.
+> (It should work over infinite-precision rationals.)
+>
+>                                                        -- Jerry
+>
+>
+>>
+>>
+>> in the url below they say
+>> http://en.wikipedia.org/wiki/Information_theoretic_security
+>> "Secret sharing schemes such as Shamir's are information
+>> theoretically secure (and in fact perfectly secure) in that less
+>> than the requisite number of shares of the secret provide no
+>> information about the secret."
+>>
+>> how can that be true? we already are able to make inferences.
+>>
+>> Moreover say that, we have 3 planes intersecting at a single point
+>> in euclidean space, where each plane is a secret share(Blakely's
+>> scheme). With 2 plane equations, we cannot find the point of
+>> intersection but we can certainly narrow down to the line where the
+>> planes intersect. There is information loss about the secret.
+>>
+>>
+>> from this it appears that Shamir's secret sharing scheme leaks
+>> information from its shares but why is it then considered
+>> information theoretically secure?
+>>
+>> They do appear to leak information as similar to k-threshold
+>> schemes using chinese remainder theorem.
+>>
+>> what am i missing?
+>>
+>> Thanks,
+>> Sarad.
+>>
+>>
+>> ---------------------------------------------------------------------
+>> The Cryptography Mailing List
+>> Unsubscribe by sending "unsubscribe cryptography" to
+majordomo@metzdowd.com
+>
+>
+Begin forwarded message:
+
+> From: sbg@acw.com
+> Date: February 23, 2009 1:05:47 PM EST
+> To: "Jerry Leichter" <leichter@lrw.com>
+> Cc: "R.A. Hettinga" <rah@shipwright.com>, "Cryptography"
+<cryptography@metzdowd.com
+> >
+> Subject: Re: Shamir secret sharing and information theoretic security
+>
+> Is it possible that the amount of information that the knowledge of a
+> sub-threshold number of Shamir fragments leaks in finite precision
+> setting
+> depends on the finite precision implementation?
+>
+> For example, if you know 2 of a 3 of 5 splitting and you also know
+> that
+> the finite precision setting in which the fragments will be used is
+> IEEE
+> 32-bit floating point or GNU bignum can you narrow down the search
+> for the
+> key relative to knowing no fragments and nothing about the finite
+> precision implementation?
+>
+>
+>
+Begin forwarded message:
+
+> From: Jerry Leichter <leichter@lrw.com>
+> Date: February 23, 2009 2:03:01 PM EST
+> To: sbg@acw.com
+> Cc: "R.A. Hettinga" <rah@shipwright.com>, "Cryptography"
+<cryptography@metzdowd.com
+> >
+> Subject: Re: Shamir secret sharing and information theoretic security
+>
+> On Feb 23, 2009, at 1:05 PM, sbg@acw.com wrote:
+>
+>> Is it possible that the amount of information that the knowledge of a
+>> sub-threshold number of Shamir fragments leaks in finite precision
+>> setting
+>> depends on the finite precision implementation?
+>>
+>> For example, if you know 2 of a 3 of 5 splitting and you also know
+>> that
+>> the finite precision setting in which the fragments will be used is
+>> IEEE
+>> 32-bit floating point or GNU bignum can you narrow down the search
+>> for the
+>> key relative to knowing no fragments and nothing about the finite
+>> precision implementation?
+> I've never seen any work done in this direction.  When you consider
+> exact values, FP arithmetic is very messy and has almost no nice
+> mathematical properties.  (It's nice in a model where all you care
+> about is relative error - which is actually a rather unnatural
+> model!)  As a result, I think it's unlikely you can come up with any
+> general theory here.  But you can probably come up with examples
+> showing that there's a problem.  It's usually easiest to work with a
+> simpler form of FP math - e.g., assume 4 decimal digits and a 1-
+> digit decimal exponent.  Consider just quadratics, which we can
+> write as
+> p(x) = (x - r1)*(x - r2).  If r1*r2 overflows in a particular FP
+> system, you can't write down the value of the constant coefficient -
+> hence, you can't write down the value p(0).  Yet p(1) and p(2) might
+> have values you *can* write down.  I'm not sure how you leverage
+> this to produce a bias, but it certainly shows that FP arithmetic
+> just plain doesn't have the right properties to support the
+> reasoning behind Shamir secret sharing....
+>
+>                                                        -- Jerry
+

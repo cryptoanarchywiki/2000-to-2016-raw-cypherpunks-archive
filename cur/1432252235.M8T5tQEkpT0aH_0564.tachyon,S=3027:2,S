@@ -1,0 +1,67 @@
+From owner-cypherpunks@al-qaeda.net  Wed Aug 11 23:47:11 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i7C4l8hs032726
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Wed, 11 Aug 2004 23:47:08 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i7C4l8VZ032725
+	for cypherpunks-outgoing; Wed, 11 Aug 2004 23:47:08 -0500
+Date: Thu, 12 Aug 2004 06:44:26 +0200 (CEST)
+From: Thomas Shaddack <shaddack@ns.arachne.cz>
+To: "Major Variola \(ret\)" <mv@cdc.gov>
+cc: "cypherpunks@al-qaeda.net" <cypherpunks@al-qaeda.net>
+Subject: Re: Forensics on PDAs, notes from the field
+In-Reply-To: <411AC636.230A1946@cdc.gov>
+Message-ID: <0408120630100.10414@somehost.domainz.com>
+References: <411AC636.230A1946@cdc.gov>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 1912
+Lines: 40
+
+On Wed, 11 Aug 2004, Major Variola (ret) wrote:
+
+> Obvious lesson: Steganography tool authors, your programs
+> should use the worm/HIV trick of changing their signatures
+> with every invocation.  Much harder for the forensic
+> fedz to recognize your tools.  (As suspicious, of course).
+
+It should be enough to do that at the installation time. The adversary in 
+this model gets to analyze the file only once, and we want to make sure 
+that nobody tampered with the file as a protection against other, more 
+"active" threat models. What we want is to have a file and its hash, so we 
+can make sure the file content is unchanged, but the hash has to be as 
+globally-unique as possible.
+
+> The NIST CDROM also doesn't seem to include source code amongst its 
+> sigs, so if you compile yourself, you may avoid their easy glance.
+
+A cool thing for this purpose could be a patch for gcc to produce unique 
+code every time, perhaps using some of the polymorphic methods used by 
+viruses.
+
+Just adding a chunk of data to make the hash unique will work against the 
+current generation of the described tools. But we should plan to the 
+future, what moves the adversary can do to counter this step.
+
+
+Then there's the matching of date/time of the files to "real-life" events. 
+Perhaps a countermeasure could be a modified vfat filesystem which 
+assigns free clusters randomly instead of sequentially (on a solid-state 
+medium fragmentation does not matter), which avoids the reconstruction of 
+the file saving order by matching the position of their clusters (for the 
+price of making undelete difficult), and an absence of timestamps 
+(01-01-1970 is a nice date anyway).
+
+The file delete function in the filesystem driver can be modified to file 
+overwrite-and-delete, for the price of higher wear of the FlashEPROM 
+medium.
+
+Linux-based (and open-architecture in general) PDAs should offer much 
+higher thug-resistance.
+

@@ -1,0 +1,120 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Fri Sep 27 13:11:52 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g8RHBqv13680
+	for <rsw@opamp.org>; Fri, 27 Sep 2002 13:11:52 -0400
+Received: from lion.ninthwonder.com (lion.ninthwonder.com [151.199.66.147])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id NAA28683
+	for <rsw@mit.edu>; Fri, 27 Sep 2002 13:11:52 -0400 (EDT)
+Received: by lion.ninthwonder.com (Postfix, from userid 96)
+	id 296FC30711; Fri, 27 Sep 2002 13:04:52 -0400 (EDT)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by lion.ninthwonder.com (Postfix) with ESMTP id ED69B3070A
+	for <cryptography@wasabisystems.com>; Fri, 27 Sep 2002 13:04:50 -0400 (EDT)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 8A41FD97FA; Fri, 27 Sep 2002 13:04:50 -0400 (EDT)
+Received: from vulcan.rsasecurity.com (mail.rsasecurity.com [204.167.114.123])
+	by lion.ninthwonder.com (Postfix) with SMTP id B7D7430711
+	for <cryptography@wasabisystems.com>; Fri, 27 Sep 2002 11:27:42 -0400 (EDT)
+Received: from no.name.available by vulcan.rsasecurity.com
+          via smtpd (for lion.ninthwonder.com [151.199.66.147]) with SMTP; 27 Sep 2002 15:27:42 UT
+Received: from ebola.securitydynamics.com (ebola.securid.com [192.80.211.4])
+	by sdtihq24.securid.com (Pro-8.9.3/Pro-8.9.3) with ESMTP id LAA07876;
+	Fri, 27 Sep 2002 11:27:32 -0400 (EDT)
+Received: from exna00.securitydynamics.com (localhost [127.0.0.1])
+	by ebola.securitydynamics.com (8.10.2+Sun/8.10.2) with ESMTP id g8RFP6229109;
+	Fri, 27 Sep 2002 11:25:06 -0400 (EDT)
+Received: by exna00.securitydynamics.com with Internet Mail Service (5.5.2653.19)
+	id <3TPVZNZC>; Fri, 27 Sep 2002 11:27:31 -0400
+Message-ID: <F504A8CEE925D411AF4A00508B8BE90A041BAE3D@exna07.securitydynamics.com>
+From: "Trei, Peter" <ptrei@rsasecurity.com>
+To: John Gilmore <gnu@toad.com>,
+   "'Ralf-P. Weinmann'" <weinmann@cdc.informatik.tu-darmstadt.de>,
+   "'shamrock@cypherpunks.to'" <shamrock@cypherpunks.to>
+Cc: "'cryptography@wasabisystems.com'" <cryptography@wasabisystems.com>,
+   "'nugget@distributed.net'" <nugget@distributed.net>
+Subject: RE: RSA's RC5-64 Secret Key Challenge has been solved.
+Date: Fri, 27 Sep 2002 11:27:00 -0400
+MIME-Version: 1.0
+X-Mailer: Internet Mail Service (5.5.2653.19)
+Content-Type: text/plain
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 2738
+Lines: 72
+
+> Ralf-P. Weinmann[SMTP:weinmann@cdc.informatik.tu-darmstadt.de] wrote:
+> 
+> 
+> On Thu, Sep 26, 2002 at 02:45:12PM -0700, John Gilmore wrote:
+> > [...]
+> > 
+> > After getting that getting started, though, I suggest beginning a
+> > brute-force attack on the GSM cellphone encryption algorithm.  That's
+> > in use in hundreds of millions of devices worldwide, protecting (or
+> > failing to protect) the privacy of billions of phone calls a day.
+> 
+> Is A5/3 deployed yet? If not, a brute force attack is not needed, for A5/1
+> and
+> A5/2 more efficient tools exist to cryptanalyse it. Even in real-time,
+> although
+> you might need to invest in some hard disk space before being able to
+> eavesdrop
+> and intercept. See the following paper for more information:
+> 
+> "A. Biryukov, A. Shamir and D. Wagner, Real Time Cryptanalysis of A5/1 on
+> a PC"
+> 
+> As for A5/3, I'm not really sure what key length network operators
+> are/will be
+> using, 64-128 bits are allowed in the design requirements documentation.
+> The
+> specification should be available on the 3GPP website. A5/3 is based on
+> Kasumi.
+> 
+> Cheers,
+> Ralf
+> 
+I spoke to David McNett (nugget@distributed.net) yesterday. He told me that
+they intend to fire up a the RC5-72 challenge, hoping to get lucky and find
+the key near the beginning.
+
+I think they're open to other suggestions, however. Factoring may or may not
+be reasonable. While RC5, DES, etc require minimal memory and storage,
+and can so run unobtrusively in the spare cycles of almost any machine,
+factoring,
+- even the seiving step - has large memory and storage requirements. The
+matrix reduction step at the end does not have any efficient distributed
+implementation
+I'm aware of.
+
+I think the lower RSA factoring challenges *may* be possible - RSA-576 is
+still
+standing, with a $10k prize. Other factoring challenges have up to $200k
+prizes.
+
+Challenges need to be carefully set up. It must be legal - hacking a
+deployed
+system in the face of the objections of the owner won't fly. It must be
+credible,
+in that there must be no reason to suspect collaboration between the 
+challenger and the attacker. It must be realistic - it should model a
+real-world
+use closely enough to show that changes need to be made (the RSA secret
+key challenges where designed with IPSEC headers in mind - the single DES
+option was deprecated as soon as we showed that to be weak).
+
+This is an exciting time. With RC5-64 fallen, there are a lot of options for
+what
+to do next. The most interesting thing may not involve cryptanalysis.
+
+Peter Trei
+
+
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

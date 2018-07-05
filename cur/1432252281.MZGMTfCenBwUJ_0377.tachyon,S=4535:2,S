@@ -1,0 +1,85 @@
+From owner-cypherpunks@lne.com  Thu May  1 20:57:38 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h420vbt31045
+	for <rsw@jfet.org>; Thu, 1 May 2003 20:57:37 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h420oTjC010651
+	for cypherpunks-goingout345; Thu, 1 May 2003 17:50:29 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+From: Nomen Nescio <nobody@dizum.com>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@dizum.com>.
+To: cypherpunks@lne.com
+Subject: Re: Making Money in Digital Money
+Message-ID: <0cdf430384f8616dadb6d54a58d678f4@dizum.com>
+Date: Fri,  2 May 2003 02:50:05 +0200 (CEST)
+X-Virus-Scanned: by outpost.zedz.net (amavis-20020300)
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 3386
+Lines: 58
+
+Zem writes:
+
+> Alice the music critic buys copies of new content at relatively high
+> prices from the creator, or close sources.  When Bob requests a copy of
+> a particular file, Alice encrypts it to Bob's public key and signs the
+> encrypted copy, selling him this 'reviewed' copy for reproduction cost +
+> profit.  Bob can verify he's received a good copy, but he can't
+> redistribute Alice's reviewed version without revealing his secret key.
+
+Four points:
+
+First, I want to reiterate that the original idea of the so-called
+"recursive auction" is fatally flawed.  Apparently Eric Hughes was aware
+of this, but it never sunk into Bob Hettinga's thick head.  All this talk
+of editing and reputation is a different idea with a different goal.
+The original recursive auction was simple, as Hettinga described it:
+you sell the first copy for a lot, the next for somewhat less, the next
+for even less, and so on.  That doesn't work.  End of story.
+
+Second, your idea above for preventing redistribution doesn't work.
+Aside from the workaround you came up with, using a throw-away encryption
+key, it is easy to redistribute the signed data.  When the file was
+encrypted to Bob's key, using PK cryptography, what actually happens
+is that a single-use key is generated, which we'll call K.  This is a
+symmetric crypto key, like for AES or 3DES.  K is encrypted with Bob's
+public key, and then the file is encrypted using K.  So all Bob has to do
+is to reveal K when he redistributes the Alice-signed, encrypted file.
+This allows everyone to read the data and see that Alice did sign it
+in encrypted form.  The fact that K produces a meaningful decryption of
+the AES encrypted file is itself proof that K is valid, but if more is
+needed, it is easy to release additional information to prove that K is
+a valid decryption of the PK encrypted part.
+
+Third, there are better cryptographic ways to do what you want.  You can
+use Chaum's designated confirmer signatures, which Alice can issue such
+that only Bob can confirm the signature.  Or you could use the ring
+signatures from Rivest et al, which produce a file which could have
+been signed either by Alice or Bob, meaning that when Bob redistributes
+it there is no actual evidence that Alice signed it.  (That's how the
+designated confirmer signatures work, too.)  Neither of these approaches
+requires the data to be encrypted, just signed.
+
+Or even simpler, Alice can avoid signing entirely, making the file
+available for download to subscribers who authenticate with SSL.  The key
+exchange in this case involves Bob sending K to Alice, encrypted with
+her public key; and the fact that she decrypts it proves to Bob that
+she is who she claims.  But this is not a transferable proof because
+Bob could have forged it all.
+
+Fourth, Eric Hughes pointed out the fundamental flaw in this whole
+approach, many years ago.  As others have pointed out, Bob can simply
+distribute Alice's files under his own name, and quickly gain a reputation
+for faithfully passing along Alice's information.  If Alice threatens
+to cancel subscribers who do this, Bob redistributes under a different
+identity.  Now we are back to watermarking to try to figure out which
+subscribers are passing along her reports, with all the countermeasures
+and counter-countermeasures that entails.  There is no evidence that
+the content protector can expect to win such a battle.
+

@@ -1,0 +1,178 @@
+From owner-cypherpunks@al-qaeda.net  Mon Jan 30 03:01:44 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q0U7wppa024420
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 30 Jan 2012 02:58:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1327910331;
+	bh=9000uRjllvEqSMzDPvW4Z3vcKVbcMWAydUup5xASfDU=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=MgGXq2T47CVbGHO33ViqhXFj+bHmfAZOYHsTO8RCV+ywlkyBlH3yRGeGKdRsV+rIU
+	 zQe52/ytGC/6qGEFGBQsh2Cv6DqFuxyubSRbsZQC+uvwj6oX7tnnABBPTD6LDr89Ic
+	 AARigQ3M+PU49IlJtGri+E5k0sHEkwGTxJc0TeJg=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q0U7wpYK024419
+	for cypherpunks-outgoing; Mon, 30 Jan 2012 02:58:51 -0500
+Date: Mon, 30 Jan 2012 08:58:48 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Re: [liberationtech] How secure is Bluetooth?
+Message-ID: <20120130075848.GN7343@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 6134
+Lines: 144
+
+----- Forwarded message from Jacob Appelbaum <jacob@appelbaum.net> -----
+
+From: Jacob Appelbaum <jacob@appelbaum.net>
+Date: Sun, 29 Jan 2012 22:23:07 -0800
+To: Brian Conley <brianc@smallworldnews.tv>
+Cc: "liberationtech@lists.stanford.edu" <liberationtech@lists.stanford.edu>
+Subject: Re: [liberationtech] How secure is Bluetooth?
+User-Agent: mutt
+
+On 01/29/2012 04:09 PM, Brian Conley wrote:
+> See my first email please.
+> 
+> Are there any documented cases of monitoring the audio transmitted between
+> a Bluetooth headset and phone.
+
+I guess you're looking for some personal stories or big news stories?
+
+> 
+> I am quite aware that Bluetooth is not safe for a variety of reasons.
+> 
+
+Please note that your users will likely be targeted by cops with FinFisher:
+http://speciali.espresso.repubblica.it/pdf/spyfiles/it-intrusion.pdf
+
+> When preparing advice for non technical people with very real security
+> problems that are known, its important to provide the best advice about
+> what is not known in their situation. I've been unable to find any
+> information on the viability of intercepting audio transmissions, even the
+> 2007 article doesn't appear to suggest for certain that they could
+> reconstruct the audio file, merely that the potential might be there.
+> 
+
+Audio is a weird way to frame it. You have devices that communicate with
+Bluetooth (TM) use common cryptography and protocols. The crypto is
+busted: http://en.wikipedia.org/wiki/E0_(cipher)
+
+This is a pretty funny read:
+http://en.wikipedia.org/wiki/Bluetooth#Security
+
+Overall, I think it's important to note that even if a device wasn't
+used in a discoverable mode, a sniffer can at least passively track and
+try to exploit devices nearby after seeing them transmit. This is likely
+similiar to Bluejacking:
+http://en.wikipedia.org/wiki/Bluejacking
+
+Here's a project that uses a car as an audio bug:
+http://trifinite.org/trifinite_stuff_carwhisperer.html
+
+> I'm only asking if anyone has heard of documented cases of listening in to
+> Bluetooth audio. So far it only seems to happen if there is a prior exploit
+> in place and that doesn't even appear to be definitive.
+
+R&S sells a solution to sniff traffic between two devices:
+http://www2.rohde-schwarz.com/file_13603/Bluetooth_Sniffer_v2.4.pdf
+
+"In  an  active  Piconet,  where  at  least  two  Bluetooth.  devices
+(one  master,  one  or  more  slaves)  interact  with  each  other,  the
+ USB  dongle  is  air  sniffing the communication  between  those.  This
+ analysis  is  required  to  check  interoperability  of  Bluetooth.
+devices  from  different  vendors  and  to  troubleshoot  problems  by
+detailed protocol decoding"
+
+Those guys also sell IMSI-catchers if you're in the market...
+
+This "Decrypting Encrypted Bluetooth data with FTS4BT" is also a good read:
+http://www.fte.com/docs/encryption%20and%20decryption%20in%20fts4bt.pdf
+
+Basically, the FTS4BT just needs the pin to decrypt the data and that's
+where h1kari's work comes in:
+http://openciphers.sourceforge.net/oc/
+http://openciphers.sourceforge.net/oc/btpincrack.php
+
+Bluetooth Pin Cracking Core says:
+
+"The bluetooth pin cracking core implements the basic bluetooth pin
+cracking attack by generating possible PINs and running then through
+SAFER+ to verify if they are correct or not. This uses the pipelined
+implementation of SAFER+ and loops the output of the pipeline back into
+itsself 7 times to perform all of the E21/E22/E1 functions. The max
+clock speed we've been able to run it at on an E-12 is 75MHz which
+results in ~10 million PINs per second compared to roughly 40k on a
+modern CPU."
+
+the openciphers project supports the protocol analyser files produced by
+these devices:
+http://www.lecroy.com/protocolanalyzer/?capid=103&mid=511
+
+This does HCI and air interface sniffing in sync:
+http://www.connectblue.com/products/sniffer-protocol-analyzers/bluetooth-sniffer-protocol-analyzer/
+
+Note the features of that one:
+"Extracts Audio into WAV files: Supports A2DP, HSP & HF Profiles with
+playback for rapid quality check or performing a more detailed analysis"
+
+And if all of that doesn't convince you that someone can sniff Bluetooth
+- I encourage you to read this student's web page:
+http://nap.cse.bgu.ac.il/home/index.php/Bluetooth_Sniffing
+
+This seems to be the best buy for your money:
+http://compare.ebay.com/like/150735473216?var=lv&ltyp=AllFixedPriceItemTypes&var=sbar
+
+$799.99 for the LeCroy Merlin CATC Mobile Bluetooth Protocol Analyzer
+seems like a deal. Even cheaper than the USRP!
+
+If you're looking for other devices for BT sniffing, I also found this:
+http://www.palowireless.com/bluearticles/bluetoothanalyzercompare1.asp
+
+And finally - the Ellisys equipment:
+http://www.ellisys.com/products/bex400/revolution.php
+"The new Ellisys All-Channel sniffer robustly records any packet, at any
+time, from any neighboring piconet, with zero-configuration and without
+being intrusive."
+
+http://www.ellisys.com/products/bex400/ has the best quote:
+"Determine PIN codes automatically and decrypt the data on the fly"
+
+Two nice photos of the device and software:
+http://www.ellisys.com/archive/images/bex400.png
+http://www.ellisys.com/archive/images/bex400_soft.png
+
+All the best,
+Jacob
+_______________________________________________
+liberationtech mailing list
+liberationtech@lists.stanford.edu
+
+Should you need to change your subscription options, please go to:
+
+https://mailman.stanford.edu/mailman/listinfo/liberationtech
+
+If you would like to receive a daily digest, click "yes" (once you click above) next to "would you like to receive list mail batched in a daily digest?"
+
+You will need the user name and password you receive from the list moderator in monthly reminders.
+
+Should you need immediate assistance, please contact the list moderator.
+
+Please don't forget to follow us on http://twitter.com/#!/Liberationtech
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

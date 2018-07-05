@@ -1,0 +1,88 @@
+From cypherpunks-bounces@cpunks.org  Tue Oct 22 15:07:51 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9MJ7Ki7009124;
+	Tue, 22 Oct 2013 15:07:24 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; insecure key"
+	header.d=gmail.com header.i=@gmail.com header.b=SnCEn9Mq;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-ee0-f54.google.com (mail-ee0-f54.google.com [74.125.83.54])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9MJ7Hf4009119
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Tue, 22 Oct 2013 15:07:19 -0400
+Received: by mail-ee0-f54.google.com with SMTP id e53so4728920eek.27
+ for <cypherpunks@cpunks.org>; Tue, 22 Oct 2013 12:07:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=date:from:message-id:to:subject:in-reply-to:references:mime-version
+ :content-type:content-transfer-encoding;
+ bh=OhzTnJ2hGMa/nsaCYtDup8ryEk5ROxr8Qfwjuwie/fU=;
+ b=SnCEn9MquZ9o0oTJrkCOJJUwfOIcGMfj/0YspYZNRSONxI5VXJFIqzocXjBZMYw4O+
+ P5YS8v98pJRTX1J5IG+7k7qQW46EjCeTW5LgRTFafIz36ilX6Usr4Wh9zNM41eocvu5T
+ pqNMEThPr6Sk3a2gtBchrpjyU2lLlB5/+OQra4o4SNohA2otyG3nndDwy7lpUWSEG1ed
+ lyOrEIDKT2qBsOjc69KESP3NKFVBVRReCxj7ZcuMeLn7AXhsYw2Y7JVshFaguG10ry2z
+ 6qSej9j+8oth4gZI5oOMfJhUg9yk0Smv0tUynWM5uy5+WLcR6uJ7lzjaO+1+56EKZimh
+ 3ohw==
+X-Received: by 10.14.177.199 with SMTP id d47mr30171590eem.14.1382468831687;
+ Tue, 22 Oct 2013 12:07:11 -0700 (PDT)
+Received: from [192.168.2.151] (catv-176-63-52-22.catv.broadband.hu.
+ [176.63.52.22])
+ by mx.google.com with ESMTPSA id m54sm60250470eex.2.2013.10.22.12.07.10
+ for <cypherpunks@cpunks.org>
+ (version=TLSv1 cipher=RC4-SHA bits=128/128);
+ Tue, 22 Oct 2013 12:07:11 -0700 (PDT)
+Date: Tue, 22 Oct 2013 21:07:13 +0200
+From: =?iso-8859-1?Q?Kriszti=E1n_Pint=E9r?= <pinterkr@gmail.com>
+X-Priority: 3 (Normal)
+Message-ID: <1845424051.20131022210713@gmail.com>
+To: cypherpunks@cpunks.org
+Subject: Re: DIY RNGs [was: Re: Curious RNG stalemate [was: use of cpunks]]
+In-Reply-To: <20131022182716.GX15525@hexapodia.org>
+References: <CAD2Ti2_Y4V+d_kLEmoyUmUXLXvA8CCg8Hi50GW2ZGAZZ+eb0Rg@mail.gmail.com>
+ <CACXcFmkd0agP7z=OAAj6Fdx55xc67pgXPZsBN9qYW==vhD5ktw@mail.gmail.com>
+ <20131022070715.GW15525@hexapodia.org> <1382454909.16118.32.camel@anglachel>
+ <1475165977.20131022184740@gmail.com> <20131022182716.GX15525@hexapodia.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 1055
+Lines: 23
+
+
+Andy Isaacson (at Tuesday, October 22, 2013, 8:27:16 PM):
+
+>> https://github.com/krisztianpinter/rnd_wavein
+> It seems that rnd_wavein uses a small window (you document 256 samples
+> as the default).  One common silent-failure mode of video capture
+> interfaces is to intermittently provide the same frame (around 1 MiB of
+> data) twice!
+> If your whitener doesn't chain blocks and you use the output directly as
+
+that is interesting, but does not hurt my tool too much, because my
+whitener does chain blocks. i use a keccak sponge that is never
+cleared or reset. even if you feed it with all zeros, the output is
+indistinguishable from random for a very long time.
+
+> It would be much better to implement a multi-stage entropy pool design
+
+certainly, but such tools have their purpose. for example a online
+lotteries might want to have high throughput random number generator.
+if you really feed some visual noise to a camera, the entropy
+production can even be multiple megabytes per second. it dwarfs any
+randomness harnessed from a regular desktop.
+
+

@@ -1,0 +1,98 @@
+From owner-cypherpunks@al-qaeda.net  Wed Sep  8 13:52:02 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i88IprA8031730
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Wed, 8 Sep 2004 13:51:53 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i88IprUo031729
+	for cypherpunks-outgoing; Wed, 8 Sep 2004 13:51:53 -0500
+To: cypherpunks@al-qaeda.net
+Subject: Seth Schoen's Hard to Verify Signatures
+Message-Id: <20040908184802.D187857E2B@finney.org>
+Date: Wed,  8 Sep 2004 11:48:02 -0700 (PDT)
+From: hal@finney.org ("Hal Finney")
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4263
+Lines: 76
+
+Seth Schoen of the EFF proposed an interesting cryptographic primitive
+called a "hard to verify signature" in his blog at
+http://vitanuova.loyalty.org/weblog/nb.cgi/view/vitanuova/2004/09/02 .
+The idea is to have a signature which is fast to make but slow to verify,
+with the verification speed under the signer's control.  He proposes
+that this could be useful with trusted computing to discourage certain
+objectionable applications.
+
+The method Seth describes is to include a random value in the signature
+but not to include it in the message.  He shows a sample signature
+with 3 decimal digits hidden.  The only way to verify it is to try all
+possibilities for the random values.  By controlling how much data is
+hidden in this way, the signer can control how long it will take to
+verify the signature.
+
+This idea is nice and simple, but one disadvantage is that it is
+probabilistic.  It works on average, but occasionally someone might
+choose an n digit value which happens to be low (assuming the values are
+chosen at random).  Then they don't get as much protection.  They could
+fix this by eliminating too-low values, but then verifiers might exploit
+that by doing low values last in their testing.
+
+Another problem is that this method is inherently parallelizable, so
+that someone with N computers could solve it N times faster, by having
+each computer test a subset of the values.
+
+An alternative is based on the paper, "Time-lock puzzles and
+timed release Crypto", by Rivest, Shamir and Wagner, from 1996,
+http://theory.lcs.mit.edu/~rivest/RivestShamirWagner-timelock.pdf or .ps.
+They are looking more at the problem of encrypting data such that it can
+be decrypted only after a chosen amount of computing time, but many of
+their techniques are applicable to signatures.
+
+The first solution they consider is essentially the same as Seth's,
+doing an encryption where n bits of the encryption key are unknown, and
+letting people search for the decryption key.  They identify the problems
+I noted above (which I stole from their paper).  They also point out BTW
+that this concept was used by Ralph Merkle in his paper which basically
+foreshadowed the invention of public key cryptography.  Merkle had to
+fight for years to get his paper published, otherwise he would be known
+as the father of the field rather than just a pioneer or co-inventor.
+
+The next method they describe can be put into signature terms as follows.
+Choose the number of modular squarings, t, that you want the verifier
+to have to perform.  Suppose you choose t = 1 billion.  Now you will
+sign your value using an RSA key whose exponent e = 2^t + 1.  (You also
+need to make sure that this value is relatively prime to p-1 and q-1,
+but that is easily arranged, for example by letting p and q be strong
+primes.)  The way you sign, even using such a large e, is to compute
+phi = (p-1)*(q-1) and to compute e' = e mod phi, which can be done using
+about 30 squarings of 2 mod phi.  You then compute the secret exponent
+d as the multiplicative inverse mod phi of e', in the standard way that
+is done for RSA keys.  Using this method you can sign about as quickly
+as for regular RSA keys.
+
+However, the verifier has a much harder problem.  He does not know phi,
+hence cannot reduce e.  To verify, he has to raise the signature to
+the e power as in any RSA signature, which for the exponent I described
+will require t = 1 billion modular squaring operations.  This will be a
+slow process, and the signer can control it by changing the size of t,
+without changing his own work factor materially.
+
+The authors also point out that modular squaring is an intrinsically
+sequential process which cannot benefit from applying multiple computers.
+So the only speed variations relevant will be those between individual
+computers.
+
+Another idea I had for a use of hard to verify signatures would be if
+you published something anonymously but did not want to be known as
+the author of it until far in the future, perhaps after your death.
+Then you could create a HTV signature on it, perhaps not identifying
+the key, just the signature value.  Only in the future when computing
+power is cheap would it be possible to try verifying the signature under
+different keys and see which one worked.
+
+Hal Finney
+

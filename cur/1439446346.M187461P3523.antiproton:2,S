@@ -1,0 +1,123 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t7D6BQS6003493;
+	Thu, 13 Aug 2015 02:11:30 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=CDSyV3lc;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-ig0-f177.google.com (mail-ig0-f177.google.com
+ [209.85.213.177])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t7D6BNwS003489
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 13 Aug 2015 02:11:24 -0400
+Received: by igbpg9 with SMTP id pg9so29339869igb.0
+ for <cypherpunks@cpunks.org>; Wed, 12 Aug 2015 23:11:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :cc:content-type;
+ bh=DnNra/45FTurYxtFnDlP5lLzdep2V1d7cKVW9Viopf4=;
+ b=CDSyV3lckasfqjfzCo492mpNyR1HPEW3ewLIscD4Cpo+k5OEXUpDJcqA5Oofyk3KYP
+ ZiEJA+W7cx+Zh1hT8Yyl5U9h3he/msJn4NKoFN4w/Ixkxk4stISMMQmmOJdjnPzVi8bM
+ uEfSLMAOkPu9WXmwnmFH8NynHlPW51Z+V1rju2dnygAY+//f/m7cErLdkOeJB4W06FSl
+ 01FjQg478CrOkvTrVHjq92bdw5i+ICca2m4k0FWYgvspf+7ot1ftSXU6rdwmD1UmITAl
+ 3a5A43xxttoqO0YllNtBbC18nTsR9A01PZKgZntPq4w0xW7DYVTHgrWTn4DxxdqtYo3F
+ 6H3g==
+MIME-Version: 1.0
+X-Received: by 10.50.153.75 with SMTP id ve11mr16854434igb.52.1439446277657;
+ Wed, 12 Aug 2015 23:11:17 -0700 (PDT)
+Received: by 10.36.44.69 with HTTP; Wed, 12 Aug 2015 23:11:17 -0700 (PDT)
+In-Reply-To: <20150812234512.GE2384@torproject.org>
+References: <55C59BBA.2020700@openmailbox.org>
+ <CAD2Ti2963Oiin8ZWdR5Pc4RrmEfteN2X0MtBAUMdQ6uQuPm1jA@mail.gmail.com>
+ <CAAd2PDJSmAR8UBLa62yzQTd4tF9S46q2cZgH0ErxtOyYH531Ww@mail.gmail.com>
+ <1439101342-sup-8277@metis.syd1.tesser.org>
+ <20150812234512.GE2384@torproject.org>
+Date: Thu, 13 Aug 2015 02:11:17 -0400
+Message-ID: <CAD2Ti28+=dSmwqe_ZtJSDMZ1N-AJ5Lp=5OA6HpNHakhfwe1uMg@mail.gmail.com>
+Subject: Re: [tor-relays] clarification on what Utah State University exit
+ relays store ("360 gigs of log files")
+From: grarpamp <grarpamp@gmail.com>
+To: tor-relays@lists.torproject.org
+Content-Type: text/plain; charset=UTF-8
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 66
+
+On Wed, Aug 12, 2015 at 7:45 PM, Mike Perry <mikeperry@torproject.org> wrote:
+> At what resolution is this type of netflow data typically captured?
+
+Routers originally exported at 100% coverage, then many of them
+started supporting sampling at various rates (because routers were
+choking and buggy anyways, and netheads were happy with averages),
+some only do sampling. Plug flow probes into network taps and you
+can do whatever you want (netsec loves this and other tools).
+
+> Are we talking about all connection 5-tuples, bidirectional/total
+> transfer byte totals, and open and close timestamps, or more (or less)
+> detail than this?
+>
+> Are timestamps always included? Are bidirectional transfer bytecounts
+> always included? Are subsampled packet headers (or contents)
+> sometimes/often included?
+>
+> What about UDP sessions? IPv6?
+>
+> Information about how UDP is treated would also be useful if/when we
+> manage to switch to a UDP transport protocol, independent of any
+> padding.
+
+All of the above depends on which flow export version / aggregation you
+choose, until you get to v9 and IPFIX, for which you can define your fields.
+In short... yes.
+
+Flow endtime is last matching packet seen, but a flow can span records
+when the time (therefore space, ie RAM) limited mandatory expiry timers hit.
+UDP goes via that, TCP usually via flags. Records can span flows for
+which other semantic keys may not exist, as often with UDP.
+But DPI can also be used in the exporter to do all sorts of fun stuff and enable
+other downstream uses (obviously TLS / IPSEC / crypto break some things there).
+
+Tor already bundles multiple logical flows (only TCP for user today) into some
+number of physical TCP flows, UDP transport there might not need
+anything special.
+But consider looking at average flow lifetimes on the internet. There may
+be case for going longer, bundling or turfing across a range of ports to falsely
+trigger a record / bloat, packet switching and so forth.
+
+> and having more information about what is typically
+> recorded in these cases would be very useful to inform how we might want
+> to design padding and connection usage against this and other issues.
+
+"Typical" is really defined by the use case of whoever needs the flows,
+be it provisioning, engineering, security, operations, billing, bigdata, etc.
+And only limited by the available formats, storage, postprocessing,
+and customization. IPFIX and
+
+https://en.wikipedia.org/wiki/NetFlow
+https://en.wikipedia.org/wiki/IP_Flow_Information_Export
+https://www.google.com/search?q=(netflow|IPFIX)+(probe|exporter|parser)
+http://www.freebsd.org/cgi/man.cgi?query=ng_netflow&sektion=4
+
+> I think for various reasons (including this one), we're soon going to
+> want some degree of padding traffic on the Tor network at some point
+> relatively soon
+
+Really? I can haz cake nao? Or only after I pump in this 3k email and
+watch 3k come out the other side to someone otherwise idling ;)
+
+https://cdn.plixer.com/images/slider-3-icon.png
+... and/or some other bigdata systems ...
+

@@ -1,0 +1,142 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u629wnbE010425;
+	Sat, 2 Jul 2016 05:58:52 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=uGegZ/4r;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-vk0-f49.google.com (mail-vk0-f49.google.com
+ [209.85.213.49])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u629wkq2010418
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Sat, 2 Jul 2016 05:58:48 -0400
+Received: by mail-vk0-f49.google.com with SMTP id k68so94831686vkb.0
+ for <cypherpunks@cpunks.org>; Sat, 02 Jul 2016 02:58:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to;
+ bh=mdnyUUpSPAkcKHtq2qN+hInrfsxO8UKJCKi5phw7LNw=;
+ b=uGegZ/4rr2/aJLNkUpvwe9pI4mSvxIaszKpWIsoPQBeietqMp9hY++B5VkM5UPzkrs
+ aXvrvEbizMB/vs6TCdfdNN/QCoGJvGzTQW7tpRnM4lI9ykoryOMd6x7CRehznudJC8lc
+ LXYvbsXub5jd3D9T2eJTSxue0pio41mX7UMswhGB2mD3SZkCMrRLy0sEoE78ATyIWJpN
+ NC/X4/flLAuZGP/9t1aLtcb/YW5K0V0zZTFL8AXSuhTiCd6NmNVY4bi7hxQzGNnfA+cA
+ /C79NE6t1upGDQEMjqEXiXgSiEszY7TRVfLYw++modQ1KOrMwz3+eEITGhZj9c+fNLzo
+ ebxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to;
+ bh=mdnyUUpSPAkcKHtq2qN+hInrfsxO8UKJCKi5phw7LNw=;
+ b=fWfnIvfmkWYPCUSDqAY6FPGUSurxzZZfjz+0FDbQb3RTsoZBBjfxaqgnG/wJMVaGQM
+ dHoPD7sFOo+KsfbA260lxtZ86L5WumYu7+tCOobXj+mWs/2GQVI7WMC1T2/Ze/wqeuVD
+ eqfg9gHLJ5PH4Do3P6O/5F8ClY1zrwbE7/mTlZl5DApMYV5wb8xw+4tQiYohgOSjOrfj
+ jz9qkZxVRGXCrDui9hWiLapekDzmvGhESp9uTmWI7yQWd4AlX2LWqzCVtl5g2BcWQgSj
+ 0kaPWvSJFGxIluV9eYrpNhAa/Dro8qk2B4sPd+RE5wUkTMI2ScJ4LZMtpR3h+kVa8ijw
+ N6Tg==
+X-Gm-Message-State: ALyK8tKY063A8I/JI0l6AVZiH9IekDW/GWmkBcUMmN6sQT/iBq8kZu8byiiSJ+1X1FWHCGiie5W5SAV3Jg0KSA==
+MIME-Version: 1.0
+X-Received: by 10.31.161.81 with SMTP id k78mr1163603vke.122.1467453520636;
+ Sat, 02 Jul 2016 02:58:40 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Sat, 2 Jul 2016 02:58:40 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Sat, 2 Jul 2016 02:58:40 -0700 (PDT)
+In-Reply-To: <CAG2tMp4PQycjNaCsZOsgH=AGBEdn2tk0c5gzQMWArj+j9t2tJg@mail.gmail.com>
+References: <57709a1b.c94a370a.959b3.ffff9730@mx.google.com>
+ <5770A80B.1080608@riseup.net>
+ <5770ba03.c469370a.f2f5f.ffffa595@mx.google.com>
+ <5770C89D.4050208@riseup.net>
+ <5772d036.2839ed0a.a7c2e.ffffcef5@mx.google.com>
+ <577314E9.80400@riseup.net>
+ <577458b3.c469370a.95c6d.1dfa@mx.google.com>
+ <57747838.6030702@riseup.net>
+ <5776c405.5623ed0a.6d72d.ffffcb0b@mx.google.com>
+ <577715A3.4000807@riseup.net> <20160702013844.GE5207@x220-a02>
+ <57772343.5060304@riseup.net>
+ <CAG2tMp5mxa-uvgsxp-nkfer6PKXojScXRYq2vgsLmFG+Od2FuA@mail.gmail.com>
+ <57773523.0126c80a.89d81.fffffcd9@mx.google.com>
+ <CAG2tMp4PQycjNaCsZOsgH=AGBEdn2tk0c5gzQMWArj+j9t2tJg@mail.gmail.com>
+Date: Sat, 2 Jul 2016 06:58:40 -0300
+Message-ID: <CAG2tMp6hVOOrfmnPH5_4bAbOgksJ=Lqqau6q=ywGJD9UE959vA@mail.gmail.com>
+Subject: Re: Wikileaks is the Endgame
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=001a1143fa9cd275240536a425f0
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 66
+
+--001a1143fa9cd275240536a425f0
+Content-Type: text/plain; charset=UTF-8
+
+On Jul 2, 2016 12:40 AM, "juan" <juan.g71@gmail.com> wrote:
+>
+> On Sat, 2 Jul 2016 00:14:03 -0300
+> Cecilia Tanaka <cecilia.tanaka@gmail.com> wrote:
+>
+> > On Jul 1, 2016 11:22 PM, "Mirimir" <mirimir@riseup.net> wrote:
+> > >
+> > > And that includes Tor, even if it's primarily a tool of fascist
+oppression. The Colt M1911A1 is one of my favorite weapons, for example.
+Even though it was built for the US military.
+> >
+> > Better examples than weapons, my dear...
+> >
+> >
+https://mic.com/articles/86489/11-incredible-products-that-were-really-invented-by-the-u-s-military#.PYyYcVJRn
+>
+>
+>         What's your point Cecilia?
+
+Nothing really important.  I was just saying that you should not consider
+_only_ US military origins to judge if something is good or not.  You can,
+but should not do it.
+
+I was also telling Mirimir that I don't like weapons.  Had bad experiences
+with them.
+
+--001a1143fa9cd275240536a425f0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p><br>
+On Jul 2, 2016 12:40 AM, &quot;juan&quot; &lt;<a href=3D"mailto:juan.g71@gm=
+ail.com">juan.g71@gmail.com</a>&gt; wrote:<br>
+&gt;<br>
+&gt; On Sat, 2 Jul 2016 00:14:03 -0300<br>
+&gt; Cecilia Tanaka &lt;<a href=3D"mailto:cecilia.tanaka@gmail.com">cecilia=
+.tanaka@gmail.com</a>&gt; wrote:<br>
+&gt;<br>
+&gt; &gt; On Jul 1, 2016 11:22 PM, &quot;Mirimir&quot; &lt;<a href=3D"mailt=
+o:mirimir@riseup.net">mirimir@riseup.net</a>&gt; wrote:<br>
+&gt; &gt; &gt;<br>
+&gt; &gt; &gt; And that includes Tor, even if it&#39;s primarily a tool of =
+fascist oppression. The Colt M1911A1 is one of my favorite weapons, for exa=
+mple. Even though it was built for the US military.<br>
+&gt; &gt;<br>
+&gt; &gt; Better examples than weapons, my dear...<br>
+&gt; &gt;<br>
+&gt; &gt; <a href=3D"https://mic.com/articles/86489/11-incredible-products-=
+that-were-really-invented-by-the-u-s-military#.PYyYcVJRn">https://mic.com/a=
+rticles/86489/11-incredible-products-that-were-really-invented-by-the-u-s-m=
+ilitary#.PYyYcVJRn</a><br>
+&gt;<br>
+&gt;<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 What&#39;s your point Cecilia?</p>
+<p>Nothing really important.=C2=A0 I was just saying that you should not co=
+nsider _only_ US military origins to judge if something is good or not.=C2=
+=A0 You can, but should not do it.</p>
+<p>I was also telling Mirimir that I don&#39;t like weapons.=C2=A0 Had bad =
+experiences with them.</p>
+
+--001a1143fa9cd275240536a425f0--
+

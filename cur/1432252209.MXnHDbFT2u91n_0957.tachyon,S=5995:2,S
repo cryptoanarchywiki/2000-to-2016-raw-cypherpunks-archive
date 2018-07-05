@@ -1,0 +1,139 @@
+From owner-cypherpunks@al-qaeda.net  Sat Sep 11 23:09:14 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i8C48wf6009791
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Sat, 11 Sep 2004 23:08:58 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i8C48wC4009790
+	for cypherpunks-outgoing; Sat, 11 Sep 2004 23:08:58 -0500
+Mime-Version: 1.0
+X-Sender: rah@bullae.ibuc.com
+Message-Id: <p061104f1bd697b286e98@[66.149.49.5]>
+Date: Sun, 12 Sep 2004 00:04:11 -0400
+To: cypherpunks@al-qaeda.net
+From: "R. A. Hettinga" <rah@shipwright.com>
+Subject: Re: anonymous IP terminology (Re: [anonsec] Re: potential new 
+  IETF WG on anonymous IPSec (fwd from hal@finney.org))
+Content-Type: text/plain; charset="us-ascii"
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4938
+Lines: 113
+
+--- begin forwarded text
+
+
+Delivered-To: cryptography@metzdowd.com
+Date: Sat, 11 Sep 2004 15:09:54 -0400
+From: Adam Back <adam@cypherspace.org>
+To: Joe Touch <touch@ISI.EDU>
+Cc: Eugen Leitl <eugen@leitl.org>,
+	Cryptography List <cryptography@metzdowd.com>,
+	Adam Back <adam@cypherspace.org>
+Subject: Re: anonymous IP terminology (Re: [anonsec] Re: potential new IETF
+WG on anonymous IPSec (fwd from hal@finney.org))
+User-Agent: Mutt/1.4.1i
+Sender: owner-cryptography@metzdowd.com
+
+On Sat, Sep 11, 2004 at 11:38:00AM -0700, Joe Touch wrote:
+> >>Although anonymous access is not the primary goal, it is a feature
+> >>of the solution.
+> >
+> >The access is _not_ anonymous.  The originator's IP, ISP call traces,
+> >phone access records will be all over it and associated audit logs.
+>
+> And you cannot determine whether that IP address came from the authentic
+> owner of that address or is spoofed. I'll try to be more careful -
+> you're right, in that it's not anonymous access. It IS anonymous
+> security, though.
+
+I think you are confusing a weak potential for a technical ambiguity
+of identity under attack conditions with anonymity.  (The technical
+ambiguity would likely disappear in most practical settings).
+
+Anonymity implies positives steps to avoid linking with PII.  With
+anonymity you want not just technical ambiguity, but genuinely
+pluasible deniability from an anonymity set -- preferably a large set
+of users who could equally plausibly have established a given
+connection, participated in an authentication protocol etc.
+
+We don't after all call TCP anonymous, and your system is cleary
+_less_ "anonymous" than TCP as there are security mechanisms involved
+with various keys and authentication protocols which will only reduce
+ambiguity.
+
+> >The distinguishing feature of anonymous is that not only is your name
+> >not associated with the connection but there is no PII (personally
+> >identifiable information) associated with it or obtainable from logs
+> >kept.
+>
+> If I know the IP address you used, I still know NOTHING, FWIW. This is
+> no more distinguishable than the port number is in identifying something
+> behind a NAT.
+
+Practically, knowing the IP address conveys a lot.  Many ISPs have
+logs, some associated with DSL subscriber and phone records, for
+billing, bandwidth caps, abuse complaints, spam cleanup etc etc.
+
+The IP may be used for many different logged activities and some of
+those activites may involve directly identified authentication.
+People go to lengths to hide their IP precisely because it does
+typically convey all too much.
+
+> >And to be clear also anonymous means unlinkable anonymous across
+> >multiple connections (which SSH type of authentication would not be)
+>
+> That might be more specifically "per-connection anonymous", but the term
+> 'anonymous' is too general for that usage. However, there's still
+> nothing associated across connections in ANONSEC, IMO.
+
+> You cannot know whether two connections from 10.0.0.1 on two different
+> ports with two different cookies are from the same endpoint. The point
+> of ANONSEC is that you don't care.
+
+If one wants this to be true in practice it has to propogate up the
+stack.  (Not the problem of ANONSEC, a problem for the higher level
+app).
+
+But even at the authentication protocol level one has to be quite
+careful.  There are many gotchas if you really do want it to be
+unlinkable.  (eg. pseudo random sequences occur in many settings at
+different protocol levels which are in fact quite linkable).  I'll
+give you one high level example.  At ZKS we had software to remail
+MIME mail to provide a pseudonymous email.  But one gotcha is that
+mail clients include MIME boundary lines which are pseudo-random
+(purely to avoid string collision).  If these random lines are
+generated with a non-cryptographic RNG it is quite likely that so
+called unlinkable mail would in fact be linkable because of this
+higher level protocol.  (We cared about unlinkability even tho' I said
+pseudonymous because the user had multiple pseudonyms which were
+supposed to be unlinkable across).
+
+I would say if your interest in fixing such pseudo random sequeneces
+is not present you should not be calling this anonymous.
+
+But if it is part of your threat model, then you may in fact be using
+anonymous authentication and that would be interesting to me at least
+to participate.
+
+Adam
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+
+--- end forwarded text
+
+
+-- 
+-----------------
+R. A. Hettinga <mailto: rah@ibuc.com>
+The Internet Bearer Underwriting Corporation <http://www.ibuc.com/>
+44 Farquhar Street, Boston, MA 02131 USA
+"... however it may deserve respect for its usefulness and antiquity,
+[predicting the end of the world] has not been found agreeable to
+experience." -- Edward Gibbon, 'Decline and Fall of the Roman Empire'
+

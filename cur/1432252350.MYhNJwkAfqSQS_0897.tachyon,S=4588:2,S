@@ -1,0 +1,108 @@
+From owner-cypherpunks@al-qaeda.net  Mon Feb 20 08:43:39 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q1KDerdf027154
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 20 Feb 2012 08:40:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1329745253;
+	bh=3gYrn0rhetnN7heWT3YRjPyeidc/AiS30UbtKYHkmVE=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=aEQaX8fmWRpXcp2VNJWvdOvPd+0e80ta9LbZkzJNf3Vco/WwPn/sPTL/CtLBE4kG6
+	 +flevhumIkW5yUvGIXv9JO/UzV19B+ampwOPdJIlaCvRq6PdHtQQTTADY4y5WHq+JO
+	 bZIldfYvmhupOCimD3zBKEbWaXrfaul6FsSc2iZc=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q1KDerjB027153
+	for cypherpunks-outgoing; Mon, 20 Feb 2012 08:40:53 -0500
+Date: Mon, 20 Feb 2012 14:40:50 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: [tor-talk] Hidden service security w. Apache/Win32
+Message-ID: <20120220134050.GN7343@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3187
+Lines: 76
+
+----- Forwarded message from Ondrej Mikle <ondrej.mikle@gmail.com> -----
+
+From: Ondrej Mikle <ondrej.mikle@gmail.com>
+Date: Sun, 19 Feb 2012 19:58:32 +0100
+To: tor-talk@lists.torproject.org
+Subject: Re: [tor-talk] Hidden service security w. Apache/Win32
+User-Agent: Mozilla/5.0 (X11; Linux x86_64;
+	rv:10.0.2) Gecko/20120216 Thunderbird/10.0.2
+Reply-To: tor-talk@lists.torproject.org
+
+On 02/19/2012 05:05 PM, proper@tormail.net wrote:
+> 
+> [1] https://trac.torproject.org/projects/tor/wiki/doc/TransparentProxyLeaks
+> [2] https://trac.torproject.org/projects/tor/wiki/doc/TorBOX
+> [3]
+> https://trac.torproject.org/projects/tor/wiki/doc/TorBOX#hostinghiddenservicesOPTIONAL
+
+Great howto!
+
+We've been discussing a "safest" setup for hidden service a while ago.
+Unfortunately the forum is not in English, so I sum it up shortly:
+
+- it's very similar to your setup, two VMs:
+  - VM1 for Tor
+  - VM2 for http server and database, host-only networking!
+- harden installation with SELinux, grsecurity or AppArmor
+- absolutely no php (really bad track record with php apps and language itself)
+- nginx/lighttpd/thttpd instead of Apache (smaller code, smaller chance of bugs)
+
+SELinux is for example by default part of RHEL and clones (CentOS, Scientific
+Linux). By default only targeted policy is turned on, but you can turn on full
+enforcing. AppArmor is in Ubuntu AFAIK.
+
+
+A more advanced guide for hidden service on hardened Gentoo server (this will
+take a bit time to set up, depends on what your threat model is):
+
+- use hardened Gentoo profile
+- enable grsecurity in kernel
+- make a monolithic kernel, disable module support
+- turn on all possible grsecurity features (except RBAC)
+- install only necessary software (like webserver and DB), turn off all USE
+flags you won't need
+- compile everything as position-independent shared object (see -fPIC, -fPIE gcc
+options)
+
+
+Addendum for truly "uberparanoid" installation:
+
+- on VM1, limit new outgoing connections to Tor node IPs, this will need some
+script or using NFQUEUE in iptables since the IPs change (enable other IPs
+temporarily when doing update)
+- on VM1, install unbound locally, tunnel it through Tor with socat to some
+recursive DNSSEC-aware resolver, make unbound default resolver in
+/etc/resolv.conf "nameserver 127.0.0.1" (do we need DNS at all here?)
+- turn on grsecurity's RBAC (role-based access control), this will be pain to
+set up the rules for software, but grsecurity has a learning tool that will
+greatly assist in generating them by observing the app
+
+With the uberparanoid installation, the greatest risk is a return-to-libc-style
+attack on Tor where attacker instructs Tor to make circuit to a node controlled
+by attacker, thus revealing IP.
+
+
+Ondrej
+_______________________________________________
+tor-talk mailing list
+tor-talk@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-talk
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

@@ -1,0 +1,625 @@
+Return-path: <cypherpunks-bounces@cpunks.org>
+Envelope-to: rsw@positron.jfet.org
+Delivery-date: Thu, 04 Aug 2016 16:56:44 -0700
+Received: from antiproton.jfet.org ([209.141.47.85])
+	by positron.jfet.org with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.87)
+	(envelope-from <cypherpunks-bounces@cpunks.org>)
+	id 1bVSVI-00069Y-36
+	for rsw@positron.jfet.org; Thu, 04 Aug 2016 16:56:44 -0700
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u74Ndf1V007190;
+	Thu, 4 Aug 2016 19:39:43 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=yahoo.com header.i=@yahoo.com header.b=C9j3iuZe;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from nm33-vm6.bullet.mail.ne1.yahoo.com
+ (nm33-vm6.bullet.mail.ne1.yahoo.com [98.138.229.70])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u74Ndbfj007186
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 4 Aug 2016 19:39:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048;
+ t=1470353972; bh=9+7ONGNeHXFKzVu+eRn048qfIn3lU5Gvx3GinVxT3fc=;
+ h=Date:From:Reply-To:To:In-Reply-To:References:Subject:From:Subject;
+ b=C9j3iuZemACb2p8ft8rkH6UEM+cLrrZBl2M5Ktgwbr1fWmtU98CvfBUhandDbFvWhP575cDN8NvMCsdFI15P2yABCxEEIyoMKiyfxxxVasALA6Ga74F/NNdCu4JA4Yfv3JtGQtSUFP1zc072GylOQpDrKO/tD6of/A924nD5dN98WdhmmCPRKKajP9s7p1iFB6Zmucr3iqkrkjr4303ANbQJq0vTaOrhHfKHkctYSeWhPnuqe26EHjlILgznIWAmHLNiYrYLsVTU9GwDhiGtyYDaE5YuUdt7IUnKbtxdTHuMhbuplqUcjcYu0id44as6cqJvyqnpTpNBk0d05rGE2w==
+Received: from [127.0.0.1] by nm33.bullet.mail.ne1.yahoo.com with NNFMP;
+ 04 Aug 2016 23:39:32 -0000
+Received: from [98.138.101.129] by nm33.bullet.mail.ne1.yahoo.com with NNFMP;
+ 04 Aug 2016 23:36:49 -0000
+Received: from [98.139.214.32] by tm17.bullet.mail.ne1.yahoo.com with NNFMP;
+ 04 Aug 2016 23:33:48 -0000
+Received: from [98.139.212.225] by tm15.bullet.mail.bf1.yahoo.com with NNFMP;
+ 04 Aug 2016 23:33:48 -0000
+Received: from [127.0.0.1] by omp1034.mail.bf1.yahoo.com with NNFMP;
+ 04 Aug 2016 23:33:48 -0000
+X-Yahoo-Newman-Property: ymail-4
+X-Yahoo-Newman-Id: 861567.98563.bm@omp1034.mail.bf1.yahoo.com
+X-YMail-OSG: aCiv2z8VM1lrsyoIRnu..FlomMC6wFu.9kYgWBQgTYE7qQmgfPCgtSqliLSXHZ6
+ FIHXKqUJ7ChCGQ1vtJSHpjkVCO9a1PcTe.iRn9bCfTd.X.SD16nmebXKkxMm.MzISj1oyce_HFSH
+ i8nQcbwfu1iU1hhloZj_RTVYaMBI.lJfvzEc29egkD8PaedxTSgJnNprclF_9HXxctZyBlOTh1fT
+ XXcyQ2Apmjw.LMYfdEgdJ8FSPa9M9_yERp6AWcLC52hth_EeQIgU0jzHiNS0_Ez08lFqnjimxX1j
+ CwiKfGmno151.h_EAlr2OesKq4VlbPJje_6PtLBVQs74q.T4TcTnag9PIwhGoIGuSE5Mp8lE_aC6
+ E4f5yPiGEWMq37X5WKs8BEaHduWOIf3nOaoNcXldPt9xjRtr.7fG28ESBr2nhmD2zJK19wD8yZlN
+ .9i04J1EpzfEfB7iqyock7Tz_204RQ.P7qaUmDT08hztnKu96J3U7FzNj788bcZp6rhS0acNxWFT
+ vHyjMfpEI2c.Oe1U-
+Received: from jws106264.mail.bf2.yahoo.com by
+ sendmailws109.mail.bf1.yahoo.com; Thu, 04 Aug 2016 23:33:48 +0000;
+ 1470353628.459
+Date: Thu, 4 Aug 2016 23:33:47 +0000 (UTC)
+From: jim bell <jdb10987@yahoo.com>
+To: juan <juan.g71@gmail.com>,
+        "cypherpunks@cpunks.org" <cypherpunks@cpunks.org>
+Message-ID: <953028539.36755.1470353627925.JavaMail.yahoo@mail.yahoo.com>
+In-Reply-To: <57a3c0a1.84bd370a.2e08f.dde4@mx.google.com>
+References: <255450741.10726589.1470277325532.JavaMail.yahoo.ref@mail.yahoo.com>
+ <255450741.10726589.1470277325532.JavaMail.yahoo@mail.yahoo.com>
+ <687871470314039@web15g.yandex.ru>
+ <1603947053.11044988.1470329352392.JavaMail.yahoo@mail.yahoo.com>
+ <57a3a57f.0703370a.241d8.c3ea@mx.google.com>
+ <1359771938.2091832.1470347891966.JavaMail.yahoo@mail.yahoo.com>
+ <57a3c0a1.84bd370a.2e08f.dde4@mx.google.com>
+Subject: Re: Quantum entangled-photon Chinese satellite.
+MIME-Version: 1.0
+Content-Type: multipart/alternative; 
+ boundary="----=_Part_36754_714605647.1470353627916"
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Reply-To: jim bell <jdb10987@yahoo.com>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 545
+
+------=_Part_36754_714605647.1470353627916
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+
+
+ From: juan <juan.g71@gmail.com>
+
+On Thu, 4 Aug 2016 21:58:11 +0000 (UTC)
+jim bell <jdb10987@yahoo.com> wrote:
+
+>=C2=A0 From: juan <juan.g71@gmail.com>
+
+> >> Apparently, that is true. =C2=A0 The tantalizing thing is that SOMETHI=
+NG
+> >> APPEARS =C2=A0 (information, of some nature) to be transferred between
+> >> one particle and another, distant one, and yet there seems to be
+> >> no way to use that transfer to actually transmit useful FTL=20
+>=20
+> =C2=A0> =C2=A0Which sounds rather absurd no?
+> Certainly that sounds absurd! =C2=A0 It IS absurd!=20
+
+
+> =C2=A0 Oh, OK. So I don't need to bother with patently false theories.
+> =C2=A0 Because that's what 'absurd' implies.=C2=A0
+No, you obviously don't understand. =C2=A0Something can be "absurd" and yet=
+quite real. =C2=A0"Absurd" merely explains how we react to something we do =
+notunderstand.Simple example of thing that appears "absurd": =C2=A0To someb=
+ody in 6th grademath, the question "what is the square root of negative 1" =
+looks absurd.But it isn't absurd to a 12th grader taking calculus.
+
+
+>>=C2=A0Which explains a lot
+>> of the fascinationhas for entangled photons and related phenomena.
+
+> =C2=A0 =C2=A0I don't follow. I don't think absurd ideas are 'fascinating'=
+.
+At one point, the idea that Earth is flat was the received wisdom, and anal=
+lergation that Earth is round was "absurd". =C2=A0Einstein's theory ofrelat=
+ivity was "absurd" to people who grew up on Newtonian theory. =C2=A0The ide=
+a that nuclei in atoms would =C2=A0decay, emitting hugeamounts of energy, w=
+as "absurd" in 1900. =C2=A0By 1946, nuclear bombshad killed well over 100,0=
+00 people.
+
+=C2=A0> =C2=A0 And at any rate it should be obvious that absurd ideas have =
+no
+=C2=A0 > =C2=A0place in rational discourse, or 'science'.
+Until they do. =C2=A0
+
+
+> =C2=A0Einstein never liked the=C2=A0quantum-mechanics idea, famously decl=
+aring
+> "God does not play dice with theuniverse". =C2=A0 =C2=A0
+
+> =C2=A0 A sensible remark, if you take out the god bullshit. And as I
+> =C2=A0 =C2=A0think you know, there are many so called 'interpretations' o=
+f
+=C2=A0 > =C2=A0QM and not all of them are absurd (i.e. patently false).
+Einstein was wrong, and ultimately other scientists were right. =C2=A0And t=
+heyconfirmed that, with experiments and further theory.
+
+
+>> Unfortunately for =C2=A0Einstein, dice are actually played.=20
+> =C2=A0 =C2=A0So says one faction of the 'scientific' establishment. Just =
+like
+> =C2=A0 =C2=A0statists say that the state is legitimate.=20
+
+Scientific dispute exists. =C2=A0It's normal.Curiously, in the 1920's, a Ru=
+ssian scientist named Lysenko believedthat characteristics could be acquire=
+d by an organism far more quicklythan genetics would otherwise allow. =C2=
+=A0https://en.wikipedia.org/wiki/Trofim_Lysenko=C2=A0=C2=A0=C2=A0=C2=A0Soon=
+ enough, he was considered a fraud, a joke. =C2=A0And he was, but eventuall=
+y the phenomonof methylation of the DNA strand ('epigenetics') was discover=
+ed.https://en.wikipedia.org/wiki/Epigenetics=C2=A0
+
+In 1978, I visited the Smithsonian Institution for the first (and so far la=
+st) time. =C2=A0Oneof the exhibits was a display of "quack" medical equipme=
+nt, including gas-dischargetubes that were activated with high-voltage and =
+were said to control pain. =C2=A0Quackmedical treatment. =C2=A0By 1996, I w=
+as working at a company which designed and built TENSunits (Transcutaneous =
+electrical nerve stimulator) which reduce paid by using small=C2=A0electric=
+al currents. =C2=A0 https://en.wikipedia.org/wiki/Transcutaneous_electrical=
+_nerve_stimulation=C2=A0 =C2=A0
+What did you say, above? =C2=A0 =C2=A0"So says one faction of the 'scientif=
+ic' establishment."
+> =C2=A0>Either this is ordinary EM
+> =C2=A0> phenomena that propagate at the so called speed of light, or
+> =C2=A0> it is something else which could propagate at 'faster than
+> =C2=A0> light' speed.=C2=A0
+
+>> It's at least 10,000 times 'c' the speed of light in a vacuum,
+>> according toexperiments involving fiber optics. =C2=A0It might be
+>> essentially infinite.
+
+> =C2=A0It can't be infinite
+Why not? =C2=A0Have you ever heard the term, "phase velocity"? =C2=A0=C2=A0
+
+>, but it certainly can be faster than
+> =C2=A0 =C2=A0light.
+Prior to relatively recently, people generally thought nothing could travel=
+faster than 'c'. =C2=A0They thought that travel faster than 'c' was "absurd=
+". =C2=A0
+> So somebody actually did the measurements?
+Yes. =C2=A0They determined that the 'speed' of whatever was going on had to=
+ be at least10,000 times 'c', but they couldn't determine an upper limit to=
+ that value.
+
+
+
+
+> > > =C2=A0If 'something' is moving at faster than light speed, then some
+> > > information must be being transmitted. If no information is
+> > > =C2=A0being transmitted, then by definition, there's no way to measur=
+e
+> > =C2=A0> =C2=A0speed and the claim makes no sense.
+
+>> Well, that's the problem.=20
+>>=C2=A0Knowing that SOMETHING is being
+>> transmitted, and actually USING that method to transmit useful
+>> information, are (quite strangely) two different things.=20
+
+=C2=A0> =C2=A0 If you know that 'something' was transmitted, then al least =
+one
+=C2=A0> =C2=A0 bit of information was transmitted, no?=C2=A0
+Like I said, there's a difference between knowing something is happening,an=
+d being able to actually employ that for useful purposes.If I see a horse r=
+unning in the prairie, and yet I cannot capture him, Icannot use him to tra=
+vel at horse-speed rather than man-speed.
+Even in the 1s00s, people knew that light traveled at a finite(non-infinite=
+) velocity. =C2=A0Hint: =C2=A0It involved Jupiter's moons.https://en.wikipe=
+dia.org/wiki/Speed_of_light
+But until the invention of the Fleming valve (old name for an 'electrontube=
+') and then radio, people didn't know how to transmit information=C2=A0from=
+ Europe to America in a few milliseconds.=C2=A0https://en.wikipedia.org/wik=
+i/Fleming_valve
+Curiously, Thomas Edison really screwed up by not recognizing the value oft=
+he "Edison Effect" (which he wasn't actually the first to recognize)
+=C2=A0> =C2=A0 Again, either information is being transmitted at FTL speed =
+or
+=C2=A0 > =C2=A0not. So, what is being claimed here?
+We simply don't know how to use entangled photons to transmit informationat=
+ greater than 'c'. =C2=A0And there is no guarantee we will ever know how to=
+ doso.
+And if you believe that something must definitely be one thing, or another,=
+=C2=A0I will have to introduce you to Schrodinger's Cat.
+https://en.wikipedia.org/wiki/Schr%C3%B6dinger%27s_cat
+
+=C2=A0...which has the weird property of being able to be alive and dead at=
+ the same time.
+
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0Jim Bell
+  
+------=_Part_36754_714605647.1470353627916
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<html xmlns=3D"http://www.w3.org/1999/xhtml" xmlns:v=3D"urn:schemas-microso=
+ft-com:vml" xmlns:o=3D"urn:schemas-microsoft-com:office:office"><head><!--[=
+if gte mso 9]><xml><o:OfficeDocumentSettings><o:AllowPNG/><o:PixelsPerInch>=
+96</o:PixelsPerInch></o:OfficeDocumentSettings></xml><![endif]--></head><bo=
+dy><div style=3D"color:#000; background-color:#fff; font-family:HelveticaNe=
+ue, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;font-size:1=
+3px"><div id=3D"yui_3_16_0_ym19_1_1470295148022_98423"></div><div class=3D"=
+qtdSeparateBR"><br><br></div><div class=3D"yahoo_quoted" id=3D"yui_3_16_0_y=
+m19_1_1470295148022_98470" style=3D"display: block;"><div id=3D"yui_3_16_0_=
+ym19_1_1470295148022_98469"><div id=3D"yui_3_16_0_ym19_1_1470295148022_9846=
+8"><div dir=3D"ltr" id=3D"yui_3_16_0_ym19_1_1470295148022_98467" style=3D"f=
+ont-family: HelveticaNeue, &quot;Helvetica Neue&quot;, Helvetica, Arial, &q=
+uot;Lucida Grande&quot;, sans-serif; font-size: 16px;"><font size=3D"2" fac=
+e=3D"Arial" id=3D"yui_3_16_0_ym19_1_1470295148022_98471"> <b><span style=3D=
+"font-weight:bold;">From:</span></b> juan &lt;juan.g71@gmail.com&gt;<br><br=
+></font></div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_147029=
+5148022_98474" style=3D"font-family: HelveticaNeue, &quot;Helvetica Neue&qu=
+ot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-size: 16=
+px;">On Thu, 4 Aug 2016 21:58:11 +0000 (UTC)<br clear=3D"none">jim bell &lt=
+;<a shape=3D"rect" ymailto=3D"mailto:jdb10987@yahoo.com" href=3D"mailto:jdb=
+10987@yahoo.com">jdb10987@yahoo.com</a>&gt; wrote:<br clear=3D"none"><br cl=
+ear=3D"none">&gt;&nbsp; From: juan &lt;<a shape=3D"rect" ymailto=3D"mailto:=
+juan.g71@gmail.com" href=3D"mailto:juan.g71@gmail.com" id=3D"yui_3_16_0_ym1=
+9_1_1470295148022_98485">juan.g71@gmail.com</a>&gt;<br clear=3D"none"><br c=
+lear=3D"none">&gt; &gt;&gt; Apparently, that is true. &nbsp; The tantalizin=
+g thing is that SOMETHING<br clear=3D"none">&gt; &gt;&gt; APPEARS &nbsp; (i=
+nformation, of some nature) to be transferred between<br clear=3D"none">&gt=
+; &gt;&gt; one particle and another, distant one, and yet there seems to be=
+<br clear=3D"none">&gt; &gt;&gt; no way to use that transfer to actually tr=
+ansmit useful FTL <br clear=3D"none">&gt; <br clear=3D"none">&gt; &nbsp;&gt=
+; &nbsp;Which sounds rather absurd no?<br clear=3D"none">&gt; Certainly tha=
+t sounds absurd! &nbsp; It IS absurd! <br clear=3D"none"><br clear=3D"none"=
+><br clear=3D"none">&gt; &nbsp; Oh, OK. So I don't need to bother with pate=
+ntly false theories.<br clear=3D"none">&gt; &nbsp; Because that's what 'abs=
+urd' implies.&nbsp;</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym=
+19_1_1470295148022_98474" style=3D"font-family: HelveticaNeue, &quot;Helvet=
+ica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; fo=
+nt-size: 16px;"><br></div><div class=3D"y_msg_container" id=3D"yui_3_16_0_y=
+m19_1_1470295148022_98474" style=3D"font-family: HelveticaNeue, &quot;Helve=
+tica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; f=
+ont-size: 16px;">No, you obviously don't understand. &nbsp;Something can be=
+ "absurd" and yet</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19=
+_1_1470295148022_98474" style=3D"font-family: HelveticaNeue, &quot;Helvetic=
+a Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font=
+-size: 16px;">quite real. &nbsp;"Absurd" merely explains how we react to so=
+mething we do not</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19=
+_1_1470295148022_98474" style=3D"font-family: HelveticaNeue, &quot;Helvetic=
+a Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font=
+-size: 16px;">understand.</div><div class=3D"y_msg_container" id=3D"yui_3_1=
+6_0_ym19_1_1470295148022_98474" style=3D"font-family: HelveticaNeue, &quot;=
+Helvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-ser=
+if; font-size: 16px;">Simple example of thing that appears "absurd": &nbsp;=
+To somebody in 6th grade</div><div class=3D"y_msg_container" id=3D"yui_3_16=
+_0_ym19_1_1470295148022_98474" style=3D"font-family: HelveticaNeue, &quot;H=
+elvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-seri=
+f; font-size: 16px;">math, the question "what is the square root of negativ=
+e 1" looks absurd.</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym1=
+9_1_1470295148022_98474" style=3D"font-family: HelveticaNeue, &quot;Helveti=
+ca Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; fon=
+t-size: 16px;">But it isn't absurd to a 12th grader taking calculus.<br cle=
+ar=3D"none"><br clear=3D"none"><br clear=3D"none">&gt;&gt;&nbsp;Which expla=
+ins a lot<br clear=3D"none">&gt;&gt; of the fascinationhas for entangled ph=
+otons and related phenomena.<br clear=3D"none"><br clear=3D"none">&gt; &nbs=
+p; &nbsp;I don't follow. I don't think absurd ideas are 'fascinating'.</div=
+><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148022_98474=
+" style=3D"font-family: HelveticaNeue, &quot;Helvetica Neue&quot;, Helvetic=
+a, Arial, &quot;Lucida Grande&quot;, sans-serif; font-size: 16px;"><br></di=
+v><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148022_9847=
+4" style=3D"font-family: HelveticaNeue, &quot;Helvetica Neue&quot;, Helveti=
+ca, Arial, &quot;Lucida Grande&quot;, sans-serif; font-size: 16px;">At one =
+point, the idea that Earth is flat was the received wisdom, and an</div><di=
+v class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148022_98474" di=
+r=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;Helvetica Neue&quot;, =
+Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-size: 16px;">=
+allergation that Earth is round was "absurd". &nbsp;Einstein's theory of</d=
+iv><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148022_984=
+74" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;Helvetica Neue&q=
+uot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-size: 1=
+6px;">relativity was "absurd" to people who grew up on Newtonian theory. &n=
+bsp;</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148=
+022_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;Helvetica=
+ Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-=
+size: 16px;">The idea that nuclei in atoms would &nbsp;decay, emitting huge=
+</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148022_=
+98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;Helvetica Neu=
+e&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-size=
+: 16px;">amounts of energy, was "absurd" in 1900. &nbsp;By 1946, nuclear bo=
+mbs</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_14702951480=
+22_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;Helvetica =
+Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-s=
+ize: 16px;">had killed well over 100,000 people.</div><div class=3D"y_msg_c=
+ontainer" id=3D"yui_3_16_0_ym19_1_1470295148022_98474" style=3D"font-family=
+: HelveticaNeue, &quot;Helvetica Neue&quot;, Helvetica, Arial, &quot;Lucida=
+ Grande&quot;, sans-serif; font-size: 16px;"><br></div><div class=3D"y_msg_=
+container" id=3D"yui_3_16_0_ym19_1_1470295148022_98474" style=3D"font-famil=
+y: HelveticaNeue, &quot;Helvetica Neue&quot;, Helvetica, Arial, &quot;Lucid=
+a Grande&quot;, sans-serif; font-size: 16px;"><br clear=3D"none">&nbsp;&gt;=
+ &nbsp; And at any rate it should be obvious that absurd ideas have no<br c=
+lear=3D"none">&nbsp; &gt; &nbsp;place in rational discourse, or 'science'.<=
+/div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148022_9=
+8474" style=3D"font-family: HelveticaNeue, &quot;Helvetica Neue&quot;, Helv=
+etica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-size: 16px;"><br>=
+</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148022_=
+98474" style=3D"font-family: HelveticaNeue, &quot;Helvetica Neue&quot;, Hel=
+vetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-size: 16px;">Unt=
+il they do. &nbsp;<br clear=3D"none"><br clear=3D"none"><br clear=3D"none">=
+&gt; &nbsp;Einstein never liked the&nbsp;quantum-mechanics idea, famously d=
+eclaring<br clear=3D"none">&gt; "God does not play dice with theuniverse". =
+&nbsp; &nbsp;<br clear=3D"none"><br clear=3D"none">&gt; &nbsp; A sensible r=
+emark, if you take out the god bullshit. And as I<br clear=3D"none">&gt; &n=
+bsp; &nbsp;think you know, there are many so called 'interpretations' of<br=
+ clear=3D"none">&nbsp; &gt; &nbsp;QM and not all of them are absurd (i.e. p=
+atently false).</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1=
+_1470295148022_98474" style=3D"font-family: HelveticaNeue, &quot;Helvetica =
+Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-s=
+ize: 16px;"><br></div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_=
+1_1470295148022_98474" style=3D"font-family: HelveticaNeue, &quot;Helvetica=
+ Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-=
+size: 16px;">Einstein was wrong, and ultimately other scientists were right=
+. &nbsp;And they</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_=
+1_1470295148022_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &qu=
+ot;Helvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-=
+serif; font-size: 16px;">confirmed that, with experiments and further theor=
+y.<br clear=3D"none"><br clear=3D"none"><br clear=3D"none">&gt;&gt; Unfortu=
+nately for &nbsp;Einstein, dice are actually played. <br clear=3D"none">&gt=
+; &nbsp; &nbsp;So says one faction of the 'scientific' establishment. Just =
+like<br clear=3D"none">&gt; &nbsp; &nbsp;statists say that the state is leg=
+itimate. <br clear=3D"none"><br clear=3D"none">Scientific dispute exists. &=
+nbsp;It's normal.</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19=
+_1_1470295148022_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &q=
+uot;Helvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans=
+-serif; font-size: 16px;">Curiously, in the 1920's, a Russian scientist nam=
+ed Lysenko believed</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym=
+19_1_1470295148022_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, =
+&quot;Helvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sa=
+ns-serif; font-size: 16px;">that characteristics could be acquired by an or=
+ganism far more quickly</div><div class=3D"y_msg_container" id=3D"yui_3_16_=
+0_ym19_1_1470295148022_98474" dir=3D"ltr" style=3D"font-family: HelveticaNe=
+ue, &quot;Helvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;=
+, sans-serif; font-size: 16px;">than genetics would otherwise allow. &nbsp;=
+<a href=3D"https://en.wikipedia.org/wiki/Trofim_Lysenko" id=3D"yui_3_16_0_y=
+m19_1_1470295148022_99237">https://en.wikipedia.org/wiki/Trofim_Lysenko</a>=
+&nbsp;&nbsp;&nbsp;</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym1=
+9_1_1470295148022_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &=
+quot;Helvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, san=
+s-serif; font-size: 16px;">&nbsp;Soon enough, he was considered a fraud, a =
+joke. &nbsp;And he was, but eventually the phenomon</div><div class=3D"y_ms=
+g_container" id=3D"yui_3_16_0_ym19_1_1470295148022_98474" dir=3D"ltr" style=
+=3D"font-family: HelveticaNeue, &quot;Helvetica Neue&quot;, Helvetica, Aria=
+l, &quot;Lucida Grande&quot;, sans-serif; font-size: 16px;">of methylation =
+of the DNA strand ('epigenetics') was discovered.https://en.wikipedia.org/w=
+iki/Epigenetics&nbsp;</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_=
+ym19_1_1470295148022_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue=
+, &quot;Helvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, =
+sans-serif; font-size: 16px;"><br></div><div class=3D"y_msg_container" id=
+=3D"yui_3_16_0_ym19_1_1470295148022_98474" dir=3D"ltr" style=3D"font-family=
+: HelveticaNeue, &quot;Helvetica Neue&quot;, Helvetica, Arial, &quot;Lucida=
+ Grande&quot;, sans-serif; font-size: 16px;"><br></div><div class=3D"y_msg_=
+container" id=3D"yui_3_16_0_ym19_1_1470295148022_98474" dir=3D"ltr" style=
+=3D"font-family: HelveticaNeue, &quot;Helvetica Neue&quot;, Helvetica, Aria=
+l, &quot;Lucida Grande&quot;, sans-serif; font-size: 16px;">In 1978, I visi=
+ted the Smithsonian Institution for the first (and so far last) time. &nbsp=
+;One</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148=
+022_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;Helvetica=
+ Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-=
+size: 16px;">of the exhibits was a display of "quack" medical equipment, in=
+cluding gas-discharge</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_=
+ym19_1_1470295148022_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue=
+, &quot;Helvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, =
+sans-serif; font-size: 16px;">tubes that were activated with high-voltage a=
+nd were said to control pain. &nbsp;Quack</div><div class=3D"y_msg_containe=
+r" id=3D"yui_3_16_0_ym19_1_1470295148022_98474" dir=3D"ltr" style=3D"font-f=
+amily: HelveticaNeue, &quot;Helvetica Neue&quot;, Helvetica, Arial, &quot;L=
+ucida Grande&quot;, sans-serif; font-size: 16px;">medical treatment. &nbsp;=
+By 1996, I was working at a company which designed and built TENS</div><div=
+ class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148022_98474" dir=
+=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;Helvetica Neue&quot;, H=
+elvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-size: 16px;">u=
+nits (Transcutaneous electrical nerve stimulator) which reduce paid by usin=
+g small&nbsp;</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1=
+470295148022_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;=
+Helvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-ser=
+if; font-size: 16px;">electrical currents. &nbsp; <a href=3D"https://en.wik=
+ipedia.org/wiki/Transcutaneous_electrical_nerve_stimulation">https://en.wik=
+ipedia.org/wiki/Transcutaneous_electrical_nerve_stimulation</a>&nbsp; &nbsp=
+;</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148022=
+_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;Helvetica Ne=
+ue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-siz=
+e: 16px;"><br></div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_=
+1470295148022_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &quot=
+;Helvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-se=
+rif; font-size: 16px;">What did you say, above? &nbsp; &nbsp;"So says one f=
+action of the 'scientific' establishment."</div><div class=3D"y_msg_contain=
+er" id=3D"yui_3_16_0_ym19_1_1470295148022_98474" dir=3D"ltr" style=3D"font-=
+family: HelveticaNeue, &quot;Helvetica Neue&quot;, Helvetica, Arial, &quot;=
+Lucida Grande&quot;, sans-serif; font-size: 16px;"><br clear=3D"none">&gt; =
+&nbsp;&gt;Either this is ordinary EM<br clear=3D"none">&gt; &nbsp;&gt; phen=
+omena that propagate at the so called speed of light, or<br clear=3D"none">=
+&gt; &nbsp;&gt; it is something else which could propagate at 'faster than<=
+br clear=3D"none">&gt; &nbsp;&gt; light' speed.&nbsp;<br clear=3D"none"><br=
+ clear=3D"none">&gt;&gt; It's at least 10,000 times 'c' the speed of light =
+in a vacuum,<br clear=3D"none">&gt;&gt; according toexperiments involving f=
+iber optics. &nbsp;It might be<br clear=3D"none">&gt;&gt; essentially infin=
+ite.<br clear=3D"none"><br clear=3D"none">&gt; &nbsp;It can't be infinite</=
+div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148022_98=
+474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;Helvetica Neue&=
+quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-size: =
+16px;"><br></div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_147=
+0295148022_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;He=
+lvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif=
+; font-size: 16px;">Why not? &nbsp;Have you ever heard the term, "phase vel=
+ocity"? &nbsp;&nbsp;</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_y=
+m19_1_1470295148022_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue,=
+ &quot;Helvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, s=
+ans-serif; font-size: 16px;"><br></div><div class=3D"y_msg_container" id=3D=
+"yui_3_16_0_ym19_1_1470295148022_98474" dir=3D"ltr" style=3D"font-family: H=
+elveticaNeue, &quot;Helvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Gr=
+ande&quot;, sans-serif; font-size: 16px;"><br></div><div class=3D"y_msg_con=
+tainer" id=3D"yui_3_16_0_ym19_1_1470295148022_98474" dir=3D"ltr" style=3D"f=
+ont-family: HelveticaNeue, &quot;Helvetica Neue&quot;, Helvetica, Arial, &q=
+uot;Lucida Grande&quot;, sans-serif; font-size: 16px;">&gt;, but it certain=
+ly can be faster than<br clear=3D"none">&gt; &nbsp; &nbsp;light.</div><div =
+class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148022_98474" dir=
+=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;Helvetica Neue&quot;, H=
+elvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-size: 16px;"><=
+br></div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_14702951480=
+22_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;Helvetica =
+Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-s=
+ize: 16px;">Prior to relatively recently, people generally thought nothing =
+could travel</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_14=
+70295148022_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;H=
+elvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-seri=
+f; font-size: 16px;">faster than 'c'. &nbsp;They thought that travel faster=
+ than 'c' was "absurd". &nbsp;</div><div class=3D"y_msg_container" id=3D"yu=
+i_3_16_0_ym19_1_1470295148022_98474" dir=3D"ltr" style=3D"font-family: Helv=
+eticaNeue, &quot;Helvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Grand=
+e&quot;, sans-serif; font-size: 16px;"><br></div><div class=3D"y_msg_contai=
+ner" id=3D"yui_3_16_0_ym19_1_1470295148022_98474" dir=3D"ltr" style=3D"font=
+-family: HelveticaNeue, &quot;Helvetica Neue&quot;, Helvetica, Arial, &quot=
+;Lucida Grande&quot;, sans-serif; font-size: 16px;">&gt; So somebody actual=
+ly did the measurements?</div><div class=3D"y_msg_container" id=3D"yui_3_16=
+_0_ym19_1_1470295148022_98474" dir=3D"ltr" style=3D"font-family: HelveticaN=
+eue, &quot;Helvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot=
+;, sans-serif; font-size: 16px;"><br></div><div class=3D"y_msg_container" i=
+d=3D"yui_3_16_0_ym19_1_1470295148022_98474" dir=3D"ltr" style=3D"font-famil=
+y: HelveticaNeue, &quot;Helvetica Neue&quot;, Helvetica, Arial, &quot;Lucid=
+a Grande&quot;, sans-serif; font-size: 16px;">Yes. &nbsp;They determined th=
+at the 'speed' of whatever was going on had to be at least</div><div class=
+=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148022_98474" dir=3D"lt=
+r" style=3D"font-family: HelveticaNeue, &quot;Helvetica Neue&quot;, Helveti=
+ca, Arial, &quot;Lucida Grande&quot;, sans-serif; font-size: 16px;">10,000 =
+times 'c', but they couldn't determine an upper limit to that value.<br cle=
+ar=3D"none"><br clear=3D"none"><br clear=3D"none"><br clear=3D"none"><br cl=
+ear=3D"none">&gt; &gt; &gt; &nbsp;If 'something' is moving at faster than l=
+ight speed, then some<br clear=3D"none">&gt; &gt; &gt; information must be =
+being transmitted. If no information is<br clear=3D"none">&gt; &gt; &gt; &n=
+bsp;being transmitted, then by definition, there's no way to measure<br cle=
+ar=3D"none">&gt; &gt; &nbsp;&gt; &nbsp;speed and the claim makes no sense.<=
+br clear=3D"none"><br clear=3D"none">&gt;&gt; Well, that's the problem. <br=
+ clear=3D"none">&gt;&gt;&nbsp;Knowing that SOMETHING is being<br clear=3D"n=
+one">&gt;&gt; transmitted, and actually USING that method to transmit usefu=
+l<br clear=3D"none">&gt;&gt; information, are (quite strangely) two differe=
+nt things. <br clear=3D"none"><br clear=3D"none">&nbsp;&gt; &nbsp; If you k=
+now that 'something' was transmitted, then al least one<br clear=3D"none">&=
+nbsp;&gt; &nbsp; bit of information was transmitted, no?&nbsp;</div><div cl=
+ass=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148022_98474" dir=3D=
+"ltr" style=3D"font-family: HelveticaNeue, &quot;Helvetica Neue&quot;, Helv=
+etica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-size: 16px;"><br>=
+</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148022_=
+98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;Helvetica Neu=
+e&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-size=
+: 16px;">Like I said, there's a difference between knowing something is hap=
+pening,</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295=
+148022_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;Helvet=
+ica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; fo=
+nt-size: 16px;">and being able to actually employ that for useful purposes.=
+</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148022_=
+98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;Helvetica Neu=
+e&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-size=
+: 16px;">If I see a horse running in the prairie, and yet I cannot capture =
+him, I</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_14702951=
+48022_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;Helveti=
+ca Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; fon=
+t-size: 16px;">cannot use him to travel at horse-speed rather than man-spee=
+d.</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_147029514802=
+2_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;Helvetica N=
+eue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-si=
+ze: 16px;"><br></div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1=
+_1470295148022_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &quo=
+t;Helvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-s=
+erif; font-size: 16px;">Even in the 1s00s, people knew that light traveled =
+at a finite</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_147=
+0295148022_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;He=
+lvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif=
+; font-size: 16px;">(non-infinite) velocity. &nbsp;Hint: &nbsp;It involved =
+Jupiter's moons.</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_=
+1_1470295148022_98474" dir=3D"ltr"><span style=3D"font-size: 16px;" id=3D"y=
+ui_3_16_0_ym19_1_1470295148022_100189"><a href=3D"https://en.wikipedia.org/=
+wiki/Speed_of_light" id=3D"yui_3_16_0_ym19_1_1470295148022_100190">https://=
+en.wikipedia.org/wiki/Speed_of_light</a></span></div><div class=3D"y_msg_co=
+ntainer" id=3D"yui_3_16_0_ym19_1_1470295148022_98474" dir=3D"ltr" style=3D"=
+font-family: HelveticaNeue, &quot;Helvetica Neue&quot;, Helvetica, Arial, &=
+quot;Lucida Grande&quot;, sans-serif; font-size: 16px;"><br></div><div clas=
+s=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148022_98474" dir=3D"l=
+tr" style=3D"font-family: HelveticaNeue, &quot;Helvetica Neue&quot;, Helvet=
+ica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-size: 16px;">But un=
+til the invention of the Fleming valve (old name for an 'electron</div><div=
+ class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148022_98474" dir=
+=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;Helvetica Neue&quot;, H=
+elvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-size: 16px;">t=
+ube') and then radio, people didn't know how to transmit information&nbsp;<=
+/div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148022_9=
+8474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;Helvetica Neue=
+&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-size:=
+ 16px;">from Europe to America in a few milliseconds.</div><div class=3D"y_=
+msg_container" id=3D"yui_3_16_0_ym19_1_1470295148022_98474" dir=3D"ltr" sty=
+le=3D"font-family: HelveticaNeue, &quot;Helvetica Neue&quot;, Helvetica, Ar=
+ial, &quot;Lucida Grande&quot;, sans-serif; font-size: 16px;">&nbsp;<a href=
+=3D"https://en.wikipedia.org/wiki/Fleming_valve" id=3D"yui_3_16_0_ym19_1_14=
+70295148022_100912">https://en.wikipedia.org/wiki/Fleming_valve</a></div><d=
+iv class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148022_98474" d=
+ir=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;Helvetica Neue&quot;,=
+ Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-size: 16px;"=
+><br></div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_147029514=
+8022_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;Helvetic=
+a Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font=
+-size: 16px;">Curiously, Thomas Edison really screwed up by not recognizing=
+ the value of</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1=
+470295148022_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;=
+Helvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-ser=
+if; font-size: 16px;">the "Edison Effect" (which he wasn't actually the fir=
+st to recognize)</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_=
+1_1470295148022_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &qu=
+ot;Helvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-=
+serif; font-size: 16px;"><br></div><div class=3D"y_msg_container" id=3D"yui=
+_3_16_0_ym19_1_1470295148022_98474" dir=3D"ltr" style=3D"font-family: Helve=
+ticaNeue, &quot;Helvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande=
+&quot;, sans-serif; font-size: 16px;">&nbsp;&gt; &nbsp; Again, either infor=
+mation is being transmitted at FTL speed or<br clear=3D"none">&nbsp; &gt; &=
+nbsp;not. So, what is being claimed here?</div><div class=3D"y_msg_containe=
+r" id=3D"yui_3_16_0_ym19_1_1470295148022_98474" dir=3D"ltr" style=3D"font-f=
+amily: HelveticaNeue, &quot;Helvetica Neue&quot;, Helvetica, Arial, &quot;L=
+ucida Grande&quot;, sans-serif; font-size: 16px;"><br></div><div class=3D"y=
+_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148022_98474" dir=3D"ltr" st=
+yle=3D"font-family: HelveticaNeue, &quot;Helvetica Neue&quot;, Helvetica, A=
+rial, &quot;Lucida Grande&quot;, sans-serif; font-size: 16px;">We simply do=
+n't know how to use entangled photons to transmit information</div><div cla=
+ss=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148022_98474" dir=3D"=
+ltr" style=3D"font-family: HelveticaNeue, &quot;Helvetica Neue&quot;, Helve=
+tica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-size: 16px;">at gr=
+eater than 'c'. &nbsp;And there is no guarantee we will ever know how to do=
+</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148022_=
+98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;Helvetica Neu=
+e&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-serif; font-size=
+: 16px;">so.</div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_14=
+70295148022_98474" dir=3D"ltr" style=3D"font-family: HelveticaNeue, &quot;H=
+elvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot;, sans-seri=
+f; font-size: 16px;"><br></div><div class=3D"y_msg_container" id=3D"yui_3_1=
+6_0_ym19_1_1470295148022_98474" dir=3D"ltr" style=3D"font-family: Helvetica=
+Neue, &quot;Helvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quo=
+t;, sans-serif; font-size: 16px;">And if you believe that something must de=
+finitely be one thing, or another,&nbsp;</div><div class=3D"y_msg_container=
+" id=3D"yui_3_16_0_ym19_1_1470295148022_98474" dir=3D"ltr" style=3D"font-fa=
+mily: HelveticaNeue, &quot;Helvetica Neue&quot;, Helvetica, Arial, &quot;Lu=
+cida Grande&quot;, sans-serif; font-size: 16px;">I will have to introduce y=
+ou to Schrodinger's Cat.</div><div class=3D"y_msg_container" id=3D"yui_3_16=
+_0_ym19_1_1470295148022_98474" dir=3D"ltr" style=3D"font-family: HelveticaN=
+eue, &quot;Helvetica Neue&quot;, Helvetica, Arial, &quot;Lucida Grande&quot=
+;, sans-serif; font-size: 16px;"><br></div><div class=3D"y_msg_container" i=
+d=3D"yui_3_16_0_ym19_1_1470295148022_98474" dir=3D"ltr"><span style=3D"font=
+-size: 16px;" id=3D"yui_3_16_0_ym19_1_1470295148022_100867"><a href=3D"http=
+s://en.wikipedia.org/wiki/Schr%C3%B6dinger%27s_cat" id=3D"yui_3_16_0_ym19_1=
+_1470295148022_100890">https://en.wikipedia.org/wiki/Schr%C3%B6dinger%27s_c=
+at</a></span><br clear=3D"none"><br clear=3D"none"><span style=3D"font-size=
+: 16px;" id=3D"yui_3_16_0_ym19_1_1470295148022_100868">&nbsp;...which has t=
+he weird property of being able to be alive and dead at the same time.</spa=
+n><br></div><div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_14702951=
+48022_98474" dir=3D"ltr"><span style=3D"font-size: 16px;"><br></span></div>=
+<div class=3D"y_msg_container" id=3D"yui_3_16_0_ym19_1_1470295148022_98474"=
+ dir=3D"ltr"><span style=3D"font-size: 16px;" id=3D"yui_3_16_0_ym19_1_14702=
+95148022_101200">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &n=
+bsp; &nbsp; &nbsp; &nbsp; &nbsp;Jim Bell</span></div><div class=3D"y_msg_co=
+ntainer" id=3D"yui_3_16_0_ym19_1_1470295148022_98474" dir=3D"ltr"><span sty=
+le=3D"font-size: 16px;"><br></span></div> </div> </div>  </div></div></body=
+></html>
+------=_Part_36754_714605647.1470353627916--
+

@@ -1,0 +1,255 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u22EtQpT020324;
+	Wed, 2 Mar 2016 09:55:28 -0500
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=VZPVlOv+;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-io0-f176.google.com (mail-io0-f176.google.com
+ [209.85.223.176])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u22EtN7C020320
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Wed, 2 Mar 2016 09:55:25 -0500
+Received: by mail-io0-f176.google.com with SMTP id m184so20436603iof.1
+ for <cypherpunks@cpunks.org>; Wed, 02 Mar 2016 06:55:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+ :cc; bh=/onWHf9h5OTlKD6VIvkYAp7m/JYghyltZuub/zuIhec=;
+ b=VZPVlOv+oEqlfnt7F0gZNgoKvloGJ5W2SSqBUvH5rIL2uhTbmRL0RtJEEGs8Bas3eN
+ ctEwRrU60+35+UNKyrhHrb6xmKnaK/uoXIPs+0EngF5Gdt/ypXAMK+Lr5dVAgAbb2dc9
+ 2KyXmLj9qKefcpTw7drQujkBztut1RmJP+E14HNgiUjhQq+sbGj+XrrBgO6dayua6fai
+ APLTkyjKE04UV4QX8LtXXD8dvCDP5pGyv3oY7dxxAnpcbt7BPxjHIOYGUnvKjtatCT6K
+ jiPj1bLaRe8mpZX7JjGlQLfhWwwaLApfZNoRce4xUkVlao0793siGPWyXVJjVHhBhlfN
+ kE7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+ :message-id:subject:to:cc;
+ bh=/onWHf9h5OTlKD6VIvkYAp7m/JYghyltZuub/zuIhec=;
+ b=hHrlKWrpShSajsSgX7K3SLDGK6pRI2qwSWaKuWkW75aFMPhNi04pVZCGm7l/5ttG5W
+ c2TjePb1D5OLpM0Dg9RKHP8OfRLwIJZGWZOdVF3cbhsfMZgx2GH6MFFiyr3+22o7Sb6O
+ t3oJRGY5BkAh3S5Qq/1vdlAyhe4JGNmqjBxQoJ7zsTgaMq8Pf8fOq9RQPdUGqa+xMqcy
+ Q0uq469t0A5SlsRBpskdLw9+txgIpuziUgTiuafoY+2lpCQenCZ31GAoVZpXRdmMw1PZ
+ YChheCRqaerp1UNaukks3Lo2dI01XLv/05VrIz7TjqFcWWraHlQvJaMaYvrl1e9JeXGr
+ DLIQ==
+X-Gm-Message-State: AG10YOSSGrfnqhkCHryccKMg4pzz6ivm6s2ItNQPmJ6ny6lYYKfqtSsdOHXIqmWz2/R4a9fS8zG3pkixY5F2+g==
+X-Received: by 10.107.3.33 with SMTP id 33mr31290244iod.80.1456930517714; Wed,
+ 02 Mar 2016 06:55:17 -0800 (PST)
+MIME-Version: 1.0
+Received: by 10.107.145.70 with HTTP; Wed, 2 Mar 2016 06:54:58 -0800 (PST)
+In-Reply-To: <20160302140144.GC2536@sivokote.iziade.m$>
+References: <20160229074429.GA2571@sivokote.iziade.m$>
+ <CAD2Ti2_+348bjcA5eaNrqvECU45=eJPspu0xhPdj4hntuP0cHQ@mail.gmail.com>
+ <20160229100643.GB2571@sivokote.iziade.m$>
+ <CAD2Ti29is2Z-6qJFgh8OG1UrAHPae++PZyfZ1-iuADXG=Bd9pQ@mail.gmail.com>
+ <20160229113804.GC2571@sivokote.iziade.m$>
+ <CAD2Ti2911evPsw0dZQWXvTr9Wgu6Su5PHDytQc81iAUJgMde9w@mail.gmail.com>
+ <20160301065454.GA2577@sivokote.iziade.m$>
+ <CAD2Ti29HE8xBWmXujbGQHHoj5L+2wk7iyBpgTZ9JownWxX-gOQ@mail.gmail.com>
+ <20160301094345.GC2577@sivokote.iziade.m$>
+ <CAD2Ti28t0dScbR-nkVteQi-29D2pytPYjQw6oWkvPvJhVvho8w@mail.gmail.com>
+ <20160302140144.GC2536@sivokote.iziade.m$>
+From: Cari Machet <carimachet@gmail.com>
+Date: Wed, 2 Mar 2016 15:54:58 +0100
+Message-ID: <CAGRDzQUD2qfJiQLJY7Js4RHaNgPNyV2vHEMp5nf5md0q9zgYYA@mail.gmail.com>
+Subject: Re: Once again: Tor timing attacks and a Tor confession
+To: Georgi Guninski <guninski@guninski.com>
+Content-Type: multipart/alternative; boundary=001a113ed3a4f89346052d121189
+Cc: cpunks <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 182
+
+--001a113ed3a4f89346052d121189
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+"That was enough for a judge to grant the FBI a warrant and permission to
+secretly install what=E2=80=99s known as a pen/trap device, which allowed f=
+or the
+monitoring of Hammond=E2=80=99s Internet activity at the end of February 20=
+12.
+That, coupled with the physical surveillance, allowed the agency to see
+when he was home. What they found correlated with his Tor usage=E2=80=94whi=
+ch
+allowed him to hide his IP address=E2=80=94and when =E2=80=9Cyohoho=E2=80=
+=9D was online, "
+
+http://kernelmag.dailydot.com/issue-sections/headline-story/9895/jeremy-ham=
+mond-fbi-surveillance-bust/#sthash.qrw4hBVT.dpuf
+
+"Bello Coffee appears to be the cafe from which police say Ulbricht logged
+into the virtual private network (VPN) that he allegedly used as an extra
+layer of protection to access Tor and Silk Road. The prosecution says they
+have records from Google showing Ulbricht logging into his Gmail account
+from the Internet cafe on a regular basis, including on days when the VPN
+was used from the same cafe."
+
+oh its too funny....
+
+so what jeremy says about his case is that they just did lots of different
+types of investigations and that is what got him - he also states that he
+should have been mobile - nomadic ... maybe solutions should be nomadic as
+well
+
+On Wed, Mar 2, 2016 at 3:01 PM, Georgi Guninski <guninski@guninski.com>
+wrote:
+
+> On Tue, Mar 01, 2016 at 01:52:24PM -0500, grarpamp wrote:
+> > > Don't know about courts, here is a reference from thereg:
+> > > http://www.theregister.co.uk/2012/03/07/lulzsec_takedown_analysis/
+> >
+> > That's not a quote from an original source. Neither is what it
+> references...
+> > http://blog.erratasec.com/2012/03/notes-on-sabu-arrest.html
+> > ... which goes to Fox, which probably goes to... and to... and to...
+> > ... including possibly to stretching / ignoring the law, parallel
+> > construction...
+> > or to some other legit defendant screwup... at least until the quote
+> > is validated.
+> >
+> > Have the actual chain of custodied investigative materials as to exactl=
+y
+> > how the SilkRoad server was found come out yet? (And other similarly
+> fishy
+> > cases where nodes on supposedly strong overlay networks were found...)
+> > Or is that still wrapped in grand jury, work product, state secret,
+> > in camera, sealed...
+>
+> If you find out, let us know.
+>
+> This is the most "official" version for me for now.
+>
+>
+
+
+--=20
+Cari Machet
+NYC 646-436-7795
+carimachet@gmail.com
+AIM carismachet
+Syria +963-099 277 3243
+Amman +962 077 636 9407
+Berlin +49 152 11779219
+Reykjavik +354 894 8650
+Twitter: @carimachet <https://twitter.com/carimachet>
+
+7035 690E 5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187
+
+Ruh-roh, this is now necessary: This email is intended only for the
+addressee(s) and may contain confidential information. If you are not the
+intended recipient, you are hereby notified that any use of this
+information, dissemination, distribution, or copying of this email without
+permission is strictly prohibited.
+
+--001a113ed3a4f89346052d121189
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><span style=3D"color:rgb(51,51,51);font-family:Lato,&#39;H=
+elvetica Neue&#39;,Helvetica,Arial,sans-serif;font-size:14px;line-height:20=
+px">&quot;That was enough for a judge to grant the FBI a warrant and permis=
+sion to secretly install what=E2=80=99s known as a pen/trap device, which a=
+llowed for the monitoring of Hammond=E2=80=99s Internet activity at the end=
+ of February 2012. That, coupled with the physical surveillance, allowed th=
+e agency to see when he was home. What they found correlated with his Tor u=
+sage=E2=80=94which allowed him to hide his IP address=E2=80=94and when =E2=
+=80=9Cyohoho=E2=80=9D was online, &quot;</span><div><span style=3D"color:rg=
+b(51,51,51);font-family:Lato,&#39;Helvetica Neue&#39;,Helvetica,Arial,sans-=
+serif;font-size:14px;line-height:20px"><br></span></div><div><span style=3D=
+"color:rgb(51,51,51);font-family:Lato,&#39;Helvetica Neue&#39;,Helvetica,Ar=
+ial,sans-serif;font-size:14px;line-height:20px"><a href=3D"http://kernelmag=
+.dailydot.com/issue-sections/headline-story/9895/jeremy-hammond-fbi-surveil=
+lance-bust/#sthash.qrw4hBVT.dpuf">http://kernelmag.dailydot.com/issue-secti=
+ons/headline-story/9895/jeremy-hammond-fbi-surveillance-bust/#sthash.qrw4hB=
+VT.dpuf</a></span><br></div><div><span style=3D"color:rgb(51,51,51);font-fa=
+mily:Lato,&#39;Helvetica Neue&#39;,Helvetica,Arial,sans-serif;font-size:14p=
+x;line-height:20px"><br></span></div><div><span style=3D"color:rgb(90,90,90=
+);font-family:Georgia,serif;font-size:18px;line-height:27px">&quot;Bello Co=
+ffee appears to be the cafe from which police say Ulbricht logged into the =
+virtual private network (VPN) that he allegedly used as an extra layer of p=
+rotection to access Tor and Silk Road. The prosecution says they have recor=
+ds from Google showing Ulbricht logging into his Gmail account from the Int=
+ernet cafe on a regular basis, including on days when the VPN was used from=
+ the same cafe.&quot;</span><span style=3D"color:rgb(51,51,51);font-family:=
+Lato,&#39;Helvetica Neue&#39;,Helvetica,Arial,sans-serif;font-size:14px;lin=
+e-height:20px"><br></span></div><div><span style=3D"color:rgb(90,90,90);fon=
+t-family:Georgia,serif;font-size:18px;line-height:27px"><br></span></div><d=
+iv><span style=3D"color:rgb(90,90,90);font-family:Georgia,serif;font-size:1=
+8px;line-height:27px">oh its too funny....</span></div><div><span style=3D"=
+color:rgb(90,90,90);font-family:Georgia,serif;font-size:18px;line-height:27=
+px"><br></span></div><div><span style=3D"color:rgb(90,90,90);font-family:Ge=
+orgia,serif;font-size:18px;line-height:27px">so what jeremy says about his =
+case is that they just did lots of different types of investigations and th=
+at is what got him - he also states that he should have been mobile - nomad=
+ic ... maybe solutions should be nomadic as well</span></div><img src=3D"ht=
+tp://t.sidekickopen42.com/e1t/o/5/f18dQhb0S7ks8dDMPbW2n0x6l2B9gXrN7sKj6v5df=
+b6W5vwkZs7fZjrnW2BpKgF2zlZNzW8v-hnY1k1H6H0?si=3D5459291358625792&amp;pi=3D3=
+d19d64c-e483-4e44-c30a-1cd01a33ad2b" style=3D"display:none!important" heigh=
+t=3D"1" width=3D"1"></div><div class=3D"gmail_extra"><br><div class=3D"gmai=
+l_quote">On Wed, Mar 2, 2016 at 3:01 PM, Georgi Guninski <span dir=3D"ltr">=
+&lt;<a href=3D"mailto:guninski@guninski.com" target=3D"_blank">guninski@gun=
+inski.com</a>&gt;</span> wrote:<br><blockquote class=3D"gmail_quote" style=
+=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"><span cl=
+ass=3D"">On Tue, Mar 01, 2016 at 01:52:24PM -0500, grarpamp wrote:<br>
+&gt; &gt; Don&#39;t know about courts, here is a reference from thereg:<br>
+&gt; &gt; <a href=3D"http://www.theregister.co.uk/2012/03/07/lulzsec_takedo=
+wn_analysis/" rel=3D"noreferrer" target=3D"_blank">http://www.theregister.c=
+o.uk/2012/03/07/lulzsec_takedown_analysis/</a><br>
+&gt;<br>
+&gt; That&#39;s not a quote from an original source. Neither is what it ref=
+erences...<br>
+&gt; <a href=3D"http://blog.erratasec.com/2012/03/notes-on-sabu-arrest.html=
+" rel=3D"noreferrer" target=3D"_blank">http://blog.erratasec.com/2012/03/no=
+tes-on-sabu-arrest.html</a><br>
+&gt; ... which goes to Fox, which probably goes to... and to... and to...<b=
+r>
+&gt; ... including possibly to stretching / ignoring the law, parallel<br>
+&gt; construction...<br>
+&gt; or to some other legit defendant screwup... at least until the quote<b=
+r>
+&gt; is validated.<br>
+&gt;<br>
+&gt; Have the actual chain of custodied investigative materials as to exact=
+ly<br>
+&gt; how the SilkRoad server was found come out yet? (And other similarly f=
+ishy<br>
+&gt; cases where nodes on supposedly strong overlay networks were found...)=
+<br>
+&gt; Or is that still wrapped in grand jury, work product, state secret,<br=
+>
+&gt; in camera, sealed...<br>
+<br>
+</span>If you find out, let us know.<br>
+<br>
+This is the most &quot;official&quot; version for me for now.<br>
+<br>
+</blockquote></div><br><br clear=3D"all"><div><br></div>-- <br><div class=
+=3D"gmail_signature"><div dir=3D"ltr"><div>Cari Machet<br>NYC 646-436-7795<=
+br><a href=3D"mailto:carimachet@gmail.com" target=3D"_blank">carimachet@gma=
+il.com</a><br>AIM carismachet<br>Syria +963-099 277 3243<br>Amman +962 077 =
+636 9407<br>Berlin +49 152 11779219 <br>Reykjavik +354 894 8650<br>Twitter:=
+ @carimachet &lt;<a href=3D"https://twitter.com/carimachet" target=3D"_blan=
+k">https://twitter.com/carimachet</a>&gt;<br><br></div>7035 690E 5E47 41D4 =
+B0E5 B3D1 AF90 49D6 BE09 2187<br><div><br>Ruh-roh, this is now necessary: T=
+his email is intended only for the <br>addressee(s) and may contain confide=
+ntial information. If you are not the <br>intended recipient, you are hereb=
+y notified that any use of this <br>information, dissemination, distributio=
+n, or copying of this email without <br>permission is strictly prohibited.<=
+br><br><br></div></div></div>
+</div>
+
+--001a113ed3a4f89346052d121189--
+

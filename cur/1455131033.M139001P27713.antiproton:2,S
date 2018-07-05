@@ -1,0 +1,204 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u1AJ3Y8U027691;
+	Wed, 10 Feb 2016 14:03:35 -0500
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=rakQAz4x;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-ig0-f180.google.com (mail-ig0-f180.google.com
+ [209.85.213.180])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u1AJ3VLS027687
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Wed, 10 Feb 2016 14:03:33 -0500
+Received: by mail-ig0-f180.google.com with SMTP id ik10so21338388igb.1
+ for <cypherpunks@cpunks.org>; Wed, 10 Feb 2016 11:03:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+ :cc:content-type;
+ bh=2LcU+C23W3Lm/uaKGbecCRwNnI6pkSpfgmLfmC1HA5g=;
+ b=rakQAz4x3qQBRdGhaHrdB3KEIHU5nNBnHEhmkkdDnY3Utrs3rvLn0PVt3nUG4mOpy0
+ R14rDOCqc+M0VcbXsDYI1LojcKOrH9xzHnp+NZmwf2DFy7spnJBE3kcGLHFDGewwGJ1F
+ HKbMPo0lD/zz9Z8MqXjTKh/pJtL1VKPb2pjl2K/vaMapXglSbebMsJHOed1Ej45muXco
+ 7NUwBR4JZ1IpblRZLaw0IuaqxnfkT3fMxmEkPmVwjPnrjv+jnVSbxnuDqvuOFlfw/avf
+ 5fYABpjRCi9gqYo2gtA4CM4YpTFkRiU4aUZ4qVWsf7gIMptFYw7anNxI4JW9lmWpaz20
+ fAvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+ :message-id:subject:to:cc:content-type;
+ bh=2LcU+C23W3Lm/uaKGbecCRwNnI6pkSpfgmLfmC1HA5g=;
+ b=S7sRrKb0oMyHZKrDLlW0txliDbCzJGyuK/n9qpOJv8h40y5qJWHUE1p5MN6A+zxTta
+ 95seD1nspc/I6OHLD5BDD3josqk9/G0QH1M8HFw+OW7PRjhn/hUZ+k62ytjp8RntpAJI
+ tUL03oEzUhprVxBB9ElqleTD1ZgwhxHR3MB29K2Sx+p1LLP5uXDgYm3PMDIfq5w2ma4C
+ oXLOcKlhL5NQGRqbKAz6ONDyWNkkfD+JHzJuqzeJcQuDPU1FohykVYEh1bdc+bxkDq6z
+ dHlMADOkkp29vdznHP1RSpHFhvQI7CFZ9+dOqcQ5Grgykk8mnMuIbWm4VpbzwYVVjGUj
+ PIYw==
+X-Gm-Message-State: AG10YOSlwGHZdtqAGfU+/wh4WaKvCqwn0oN5Fk46I2FtocSsiYfjz9AqvOcK52mjCjt8TizpVJWwEAT0bVHsfg==
+X-Received: by 10.50.93.36 with SMTP id cr4mr11244809igb.22.1455131006163;
+ Wed, 10 Feb 2016 11:03:26 -0800 (PST)
+MIME-Version: 1.0
+Received: by 10.107.145.70 with HTTP; Wed, 10 Feb 2016 11:03:06 -0800 (PST)
+In-Reply-To: <1455124062.21508.7.camel@riseup.net>
+References: <CANFTA0-poVPP2nHwFmZOUc8VKq=P4oup5jGED_AfsE7tA-f4Lg@mail.gmail.com>
+ <CAHKdp-m7G5RFTUhxOfUjYL5MqPdpt84gwUuYDb0tQSX_=Nx0ZA@mail.gmail.com>
+ <56b4f3ba.d4f28c0a.1c75a.fffff056@mx.google.com>
+ <CAGRDzQWAgK+wsTafWkGcqbfHNcc1g8RZ-ACkDxjDcDG-xi8DnQ@mail.gmail.com>
+ <CAHKdp-m7fZVHzvDu_Q8=wODpkAMtAJkSBnniuco0Yybm2E9hGQ@mail.gmail.com>
+ <CAGRDzQW5FA_AK8WRBag4Zi3XHoMkz-MVG6yD+tt769df2uS6gw@mail.gmail.com>
+ <CAGRDzQVOeb_B+WVc2TmX-oMBazDiFw1ykvW=nP=O9M2kQ=8okw@mail.gmail.com>
+ <56b53670.4ac98c0a.7672b.1586@mx.google.com>
+ <CAGRDzQVMv=p5yQak6Rsq0UXEyVcgzXSd=WffWVC=AFzW84priw@mail.gmail.com>
+ <56b5636d.6d148c0a.ed84d.2adf@mx.google.com>
+ <CAJVRA1QHYFmGH0txZYKfEL3hM_1S-06sObKdhmnrMoveCGeRdw@mail.gmail.com>
+ <CAEm6KbJ_588U6o+AZUpVu6RapoEx5eawdmaQJEau71+rNX=dfQ@mail.gmail.com>
+ <56B61378.30706@riseup.net>
+ <CAOsGNSTgi3fh3KrJBkjbhTaf-A77=5PvFbptbMzjMCYC=pDU2w@mail.gmail.com>
+ <56b7a394.8550370a.ec665.ffffdf52@mx.google.com> <56B90BA9.9030708@riseup.net>
+ <56ba02a5.07dd8c0a.e7eb8.ffffc98d@mx.google.com> <56BA0F78.90805@riseup.net>
+ <CAJVRA1Rq3iLH6e9WzzcDFuMXuvOJkbLr4uoGK9sN+PvM_Mixjg@mail.gmail.com>
+ <1455124062.21508.7.camel@riseup.net>
+From: Cari Machet <carimachet@gmail.com>
+Date: Wed, 10 Feb 2016 20:03:06 +0100
+Message-ID: <CAGRDzQUopk=L1K5p4eWsKXPSzsnXJBJaRgyYfu1w+Y_5qw5BRw@mail.gmail.com>
+Subject: Re: The Intercept steps up after catching a reporter faking data and
+ sources
+To: Ted Smith <tedks@riseup.net>
+Content-Type: multipart/alternative; boundary=047d7b414180b966e4052b6f16b9
+Cc: cpunks <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 122
+
+--047d7b414180b966e4052b6f16b9
+Content-Type: text/plain; charset=UTF-8
+
+FUCK
+
+V MAJOR
+
+i have boycotted tor for sooooo many years now
+
+On Wed, Feb 10, 2016 at 6:07 PM, Ted Smith <tedks@riseup.net> wrote:
+
+> On Wed, 2016-02-10 at 03:37 +0100, coderman wrote:
+> > On 2/9/16, Rayzer <Rayzer@riseup.net> wrote:
+> > > ...
+> > > Somewhere on Tor's site I ran into something about how Tail's
+> > > tor/browser was more secure than the standard torbrowser because of
+> > > something the tails folks were doing with iptables. Perhaps they're
+> > > 'steering' traffic away from (or yeah, perhaps towards, take that
+> anyway
+> > > you like...) certain nodes.
+> >
+> > drop packets that bypass the SOCKS proxy path into Tor client. also,
+> > makes sure to plug leaks, like:
+> >
+> >  iptables -A OUTPUT -m conntrack --ctstate INVALID -j DROP
+> >
+> > see also, Whonix-Qubes, etc.
+>
+> The downside of TAILS is that you don't get entry guards, which is
+> pretty major.
+>
+> --
+> Sent from Ubuntu
+>
+
+
+
+-- 
+Cari Machet
+NYC 646-436-7795
+carimachet@gmail.com
+AIM carismachet
+Syria +963-099 277 3243
+Amman +962 077 636 9407
+Berlin +49 152 11779219
+Reykjavik +354 894 8650
+Twitter: @carimachet <https://twitter.com/carimachet>
+
+7035 690E 5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187
+
+Ruh-roh, this is now necessary: This email is intended only for the
+addressee(s) and may contain confidential information. If you are not the
+intended recipient, you are hereby notified that any use of this
+information, dissemination, distribution, or copying of this email without
+permission is strictly prohibited.
+
+--047d7b414180b966e4052b6f16b9
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">FUCK=C2=A0<div><br></div><div>V MAJOR</div><div><br></div>=
+<div>i have boycotted tor for sooooo many years now</div><img src=3D"http:/=
+/t.sidekickopen35.com/e1t/o/5/f18dQhb0S7ks8dDMPbW2n0x6l2B9gXrN7sKj6v5dfb6W5=
+vwkZs7fZjrnW2BpKgF2zlZNzW8v-hnY1k1H6H0?si=3D5459291358625792&amp;pi=3Dd5aff=
+1aa-e5f7-43bf-f7a2-35d930361e0b" style=3D"display:none!important" height=3D=
+"1" width=3D"1"><img src=3D"http://t.sidekickopen35.com/e1t/o/5/f18dQhb0S7k=
+s8dDMPbW2n0x6l2B9gXrN7sKj6v5dfb6W5vwkZs7fZjrnW2BpKgF2zlZNzW8v-hnY1k1H6H0?si=
+=3D5459291358625792&amp;pi=3D6c9d239d-7091-4d4f-8045-57dd72462856" style=3D=
+"display:none!important" height=3D"1" width=3D"1"><div class=3D"gmail_extra=
+"><br><div class=3D"gmail_quote">On Wed, Feb 10, 2016 at 6:07 PM, Ted Smith=
+ <span dir=3D"ltr">&lt;<a href=3D"mailto:tedks@riseup.net" target=3D"_blank=
+">tedks@riseup.net</a>&gt;</span> wrote:<br><blockquote class=3D"gmail_quot=
+e" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">=
+<span>On Wed, 2016-02-10 at 03:37 +0100, coderman wrote:<br>
+&gt; On 2/9/16, Rayzer &lt;<a href=3D"mailto:Rayzer@riseup.net" target=3D"_=
+blank">Rayzer@riseup.net</a>&gt; wrote:<br>
+&gt; &gt; ...<br>
+&gt; &gt; Somewhere on Tor&#39;s site I ran into something about how Tail&#=
+39;s<br>
+&gt; &gt; tor/browser was more secure than the standard torbrowser because =
+of<br>
+&gt; &gt; something the tails folks were doing with iptables. Perhaps they&=
+#39;re<br>
+&gt; &gt; &#39;steering&#39; traffic away from (or yeah, perhaps towards, t=
+ake that anyway<br>
+&gt; &gt; you like...) certain nodes.<br>
+&gt;<br>
+&gt; drop packets that bypass the SOCKS proxy path into Tor client. also,<b=
+r>
+&gt; makes sure to plug leaks, like:<br>
+&gt;<br>
+&gt;=C2=A0 iptables -A OUTPUT -m conntrack --ctstate INVALID -j DROP<br>
+&gt;<br>
+&gt; see also, Whonix-Qubes, etc.<br>
+<br>
+</span>The downside of TAILS is that you don&#39;t get entry guards, which =
+is<br>
+pretty major.<br>
+<span><font color=3D"#888888"><br>
+--<br>
+Sent from Ubuntu<br>
+</font></span></blockquote></div><br><br clear=3D"all"><div><br></div>-- <b=
+r><div><div dir=3D"ltr"><div>Cari Machet<br>NYC <a href=3D"tel:646-436-7795=
+" value=3D"+16464367795" target=3D"_blank">646-436-7795</a><br><a href=3D"m=
+ailto:carimachet@gmail.com" target=3D"_blank">carimachet@gmail.com</a><br>A=
+IM carismachet<br>Syria +963-099 277 3243<br>Amman +962 077 636 9407<br>Ber=
+lin <a href=3D"tel:%2B49%20152%2011779219" value=3D"+4915211779219" target=
+=3D"_blank">+49 152 11779219</a> <br>Reykjavik <a href=3D"tel:%2B354%20894%=
+208650" value=3D"+3548948650" target=3D"_blank">+354 894 8650</a><br>Twitte=
+r: @carimachet &lt;<a href=3D"https://twitter.com/carimachet" target=3D"_bl=
+ank">https://twitter.com/carimachet</a>&gt;<br><br></div>7035 690E 5E47 41D=
+4 B0E5 B3D1 AF90 49D6 BE09 2187<br><div><br>Ruh-roh, this is now necessary:=
+ This email is intended only for the <br>addressee(s) and may contain confi=
+dential information. If you are not the <br>intended recipient, you are her=
+eby notified that any use of this <br>information, dissemination, distribut=
+ion, or copying of this email without <br>permission is strictly prohibited=
+.<br><br><br></div></div></div>
+</div></div>
+
+--047d7b414180b966e4052b6f16b9--
+

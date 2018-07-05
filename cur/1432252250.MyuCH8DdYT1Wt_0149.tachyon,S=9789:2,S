@@ -1,0 +1,206 @@
+From cypherpunks-bounces@cpunks.org  Fri Aug  9 06:06:57 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r79A6mcw001398;
+	Fri, 9 Aug 2013 06:06:49 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r79A6hQo001394
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Fri, 9 Aug 2013 06:06:45 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 0AD56543E37; Fri,  9 Aug 2013 12:06:43 +0200 (CEST)
+Date: Fri, 9 Aug 2013 12:06:42 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is,
+        doctrinezero@zerostate.is,
+        ExI chat list <extropy-chat@lists.extropy.org>
+Subject: [tahoe-dev] Tahoe-LAFS, Tor and Tails
+Message-ID: <20130809100642.GB29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+----- Forwarded message from Jacob Appelbaum <jacob@appelbaum.net> -----
+
+Date: Fri, 09 Aug 2013 00:22:54 +0000
+From: Jacob Appelbaum <jacob@appelbaum.net>
+To: tahoe-dev@tahoe-lafs.org, The Tails public development discussion list <tails-dev@boum.org>
+Subject: [tahoe-dev] Tahoe-LAFS, Tor and Tails
+
+Greetings from Berlin,
+
+Leif and I have been working on ways to deploy, use and sync data with
+Tahoe on Tails. Tails[0] is a live CD based on Debian GNU/Linux that is
+supported by the Tor Project. It is intended to lose state after every
+shutdown, unless a user configures it to keep certain bits of
+information in a so-called Persistent container. This is usually a LUKS
+encrypted partition on the same bootable medium that contains Tails.
+
+To start - we worked through bootstrapping Tahoe on a Tails system - the
+Tahoe package in Debian and thus available in Tails as of the Tails 0.19
+release is 1.9.2-1. This is a bit older than we'd like, so we
+bootstrapped from source with only a few Debian packages from the
+packaging system.
+
+Here is the git repo for the script that we used to bootstrap Tahoe-LAFS
+on Tails 0.19:
+
+  https://github.com/leif/tahoe-tails-utils
+
+The following ticket covers the overall issues of actually trying to
+bootstrap Tahoe safely on any network at all:
+
+  https://tahoe-lafs.org/trac/tahoe-lafs/ticket/2055
+
+The issues outlined in the above ticket should cover Tor users, though
+likely it equally applies to a VPN user, an i2p user and really, anyone
+barebacking with the internet.
+
+Once this bootstrapping process was completed, we connected the Tails
+machine to a Tahoe-LAFS grid that is Tor aware. The introducer runs as a
+Tor hidden service. Each of the Storage Nodes also presents their
+respective addresses as Tor hidden services through the previously
+mentioned introducer.
+
+We found that the open browser command uses the system browser included
+with Tails. We weren't thrilled about the main browser being used for
+local system daemon or system service related activities. I dislike that
+it talks to the loopback interface, while other content it loads may go
+over the Tor network or even try to do other things with stored data in
+the browser or on the file system.
+
+This ticket is an example of why total browser isolation is a good idea:
+
+  https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1942
+
+We prefer that at least this browser data should be isolated from any
+other web browsing I might perform with this machine. We wrote a quick
+little hack to use a different profile - we added a wrapper called
+`tahoe-browser` written in bash and stuffed it into
+/usr/local/bin/tahoe-browser. We then set BROWSER in the environment to
+point to it:
+
+  export BROWSER="/usr/local/bin/tahoe-browser"
+
+This allows me to use `tahoe webopen grid-news/Latest/index.html` in a
+completely separate browser profile. Hooray. What is grid-news? A useful
+news service on our local Tor grid - any url would have the same issues
+as noted.
+
+Is this useful? Should we generalize this and add it to Tahoe? It would
+be easy enough to extend src/allmydata/scripts/tahoe_webopen.py to do
+this job with the addition of another small class. No such tahoe-browser
+program would be required - though it surely wouldn't hurt to keep them
+completely separated.
+
+An interesting trick would be to put that browser profile itself inside
+of a user's Tahoe grid. It would provide some on-the-go anti-forensics
+and keep all Tahoe related url data, bookmarks and so on inside of the
+grid itself. Leif isn't so hot on this idea because of Tahoe's Magic
+Folders idea isn't implemented. Abstractly, I like the idea but I'm not
+sure if it is practical.
+
+As it stands, we've now managed to bootstrap Tahoe on Tails - so it is
+basically possible to do all grid related activity over Tor. We don't
+have to worry about exit nodes as we're using Tor Hidden Services for
+all of the services. Though generally, I'm not really worried about Tor
+Exit nodes in the context of Tahoe-LAFS.
+
+In an ideal world, we'd use the Tails persistence feature to store a
+user's Tahoe's introducer furl and a few other important bits. This
+could then in turn be used to store all of the other Tails persistance
+data - things like web browser history, .{ssh,gnupg,pidgin,etc}, and/or
+even added Debian packages. To do this, we need to add persistence
+support for Tahoe related configuration in Tails and we need to ensure
+that Tahoe ships as part of Tails.
+
+Here are a few bugs related to this in the Tails bug tracker:
+
+  https://labs.riseup.net/code/issues/5514
+  https://labs.riseup.net/code/issues/5804
+
+Adding '/home/amnesia/.tahoe' to the Tails persistence seems to be
+possible from an existing Tails system. We've filed a bug to add this
+discuss adding Tahoe as a default option in the persistence
+configuration dialog:
+
+  https://labs.riseup.net/code/issues/6227
+
+There are a few interesting improvements that came up for discussion
+during this process.
+
+One such idea relates to changing the way that the Storage Nodes publish
+data to introducers.
+
+Wouldn't it be nice if we could reduce the authority of the introducer
+even more? With a little bit of effort, we could ensure that an attacker
+who learns about the introducer is only able to learn the number of
+Storage Servers but not any other information.
+
+For an all Tor Hidden Service grid with such an introducer, an attacker
+who takes the introducer will learn very little beyond a rough count of
+the total Storage Nodes connecting to that introducer. The clients are
+all protected by Tor and the Storage Nodes are similarly protected by
+Tor. The Storage Nodes would stay not only geographically anonymous as
+provided by Tor but it wouldn't be possible to learn their .onion names
+and even begin to have any way to connect with them at all. To do this,
+we'd need to encrypt the furls shared by the introducer in some way.
+This requires that clients share a symmetric key or publish a public key
+or something similar. Thus the introducer could even be shared by a few
+groups who do not trust each other. If we merge the multi-introducer
+patch, heavily used by the i2p folks, we could really do interesting
+things along these lines. These ideas obviously require a design that is
+beyond the scope of this email.
+
+Additionally, we thought it useful to extend Tahoe to be aware of a grid
+that uses Tor Stealth Hidden Services[1][2]. This essentially adds a
+layer of authentication between a client and a server at the Tor layer.
+Thus even if an attacker were to learn of a Storage Nodes's .onion,
+without the corresponding shared secret - no one will be able to connect
+to the Storage node or even elicit a reply from that server. This is a
+bit tricky in the sense that the Storage Node will make outbound
+connections to the introducer - so Tahoe Storage Node client side
+exploitation is probably a concern. However, if an introducer were
+stolen, the Storage Node's .onion would not be useful to the attacker
+without the Tor Hidden Service authorization keys. Those keys should
+only be available on the Tahoe client's Tor client, and the Tor Hidden
+Service Storage Server's Tor client and not on the introducer.
+
+We of course want to ensure that Tails has the newest version of Tahoe -
+though there is some debate about using Tahoe-LAFS or Leif's Truckee
+Tahoe-LAFS branch. Any thoughts on this topic would be appreciated.
+
+What else should we be thinking about?
+
+All the best,
+Jacob
+
+[0] https://tails.boum.org/
+[1] https://www.torproject.org/docs/tor-hidden-service.html.en
+[2] https://www.torproject.org/docs/hidden-services.html.en
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

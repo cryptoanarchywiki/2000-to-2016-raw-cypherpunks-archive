@@ -1,0 +1,398 @@
+From owner-cypherpunks@Algebra.COM  Thu Aug 15 22:18:04 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7G2I3112772
+	for <rsw@opamp.org>; Thu, 15 Aug 2002 22:18:03 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id WAA23915
+	for <rsw@mit.edu>; Thu, 15 Aug 2002 22:18:02 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7FKCfkV016700
+	for <cypherpunks-outgoing@ak47.algebra.com>; Thu, 15 Aug 2002 15:12:41 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g7FKCfG0016699
+	for cypherpunks-outgoing; Thu, 15 Aug 2002 15:12:41 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7FKCZkV016675
+	for <cypherpunks@ak47.algebra.com>; Thu, 15 Aug 2002 15:12:36 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7FKCYXn021457
+	for cypherpunks@ak47.algebra.com; Thu, 15 Aug 2002 13:12:34 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7FKBSLX021446
+	for cypherpunks-goingout345; Thu, 15 Aug 2002 13:11:28 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Message-ID: <004e01c24497$eafb8da0$6601a8c0@josephas>
+From: "Joseph Ashwood" <ashwood@msn.com>
+To: "Adam Back" <adam@cypherspace.org>
+Cc: <cypherpunks@lne.com>, <cryptography@wasabisystems.com>
+References: <01da01c24357$f8e3f560$6601a8c0@josephas>
+  <3D5A4A38.20609@algroup.co.uk>
+  <00de01c243df$d357a660$6601a8c0@josephas>
+  <20020815070604.A935125@exeter.ac.uk>
+Old-Subject: Re: TCPA not virtualizable during ownership change (Re:
+  Overcoming the potential downside of TCPA)
+Date: Thu, 15 Aug 2002 13:06:26 -0700
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook Express 6.00.2600.0000
+X-OriginalArrivalTime: 15 Aug 2002 20:10:12.0923 (UTC)
+  FILETIME=[C36CC0B0:01C24497]
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Re: TCPA not virtualizable during ownership change (Re:
+  Overcoming the potential downside of TCPA)
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 16321
+Lines: 341
+
+
+This is going to be a very long, and very boring message. But it should
+highlight why we have differing opinions about so very many capabilities of
+the TCPA system. For the sake of attempting to avoid supplying too little
+information, I have simply searched for the term and will make comments on
+each location that it appears.
+
+----- Original Message -----
+From: "Adam Back" <adam@cypherspace.org>
+> Phew... the document is certainly tortuous, and has a large number of
+> similarly and confusingly named credentials, certificates and keys,
+> however from what I can tell this is what is going on:
+
+I wholeheartedly agree. 332 pages to say 5 pages worth of real information
+is not helpful.
+
+>
+> Summary: I think the endorsement key and it's hardware manufacturers
+> certificate is generated at manufacture and is not allowed to be
+> changed.
+[Search criteria "endorsement"]
+While I haven't found any solid evidence either way, they seem to almost
+deliberately avoid that discussion on Page 22 I found a fatal errorcode
+TCPA_NO_ENDORSEMENT at TCPA_BASE+35 "The TPM does not a EK installed"
+attempting to interpret the bad grammar, I believe this should state "The
+TPM does not [have] an [Endorsement Key] installed" which seems to indicate
+that the platform may ship without one.
+
+On page 35 the endorsement key is listed as persistent data. Which at first
+would indicate that the endorsement key happens before shipping, but since
+there is also an RNG state variable stored persistently, my confidence in
+this is undermined. Adding to the complications, down near the end of the
+page, in the table it says "This is the TPM's endorsement key pair. See 9.2.
+The default value is manufacturer-specific" which indicates that it does
+ship with an endorsement key, but that the key can be changed by the owner.
+
+Page 38, the existance of the CBKPUsed flag hints that the endorsement key
+pair need not always be present. Unfortunately the spec goes on to say
+"NOTE: This flag has no default value as the key pair MUST be created by one
+or the other mechanism." Which certainly confuses things.
+
+Page 41 "TPM_CreateEndorsementKey may be called before TPM_Startup. This is
+necessary because TPM_Startup will fail unless an endorsement key exists" is
+of no help either way. As with all the others, it states that there may
+exist conditions where the EK may not exist, but does not give any hints
+whether this is before or after the TPM leaves the plant.
+
+On page 79, the EK is metioned twice. The first time if useless for our
+purpose. The second time states "This SHALL be the TPM endorsement
+credential" which indicates that an endorsement credential must exist. Other
+locations though seem to hint that a void endorsement credential may be
+possible.
+
+Starting on Page 84 is section 4.32.1, which seems to be as close to an
+authority on the EK as possible, but lacks a statement of whether the EK is
+shipped with or added later. It does however clearly indicate that the
+creation of the EK occurs before the Privacy CA is contacted, which was
+already agreed on.
+
+[somewhere around here I stopped addressing everyt occurance of the word
+"endorsement" because most of them are frivolous]
+
+Page 135, Section 5.11.1, clearly states "The new owner MUST encrypt the
+Owner authorization data and the SRK authorization data using the PUBEK."
+Which clearly indicates that the EK must exist before ownership can be
+taken. Other places have hinted that ownership may be taken and then the EK
+updated, which completely contradicts the one-timeness, or this statement.
+
+Page 135 "If no EK is present the TPM MUST return TCPA_NO_ENDORSEMENT" which
+indicates that one can at least attempt to take ownership before an EK is
+present, which would contradict the requirement that the EK come from the
+factory.
+
+Page 178, Section 7.3 I am only mentioning because it presents a rather
+interesting possibility. It hints that under some circumstances it may be
+acceptable for a manufacturer to copy the data from one TCPA to another.
+This portion begins with "The manufacturer takes the maintainance blob . .
+." This may however only be to update an existing one to address flaws or
+meet new capabilities.
+
+Page 183, hints that even the manufacturer is not allowed to known EK public
+key, which complicates things no end, because the Privacy CA certainly
+cannot at that point be permitted to view it. This would indicate that even
+if the EK is shipped with the system, it can never leave the system. This
+would limit the ability of the EK to simply certifying the owner, if that is
+true then it confuses me even further.
+
+Page 213 section 8.10 clearly states that if the owner clears the TCPA,
+everthing is cleared "except the endorsement key pair." Which would indicate
+that this is truly a one-shot deal.
+
+Page 240, states "This is a dead TPM. It has failed it's startup smoke test.
+It should not leave the factory floor." This indicates that the EK must be
+created before the TPM leaves the factory.
+
+Section 9.2, page 261, states that TPM_CreateEndorsementKeyPair can only be
+called once, but does not state if this is done by the owner, or by the
+plant. Later on the page is a hint that it may be shipped with it. "The
+PRIVEK and PUBEK MAY be created by a process other than the use of
+TPM_CreateEndorsementKeyPair" and related statements, which indicate rather
+well that the endorsement key created before shipping. It also states that
+the credential could be stored after "an Owner has taken ownership of the
+platform," confusing the matter even more. Of course at the end of this
+section they change the mandatory return value for
+TPM_CreateEndorsementKeyPair (beginning TCPA_FAIL, end TCPA_DISABLED_CMD).
+
+Page 268, "The TPM creates an identity-binding signature (the value of a
+signature over the
+TCPA_IDENTITY_CONTENTS structure). Among other things, this proves
+possession of the new private key, which does the signing of the
+TCPA_IDENTITY_CONTENTS structure." Indicates that the endorsement key (they
+only possible plant binding factor) is never used outside the box. The
+TCPA_IDENTITY_CONTENTS structure contains only TCPA_VERSION, ordinal, label
+PrivCADigest, and identityPubKey. Note the absence of anything identifying
+the TPM and binding it to the manufacturing. On the next page they state
+that there is some method used of certifying that it came from a genuine
+TPM, but I can't immediately find such evidence.
+
+I suppose just to make life more interesting for everyone involved, they
+included the following "The form of the following certificates is out of
+scope for this version of the TPM specification:
+. TPM endorsement entity certificate"
+
+Section 9.5.1 page 283 states "If the data structure
+<endorsement_certificate> is stored on a platform after an Owner has taken
+ownership of that platform, it SHALL exist only in storage to which access
+is controlled and is available to authorized entities." Which indicates very
+strongly that the EK can be created after shipping. More interesting though
+is the TPM_ENDORSEMENT_CREDENTIAL itself, which includes only the
+information to gaurantee that the cert was grabbed from a valid instance of
+a TPM, but does not from what I can tell actually certify that the current
+request comes from a valid TPM. Although they do take the odd step of making
+certain that CRLs are not used, under CRL dictribution points "If present
+and marked critical, then reject" which of course means that CRLs will not
+be used for this.
+
+The other credentials have the same interesting quirks.
+
+Page 311, Section 10.8 gives an interesting view of the situation, which
+indicates that the EK may be produced later discussing power-on self-tests
+"If an endorsement key has not yet been generated the TPM action is
+manufacturer specific."
+
+In the Glossary I think is the clearest statement about the EK in the entire
+document, the problem is the sentence is too long, shortening it for the
+valid point "Endorsement Key [-] A term used ambiguously" is entirely
+accurate enough for our purposes.
+
+Result: I have no idea whatsoever about where/when the EK is created, there
+are a number of conflicting statements regarding it, and at least once where
+they even change the return value of a function.
+
+> Changing ownership only means (typically) deleting old
+> identities and creating new ones.
+
+Agreed. After almost two hours of picking through poorly written
+specification, I'm just going to state that I agree.
+
+>
+> The longer version...
+>
+> - endorsement key generation and certification - There is one
+> endorsement key per TPM
+
+Agreed.
+
+> which is created and certified during
+> manufacture.
+
+Probably correct, but I'm not sure.
+
+> The creation and certification process is 1) create
+> endorsement key pair,
+
+> 2) export public key endorsement key,
+
+Only to the owner, the manufacturer is not supposed to have a copy
+
+> 3)
+> hardware manufacturer signs endorsement public key to create an
+> endorsement certificate (to certify that that endorsement public key
+> belongs to this TPM), 4) the certificate is stored in the TPM (for
+> later use in communications with the privacy CA.)
+
+The privacy CA never recieves a copy of the PUBEK, the PUBEK is only to be
+seen by the owner.
+
+>
+> - ownership - Then there is the concept of ownership.  The spec says
+> the TPM MUST ship with no Owner installed.  The owner when he wishes
+> to claim ownership choose a authentication token which is sent into
+> the TPM encrypted with the endorsement key.  (They give the example of
+> the authentication token being the hash of a password).  Physical
+> presence tests apply to claiming ownership (eg think BIOS POST with no
+> networking enabled, or physical pin on motherboard like BIOS flash
+> enable).  The authentication token and ownership can be changed.  The
+> TPM can be reset back to a state with no current owner.  BUT _at no
+> point_ does the TPM endorsement private key leave the TPM.  The
+> TPM_CreateEndorsementKeyPair function is allowed to be called once
+> (during manufacture) and is thereafter disabled.
+
+I agree with everything except the "during manufacture" which while
+seemingly is the correct way to do it to meet the majority of the spec,
+isn't necessarily the only way.
+
+>
+> - identity keys - Then there is the concept of identity keys.  The
+> current owner can create and delete identities, which can be anonymous
+> or pseudonymous.  Presumably the owner would delete all identity keys
+> before giving the TPM to a new owner.  The identity public key is
+> certified by the privacy CA.
+
+Agreed.
+
+>
+> - privacy ca - The privacy CA accepts identity key certification
+> requests which contain a) identity public key b) a proof of possession
+> (PoP) of identity private key (signature on challenge),
+
+c) the
+> hardware manufacturers endorsement certificate containing the TPM's
+> endorsement public key.
+
+I believe this is incorrect. The complete contents of the endorsement
+credentials can be found starting on page 283, and does not include the
+endorsement key in any way. Which is good because knowledge of the
+endorsement public key, would allow someone to claim ownership of the
+system.
+
+> The privacy CA checks whether the endorsement
+> certificate is signed by a hardware manufacturer it trusts.  The
+> privacy CA sends in response an identity certificate encrypted with
+> the TPM's endorsement public key.  The TPM decrypts the encrypted
+> identity certifate with the endorsement private key.
+
+It is not encrypted with the endorsement public key, it can't be since the
+Privacy CA does not receive a copy of it. I'm not sure whether or not it is
+encrypted at all, but at the very least it cannot be encrypted by the EK.
+
+>
+> - remote attestation - The owner uses the identity keys in the remote
+> attestation functions.  Note that the identity private keys are also
+> generated on the TPM, the private key also never leaves the TPM.  The
+> identity private key is certified by the privacy CA as having been
+> requested by a certified endorsement key.
+
+Agreed.
+
+>
+>
+> The last two paragraphs imply something else interesting: the privacy
+> CA can collude with anyone to create a virtualized environment.  (This
+> is because the TPM endorsement key is never directly used in remote
+> attestation for privacy reasons.)  All that is required to virtualize
+> a TPM is an attestation from the privacy CA in creating an identity
+> certificate.
+
+Certainly correct, but I don't believe the Privacy CA necessarily has to be
+in on it.
+
+>
+> So there are in fact three avenues for FBI et al to go about obtaining
+> covert access to the closed space formed by TCPA applications:
+>
+> (A) get one of the hardware manufacturers to sign an endorsement key
+> generated outside a TPM (or get the endorsement CA's private key), or
+>
+> (B) get a widely used and accepted privacy CA to overlook it's policy
+> of demanding a hardware manufacturer CA endorsed endorsement public
+> key and sign an identity public key created outside of a TPM (or get
+> the privacy CA's private key).
+
+This would probably be easier done with a court order forcing the Privacy CA
+to perform the operation under the guise of law enforcement.
+
+>
+> (C) create their own privacy CA and persuade an internet server they
+> wish to investigate the users of to accept it.  Create themselves a
+> virtualized client using their own privacy CA, look inside.
+>
+>
+> I think to combat problem C) as a user of a service you'd want the
+> remote attestation of software state to auditably include it's
+> accepted privacy CA database to see if there are any strange "Privacy
+> CAs" on there.
+
+But it could be easily combined with a smaller, easier to get court order
+along the lines of B where a company is required to allow the FBI to work
+under the company's name to perform the necessary work. This eliminates the
+phony Privacy CA from existance.
+
+> I think you could set up and use your own privacy CA, but you can be
+> sure the RIAA/MPAA will never trust your CA.  A bit like self-signing
+> SSL site keys.  If you and your friends add your CA to their trusted
+> root CA database it'll work.  In this case however people have to
+> trust your home-brew privacy CA not to issue identity certificates
+> without having seen a valid hardware-endorsement key if they care
+> about preventing virtualization for the privacy or security of some
+> network application.
+>
+> Also, they seem to take explicit steps to prevent you getting multiple
+> privacy CA certificates on the same identity key.  (I'm not sure why.)
+> It seems like a bad thing as it forces you to trust just one CA, it
+> prevents web of trust which could reduce your chances of getting
+> caught in attack scenarios B) and C) by demanding multiple
+> certificates.
+
+I didn't notice that, but it does seem to be true, as with you I can see no
+reason for that decision. Perhaps it was a non-decision that made it into
+the spec?
+
+> section 8.3.1 p 195
+> (not sure what the maintenance policy of the TPM is or what it has to
+> do with trusting privacy CAs -- it is not otherwise discussed).
+
+It is discussed surprisingly briefly for this spec, it occupies a mere 10
+pages, beginning on page 178. The reliance on trust here stems from the
+manufacturer's ability to replicate TPMs (although the EK does not appear to
+be changable this way).
+
+Thinking about it more, I don't like that this spec assumes there is 1
+primary user of a machine, and that this user is also the owner. A better
+design would use something akin to a smartcard, and a large chunk of
+non-volatile RAM. Making properly use of this would allow for authentication
+of families of people, simply plugging in your card, and entering your
+passphrase would allow users to authenticate to the system easily, allowing
+the home system to separate the identities of Mom, Dad, Son, Daughter, Aunt,
+Uncle. And could still bind people to a specific machine.
+
+
+I think everyone who reads the spec, or even our commentary on it can safely
+conclude that all the chips supporting this should have a "WTF" somewhere in
+their identifier.
+
+Now leaving the topic.
+
+Fortunately in my current state of (lack of) employment I have plenty of
+time to do this kind of examination, otherwise I wouldn't bother. With that
+said, if anyone knows of a company currently hiring software
+engineer/cryptanalyst/etc I'd appreciate any information.
+                    Joe
+

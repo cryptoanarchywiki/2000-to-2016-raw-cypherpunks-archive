@@ -1,0 +1,78 @@
+From cryptography-owner@c2.net  Wed Oct 11 23:38:55 2000
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.72.0.53])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id XAA10935
+	for <kwantam@positron.mit.edu>; Wed, 11 Oct 2000 23:38:55 -0400
+Received: from blacklodge.c2.net (blacklodge.c2.net [140.174.185.245])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id XAA20115;
+	Wed, 11 Oct 2000 23:38:49 -0400 (EDT)
+Received: from localhost (daemon@localhost) by blacklodge.c2.net (8.8.8/8.7.3) with SMTP id UAA25559; Wed, 11 Oct 2000 20:38:56 -0700 (PDT)
+Received: by blacklodge.c2.net (bulk_mailer v1.11); Wed, 11 Oct 2000 20:37:16 -0700
+Received: (from majordom@localhost) by blacklodge.c2.net (8.8.8/8.7.3) id UAA25140 for cryptography-outgoing; Wed, 11 Oct 2000 20:37:15 -0700 (PDT)
+Mime-Version: 1.0
+Message-Id: <v04210100b60a61f69e60@[24.218.56.92]>
+In-Reply-To: <sjm4s2jjslo.fsf@indiana.mit.edu>
+References: <20001011142522.F217E35DC2@smb.research.att.com>
+ <sjm4s2jjslo.fsf@indiana.mit.edu>
+Date: Wed, 11 Oct 2000 14:55:46 -0400
+To: Derek Atkins <warlord@MIT.EDU>,
+        "Steven M. Bellovin" <smb@research.att.com>
+From: "Arnold G. Reinhold" <reinhold@world.std.com>
+Subject: Re: Rijndael & Hitachi
+Cc: Michael Paul Johnson <mpj@ebible.org>, Vin McLellan <vin@shore.net>,
+        cryptography@c2.net, cypherpunks@cyberpass.net
+Content-Type: text/plain; charset="us-ascii" ; format="flowed"
+Sender: owner-cryptography@c2.net
+Status: O
+Content-Length: 1848
+Lines: 49
+
+>"Steven M. Bellovin" <smb@research.att.com> writes:
+>
+>> Precisely.  What is the *real* threat model?
+>>
+>> History does indeed show that believed-secure ciphers may not be, and
+>> that we do indeed need a safety margin.  But history shows even more
+>> strongly that there are many better ways to the plaintext, and that's
+>> the real goal.
+
+Ciphers are components of security systems, not complete security 
+systems. How best to improve a  component is a legitimate engineering 
+question even if there is reason to believe they will often be 
+misapplied. At present there is no serious threat to 3DES, so why did 
+we bother with the whole AES exercise?
+
+[Look at the benchmarks? --Perry]
+
+Anyway, I think there is an interesting theoretical question here:
+
+Design a cipher algorithm P that assumes as primitives 5 ciphers, C1, 
+...,C5 (or more generally N ciphers for odd N > 1) with the same 
+block size and key length.  P is to have the same block size and key 
+length as the Ci and is to be provably secure against chosen 
+plaintext attacks even under the following conditions:
+
+1. One of the Ci is a strong cipher (i.e. there is no attack faster 
+than trying all the keys)
+
+2. An attacker gets to supply  the other four  Ci, subject to the 
+condition that they be cipher like: i.e. they must be bijections 
+between the input and output domains, the bijection is the same if 
+the key value is the same and there are no extra outputs.
+
+3. The attacker knows the details of the secure algorithm.
+
+
+P should be as simple as possible not employ any additional 
+cryptographic primitives (e.g hashes, S-boxes or special constants).
+
+Derek Atkins adds:
+
+>
+>Why try to pick a Medeco when it's locking a glass door?  :-)
+
+The fact that some people put Medeco's in glass doors, doesn't mean 
+Medeco should never develop a better lock.
+
+
+Arnold Reinhold
+

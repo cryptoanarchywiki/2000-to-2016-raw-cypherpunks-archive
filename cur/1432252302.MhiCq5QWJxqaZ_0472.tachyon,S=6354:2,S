@@ -1,0 +1,128 @@
+From owner-cypherpunks@al-qaeda.net  Tue Jul  6 17:31:59 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i66MVotH010771
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Tue, 6 Jul 2004 17:31:50 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i66MVoJm010770
+	for cypherpunks-outgoing; Tue, 6 Jul 2004 17:31:50 -0500
+To: cypherpunks@al-qaeda.net
+Subject: Re: Email tapping by ISPs, forwarder addresses, and crypto
+  proxies
+Message-Id: <20040706214743.5D26657E2A@finney.org>
+Date: Tue,  6 Jul 2004 14:47:43 -0700 (PDT)
+From: hal@finney.org ("Hal Finney")
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5443
+Lines: 105
+
+Thomas Shaddack writes:
+
+> Reading some news about the email wiretapping by ISPs, and getting an 
+> idea.
+>
+> There are various email forwarding services, which are nothing more than a 
+> SMTP server with pairs of recipient@forwarder.com -- 
+> recipient@hiscurrentisp.com.
+
+Right, mostly for use as disposable email addresses.  I've used
+spamgourmet to good effect, myself.
+
+> Messages in storage have much lower judicial protection than messages in 
+> transit. (This does not have much technical merit, in the current 
+> atmosphere of "damn the laws - there are terrorists around the corner", 
+> but can be seen as a nice little potential benefit.)
+
+One thing I haven't understood in all the commentary is whether law
+enforcment still needs a warrant to access emails stored in this way.
+Apparently the ISP can read them without any notice or liability, but
+what about the police?
+
+Also, what if you run your own mail spool, so the email is never stored
+at the ISP, it just passes through the routers controlled by the ISP
+(just like it passed through a dozen other routers on the internet).
+Does this give the ISP (and all the other router owners) the right to
+read your email?  I don't think so, it seems like that would definitely
+cross over the line from "mail in storage" to "mail in transit".
+
+> There can be an easy enhancement for such forwarder service; GnuPG proxy. 
+> Every email that arrives to the forwarder address, before it is forwarded 
+> to the real recipient, is piped through a GnuPG script; the recipient has 
+> then to upload his public key during the registration of the target 
+> address, otherwise the function is the same.
+
+That's a great idea.  You'd want to be sure and encrypt the whole message
+including headers, and make the whole thing an encrypted attachment.
+Has the added side benefits of compressing the email, and you could even
+have the server do some spam filtering.
+
+> For added benefit, the 
+> forwarder should support SMTP/TLS (STARTTLS) extension, so the connections 
+> from security-minded owners of their own mailservers would be protected.
+
+STARTTLS support at the proxy should pretty much go without saying these
+days, so you might as well do it, but if you're already PGP encrypting
+then it's not adding that much security.  Well, maybe it does, but you're
+talking about a different threat.  For the problem that ISPs can read
+your email in storage, STARTLS doesn't help much because it will only
+protect the email until it gets to your local ISP, who will store your
+email for you and can read it then (which is where the PGP comes in).
+
+Where STARTTLS would help is with power users who run their own mail
+servers.  But those people don't suffer from the problem we are talking
+about here, legal access to the email by the ISP (I think, see above).
+Nevertheless a mail-receiving proxy that uses STARTTLS connections to
+power users would be kind of cool because it would keep anyone local
+from knowing anything about the incoming mail.  Hopefully, STARTTLS will
+eventually become so widespread that this functionality will be redundant,
+but we are not there yet.
+
+
+> The recipient himself then can either run his own mailserver and download 
+> mails through fetchmail, or receive mails using SMTP/ETRN (both methods 
+> allow automated decryption of such wrapped mail during its receiving), or 
+> use a POP/IMAP decryption proxy, or have a plugin in mail client.
+>
+> (I know, auto-decryption is dangerous, but we now talk about the system 
+> for one's grandma, transparent to use.)
+
+Absolutely, look at the threat model.  You're not worried about someone
+breaking into your computer, you're worried about your ISP legally
+reading your email.  To address this threat, auto-decryption is a
+perfect solution.
+
+Recently there was a proposal for a nym receiving service,
+http://www.freehaven.net/doc/pynchon-gate/, by Bran Cohen and Len
+Sassaman.  They have a complicated protocol for downloading email
+anonymously.  To hide the complexity, they propose to set up a POP
+compatible mail server agent on the user's computer running as a daemon
+process (Windows service).  He would configure his mailer to connect to
+localhost:4949 or whatever, just like any other POP server.  The service
+would periodically go out and poll for email using the fancy protocol,
+but then it would make it available to the local mail agent in perfectly
+vanilla form.  The point is that this architecture hides the complexity
+and makes it transparent for end users to use arbitrarily complex crypto
+for mail receiving.  Something similar would be perfect for your idea.
+
+
+> The only vulnerable parts of the mail route then will be the sender's 
+> computer, the pathway between the sender and the forwarder server (if 
+> SMTP/TLS is not used correctly or at all), the forwarder server (if 
+> compromised), and the recipient's computer. The way between the forwarder 
+> and the recipient's ISP, including the recipient's mailbox, is secured.
+>
+> What do you think about this scheme?
+
+I think it's a great idea.  Of course as you say there is still the
+problem that the forwarding server could read your email, so you have
+only moved the threat from the ISP to another operator.  The difference
+I suppose is that the forwarder would be selling privacy services, hence
+different ones would compete to get a good reputation.  Any cheating might
+be detected by insider whistle blowers or perhaps some kind of audit.
+
+Hal Finney
+

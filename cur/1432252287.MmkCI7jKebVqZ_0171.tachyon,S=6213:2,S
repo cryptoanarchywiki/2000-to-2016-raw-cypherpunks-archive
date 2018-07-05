@@ -1,0 +1,100 @@
+From cypherpunks-bounces@cpunks.org  Thu Oct 17 17:08:14 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9HL87Aq000411;
+	Thu, 17 Oct 2013 17:08:09 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9HL83XL000407
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Thu, 17 Oct 2013 17:08:05 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id BC152543E75; Thu, 17 Oct 2013 23:08:02 +0200 (CEST)
+Date: Thu, 17 Oct 2013 23:08:02 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: Re: [Cryptography] /dev/random is not robust
+Message-ID: <20131017210802.GF10405@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 4467
+Lines: 62
+
+----- Forwarded message from Jerry Leichter <leichter@lrw.com> -----
+
+Date: Thu, 17 Oct 2013 13:53:11 -0400
+From: Jerry Leichter <leichter@lrw.com>
+To: Kent Borg <kentborg@borg.org>
+Cc: tytso@mit.edu, cryptography@metzdowd.com
+Subject: Re: [Cryptography] /dev/random is not robust
+Message-Id: <5D9D1764-5578-42A4-BBB1-4586B5F167D3@lrw.com>
+X-Mailer: Apple Mail (2.1510)
+
+On Oct 17, 2013, at 1:05 PM, Kent Borg <kentborg@borg.org> wrote:
+> But is this something that /dev/urandom might do better?  Should blocking be added to /dev/urandom immediately after boot until some reasonable threshold has been reached at least once?  Or on first boot are common distributions restoring a bad seed file and /dev/random can't tell?  Arrgh, I am starting to think that the RNG is the wrong place to fix it.
+> 
+> Should RNGs attempt to detect uninitialized states and refuse to run?
+One answer to this question appears in the FIPS standards for RNG's.  At times, they've required a continuous on-line test of the numbers being generated, with automatic shutdown if the test fail.  These requirements almost certainly came from the hardware background of the FIPS standards.  For hardware, certain failure modes - stuck at 0/stuck at 1 are the most obvious; short cycles due to some internal oscillation may be another - are extremely common, and worth checking for.  For software-based deterministic PRNG's, such tests are mainly irrelevant - code doesn't develop such failures in the field.  As the FIPS standards were adjusted for a more software-based world, the requirement for on-line testing was dropped.
+
+Looking through some old messages on the subject here on the Cryptography list, I found one from Francois Grieu back in July of 2010:
+
+> The Smart Card industry uses True RNG a lot. There, a common line of
+> thought is to use:
+> - a hardware RNG, which raw output (perhaps biased) is directly
+> accessible for testing purposes (only), so that the software can check
+> it in depth at startup and from time to time to ascertain that it is at
+> least generating a fair amount of entropy
+> - followed by appropriate post-processing in hardware (so as to gather
+> entropy at all time), acting as a mixer/debiaser:; e.g. something LFSR-based
+> - followed by a crude software test (e.g. no bit stuck)
+> - optionally followed by software postprocessing (the subject is
+> debated; this software has to be proven to not include weakness, and the
+> hardware + crude software test is certified to eliminate such weakness,
+> so why bother, some say)
+> 
+> There is a standard, known as AIS31, on evaluating True RNG, which
+> de-facto enforces the first three steps
+> <https://www.bsi.bund.de/cae/servlet/contentblob/478130/publicationFile/30270/ais31e_pdf.pdf>
+> which references
+> <https://www.bsi.bund.de/cae/servlet/contentblob/478152/publicationFile/30275/ais20e_pdf.pdf>
+
+More recently, David Johnston, who I gather was involved in the design of the Intel on-chip RNG, commented in a response to a question about malfunctions going undetected:
+
+> That's what BIST is for. It's a FIPS and SP800-90 requirement.
+
+
+Of course, with generators like the Linux /dev/random, we're in some intermediate state, with hardware components that could fail feeding data into software components.
+
+My own view on this is that there's no point in testing the output of a deterministic PRNG, but the moment you start getting information from the outside world, you should be validating it.  You can never prove that a data stream is random, but you can cheaply spot some common kinds of deviation from randomness - and if you're in a position to "pay" more (in computation/memory) you can spot many others.  You have no hope of spotting a sophisticated *attack*, and even spotting code bugs that destroy randomness can be hard, but it's hard to come up with an example of an actual real-world hardware failure that would slip through.  So you might as well do the testing.
+
+                                                        -- Jerry
+
+
+_______________________________________________
+The cryptography mailing list
+cryptography@metzdowd.com
+http://www.metzdowd.com/mailman/listinfo/cryptography
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

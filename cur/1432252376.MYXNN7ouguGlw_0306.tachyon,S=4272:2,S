@@ -1,0 +1,81 @@
+From owner-cypherpunks@al-qaeda.net  Mon Jun 30 09:54:44 2008
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id m5UDsCXM008549
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 30 Jun 2008 09:54:12 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id m5UDsCGt008548
+	for cypherpunks-outgoing; Mon, 30 Jun 2008 09:54:12 -0400
+Date: Mon, 30 Jun 2008 15:54:04 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: detecting ssh tunnels with bayes and packet timing
+Message-ID: <20080630135404.GJ9875@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+http://coderrr.wordpress.com/2008/06/28/detecting-ssh-tunnels/
+
+
+Detecting SSH tunnels
+
+Filed under: network, security b Tags: network, security b coderrr @ 6:35 pm
+
+Italian researchers have published a paper on the Detection of Encrypted
+Tunnels across Network Boundaries. I came across it in a google search
+because Ibve been thinking of writing a program which does something similar.
+It doesnbt seem like anyone else has picked up on this research yet so I
+thought I should mention it. Here is a link to the actual paper: pdf or
+scribd.
+
+They claim their technique can differentiate between bnormalb ssh or scp
+sessions and ssh sessions which are being used to tunnel traffic (through
+sshbs port forwarding mechanism). This is accomplished through a naive Bayes
+classifier, which they first trained with bnormalb ssh sessions. The two
+variables used to classify a session are the size of the packets and the
+difference in arrival time of two consecutive packets. With just these, they
+can classify with 99% accuracy whether an ssh session is a tunnel. They were
+also able to classify the actual protocol (P2P, POP, SMTP, HTTP) of the
+tunneled connection with close to 90% accuracy.
+
+Although their research is quite interesting there are a few things which
+limit its practicality. They can only detect tunnels going through ssh
+servers which they control. This is because their detection mechanism can
+only handle a single authentication type whereas an ssh server can (and
+usually does) allow multiple (e.g. public-key or password). This requires
+admins of the server to limit the allowed authentication options to a single
+consistent choice. They also require the ssh server _and_ client to disable
+compression. Their technique will also falsely classify a second login
+attempt (after a failed login) as a tunnel and drop the connection. In their
+words: bHowever, this should not be a major problem: simply, if the user is
+entitled to connect, they will try again.b
+
+So it seems the use of a tool like this would be limited to an extremely
+controlled environment where users are limited to a white-list set of network
+protocols (so that they canbt use a different tunneling mechanism, stunnel
+for example) and only allowed to ssh to servers under the control of the
+censoring party. In which case you would wonder why the admin wouldnbt just
+set the ssh serversb AllowTcpForwarding option to false.
+
+It sounds like this is just preliminary work so maybe their future research
+will solve all these problems. If perfected this technology could be used by
+ISPs to block or throttle even encrypted P2P traffic.
+
+Ibd also like to note that it would probably be easy to create a tunneling
+mechanism which thwarts their detection attempts. Knowing that they use
+packet size and inter packet intervals you could easily manipulate these to
+match whatever protocol type you wanted.
+
+While looking around one of the researchers web pages (Franceso Gringoli) I
+found a pretty cool Linux/OSX utility called sshgate. It allows you to
+transparently tunnel all your connections over ssh. This is great for
+programs which do not give you the option to use a socks server and which do
+not play nice with socksification. I havenbt tested it out so Ibm not sure if
+it actually works.
+

@@ -1,0 +1,135 @@
+From owner-cypherpunks@al-qaeda.net  Sat Dec 22 14:05:02 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id qBMJ19qF006840
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sat, 22 Dec 2012 14:01:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1356202869;
+	bh=LPlnU0x1DMFIOEsNQ3kF9fsKoXOnwZ4ZPRdUI0cce5A=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=B7FoDSVkeNmVWx0XZH5wJyhUwFYp/SVzNmaiL+SFF7FKaEFx+OUTzloPqdmz81iKz
+	 Tkugz/kGQG/ebKUe+dZUlaIWOT327lIPiallgFwSSMT3XkOpUNMsMKLsSsFSe/+sJR
+	 tT1RDkdkuAE6xAt3Tfaesa6h6ntOtE24xv33lozg=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id qBMJ19rl006839
+	for cypherpunks-outgoing; Sat, 22 Dec 2012 14:01:09 -0500
+Date: Sat, 22 Dec 2012 20:01:06 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, zs-p2p@googlegroups.com
+Subject: [tahoe-dev] Tahoe-LAFS as web server file backend?
+Message-ID: <20121222190106.GH9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5073
+Lines: 101
+
+----- Forwarded message from Alfonso Montero Lspez <amontero@tinet.org> -----
+
+From: Alfonso Montero Lspez <amontero@tinet.org>
+Date: Sat, 22 Dec 2012 18:35:20 +0100
+To: tahoe-dev@tahoe-lafs.org
+Subject: [tahoe-dev] Tahoe-LAFS as web server file backend?
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+Hi all.
+
+I'm watching and playing with tahoe to use it as a family/personal
+backup solution. Nothing working yet, just playing by now :) I tried
+once with the code but too difficult, too little time by then. At
+least, I added some novice notes to the docs, along the way. But, now
+I'm at it, I would like to say that I think Tahoe-LAFS is a brilliant
+piece of software with great ideas in it worth watching evolve. Thanks
+for the awesome work!
+
+Now I'm at another different thing. Thinking in ditributed/clustered
+web serving, I wonder what would be the best way to use Tahoe-LAFS as
+the file backend, if possible. I mean, you throw a bunch of webservers
+at the front, say Apache or nginx and point their webroots to a
+locally stored tahoe cap and serve/run files and scripts from there
+(PHP, for instance). Let's leave MySQL for another story :)
+
+Mounting would need to be read/write and performant enough for running
+apps such as CMS and other complex scripts. I still don't have a true
+sense/measurement of its performance by my current experience, and I'm
+not sure of it being possible to be handled.
+
+I know tahoe has its webapi but seems not easily pluggable into
+apache, without much coding (too far for me). I need to do it by
+gluing some pieces, and don't know where to look next. I suppose it
+has to be mounted in the filesystem r/w. In my experience don't think
+the FTP frontend being stable and current enough to handle it, let
+alone the complexity and layer performance hit. I recall seeing it
+somewhere being used as some web app backend, but the app was
+tahoe-specifically coded, I think.
+Inbetween of those some Apache-plugged reverse proxying module + WebAV
+trick could be the way, but my knowledge in that area is still
+limited. Or maybe WebDAV is currently working well enough to be used
+with davfs fuse.
+Any tried and tested stable mounting solution anybody can recommend?
+Any WebDAV/fuse/whatever layer (the lighter, the better) anyone can
+point to? Creating a package mounting a tahoe root in the appropiate
+place in the filesystem for the webserver makes it a tempting
+low-hanging fruit :)
+The file usage would be more reads than writes, since lots of software
+depend on DBs for really frequently used data and (perhaps?) file
+writes will be majority a single object with less frequent updates.
+There will be updates, anyway. But usage-wise, maybe I'm too CMS
+biased, anyway. Maybe it's not that relevant, but just for
+completeness.
+The write performance/consistency/concurrency/name-your-issue of
+several web servers has to be taken in account the first. I don't have
+any clue about its overhead and implications. But at least, it may be
+good enough to having a hot-standby or point-in-time secondary web
+server, anyway. Or maybe there is a better/easier way of doing this
+without tahoe-LAFS that I just don't know about. But if finally it
+makes sense for me, it will have a lot of sense to discuss it in
+public, too. So, pardon my verbosity.
+
+BTW, I should confess that about the hosted apps I'm a bit more biased
+to the Drupal CMS, since with its pluggable storage backends, even in
+a reduced version, tahoe might have sense for it as a file storage.
+And this would be a big pool of developers to attract their interest,
+the least. Might make for a howto. But I prefer to keep it general if
+possible.
+
+So, before exploring any further route, I would like to ask. How the
+bright minds I've seen here by lurking for some time would address
+this scenario? Since there an overwhemling number of moving parts and
+possibilities here for me, nobody with better knowledge than people in
+this list can provide feedback about the whole use case.
+
+It might be achievable maybe in a bunch of config files or scripts?
+(grid-updates smartness comes to mind). I would be happy in
+collaborating/sharing my work in a repo to make it a valid use case,
+when the time comes (no python by now, just bash scripting). But at
+least, if it is feasible, it makes for sure worth seeding some docs in
+the wiki to open discussion about it, and who knows, compiling some
+repos if some passerby decides it's worth going for it. Combined with
+some spice such as already existing Puppet manifests could make it a
+trully awesome tahoe-LAFS based solution, IMO.
+
+Many thanks in advance.
+Regards,
+
+--
+Alfonso M. L.
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

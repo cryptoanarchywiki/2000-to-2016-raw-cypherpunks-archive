@@ -1,0 +1,72 @@
+From owner-cypherpunks@al-qaeda.net  Sat Sep 11 00:58:00 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i8B5vl4X020641
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Sat, 11 Sep 2004 00:57:47 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i8B5vlba020640
+	for cypherpunks-outgoing; Sat, 11 Sep 2004 00:57:47 -0500
+Message-Id: <6.0.3.0.0.20040910223501.0403c120@pop.idiom.com>
+X-Sender: wcs@pop.idiom.com
+X-Mailer: QUALCOMM Windows Eudora Version 6.0.3.0
+Date: Fri, 10 Sep 2004 22:54:09 -0700
+To: hal@finney.org ("Hal Finney")
+From: Bill Stewart <bill.stewart@pobox.com>
+Subject: Re: potential new IETF WG on anonymous IPSec
+Cc: cryptography@metzdowd.com, cypherpunks@al-qaeda.net, touch@isi.edu
+In-Reply-To: <20040909195729.4798957E2B@finney.org>
+References: <20040909195729.4798957E2B@finney.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2187
+Lines: 43
+
+At 12:57 PM 9/9/2004, Hal Finney wrote:
+> >       http://www.postel.org/anonsec
+>
+>To clarify, this is not really "anonymous" in the usual sense.  Rather it
+>is a proposal to an extension to IPsec to allow for unauthenticated
+>connections.  Presently IPsec relies on either pre-shared secrets or a
+>trusted third party CA to authenticate the connection.  The new proposal
+>would let connections go forward using a straight Diffie-Hellman type
+>exchange without authentication.  It also proposes less authentication
+>of IP message packets, covering smaller subsets, as an option.
+
+I read the draft, and I don't see how it offers any improvement
+over draft-ietf-ipsec-internet-key-00.txt or Gilmore's proposal touse "open 
+secret" as a not-very-secret pre-shared secret
+that anybody who wants to can accept.
+It does introduce some lower-horsepower alternatives for
+authenticating less than the entire packet, and suggests
+using AH which I thought was getting rather deprecated these days,
+but another way to reduce horsepower needs is to use AES instead of 3DES.
+
+Also, the author's document discusses protecting BGP to prevent
+some of the recent denial-of-service attacks,
+and asks for confirmation about the assertion in a message
+on the IPSEC mailing list suggesting
+    "E.g., it is not feasible for BGP routers to be configured with the
+    appropriate certificate authorities of hundreds of thousands of peers".
+Routers typically use BGP to peer with a small number of partners,
+though some big ISP gateway routers might peer with a few hundred.
+(A typical enterprise router would have 2-3 peers if it does BGP.)
+If a router wants to learn full internet routes from its peers,
+it might learn 1-200,000, but that's not the number of direct connections
+that it has - it's information it learns using those connections.
+And the peers don't have to be configured "rapidly without external 
+assistance" -
+you typically set up the peering link when you're setting up the
+connection between an ISP and a customer or a pair of ISPs,
+and if you want to use a CA mechanism to certify X.509 certs,
+you can set up that information at the same time.
+
+
+
+----
+Bill Stewart  bill.stewart@pobox.com 
+

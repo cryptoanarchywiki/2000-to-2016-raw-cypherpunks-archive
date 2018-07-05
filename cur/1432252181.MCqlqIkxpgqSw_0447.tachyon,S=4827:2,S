@@ -1,0 +1,120 @@
+From owner-cypherpunks@lne.com  Tue Jul 15 15:21:07 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h6FJL5616618
+	for <rsw@jfet.org>; Tue, 15 Jul 2003 15:21:05 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h6FJ0oS7009305
+	for cypherpunks-goingout345; Tue, 15 Jul 2003 12:00:50 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Tue, 15 Jul 2003 20:58:05 +0200 (CEST)
+From: Thomas Shaddack <shaddack@ns.arachne.cz>
+X-X-Sender: <shad@Zeta>
+To: Sampo Syreeni <decoy@iki.fi>
+cc: <cypherpunks@einstein.ssz.com>
+Subject: Re: MRAM, persistence of memory
+In-Reply-To: <Pine.SOL.4.51.0307152104460.14205@kruuna.Helsinki.FI>
+Message-ID: <Pine.LNX.4.33.0307152036581.26820-100000@Zeta>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 3711
+Lines: 92
+
+On Tue, 15 Jul 2003, Sampo Syreeni wrote:
+
+> There are plenty of examples like printer buffers,
+
+They shall be on encrypted partition, if possible by a session key (as
+they are temporary files which we won't need after next powerup), which
+gets lost after powerdown.
+
+> random pools,
+
+Why not initialize them after each powerup with fresh data from a hardware
+generator?
+
+> already keyed smartcards,
+
+...whose status gets lost with powerdown,
+
+> anything you're currently showing on-screen (I wouldn't be surprised if
+> that could be read after sustained powerdown),
+
+An issue (though I don't know how serious) with CRTs, where there could be
+detectable residual charge, but with a bit of luck that could get
+undetectable in just couple seconds in normal room temperatures.
+
+> any battery backed memory,
+
+IMPORTANT issue. But as NVRAM is a kind of permanent storage, nothing
+unencrypted shall touch it anyway.
+
+> off-the-shelf peripherals which do not admit crypto,
+
+If we consider them plaintext, it doesn't matter here if they contain
+crypto or not.
+
+> and so on. Probably
+> we'd also want to make the machine as dead as possible, shutting down any
+> remote power-on features,
+
+Why? The adversary can power up the machine once he gets physical access,
+anyway. By then, though, he shouldn't get anything more than a machine
+with data with either missing session key (and hence unrecoverable) or
+encrypted data missing the key that has to be supplied by the user to
+complete the power-up.
+
+> network connections (otherwise retries might go
+> on for a fair while),
+
+...which is no harm, as the data should be encrypted and without the key,
+lost to the powerdown, they won't reveal anything than that there was
+some connection in progress. Which is something the adversary most likely
+knows anyway; before physical intrusions, passive surveillance usually
+takes place. Keyword: Carnivore.
+
+> open phone lines,
+
+...hung up by power loss to the modems...
+
+> whathaveyou.
+
+Everything must lose critical inner state with the powerdown. Everything
+that carries plaintext data has to be power-dependent.
+
+> That's why we might need software, and not just the power switch.
+
+That's why we need the software designed to cope with the possibility of
+unpredictable power-down. There should be no dependability on proper
+function of software at the moment of the power-down itself, as we need to
+keep the system as reliable (and as simple) as possible. Remember that
+years in jail, and possibly even lives, are in stake.
+
+The software could be able to communicate with the hardware though,
+issuing "locks" to prevent power-down in the middle of a critical
+operation (eg, writing to disk) and delay it a little. The locks should be
+issued for maximum time of some few 100s milliseconds, expiring in
+hardware if not cancelled from the software. There should be a period of
+allowed shutdown every period (100s msec?) even in the worst possible
+combination of issued locks. This should prevent damage to data during an
+emergency shutdown event while not compromising the security due to
+software bug (eg, forgotten unlock).
+
+The delay time has to be determined to the worst possible combination of
+events, to not allow the best-trained best-equipped adversary to prevent
+the machine from shutting down in that time.
+
+> I can also imagine situations where we'd want to be able to perform
+> manual shutdowns remotely.
+
+That's the simple part. Just take the output of the computer (or an
+external device, eg. a cellphone, a radio receiver, anything suitable) and
+use it as one of the event inputs of the power-down system. You raise the
+event (tell the computer over SSH, send a SMS, broadcast a tone...), the
+computer shuts down.
+

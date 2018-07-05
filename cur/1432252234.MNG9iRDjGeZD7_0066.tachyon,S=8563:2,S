@@ -1,0 +1,162 @@
+From cypherpunks-bounces@cpunks.org  Sat Dec 21 06:15:11 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id rBLBBbrN028125;
+	Sat, 21 Dec 2013 06:12:12 -0500
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.195])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id rBLBBOUV028121
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Sat, 21 Dec 2013 06:11:29 -0500
+Received: from netbook (c107-70.i07-27.onvol.net [92.251.107.70])
+ by mrelay.perfora.net (node=mrus3) with ESMTP (Nemesis)
+ id 0MTSXP-1W2C1X2bWZ-00SZv2; Sat, 21 Dec 2013 06:10:56 -0500
+Received: by netbook (Postfix, from userid 1000)
+ id A28FE2E2839; Sat, 21 Dec 2013 12:10:45 +0100 (CET)
+Received: by flare (hashcash-sendmail, from uid 1000);
+ Sat, 21 Dec 2013 12:10:43 +0100
+Date: Sat, 21 Dec 2013 12:10:42 +0100
+From: Adam Back <adam@cypherspace.org>
+To: Peter Gutmann <pgut001@cs.auckland.ac.nz>
+Subject: soft backdoors: ECDSA vs RSA vs EdDSA (aka EC Schnorr) (Re: BlueHat
+ v13 crypto talks - request for leaks ;))
+Message-ID: <20131221111042.GA19555@netbook.cypherspace.org>
+References: <CA+cU71mMhSKA+DJW5DBWyJvBbGk1LLJGCBjK4BPwgvGvRs-sog@mail.gmail.com>
+ <E1Vsn8B-0003Cc-VG@login01.fos.auckland.ac.nz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <E1Vsn8B-0003Cc-VG@login01.fos.auckland.ac.nz>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Hashcash: 1:20:131221:pgut001@cs.auckland.ac.nz::jypywiqZeAvc+Gnw:000000000000
+ 0000000000000000000000005V0O
+X-Hashcash: 1:20:131221:tom@ritter.vg::AuxjmmcLm4hynkOK:00005yAh
+X-Hashcash: 1:20:131221:cypherpunks@cpunks.org::C8scsSjl+agAUokm:000000000000000
+ 0000000000000000000000000EIU
+X-Hashcash: 1:20:131221:justin@justintroutman.com::uIzqFeUFQBIg1qnl:000000000000
+ 000000000000000000000000107/
+X-Hashcash: 1:20:131221:adam@cypherspace.org::OGnAo66ib1LhZ0EB:00000000000000000
+ 0000000000000000000000001SUc
+X-Hashcash: 1:20:131221:djb@cr.yp.to::y7h3ovQeYKIbuKS+:000004lvz
+X-Provags-ID: V02:K0:bwvi2E/LAwywEtwmxonjdMjfp4lBJQ2pC3bDwbFp1nu
+ hZZbcCqDi85LTeRBFk7dByQ/B98nQgDrOG2hw9H79m+sWU4LiT
+ m5qhFclPgAvfKLBwzdoP/sNTUDk6JVMcCWqmWG9t5BZBf8b3s0
+ 1g+C+J2uY96gvNKoaNPtNtgPWdhITpWGWIEBAwdH6PthWTkx6P
+ S0FJcD3g83hjt8znkLmCqaS+3QRApgV9ZMgT6tsV7d+/IEKedn
+ BP866I2NNyg93twvDUh/p+m5iMB3ZEeIyc8qBC+xCKlHGDR2W+
+ HuoT4H3jACrpv8oJl8PZsv2SHWHnKH60QZRARG8j5kXBmbrlqe
+ ki0g3eI8jgbBOLNDe7TyMIvFkiABIoO0fiLh2HIwA
+Cc: cypherpunks@cpunks.org, justin@justintroutman.com,
+        Dan Bernstein <djb@cr.yp.to>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+Vaudenay's report writes up an attack developed by Daniel Bleichenbacher
+which he presented to some standards groups but did not publish.  As a
+result of that the DSA standard was modified.  As I recall with about
+1million signatures he could recover the private key due to the small bias
+from the formual Peter mentioned: k = G(t,KKEY) mod q ie if |n| = 256-bits
+where n is the order of the group, then G(t,KKEY) is distributed with a
+rectangular distribution in {0,2^256-1} and q is < 2^256-1.  As I read it
+Bleichenbacker did not try that hard to optimize his attack, it was enough
+to show the NIST/NSA designed DSA RNG was biased enough to break DSA in a
+server / automated environment.
+
+Maybe further optimizations would have been possible...  Maybe this DSA flaw
+spotted by Bleichenbacker was another NSA soft-sabotage attempt (making
+standards security brittle in the knowledge that it some people will fail to
+harden it, and also it gives a plausibly deniable backdoor design for
+colluding business entities, or double-agents on the payroll (former NSA
+people say)).  In fact DSA was even designed by a former NSA cryptographer.
+http://en.wikipedia.org/wiki/Digital_Signature_Algorithm (Dr David Kravitz,
+a former NSA employee).
+
+The approach I prefer is the deterministic DSA approach where k = MAC(d,M)
+where d is the private DSA/ECDSA key and M is the message, plus bias
+removal.  Bernsteins EdDSA (which despite the name is actually a Schnorr
+signature over an Edwards curve) also uses the same technique.  This is
+standardized in an RFC.  If people are going to use DSA/ECDSA they should
+use this deterministic DSA.  Personally I prefer EC Schnorr because Schnorr
+is just a better, simpler, more secure and more flexible signature (supports
+simplel blinding, compact multi-sig, clearer security proofs, better
+security margin, less dependence on hash properties etc).  To my mind DSA's
+only reason for existence is historic due to patents.  It is inferior by all
+metrics to Schnorr, just that Scnorr's patent didnt expire until
+http://en.wikipedia.org/wiki/Schnorr_signature feb 2008.
+
+Anyway as Bernstein has put forward EdDSA with parameters and multiple
+security, speed, simple constant time, non-key related, nor message
+execution time, and provably non-cooked curve parameters (and there perhaps
+remains some needless ambiguity about the magic constants used to seed the
+ECDSA parameters) there is no reason in my opinion not to use EdDSA aka EC
+Schnorr in any new systems.
+
+Of course RSA is good also, and simpler parameter definition, the main
+downside being the large keys for same security margin (3072-bit).
+
+Adam
+
+On Tue, Dec 17, 2013 at 06:23:43PM +1300, Peter Gutmann wrote:
+>Tom Ritter <tom@ritter.vg> writes:
+>>On 14 December 2013 14:51, Peter Gutmann <pgut001@cs.auckland.ac.nz> wrote:
+>>
+>>> For example if you
+>>>  follow DSA's:
+>>>
+>>>   k = G(t,KKEY) mod q
+>>>
+>>> then you've leaked your x after a series of signatures, so you need to know
+>>> that you generate a large-than-required value before reducing mod q.  The
+>>> whole DLP family is just incredibly brittle, a problem that RSA doesn't
+>>> have.
+>>
+>>This is different from the normal 'repeated/non-random k leads to private
+>>key', is it not?  Is there a paper/reference I can read more about this
+>>attack?
+>
+>Yes, this is one of several variations of subtle leak-the-private-key issues,
+>rather than the standard obvious-leak-the-private-key.  The code comment I've
+>got has, alongside other observations:
+>
+>           The best reference for this is
+>           probably "The Insecurity of the Digital Signature Algorithm with
+>           Partially Known Nonces" by Phong Nguyen and Igor Shparlinski or
+>           more recently Serge Vaudenay's "Evaluation Report on DSA"
+>
+>Then there's tricks like:
+>
+>   Suppose that the
+>   certificate contains a copy of the certificate signer's DSA parameters,
+>   and the verifier of the certificate has a copy of the signer's public key
+>   but not the signer's DSA parameters (which are shared with other keys).
+>   If the verifier uses the DSA parameters from the certificate along with
+>   the signer's public key to verify the signature on the certificate, then
+>   an attacker can create bogus certificates by choosing a random u and
+>   finding its inverse v modulo q (uv is congruent to 1 modulo q).  Then
+>   take the certificate signer's public key g^x and compute g' = (g^x)^u.
+>   Then g'^v = g^x.  Using the DSA parameters p, q, g', the signer's public
+>   key corresponds to the private key v, which the attacker knows.  The
+>   attacker can then create a bogus certificate, put parameters (p, q, g')
+>   in it, and sign it with the DSA private key v to create an apparently
+>   valid certificate.  This works with the DSA OID that makes p, q, and g
+>   unauthenticated public parameters and y the public key, but not the one
+>   that makes p, q, g, and y the public key
+>
+>That's not leaking the private key, but it allows signature forgery via
+>another mechanism that's totally unrelated to "was the fundamental DSA
+>algorithm implemented correctly".  As I said, the DLP algorithms are really,
+>really brittle, you have to worry about all sorts of things that aren't a
+>concern with RSA.
+>
+>Peter.
+

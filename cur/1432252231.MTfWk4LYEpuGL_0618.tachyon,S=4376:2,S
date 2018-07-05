@@ -1,0 +1,101 @@
+From owner-cypherpunks@jfet.org  Fri Jan 13 02:35:06 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.5/8.13.5/Debian-3) with ESMTP id k0D7YkHU010329
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 13 Jan 2006 02:34:46 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.5/8.13.5/Submit) id k0D7YkAd010328
+	for cypherpunks-outgoing; Fri, 13 Jan 2006 02:34:46 -0500
+Date: Fri, 13 Jan 2006 08:34:38 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@jfet.org, Cryptography List <cryptography@metzdowd.com>
+Subject: [arma@mit.edu: Tor security advisory: hidden services can be
+  located quickly]
+Message-ID: <20060113073438.GI2247@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.5.9i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3228
+Lines: 73
+
+----- Forwarded message from Roger Dingledine <arma@mit.edu> -----
+
+From: Roger Dingledine <arma@mit.edu>
+Date: Thu, 12 Jan 2006 18:03:40 -0500
+To: or-announce@freehaven.net
+Subject: Tor security advisory: hidden services can be located quickly
+User-Agent: Mutt/1.5.9i
+Reply-To: or-talk@freehaven.net
+
+Versions affected: all stable versions, and all experimental versions
+up through 0.1.1.10-alpha.
+
+Impact: If you offer a Tor hidden service, an adversary who can run a
+fast Tor server and who knows some basic statistics can find the location
+of your hidden service in a matter of minutes to hours.
+
+Solution: You have three options:
+1) Upgrade to Tor 0.1.1.12-alpha from the Tor download page [1]. You're
+   all set, though be aware that this is an alpha release so there may
+   be other bugs. You may also want to look through the release notes [2].
+2) Turn off your hidden service until the final 0.1.1.x release is out.
+   It may be several months.
+3) Stick with Tor 0.1.0.16 and manually configure a half dozen
+   EntryNodes. See the FAQ entry [3] for some hints about how to do this.
+
+
+The details:
+
+Tor researchers Lasse ?verlier and Paul Syverson have confirmed
+that a previously theoretical attack on Tor works very well in
+practice. Specifically, they found that a malicious Tor server can locate
+a hidden service more quickly than was previously believed. The attack
+is simple: access the hidden service repeatedly, and keep track of who
+builds circuits through you shortly after each access. Because you can
+induce your victim to build a new circuit on demand, eventually one of
+his circuits will start at your node.
+
+To slow this attack, our latest experimental release implements a
+new feature called "guard nodes": it automatically chooses a handful
+of entry nodes and sticks with them for all circuits. This idea is
+adapted from the "helper node" concept published by Wright et al [4],
+but with improved reliability: rather than picking a set of entry nodes
+and refusing to access the Tor network if they all become unreachable,
+Tor's design dynamically picks new guards as needed, yet switches back
+to the old ones when they become reachable again. Therefore Tor users
+still have the same level of robustness as before, but the chance of a
+successful attack by a limited adversary is greatly reduced.
+
+More details will be presented on January 14 at Shmoocon [5] and January
+26 at Black Hat Federal [6].
+
+--Roger
+
+[1] http://tor.eff.org/download
+[2] http://archives.seul.org/or/talk/Jan-2006/msg00024.html
+    http://archives.seul.org/or/talk/Jan-2006/msg00026.html
+[3] http://wiki.noreply.org/noreply/TheOnionRouter/TorFAQ#ChooseEntryExit
+[4] http://freehaven.net/anonbib/#wright03
+[5] http://www.shmoocon.org/speakers.html#overlier
+[6]
+http://www.blackhat.com/html/bh-federal-06/bh-fed-06-speakers.html#Syverson
+
+
+
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820            http://www.ativel.com
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+
+[demime 1.01d removed an attachment of type application/pgp-signature which had a name of signature.asc]
+

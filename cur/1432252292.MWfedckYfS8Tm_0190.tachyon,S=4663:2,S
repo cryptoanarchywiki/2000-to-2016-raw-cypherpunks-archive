@@ -1,0 +1,107 @@
+From owner-cypherpunks@al-qaeda.net  Fri Dec  2 04:59:10 2011
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id pB29rhqr006700
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 2 Dec 2011 04:53:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1322819623;
+	bh=POZ1yyMg50tLj4nJhnqQVkEcGLSwM97+7tsQHzALK+s=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=wMlXDs903bFgssLsZ0hotexHCTmQRJpWai887zbWg92NjNHNZJ8smSfERBs2M6y1/
+	 K8sF0EJxBV4fKdspB8SUebq1RfWGPA3vVqdRH8eYIM2inSGkLk75Fw6/jglRbe4oGD
+	 XpsV0wV0kmmSVxZf9cIMRQwhV1Wb79moAsenCMDY=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id pB29rhx7006699
+	for cypherpunks-outgoing; Fri, 2 Dec 2011 04:53:43 -0500
+Date: Fri, 2 Dec 2011 10:53:40 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: [serval-project-dev] Re: Serval mesh multicast non-functional
+Message-ID: <20111202095340.GS31847@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3214
+Lines: 73
+
+----- Forwarded message from Paul Gardner-Stephen <paul.gardner.stephen@gmail.com> -----
+
+From: Paul Gardner-Stephen <paul.gardner.stephen@gmail.com>
+Date: Thu, 1 Dec 2011 20:21:32 -0800 (PST)
+To: Serval Project Developers <serval-project-developers@googlegroups.com>
+Subject: [serval-project-dev] Re: Serval mesh multicast non-functional
+User-Agent: G2/1.0
+Reply-To: serval-project-developers@googlegroups.com
+
+Hello,
+
+On Dec 1, 10:45 pm, "L. Martin Ringler" <l.martin.ring...@gmail.com>
+wrote:
+> It appears Serval doesn't handle multicast UDP messages. Is this
+> deliberate or broken?
+
+It is not deliberate on our part.
+A number of complications are likely to be present when trying to do
+multicast:
+
+1. The phones may not have kernel support for it compiled in (or more
+likely, some models will, while others wont).
+2. I don't know if BATMAN does multicast (I suspect OLSR might, but I
+really don't know).
+
+> Why muticast messages are important...
+>
+> 1. To maintain a routing table for non pure mesh where some of the
+> nodes are seperated by a functional backbone the mesh messages will
+> have to be multicast since broadcast messages will be restricted to
+> the local subnet. Most modern routers block IP broadcast traffic.
+
+I agree multicast is good here, but there are ways around this, even
+if they aren't ideal.
+In particular, if there is a mesh node at either end, then they can
+(eventually) bridge traffic.
+Some of this will become much simpler once we move to the overlay
+mesh, at which point multicast will not be sensibly possible, anyway.
+
+> 2. Some applications that could use the ad-hoc mesh are Position
+> Location type apps. You and your friends are skiing and you get
+> seperated, your app would tell you where they are etc. I think you
+> would need to multicast the Position Location Information and
+> broadcast wouldn't work if 2 or more discreet groups were on the same
+> Serval mesh.
+
+Actually, there are ways around this, and we are currently working on
+exactly this kind of groups of people sharing information problem that
+you mention.  We see no reason why our planned protocols shouldn't
+work with multiple groups in the same physical area, even with
+overlapping membership.
+
+> Is the Ad-hoc mesh encryted? Seems to be in the clear.
+
+It is all in the clear at present.  We have plans to add voice, SMS
+etc encryption and authentication in over coming months.
+Mesh management traffic will remain en claire, but the overlay mesh
+will increase the ability to authenticate even that.
+
+Paul.
+
+-- 
+You received this message because you are subscribed to the Google Groups "Serval Project Developers" group.
+To post to this group, send email to serval-project-developers@googlegroups.com.
+To unsubscribe from this group, send email to serval-project-developers+unsubscribe@googlegroups.com.
+For more options, visit this group at http://groups.google.com/group/serval-project-developers?hl=en.
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

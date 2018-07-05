@@ -1,0 +1,119 @@
+From owner-cypherpunks@al-qaeda.net  Wed Sep 12 06:17:07 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q8CACieW011228
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 12 Sep 2012 06:12:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1347444764;
+	bh=dA5D444+oRApCOcIowKzEmSqBjrdDY7da6BRcYczvtI=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=by2zeM/jDL/lDveLuMqKq5Os1+bjulW/OZ9dF2ACtXnqrrBt7cuY0wQ48izvSnhUC
+	 kTjqUsCWUbe53rTmkTsvTOI4X+qcMhHhrSCtguIiBGNpNhAHGrjPjphAUnYsy8RSn+
+	 nG4IfbZZXRB1UPv0hGLfpG4/5cWDnTTxts52P7Q0=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q8CACiWK011227
+	for cypherpunks-outgoing; Wed, 12 Sep 2012 06:12:44 -0400
+Date: Wed, 12 Sep 2012 12:12:40 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: [tahoe-dev] notes from the Tahoe-LAFS Weekly Dev Call, 
+  2012-09-11
+Message-ID: <20120912101240.GF9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4063
+Lines: 84
+
+----- Forwarded message from Brian Warner <warner@lothar.com> -----
+
+From: Brian Warner <warner@lothar.com>
+Date: Tue, 11 Sep 2012 13:57:03 -0700
+To: tahoe-dev@tahoe-lafs.org
+Subject: Re: [tahoe-dev] notes from the Tahoe-LAFS Weekly Dev Call,
+	2012-09-11
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8;
+	rv:15.0) Gecko/20120907 Thunderbird/15.0.1
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+On 9/11/12 9:59 AM, Zooko Wilcox-O'Hearn wrote:
+
+> b" topic: The compression attack on HTTPS.
+
+> The drewp defense -- the Added Convergence Secret -- is exactly the
+> thing that creates independent compression contexts in order to limit
+> the scope for attack.
+
+Nope. Drewp's defense increases the total entropy of the input to the
+convergence function, but that only helps if you're limited to guessing
+that input all-at-once. The compression attack lets you guess the secret
+input incrementally (just like a padding-oracle attack), so the
+attacker's job is linear, not exponential. Adding 256 bits of
+unguessable secret merely adds about 256 extra guesses to their
+workload.
+
+The defense is either to prevent the mixing of secret and adaptive
+attacker-supplied data in the same compression context (i.e. the same
+file), or to prevent the attacker from measuring the length of the
+resulting compressed data.
+
+> Zooko and (perhaps to a lesser degree) Brian are uncomfortable with
+> the fact that LAFS currently exposes the length of your plaintext, to
+> the byte level of precision. Zooko wants to add padding.
+
+I'm vaguely uncomfortable with it, but I'm more uncomfortable with some
+of the alternatives. Exposing the exact byte-length of the plaintext is
+easy to implement (the alternatives are harder to implement) and easy to
+explain to users ("we expose the exact byte-length of your plaintext,
+and if you append N bytes of attacker-supplied data, we'll expose
+length+N"). Compressing the data first might have value (for large
+fluffy data, but we think most large data is already mp3/jpg
+compressed), but is harder to explain: "we'll leak the length of a
+gzipped form of your data, which exposes some obscured combination of
+the actual length of your file and the fluffiness of its contents, which
+will vary in hard-to-predict way if you append attacker-supplied data to
+it".
+
+Padding isn't too hard to explain ("we expose 8*ceil(len/8)"), but the
+privacy value it provides is dubious: an active attacker can still
+detect single-byte variations if they can get you to start close to an
+edge of the block size, and 8 bytes may not be enough to thwart the
+would-be file-correlator (who's just on the lookout for a file exactly
+4834263 bytes long, but knows there aren't any other files close to that
+length, so the rounded-up 4834264-byte file is probably the same). For
+larger files, even 4096-byte chunks might not be enough. So the benefit
+depends upon the block size you pick, versus the distribution of file
+sizes, meaning we'd have to pick a block size out of a hat, and
+unjustified ad-hoc constants always make me think we're doing something
+wrong. (it might end up being a good idea, but it makes me nervous).
+
+You could add random padding (in a convergent fashion, e.g. append
+H(file)%8 bytes of zeros, record the original length in the encrypted
+data somewhere). But as we've learned from anonymous remailers, random
+padding merely lowers the signal-to-noise ratio, and only increases the
+cost of statistical correlation by a linear factor. So you'd have to be
+clear on what sort of protection you were earning before taking the
+complexity hit of random padding.
+
+
+cheers,
+ -Brian
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

@@ -1,0 +1,150 @@
+From owner-cypherpunks@lne.com  Sun Apr 27 11:45:25 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h3RFjMt26705
+	for <rsw@jfet.org>; Sun, 27 Apr 2003 11:45:22 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h3RFXfZf027692
+	for cypherpunks-goingout345; Sun, 27 Apr 2003 08:33:41 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Sun, 27 Apr 2003 11:35:25 -0400
+Subject: Anonymous Transport Layer
+Content-Type: text/plain; charset=US-ASCII; format=fixed
+Mime-Version: 1.0 (Apple Message framework v551)
+Cc: cypherpunks@lne.com
+To: lucrative-l@lucrative.thirdhost.com
+From: Patrick Chkoreff <patrick@fexl.com>
+In-Reply-To: <E199cEM-0007cQ-00@smtp10.atl.mindspring.net>
+Message-Id: <DD874A1A-78C5-11D7-9286-000393D91E36@fexl.com>
+Content-Transfer-Encoding: 7bit
+X-Pgp-Rfc2646-Fix: 1
+X-Mailer: Apple Mail (2.551)
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 5423
+Lines: 121
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+From: John Kelsey <kelsey.j@ix.netcom.com>
+
+(Regarding my non-blinded scheme)
+
+> Right.  You actually can get reasonable anonymity with the kind of 
+> scheme
+> you're proposing, assuming anonymous communications and heavy use of 
+> the
+> system.  When you get a coin issued, you just keep it in limbo for 
+> awhile,
+> and then "spend" it with yourself, iterating until your paranoia level 
+> is
+> satisfied.  If the system is heavily used for real stuff, and the uses 
+> are
+> over an anonymous communications network, there should be no way for 
+> the
+> bank to tell when you're transferring the coin to yourself, vs. when 
+> you're
+> transferring it to someone else.  ...
+
+I have sometimes wondered if it might be possible to use non-blinded 
+digital notes on top of an anonymous transport layer and thereby 
+achieve the same untraceability as that provided by blinded digital 
+notes.
+
+So, I considered the possibility that a coder might be lazy and write a 
+system that over normal IP would have undesirable traceability 
+characteristics, and simply wave his hands and say "Ah, no problem, I'm 
+letting the transport layer (Tarzan, ANON, etc.) take care of that."
+
+If such a division of labor were possible, it would be analogous to 
+using a Secure Socket Layer in an application, knowing only how to set 
+up and tear down the protocol but nothing in particular about 
+cryptography.
+
+One might even assume the worst case, that the server records every bit 
+of information it ever receives for all time.  The main events recorded 
+would be of the form "At time T, the server received note P[i] for 
+redemption and sent out note P[i+1] in return."  So there would in fact 
+(worst case) be a traceable chain P[1]-> ... ->P[n].  However, there 
+would be no IP address information because of the anonymous transport 
+layer.
+
+> The bank can tell that you have coin X
+> today, and that 20 iterations ago, that was coin Y.  ...
+
+Yes, I see, the P[1]->...->P[n] chain.
+
+> But that isn't going
+> to give very much information about whether the coin is still in the
+> possession of the same person.  ...
+
+Yes, but the 20 rounds of thrashing occur within a specific short time 
+period, so that won't fool ANY spook worth his salt, right?
+
+Alice deposits a gold Maple at the bank and receives P[1].  The next 
+day she thrashes P[1]-> ... -> P[20] in a period of one second.  Four 
+days later she spends P[20] with Bob's Kinky Sex Emporium.  Bob swaps 
+P[20] for P[21].  The next day he redeems P[21] for a gold Maple 
+(ignoring fees of course).
+
+I guess the problem here is that the bank receiving and issuing gold 
+Maples knows that P[1] belongs to Alice and P[21] belongs to Bob@Kinky. 
+  The time stamps on the chain of swaps P[1] ...  P[20] look 
+suspiciously like obscurity-thrashing, although the bank cannot be 
+absolutely sure, of course.  Instead, Alice might have spent P[1] for a 
+gardening book at Amazon and some kinky employee there did the 
+thrashing P[2] ... P[20].
+
+Such a scheme might provide a certain level of plausible deniability, 
+but I am not sure one could capitalize on it enough to build a solid 
+system.  It does sound a bit crufty compared to blinding, although the 
+possibility of a more efficient implementation (storing unspent coins 
+only for low disk usage and hyper-fast lookup) might compensate -- 
+although there might be a cost in bandwidth, but that might be 
+proportional to paranoia level and charged accordingly.
+
+The idea of implementing a relatively unsafe digital note protocol on 
+top of an anonymous transport layer is appealing, but I am not sure 
+such a division of labor is possible.  Can anyone provide a bit of 
+guidance on this point?  I know Google is my friend, but this is a 
+pretty subtle question and just a hint will suffice.
+
+The problem at the endpoints described above might be mitigated 
+considerably if we had a world-wide network of gold kiosks providing 
+bidirectional swapping of physical gold and digital notes -- a true 
+e-hawala.  Alice could don a ski mask and deposit a gold Maple in 
+Jasper, Georgia, and five days later Bob@Kinky could don a ski mask and 
+receive a gold Maple in Helsinki.  There would be no "bank" where Alice 
+or Bob would have to identify themselves.
+
+<tangent>
+There's an ideal world scenario for you -- gold kiosks, cheap 
+disposable smart card note purses, and wireless network everywhere.  In 
+an interesting twist, this would not in fact be a "cashless society," 
+but an even more "cashful society" with one brand new feature:  the 
+ability to teleport fungible gold atoms from Jasper to Helsinki in a 
+fraction of a second.  The ultimate hawala, where oil-powered shipment 
+of gold would only occasionally be necessary to balance out the kiosk 
+inventories.  Perhaps eventually the need for giant central stores of 
+gold could be nearly eliminated.  Gold would just be laying around in 
+kiosks everywhere on the planet, just waiting for someone with the 
+right bits (or tools :-) to pick it up.  I'm sure many of you have 
+discussed such starry-eyed visions at length, but please forgive this 
+newbie for indulging a bit as this cappuccino-inspired vision possesses 
+him.
+</tangent>
+
+- -- Patrick
+http://fexl.com
+
+-----BEGIN PGP SIGNATURE-----
+Version: PGP 8.0
+
+iQA/AwUBPqv4x1A7g7bodUwLEQIMfQCgw3QwMINRZKzZdP+8ke6JjuLYAlUAoKBl
+fMuBMYvCkXdK+kZv1PT5Ki51
+=Vxog
+-----END PGP SIGNATURE-----
+

@@ -1,0 +1,244 @@
+Return-path: <cypherpunks-bounces@cpunks.org>
+Envelope-to: rsw@positron.jfet.org
+Delivery-date: Sat, 16 Jul 2016 08:36:53 -0700
+Received: from antiproton.jfet.org ([209.141.47.85])
+	by positron.jfet.org with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.87)
+	(envelope-from <cypherpunks-bounces@cpunks.org>)
+	id 1bORe8-0007Fl-RL
+	for rsw@positron.jfet.org; Sat, 16 Jul 2016 08:36:53 -0700
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u6GFSxs3013783;
+	Sat, 16 Jul 2016 11:29:00 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=RpJva5ER;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-vk0-f50.google.com (mail-vk0-f50.google.com
+ [209.85.213.50])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u6GFSutT013779
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Sat, 16 Jul 2016 11:28:58 -0400
+Received: by mail-vk0-f50.google.com with SMTP id w127so132817195vkh.2
+ for <cypherpunks@cpunks.org>; Sat, 16 Jul 2016 08:28:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to;
+ bh=W34A9XAVzOrIw0BowSCpN3sK/eMwpNPbXWZJpPYLclg=;
+ b=RpJva5ER3KgwlvbesYwa/Lll2Ib4O2gfsaQrNxQrNcmiyUWPmCcf4eB5lBSgL0xL5S
+ U9WIjrfOMValYQt9V2xcjtYeVqg9M+hxJDsz8Obnc35111QFdb2MmwhQt7vliyhbxPj8
+ BLQYpyG8uaIwCi8BFJxzzTIxMoRnFHSImAEk7qQDalWEP/MFDeqrD/D0OMC7+YSEBrKJ
+ 4JWfdE7Ke2AJ4SBn6sWQ4gzettVxVrp78pNPQXy6GmOFBivFBDA+X+XmdWV0W29r3K1a
+ gUImww8QAPMM5J3Jj5bwCgebe0JQzg9pkWmDQDlSrUEP/xMIJFRT7E1P/gE5n4bq+Od8
+ suug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to;
+ bh=W34A9XAVzOrIw0BowSCpN3sK/eMwpNPbXWZJpPYLclg=;
+ b=L1g+jxp9NLcRU3UrRwY4MrgLZnpR4yc0Wsbw4iTW9iER2dog5Gxisb2x9t7Ui9ESFM
+ U8jWvg+ihVdRhy1i2w9shKhKNlS4mFzsIyNfOzs2Gjy8/1JYhUm5JHSOTqgwYWMqSQyY
+ e1p/vYcrDHMpej6twWsJYMg7xUwcl61zdYrkcdY3ur/Mq6dgWxtnC6fjmqQZuCbFa4Xe
+ WX84CUxInV27xUOUqr9H3CqfJbnE7U2/y0wcT2sC05YUOg1TAGj2yjNnZiIfbm1XF087
+ +83++wEPgKNURQasEuRdxmEirnARf/Jo5MASDf6+NyAuC+mievwW/nOYPvLZ6Uksiogh
+ v4RQ==
+X-Gm-Message-State: ALyK8tLj7jCacMkCZkDjwAUImhmOia/eeBtXKxdrRhOxLCjN9gggvfNsHJlCu3A3SLFvxBjzUeZXOopF23+kHg==
+MIME-Version: 1.0
+X-Received: by 10.31.94.205 with SMTP id s196mr13714846vkb.78.1468682930334;
+ Sat, 16 Jul 2016 08:28:50 -0700 (PDT)
+Received: by 10.176.2.138 with HTTP; Sat, 16 Jul 2016 08:28:49 -0700 (PDT)
+Received: by 10.176.2.138 with HTTP; Sat, 16 Jul 2016 08:28:49 -0700 (PDT)
+In-Reply-To: <CAD2Ti28htR6And88bv2nSVVqdmS9fXOyGtZGTbkN3iTKgXRJnA@mail.gmail.com>
+References: <CAD2Ti2-WQUubiAkLGER4UxPsxaOiTernoEuf3O6T2g+HF16YoA@mail.gmail.com>
+ <57870A8C.3070906@riseup.net>
+ <57873979.8244b00a.24fc.0c17@mx.google.com>
+ <5787A3B0.8010403@riseup.net>
+ <5787e311.e935ed0a.e1e8e.8381@mx.google.com>
+ <57883383.9070705@riseup.net>
+ <57883a9f.9d3bed0a.5356c.d31e@mx.google.com>
+ <57883EBF.9040001@riseup.net>
+ <5788420a.91c3370a.bee34.d20b@mx.google.com>
+ <5788559B.1000609@riseup.net> <5788824C.2090907@pilobilus.net>
+ <CAD2Ti28htR6And88bv2nSVVqdmS9fXOyGtZGTbkN3iTKgXRJnA@mail.gmail.com>
+Date: Sat, 16 Jul 2016 12:28:49 -0300
+Message-ID: <CAG2tMp7tThm-fzDkBii1sU5t1S75sR6=7rVNuDasoTFbFSyZpA@mail.gmail.com>
+Subject: Re: Tor Replaces Its Entire Board
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=001a114f1ef259ba4f0537c264a6
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 163
+
+--001a114f1ef259ba4f0537c264a6
+Content-Type: text/plain; charset=UTF-8
+
+The removal of content is happening since last month, my dear @grarpamp.
+Lots of strange things are happening and there is evident censorship in
+some places when you mention Jake's name.
+
+This kind of thing makes me feel really upset and I am considering if was
+correct to avoid cruel gossip, because it is disgusting, vile.  "JA group"
+used this kind of despicable resource, but they are not a good and healthy
+reference for normal people, with a little bit of ethics.  "Decent people",
+using Quinn's favorite expression.  "Sane people", in my own code of ethics.
+
+I never asked Jake about this fact, because it would sound disgusting and
+non sense for him and he already has lots of more relevant worries.  I used
+this embarrassing information for my personal conviction only.
+
+We can't use this information in a trial, but I am sure he had no sexual
+contact or approach with one of the alleged victims because he has a very
+sensitive nose.
+
+Jake is very clean and really cares a lot about personal hygiene.
+Everybody knows how much he cares about his apparence and his smell always
+is good, even after a longer talk.  A comfortable smell that remembers me
+"cleanliness", daily baths and use of cleaning products, like soap,
+shampoo, etc.
+
+It is an important detail for a Brazilian person.  We do love water and
+baths.  Brazilians usually are considered "bath addicteds" and "maniacs for
+cleanliness, hygiene products and perfums" in whole world.
+
+The girl is knowed in some activist circles for _not_ having an accurate
+hygiene and for several disgusting intimate smells.  One of her ex-lovers,
+who I've knowed in person, confirmed me it some weeks ago and I really felt
+bad for her.
+
+I don't know her in person and I don't know if she has a disease or just
+unsanitary, unhygienic habits, but being associated with "sour cream",
+"rotten cheese" and other bizarre odors is very humilliating.  He never had
+courage to lick any part of her body and left her after two disastrous
+sexual meetings.
+
+Jake never would touch a stinky person in an intimate way.  He is too clean
+for it and he could have sex with a better person very, very easily.
+Sorry, I can't believe it.  He probably would reject her sexual advances,
+exactly like her ex-lover did.
+
+She is a revengeful person and, well, a rejected woman is the Hell in a
+human form.  She said his ex-lover is gay and he doesn't like sex to some
+people.  He is not gay and likes sex a lot, but only with clean women.  Not
+her case!  :P
+
+It was childish and cruel, but I confess when I was angry, I tried to play
+with two horrible versions of "Smelly Cat"  (one of Phoebe' songs, Friends
+sitcom),  provisionally called "Smelly Pussy" and "Smelly Little Cat" just
+for making Jake laugh a bit.  It was a bad idea and I left it at all.  Jake
+deserves good music and I sing like a banshee dying, uh!  :((
+
+(I don't know if it is really used, but they teach a pussy is a "little
+cat" for foreign people and I just learned it can be a bad word when I
+tried to explain how much I love puppies and kittens to my ex-boyfriend.  I
+said "I love pussies" and he laughed for a long time before explaining my
+mistake...  d'oh!  :P)
+
+Tender kisses.  Wish you all a lovely day!  :*
+
+Cecilia, at hospital, in a horrible mood...  I've spent my whole week
+visiting hospitals and strongly wished to die all the times after reading
+dramatic Russian propaganda.  Too much drama and noise because of another
+corrupt politician, who doesn't support LGBTQ rights and censors
+philosophers, aff...  :(((
+
+PS for @Georgi:  -  Stallman certainly likes scumbags, because is a
+complete scumbag in some moments.  But I swear he is very funny and cute
+when in the mood!  <3
+
+I don't know if Jesus loves @Juan, but later I will share a cute comic book
+named "Religion - Ruining Everything Since 4004 B.C.".  A lovely friend
+sent me and I read it yesterday, at hospital, while complaining about God's
+dark humor and bad jokes.
+
+It was published under a Creative Commons license and I need to thank the
+author for being so generous and fun.  He made me smile while my
+temperamental body was rejecting medicines, so his book is good, hihi...  ;)
+
+--001a114f1ef259ba4f0537c264a6
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p>The removal of content is happening since last month, my dear @grarpamp.=
+=C2=A0 Lots of strange things are happening and there is evident censorship=
+ in some places when you mention Jake&#39;s name.</p>
+<p>This kind of thing makes me feel really upset and I am considering if wa=
+s correct to avoid cruel gossip, because it is disgusting, vile.=C2=A0 &quo=
+t;JA group&quot; used this kind of despicable resource, but they are not a =
+good and healthy reference for normal people, with a little bit of ethics.=
+=C2=A0 &quot;Decent people&quot;, using Quinn&#39;s favorite expression.=C2=
+=A0 &quot;Sane people&quot;, in my own code of ethics.</p>
+<p>I never asked Jake about this fact, because it would sound disgusting an=
+d non sense for him and he already has lots of more relevant worries.=C2=A0=
+ I used this embarrassing information for my personal conviction only.</p>
+<p>We can&#39;t use this information in a trial, but I am sure he had no se=
+xual contact or approach with one of the alleged victims because he has a v=
+ery sensitive nose.=C2=A0 </p>
+<p>Jake is very clean and really cares a lot about personal hygiene.=C2=A0 =
+Everybody knows how much he cares about his apparence and his smell always =
+is good, even after a longer talk.=C2=A0 A comfortable smell that remembers=
+ me &quot;cleanliness&quot;, daily baths and use of cleaning products, like=
+ soap, shampoo, etc.=C2=A0 </p>
+<p>It is an important detail for a Brazilian person.=C2=A0 We do love water=
+ and baths.=C2=A0 Brazilians usually are considered &quot;bath addicteds&qu=
+ot; and &quot;maniacs for cleanliness, hygiene products and perfums&quot; i=
+n whole world.=C2=A0</p>
+<p>The girl is knowed in some activist circles for _not_ having an accurate=
+ hygiene and for several disgusting intimate smells.=C2=A0 One of her ex-lo=
+vers, who I&#39;ve knowed in person, confirmed me it some weeks ago and I r=
+eally felt bad for her.=C2=A0 </p>
+<p>I don&#39;t know her in person and I don&#39;t know if she has a disease=
+ or just unsanitary, unhygienic habits, but being associated with &quot;sou=
+r cream&quot;, &quot;rotten cheese&quot; and other bizarre odors is very hu=
+milliating.=C2=A0 He never had courage to lick any part of her body and lef=
+t her after two disastrous sexual meetings.</p>
+<p>Jake never would touch a stinky person in an intimate way.=C2=A0 He is t=
+oo clean for it and he could have sex with a better person very, very easil=
+y.=C2=A0 Sorry, I can&#39;t believe it.=C2=A0 He probably would reject her =
+sexual advances, exactly like her ex-lover did.=C2=A0 </p>
+<p>She is a revengeful person and, well, a rejected woman is the Hell in a =
+human form.=C2=A0 She said his ex-lover is gay and he doesn&#39;t like sex =
+to some people.=C2=A0 He is not gay and likes sex a lot, but only with clea=
+n women.=C2=A0 Not her case!=C2=A0 :P</p>
+<p>It was childish and cruel, but I confess when I was angry, I tried to pl=
+ay with two horrible versions of &quot;Smelly Cat&quot;=C2=A0 (one of Phoeb=
+e&#39; songs, Friends sitcom),=C2=A0 provisionally called &quot;Smelly Puss=
+y&quot; and &quot;Smelly Little Cat&quot; just for making Jake laugh a bit.=
+=C2=A0 It was a bad idea and I left it at all.=C2=A0 Jake deserves good mus=
+ic and I sing like a banshee dying, uh!=C2=A0 :((</p>
+<p>(I don&#39;t know if it is really used, but they teach a pussy is a &quo=
+t;little cat&quot; for foreign people and I just learned it can be a bad wo=
+rd when I tried to explain how much I love puppies and kittens to my ex-boy=
+friend.=C2=A0 I said &quot;I love pussies&quot; and he laughed for a long t=
+ime before explaining my mistake...=C2=A0 d&#39;oh!=C2=A0 :P)</p>
+<p>Tender kisses.=C2=A0 Wish you all a lovely day!=C2=A0 :*</p>
+<p>Cecilia, at hospital, in a horrible mood...=C2=A0 I&#39;ve spent my whol=
+e week visiting hospitals and strongly wished to die all the times after re=
+ading dramatic Russian propaganda.=C2=A0 Too much drama and noise because o=
+f another corrupt politician, who doesn&#39;t support LGBTQ rights and cens=
+ors philosophers, aff...=C2=A0 :(((</p>
+<p>PS for @Georgi:=C2=A0 -=C2=A0 Stallman certainly likes scumbags, because=
+ is a complete scumbag in some moments.=C2=A0 But I swear he is very funny =
+and cute when in the mood!=C2=A0 &lt;3</p>
+<p>I don&#39;t know if Jesus loves @Juan, but later I will share a cute com=
+ic book named &quot;Religion - Ruining Everything Since 4004 B.C.&quot;.=C2=
+=A0 A lovely friend sent me and I read it yesterday, at hospital, while com=
+plaining about God&#39;s dark humor and bad jokes.</p>
+<p>It was published under a Creative Commons license and I need to thank th=
+e author for being so generous and fun.=C2=A0 He made me smile while my tem=
+peramental body was rejecting medicines, so his book is good, hihi...=C2=A0=
+ ;)<br>
+</p>
+
+--001a114f1ef259ba4f0537c264a6--
+

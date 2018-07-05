@@ -1,0 +1,85 @@
+From owner-cypherpunks@lne.com  Sun Dec 14 21:35:10 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p3/8.11.6-03-31-03) with ESMTP id hBF2Z8Y08041
+	for <rsw@jfet.org>; Sun, 14 Dec 2003 21:35:08 -0500
+Received: from slack.lne.com (slack.lne.com [127.0.0.1])
+	by slack.lne.com (8.12.10/8.12.10) with ESMTP id hBF2NUfi024202
+	(version=TLSv1/SSLv3 cipher=EDH-DSS-DES-CBC3-SHA bits=168 verify=NO)
+	for <cypherpunks-goingout345@slack.lne.com>; Sun, 14 Dec 2003 18:23:30 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.10/8.12.10/Submit) id hBF2NUAv024201
+	for cypherpunks-goingout345; Sun, 14 Dec 2003 18:23:30 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Message-ID: <024001c3c2b2$6b087730$01c8a8c0@broadbander>
+From: "Dave Howe" <DaveHowe@gmx.co.uk>
+To: "Email List: Cypherpunks" <cypherpunks@lne.com>
+References: <Pine.LNX.4.44L0.0312142027180.582-100000@smtp.datapower.com
+  >
+Subject: Re: PKI root signing ceremony, etc.
+Date: Mon, 15 Dec 2003 02:23:21 -0000
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook Express 6.00.2800.1158
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 3048
+Lines: 53
+
+Rich Salz wrote:
+>> *shrug* it doesn't retroactively enforce the safety net - but that's
+>> ok, most MS products don't either :)
+> The whole point is to enhance common practice, not stay at the lowest
+> common denominator.
+If someone has *already* issued a certificate - and ignored the CA flag - is
+it part of the software's duty to somehow point this out to you? But
+regardless, as this only applies to imported keys you would never actually
+see it in Real Life (tm)
+
+>> Key management and auditing is pretty much external to the actual
+>> software regardless of which solution you use I would have thought.
+> You'd be wrong. :)  I did just download and use XCA for a little bit.
+> It's practically impossible to audit.  Every key in the database is
+> protected with the same password.
+um, this is a **CA** - you have *one* key in the database, your CA key. It
+is bad practice to generate the keys on the CA machine and transport them to
+the server they will be used on - instead, the Cert request should be
+generated on the end-use machine, and the *request* transported to the CA,
+signed, and the certificate returned. That way, the private key never leaves
+the machine it was generated for and used on, and is protected by its own
+password.
+
+> The system ask for the password
+> as soon as it starts up.  If I leave the program running while
+> I leave my computer, I'm screwed.
+Then don't leave it running. If you got out of your car but left the engine
+running, and somebody stole the car, would you blame the design of the car?
+
+> The key-holder isn't asked to
+> confirm each signing -- there's no *ceremony* -- and they never
+> enter the password after the program starts.  For any kind of root
+> these are all very bad.
+This is just fine for a root - the root acquires 'n' signing requests, opens
+the program, signs or rejects the requests as appropriate, then closes the
+program.  It is not the duty of the CA to generate keys or enter certificate
+information - that is the requestor's problem, which he can do with the
+tools appropriate to his machine (openssl on almost anything, the built in
+keygen in IIS and several other webservers, and so forth. I am actually
+disappointed in XCA (compared to the earlier but awkward to set up OpenCA
+project) in that no browser-accessable request interface is provided. of
+course XCA is compatable with importing requests made from OpenCA, and
+exporting them back into an openCA "pickup" dir..... but really it would be
+nice to be compatable with the interface most key requestors are used to.
+
+> XCA is pretty nice for a Level-2 or small Level-1 CA.  The template
+> management, etc., is pretty good.  (Having them tied to the key
+> database, and having the keys be unlocked while making cert requests,
+> are both real bad ideas, however.)
+There is no mystical value in having to type a key lots of times. I was just
+pointing out what other options are out there (I would have pointed out
+EBCrypt as well, which appears better suited to your current ritual, but its
+website seems to have vanished)
+

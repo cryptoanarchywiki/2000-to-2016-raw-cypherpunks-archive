@@ -1,0 +1,138 @@
+From cypherpunks-bounces@cpunks.org  Thu Oct 17 06:44:16 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9HAhnSe023814;
+	Thu, 17 Oct 2013 06:43:53 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9HAhhxw023810
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Thu, 17 Oct 2013 06:43:45 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id EFA51543E75; Thu, 17 Oct 2013 12:43:42 +0200 (CEST)
+Date: Thu, 17 Oct 2013 12:43:42 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: Re: [Cryptography] /dev/random is not robust
+Message-ID: <20131017104342.GE10405@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 4963
+Lines: 100
+
+----- Forwarded message from Theodore Ts'o <tytso@mit.edu> -----
+
+Date: Wed, 16 Oct 2013 22:12:14 -0400
+From: Theodore Ts'o <tytso@mit.edu>
+To: Jerry Leichter <leichter@lrw.com>
+Cc: Sandy Harris <sandyinchina@gmail.com>, Cryptography <cryptography@metzdowd.com>
+Subject: Re: [Cryptography] /dev/random is not robust
+Message-ID: <20131017021214.GA8443@thunk.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+
+On Wed, Oct 16, 2013 at 05:10:00PM -0400, Jerry Leichter wrote:
+> I see the paper as valuable for proposing strong security
+> definitions for "PRNG's with input", showing that neither Barak and
+> Halevi's algorithm nor the Linux RNG's algorithm attain those
+> definitions, but suggesting an algorithm that does.  The answer
+> "well, yes, the Linux generator fails if its entropy sources are bad
+> in a particular way, but we have entropy sources that aren't" misses
+> the point.
+
+The answer is, "#1, the paper's claim that the Linux generator fails
+if the entropy sources are under the control of the adversary relies
+on the fact that it stops collecting entropy when it thinks the
+entropy pool is full, which is NOT TRUE, and #2, it's really, REALLY
+stupid to assume the adversary has complete control of the interrupt
+timing on your system."  I think you have missed the first part.
+
+> At one time, not so very long ago, no one knew how to
+> build a cipher secure against a known-plaintext attack.  Today,
+> that's assumed.  A defense of a modern cipher as "well, we won't let
+> anyone see the plaintext" isn't good enough.
+
+I'm not sure that's the best analogy, because there are known attack
+scenarios where someone might have some plaintext/ciphertext pairs and
+might be interested getting the key.
+
+I haven't seen an even half-way reasonable attack scenario where the
+attacker can control all of the entropy sources in the system --- not
+just know the interrupt timings, but to *control* the interrupt
+timings, in a very fine-grained way.  (So it's not enough to just to
+know roughly when a packet gets sent to the machine, but to be able to
+send the packet such that you can control the exact value of the CPU
+counter, so you can fool the entropy estimator.  And the attacker has
+to be able to do this not just for network interrupts, but also for
+disk, keynoard, and mouse interrupts, all at the same time.
+Yeaah.....)
+
+> (Even worse is the
+> claim that "you can only see the state of the PRNG from root, and
+> then there are other attacks".  This isn't even true - a Linux
+> system frozen into a VM can't prevent anyone from reading that state
+> if they want it hard enough.)
+
+That's only true if they have fairly privileged access to the
+hypervisor.  And while it's barely possible to imagine scenarios where
+an adversary would have read access to hypervisor memory, but not
+write access, that is actually pretty far-fetched.  Feel free to
+construct a scenario....
+
+> I'm not sure how the whole business of entropy estimation feeds into
+> this.  There are others who've criticized it as just guesswork.
+> Frankly, they have a point.  John Denker's work on Turbid provides a
+> much more principled approach to the problem.  Still, the Linux
+> kernel has to work with what it has.
+
+Um, if you read the paper, its claim that /dev/random is not robust by
+their definition relied fundamentally about the entropy estimator
+being "wrong" because the adversary could control the inputs to the
+entropy pool, and thus construct inputs that would fool the entropy
+estimator.  So it feeds into the discussion in a rather fundamental
+way.
+
+In the Linux Pseudo Random Number Generator Revisited paper
+(http://eprint.iacr.org/2012/251.pdf), the authors sampled and
+analyzed the various real-life entropy sources, and found the entropy
+estimation to be pretty good, and if it erred, it erred on the side of
+convervatism, which is as designed.  In case you were wondering, I'll
+consider this "good" academoc research --- not because I like the
+result, but because they actually carried out research instead of
+relying only on articially created attacks dressed up in the language
+of mathematical formalism.
+
+Formal proofs may be impressive, but it's nice if the formalism is
+actually tied to reality, instead of tenuously based on some
+fantastical assumptions, e.g., "The US Naval aircraft carrier is not
+robust against photon torpedoes".  You can do lots of formal
+mathematics involving weapons yield to "prove" such a result, but it
+begs the question of whether photon torpedos exist in the real world.
+
+						- Ted
+_______________________________________________
+The cryptography mailing list
+cryptography@metzdowd.com
+http://www.metzdowd.com/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

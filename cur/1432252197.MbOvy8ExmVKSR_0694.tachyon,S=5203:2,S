@@ -1,0 +1,107 @@
+From owner-cypherpunks@al-qaeda.net  Sun Nov 22 15:59:44 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id nAMKwlim009566
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sun, 22 Nov 2009 15:58:47 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id nAMKwlqu009565
+	for cypherpunks-outgoing; Sun, 22 Nov 2009 15:58:47 -0500
+Date: Sun, 22 Nov 2009 21:58:41 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Tor 0.2.2.6-alpha is out
+Message-ID: <20091122205841.GZ17686@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4251
+Lines: 82
+
+----- Forwarded message from Roger Dingledine <arma@mit.edu> -----
+
+From: Roger Dingledine <arma@mit.edu>
+Date: Sat, 21 Nov 2009 22:48:26 -0500
+To: or-talk@freehaven.net
+Subject: Tor 0.2.2.6-alpha is out
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Reply-To: or-talk@freehaven.net
+
+Tor 0.2.2.6-alpha lays the groundwork for many upcoming features:
+support for the new lower-footprint "microdescriptor" directory design,
+future-proofing our consensus format against new hash functions or
+other changes, and an Android port. It also makes Tor compatible with
+the upcoming OpenSSL 0.9.8l release, and fixes a variety of bugs.
+
+https://www.torproject.org/download.html.en
+
+Changes in version 0.2.2.6-alpha - 2009-11-19
+  o Major features:
+    - Directory authorities can now create, vote on, and serve multiple
+      parallel formats of directory data as part of their voting process.
+      Partially implements Proposal 162: "Publish the consensus in
+      multiple flavors".
+    - Directory authorities can now agree on and publish small summaries
+      of router information that clients can use in place of regular
+      server descriptors. This transition will eventually allow clients
+      to use far less bandwidth for downloading information about the
+      network. Begins the implementation of Proposal 158: "Clients
+      download consensus + microdescriptors".
+    - The directory voting system is now extensible to use multiple hash
+      algorithms for signatures and resource selection. Newer formats
+      are signed with SHA256, with a possibility for moving to a better
+      hash algorithm in the future.
+    - New DisableAllSwap option. If set to 1, Tor will attempt to lock all
+      current and future memory pages via mlockall(). On supported
+      platforms (modern Linux and probably BSD but not Windows or OS X),
+      this should effectively disable any and all attempts to page out
+      memory. This option requires that you start your Tor as root --
+      if you use DisableAllSwap, please consider using the User option
+      to properly reduce the privileges of your Tor.
+    - Numerous changes, bugfixes, and workarounds from Nathan Freitas
+      to help Tor build correctly for Android phones.
+
+  o Major bugfixes:
+    - Work around a security feature in OpenSSL 0.9.8l that prevents our
+      handshake from working unless we explicitly tell OpenSSL that we
+      are using SSL renegotiation safely. We are, but OpenSSL 0.9.8l
+      won't work unless we say we are.
+
+  o Minor bugfixes:
+    - Fix a crash bug when trying to initialize the evdns module in
+      Libevent 2. Bugfix on 0.2.1.16-rc.
+    - Stop logging at severity 'warn' when some other Tor client tries
+      to establish a circuit with us using weak DH keys. It's a protocol
+      violation, but that doesn't mean ordinary users need to hear about
+      it. Fixes the bug part of bug 1114. Bugfix on 0.1.0.13.
+    - Do not refuse to learn about authority certs and v2 networkstatus
+      documents that are older than the latest consensus. This bug might
+      have degraded client bootstrapping. Bugfix on 0.2.0.10-alpha.
+      Spotted and fixed by xmux.
+    - Fix numerous small code-flaws found by Coverity Scan Rung 3.
+    - If all authorities restart at once right before a consensus vote,
+      nobody will vote about "Running", and clients will get a consensus
+      with no usable relays. Instead, authorities refuse to build a
+      consensus if this happens. Bugfix on 0.2.0.10-alpha; fixes bug 1066.
+    - If your relay can't keep up with the number of incoming create
+      cells, it would log one warning per failure into your logs. Limit
+      warnings to 1 per minute. Bugfix on 0.0.2pre10; fixes bug 1042.
+    - Bridges now use "reject *:*" as their default exit policy. Bugfix
+      on 0.2.0.3-alpha; fixes bug 1113.
+    - Fix a memory leak on directory authorities during voting that was
+      introduced in 0.2.2.1-alpha. Found via valgrind.
+
+
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

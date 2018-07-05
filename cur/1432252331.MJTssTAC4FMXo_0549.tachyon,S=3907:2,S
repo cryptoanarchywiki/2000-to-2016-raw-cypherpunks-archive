@@ -1,0 +1,90 @@
+From owner-cypherpunks@al-qaeda.net  Wed Sep 23 11:08:06 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id n8NF5q2A004739
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 23 Sep 2009 11:05:52 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id n8NF5qoB004738
+	for cypherpunks-outgoing; Wed, 23 Sep 2009 11:05:52 -0400
+Date: Wed, 23 Sep 2009 17:05:48 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Re: Random chaff [was: more work for Grobbages]
+Message-ID: <20090923150548.GB27331@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Paul Syverson <syverson@itd.nrl.navy.mil> -----
+
+From: Paul Syverson <syverson@itd.nrl.navy.mil>
+Date: Wed, 23 Sep 2009 10:59:03 -0400
+To: or-talk@freehaven.net
+Subject: Re: Random chaff [was: more work for Grobbages]
+User-Agent: Mutt/1.5.17 (2007-11-01)
+Reply-To: or-talk@freehaven.net
+
+On Wed, Sep 23, 2009 at 10:01:07AM -0400, Brian Mearns wrote:
+> 
+> So, if I understand this correctly, a correlation attack works (on a
+> very basic level) by noticing that Alice sent a message to Bob (a
+> known Tor node) at time X, and Dave (another known Tor node) sent a
+> message to Wally (a web server) at time X+e, where e is about how long
+> we would expect it to take for the onion to be routed. Is that more or
+> less the idea?
+
+Yes. But packet counting can also play a role. Cf, 
+"Passive Attack Analysis for Connection-Based Anonymity Systems"
+at http://freehaven.net/anonbib/index.html#SS03
+
+> 
+> It seems like determining e (time to route the packet) with any degree
+> of precision would be pretty difficult, so is this really a big
+> problem? (or is that still being debated?) 
+
+It's not. Cf. my "Locating Hidden Servers"
+http://freehaven.net/anonbib/index.html#hs-attack06
+wherein we had zero false positives on any timing attacks conducted
+in finding hidden services, which generally was very quick.
+(That such attacks existed were known for years. That they were not
+just possible but so fast and effective using merely a single
+node in the network was the reason that guard nodes were introduced
+into the Tor network.)
+
+And building on that see, "Low-Resource Routing Attacks Against Tor"
+http://freehaven.net/anonbib/index.html#bauer:wpes2007
+where timing attacks with epsilon false positives
+were based simply on circuit setup and were shown on general
+Tor circuits, not just for hidden services.
+
+> On the other hand, if an attacker could monitor a good number of
+> nodes, wouldn't it be fairly easy to determine each three-node
+> circuit segment (like Alice, to Bob, to Charlie) and trace the whole
+> thing end-to-end? It seems like this could be defeated with a more
+> intelligent type of "chaff", where the receiving relay generates N
+> random dummy onions (with an appreciable circuit length) for each
+> onion it receives, and then sends all N+1 into the network in a
+> random order.
+> 
+
+There's been a lot of research on this. I think Nick pointed at
+some. Cf. the anonbib.
+Research against timing attacks continues. (I'm doing some myself.)
+But so far, any "chaff" strategy in the literature is both too
+expensive and not at all effective against active attacks on
+general low-latency systems for wide use, such as Tor.
+
+HTH,
+Paul
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

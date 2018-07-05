@@ -1,0 +1,295 @@
+From owner-cypherpunks@al-qaeda.net  Mon Apr  5 12:36:53 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: (from majordomo@localhost)
+	by POSITRON.MIT.EDU (8.11.6p3/8.11.6-03-31-03) id i35Gaq312055
+	for cypherpunks-outgoing; Mon, 5 Apr 2004 12:36:52 -0400
+X-Authentication-Warning: positron.mit.edu: majordomo set sender to owner-cypherpunks@al-qaeda.net using -f
+Date: Mon, 5 Apr 2004 18:36:51 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: how much anonymity an internet cafe provides
+Message-ID: <20040405163651.GB28136@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.4i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 13419
+Lines: 271
+
+http://www.linux.ie/pipermail/ilug/2004-April/013049.html
+
+[ILUG] [Fwd: I fought the scammer... and I won.]
+John Allman allmanj at houseofireland.com
+Mon Apr 5 09:33:39 IST 2004
+
+    * Previous message: [ILUG] bringing users to Linux (RFC)
+    * Next message: [ILUG] [Fwd: I fought the scammer... and I won.]
+    * Messages sorted by: [ date ] [ thread ] [ subject ] [ author ]
+
+Some of you who were on #linux on friday will know part or most of this
+story already as i witnessed some of it (while drinking a truly
+delicious hot chocolate). For those of you who don't, the following is a
+report written up by a friend of mine on his succussful (or at least,
+it's looking good) attempt to stop and catch a 419 scammer. I feel it's
+worth the read
+
+John
+
+-------- Original Message --------
+Subject: 	I fought the scammer... and I won.
+Date: 	Fri, 02 Apr 2004 21:54:30 +0100
+From: 	Steffen Higel <Steffen.Higel at cs.tcd.ie>
+To: 	John Allman <allmanj at houseofireland.com>,
+paulinemccaffrey at eircom.net, stevecash at ireland.com,
+tony.odonnel at cs.tcd.ie, declan.dagger at cs.tcd.ie,
+edwin.higel at brookside.ie, marynstanley at eircom.net,
+richard.bannister at cs.tcd.ie, oconnoat at tcd.ie, jean.higgins3 at
+mail.dcu.ie
+
+
+
+[This is long, and is quite heavy on the technical discussion. Skip the
+bits you don't understand. It gets interesting.]
+
+I work for a busy Dublin Internet cafe, doing some sysadmining and
+general computer maintenance. On Sunday the 28th of March, I got a
+rather distressing email from a sysadmin in a large U.S. University.
+Spamcop had blacklisted our server's external IP address. Abuse mail for
+the server in question gets sent to my college account (bad practice, I
+know,  but it's a part time job). My college uses Spamcop as a blacklist
+source. You can probably tell what happened...
+
+Anyway, said email included the full headers of an email which was
+natted by our server pretending to be from the widow of Mr. Jonas
+Savimbi, offering the recipient a share of an unspecified large sum of
+money. The usual panicked thoughts kick in... "Have I fiddled with
+something which has left us as an open relay?", "Has our server been
+cracked?", "Have I been sleep-spamming again?". A more reasoned
+examination of the headers showed that the mail had originated from one
+of the IP addresses that we assign dynamically to people who bring
+laptops into the cafe. This is something of a nightmare for cafe
+operators, we can hardly block outbound smtp but then again it isn't
+possible for us to manually check every single mail either. Maybe rate
+limiting is a valid technical solution. Or a contraption which hits the
+user on the head for every mail they send. So if they send 1 an hour,
+it's a mild nuisance. But if they send 100 a minute, it'll probably kill
+them.
+
+A peek through the logs revealed:
+
+Mar 26 15:04:16 server dhcpd-2.2.x: DHCPDISCOVER from 00:40:f4:5d:aa:f7
+via eth1
+Mar 26 15:04:17 server dhcpd-2.2.x: DHCPOFFER on 192.168.1.70 to
+00:40:f4:5d:aa:f7 via eth1
+Mar 26 15:04:17 server dhcpd-2.2.x: DHCPREQUEST for 192.168.1.70 from
+00:40:f4:5d:aa:f7 via eth1
+Mar 26 15:04:17 server dhcpd-2.2.x: DHCPACK on 192.168.1.70 to
+00:40:f4:5d:aa:f7 via eth1
+Mar 26 15:04:20 server dhcpd-2.2.x: DHCPREQUEST for 192.168.1.70 from
+00:40:f4:5d:aa:f7 via eth1
+Mar 26 15:04:20 server dhcpd-2.2.x: DHCPACK on 192.168.1.70 to
+00:40:f4:5d:aa:f7 via eth1
+
+Bingo. I had something to work with. The network card is one based on a
+Cameo 32bit chipset. Matches up quite nicely with these:
+
+Return-Path: <mjsavimbi2000 at yahoo.co.uk>
+Received: from 192.168.1.70 (server.XXXXXX [XXXXXXX.29])
+   byXXXXXXXXXXXXXXXXXX) with SMTP id i2QFrgi0002755
+   for <XXXXXXXXXXXXXX>; Fri, 26 Mar 2004 10:53:44 -0500 (EST)
+Reply-To: "michelle savimbi" <mjsavimbi2000 at yahoo.co.uk>
+From: "michelle savimbi" <mjsavimbi2000 at yahoo.co.uk>
+To: <XXXXXXXXXXXXXXX>
+Subject: urgent response
+Date: Fri, 26 Mar 2004 15:53:26 +0000
+Organization:
+Mime-Version: 1.0
+Content-Type: multipart/alternative;
+boundary="----=_NextPart_000_0034_01C221EC.6C64F7B0"
+X-Priority: 3 (Normal)
+X-MSMail-Priority: Normal
+X-Mailer: Microsoft Outlook Express 6.00.2600.0000ams
+X-MimeOLE: Produced by Microsoft MimeOLE V6.00.2800.1165
+
+I asked around, and a man, described as being black (or is the word
+African-American these days?), roughly 30, with an accent which seemed
+half London and half African had been in the cafe with a laptop and had
+a number of visitors call into his booth and had been there at the given
+time.
+
+I hate spam more than I hate crackers. I hate spam more than I hate
+virus writers. I wanted to catch this guy in the act and I wanted to see
+him hauled off in a paddywagon. We contacted the police, who
+unfortunately didn't seem willing to do anything about it unless we
+caught someone in the act of doing something illegal. The daily staff in
+the cafe were instructed to let me know if said individual turned up
+again, though honestly, who could be that stupid? My hopes weren't high.
+
+Evidently, a 419er is that stupid. The very next Friday (2nd of April
+2004) he turned up again. I was on the bus at the time, just about to go
+in for another day of world altering research. I ran down as fast as I
+could and was told that he was on the second floor and hadn't plugged in
+yet because he wanted one particular booth which is somewhat secluded
+and was willing to wait.
+
+I sat myself down at a computer in another room, started tailing the
+daemon.log and waited for the telltale entries. I took a quick flick
+through the tcpdump manpage, just to make sure I didn't screw up. 20
+minutes later, it started to happen. He plugged in, and his Windows XP
+laptop started to blabber away. WindowsUpdate, Netbios, passport logins.
+Nothing much happened for a while. The odd DNS request here, the
+occasional search:
+
+GET /search.php?Keywords=male%20erection&p (I'm not messing!)
+
+on 64.21.81.131, which seems to belong to some direct marketing whorehouse.
+
+He logged into this as well: 66.180.174.12, which seems to be some sort
+of mail harvesting database. The login is done over SSL, so I can't find
+out more. If any militant anti-spam vigilantes want to get a good look
+at how these people organize themselves, that's probably a good place to
+start.
+
+Then, he spent a bit of time on http://www.emailspidereasy.com. Don't
+you just love the fake google-textads? He logged into mail.com next,
+using the email address kendoda at accountant.com. Whatever hash they use
+for passwords was aaka7zxkcNo. Then, he logged into his yahoo mail
+account. This was probably to check the account that in which he
+receives those mails. It looks like the rest happened over SSL.
+
+Then it started. The screen started showing an awful lot of smtp traffic
+heading out onto the net. I knew that I had to let it go, even if it
+meant another 48 hours of being blacklisted. If it meant he could be
+convicted of committing a crime, then I figured it was worth the price.
+I hope those who received the mail also feel that way. (sorry :-/)
+
+Before I phoned my contact in the Gardai, I had to make sure that he was
+actually sending out his vile wares. I scped the partial dumpfile onto
+my laptop, and opened it up in ethereal. Guess what?
+
+220 serverXXXXXXXXXX ESMTP Postfix
+HELO 192.168.1.70
+250 serverXXXXXXXXXX
+MAIL FROM:<mjsavimbi2000 at yahoo.co.uk>
+250 Ok
+RCPT TO:<poXXXXXXXXXXries.com>
+250 Ok
+DATA
+354 End data with <CR><LF>.<CR><LF>
+Reply-To: "michelle savimbi" <mjsavimbi200From: "michelle savimbi"
+<mjsavimbi2000 at yaSubject: urgent response
+Date: Fri, 2 Apr 2004 10:48:20 +0100
+Organization:
+Mime-Version: 1.0
+Content-Type: multipart/alternative; boundX-Priority: 3 (Normal)
+X-MSMail-Priority: Normal
+X-Mailer: Microsoft Outlook Express 6.00.2X-MimeOLE: Produced by
+Microsoft MimeOLE V
+------=_NextPart_000_0034_01C221EC.6C64F7BContent-Type: text/plain;
+       charset="iso-8859-1"
+
+Dear Sir,
+
+I would like to introduce myself to you [....]
+
+[I've noticed that some characters are missing. This seems to be due to
+our server not being able to keep up]
+
+And on it went. To lots of people. 1178 of them. By that time, two
+Gardai had called in and wanted to wait until he had sent as many as he
+was going to. They seemed fairly convinced at that point that our friend
+was engaged in something less than honest. These weren't computer
+specialists, but they walked up, knocked on the window of the booth and
+introduced themselves.
+
+He asks them what the problem is and is told to step away from the
+computer. He doesn't seem too happy about this, but does so. He's asked
+his name and is told that he might like to come down for a chat in the
+local station. He says his wallet and ID are in the booth, so he walks
+in, rips a USB memory stick from the side of his laptop, tries to
+swallow it and makes a run for it. Detective number 1 grabs and tries to
+cuff him, detective 2 starts to do the same. A struggle ensues and goes
+on for a full 10 minutes, basically trying to pin him on the floor and
+then getting his arms behind so he can be handcuffed. Michelle agrees to
+co-operate on numerous occasions and each time tries to run to the booth
+to destroy whatever is on that machine.
+
+Eventually, 2 more gardai arrive and he's cuffed and brought out, crying
+like a little girl claiming police brutality (which is untrue, they
+would probably never have even formally arrested him if he hadn't
+attempted to run). Detective 1 was explaining to me how it's extremely
+difficult to restrain someone without hurting them. They could have had
+him subdued in about 10 seconds flat, but there have been instances in
+the past where a few gardai in this country have caused quite a bit of
+controversy with their liberal application of force. So this eyewitness
+applauds the superb work done by these gardai in a very difficult
+situation. 10 minutes of struggling with someone is pretty tough work.
+
+So he's carted off in a car back to the local station., where he'll get
+a cozy cell. Myself and detective 1 take a look at the equipment he
+had... A "mentor" network card (based on the cameo chipset), a badly
+chewed (but fairly undamaged looking) USB memory stick and a bulky
+laptop running Windows XP. Open on the screen is MS Word with the exact
+text of our beloved email and some bulk email program (the icon had a
+yellow background with a black @ symbol). His phone is ringing in his
+coat constantly. One of his many guests from his previous visit must
+want to talk to him.
+
+At one point, 3 guys who would appear to be of similar ethnic background
+want to come into the room where Michelle was working. They are told we
+are closed due to a technical problem. They were friendly and understood
+the situation and departed quickly enough.
+
+Some guys from the computer crime unit turn up, 3 of them. We have a
+good chat about what evidence I have on the guy. We look through my tcp
+trace, they same happy enough with what's there. They ask if I managed
+to sniff any other traffic, http and so forth. They're really hoping
+that they can get his email password, so with appropriate judicial
+permission (I assume) they can take a look at who has been mailing him.
+Yahoo are apparantly extremely uncooperative in this area. He seemed to
+be using a mail.com address as well. Proof that he is intending on
+scamming people out of money is what the gardai need. I'm not sure if
+it's illegal to pretend to be someone you aren't and offer a stranger
+money that you don't have. I'm guessing that with the tcpdump I gave
+them, their technicians will be able to get something out of it. I'm
+more interested in the contents of that USB stick.
+
+So anyway, that's my tale. Michelle has been charged with assault (he
+tore off detective 1's wrist watch) and is claiming that he can't speak
+any English. Given the potential scale of the scamming operation,
+detective 1 reckoned that they'd probably end up handing the evidence
+over to interpol or whoever works in Quantico (that's the FBI, right?).
+
+What have I learned? Firstly, digging up evidence on criminals is an
+exciting activity. Secondly, if you're an absentee sysadmin for an
+Internet cafe, transperantly proxy as much traffic as you can. The logs
+will prove useful if you are trying to track an abuser's traffic 24
+hours after they have left. I was lucky in this respect, I was proxying
+smtp and http to postfix and squid. The added headers in the mails makes
+things easier to track. Thirdly, there doesn't seem to be sufficient
+clarity among those employed in law enforcement concerning the
+legalities of spam. Hell, I don't know what the laws regarding this sort
+of thing are. I just know it sucks. Finally, it's a bit out there, but
+the gardai should forge closer links with the research community Among
+us, we have a whole lot of knowledge of just about every issue under the
+sun. We're mostly idealists, and those ideals include a spam-free
+Internet. And heck, we're cheap!
+
+Hope that provided some amusement. Forward it on to anyone who is
+interested. Really. I want to see it on the front page of slashdot and
+el reg within a week. And yes it really happened.
+
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a>
+______________________________________________________________
+ICBM: 48.07078, 11.61144            http://www.leitl.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+http://moleculardevices.org         http://nanomachines.net
+
+[demime 1.01d removed an attachment of type application/pgp-signature]
+

@@ -1,0 +1,126 @@
+From owner-cypherpunks@Algebra.COM  Fri Feb  9 16:35:58 2001
+Received: from MIT.EDU (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.69.0.28])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id QAA02557
+	for <kwantam@positron.mit.edu>; Fri, 9 Feb 2001 16:35:57 -0500
+Received: from [208.233.99.160] by MIT.EDU with SMTP
+	id AA22895; Fri, 9 Feb 01 16:38:04 EST
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f19L8V704662
+	for cypherpunks-outgoing; Fri, 9 Feb 2001 15:08:31 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from einstein.ssz.com (cpunks@einstein.ssz.com [204.96.2.99])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f19L8Tq04646
+	for <cypherpunks@algebra.com>; Fri, 9 Feb 2001 15:08:29 -0600
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id PAA29268
+	for cypherpunks@algebra.com; Fri, 9 Feb 2001 15:15:40 -0600
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id PAA29259
+	for cypherpunks-outgoing; Fri, 9 Feb 2001 15:15:35 -0600
+Received: from smile.idiom.com ([209.209.13.26])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id PAA29254
+	for <cypherpunks@einstein.ssz.com>; Fri, 9 Feb 2001 15:15:31 -0600
+Received: from billstewart (bay-29-b-21.sfo.dsl.cerfnet.com [216.148.82.21])
+	by smile.idiom.com (8.9.1/8.8.5) with SMTP id NAA84807;
+	Fri, 9 Feb 2001 13:07:59 -0800 (PST)
+Message-Id: <3.0.5.32.20010209130702.01c60100@idiom.com>
+X-Sender: wcs@idiom.com
+X-Mailer: QUALCOMM Windows Eudora Light Version 3.0.5 (32)
+Date: Fri, 09 Feb 2001 13:07:02 -0800
+To: "Andrew Alston" <andrew@security.za.net>, <cypherpunks@einstein.ssz.com>
+From: Bill Stewart <bill.stewart@pobox.com>
+Old-Subject: RE: CDR: Re: IW: Tools Stunt DoS Attacks
+In-Reply-To: <LEEEJPKEDECPBBHJMPNPAENLCIAA.andrew@security.za.net>
+References: <3.0.5.32.20010208184534.00955640@idiom.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Reply-To: cypherpunks@EINSTEIN.ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Acceptable-Languages: English, Russian, German, French, Spanish
+Subject:  RE: Re: IW: Tools Stunt DoS Attacks
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 3320
+Lines: 72
+
+
+At 09:08 AM 2/9/01 +0200, Andrew Alston wrote:
+>If the attacker has a large number of slave machines, each machine is
+>spoofing from 1000 addresses (I.E sending 1000 packets each one from a
+>different address, and then cycling these addresses or generating another
+>1000 different addresses), it becomes VERY VERY difficult to block.
+>1000 machines, each sending 1000 packets, from 1000 spoofed addresses, each
+>packet is 8k big...
+
+
+Agreed - if the ISPs aren't spoof-proofing, it's very tough to defend
+against, as Lars and I noted.  But if ISPs, particularly the cable and DSL
+ISPs, 
+are spoof-proofing their outgoing packets, there won't be an 
+unblockably large 1,000,000 addresses, just a still-annoying 1000 addresses, 
+and the addresses you'll be blocking are mostly sites you won't miss 
+(cable, DSL, and dial-up subscribers) rather than a random scatter
+of probably-useful systems and networks around the net.
+
+>Because each packet is a SYN packet, ... the firewall will attempt to
+>insert 1 million rules in the space on under 5 minutes.
+
+The magic of SYN attacks is that you don't have to accept
+more than one SYN from a given machine at a time,
+at least for a given port, so you don't have to use firewall rules
+except to limit the range of ports that are being targeted,
+and when you start to build rules, you only need 1000 of them.
+
+>With 1000 machines, each sending 10 8k packets per second (80k/sec), you are
+>running at 80000k/sec, that is to say almost 80gigabit, enough to kill an
+>OC-48 dead in the water.
+
+Fortunately, that's only 80 Megabits, not Gigabits, 
+so it's only a T3-killer, not an OC-768-killer :-)  Still annoying.
+You can fill the T3 with about 1500 dialup users,
+and about 5 times as fast with cable modem or IDSL,
+15-30 with faster DSL, and of course much faster with 
+university machines (where you're limited by the 
+university's aggregate outgoing bandwidth
+rather than the individual smurves' bandwidth.)
+Of course, if you've only got a T1/DSL/Cable line, you're toast.
+
+But there are several different attacks here -
+I'd be surprised if there's a legitimate use for 8KB SYN packets,
+though I'm not sure any current firewalls have an easy way to
+detect and block that, so it may work.
+Some attacks are likely be blocked by firewalls -
+ports you don't want, UDP packets and traffic pretending to be
+from open TCP connections when you haven't done a SYN first.
+Those still flood your incoming pipe - some ISPs are
+offering network-based firewalls that can do simple filtering
+at the upstream end of the connection to reduce the
+bandwidth you spend on anklebiters.
+
+But still, a 1000-machine attack is hard to do much about by yourself,
+and as you say, the upstream providers will get swamped also
+until you go out smurf hunting and get the things killed off.
+There have been some proposals to add various tracing to the
+backbone networks that may be of some help in the future.
+
+Things could be far worse, though - imagine if some popular software
+package that people installed on purpose had DDOS capabilities,
+like a hacked Napster client or Quake Performance-Booster or 
+Netscape Foobar-Graphics plug-in or a more clever than usual MSWord virus.
+Bad stuff.
+
+
+
+				Thanks! 
+					Bill
+Bill Stewart, bill.stewart@pobox.com
+PGP Fingerprint D454 E202 CBC8 40BF  3C85 B884 0ABE 4639
+

@@ -1,0 +1,96 @@
+From owner-cypherpunks@al-qaeda.net  Thu Sep 16 17:37:33 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i8GMbRoD025543
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Thu, 16 Sep 2004 17:37:27 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i8GMbRW5025542
+	for cypherpunks-outgoing; Thu, 16 Sep 2004 17:37:27 -0500
+Message-Id: <6.0.3.0.0.20040916151712.0420ba18@pop.idiom.com>
+X-Sender: wcs@pop.idiom.com
+X-Mailer: QUALCOMM Windows Eudora Version 6.0.3.0
+Date: Thu, 16 Sep 2004 15:32:46 -0700
+To: Joe Touch <touch@ISI.EDU>
+From: Bill Stewart <bill.stewart@pobox.com>
+Subject: Re: potential new IETF WG on anonymous IPSec
+Cc: Ian Grigg <iang@systemics.com>, cypherpunks@al-qaeda.net
+In-Reply-To: <414A02D5.3080702@isi.edu>
+References: <20040909195729.4798957E2B@finney.org> 
+  <6.0.3.0.0.20040910223501.0403c120@pop.idiom.com> 
+  <4148C843.9000700@systemics.com>  <414A02D5.3080702@isi.edu>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Content-Length: 3050
+Lines: 62
+Status: O
+X-Status: 
+X-Keywords:                  
+X-UID: 1013
+
+At 02:17 PM 9/16/2004, Joe Touch wrote:
+
+>Ian Grigg wrote:
+>>On the backbone, between BGP peers, one would have thought
+>>that there are relatively few attackers, as the staff are
+>>highly trusted and the wires are hard to access - hence no
+>>active attacks going on and only some passive eavesdropping
+>>attacks.  Also, anyone setting up BGP routing knows the other
+>>party, so there is a prior relationship.
+>
+>My understanding of the attacks this past spring is that:
+>         a) they were indeed on the backbone BGP peers
+>         b) that those peers had avoided setting up
+>            preshared keys or getting mutually-authenticatable
+>            certificates because of the configuration overhead
+>            (small on a per-pair basis, but may be large
+>            in aggregate)
+
+The interesting attacks were a sequence-number guessing attack
+using forged TCP RST packets, which tell the TCP session to tear down,
+therefore dropping the BGP connection (typically between two ISPs).
+The attackers didn't need to be trusted backbone routers -
+they could be randoms anywhere on the Internet.
+BGP authentication doesn't actually help this problem,
+because the attack simply kills the connection at a TCP layer
+rather than lying to the BGP application.
+
+A simple way to avoid most of this problem is to
+filter packets at the edges so that customer connections
+can't send IP (or ICMP, while you're at it) packets
+to the core addresses on the routers that do the BGP signalling.
+(It's not a complete solution, because both ends of the connection
+need to so that, or need to do spoof-proofing so nobody can forge packets
+from those addresses, or both.)  Customers can still send packets
+to the ISP edge routers supporting their own connections,
+but killing your own internet connection is much less entertaining
+than killing somebody else's, and if the customer is managing their own router,
+their users probably have an easier time killing that end of the connection
+than convincing the ISP's end to drop the connection.
+
+(One downside to this approach is that customers can't simply ping routers
+to get information about paths, latencies, capacities, etc.,
+but that's not necessarily a bad thing.  Also, you can set things up
+so they can traceroute to the far end of a connection and still get
+traceroute responses from the intermediate routers.)
+
+>While inspired by this issue, there may be other solutions (e.g., IMO 
+>IPsec) which are more appropriate for BGP peers.
+>...
+>I wouldn't think that the encryption need be opportunistic; in the BGP 
+>backbone world, as you noted, peers are known a-priori, and should have 
+>certs that could be signed by well-known, trusted CAs.
+
+I agree with Joe.  You can fix most of the problems using ACLs,
+but IPSEC does have some appeal to it.
+You don't even need CAs - pre-shared secrets are perfectly adequate,
+but if you want to use a CA-based IPSEC implementation for convenience,
+you can agree on what CA to use when you're agreeing on other parameters.
+
+
+----
+Bill Stewart  bill.stewart@pobox.com 
+

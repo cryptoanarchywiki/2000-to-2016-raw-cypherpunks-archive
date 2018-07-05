@@ -1,0 +1,113 @@
+From owner-cypherpunks@al-qaeda.net  Tue Sep  7 13:35:33 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i87IYqaV005815
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Tue, 7 Sep 2004 13:34:52 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i87IYqq6005814
+	for cypherpunks-outgoing; Tue, 7 Sep 2004 13:34:52 -0500
+Message-ID: <413DFE30.3BAF22B7@cdc.gov>
+Date: Tue, 07 Sep 2004 11:30:08 -0700
+From: "Major Variola (ret)" <mv@cdc.gov>
+Organization: GLODO PSYOPS
+X-Mailer: Mozilla 4.75 [en] (Win95; U)
+X-Accept-Language: en
+MIME-Version: 1.0
+To: "cypherpunks@al-qaeda.net" <cypherpunks@al-qaeda.net>
+Subject: RE: stegedetect & Variola's Suitcase
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3306
+Lines: 85
+
+At 11:57 AM 9/7/04 -0400, Sunder wrote:
+>The answer to that question depends on some leg work which involves
+>converting the source code to stegetect into hardware and seeing how
+fast
+>that hardware runs, then multiplying by X where X is how many of the
+chips
+>you can afford to build.
+
+A quick perusal of stegdetect.c, attending to how it analyzes jphide
+images,
+indicates that it computes histograms of DCT coefficients and then
+performs
+chi^2 tests on the distributions.  Since this is
+fairly easy on a generic RISC CPU, one might be better off with a rack
+o' blades
+or even a cluster.  Particularly because most JPGs will fit inside your
+typical
+21st century-sized processor cache.
+
+Note that a streaming implementation is not easy because JPG data will
+have to be reassembled from transport-level packet quantization; e.g., a
+200KB JPG is a lot
+of 1500 byte packets.  Better to snarf & reassemble the JPG then analyze
+the whole captured image.
+
+Contrast this with e.g., block cipher accelerators that benefit
+from hardware implementation because they use bit-diddling not well
+supported by
+a typical instruction set.  Or modexp() accelerators that benefit from
+parallelism.
+
+Joseph Holsten <pantosys@gmail.com> is right that its a complete waste
+(and not really stego) to look for data appended to the image data.  Any
+data appended there, especially noise :-), will be suspicious.
+
+
+>I'd image that it's a lot faster to have some hw that gives you a
+yea/nay
+>on each JPG, than to say, attempt to crack DES.
+
+Stegdetect is performing a signal-detection task.  As such, it measures
+a continuous
+variable, then thresholds it to make a decision.  Therefore there is a
+tradeoff between sensitivity and false positives.
+
+For instance, I produced a test, jphide stego'd JPG which is *not*
+detected by stegdetect
+with default sensitivity, but using the "-s 3" argument it scores one
+asterisk.
+
+The steganographer can make the steganalysts' jobs much harder by
+keeping
+the S/N down, ie by only using short messages in large images.  This is
+alluded
+to in the jphide pages: "Given a typical visual image, a low insertion
+rate (under 5%) and the absence of the original file, it is not possible
+to conclude with any worthwhile certainty that the host file contains
+inserted data." and follows from signal detection theory.
+It is also empirically true from some casual experimentation.
+
+Further commentary:
+
+* Stegdetect, though clever and well written (if poorly commented),
+barfs on a number of valid JPGs, including monochrome ones.
+
+* One could write a jphide variant which doesn't skew the coefficients
+e.g., if you
+use the upper half of an image for cargo, and the lower half to hide the
+changes.
+If instead of simplistic "halves" you used the passphrase to seed a PRNG
+you could
+disperse the cargo & re-balancing changes much more subtly.
+
+* MPx format files have great potential, for both image, image-N-tuple,
+and audio stego; is that http://irenarchy.org hip-hop recruiting video
+really just a video?   (And is morphing someone into a sesame-street
+character "fair use"?)
+
+* Note that stego dictionary-attack breaking *would* benefit from
+compression-
+and crypto- accelerators for obvious reasons.  But the topic here is
+stego detection.
+
+-------
+Steganography is in the eye of the beholder.  -Viktor.
+

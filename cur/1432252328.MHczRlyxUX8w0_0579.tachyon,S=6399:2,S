@@ -1,0 +1,129 @@
+From owner-cypherpunks@al-qaeda.net  Thu Aug  6 11:21:58 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id n76FL2AQ020785
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 6 Aug 2009 11:21:03 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id n76FL26w020784
+	for cypherpunks-outgoing; Thu, 6 Aug 2009 11:21:02 -0400
+Date: Thu, 6 Aug 2009 17:20:58 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: Re: cleversafe says: 3 Reasons Why Encryption is Overrated
+Message-ID: <20090806152058.GE23524@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5395
+Lines: 104
+
+----- Forwarded message from Zooko Wilcox-O'Hearn <zooko@zooko.com> -----
+
+From: Zooko Wilcox-O'Hearn <zooko@zooko.com>
+Date: Wed, 5 Aug 2009 09:28:59 -0600
+To: tahoe-dev@allmydata.org, Cryptography List <cryptography@metzdowd.com>
+Subject: Re: cleversafe says: 3 Reasons Why Encryption is Overrated
+X-Mailer: Apple Mail (2.753.1)
+
+[cross-posted to tahoe-dev@allmydata.org and cryptography@metzdowd.com]
+
+Folks:
+
+It doesn't look like I'm going to get time to write a long post about  
+this bundle of issues, comparing Cleversafe with Tahoe-LAFS (both use  
+erasure coding and encryption, and the encryption and key-management  
+part differs), and arguing against the ill-advised Fear, Uncertainty,  
+and Doubt that the Cleversafe folks have posted.  So, I'm going to  
+try to throw out a few short pieces which hopefully each make sense.
+
+First, the most important issue in all of this is the one that my  
+programming partner Brian Warner already thoroughly addressed in [1]  
+(see also the reply by Jason Resch [2]).  That is the issue of access  
+control, which is intertwined with the issues of key management.  The  
+other issues are cryptographic details which are important to get  
+right, but the access control and key management issues are the ones  
+that directly impact every user and that make or break the security  
+and usefulness of the system.
+
+Second, the Cleversafe documents seem to indicate that the security  
+of their system does not rely on encryption, but it does.  The data  
+in Cleversafe is encrypted with AES-256 before being erasure-coded  
+and each share stored on a different server (exactly the same as in  
+Tahoe-LAFS).  If AES-256 is crackable, then a storage server can  
+learn information about the file (exactly as in Tahoe-LAFS).  The  
+difference is that Cleversafe also stores the decryption key on the  
+storage servers, encoded in such a way that  any K of the storage  
+servers must cooperate to recover it.  In contrast, Tahoe-LAFS  
+manages the decryption key separately.  This added step of including  
+a secret-shared copy of the decryption key on the storage servers  
+does not make the data less vulnerable to weaknesses in AES-256, as  
+their documents claim.  (If anything, it makes it more vulnerable,  
+but probably it has no effect and it is just as vulnerable to  
+weaknesses in AES-256 as Tahoe-LAFS is.)
+
+Third, I don't understand why Cleversafe documents claim that public  
+key cryptosystems whose security is based on "math" are more likely  
+to fall to future advances in cryptanalysis.  I think most  
+cryptographers have the opposite belief -- that encryption based on  
+bit-twiddling such as block ciphers or stream ciphers is much more  
+likely to fall to future cryptanalysis.  Certainly the history of  
+modern cryptography seems to fit with this -- of the original crop of  
+public key cryptosystems founded on a math problem, some are still  
+regarded as secure today (RSA, DH, McEliece), but there has been a  
+long succession of symmetric crypto primitives based on bit twiddling  
+which have then turned out to be insecure.  (Including, ominously  
+enough, AES-256, which was regarded as a gold standard until a few  
+months ago.)
+
+Fourth, it seems like the same access control/key management model  
+that Cleversafe currently offers could be achieved by encrypting the  
+data with a random AES key and then using secret sharing to split the  
+key and store on share of the key with each server.  I *think* that  
+this would have the same cryptographic properties as the current  
+Cleversafe approach of using an All-Or-Nothing-Transform followed by  
+erasure coding.  Both would qualify as "computation secret sharing"  
+schemes as opposed to "information-theoretic secret sharing"  
+schemes.  I would be curious if there are any significant differences  
+between these two constructions.
+
+I don't think there is any basis to the claims that Cleversafe makes  
+that their erasure-coding ("Information Dispersal")-based system is  
+fundamentally safer, e.g. these claims from [3]: "a malicious party  
+cannot recreate data from a slice, or two, or three, no matter what  
+the advances in processing power." ... "Maybe encryption alone is  
+'good enough' in some cases now  - but Dispersal is 'good always' and  
+represents the future."
+
+Fifth, as I've already mentioned, the emphasis on cryptography being  
+defeated due to advances in processing power e.g. reference to  
+Moore's Law is confused.  Advances in processing power would not be  
+sufficient to crack modern cryptosystems and in many cases would not  
+be necessary either.
+
+Okay I think that's it.  I hope these notes are not so terse as to be  
+confusing or inflammatory.
+
+Regards,
+
+Zooko Wilcox-O'Hearn
+
+[1] http://allmydata.org/pipermail/tahoe-dev/2009-July/002482.html
+[2] http://allmydata.org/pipermail/tahoe-dev/2009-August/002514.html
+[3] http://dev.cleversafe.org/weblog/?p=63
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

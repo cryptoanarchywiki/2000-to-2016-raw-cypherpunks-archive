@@ -1,0 +1,151 @@
+From owner-cypherpunks@al-qaeda.net  Wed Dec 29 03:26:18 2010
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-5+lenny1) with ESMTP id oBT8NHL9032450
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 29 Dec 2010 03:23:17 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id oBT8NG4K032449
+	for cypherpunks-outgoing; Wed, 29 Dec 2010 03:23:16 -0500
+Date: Wed, 29 Dec 2010 09:23:13 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: 27C3 on Tor
+Message-ID: <20101229082313.GV16518@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Roc Admin <onionroutor@gmail.com> -----
+
+From: Roc Admin <onionroutor@gmail.com>
+Date: Tue, 28 Dec 2010 23:45:23 -0500
+To: or-talk@freehaven.net
+Subject: Re: 27C3 on Tor
+Reply-To: or-talk@freehaven.net
+
+Not sure if anyone else watched the video but of course there is a
+different story than the Wired article.
+
+If you don't want to sit through the whole hour, here's how I would sum it up:
+
+The talk in general was about modern tactics for profiling web users.
+They actually had some interesting stuff to say about how easily and
+accurately they were able to correlate a user to his or her web
+traffic but that's off topic.  My take away from the entire thing is
+that there are new technologies to apply machine learning for
+automated statistical analysis of traffic.  In other words, the
+attacks Nick referenced of 2002 are more feasible.  (They do admit
+that this is nothing new) The same rules apply though and that is you
+can only be profiled if you are performing the activities that they
+have in their database and it seems to me that this is more difficult
+than they make it sound.  Profiling a website that has streaming
+content would be difficult to nail down into a set profile.  They
+conclude by saying that the easiest way to protect yourself is to do
+multiple things at the same time which increases the likliness that
+they can profile your activity to their database. I seem to remember a
+Google Code project that generated random data to obfuscate your
+fingerprint.  Anyone remember?
+
+You can see in the video at 31:48 when they start specifically talking
+about Tor.  The specifics of their version of the attack look like
+this:
+1) The attack starts out where the attacker sets up a Tor client
+running the same OS version and browser and uses tools to profile a
+website like slashdot.org.
+2) their "website profiling tool of doom" makes connections to the
+website they want to profile.  They say that after 2000 requests over
+a 2 week period, they are able to accurately profile a website no
+matter what specific content is on the page.  This is metadata
+profiling like packet size, direction, etc.
+3) After they have a database of sites, they intercept a Tor client's
+traffic locally and correlate it with their data.
+
+They make a comment that Andriy Panchenko is one of the people that
+increased the accuracy of this attack by a lot but they don't give the
+details of what he added. His website is here but I didn't find any
+details: http://lorre.uni.lu/~andriy/  Prior to his involvement, the
+attack was at a 3% accuracy.
+
+They really don't have any suggestions for the Tor network.  They did
+say that padding, as I originally thought would help, doesn't affect
+this attack so that wouldn't prevent the attack.  Roger, it sounds
+like you had some specific ideas as to where to put the padding
+compared to a global value so maybe that's different than what they
+were talking about.  They do comment that TCP fragmentation over the
+Tor network causes size variation of packets over which makes things
+easier.  Not sure how much value there is in working on that aspect.
+
+
+--
+ROC Admin
+
+
+
+
+On Tue, Dec 28, 2010 at 11:29 PM, Roger Dingledine <arma@mit.edu> wrote:
+> On Tue, Dec 28, 2010 at 08:51:30PM -0500, Nick Mathewson wrote:
+>> From the wired.com article, this sounds _exactly_ like the old website
+>> fingerprinting attack, which has been known since 2002:
+>>     http://freehaven.net/anonbib/#hintz02
+>>
+>> It would be neat if somebody could send a pointer to the authors'
+>> actual results.
+>
+> See also point 3 at
+> https://www.torproject.org/getinvolved/research.html.en#Ideas
+> It's been sitting on our "this is important to learn more about"
+> research list for years.
+>
+> It's also listed in the talk I did at 25c3:
+> http://events.ccc.de/congress/2008/Fahrplan/events/2977.en.html
+> http://freehaven.net/~arma/slides-25c3.pdf (slide 30)
+>
+> So I'm glad to see more attention to the attack, but a bit frustrated that
+> we (the research community) are not farther along at understanding it.
+>
+> Two other things to note:
+>
+> The website fingerprinting attack works against other anonymity systems
+> too, in most cases even more straightforwardly than against Tor. We've
+> got 8+ years in the literature of applying it to other systems (most
+> thoroughly just attacking SSL streams to learn what web page is being
+> fetched despite the encryption), and in the past few years people have
+> improved the attack to get it to work against Tor also. As I understand
+> it, even now it only works consistently when they assume laboratory
+> conditions. That isn't to say that it won't work in real-world conditions
+> -- just that it's a real hassle to get all the details right so most
+> researchers don't put in the required engineering work.
+>
+> What I'm really looking forward to is learning what modifications to Tor
+> might slow down the attack. For example, what happens if we move to a 1024
+> byte cell by default, or if we randomly add some extra cells periodically,
+> or if we ask the entry node to add padding cells so the responses we get
+> are multiples of 10KB? It would seem that there is a tradeoff between
+> bandwidth overhead (wasted bytes) and protection against this attack,
+> but I hope there are smart points in the tradeoff space. Alas, we're
+> still not really to that point yet -- we don't know how well it actually
+> works in practice against vanilla Tor, so it doesn't make sense to ask
+> how well it would work in practice against a modified Tor design.
+>
+> --Roger
+>
+> ***********************************************************************
+> To unsubscribe, send an e-mail to majordomo@torproject.org with
+> unsubscribe or-talk    in the body. http://archives.seul.org/or/talk/
+>
+***********************************************************************
+To unsubscribe, send an e-mail to majordomo@torproject.org with
+unsubscribe or-talk    in the body. http://archives.seul.org/or/talk/
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

@@ -1,0 +1,77 @@
+From cypherpunks-bounces@cpunks.org  Thu Apr 10 06:40:51 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id s3AAek6t030216;
+	Thu, 10 Apr 2014 06:40:46 -0400
+Received: from slinafirinne.net ([217.115.118.49])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id s3AAefl6030212
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 10 Apr 2014 06:40:43 -0400
+DomainKey-Signature: a=rsa-sha1;  q=dns; c=nofws; s=default; d=petermalone.org;
+ b=dir/7LrvrnfT3lHj9Ff9FQo8Im2nKuXHi/2DkfEfz2liLLad6SzBvQKGtQ5zT8JLbpRoJV7p9TObQnkzRSvTEmOnd99iSzgBmq9NCfpXq6uktubjo56DRc37yqvJoD3E;
+ h=Received:Received:Message-ID:Subject:From:To:Date:Content-Type:X-Mailer:Mime-Version:Content-Transfer-Encoding;
+Received: (qmail 17118 invoked from network); 10 Apr 2014 11:40:07 +0100
+Received: from c-75-67-42-251.hsd1.nh.comcast.net (HELO ?10.0.0.4?)
+ (75.67.42.251)
+ by petermalone.org with ESMTPSA (AES256-SHA encrypted, authenticated);
+ 10 Apr 2014 11:40:06 +0100
+Message-ID: <1397126438.1729.11.camel@shire>
+Subject: Two possible vulnerabilities in OpenSSL?
+From: Peter Malone <peter@petermalone.org>
+To: "cypherpunks@cpunks.org" <cypherpunks@cpunks.org>
+Date: Thu, 10 Apr 2014 06:40:38 -0400
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.4.4-3 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.16
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 1174
+Lines: 33
+
+Hey there,
+
+I was auditing OpenSSL last night. I looked at several files and found
+the following:
+
+ https://github.com/openssl/openssl/blob/master/ssl/t1_lib.c#L2893
+/* Determine if we need to see RI. Strictly speaking if we want to  
+* avoid an attack we should *always* see RI even on initial server  
+* hello because the client doesn't see any renegotiation during an  
+* attack. However this would mean we could not connect to any server  
+* which doesn't support RI so for the immediate future tolerate RI  
+* absence on initial connect only.  
+*/  
+
+Well that's awful coding.
+
+Unless I'm mistaken, the following memcmp is vulnerable to a remote
+timing attack.
+https://github.com/openssl/openssl/blob/master/ssl/ssl_lib.c#L1974
+static int ssl_session_cmp(const SSL_SESSION *a,const SSL_SESSION *b)  
+{  
+  if (a->ssl_version != b->ssl_version)  
+       return(1);  
+  if (a->session_id_length != b->session_id_length)  
+       return(1);  
+  return(memcmp(a->session_id,b->session_id,a->session_id_length));  
+}  
+
+I posted both of these findings to the full disclosure list last night.
+I figured someone on this list might find it interesting as well.
+
+Cheers,
+Peter.
+

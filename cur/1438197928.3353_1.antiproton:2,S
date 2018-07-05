@@ -1,0 +1,83 @@
+Date: Wed, 29 Jul 2015 15:25:28 -0400
+From: "Riad S. Wahby" <rsw@jfet.org>
+To: cypherpunks@cpunks.org
+Subject: Re: Open Fabs
+Message-ID: <20150729192528.GA3353@antiproton.jfet.org>
+Mail-Followup-To: cypherpunks@cpunks.org
+References: <CAD2Ti29zN7j-1giNsYgHj1__9LMDAs1dobAnAAtR8_Cr+vCZJw@mail.gmail.com>
+ <CAD2Ti2-od9OHrLu37osw4Rve1S8s52QpL_DEn-=3+fm9WTZC5g@mail.gmail.com>
+ <CAHKdp-==WNiJBoJ5+sfLUut4w4AJ23EYCBq-6rvN8OBcVERkDQ@mail.gmail.com>
+ <55B9064E.5010903@virtadpt.net>
+ <20150729180714.GA2509@antiproton.jfet.org>
+ <55B91C79.8010203@virtadpt.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <55B91C79.8010203@virtadpt.net>
+
+The Doctor <drwho@virtadpt.net> wrote:
+> I thought the point being made in the conversation was (and correct me
+> if I'm wrong) that one could dump an arbitrary FPGA's contents to do a
+> security audit on them.
+
+Ah, I see. I thought the focus was on cold boot or evil maid attacks
+against FPGA-based (thus, nominally trustworthy) CPUs, and how these
+attacks might compare to similar attacks against a commercial CPU.
+
+As you pointed out before, one may as well just grab the configuration
+out of the ROM itself, and I agree---but my point was that either way,
+what are we getting except some information that's not really secret?
+So I think we're in violent agreement, at least to the extent that
+we're talking about the same thing :)
+
+Also: one assumes that cold boot attacks against the contents of
+RAM are more useful than against the SRAMs that hold the FPGA's
+configuration, and in that case probably it's little different from
+the equivalent attack against a commercial CPU (the DRAM is more
+or less the same whether we're talking about the commercial or the
+FPGA-based CPU---you're using the same DIMMs either way).
+
+On further reflection, I suppose the contents of the block RAMs inside
+the FPGA (little SRAMs sprinkled through the fabric) might be a prize
+worth chasing, since those are presumably acting as registers and
+cache for our CPU. It *might* be possible to do so by cold booting the
+FPGA with a configuration that dumps the contents of the block RAMs,
+assuming that those contents aren't cleared by power-on reset or the
+configuration process itself.
+
+To your point above about auditing the configuration actually running
+on an FPGA: that would be very interesting to prevent against an FPGA
+manufacturer going the reflections-on-trusting-trust route.
+
+Here's one way an evil FPGA manufacturer might proceed: the CAD
+software that the manufacturer provides with the FPGA detects that
+you're synthesizing a CPU. Rather than emit a flawed bitstream
+(which might be detectable just by examining the bitstream itself),
+perhaps the software would hide in the bitstream some instructions
+that direct the FPGA's configuration state machine to introduce flaws
+at config time.
+
+(FPGA config bitstreams are big, complicated, and proprietary; so
+it's not impossible that they contain enough redundancy that one
+could use stego to hide such commands in the bitstream.)
+
+(This approach also helps to get around the fact that the synthesis
+and fitting process does a randomized search for a configuration
+that meets your criteria (e.g., speed, size, etc.). In other words:
+the best time to detect "this guy is trying to build a CPU" is when
+the software is reading your Verilog, not when it's loading the
+bitstream into an FPGA, because it's really really hard to decide
+"this is a CPU" just by examining the bitstream itself.)
+
+But I suppose if I were so devious as a manufacturer of FPGAs as to
+detect a CPU design and introduce subtle bugs as a result, I would
+probably also do my best to keep you from detecting it, even if you
+*are* able to read out the config from a running FPGA. It's quite a
+large haystack for hiding such a little needle...
+
+(And regarding cold booting to read out the config SRAMs: I worry even
+more here than in the case of block RAMs that these have a carefully
+designed power-on reset scheme in place so that the FPGA fabric comes
+up in a known state.)
+
+-=rsw

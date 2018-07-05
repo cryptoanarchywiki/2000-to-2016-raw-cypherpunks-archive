@@ -1,0 +1,182 @@
+From owner-cypherpunks@lne.com  Sat Apr 12 04:40:44 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h3C8eft16594
+	for <rsw@jfet.org>; Sat, 12 Apr 2003 04:40:41 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h3C8NO3i015606
+	for cypherpunks-goingout345; Sat, 12 Apr 2003 01:23:24 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+X-envelope-info: <bill.stewart@pobox.com>
+Message-Id: <5.1.1.6.2.20030411230408.02bdef60@idiom.com>
+X-Sender: wcs@idiom.com
+X-Mailer: QUALCOMM Windows Eudora Version 5.1.1
+Date: Sat, 12 Apr 2003 01:21:11 -0700
+To: Thomas Shaddack <shaddack@ns.arachne.cz>
+From: Bill Stewart <bill.stewart@pobox.com>
+Subject: Re: Metaswitch cleared by FBI for spying
+Cc: cypherpunks@lne.com
+In-Reply-To: <Pine.LNX.4.33.0304112236220.1934-100000@Zeta>
+References: <F97tcL4fy7sstphhDpB00024f7a@hotmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 8580
+Lines: 152
+
+At 11:07 PM 04/11/2003 +0200, Thomas Shaddack wrote:
+ > > ALAMEDA, Calif. -- MetaSwitch, supplier of the VP3500, the industry's 
+first
+ > > true Next Generation Class 5 Switch, announced today that it has completed
+ > > an extensive review with the FBI, which demonstrates that the MetaSwitch
+ > > CALEA specification meets the J-STD-025A standard for circuit 
+switching equipment.
+
+ > What's the chance to amend the H.323 specs with end-to-end encryption,
+ > and/or make publicly available design of phone switching system built on
+ > fully open designs, something that the user can audit and amend, something
+ > over which nobody but the user has the control?
+..
+ > Or did I smoked one puff too much?
+Smoke away - the situation is both better and worse than you think :-)
+
+H.323 isn't quite dead, but the impressions I've gotten before and at
+the recent Voice On The Net conference are that SIP is pretty much taking over,
+and H.323 is at least resting and pining for the fjords,
+even if nobody's nailed its feet to the perch yet.
+And some people have addressed encryption issues with SIP, though I'm not
+sure of the exact standards status.
+
+H.323 looks a lot like some of the ISDN protocols -
+designed by people who didn't really have a clue about how to make things
+work well on the Internet, but who did like complex and ugly features.
+SIP isn't perfect, and it apparently has some issues with NAT,
+but it's a fairly well-behaved Internet-like standard,
+and there was a lot of work done to make things extensible and modular
+and let services be provided by networks of servers rather than monoliths.
+
+While H.323 is ugly and doomed, it can be used for direct user-to-user calls,
+and Microsoft did everybody a major favor a few years ago with Netmeeting,
+which does H.323 for audio, video, and shared whiteboarding, for free,
+and while it doesn't do conferencing well, it's quite usable for 
+person-to-person calls
+as long as there's no NAT in the way and everybody runs it,
+plus it can use an IIS server for tracking who's on.
+And you can run it over IPSEC, though there's usually overhead.
+
+The basic problem SIP tries to solve is to have some method of tracking
+user presence, and telling users who want to talk to each other how to reach
+the others systems, with a bunch of optional extra activities like 
+multi-person calls.
+(If that sounds like what H.323 does, yes, that's true,
+but H.323 feels like it was designed by someone much worse at programming
+than Microsoft, vs. solving the same problems on Unix.)
+
+If all you wanted to do was let SIP users talk to other SIP users,
+this would be pretty simple, but that's not the main market -
+real systems need to talk to existing phone networks as well,
+and they need to provide many of the standard business features like voicemail
+and different types of conferencing, and those add lots of complexity.
+
+The two main environments this can run in are PBXs (phone switch on
+customer premises, run by the customer, getting some long-haul from a carrier)
+and Phone Companies, either local or long distance, who own the
+old phone infrastructure, may have better economies of scale,
+and often provide Internet service as well as telephony.
+IP telephony has lots of ways to build hybrids, and economies of scale
+matter a lot less in a Stupid Network with the control functions
+happening on glorified PCs than they did with 1960s phone switches.
+
+ From the perspective of a Phone Company, the hardest problems with
+the emerging IP telephony market involve figuring out how to make money
+while the whole industry is collapsing around us (:-),  and some of those
+methods involve finding new and innovative features that we can provide
+slightly better than other ISPs because we have a hundred years of experience.
+(Yes, I realize that the hundred years of experience involves lots of
+dead weight and useless baggage :-)
+
+One of the annoying pieces of baggage that phone companies have in many
+countries is regulation, and in the US, that includes the CALEA wiretapping 
+rules,
+which apply to us and don't appear to apply to
+businesses providing their own phone service using equipment they buy from
+hardware and software vendors like Cisco and MS, or to those vendors.
+This annoying baggage not only shows up when we plan consumer telephony 
+evolution,
+which is mostly in the future, it also shows up when we reply to RFPs from
+businesses that want people to manage their telephone systems for them.
+It is not only annoying because it's an offensive invasion of privacy,
+it's annoying because it's really hard to implement well in an evolving 
+tech environment,
+and it's annoying because we and some of our competitors have to do it
+while others of our competitors don't have to.
+
+But in a SIP world, there's not much difference between a wiretap
+and a conference call where one party is on mute, and it's
+really really easy to build fancy calling features like conferencing.
+At Voice On The Net last week, our development people were demonstrating
+interesting systems like "You're on a phone call at your office, and you want
+to go home but the people you're talking to won't shut up,
+so you tell your phone to conference in your cellphone,
+which connects in silently without losing anybody from the call, and you 
+drive home,
+and when you get there you press keys on your analog cellphone to tell the
+call that you now want it to switch to the software phone on your PC,
+and tell the popup window on your PC that you also want the call to play
+on the speaker in the kitchen while you get yourself a beer".
+
+Another generic kind of demo they did was follow-me numbers -
+the Centrex knows that when you get a call (IP or old-style),
+it should first try ringing your desk and your lab phone simultaneously
+and if you don't answer at either of those, try your cell phone if
+it's before midnight or the caller is on your buddy list.
+
+Letting the FBI join in on your call isn't too hard,
+if they can tell the call control system what to do - the hardest part is
+finding a way to let all the different kinds of phones Not Warn The User,
+since most phones are really just software, and the software writers like to
+add features like "Hey, Bob just joined your conference, do you want to send
+him the draft of the memo, and do you want to add in his video?"
+and "Find who's using Music-on-Hold and delete their MP3 collection".
+It's somewhat different for two-party pure-SIP calls, which can go 
+peer-to-peer,
+while some of the more complex call types run the voice bits through
+the call manager or conference bridge so it has a handle to build things with,
+but of course the calls can often be moved between those environments.
+
+http://www.iptel.org/info/products/sipphones.php has a nice list of
+SIP phones (software and hardware, including free software.)
+Grandstream makes a nice $75 SIP phone as well.
+There's a lot of other open source telephony work, much of it
+sponsored by hardware vendors trying to facilitate their sales.  Google.
+
+You can take SIP or H.323 and run them through IPSEC tunnels,
+but there turn out to be some annoying inefficiencies -
+the IP and RTP headers take up a lot of space, often turning 8kbps
+compressed voice into about 22-24kbps.  You can run compressed headers
+(cRTP is sort of like the old cslip), cutting it down to 11-12kbps,
+but only over raw Layer 2 transport, not over IPSEC, which also adds headers.
+It's cleaner to do the crypto along with the voice compression,
+and the SIP standards support that (but I don't know how many people use it),
+though of course anything the SIP helps to set up, the SIP can set up 
+wiretaps for.
+
+The other piece of really annoying telco regulation baggage is 911
+(emergency telephone service, which some of you non-US folks dial 999 for.)
+Unlike wiretapping, which is inherently offensive, this part is mainly
+annoying because it's a hard problem, and regulations can make it
+impossible for telcos to bid on projects without solving it,
+plus it's something that customers actually want, unlike wiretapping.
+With Real Telco Telephones, the phone number tells you what building
+a phone is in, so 911 can send the fire truck to the right building.
+With IP telephones, the gateway to the phone company might not be
+on the same side of the continent as the phone, so calling the local fire 
+trucks
+is a bad idea, and you can plug your phone in anywhere (if it's hardware)
+or run your phone software from any PC, maybe over a VPN,
+so your phone number isn't always in the _same_ wrong place.
+Some of the IP PBX makers have crude hacks for the problem, but it's hard.
+

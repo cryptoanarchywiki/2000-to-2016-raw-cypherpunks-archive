@@ -1,0 +1,120 @@
+From owner-cypherpunks@al-qaeda.net  Wed Jun 17 08:41:57 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id n5HCf9fD007434
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 17 Jun 2009 08:41:09 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id n5HCf91f007433
+	for cypherpunks-outgoing; Wed, 17 Jun 2009 08:41:09 -0400
+Message-Id: <D954F6C3-8254-47A7-975A-9E0BB7FAF18C@shipwright.com>
+From: "R.A. Hettinga" <rah@shipwright.com>
+To: Gold Silver Crypto <gold-silver-crypto@rayservers.com>,
+        cypherpunks@al-qaeda.net
+Content-Type: text/plain; charset=US-ASCII; format=flowed; delsp=yes
+Content-Transfer-Encoding: 7bit
+Subject: Fwd: Popular explanation of fully homomorphic encryption wanted
+Mime-Version: 1.0 (Apple Message framework v935.3)
+Date: Wed, 17 Jun 2009 08:41:06 -0400
+References: <20090616163136.A381D14F6E1@finney.org>
+X-Mailer: Apple Mail (2.935.3)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4650
+Lines: 92
+
+Begin forwarded message:
+
+From: hal@finney.org ("Hal Finney")
+Date: June 16, 2009 12:31:36 PM GMT-04:00
+To: cryptography@metzdowd.com, udhay@pobox.com
+Subject: Re: Popular explanation of fully homomorphic encryption wanted
+
+Udhay Shankar N quotes wikipedia:
+> The question was finally resolved in 2009 with the development of the
+> first true fully homomorphic cryptosystem. The scheme, constructed by
+> Craig Gentry, employs lattice based encryption and allows evaluation
+> of both addition and multiplication operations without restriction.[2]
+>
+>   2. ^ Craig Gentry. On homomorphic encryption over circuits of
+>      arbitrary depth. In the 41st ACM Symposium on Theory of Computing
+>      (STOC), 2009.
+
+A URL for this paper is
+http://portal.acm.org/citation.cfm?id=1536414.1536440 but you will have
+to be an ACM member to download it. I was able to get a copy this  
+morning
+and quickly skimmed it.
+
+This is IMO one of the most remarkable crypto papers ever. Not only
+does it solve one of the oldest open problems in cryptography, the
+construction of a fully homomorphic encryption system, it does so by
+means of a self-embedding technique reminiscent of Godel's theorem.
+
+Craig Gentry starts off by inventing a limited homomorphic encryption
+system based on lattice encryption. For full homomorphism you want to do
+both add and multiply - or expressed on bits, XOR and AND.  Think of  
+your
+operation as a circuit made up of XOR and AND gates, then the limiting
+factor in previous work has been the number of ANDs.  While many schemes
+have been found that do just XORs, and at least one that could do a very
+limited number of ANDs, the new scheme allows you to go deeper.
+
+In lattice encryption, there is a multi-dimensional lattice of points
+that have a hidden structure. Encryption puts you "near" a point on
+the lattice, and decryption involves finding that point. But without
+knowing the hidden structure, attackers can't tell which one is closest.
+In the new homomorphic lattice encryption, AND operations cause the
+error term to increase. After too many of them, too deep a circuit,
+the error term grows up to roughly half the distance between lattice
+points, and decryption is no longer possible. So you have a limited
+depth homomorphic encryption system.
+
+By itself this is a substantial advance. But now for the amazing
+Godelian trick. The error term has grown and any more operations will
+make decryption impossible. So Craig Gentry proposes to allow the server
+(which is working on data encrypted under a key controlled by the  
+client)
+to decrypt the data - *homomorphically*. If the data is encrypted by
+client key pk1, the client has also supplied the server a second key  
+pk2,
+and also a version of the pk1 *secret key* encrypted under pk2. Since
+pk2 is homomorphic, the server can compute a circuit using the encrypted
+secret pk1 key just like it can compute any other circuit on encrypted
+data. The result is that the server ends up with an encryption of the
+original ciphertext under pk2 instead of under pk1, and because lattice
+decryption in effect performs error correction, the error term is  
+reduced
+and we are ready for more.
+
+The key idea here is that the homomorphic encryption system has to
+allow enough homomorphic depth that *its own decryption algorithm*
+can be expressed as a circuit that "fits" within what can be handled
+homomorphically. This is quite difficult and most of the paper is taken
+up with constructing such a cryptosystem and proving its properties.
+The resulting scheme is apparently not practical (at one point he
+mentions that the secret key bits have to be expressed in *unary*) but
+it is still amazing that it is even possible. Again I have to go back
+to Godel's and Turing's work to think of a comparable example exploiting
+the power of self-embedding.
+
+In its most basic form, then, the client must supply a set of public  
+keys
+pk1, pk2, ... with each key's private part encrypted under the next key;
+the number of such keys would be proportional to the depth of the  
+circuit
+to be evaluated. However the paper then points out that given reasonable
+assumptions, you can dispense with the whole set and make it a loop,
+even a loop of one: that is, you encrypt pk1's private key under pk1,
+and stick with pk1 through the whole encryption, including the magical
+homomorphic decryption circuit evaluation. In this form it is the pure,
+fully homomorphic encryption system which has been so long sought.
+
+Hal Finney
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+

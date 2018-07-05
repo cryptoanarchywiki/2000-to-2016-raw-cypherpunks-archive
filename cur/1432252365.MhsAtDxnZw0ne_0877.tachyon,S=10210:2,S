@@ -1,0 +1,128 @@
+From cypherpunks-bounces@cpunks.org  Tue Sep 24 10:53:26 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r8OEquAI021411;
+	Tue, 24 Sep 2013 10:52:58 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r8OEqpY4021407
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Tue, 24 Sep 2013 10:52:53 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 09007543E2B; Tue, 24 Sep 2013 16:52:51 +0200 (CEST)
+Date: Tue, 24 Sep 2013 16:52:50 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, cryptography@randombit.net
+Subject: Dissentr: A High-Latency Overlay Mix Network
+Message-ID: <20130924145250.GU10405@leitl.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature"; boundary="Rq7eGUlTWqcQwoMe"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 8404
+Lines: 89
+
+
+--Rq7eGUlTWqcQwoMe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+
+https://github.com/ShaneWilton/dissentr
+
+Note: This project was created as part of a 36-hour hackathon - and primarily as a proof of concept. While the ideas may be sound, and the prototype may work as designed, the protocols involved in this specific project have not been peer-reviewed, and so I cannot recommend that the network be used for anything requiring serious privacy.
+
+Dissentr
+A High-Latency Overlay Mix Network
+
+Essentially, Dissentr is a security-minded network, inspired by Tor, with a few important characteristics which serve to differentiate it.
+
+High-Latency
+
+Tor is a low-latency network. This makes it ideal for real time activities like web browsing, but as a result, opens it up to attacks involving large-scale traffic analysis methods known as end-to-end correlation. In these attacks, an adversary with the ability to analyze massive amounts of traffic in a short period of time is able to match up traffic entering the network with the corresponding traffic which will inevitably soon exit it.
+
+Dissentr manages to protect against these sorts of attacks by being engineered as a high-latency network. Assuming any given node has not been compromised, that node will intentionally hold off on forwarding its traffic to the next node in the network until it is able to forward a large amount of data in bulk, rendering the aforementioned end-to-end correlation far less feasible. For an excellent discussion on this attack, and possible countermeasures, see Practical Traffic Analysis: Extending and Resisting Statistical Disclosure.
+
+Cascades
+
+Much like any mix network, Dissentr models its network as a graph of nodes, each responsible for handling the relay of traffic as it moves along some path through the network. Where Dissentr differs from a network such as Tor is in how this path is constructed. In Dissentr, the network is constructed out of cascades (A term I first heard described by Ian Goldberg, but I've been unable to pin down an original source for): essentially directed, acyclic sub-graphs, in which a node defines a set of "trusted" nodes, through which they are willing to relay traffic through. Dissentr simplifies this model by only allowing for nodes of out-degree 1, at this time. This construction brings about a number of useful results:
+
+In the event that a node is known to be compromised, individual nodes are allowed the ability to either remove themselves from a cascade, or bypass untrusted nodes entirely, without the necessity of a trusted third-party.
+The network is protected from "supernode invasions," in which an attacker floods the network with compromised nodes, in the hopes of either endangering the network's health, or placing the security of users passing through their nodes at risk of traffic interception, and subsequent analysis. This can be guaranteed because cascades are constructed by virtue of a measure of trust between node-operators, and so long as there exists some non-zero subset of trusted operators, they retain the ability to form a cascade of their own, effectively shutting out the efforts of such an attacker.
+Use-Cases
+
+As mentioned previously, the high-latency nature of the network causes a shift in the sorts of activities best facilitated by its use, however, there do exist some unique opportunities which I have neither seen implemented in the context of a mix network, nor discussed in the literature.
+
+A personal favourite idea revolves around creating a platform for political blogging, which, assuming a noisy enough network, would offer political dissidents the ability to freely write about issues of corruption or government abuse, without many of the risks associated with using a lower-latency network like Tor. If it takes a week for a blog post to appear in circulation after the author posts it to the network, it becomes magnitudes more difficult for any assailant to trace the authorship of that blog post - especially if that author never visited the website which hosts their content in the first place!
+
+It also becomes a fairly trivial exercise to adapt the network to act as a mixing service for digital currency such as Bitcoin. Furthermore, by breaking the network into a number of smaller, disjoint networks for that purpose, one is be able to counter many of the current attacks which target existing mixing services.
+
+Cryptosystem
+
+I again emphasize that the cryptosystem in place is the result of a rather rushed 48-hour hackathon - in a production system, I would recommend implementing a peer-reviewed cryptosystem, such as the very lightweight Sphinx, or, pending their coming proof of security, the recently proposed Ibis. That being said, Dissentr works as follows:
+
+Every node in the network maintains an RSA-keypair, with the public key being exposed to every node in a given cascade.
+When a client wishes to send a message M through the network, they choose some cascade C.
+For each node in the cascade, beginning with the exit node, and continuing through to the entrance node, the client generates an AES CFB128 key, which it uses to encrypt M. The key is then encrypted using that node's public RSA key.
+M, now encrypted with AES CFB128 for every node in the cascade, is then passed to the entrance node along with the encrypted AES keys. The entrance node then uses its private RSA key to decrypt the AES key, so that it can subsequently decrypt M, yielding yet another cipher text.
+This process is repeated for every node in the cascade, until the final node decrypts M to a plaintext, which it then handles accordingly.
+Building and Running it
+
+If, after all of my warnings, you still want to see it in action, it's dead-easy to get setup. All you'll need is Erlang installed (Tested on R16B02), along with Elixir. From there, you'll want to invoke the following from within Dissentr's directory, on every machine you want to host a node:
+
+iex --sname {Any name, different per machine} --cookie {Any string, common between all machines} -S mix
+This will stick you into a REPL, loaded with Dissentr's namespaces and dependencies. Sorry, there's no interface yet. From there, if you're using more than one machine, you'll want to link them all together, by running the following on every machine you want to host a node on. Since Erlang node connections are transitive, you won't have to do this for every pair of nodes.:
+
+:net_adm.ping(binary_to_atom(hostname))
+The hostname in question can be found in the iex prompt. Most likely it will be something@domain.
+
+Now, just spawn a few nodes to create a network. I've got some temporary methods in place for making this easy, using some hardcoded keys stored in example_data/ for testing. Ideally, each node will be hosted on a different machine, but for testing purposes it doesn't matter. Within your prompt, execute the following:
+
+Dissentr.Cascade.add_node(:node1, nil, 1)
+Dissentr.Cascade.add_node(:node2, :node1, 2)
+Dissentr.Cascade.add_node(:node3, :node2, 3)
+Dissentr.Cascade.add_node(:node4, :node3, 4)
+Dissentr.Cascade.add_node(:node5, :node4, 5)
+Finally, to send an encrypted message, run the following, substituting the node and message as desired:
+
+Dissentr.Cascade.mix(:node3, "Something, something, NSA")
+If all went well, you should see a debug statement print out the plaintext message, on the machine which is hosting :node1
+
+--Rq7eGUlTWqcQwoMe
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSQadCAAoJEPRuNImsiU7FqGMP/1fK7LtL0qwgM4QgmRVv8cCa
+HLKTx5bWM3HuRpvfJ4Ueb5T82rlozNXE8JSca8imdfBDoi51a/hZClw757INrnmN
+NkwCP2JlAJqjFA7bljFKsATAozbPtp2XwL8fP8wLbz1UZRYuegIjon/OVLDkE9+K
+sA/AHTaQoJhtXm3mr7lblJcAn0NvoiPAG2kxL0N+6qORDRj4GMGc4Mc5045C+Uj1
+1wtJmUbDDJZL6yhWD6gpv15AJFsrNfneuGlxWV5h7aqYMy8Wf/ABtLWu9fesxYlk
+dxNzcncp++9sk6JwFKHw+EPQ++i1OlpZVTqvjFrU6Xx1ho7eSW1dEJJ3PwM7m7fu
+eJu2g1Q/G5r8BkuWUcu6AWeNWO6fm0/y1RLcPDPGnTtXdlJ+kkzrmRT4h97w5PX2
+On5GL3LPgz7BHPWXsRD8MS0QHLgTRNehCFF+P+aAdfPaqi0RptJrdrxNLmWYH5Tn
+6DxQx0o05wjYy5Yt/JP9YxUCQTXmlObKD9FfU2tL57coxbt2qU0kLn3fh5E+Sh0j
+wAyDixMEdhLtwsEy+Rwre6Z0F0IfsHM3pm1oURuldA0vXMsF6iLFsKg/xYZIxCED
+JGu40yumCLIdEQdmPdiDexCPkIRE4fQQ062+g2geJBfqPHZjiVVvmtTb4Yw3bsrC
+L4+355zlOnIUMO5B315H
+=vZtA
+-----END PGP SIGNATURE-----
+
+--Rq7eGUlTWqcQwoMe--
+

@@ -1,0 +1,119 @@
+From owner-cypherpunks@al-qaeda.net  Wed Sep  2 10:01:01 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id n82E0or5006016
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 2 Sep 2009 10:00:50 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id n82E0ohA006015
+	for cypherpunks-outgoing; Wed, 2 Sep 2009 10:00:50 -0400
+Message-Id: <FFD68EB9-639A-488E-90D7-5C1705632CD3@shipwright.com>
+From: "R.A. Hettinga" <rah@shipwright.com>
+To: Gold Silver Crypto <gold-silver-crypto@rayservers.com>,
+        cypherpunks@al-qaeda.net, Cryptography <cryptography@metzdowd.com>
+Content-Type: text/plain; charset=US-ASCII; format=flowed; delsp=yes
+Content-Transfer-Encoding: 7bit
+Subject: n2n revisited
+Mime-Version: 1.0 (Apple Message framework v936)
+Date: Wed, 2 Sep 2009 10:00:46 -0400
+X-Mailer: Apple Mail (2.936)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+<http://www.snell-pym.org.uk/archives/2009/08/22/n2n-revisited/>
+
+Snell-Pym
+Sarah and Alaric Snell-Pym living in interesting times
+
+n2n revisited
+
+I have spoken before about n2n, the peer-to-peer VPN tool that makes  
+it easy to create efficient virtual networks.
+
+Normal VPN products are really more of a "virtual private cable" than  
+a "virtual private network" - they just establish a point-to-point  
+link over the Internet, requiring a login to set it up and encrypting  
+the traffic. This means you can have a virtual connection to a real  
+private network somewhere; and if a few people connect into that  
+network via VPN links, then there really is a virtual private network  
+between you all, but all going through a central point where all your  
+links meet.
+
+While with n2n, everyone connects to a shared "supernode" that keeps a  
+list of who is connected to the VPN, and from where; then when you  
+want to connect to somebody else, you use the list from the supernode  
+to establish a direct encrypted connection between yourself and them,  
+rather than going through any central point. So it's an actual virtual  
+network out of the box. You can even have more than one supernode  
+running, so that any one can fail; all the supernode does is to  
+provide the directory service.
+
+Also, you don't need to maintain a database of user logins; a  
+supernode can carry any number of virtual networks. When you connect  
+to the supernode, you just tell it the name of the community you want  
+to join, and it will share your connection details with anybody else  
+in the same community - you can make communities up on the fly rather  
+than needing to maintain a central list. Access control is handled by  
+the simple fact that you need to know the correct encryption key for  
+the community you want to join, or your messages will be received  
+garbled by everyone else, and ignored.
+
+Anyway, for a long time, I wanted to get into n2n, but I couldn't as  
+it didn't compile out of the box on NetBSD; but a desire for a better  
+VPN solution at work has led to me getting it working. It wasn't that  
+much work, in the end, as the existing FreeBSD support already had a  
+BSD approach to things.
+n2n is distributed via Subversion, so they don't have version tarballs  
+- this is a problem for my NetBSD port. So I decided to mirror it into  
+git with git svn, then forked it as "Kitten n2n", made my NetBSD port,  
+tagged a release, pushed it to github, uploaded a tarball from that  
+tag, and then made a NetBSD package of net/kitten-n2n.
+
+I'll tinker with it for a few more days, then I'll submit it to the  
+NetBSD folks for consideration.
+
+I'll keep pulling in from the official n2n Subversion repo, to pull  
+down patches, and I'll see if they'd like my patches pushed up - as  
+well as NetBSD support, there's a few things I'd like to fix as well  
+(I've spotted passing an integer through a void* by casting, which is  
+slightly dodgy practice and produces warnings on my 64-bit machine,  
+but is easily fixed by passing a pointer to a heap-allocated copy of  
+the integer!)
+
+Crypto / security | alaric |  Sat 22nd Aug 2009 12:49 pm
+1 Comment
+		
+By alaric, Tue 25th Aug 2009 @ 12:26 pm
+
+We've since spotted a few more neat features of our n2n vpn.
+
+Firstly, it's not fragile, because it has good state recovery. The old  
+PPTP VPN would, if we moved network or suspended and awoke our  
+laptops, go down and require manual re-connection. However, n2n works  
+by having the edge nodes send regular keep-alives to the supernodes,  
+updating the supernodes' directory tables. So if we're offline, the  
+edge nodes' keep-alives are discarded due to lacking a route out; and  
+when we come online again, one gets to the supernode, and then we're  
+back.
+
+This means that we've ended up leaving our n2n connections running, as  
+once they're running, they stay running. Being connected to the VPN is  
+something that's just there, rather than being something you manually  
+initiate when needed.
+
+And this has led to a second dimension: the laptops of anybody who's  
+online are all joined on a virtual Ethernet LAN. So we can see if  
+people are online by just pinging them. And we see each other appear  
+in Bonjour.
+
+We have a Nabaztag in the office; it announces (via text-to-speech)  
+when people push to 'mainline' git repositories, and we want to make  
+the continuous-integration system so it can announce when somebody  
+breaks the build. But that's not so useful for people who are working  
+from home; so we've been considering running a reliable-multicast  
+group (using the Spread Toolkit) that team events can be published  
+into, and things like the Nabaztag listen from - but then we can  
+extend it over our VPN, so it can drive Growl notifications on my Mac,  
+and similar mechanisms for the Linux users.
+

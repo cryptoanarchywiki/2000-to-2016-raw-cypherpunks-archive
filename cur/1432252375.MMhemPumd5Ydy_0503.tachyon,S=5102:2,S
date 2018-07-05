@@ -1,0 +1,103 @@
+From owner-cypherpunks@jfet.org  Sat Dec 31 21:33:25 2005
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.5/8.13.5/Debian-3) with ESMTP id k012WZGk031699
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sat, 31 Dec 2005 21:32:35 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.5/8.13.5/Submit) id k012WZuQ031697
+	for cypherpunks-outgoing; Sat, 31 Dec 2005 21:32:35 -0500
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;         s=beta;
+  d=gmail.com;        
+  h=received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+  b=UqkXvYsvMMg4V5j3Ev8Y9b3O0EzY6D/yO1UlgPBANQu2NoF/RYEF41+PwfKv6Rm9h+VbyxEcHaczIQFAbZwQAUUJrCljo+cL5u9DFb6+oHhV6ufIY6pv4vELBzTucxRrC04J9FHMMnwvrJtiEBlSL1EYmrwxP1diVE+/S5uwB5k=
+Message-ID: <4ef5fec60512311832r245dc2f7y2cd5261b73363dcf@mail.gmail.com>
+Date: Sat, 31 Dec 2005 18:32:33 -0800
+From: coderman <coderman@gmail.com>
+To: Tyler Durden <camera_lumina@hotmail.com>
+Subject: Re: [dave@farber.net: [IP] more on AP Story Justice Dept.
+  Probing Domestic Spyin
+Cc: jya@cryptome.net, cypherpunks@jfet.org
+In-Reply-To: <BAY103-F426E39267B11EF9300EE89B2B0@phx.gbl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+References: <E1EsV9V-00068N-00@pop05.mail.atl.earthlink.net> 	
+  <BAY103-F426E39267B11EF9300EE89B2B0@phx.gbl>
+Content-Transfer-Encoding: 7bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by proton.jfet.org
+  id k012WYKi031667
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3363
+Lines: 67
+
+On 12/31/05, Tyler Durden <camera_lumina@hotmail.com> wrote:
+> ...
+> Of course, NSA will likely grab&store the hidden piece as well
+
+i would count on it, as it's a good bet the answer is yes rather than no.
+
+
+> but I submit
+> one might be able to make this a fairly intractable problem, particularly if
+> information about -where- the appropriate piece is stored is itself
+> destroyed. (ie, they may have the piece, but they dont know which message it
+> belongs).
+
+i'm working on a one time pad based IPsec key daemon with a similar
+purpose to what you describe.  i'll be posting here for feedback when
+it's ready but the basic premise is that it provides strong ephemeral
+IPsec keying using one time pads previously exchanged between peers. 
+as long as the pads are generated and secured properly[1] you don't
+need to care if $TLA has kept your IPsec traffic archives in their
+acres of computing machinery.
+
+likewise, if large qubit quantum computers suddenly become feasible or
+multi ring GCF gets really fast, you don't need to worry about past
+key exchanges (also archived) being compromised, as with pub key based
+ISAKMP implementations.
+
+last, such a mode needs no open ports[2], so the attack surface for
+remote exploitation is limited to the IP level - only authenticated
+traffic is passed up the stack, everything else is dropped.
+
+as long as your OTP's are truly random and never compromised, the key
+exchange will be secure and the only way to attack your traffic
+remotely will be brute force of AES256.
+
+[1]. securing pads is really the crux of the issue here.  i'm using
+modified linux distributions for key generation (a host with no
+networking capability - kernel omits all network functionality) and
+IPsec termination (boot from CD/DVD, require USB fob / hardware token
++ passphrase for auth to access pads stored in encrypted volume).
+
+[2]. this is true with an explanation: for the initial session ICMP
+payloads are sent in the clear (not IPsec) to perform the encrypted
+key exchange using OTP's.  once IPsec is initialized, ICMP is also
+directed through IPsec via the SPD and future rekeying uses OTP's on
+top of the existing IPsec SA.  i'll have more details later but in
+short all traffic is authenticated or dropped, most of it
+authenticated via IPsec, and the only exception being key exchange via
+ICMP which is authenticated via OTP only until the first SA is
+established.
+
+the advantage of using OTP's in addition to security is simplicity:
+all buffers are fixed size, key material is small (per instance) and
+the operations fast (no montgomery multiplication on very large
+numbers).  even at a 1Hz rekey interval you could fit a years worth of
+key exchange OTP in 100MBytes of storage.
+
+the disadvantage is you probably need hardware entropy generation to
+produce the pads in a reasonable time.  i'm using the VIA C5XL and C5P
+processors for testing / runtime and these can produce more than
+enough entropy for large pads without sucking /dev/random dry.
+
+last but not least, the implicit out of band pad exchange with trusted
+peers is reasonable for private group networking and other smaller
+networks but would be very difficult to scale to a large organization.
+ this is a feature in my eyes, as private group networks are what this
+is intended for and meatspace pad exchange a desired requirement to
+ensure trust is properly placed.
+

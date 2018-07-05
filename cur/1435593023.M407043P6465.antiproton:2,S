@@ -1,0 +1,309 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t5TFn9Nx006448;
+	Mon, 29 Jun 2015 11:49:14 -0400
+Received: from mx.sysfu.com (mx.sysfu.com [104.207.157.172])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t5TFn5sp006444
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Mon, 29 Jun 2015 11:49:06 -0400
+Received: from work-pc.lan (172-7-164-197.lightspeed.sndgca.sbcglobal.net
+ [172.7.164.197]) by mx.sysfu.com (OpenSMTPD) with ESMTPS id 1f468cb4
+ TLS version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO
+ for <cypherpunks@cpunks.org>; Mon, 29 Jun 2015 08:49:01 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8; format=flowed; delsp=yes
+To: cypherpunks@cpunks.org
+Date: Mon, 29 Jun 2015 08:48:26 -0700
+Subject: Fixing the broken GPG and HTTPS (X509) trust models with Simple
+ Public Key Infrastructure (SPKI)
+MIME-Version: 1.0
+From: Seth <list@sysfu.com>
+Message-ID: <op.x0z0u0p2bgbjo9@work-pc.lan>
+User-Agent: Opera Mail/1.0 (Win32)
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from Quoted-Printable to 8bit by antiproton.jfet.org id
+ t5TFn5sp006444
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 271
+
+Reposted from  
+http://vinay.howtolivewiki.com/blog/other/secure-private-reliable-social-networks-sprsn-3654
+
+
+** secure private reliable social networks: sprsn **
+by Vinay Gupta • December 29, 2014
+
+sprsn is an idea for a small piece of software which I think would do the  
+world some good by existing, and which currently does not exist.
+
+It’s a deeply technical project that I probably don’t have time to build  
+(unless somebody wants to pay my rent for a few months while I take a shot  
+at it with a helper or two! – I am not serious about this) but I can  
+describe what’s needed and maybe it will inspire somebody, in whole or in  
+part.
+
+Synopsis: combine the new (telehash) with the old (SPKI) and get a  
+Facebook-killer in the form of a command line utility that provides a  
+decentralized social network. However, will Ethereum do this, and a ton  
+more?
+
+The dream
+sprsn bob "hey when are you coming over?"
+
+sprsn bob list friends
+> leslie
+> carol
+> jake
+
+sprsn bob add carol
+> added bob's friend carol with key [a23fd61b7]
+> you have no other routes to carol
+
+sprsn jake
+> use bob's key for jake?
+
+Now imagine that sprsn also has a web interface mode: sprsn -d 9999
+
+http://localhost:9999 mounts a web interface to your local sprsn instance.  
+The sprsn instance connects to your (online) friends running sprsn using  
+telehash (a persistant DHT tool) for web chat and for key management:  
+click on your friend’s friends to acquire their keys, and multipath to  
+people (“you have 9 friends in common”) to get more certainty about the  
+keys.
+
+Obviously this would be great: the best of SSH and Facebook in a single  
+utility. It is now relatively easy to build.
+
+Let me show you why it hasn’t happened already, and why we need it!
+
+The Problem
+GPG and HTTPS (X509) are broken in usability terms because the conceptual  
+model of trust embedded in each network does not correspond to how people  
+actually experience the world. As a result, there is a constant grind  
+between people and these systems, mainly showing up as a series of user  
+interface disasters. The GPG web of trust results in absurd social  
+constructs like signing parties because it does not work and creating  
+social constructs that weird to support it is a sign of that: stand in a  
+line and show 50 strangers your government ID to prove you exist? Really?  
+Likewise, anybody who’s tried to buy an X509 certificate (HTTPS cert)  
+knows the process is absurd: anybody who’s really determined can probably  
+figure out how to fake your details if they happen to be doing this before  
+you do it for yourself, and of the 1500 or so Certificate Authorities  
+issuing trust credentials at least one is weak or compromised by a State,  
+and all your browser will tell you is “yes, I trust this credential  
+absolutely.” You just don’t get any say in the matter at all.
+
+The entirely manual, Byzantine process is broken, and so is the entirely  
+invisible, automated one. It just doesn’t work. The process of mapping  
+keys to people is just broken and nearly all the rest of the trouble  
+emanates from this fact. A GPG key maps a person to an email address to a  
+key, and leaves you to pick who you trust enough to prove the map is  
+right. An HTTPS cert maps an organization to an IP address to a key, and  
+asks you to trust one of 1500 organizations your browser vendor chose to  
+trust. It’s not just the trust model that’s broken, it’s the binding of  
+these various pieces of data together using cryptography. Gluing the wrong  
+stuff to the wrong stuff produces constant security and reliability  
+problems.
+
+What’s the wrong stuff? Legacy delivery mechanisms like email and DNS.  
+Mapping a person to an email address, and an email address to a key is two  
+mappings. Same for HTTPS where we map an organization to an IP address to  
+a key. Two mappings, one of which is essentially arbitrary: I care about  
+identity and key. I should not have to worry about IP address or email  
+address – that’s a minor technical detail. But these outmoded trust  
+systems foreground it, much to our discomfort.
+
+Telehash
+Enter Telehash, an encrypted network stack in which you route messages  
+directly to a public key. The code is pretty simple
+
+expect(mesh).to.be.an('object');
+mesh.receive(new Buffer("208cb2d0532f74acae82","hex"), pipe);
+
+The cryptographic key is the routing address. So now we only have to  
+accomplish one level of indirection: person to key.
+
+Something old, something new, something borrowed, something blue. Enter  
+SPKI and our old friend, the Granovetter diagram.
+
+SPKI and trust in networks, not webs
+Simple Public Key Infrastructure is what we should have deployed instead  
+of X509/HTTPS and the GPG web of trust. There are two critical differences  
+between SPKI and X509/GPG. They are:
+
+1) SPKI gives users the ability to certify facts about other users, for  
+example “bob is allowed to use my computer” can be expressed in a  
+machine-readable fashion (s-expressions.) This lets users build their own  
+trust architectures on an ad-hoc basis.
+
+2) SPKI allows anybody to chain certificates of this type (“fred says that  
+bob says that vinay says that bob is allowed to use his computer.”) This  
+ability removes the centrality of the CA: anybody that I trust can give me  
+a certificate stating “this is the key for amazon.com” and because of  
+certificate chaining, I can see the line of authority down which that key  
+passed.
+
+These might sound like minor features, but they are not: these two  
+features express the difference between trust-hierarchy (X509) and  
+trust-soup (GPG), neither of which are productive, and the  
+consumer-producer based trust-anarchy which SPKI permits and, indeed,  
+requires.
+
+The best explanation of this in more detail is the Ode to the Granovetter  
+Diagram which shows how this different trust model maps cleanly to the  
+networks of human communication found by Mark Granovetter in his  
+sociological research. We’re talking about building trust systems which  
+correspond to actual trust systems as they are found in the real world,  
+not the broken military abstractions of X509 or the flawed cryptoanarchy  
+of GPG.
+
+Usable security is possible
+Once you fix the trust model so that it works for humans, and use Telehash  
+to reduce the number of mappings from three (person -> delivery mechanism  
+-> key) to two (person -> key) it’s possible to imagine a secure system in  
+which people actually understand what is happening well enough feel  
+comfortable that they understand what is going on.
+
+So let’s break this down into the desirable properties for the system we’d  
+build using these primitives.
+
+For ease, let’s consider realtime chat in the first instance – just  
+pushing messages down telehash sockets. The only question we have to  
+answer is which telehash socket corresponds to which person.
+
+1) person = key
+there’s no way to break the binding between a person and a key, because a  
+person is a key, or multiple keys.
+
+2) delivery = key
+this is what we get from telehash – I don’t need to worry about how I’m  
+sending you the message, it’s right there.
+
+So I obtain a key for a friend of mine by, say, email. Once I’ve connected  
+to them, I can then ask them to send me keys for our mutual friends.
+
+3) keys carry the chain of referrers
+“alice says this is her key”
+“bob says that alice says that this is her key”
+“fred says that bob says that alice says that this is her key”
+
+What that looks like in practice is a social graph, like the one embedded  
+in facebook. I click on you, my friend, and I click on alice, your friend,  
+and the connection that forms is an SPKI key being transferred to my  
+keyring. The key is its history – the path by which the key came to me is  
+the trust chain. If I want to be more sure the key I have is Alice’s key  
+(and not your sockpuppet) I need to find an independent route or two to  
+Alice.
+
+If Google and Dunn & Bradstreet both agree that this key is the key for  
+the IRS, that’s good enough for me.
+
+4) tools and affordances
+So how would we actually build this? I would recommend a golang  
+implementation for cross platform compatibility and ease of distribution.  
+NaCl and Telehash both exist for golang, and the self-contained binaries  
+which result are easy to spread around. A command line client would be  
+easy to augment with a web interface in which the golang program running  
+on localhost provides an HTTP interface for users that want graphics etc.
+
+Basically you get a decentralized social network with secure chat pretty  
+much out of the box, where “friending” somebody acquires their key, and  
+the referral network through which keys propagate is a key social dynamic.  
+This can work.
+
+5) advanced topics
+How do we message friends who aren’t online? Store and forwards seems to  
+be the obvious approach. Suppose I create a certificate (“sign”) which  
+lists a set of telehash keys that are my “store and forward” servers – if  
+you try and chat to me and I’m not there, you can ping one of them and  
+dump an (encrypted) message for me there and I’ll pick it up when I’m  
+online again.
+
+Same holds for large block transfer (i.e. dropbox) – I specify my choice  
+of servers by issuing a digital certificate. Do we need a central store of  
+those certificates? Maybe, or maybe it’s simply an addressing mechanism:  
+every time we chat, I push over my updated delivery info, and you can ask  
+your friends for my updated delivery info if you need to reach me.
+
+In all probability, a decision has to be made about whether to keep the  
+old SPKI s-expression format for certificates, or move to JSON. Good luck  
+with that decision, it’s a hard one.
+
+Conclusion
+There’s no way to fix a broken conceptual model with a better user  
+interface.
+
+GPG does not work for ordinary users, and GPG cannot work: we’ve been  
+trying to fix this for 20 years and it has not happened. The process by  
+which humans communicate is not tractable using those trust primitives.
+
+We are stuck with a mess, and X509 is not an answer either – it worked  
+when only big orgs wanted to secure their email and web sites, but now  
+everybody wants to do it and the certificate issuing mechanisms are  
+becoming far too sloppy to trust.
+
+We have to go back 20 years to the brilliant analysis of the people who  
+did not ship a sloppy hack to quickly get to market but sat there and  
+figured out the right thing to do, if we want to fix this mess in a  
+durable way.
+
+High roads and low roads
+The high road on these issues is Ethereum.
+
+Telehash takes the DHT and uses it for routing. Bitcoin takes the DHT and  
+adds proof of work to generate a history.
+Ethereum takes bitcoin and puts executable contracts into the history,  
+plus protocols for chat and block transfer.
+
+It’s entirely possible that SPKI-style user-generated certificates will  
+make their way into Ethereum, either as part of the core spec or as a  
+common class of DAAPs. “I have bought stuff from bob and would do so  
+again” can be issues as a certificate, in a standardized format, and these  
+certificates can be spidered out of the blockchain to generate trust  
+metrics.
+
+Likewise, if all your messaging is happening on the Ethereum protocol, you  
+do not necessarily need telehash.
+
+Here’s the question: is Ethereum’s “one ring to rule them all” approach  
+feasible, or should we work closer to the Unix Philosophy and build  
+smaller pieces, loosely joined. I can imagine a command line Telehash/SPKI  
+client which is as commonly used as SSH is today, for slinging around chat  
+and small data.
+
+I can also imagine an operating-system like sea of executable contracts  
+and helper functions in a densely knit global decentralized computational  
+ecosystem providing all the same services and more.
+
+I, personally, am in favor of a mixed strategy. I think the sheer naked  
+moonshot ambition of Ethereum is extremely attractive, and part of the  
+reason I joined the team (F.I.S.T.) was that I wanted to be part of such  
+an ambitious vision.
+
+But it’s an awful lot of bleeding edge tech, and with a project that large  
+and complex, you can never be quite sure what will come out the other end.  
+In particular, I have no idea whether the nuances of SPKI etc. which will  
+enable a revolution in the way that ordinary users experience cryptography  
+will show up in Ethereum in a usable way – the core smart contract etc.  
+functions can work perfectly well without fixing the nuances that  
+user-issued certificates will get.
+
+So I’m writing this post for two reasons: to encourage the Telehash  
+community to examine SPKI and look at it as a way of managing keys inside  
+of their DHT routing paradigm, and to encourage the Ethereum community to  
+look at SPKI and ask whether it might empower users within the larger  
+Ethereum landscape. Either way, I would dearly love to see an SPKI revival  
+so that, finally, at long last, pull the sword from the stone: Johnny can  
+encrypt.
+

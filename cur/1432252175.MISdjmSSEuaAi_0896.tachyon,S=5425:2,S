@@ -1,0 +1,124 @@
+From owner-cypherpunks@Algebra.COM  Thu Aug  1 21:53:13 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g721rCh29595
+	for <rsw@opamp.org>; Thu, 1 Aug 2002 21:53:12 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id VAA00625
+	for <rsw@mit.edu>; Thu, 1 Aug 2002 21:53:11 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g721TFOX001985
+	for <cypherpunks-outgoing@ak47.algebra.com>; Thu, 1 Aug 2002 20:29:15 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g721TFbu001984
+	for cypherpunks-outgoing; Thu, 1 Aug 2002 20:29:15 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g721TBOX001967
+	for <cypherpunks@ak47.algebra.com>; Thu, 1 Aug 2002 20:29:12 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g721T90K015936
+	for cypherpunks@ak47.algebra.com; Thu, 1 Aug 2002 18:29:09 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g721SmR4015929
+	for cypherpunks-goingout345; Thu, 1 Aug 2002 18:28:48 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Fri, 2 Aug 2002 02:28:17 +0100
+From: Adam Back <adam@cypherspace.org>
+To: Eugen Leitl <eugen@leitl.org>
+Cc: cypherpunks@lne.com
+Old-Subject: Re: document popularity estimation / amortizable hashcash (Re:
+  Hollywood Hackers)
+Message-ID: <20020802022817.A474159@exeter.ac.uk>
+References: <8d94fd13ad3927e1ffe95293727b1cc6@ecn.org>
+  <Pine.LNX.4.33.0207311603400.15129-100000@hydrogen.leitl.org>
+  <Pine.LNX.4.33.0207311603400.15129-100000@hydrogen.leitl.or g>
+  <20020731213435.A346258@exeter.ac.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <20020731213435.A346258@exeter.ac.uk>; from
+  adam@cypherspace.org on Wed, Jul 31, 2002 at 09:34:35PM +0100
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Re: document popularity estimation / amortizable hashcash (Re:
+  Hollywood Hackers)
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 2751
+Lines: 67
+
+
+This paper is quite interesting and proposes another method of
+metering content [1]:
+
+	http://citeseer.nj.nec.com/naor98secure.html
+
+It's proposed in the context of web site traffic metering to determine
+site traffic rates (for advertising payment or other applications).
+
+It relies on a trusted auditor, which could become a central failure
+point so is perhaps less attractive for file sharing, but perhaps that
+could be fixed.
+
+Another problem is that it presumes a communication pattern where the
+auditor sends a secret to each user, the user makes a cheap
+computation involving the secret to send with each request, and then
+the respective server collects all of the requests it gets and does
+some computation to arrive at a compact proof that it received some
+number k of requests.  (The server also receives a secret, but this is
+not problematic, it it anyway wants to participate).
+
+On the plus side their approach is not probabilistic -- it gives an
+accurate measurement of traffic, it is also not vulnerable to server
+traffic inflation, and is somewhat resistant to multiple client and
+server collusion.  (Though of course any scheme is generically
+vulnerable to server traffic inflation -- servers can _act_ as
+multiple clients and simply generate the claimed traffic themselves,
+or contract other parties to do this for them.)
+
+Adam
+
+[1]
+
+@article{Naor:98:secure-and-efficient-metering
+    author = "Moni Naor and Benny Pinkas",
+    title = "Secure and Efficient Metering",
+    journal = "Lecture Notes in Computer Science",
+    volume = "1403",
+    pages = "576--??",
+    year = "1998",
+    note = "Also available as \url{http://citeseer.nj.nec.com/naor98secure.html}" 
+}
+
+On Wed, Jul 31, 2002 at 09:34:35PM +0100, Adam Back wrote:
+> I proposed a construct which could be used for this application:
+> called "amortizable hashcash".
+> 
+> 	http://www.cypherspace.org/hashcash/amortizable.pdf
+> 
+> The application I had in mind was also file sharing.  (This was
+> sometime in Mar 2000).  I described this problem as the "disitrbuted
+> document popularity estimation" problem.  The other aspect of the
+> problem is you have to distribute the popularity estimate and make it
+> accessible, so I think you want it to be workably compact (you don't
+> want to ship around 1 million hash collisions on the document hash).
+> Amortizable hashcash addresses this problem.
+> 
+> There is also some discussion of it here:
+> 
+> 	http://archives.neohapsis.com/archives/crypto/2000-q1/0440.html
+> 
+> Adam
+> 
+> On Wed, Jul 31, 2002 at 04:25:30PM +0200, Eugen Leitl wrote:
+> > It should use scarce resources (e.g. crunch) to generate a trust
+> > currency in each node, a kind of decentralized mint (nothing
+> > crunches quite a few million boxes on the Net).
+

@@ -1,0 +1,118 @@
+From owner-cypherpunks@Algebra.COM  Thu Nov  7 21:22:26 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id gA82MPo09454
+	for <rsw@opamp.org>; Thu, 7 Nov 2002 21:22:25 -0500
+Received: from ak47.algebra.com ([209.120.156.51])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id VAA22620
+	for <rsw@mit.edu>; Thu, 7 Nov 2002 21:22:24 -0500 (EST)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id gA80crpB022020
+	for <cypherpunks-outgoing@ak47.algebra.com>; Thu, 7 Nov 2002 18:38:53 -0600
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id gA80crCp022017
+	for cypherpunks-outgoing; Thu, 7 Nov 2002 18:38:53 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id gA80cbpB021983
+	for <cypherpunks@ak47.algebra.com>; Thu, 7 Nov 2002 18:38:39 -0600
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id gA80cZcI012786
+	for cypherpunks@ak47.algebra.com; Thu, 7 Nov 2002 16:38:35 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id gA80bJnc012769
+	for cypherpunks-goingout345; Thu, 7 Nov 2002 16:37:19 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Message-Id: <5.1.1.6.0.20021107192236.04242008@loom.cc>
+X-Sender: patrick@loom.cc
+X-Mailer: QUALCOMM Windows Eudora Version 5.1.1
+Date: Thu, 07 Nov 2002 19:36:41 -0500
+To: Digital Bearer Settlement List <dbs@philodox.com>
+From: Patrick Chkoreff <patrick@loom.cc>
+Old-Subject: Re: Did you *really* zeroize that key?
+Cc: cryptography@wasabisystems.com, cypherpunks@lne.com
+In-Reply-To: <p05200e1fb9f07d122771@[66.149.49.6]>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Re: Did you *really* zeroize that key?
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 1833
+Lines: 68
+
+
+>From: "Trei, Peter" <ptrei@rsasecurity.com>
+>
+>[Moderator's note: FYI: no "pragma" is needed. This is what C's
+>"volatile" keyword is for. Unfortunately, not everyone writing in C
+>knows the language. --Perry]
+
+Thanks for the reminder about "volatile."  It is an ancient and valuable 
+feature of C and I suppose it's implemented correctly under gcc and some of 
+the Windoze compilers even with high optimization options like -O2.
+
+> >From RISKS:
+>http://catless.ncl.ac.uk/Risks/22.35.html#subj6
+>
+>Those of us who write code need to be reminded of this
+>now and then.
+
+Everybody probably also knows about the gnupg trick, where they define a 
+recursive routine called "burn_stack":
+
+static void
+burn_stack (int bytes)
+{
+     char buf[64];
+
+     memset (buf, 0, sizeof buf);
+     bytes -= sizeof buf;
+     if (bytes > 0)
+         burn_stack (bytes);
+}
+
+Then there's the vararg technique discussed in Michael Welschenbach's book 
+"Cryptography in C and C++":
+
+static void purgevars_l (int noofvars, ...)
+{
+   va_list ap;
+   size_t size;
+   va_start (ap, noofvars);
+   for (; noofvars > 0; --noofvars)
+     {
+       switch (size = va_arg (ap, size_t))
+         {
+           case 1:  *va_arg (ap, char *) = 0;
+                    break;
+           case 2:  *va_arg (ap, short *) = 0;
+                    break;
+           case 4:  *va_arg (ap, long *) = 0;
+                    break;
+           default:
+                    memset (va_arg(ap, char *), 0, size);
+         }
+     }
+   va_end (ap);
+}
+
+Here's an example of how you might call the routine:
+
+   purgevars_l(2, sizeof (la), &la,
+                    sizeof (lb), &lb);
+
+
+But hey, if "volatile" keyword works then so much the better.  I would 
+recommend examining the assembly language output of your compiler to verify 
+that it honours "volatile."
+
+-- Patrick
+http://fexl.com
+

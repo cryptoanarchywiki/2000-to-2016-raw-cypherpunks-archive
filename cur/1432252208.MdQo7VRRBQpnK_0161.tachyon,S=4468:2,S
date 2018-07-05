@@ -1,0 +1,91 @@
+From full-disclosure-bounces@lists.grok.org.uk  Fri Dec 20 07:33:02 2013
+Return-Path: <full-disclosure-bounces@lists.grok.org.uk>
+Received: from lists.grok.org.uk (lists.grok.org.uk [212.98.70.170])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id rBKCX1h5016961
+	for <rsw@jfet.org>; Fri, 20 Dec 2013 07:33:02 -0500
+Authentication-Results: antiproton.jfet.org; dkim=fail
+	reason="verification failed; insecure key"
+	header.d=gmail.com header.i=@gmail.com header.b=MB8C6/Kg;
+	dkim-adsp=none (insecure policy); dkim-atps=neutral
+Received: from lists.grok.org.uk (localhost [127.0.0.1])
+	by lists.grok.org.uk (Postfix) with ESMTP id 895F7319;
+	Fri, 20 Dec 2013 12:32:40 +0000 (GMT)
+X-Original-To: full-disclosure@lists.grok.org.uk
+Delivered-To: full-disclosure@lists.grok.org.uk
+Received-SPF: pass (lists.grok.org.uk: domain of coderman@gmail.com designates
+ 209.85.216.172 as permitted sender)
+Received: from mail-qc0-f172.google.com (mail-qc0-f172.google.com
+ [209.85.216.172])
+ by lists.grok.org.uk (Postfix) with ESMTP id 90316282
+ for <full-disclosure@lists.grok.org.uk>; Fri, 20 Dec 2013 12:32:35 +0000 (GMT)
+Received: by mail-qc0-f172.google.com with SMTP id e16so2119279qcx.3
+ for <full-disclosure@lists.grok.org.uk>; Fri, 20 Dec 2013 04:32:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :content-type; bh=1XfuFyR3KNHHPs5mT2AV5/IwU9XFRKIw7Cg8a/VEACc=;
+ b=MB8C6/KgsKhAUxdPXrM6quAhDbPIhHnF6ZOatpxbzA7kP0PfLygJozLP07anTxFzLu
+ g2zAIkySgYOdf56RegY2mXI7Ocu2fvrfgJas1QkHFU+yD7PpuavCxfU+M5xD2uo9kajS
+ gDN2JijNxu7FSmuYz9BQwWPtTAW8sBrFkVMlPRq0z0uAxkBumx1yhB9j9PKid7bwRZ3D
+ HklfCMF2U18pO/2Si6kV0FVK1w9Ky5tYfSUbKg1WfSewWJEj7BGNnniXo/SAr2igpFnV
+ 8wY0OOWgBe/1dM7kEmnd6qlc6pMe5uMVCVxDYVh2WsEVSGe1RBdgrIKvx1gG2+33P3yA
+ AHMw==
+MIME-Version: 1.0
+X-Received: by 10.49.26.129 with SMTP id l1mr13264580qeg.37.1387542754052;
+ Fri, 20 Dec 2013 04:32:34 -0800 (PST)
+Received: by 10.96.94.68 with HTTP; Fri, 20 Dec 2013 04:32:33 -0800 (PST)
+In-Reply-To: <CAJVRA1St=tXDdv59Ya7TQjWFyrCiCWH4GySgGLoQxm3ZLduwag@mail.gmail.com>
+References: <CAJVRA1RZJgO2wOKsY8pMxnwpHPnLgx9DiW4_1CzxotT==f3rFw@mail.gmail.com>
+ <CAJVRA1St=tXDdv59Ya7TQjWFyrCiCWH4GySgGLoQxm3ZLduwag@mail.gmail.com>
+Date: Fri, 20 Dec 2013 04:32:33 -0800
+Message-ID: <CAJVRA1RbpJWtaU0i87BOqXzNcrMDe+uzEsJFGxOe5x=4b3e+Fg@mail.gmail.com>
+From: coderman <coderman@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>,
+        Full Disclosure <full-disclosure@lists.grok.org.uk>
+Subject: Re: [Full-disclosure] RDRAND used directly when default engines
+ loaded in openssl-1.0.1-beta1 through openssl-1.0.1e
+X-BeenThere: full-disclosure@lists.grok.org.uk
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: A lightly-moderated mailing list for the discussion of security
+ issues <full-disclosure.lists.grok.org.uk>
+List-Unsubscribe: <https://lists.grok.org.uk/mailman/options/full-disclosure>, 
+ <mailto:full-disclosure-request@lists.grok.org.uk?subject=unsubscribe>
+List-Archive: <http://lists.grok.org.uk/pipermail/full-disclosure/>
+List-Post: <mailto:full-disclosure@lists.grok.org.uk>
+List-Help: <mailto:full-disclosure-request@lists.grok.org.uk?subject=help>
+List-Subscribe: <https://lists.grok.org.uk/mailman/listinfo/full-disclosure>, 
+ <mailto:full-disclosure-request@lists.grok.org.uk?subject=subscribe>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: full-disclosure-bounces@lists.grok.org.uk
+Sender: "Full-Disclosure" <full-disclosure-bounces@lists.grok.org.uk>
+
+On Mon, Dec 16, 2013 at 7:27 PM, coderman <coderman@gmail.com> wrote:
+> ...
+> "what is affected??"
+
+fortunately impacts are less than anticipated!
+
+nickm devised most concise fix: RAND_set_rand_method(RAND_SSLeay());
+ always after ENGINE_load_builtin_engines().
+https://gitweb.torproject.org/tor.git/commitdiff/7b87003957530427eadce36ed03b4645b481a335
+
+---
+
+full write up is here including a BADRAND engine patch for testing:
+  https://peertech.org/goodrand
+
+---
+
+last but not least, notable omissions on NSA role in reqs for random
+number sources in Appendix E: US Government Role in Current Encryption
+Standards.:
+  http://cryptome.org/2013/12/nsa-usg-crypto-role.pdf
+
+can we get a do-over?
+
+_______________________________________________
+Full-Disclosure - We believe in it.
+Charter: http://lists.grok.org.uk/full-disclosure-charter.html
+Hosted and sponsored by Secunia - http://secunia.com/
+

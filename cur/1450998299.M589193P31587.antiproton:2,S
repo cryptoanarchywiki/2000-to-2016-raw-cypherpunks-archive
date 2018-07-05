@@ -1,0 +1,299 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id tBON4sOZ031560;
+	Thu, 24 Dec 2015 18:04:54 -0500
+Authentication-Results: antiproton.jfet.org; dkim=fail
+	reason="verification failed; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=G+/6IsZW;
+	dkim-adsp=none (unprotected policy); dkim-atps=neutral
+Received: from mail-qk0-f181.google.com (mail-qk0-f181.google.com
+ [209.85.220.181])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id tBON4oKf031556
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 24 Dec 2015 18:04:51 -0500
+Received: by mail-qk0-f181.google.com with SMTP id p187so173493754qkd.1
+ for <cypherpunks@cpunks.org>; Thu, 24 Dec 2015 15:04:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=references:mime-version:in-reply-to:content-type
+ :content-transfer-encoding:message-id:cc:from:subject:date:to;
+ bh=eW5nKwy57T43Hp8HXRfkBit0pwNgWSMnO/aHU61wFxE=;
+ b=G+/6IsZWcDrceU9Sega5kFcsJRXE1z+c9mr84ptODEASW9xtTQUpOW/z32Q/sO+XGa
+ 2xTwT0S9GYVtzHZPkUn57yJoW0U386wMtq3PgBJ7k4gnJJSKlfd/rYtne/cJODrGmIKo
+ 6Y1fXVcaMCPn2POV9e3Y84N4rOjYCoNhcXNfUsr8Nr5LHYNrnZLvW/dcV0JmT+VhWdm8
+ OMlgxwbaObWgYXzNIuyzia3sM06e4HJbFWXpZrjiseOqjTrFX/hmwpRqv7PYnabJNB6Z
+ CMo+62Da+6YsjR0swFyiNvitTV8xZV55I/PHocMLPexLJJiOT5DxXZ7FHNRqhs86uqEp
+ Btgw==
+X-Received: by 10.55.209.221 with SMTP id o90mr13183497qkl.41.1450998284569;
+ Thu, 24 Dec 2015 15:04:44 -0800 (PST)
+Received: from [192.168.1.4] (dynamic-acs-24-112-245-20.zoominternet.net.
+ [24.112.245.20])
+ by smtp.gmail.com with ESMTPSA id y200sm20909869qka.48.2015.12.24.15.04.43
+ (version=TLSv1/SSLv3 cipher=OTHER);
+ Thu, 24 Dec 2015 15:04:43 -0800 (PST)
+References: <CAJVRA1SaJpNaPQx=s_7VVM==ony2sH0aUG3w11cjNX6escSm8w@mail.gmail.com>
+ <CAJVRA1TUfu40206TOzK2kBsgCvbgBYYXmyKZ3E5n4KQuoEtZyg@mail.gmail.com>
+ <CAJVRA1QtgMky_hsDLsmFwiXcxE528bZaDOQsjTqqj4tR-dbGBQ@mail.gmail.com>
+ <CAJVRA1RwoyoRs-REWnhGd8cHZM6EJvcziTUDXbU5A6TMigOT6A@mail.gmail.com>
+ <CAJVRA1Rwaq1fvE8p-s1JwOANvMc7X2E75bx5eNd4KGJapt6Nuw@mail.gmail.com>
+ <CAJVRA1TU5Frg3WOJk+3ZFEH0QAFya5xZnwzCfCUE+hL1NhKUFg@mail.gmail.com>
+ <CAJVRA1Q0SDo9Fj3KAU9vA3cxR2=7pwcdpO3Ex=yi6g2WtRAg6A@mail.gmail.com>
+ <CAJVRA1Srrb08Z9XvG+rYq30p2E_MnhJA6ynOLpdT--6gCvwiyQ@mail.gmail.com>
+ <CAJVRA1RXD2dr16TJZK-MPcJm7nR0Ov=Dp9i5Anf5hKNFs2hq7w@mail.gmail.com>
+ <CAJVRA1S97DSPk0NBjgon1LS4HHuGtq_03dqFppUnWq+t61a41A@mail.gmail.com>
+ <CAJVRA1SyW_wOUcFUo6STbiePO8HmLV9LgF-PCgugvuPRD_tKWA@mail.gmail.com>
+ <CAJVRA1QaYYF=hoSQiSd4SHNUj-W6hjEJDhy1KxR9CfFKDgNkew@mail.gmail.com>
+ <CAJVRA1TvZxj_qz6_xK8h13LOD-5mE6iNvT9dnThf4ue0_=kY3Q@mail.gmail.com>
+ <CAJVRA1RbeuzfiVAOqaZ15p8kr67jxcBoNMOrJkt3K86_=FuVXw@mail.gmail.com>
+ <000701d0bcb7$94118e80$bc34ab80$@co.uk>
+ <CAJVRA1SE1O-PqmkV8vX=q5j_xs-YFOpH=OLxSvwaT8BBvadQmA@mail.gmail.com>
+ <CAJVRA1TwM3Re8Tz6NPxp_CeY5C4K3QN+Ceo5VbW3JKMbBABv9g@mail.gmail.com>
+ <CAJVRA1SbqTrEbUJ84rLFWdu6+psY5uUzu-ZsVfyUwoSaMRcGdQ@mail.gmail.com>
+ <CAJVRA1RDN6HsLCbF_wsK+zARO9PaEn80R9FSGnWgGVF4XkbbpQ@mail.gmail.com>
+ <CAJVRA1Rt2gKvgnM0MCiqf2Q4vJ8wWxm=KabcQXeBYSqn4zRvKg@mail.gmail.com>
+ <CAJVRA1Q95CKTVahkfQeH_pwaGDcgJ-4OL2=9o5ckQrZLG8HeUA@mail.gmail.com>
+ <CAJVRA1SyX65OE9-7DQ1hP1fGWHxY8rvCqFXhKPu4Oy4o6wt0gg@mail.gmail.com>
+ <CAJVRA1SgoLtLFS9AFf_d043AGDVbKp4djDtijDR+zfCRJ8twTA@mail.gmail.com>
+ <CAJVRA1SvN5ML7TQnOUqz78PhYv8aefz=k8-4fPOwv2uHUVF3_w@mail.gmail.com>
+ <CAJVRA1Ry2EV7qaFHmZJ9cjm8-waCNBCzenO9BpqW+YKChEHX7w@mail.gmail.com>
+ <CAJVRA1S5juVmB6Ouy0JWbdeJdj9yz0W6tKQDY2q_zi+AC461EA@mail.gmail.com>
+ <CAJVRA1SYO0ia4VGLwFwZFowkD75YR61MC1TNc1wzHbZtmhy1_w@mail.gmail.com>
+ <CAJVRA1SqWMVy6m6KuiJWQQG_6XPWoB+86-p45PWKvfn8wg_jeA@mail.gmail.com>
+ <CAJVRA1RWaiCZtig6+Seyk-UN9M3h9+2iZ0Otnqb6n=AFcRAeRw@mail.gmail.com>
+ <CAJVRA1QzHeh=rs0hRf0sugLZdbXvAhK+2Yte5Tbt_Tnv5Tf8mg@mail.gmail.com>
+ <CAJVRA1SdAW+36Z8yYTdSFTtz8S8U5aiELv5NiuXg5Rg-vaFYew@mail.gmail.com>
+ <CAJVRA1Svk488ax6sd4oy52rfM_u_E1EuzhUAQt6cQ2Jy5yRx5g@mail.gmail.com>
+ <CAJVRA1TeC_fjcQqs8XfQaA94R69g9FKOicENiP-pr02B26-owQ@mail.gmail.com>
+ <CAJVRA1R4iRR6MN1WKoRQP5GM86zG-ZWRznOfUesHqs6qrxvfAg@mail.gmail.com>
+ <CAJVRA1RNH9On85vohEYV3WnSZT+1zt_V4+Z29FQ2RFxkSx0A_Q@mail.gmail.com>
+ <CAO7N=i22ZkTysEC9VnYZao6mG=NtWLi-pKCKh6hL0Qkw4nf-yQ@mail.gmail.com>
+Mime-Version: 1.0 (1.0)
+In-Reply-To: <CAO7N=i22ZkTysEC9VnYZao6mG=NtWLi-pKCKh6hL0Qkw4nf-yQ@mail.gmail.com>
+Content-Type: multipart/alternative;
+ boundary=Apple-Mail-BABF5541-32D4-4BAE-892F-DD2D5F19AE5D
+Content-Transfer-Encoding: 7bit
+Message-Id: <7F52906B-B0B4-45E8-9751-910F8301B4DB@gmail.com>
+X-Mailer: iPhone Mail (13C75)
+From: Michael Best <themikebest@gmail.com>
+Subject: Re: [cryptome] Re: FOIPA adventures
+Date: Thu, 24 Dec 2015 18:04:41 -0500
+To: cryptome@freelists.org
+Cc: cpunks <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 205
+
+
+--Apple-Mail-BABF5541-32D4-4BAE-892F-DD2D5F19AE5D
+Content-Type: text/plain;
+	charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+
+Let me know if you do, I've spent a lotta time with the case. For instance, n=
+ot many people know there are several versions of the software that might be=
+ FOIA-able from different agencies.=20
+
+Sent from my iPhone
+
+> On Dec 24, 2015, at 5:41 PM, Ryan Carboni <ryacko@gmail.com> wrote:
+>=20
+> https://en.wikipedia.org/wiki/Inslaw#Inslaw_Affair_divides_into_two_separa=
+te_issues
+>=20
+> Clearly you should make a request for the source code for the the Promis s=
+oftware as used by the FBI. It's public domain.
+>=20
+>> On Thu, Dec 10, 2015 at 3:54 AM, coderman <coderman@gmail.com> wrote:
+>> On 12/9/15, coderman <coderman@gmail.com> wrote:
+>> > a most recent Glomar:
+>> >
+>> > "Disclosure timeline and decision making rationale for disclosure of
+>> > vulnerability MS14-066 / CVE-2014-6321 - "Vulnerability in Schannel
+>> > Could Allow Remote Code Execution (2992611)" to Microsoft Corporation
+>> > as part of the Vulnerabilities Equities Process. Please include
+>> > timeline for initial discovery with source of discovery, first
+>> > operational use, and finally, date for vendor notification."
+>> > -
+>> > https://www.muckrock.com/foi/united-states-of-america-10/discloseddisgu=
+stagency-22289/
+>> >
+>> > "The request has been rejected, with the agency stating that it can
+>> > neither confirm nor deny the existence of the requested documents."
+>> > -
+>> > https://www.muckrock.com/foi/united-states-of-america-10/discloseddisgu=
+stagency-22289/#comm-209022
+>>=20
+>>=20
+>> reply(appeal):
+>> '''
+>> I reject and demand appeal of your rejection of this request.
+>>=20
+>> First and foremost, please recognize that the GSF Explorer, formerly
+>> USNS Hughes Glomar Explorer (T-AG-193), for which this Glomar response
+>> is so named, was a purely military operation, using custom-built
+>> military equipment, on an exceptionally sensitive military mission to
+>> recover military equipment. Observe that the "Vulnerabilities Equities
+>> Process" is a public outreach activity communicating with third party
+>> partners, acting in the public interest regarding software used by
+>> public citizens and business alike - a scenario at opposite ends and
+>> means from which this denial blindly overreaches.
+>>=20
+>> Second, observe that existing precedent supports the release of
+>> materials responsive to this request. In American Civil Liberties
+>> Union v. Department of Defense Case No: 04-CV-4151 (ACLU v. DoD) the
+>> courts have affirmed the public interest as compelling argument for
+>> favoring the public interest against clearly military efforts. The
+>> Glomar denial should be well targeted; this targeted falls well
+>> outside of the the "Vulnerabilities Equities Process", which is a
+>> public outreach activity communicating with third party partners,
+>> acting in the public interest, regarding software used by public
+>> citizens and business alike.
+>>=20
+>> Third, consider that it is a well established technique in the
+>> information security industry to identify the origin and nature of a
+>> defect discovery and disclosure timeline. This information is used for
+>> myriad of secondary research, analysis, and automation efforts
+>> spanning numerous industries. The utility of of disclosure timeline
+>> information and context has decades of rich support and strong
+>> evidence of public interest benefit, particularly regarding long
+>> reported and fixed defects, such as this one, which has patches
+>> available for over a year.
+>>=20
+>> Fourth, observe that every hour of expert opinion coupled with legal
+>> review amounts to a non-trivial expenditure of hours which are a sunk,
+>> throw away cost of FOIA communication. While as a taxpayer I
+>> appreciate the service of FOIA professionals such as those involved in
+>> this request, who provide tireless effort the all hundreds of millions
+>> of US citizens, my personal cost should be recognized. For this reason
+>> a deference in favor of public interest and disclosure is well
+>> supported for this request regarding the "Vulnerabilities Equities
+>> Process", which is a public outreach activity communicating with third
+>> party partners, acting in the public interest, regarding software used
+>> by public citizens and business alike.
+>>=20
+>> Thank you for your time, and best regards,
+>> '''
+>>  - https://www.muckrock.com/foi/united-states-of-america-10/discloseddisg=
+ustagency-22289/#comm-209748
+>=20
+
+--Apple-Mail-BABF5541-32D4-4BAE-892F-DD2D5F19AE5D
+Content-Type: text/html;
+	charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<html><head><meta http-equiv=3D"content-type" content=3D"text/html; charset=3D=
+utf-8"></head><body dir=3D"auto"><div>Let me know if you do, I've spent a lo=
+tta time with the case. For instance, not many people know there are several=
+ versions of the software that might be FOIA-able from different agencies.&n=
+bsp;<br><br>Sent from my iPhone</div><div><br>On Dec 24, 2015, at 5:41 PM, R=
+yan Carboni &lt;<a href=3D"mailto:ryacko@gmail.com">ryacko@gmail.com</a>&gt;=
+ wrote:<br><br></div><blockquote type=3D"cite"><div><div dir=3D"ltr"><a href=
+=3D"https://en.wikipedia.org/wiki/Inslaw#Inslaw_Affair_divides_into_two_sepa=
+rate_issues">https://en.wikipedia.org/wiki/Inslaw#Inslaw_Affair_divides_into=
+_two_separate_issues</a><br><div><br></div><div>Clearly you should make a re=
+quest for the source code for the the Promis software as used by the FBI. It=
+'s public domain.</div></div><div class=3D"gmail_extra"><br><div class=3D"gm=
+ail_quote">On Thu, Dec 10, 2015 at 3:54 AM, coderman <span dir=3D"ltr">&lt;<=
+a href=3D"mailto:coderman@gmail.com" target=3D"_blank">coderman@gmail.com</a=
+>&gt;</span> wrote:<br><blockquote class=3D"gmail_quote" style=3D"margin:0 0=
+ 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"><span class=3D"">On 12/=
+9/15, coderman &lt;<a href=3D"mailto:coderman@gmail.com">coderman@gmail.com<=
+/a>&gt; wrote:<br>
+&gt; a most recent Glomar:<br>
+&gt;<br>
+&gt; "Disclosure timeline and decision making rationale for disclosure of<br=
+>
+&gt; vulnerability MS14-066 / CVE-2014-6321 - "Vulnerability in Schannel<br>=
+
+&gt; Could Allow Remote Code Execution (2992611)" to Microsoft Corporation<b=
+r>
+&gt; as part of the Vulnerabilities Equities Process. Please include<br>
+&gt; timeline for initial discovery with source of discovery, first<br>
+&gt; operational use, and finally, date for vendor notification."<br>
+&gt; -<br>
+&gt; <a href=3D"https://www.muckrock.com/foi/united-states-of-america-10/dis=
+closeddisgustagency-22289/" rel=3D"noreferrer" target=3D"_blank">https://www=
+.muckrock.com/foi/united-states-of-america-10/discloseddisgustagency-22289/<=
+/a><br>
+&gt;<br>
+&gt; "The request has been rejected, with the agency stating that it can<br>=
+
+&gt; neither confirm nor deny the existence of the requested documents."<br>=
+
+&gt; -<br>
+&gt; <a href=3D"https://www.muckrock.com/foi/united-states-of-america-10/dis=
+closeddisgustagency-22289/#comm-209022" rel=3D"noreferrer" target=3D"_blank"=
+>https://www.muckrock.com/foi/united-states-of-america-10/discloseddisgustag=
+ency-22289/#comm-209022</a><br>
+<br>
+<br>
+</span>reply(appeal):<br>
+'''<br>
+I reject and demand appeal of your rejection of this request.<br>
+<br>
+First and foremost, please recognize that the GSF Explorer, formerly<br>
+USNS Hughes Glomar Explorer (T-AG-193), for which this Glomar response<br>
+is so named, was a purely military operation, using custom-built<br>
+military equipment, on an exceptionally sensitive military mission to<br>
+recover military equipment. Observe that the "Vulnerabilities Equities<br>
+Process" is a public outreach activity communicating with third party<br>
+partners, acting in the public interest regarding software used by<br>
+public citizens and business alike - a scenario at opposite ends and<br>
+means from which this denial blindly overreaches.<br>
+<br>
+Second, observe that existing precedent supports the release of<br>
+materials responsive to this request. In American Civil Liberties<br>
+Union v. Department of Defense Case No: 04-CV-4151 (ACLU v. DoD) the<br>
+courts have affirmed the public interest as compelling argument for<br>
+favoring the public interest against clearly military efforts. The<br>
+Glomar denial should be well targeted; this targeted falls well<br>
+outside of the the "Vulnerabilities Equities Process", which is a<br>
+public outreach activity communicating with third party partners,<br>
+acting in the public interest, regarding software used by public<br>
+citizens and business alike.<br>
+<br>
+Third, consider that it is a well established technique in the<br>
+information security industry to identify the origin and nature of a<br>
+defect discovery and disclosure timeline. This information is used for<br>
+myriad of secondary research, analysis, and automation efforts<br>
+spanning numerous industries. The utility of of disclosure timeline<br>
+information and context has decades of rich support and strong<br>
+evidence of public interest benefit, particularly regarding long<br>
+reported and fixed defects, such as this one, which has patches<br>
+available for over a year.<br>
+<br>
+Fourth, observe that every hour of expert opinion coupled with legal<br>
+review amounts to a non-trivial expenditure of hours which are a sunk,<br>
+throw away cost of FOIA communication. While as a taxpayer I<br>
+appreciate the service of FOIA professionals such as those involved in<br>
+this request, who provide tireless effort the all hundreds of millions<br>
+of US citizens, my personal cost should be recognized. For this reason<br>
+a deference in favor of public interest and disclosure is well<br>
+supported for this request regarding the "Vulnerabilities Equities<br>
+Process", which is a public outreach activity communicating with third<br>
+party partners, acting in the public interest, regarding software used<br>
+by public citizens and business alike.<br>
+<br>
+Thank you for your time, and best regards,<br>
+'''<br>
+&nbsp;- <a href=3D"https://www.muckrock.com/foi/united-states-of-america-10/=
+discloseddisgustagency-22289/#comm-209748" rel=3D"noreferrer" target=3D"_bla=
+nk">https://www.muckrock.com/foi/united-states-of-america-10/discloseddisgus=
+tagency-22289/#comm-209748</a><br>
+<br>
+</blockquote></div><br></div>
+</div></blockquote></body></html>=
+
+--Apple-Mail-BABF5541-32D4-4BAE-892F-DD2D5F19AE5D--
+

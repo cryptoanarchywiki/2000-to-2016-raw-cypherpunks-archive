@@ -1,0 +1,119 @@
+From owner-cypherpunks@Algebra.COM  Wed Feb 21 21:00:19 2001
+Received: from MIT.EDU (SOUTH-STATION-ANNEX.MIT.EDU [18.72.1.2])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id VAA22369
+	for <kwantam@positron.mit.edu>; Wed, 21 Feb 2001 21:00:19 -0500
+Received: from [208.233.99.160] by MIT.EDU with SMTP
+	id AA12138; Wed, 21 Feb 01 20:58:32 EST
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f1M18B804656
+	for cypherpunks-outgoing; Wed, 21 Feb 2001 19:08:11 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from einstein.ssz.com (root@einstein.ssz.com [204.96.2.99])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f1M189s04628
+	for <cypherpunks@algebra.com>; Wed, 21 Feb 2001 19:08:10 -0600
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id SAA24285
+	for cypherpunks@algebra.com; Wed, 21 Feb 2001 18:33:49 -0600
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id SAA24277
+	for cypherpunks-outgoing; Wed, 21 Feb 2001 18:33:43 -0600
+Received: from localhost (ravage@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) with SMTP id SAA24267;
+	Wed, 21 Feb 2001 18:33:40 -0600
+Date: Wed, 21 Feb 2001 18:33:39 -0600 (CST)
+From: Jim Choate <ravage@ssz.com>
+To: The Club Inferno <hell@einstein.ssz.com>
+Cc: cypherpunks@einstein.ssz.com
+Old-Subject: CDR: Re: Harvard mathematician creates 'provably unbreakable' code (fwd)
+Message-Id: <Pine.LNX.3.96.1010221183334.5925N-100000@einstein.ssz.com>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Reply-To: cypherpunks@ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Acceptable-Languages: English, Russian, German, French, Spanish
+Subject:  Re: Harvard mathematician creates 'provably unbreakable' code (fwd)
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 3008
+Lines: 71
+
+
+
+
+    ____________________________________________________________________
+
+           Before a larger group can see the virtue of an idea, a
+           smaller group must first understand it.
+
+                                           "Stranger Suns"
+                                           George Zebrowski
+
+       The Armadillo Group       ,::////;::-.          James Choate
+       Austin, Tx               /:'///// ``::>/|/      ravage@ssz.com
+       www.ssz.com            .',  ||||    `/( e\      512-451-7087
+                           -====~~mm-'`-```-mm --'-
+    --------------------------------------------------------------------
+
+---------- Forwarded message ----------
+Date: Wed, 21 Feb 2001 14:22:26 -0800
+From: hal@finney.org
+To: bram@gawth.com, Pete.Chown@skygate.co.uk
+Cc: coderpunks@toad.com, crypt@bxa.doc.gov
+Subject: Re: Harvard mathematician creates 'provably unbreakable' code
+
+Let me tell you how the Rabin system works in the Crypto 99 paper.
+I'll do it as pseudo code and copy it to BXA so everything is kosher.
+Basically they generate a one time pad by xoring a random subset of the
+message bits, where the subset indices are agreed upon in advance by
+the communicants:
+
+Security Parameter k // Error probability = 1/2^(k/5)
+Random data length PER MESSAGE BIT n = 5E // E is maximum size of adversary memory
+Message Length m //bits
+Message M = {M_1, ..., M_m} // m bits long
+Secret key s = {sig_1, ... sig_k} // each in range 1-n, k of them
+Random data alpha[n][m]  // n*m bits long
+One Time Pad X[m]  // Will be xored with M
+
+for i = 1 to m do
+  for j = 1 to n do
+    if j is an element of s then
+      R and S store alpha[j][i]
+  end for j
+  S and R set X[i] = xor of stored alpha[j][i] values (k of them)
+  S sends M[i] xor X[i]; R recovers M[i] by xoring with X[i]
+end for i
+
+For each message bit M_i we need to use 5*E random bits, where E is the
+estimate of the maximum amount of memory the adversary can hold.
+
+For example if Eve can store 100 Tbits, we need to use up 500 Tbits of
+data for each message bit.  To send say a 1 Mbit message that is, well,
+it's a lot.  500 exabits.  (It goes giga, tera, peta, exa.  Then zetta
+and yotta.)
+
+The initial shared secret key is simply k indexes in the range 1-n,
+where k is the security parameter such that the guaranteed probability of
+failure is bounded by 1/2^(k/5).  k = 300 would give a security level of
+2^60.  The size of the initial shared secret key is therefore k log n, so
+with k = 300 and n = 2^49 as above, this is about 15000 shared key bits.
+
+So I would say no, this 1999 scheme is not practical.  Maurer's original
+approach used only n random bits in total, not n bits per message bit,
+but it did not have as strong provability.  The authors leave it as an
+open problem whether they can achieve similar levels of provable security
+using n bits total, which would make it much more practical.
+
+Maybe the new result presented in the Times fixes this problem and reduces
+the data quantity to something sane.
+
+Hal
+

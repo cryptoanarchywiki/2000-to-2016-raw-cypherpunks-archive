@@ -1,0 +1,147 @@
+From cypherpunks-bounces@cpunks.org  Sun Aug  4 05:34:17 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r749Y9t1009179;
+	Sun, 4 Aug 2013 05:34:12 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r749Y6n5009175
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Sun, 4 Aug 2013 05:34:08 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id E5637543B70; Sun,  4 Aug 2013 11:34:05 +0200 (CEST)
+Date: Sun, 4 Aug 2013 11:34:05 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: [tor-dev] Damian's Status Report - July 2013
+Message-ID: <20130804093405.GK29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+----- Forwarded message from Damian Johnson <atagar@torproject.org> -----
+
+Date: Sat, 3 Aug 2013 16:16:31 -0700
+From: Damian Johnson <atagar@torproject.org>
+To: tor-dev@lists.torproject.org, tor-reports@lists.torproject.org
+Subject: [tor-dev] Damian's Status Report - July 2013
+Reply-To: tor-dev@lists.torproject.org
+
+Hi all. This month was mostly spent on non-tor work including a server
+migration, bad service outage at work, and a full week of cleaning my
+apartment. Still, plenty of spiffy news in stem land...
+
+======================================================================
+Remote Descriptor Fetching
+======================================================================
+
+Major feature for this month was the addition of a module to remotely
+fetch tor descriptors...
+
+https://stem.torproject.org/api/descriptor/remote.html
+https://lists.torproject.org/pipermail/tor-dev/2013-July/005156.html
+
+This works much like tor itself does, downloading descriptor content
+from directory authorities and mirrors. With it we can now easily script
+against the present state of the tor network without piggybacking on a
+live tor instance.
+
+Curious what you can use it for? See our present monitors for some ideas...
+
+https://lists.torproject.org/pipermail/tor-dev/2013-July/005209.html
+https://gitweb.torproject.org/atagar/tor-utils.git/tree
+
+This also included a little work with Nick on the spec and tor side...
+
+* Dropped the unimplemented microdescriptor query from the spec. (#9271)
+
+* Noting the max queryable fingerprints/hashes in spec. (#9282)
+
+* We're getting a high failure rate on the downloads we make. A little
+  more investigation is needed on my part to help narrow this down. (#9379)
+
+======================================================================
+
+Other news includes...
+
+* Revised the appearance of stem's frontpage. The blue buttons were pretty
+  jarring, so switched to something that matches the rest of the page...
+
+  http://www.atagar.com/transfer/stem_frontpage/before.png
+  http://www.atagar.com/transfer/stem_frontpage/after.png
+
+* Added Slackware to our download page. Many thanks to Markus for adding us
+  to SlackBuilds!
+
+  http://slackbuilds.org/repository/14.0/python/stem/
+
+* Worked with Sreenatha to port Tor Weather to stem. Unfortunately Weather
+  does not presently have an active maintainer so I'm not sure how we will
+  proceed on this front. (#8264)
+
+  https://lists.torproject.org/pipermail/tor-dev/2013-July/005111.html
+
+* The Munich dev meeting has attracted quite a few potential volunteers. After
+  discussing prospective projects with seros I tidied up our volunteer page.
+  Changes included...
+
+  * Added Christian's Globe project
+  https://lists.torproject.org/pipermail/tor-commits/2013-August/060124.html
+
+  * Dropped Thandy
+  https://lists.torproject.org/pipermail/tor-commits/2013-July/059830.html
+
+  * Merged TorStatus into the entry for Atlas
+  https://lists.torproject.org/pipermail/tor-commits/2013-July/060003.html
+
+  * General page corrections
+  https://lists.torproject.org/pipermail/tor-commits/2013-August/060125.html
+
+* Our automated Jenkins test runs ran into another regression in tor that
+  caused it to segfault. (#9298)
+
+* STREAM events mishandled IPv6 addresses. (caught and patched by soult, #9181)
+
+* Thread with Pierre about TorPylle which turned into a discussion with Nick
+  regarding future language direction for the tor codebase. I'm looking
+  forward to seeing where it goes!
+
+  https://lists.torproject.org/pipermail/tor-dev/2013-July/005161.html
+
+* We just finished with midterms for Google Summer of Code. Chang
+  unfortunately did not pass, but the other projects are going well.
+
+* Sorted out travel arrangements for the GSoC mentor summit. Nick and I will
+  be going, and Moritz is presently on the waitlist.
+
+* Code reviewed ra's rttprober. He provided some great feedback for which I
+  still owe him a reply.
+
+  https://lists.torproject.org/pipermail/tor-dev/2013-July/005183.html
+
+Cheers! -Damian
+_______________________________________________
+tor-dev mailing list
+tor-dev@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

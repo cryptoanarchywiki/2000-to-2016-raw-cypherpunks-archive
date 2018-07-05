@@ -1,0 +1,147 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id tB7HIHbD031854;
+	Mon, 7 Dec 2015 12:18:21 -0500
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=tGLUAqfC;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-wm0-f49.google.com (mail-wm0-f49.google.com [74.125.82.49])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id tB7HICVB031850
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Mon, 7 Dec 2015 12:18:14 -0500
+Received: by wmec201 with SMTP id c201so160173355wme.1
+ for <cypherpunks@cpunks.org>; Mon, 07 Dec 2015 09:18:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=date:from:to:subject:message-id:mime-version:content-type
+ :content-disposition;
+ bh=B0gfccRXy8VFn/o8rnnZnRY8MFFsdnhM09TWAeOu1k8=;
+ b=tGLUAqfCs9/E2Uz77gmcAhtX5F4SY8KHXOQ2pcfEgbL72DLpVRkl0PLzirQeBC1Llg
+ HCgXjg2PmAiC7AYpHAFKSTVCMNoel7c6BXtAJbQe6WZ9XK9+ZLgLHy+FvDE5Y0LxvxzY
+ rjSVlorl1opmGCWNQdeVf6XF9HAjUPC6AAfjlwFJFrJYjmyQz63HaByiHJ36BbgSY1eT
+ Y8TzExufAdMdHWxDTYCeavCXd/r1Up2cPNVdWC0CcQQFMBgHP0mT9Nzvgmgre1I95aNE
+ QYYO3Z4sWFKbmA1ZqaLgXBH6nY3HmE37SkZc5yw7RBO0B7CmAeIH4+cQf0dG9WnwoR8F
+ rqLA==
+X-Received: by 10.28.32.22 with SMTP id g22mr21315775wmg.43.1449508686882;
+ Mon, 07 Dec 2015 09:18:06 -0800 (PST)
+Received: from localhost ([207.244.70.35])
+ by smtp.gmail.com with ESMTPSA id c13sm17385745wmd.14.2015.12.07.09.18.05
+ (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+ Mon, 07 Dec 2015 09:18:06 -0800 (PST)
+Date: Mon, 7 Dec 2015 19:17:50 +0200
+From: David Stainton <dstainton415@gmail.com>
+To: golang-nuts <golang-nuts@googlegroups.com>,
+        tor-relays@lists.torproject.org, cypherpunks@cpunks.org
+Subject: ANN: TCP injection attack detection tool - honeybadger
+Message-ID: <20151207171750.GA28163@googlemail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature"; boundary="W/nzBZO5zC0uMSeA"
+Content-Disposition: inline
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 93
+
+
+--W/nzBZO5zC0uMSeA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+
+Dear Golang community, Edward Snowden, cypherpunks, Tor-relay operators, low-level network hackers and TCP abolitionists,
+
+
+I was inspired by the Snowden documents to write a TCP injection attack detection tool. Powerful entities world wide are stock piling zero-days. TCP injection attacks can be used to deliver many of these attacks.
+
+source:
+https://github.com/david415/HoneyBadger
+
+docs:
+https://honeybadger.readthedocs.org/en/latest/
+
+tasty pcap for "integration testing":
+https://github.com/david415/honeybadger-pcap-files
+
+
+HoneyBadger does bidirectional TCP stream reassembly... temporarily storing segments in ring buffer for comparison to later received overlapping stream segments. In other words it doesn't rely on simply matching duplicate sequence numbers but compares the actual overlapping stream segment contents. This more thorough approach is needed to account for TCP's retransmission which can send various segments sizes that can differ from the original dropped segment length. Furthermore we also detect the other injection types such as handshake hijack.
+
+The literature (go ahead and scour the Internet) does NOT mention all of the TCP injection attacks that are possible. I assert that there are 5 possible types of TCP injection attack. I describe them here:
+
+https://github.com/david415/HoneyBadger_docs/blob/hackpad1/source/how-to-detect-TCP-injection-attacks.rst
+
+https://github.com/david415/HoneyBadger_docs/blob/hackpad1/source/how-to-detect-TCP-injection-attacks.rst#tcp-injection-attack-categories
+
+
+current honeybadger project status:
+
+- honeybadger seems mostly useable for use in the wild, though we are pretty sure that bugs exist and probably some false positive bugs at that.
+
+- active development halted several months ago when the implementation seemed good enough to deploy and sniff packets in the wild.
+
+- if in the future the gopacket dev team releases a new "sufficient" TCP reassembly API then I could severely reduce HoneyBadger's code size.
+
+- pull requests and github issue comments will inspire me to contribute feature additions and fixes
+
+
+
+It runs on Linux but does honeybadger work on *BSD?
+
+Of course it does... I wrote the gopacket BSD BPF sniffer API ;-p
+and tested honeybadger on NetBSD, FreeBSD and OpenBSD.
+
+
+I'd like to explore the possibility of writing a similar TCP injection attack detector in rust using libpnet as soon as libpnet is sufficiently mature to use for TCP analysis:
+
+https://github.com/libpnet/libpnet
+
+
+
+So what?
+
+1. So... all TCP analyzers need to be rewritten to account for TCP injection attacks, otherwise you are doing it wrong.
+
+2. So feel free to use HoneyBadger to analyze your own traffic over the wire or sketchy pcap files that you acquire; perhaps our data collection efforts will result in responsible disclosure of 0-days... and publicly reporting that in fact these TCP injection attacks do happen as targeted attacks against real people to violate their human rights.
+
+3. So use my design in your software; The description of how to detect the 5 possible TCP injection attacks can serve as a part of a design document for other software projects to implement their own TCP injection attack detection.
+
+
+
+cheers from the Internet,
+
+David Stainton
+
+
+--W/nzBZO5zC0uMSeA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCgAGBQJWZb82AAoJEINlAb6fJ6cjaaYP/jQE0ujF/hBkelROntmDVO1e
+REOPgiEl/M/G+/sij1bX03ECEddFmFpdUg/DYoLFNE6Ae1xoCva2Nh6Rl+tW4R4V
+xpxD1GkhmZxXdeBSI4J3BPQBX32IO5xVBzDdZH8Qh58DaRiHhE1kG3zWhzwRkyNY
+HWA8nHVSrSrMpM9p5RC9I7s791vLTcsZDTuW+t4TD1p9FxfcRtDAsmZwBxiyUFL7
+1VpGkseDtDiyu8TmeZHH+xaDG4veSb9qzjOyhmyo01C1JLXzpNhp8NLjPYV0GH/U
+U8FGYdGdWIuMdjqtUcInQQUzUZjarFrt7fjDi30lOuRz23gSgnVhzfjbzJVScC/5
+cGODYONvqtF+D/ab9rJgeuqb9bXzd8r7y1cY4qe9xVp1lckk+rR1xo72pSXtbHGm
+eq9jScdn6sPPbWdndwwt0nvQKLSlgyY6cg4PwRATp2Y8DHwOIm/7reKI7XJ2Vlpn
+kX0EcjIk5BJu+2QFa12Lo2cQ/k+EBPObrX4i/fX868qRt+7LQ3i+piKHn6/4R6tW
+mp+BfnMfyEd/hmncbAh7YJL6xnTk736yLEBZiunY00xqf4BDx7Is1nKnhFS0M3cL
+hLi3ieCMmrwh5DDJvQp5/gRjUwxaRPhjfcmUkyr3wbd4bh0CU53hzgCLGVSNuRE/
+ZFuQEtcWVL4aN05mzd27
+=UiHi
+-----END PGP SIGNATURE-----
+
+--W/nzBZO5zC0uMSeA--
+

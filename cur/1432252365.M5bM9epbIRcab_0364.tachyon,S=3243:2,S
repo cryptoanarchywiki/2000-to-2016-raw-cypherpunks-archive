@@ -1,0 +1,75 @@
+From cypherpunks-bounces@cpunks.org  Sun Nov 10 03:54:27 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id rAA8s5XA025519;
+	Sun, 10 Nov 2013 03:54:07 -0500
+Received: from straum.hexapodia.org (straum.hexapodia.org [66.109.99.53])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id rAA8s2o4025515
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Sun, 10 Nov 2013 03:54:03 -0500
+Received: by straum.hexapodia.org (Postfix, from userid 22448)
+ id EE56C43CE; Sun, 10 Nov 2013 00:54:01 -0800 (PST)
+Date: Sun, 10 Nov 2013 00:54:01 -0800
+From: Andy Isaacson <adi@hexapodia.org>
+To: "d.nix" <d.nix@comcast.net>
+Subject: Re: NIST Randomness Beacon
+Message-ID: <20131110085401.GA18544@hexapodia.org>
+References: <527F0B61.7060700@comcast.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <527F0B61.7060700@comcast.net>
+X-Old-GPG-Fingerprint: 1914 0645 FD53 C18E EEEF C402 4A69 B1F3 68D2 A63F
+X-GPG-Fingerprint: A5FC 6141 F76D B6B1 C81F  0FB7 AFA0 A45F ED3D 116D
+X-GPG-Key-URL: http://web.hexapodia.org/~adi/gpg.txt
+X-Domestic-Surveillance: money launder bomb tax evasion
+User-Agent: Mutt/1.5.20 (2009-06-14)
+Cc: cypherpunks@cpunks.org, cryptography@metzdowd.com,
+        "cryptography@randombit.net" <cryptography@randombit.net>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 1068
+Lines: 29
+
+On Sat, Nov 09, 2013 at 08:28:17PM -0800, d.nix wrote:
+> surely someone here has an opinion...
+> 
+> http://www.nist.gov/itl/csd/ct/nist_beacon.cfm
+
+>From the page, a relevant suggestion:
+
+    WARNING:
+    DO NOT USE BEACON GENERATED
+    VALUES AS SECRET
+    CRYPTOGRAPHIC KEYS.
+
+The Beacon is a potentially useful service.  Folks have implemented
+similar semantics by, for example, hashing the DJIA closing value of a
+given date (see http://xkcd.com/426/).
+
+NIST's implementation, of course, makes them a trusted third party to
+any security critical applications of this oracle.  I'd be more
+comfortable with a cryptographic hash of an unpredictable but publicly
+determined value; however, it's hard to find one that has as much
+entropy as the Beacon.
+
+For example, suppose you use the low bits of the bitcoin blockchain
+hash.  An attacker with 10% of the hash power could probabilistically
+attack such a system by chosing blocks with a specific value in those
+bits; furthermore, the miners might know the relevant value earlier than
+other users of the system.
+
+-andy
+

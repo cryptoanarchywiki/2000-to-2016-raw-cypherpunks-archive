@@ -1,0 +1,152 @@
+From cypherpunks-bounces@cpunks.org  Wed Sep  4 09:22:52 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r84DMphj021008;
+	Wed, 4 Sep 2013 09:22:51 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r84DM6aV020996
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Wed, 4 Sep 2013 09:22:08 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id B98E4543E5D; Wed,  4 Sep 2013 15:22:03 +0200 (CEST)
+Date: Wed, 4 Sep 2013 15:22:03 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: [Bitcoin-development] 0.8.4 released, fixes critical
+ denial-of-service issue
+Message-ID: <20130904132203.GW29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 3993
+Lines: 113
+
+----- Forwarded message from Gavin Andresen <gavin@bitcoinfoundation.org> -----
+
+Date: Wed, 4 Sep 2013 11:16:35 +1000
+From: Gavin Andresen <gavin@bitcoinfoundation.org>
+To: Bitcoin Dev <bitcoin-development@lists.sourceforge.net>
+Subject: [Bitcoin-development] 0.8.4 released, fixes critical denial-of-service issue
+
+Bitcoin-Qt version 0.8.4 is now available from:
+  http://sourceforge.net/projects/bitcoin/files/Bitcoin/bitcoin-0.8.4/
+
+This is a maintenance release to fix a critical bug and three
+security issues; we urge all users to upgrade.
+
+There were no changes from 0.8.4 release candidate 2, so if you are running
+0.8.4rc2 you do not need to upgrade.
+
+Please report bugs using the issue tracker at github:
+  https://github.com/bitcoin/bitcoin/issues
+
+
+How to Upgrade
+--------------
+
+If you are running an older version, shut it down. Wait
+until it has completely shut down (which might take a few minutes for older
+versions), then run the installer (on Windows) or just copy over
+/Applications/Bitcoin-Qt (on Mac) or bitcoind/bitcoin-qt (on Linux).
+
+If you are upgrading from version 0.7.2 or earlier, the first time you
+run 0.8.4 your blockchain files will be re-indexed, which will take
+anywhere from 30 minutes to several hours, depending on the speed of
+your machine.
+
+0.8.4 Release notes
+===================
+
+Security issues
+---------------
+
+An attacker could send a series of messages that resulted in
+an integer division-by-zero error in the Bloom Filter handling
+code, causing the Bitcoin-Qt or bitcoind process to crash.
+Bloom filters were introduced with version 0.8, so versions 0.8.0
+through 0.8.3 are vulnerable to this critical denial-of-service attack.
+
+A constant-time algorithm is now used to check RPC password
+guess attempts; fixes https://github.com/bitcoin/bitcoin/issues/2838
+(CVE-2013-4165)
+
+Implement a better fix for the fill-memory-with-orphan-transactions
+attack that was fixed in 0.8.3. See
+https://bitslog.wordpress.com/2013/07/18/buggy-cve-2013-4627-patch-open-new-vectors-of-attack/
+for a description of the weaknesses of the previous fix.
+(CVE-2013-4627)
+
+Bugs fixed
+----------
+
+Fix multi-block reorg transaction resurrection.
+
+Fix non-standard disconnected transactions causing mempool orphans.
+This bug could cause nodes running with the -debug flag to crash.
+
+OSX: use 'FD_FULLSYNC' with LevelDB, which will (hopefully!)
+prevent the database corruption issues many people have
+experienced on OSX.
+
+Linux: clicking on bitcoin: links was broken if you were using
+a Gnome-based desktop.
+
+Fix a hang-at-shutdown bug that only affects users that compile
+their own version of Bitcoin against Boost versions 1.50-1.52.
+
+Other changes
+-------------
+
+Checkpoint at block 250,000 to speed up initial block downloads
+and make the progress indicator when downloading more accurate.
+
+
+Thanks to everybody who contributed to the 0.8.4 releases!
+----------------------------------------------------------
+
+Pieter Wuille
+Warren Togami
+Patrick Strateman
+pakt
+Gregory Maxwell
+Sergio Demian Lerner
+grayleonard
+Cory Fields
+Matt Corallo
+Gavin Andresen
+
+------------------------------------------------------------------------------
+Learn the latest--Visual Studio 2012, SharePoint 2013, SQL 2012, more!
+Discover the easy way to master current and previous Microsoft technologies
+and advance your career. Get an incredible 1,500+ hours of step-by-step
+tutorial videos with LearnDevNow. Subscribe today and save!
+http://pubads.g.doubleclick.net/gampad/clk?id=58040911&iu=/4140/ostg.clktrk
+
+_______________________________________________
+Bitcoin-development mailing list
+Bitcoin-development@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/bitcoin-development
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

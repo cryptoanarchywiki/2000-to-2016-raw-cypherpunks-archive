@@ -1,0 +1,111 @@
+From owner-cypherpunks@al-qaeda.net  Sun Oct 24 07:52:06 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (majordomo@localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.1/8.13.1/Debian-15) with ESMTP id i9OCpwfN029638
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Sun, 24 Oct 2004 07:51:58 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.1/8.13.1/Submit) id i9OCpwTS029637
+	for cypherpunks-outgoing; Sun, 24 Oct 2004 07:51:58 -0500
+Message-ID: <20041024125011.68027.qmail@web21206.mail.yahoo.com>
+Date: Sun, 24 Oct 2004 05:50:11 -0700 (PDT)
+From: Sarad AV <jtrjtrjtr2001@yahoo.com>
+Subject: Blowfish C code still chokes
+To: cypherpunks@al-qaeda.net
+In-Reply-To: <417B28E2.30573.2C51C4@localhost>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Content-Length: 2491
+Lines: 83
+Status: O
+X-Status: 
+X-Keywords:                  
+X-UID: 8098
+
+hello,
+
+The C code for the blowfish encryption algorithm
+posted in Mr.Schneier's site, acocording to Michael.B
+still 'chokes' as it is not corrected even though the
+bug report, mentions that it is a fatal bug.
+The bug report is available at
+http://www.schneier.com/blowfish-bug.txt 
+
+His opinion is that the code  still 'chokes' in
+http://www.schneier.com/code/bfsh-sch.zip 
+
+
+Though Mr.Mike Morgan in the bug report attrbutes the
+bug to "non-standard use of the 'union' construct", I
+think it is automatic type cast form type signed char
+to unsigned long,is responsible for this bug. 
+
+Please see his comments below.
+
+Regards,
+Sarad A.V
+
+Forwarded on request by Michael.B
+---------------------------------
+
+Also the bug IS a very serious security issue if you
+read into the bug doc, making Blowfish a very easy
+crackable cipher... and yes you are right every
+responsible programmer should use test vectors etc., I
+do, but how do I know someone else did if I can't
+review the code and have no other means of testing,
+for example with (proper - see below) test vectors? 
+
+And... (you really did not read into the bug-doc)...
+standard test vectors DO NOT SHOW the bug. Which is
+why it is such an evil one, aside the extreme security
+loss. 
+
+150 products use Blowfish so far, as counterpane.org
+states, and many of them don't have a verification
+scheme at all. I recall a Secure Shell for example,
+implementing Blowfish as an optional cipher to choose
+from among others. Now with that (commercial) product
+I would choose Blowfish never more since I can't
+review the code or test with selected test vectors.
+And this is the point. The bug thing coming directly
+from Schneier does create a general distrust in
+Blowfish for me.
+
+now this is an ORIGINAL quote from the bug-describing
+doc taking direct from schneier's website. 
+
+next, please consider this ORIGINAL paste of the
+ref-installation by schneier 
+
+short InitializeBlowfish(char key[], short keybytes) 
+{ 
+   unsigned long  data; 
+
+  ... //lots of code ommitted 
+
+      j = 0; 
+      for (i = 0; i < N + 2; ++i) { 
+        data = 0x00000000; 
+        for (k = 0; k < 4; ++k) { 
+          data = (data << 8) | key[j]; //(my comment)
+CHOKE! see above 
+
+   ...
+}
+
+The discussion is available here
+
+http://www.security-forums.com/forum/viewtopic.php?t=21640&postdays=0&postorder=asc&start=8
+
+
+
+		
+__________________________________
+Do you Yahoo!?
+Yahoo! Mail Address AutoComplete - You start. We finish.
+http://promotions.yahoo.com/new_mail 
+

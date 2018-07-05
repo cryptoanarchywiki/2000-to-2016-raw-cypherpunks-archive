@@ -1,0 +1,155 @@
+From owner-cypherpunks@al-qaeda.net  Tue Aug 10 20:00:14 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i7B10DaZ024744
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Tue, 10 Aug 2004 20:00:13 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i7B10CPf024743
+	for cypherpunks-outgoing; Tue, 10 Aug 2004 20:00:12 -0500
+To: cypherpunks@al-qaeda.net
+Subject: DAA and Credentials
+Message-Id: <20040811001808.296E957E2B@finney.org>
+Date: Tue, 10 Aug 2004 17:18:08 -0700 (PDT)
+From: hal@finney.org ("Hal Finney")
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 7657
+Lines: 133
+
+A few weeks ago Adam Back sent me a pointer to a paper with what was
+basically a new anonymous credential system, by Brickell, Camenisch
+and Chen, http://www.hpl.hp.com/techreports/2004/HPL-2004-93.pdf.
+I've followed Jan Camenisch's work pretty closely over the years and
+although he is only the 2nd author here, the paper is very much based
+on his ideas.
+
+Actually the paper is about a very controversial topic, trusted computing:
+TCPA, TCG, TPM, the Fritz chip, etc.  Despite the questions about that
+technology, the paper has some interesting ideas which could be applied
+more widely.
+
+One of the concepts in trusted computing is that the computer would
+have a chip in it with an embedded key.  This chip is called the TPM
+officially but is widely known as the Fritz chip after the senator who
+was pushing some legislation that might mandate technology controls.
+Fritz Hollings is gone and so is his CBDTPA but now the FCC seems to be
+taking up the gauntlet.  But that's another story.
+
+Anyway, the TPM generates a key internally and it gets certified by some
+kind of CA established by the TCG (the TCG is the new name for the TCPA).
+When someone wants to, say, download some DRM-protected data, they could
+prove they have a real TPM by providing this certificate from the TCG CA
+on their TPM key.  This would let the data supplier know he was talking
+to a system with a genuine TPM that would protect the data and keep the
+user from defeating the DRM.
+
+That would be the simple way to work, but the TCG didn't do it that way,
+because having the user show his TPM certificate everywhere would violate
+his privacy.  It may seem strange that a proposal which is built on the
+idea that the user is the enemy will care about his privacy, especially
+since most TCG uses will require the user to pay for things, meaning
+showing a credit card number, so he has no privacy anyway.  But that's
+the political decision the TCG made.
+
+Instead, they came up with a "Privacy CA", where the user would in effect
+show his TPM certificate to the PCA, and the PCA would then certify a
+temporary "pseudonym key" that the user would then use in place of his
+TPM key and certificate.  The problem here is that this doesn't protect
+privacy all that well, plus the PCA needs to have both high availability
+and high security, two requirements that don't work well together.
+
+So TCG has approved this new proposal, cryptographically based, called
+Direct Anonymous Attestation or DAA.  There is no more Privacy CA.
+Instead, the user directly proves that he has a valid certificate on his
+TPM key, but he does it in zero knowledge.  He doesn't reveal the TPM key
+or the certificate, nevertheless the verifier (which would typically be a
+seller of DRM'd content) gets convinced that he is talking to a real TPM.
+
+The way it works is a modification of a group signature.  Camenisch has
+done a lot of work on these over the years, with various co-authors.
+But the general idea is the same, that group members each generate a key,
+which gets certified by a "group ownership manager" and that means they're
+officially part of the group.   Then they can create signatures of which
+it can only be determined that they came from someone in the group, but
+you can't tell which one.  This is done by the method described above,
+a zero knowledge proof that you know a key and you have a certificate
+(signature) on it by the group manager key.  That establishes that you
+are a group member.
+
+One of the new ideas in the DAA paper relates to revocation.  The TPM
+private keys are supposed to remain locked in the chip.  But suppose
+someone uses some fancy lab equipment or perhaps a side channel attack
+and extracts one.  They could spread it around to their friends, who
+could use it to pretend to have TPMs, download DRM-protected data and
+easily remove the protections.  The TCG wanted to deal with this.
+
+The assumption is that a secret this good can't be kept quiet for long,
+so soon there will be lists of TPM-cracked keys floating out there.
+TCG-based vendors are assumed to have access to such a list, so when
+someone shows up with their ZK proof about having a good TPM, they want
+to know if the TPM key is on the list.  The problem is that the TPM
+key is not revealed in the ZK proof.  So the authors propose that, if
+the key is k, another value of the form u^k mod p gets revealed, where
+u is perhaps chosen by the vendor, or is perhaps random.  This doesn't
+reveal k but there is a proof that the k used in u^k is the same k that
+got certified as a TPM key.
+
+Now the vendor can compare the reported u^k value with computed u^k based
+on all known "bad" keys.  If it matches for any of them, he knows that
+he is being offered a bogus TPM key proof.
+
+That's the basic idea of the DAA, but there are two additional points
+of interest.  The first is that DAA is really complicated, more so than
+most group signatures of this type I have seen.  The main reason seems to
+be a desire to not make the TPM work too hard.  The authors have cleverly
+and diligently split up the protocol so that as much work as possible
+is done by the host computer and not the TPM, even though the host is
+not trusted.  The concept is similar to the old "wallet with observer"
+protocols of Chaum and Brands.  But the effect is to add many extra
+phases and passes, which could probably be eliminated if we didn't care
+about that.
+
+The second point relates to the system as a credential system.  This idea
+of proving in zero knowledge that you have a cert on your key is the
+basis of an earlier credential system from Camenisch and Lysyanskaya.
+The concept is that credentials are represented by particular signatures
+from particular signers.  Say, AAA could give me a credential as a member
+for the year 2004 by a certain signature.  Then I could show possession
+when I made a hotel reservation and get a discount, by proving that I
+had that signature by AAA on a key I owned.  Doing it in ZK protects
+my privacy.
+
+I actually looked at implementing the C&L credential system a few
+years ago, but there was a big stumbling block right at the beginning.
+It would only work with an RSA key of a special form, one composed
+of the product of two strong primes (primes p and q where (p-1)/2 and
+(q-1)/2 were themselves prime).  And worse, it was necessary to prove
+that the modulus was of that form, without of course revealing p and q.
+Well, Camenisch had a protocol for this, but it was very complicated.
+I implemented it and it was intolerably slow, it took many minutes or
+even hours.  It just didn't appear feasible as the foundation for a
+practical credential system.
+
+One of the improvements in the new DAA system is that it escapes from
+the need to prove that the RSA key is built of strong primes.  This means
+that it could conceivably be the foundation for a credential system that
+would actually be efficient enough to use.  That's very exciting!
+
+Unfortunately, as I said the DAA system in its present form is not quite
+right; it is too complicated due to the need to split up the work between
+TPM and untrusted host.  That complication is not necessary for a plain
+credentialling system.  So some work would have to be done to clean it
+up and get it into a form that would work for credentials.
+
+Crypto is next week and I hope to see Jan there and ask him about this.
+If he thinks it would work then this is another project I might try
+in the near future.  I would really like to see some kind of anonymous
+credential system available for people to experiment with.  I had looked
+into doing one with ring signatures but it would not be very efficient.
+Camenisch's technology is far superior.
+
+Hal Finney
+

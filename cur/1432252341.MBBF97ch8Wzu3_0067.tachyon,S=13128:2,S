@@ -1,0 +1,263 @@
+From owner-cypherpunks@al-qaeda.net  Wed Nov 28 02:28:03 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id qAS7PFZ4025255
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 28 Nov 2012 02:25:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1354087515;
+	bh=T5PAYbUEe3vG8rje6rCG5a4LZSoFceaKBYiitkDr8+o=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=4xJCGJYll2jNRSR2M4usUPAAvpFQctINDEfeBX1a/t0w2Ry0gcgQQOtAl1JB7DttG
+	 2bZxmDV+B2VX4WEVoEU5GoqDY7wgVhfuIdsd7myALXhi9mCcJHwx9Tc17n0e3gAEJO
+	 AOwgjfhUEs5XXmEV8ovpDvbp5/XXartYk+AA22uk=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id qAS7PF94025254
+	for cypherpunks-outgoing; Wed, 28 Nov 2012 02:25:15 -0500
+Date: Wed, 28 Nov 2012 08:25:12 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: Re: [serval-project-dev] Implementing a different routing
+  protocol
+Message-ID: <20121128072512.GW9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 11628
+Lines: 228
+
+----- Forwarded message from Jeremy Lakeman <jeremy@servalproject.org> -----
+
+From: Jeremy Lakeman <jeremy@servalproject.org>
+Date: Wed, 28 Nov 2012 09:30:10 +1030
+To: serval-project-developers@googlegroups.com
+Subject: Re: [serval-project-dev] Implementing a different routing protocol
+Reply-To: serval-project-developers@googlegroups.com
+
+On Wed, Nov 28, 2012 at 6:30 AM, Fraser Cadger <cadge01@googlemail.com> wrote:
+> Hi all,
+>
+>
+> First of all, let me start by stating that I am very impressed with the work
+> of the Serval Project and the Serval app. I appreciate that it is still
+> under development, but having experimented on several Android phones I have
+> found it really easy to use and effective.
+>
+>
+> My name is Fraser Cadger and I am a third year PhD student at the University
+> of Ulster in Northern Ireland. My project is concerned with developing a
+> framework to allow the streaming of multimedia content both live (i.e. video
+> call) and on-demand (recorded videos) in disaster recovery scenarios using a
+> mesh network of WiFi-enabled devices (currently this entails a testbed of
+> six Android phones). As I am working with Android devices this obviously
+> adds a layer of difficult when trying to implement ad-hoc networking. After
+> doing some searching I came across several different implementations of
+> ad-hoc routing on Android, and after some experimentation the two I was most
+> interested in were Serval and Commotion (who I believe the Serval Project
+> collaborates with). In the end I decided to work with the Serval app because
+> I felt that was the closest to what I was doing, and I also liked how it
+> worked on the phones.
+>
+>
+> Currently what I am interested in doing is implementing my own routing
+> protocol (which is still under development) on the phones using Serval as a
+> base. That is to say, that I want to replace the modified BATMAN code Serval
+> uses for routing with the current version of my routing algorithm
+> (originally written in C++ for ns-2 but re-writing in C should not be a huge
+> problem). Obviously I realise this will not be a simple as copying and
+> pasting my code in and that is why I am sending this message. From reading
+> various comments in the code I understand that one of the main modifications
+> to Serval is to restrict broadcasting to link-local nodes (i.e. not
+> network-wide broadcasting), if I have understand the code correctly that is.
+> The protocol I am developing is a variation of the greedy routing protocol
+> GPSR http://www0.cs.ucl.ac.uk/staff/b.karp/gpsr/gpsr.html . Both the
+> original GPSR and my own protocol use limited broadcasting as well; beacon
+> (regular hello messages) are broadcast as far as one hop and nodes maintain
+> tables of neighbours who can be reached directly only. There is no
+> conventional collection of routes; instead each node forwards a packet to
+> their neighbour who best meets the criterion/criteria (generally geographic
+> location, i.e. located closest to the destination) one hop at a time. So
+> packets are effectively passed from node to node without a formal route
+> existing. This version of geographic routing is not perfect, and that is why
+> we are working on several modifications, but for now I am content to have
+> some form of working geographic routing up and running.
+>
+>
+> I have been reading through the code and trying to determine what parts I
+> need to change and where to add my code. What I am looking for is the point
+> at which a node determines where to send a packet. I realise that this will
+> vary depending on the packet's origin, that is to say that when a node
+> generates a new packet it will usually be treated differently from when an
+> intermediate node receives a packet from another node. Now, if I understand
+> correctly Serval's version of BATMAN does not use an explicit routing table
+> structure. I have came across a struct called subscriber defined in
+> overlay_address.h, and from what I have read this seems to act as a record
+> of different nodes (destinations). Within the subscriber struct there is an
+> integer variable called reachable and this determines whether a node is
+> reachable directly via unicast, broadcast, or must be reached indirectly. If
+> a node must be reached indirectly then there is a field called next_hop
+> which if I understand correctly is a pointer to another struct (the
+> intermediate node between ourselves and the destination). Is this correct?
+> Now, what I have noticed in the code is that sometimes next_hop contains a
+> pointer to another next_hop (i.e. next_hop->next_hop). What I'm guessing
+> this means is that if there are multiple intermediate nodes (i.e. to send a
+> packet to node D node A needs to send it via B and C), then this is a way of
+> linking them as a route. So in essence, the subscriber struct contains the
+> route to a destination (by way of the next_hop attribute).
+
+Close, next_hop always points to our immediate neighbour that we
+should forward the payload to. The payloads themselves are almost
+always sent in broadcast packets which may contain multiple payloads
+addressed to multiple neighbours. Including payloads that should be
+flooded across the entire network.
+
+> For the actual routing, from reading the code I'm guessing that the
+> 'overlay_route_recalc_node_metrics' function is used to determine whether a
+> destination can be reached directly or indirectly, and if indirectly it will
+> then assign the appropriate intermediate nodes as next_hop's. Therefore, to
+> create or change a route this function is called. Is this correct?
+>
+>
+> In my case, I would like to do things slightly differently. As I am not
+> doing end-to-end routing I do not need a list of destinations, instead all I
+> want is a list of 1-hop neighbours who can be accessed directly. Then from
+> that list I would determine which of these is the most suitable as the next
+> hop (obviously in my case this will require other stuff, for instance adding
+> GPS coordinates to the packet header and storing this in the subscriber
+> field) and forward the packet to that node, and so on until the packet has
+> been delivered (or has to be dropped).
+>
+>
+> The main questions I have are:
+>
+>
+> Exactly where is a packet received and the node to which it should be sent
+> decided?
+
+See overlay_queue.c / overlay_stuff_packet() where we pull payloads
+from our QOS queues and make a final decision about where the payload
+should go next.
+overlay_payload.c / overlay_frame_append_payload() is where the header
+format is written into the packet.
+overlay_packetformats.c / packetOkOverlay() is where those payloads
+are parsed out of an incoming packet and processed or queued if they
+are addressed to this node.
+
+> i.e. if I want to decide which node to forward a packet to where should I
+> decide this?
+>
+> I came across a method called 'overlay_mdp_receive' in mdp_client.c, is this
+> maybe what I'm looking for?
+
+That's for connected client applications to send and receive messages.
+If you want to pass some extra messages between daemons, the process
+is a little different.
+
+You can schedule an alarm to periodically queue a message, or you can
+hook into every outgoing packet and write your payload just before
+it's sent. eg overlay_tick_interface() is called for each interface
+periodically to force an outgoing packet.
+
+You can add a case to process the message in overlay_mdp.c /
+overlay_saw_mdp_frame().
+
+
+> Concerning the subscriber entity, is there an actual table/list/array of
+> these b as I can't seem to find one?
+
+There's a tree in memory, built in overlay_address.c as each node is discovered.
+
+> i.e. a list of neighbours/known nodes/destinations?
+>
+>
+> I apologise if my questions and this email aren't very well-worded.
+> Essentially what I'm looking for is some advice/guidance on exactly how
+> routing (determining intermediate nodes for nodes which cannot be reached
+> directly) and forwarding (looking at a received/originated packet and
+> determining which node to send it to) is done. As I indicated earlier in
+> this message, there are a few functions/structs I have stumbled across that
+> I think are relevant and I have made some guesses at what they are doing, so
+> I would appreciate if someone could correct/expand on my guesses.
+
+Yes, basically overlay_route.c is currently responsible for path
+discovery. These decisions are written into the subscriber structure
+so that none of the rest of the code needs to know the internal
+details of how these routes were calculated.
+
+I also have plans to implement a different routing protocol. I've been
+trying to tease apart our current spaghetti code to separate the
+different layers of the implementation as much as possible. This
+should enable us to drop in a different path discovery process without
+needing to change much of the rest of the daemon.
+
+I've been doing some more work in that direction recently in a
+currently private branch. Mainly to tweak the packet format, reducing
+header overheads, so we can lock in the network byte format for
+forward compatibility. I've still got a couple more changes to
+implement though.
+
+Neighbour discovery & link state detection need to be split out from
+overlay_route.c and redesigned. But I'm not quite ready to start that
+task yet. We don't have any bandwidth throttling yet. If you're
+planning to send large volumes of data, any excessive latency added
+from buffer bloat can cause havoc with route statistics. The list of
+things I'd like to get done before I start replacing the routing layer
+never seems to get any shorter.
+
+You should also check out our testing framework, specifically
+tests/routing. While the setup process for these tests is a little
+verbose, and the file based network simulation is a bit different to
+an actual adhoc mesh. It gives you a quick way to tell if you're on
+the right track without needing to wander around with phones all the
+time.
+
+>
+> Any help/guidance I have would be greatly appreciated. It goes without
+> saying that any code I develop myself I will happily share, and any
+> issues/bugs I come across with Serval will be reported.
+>
+>
+> Thank you for taking the time to read this message, I'm sorry it's a bit on
+> the long side but hopefully I've made myself clear.
+>
+>
+> Regards,
+>
+>
+> Fraser
+>
+>
+> Ps. I realise this topic has been covered before, but I think some of the
+> questions I am asking in this message are new.
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "Serval Project Developers" group.
+> To view this discussion on the web visit
+> https://groups.google.com/d/msg/serval-project-developers/-/MgHT2-tr_dcJ.
+> To post to this group, send email to
+> serval-project-developers@googlegroups.com.
+> To unsubscribe from this group, send email to
+> serval-project-developers+unsubscribe@googlegroups.com.
+> For more options, visit this group at
+> http://groups.google.com/group/serval-project-developers?hl=en.
+
+-- 
+You received this message because you are subscribed to the Google Groups "Serval Project Developers" group.
+To post to this group, send email to serval-project-developers@googlegroups.com.
+To unsubscribe from this group, send email to serval-project-developers+unsubscribe@googlegroups.com.
+For more options, visit this group at http://groups.google.com/group/serval-project-developers?hl=en.
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

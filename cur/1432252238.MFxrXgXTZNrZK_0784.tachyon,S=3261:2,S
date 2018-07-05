@@ -1,0 +1,78 @@
+From owner-cypherpunks@jfet.org  Sat Sep  3 09:03:16 2005
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.13.4/8.13.4/Debian-3) with ESMTP id j83D3FrM020105
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sat, 3 Sep 2005 09:03:15 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.4/8.13.4/Submit) id j83D3FOI020104
+	for cypherpunks-outgoing; Sat, 3 Sep 2005 09:03:15 -0400
+Date: Sat, 3 Sep 2005 15:03:12 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@jfet.org
+Subject: [arma@mit.edu: Re: Greetings/Question - Was: RE: Have some
+  consideration for users...]
+Message-ID: <20050903130312.GR2249@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.5.9i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2144
+Lines: 50
+
+----- Forwarded message from Roger Dingledine <arma@mit.edu> -----
+
+From: Roger Dingledine <arma@mit.edu>
+Date: Fri, 2 Sep 2005 22:00:53 -0400
+To: or-talk@freehaven.net
+Subject: Re: Greetings/Question - Was: RE: Have some consideration for
+users...
+User-Agent: Mutt/1.5.9i
+Reply-To: or-talk@freehaven.net
+
+On Fri, Sep 02, 2005 at 09:08:27PM -0400, Jeffrey F. Bloss wrote:
+> What IS the impact on the tor network if a node suddenly drops off the
+> face of the planet, or appears and disappears every half hour or so
+> for an 8 hour span? I'd assume since tor is "real time" the node is
+> simply routed around, correct? How fast are these things compensated
+> for?
+
+Tor servers publish an "uptime" in their server descriptor, which is
+the time they've been available/working at their current IP.
+
+If servers die suddenly, Tor circuits that use them are broken. If
+somebody is using one of those circuits (e.g. for his irc connection),
+then it gets cut.
+
+Tor clients have a config option "LongLivedPorts" which defaults to
+"21,22,706,1863,5050,5190,5222,5223,6667,8300,8888". If a socks request
+asks for one of these ports, then it uses a circuit constructed entirely
+of nodes with uptimes of at least a day. The theory is that if they've
+been up that long, they'll probably be up a while longer.
+
+So for things like port 80 where the request is typically quite quick,
+a flaky node is fine, since it's either up during the request or it's not
+(in which case we'll keep building circuits until we get one that works).
+
+The answer to your question is "If your node is always like this, then
+it's probably not worth while to run a Tor node. But if it's fine for
+most days and it has this behavior one afternoon a week, then it's useful
+to have it."
+
+Hope that helps,
+--Roger
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a>
+______________________________________________________________
+ICBM: 48.07100, 11.36820            http://www.leitl.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+
+[demime 1.01d removed an attachment of type application/pgp-signature which had a name of signature.asc]
+

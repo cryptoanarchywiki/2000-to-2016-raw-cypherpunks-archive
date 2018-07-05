@@ -1,0 +1,79 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Mon Oct 21 19:35:02 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g9LNZ1t14396
+	for <rsw@opamp.org>; Mon, 21 Oct 2002 19:35:01 -0400
+Received: from lion.ninthwonder.com (lion.ninthwonder.com [151.199.66.147])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id TAA28025
+	for <rsw@mit.edu>; Mon, 21 Oct 2002 19:34:59 -0400 (EDT)
+Received: by lion.ninthwonder.com (Postfix, from userid 96)
+	id 27ABD30711; Mon, 21 Oct 2002 19:33:43 -0400 (EDT)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by lion.ninthwonder.com (Postfix) with ESMTP id E404A30706
+	for <cryptography@wasabisystems.com>; Mon, 21 Oct 2002 19:33:41 -0400 (EDT)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 5B13CD97FE; Mon, 21 Oct 2002 19:33:41 -0400 (EDT)
+Received: from mccoy.flatline.org.uk (mccoy.flatline.org.uk [195.8.183.24])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 930C530706
+	for <cryptography@wasabisystems.com>; Mon, 21 Oct 2002 19:27:56 -0400 (EDT)
+Envelope-to: cryptography@wasabisystems.com
+Received: from pete by mccoy.flatline.org.uk with local-esmtp (Exim 3.35 #1 (Debian))
+	id 183lxL-0003ek-00; Tue, 22 Oct 2002 00:27:31 +0100
+Date: Tue, 22 Oct 2002 00:27:31 +0100 (BST)
+From: Peter Clay <pete@flatline.org.uk>
+Cc: Cypherpunks <cypherpunks@minder.net>,
+   Cryptography <cryptography@wasabisystems.com>, dcsb@ai.mit.edu
+Subject: Palladium
+In-Reply-To: <20021021225220.A123387@exeter.ac.uk>
+Message-ID: <Pine.LNX.4.21.0210220014080.12295-100000@mccoy.flatline.org.uk>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 1606
+Lines: 41
+
+I've been trying to figure out whether the following attack will be
+feasible in a Pd system, and what would have to be incorporated to prevent
+against it.
+
+Alice runs "trusted" application T on her computer. This is some sort of
+media application, which acts on encoded data streamed over the
+internet. Mallory persuades Alice to stream data which causes a buffer
+overrun in T. The malicious code, running with all of T's privileges:
+
+- abducts choice valuable data protected by T (e.g. individual book keys
+for ebooks)
+- builds its own vault with its own key
+- installs a modified version of T, V, in that vault with access to the
+valuable data
+- trashes T's vault
+
+The viral application V is then in an interesting position. Alice has two
+choices:
+
+- nuke V and lose all her data (possibly including all backups, depending
+on how backup of vaults works)
+- allow V to act freely
+
+I haven't seen enough detail yet to be able to flesh this out, but it does
+highlight some areas of concern:
+
+- how do users back up vaults?
+- there really needs to be a master override to deal with misbehaving
+trusted apps.
+
+Pete
+-- 
+Peter Clay                                         | Campaign for   _  _| .__
+                                                   | Digital       /  / | |
+                                                   | Rights!       \_ \_| |
+                                                   | http://uk.eurorights.org
+
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

@@ -1,0 +1,117 @@
+From owner-cypherpunks@lne.com  Tue Apr 29 00:04:58 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h3T44tt12752
+	for <rsw@jfet.org>; Tue, 29 Apr 2003 00:04:56 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h3T3vK2k009375
+	for cypherpunks-goingout345; Mon, 28 Apr 2003 20:57:20 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Mon, 28 Apr 2003 22:51:15 -0500 (CDT)
+From: Jim Choate <ravage@einstein.ssz.com>
+To: <cypherpunks@einstein.ssz.com>
+cc: <austin-cpunks@einstein.ssz.com>, <hell@einstein.ssz.com>
+Subject: Re: [9fans] OK, cpu server is up. (fwd)
+Message-ID: <Pine.LNX.4.33.0304282250410.7974-100000@einstein.ssz.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 4142
+Lines: 91
+
+If anyone happens to be going and is interested...
+
+---------- Forwarded message ----------
+Date: Fri, 25 Apr 2003 07:56:29 -0600 (MDT)
+From: ron minnich <rminnich@lanl.gov>
+To: 9fans@cse.psu.edu
+Subject: Re: [9fans] OK, cpu server is up.
+
+On Fri, 25 Apr 2003 okamoto@granite.cias.osakafu-u.ac.jp wrote:
+
+> Are you using a file sever of v9fs on Linux, and Plan 9 CPU server,
+> and Plan 9 terminals system?   And you can use grid computing using
+> your Plan 9 CPU server?
+
+no, this setup is a kludge just to get me there. Proof of concept, and
+next comes the transition to all Plan9-based hardware. Also, I am trying
+to keep it to two physical pieces: the clump of geodes and a laptop, as I
+plan to bring this to Usenix if anybody wants to see it (I hope there is a
+Plan9 BOF ...)
+
+The auth and terminal are on my IBM Thinkpad X24, and are the same vmware
+image running under linux (i.e. my terminal is the auth/kfs server). The
+CPU server is a Geode (Geode rhymes with: slow) board (Advantech PCM-5823)
+running LinuxBIOS out of FLASH rom with 9load loaded onto a compact flash.
+
+LinuxBIOS loads 9load from the compact flash. This has proven to be very
+handy for debugging, as I can pop the CF out of the geode and put it in my
+X24 if I need to fix 9load for anything.
+
+The plan9 host is using host-only networking on vmnet1. The Geodes are on
+eth0 (ether0 in Plan9 parlance). 9load DHCP requests don't make it across
+the eth0->vmnet1 gap, so I have to run linux dhcpd.
+
+Two other things I have to do: enable ipforwarding on the linux side so
+that the geode packets get to the vmware image; and hard-wire the Linux
+ARP tables for the Geode (more on that later).
+
+9load comes up on the geode and sends dhcp requests. Linux responds with a
+host name and IP address. 9load then loads the 9pccpu kernel from Linux,
+and connects to the auth server running in vmware.
+
+Here is an interesting problem. 9load gets its IP address but won't
+respond to ARP requests, so the tftp load of 9pccpu can't happen as Linux
+doesn't have an ARP entry for the geode. I assume on plan9 this is not an
+issue, but I have to hardwire the ARP cache for the CPU server or nobody
+can talk to it.
+
+Also, there is no plan9.ini for the 9load to read, and for some reason I
+still can't get environment variables from 9load to 9pccpu, so I have also
+had to hard-wire environment variables in the 9pccpu kernel. So the 9pccpu
+that 9load downloads from Linux has one or two mods to it :-)
+
+Once the 9pccpu is loaded, it contacts the auth server in vmware, and from
+there things are pretty straightforward, and up it comes.
+
+There are mods to both 9load and 9pccpu.
+
+9load cyrix interrupt routing code is completely busted (no shock there,
+it's almost impossible to test this stuff unless you're using linuxbios)
+and I have made some quick fixes to it to get it working. I just run the
+many Geode devices (all 2 of them) at IRQ 9. There are a few other things
+9load does that have proven to be dangerous in a non-bios environment and
+I am trying to put together a patch set for possible acceptance by the
+Plan 9 kernel folks.
+
+The kernel itself doesn't have a huge number of changes, although again
+there are IRQ routing issues and a few other things.
+
+So, short story is, it all works, it's held together with gum and wire
+right now, and the effort for the next month is to get it working more
+smoothly and slowly rip out as many of my changes as I can. I may just put
+9pccpu into the CF and dispense with 9load altogether, since 9load takes a
+long time to get going and boot something.  But we'll see -- 9load is very
+handy in many ways.
+
+I plan to update the wiki with all this info next week.
+
+ron
+
+
+ --
+    ____________________________________________________________________
+
+      We are all interested in the future for that is where you and I
+      are going to spend the rest of our lives.
+
+                              Criswell, "Plan 9 from Outer Space"
+
+      ravage@ssz.com                            jchoate@open-forge.org
+      www.ssz.com                               www.open-forge.org
+    --------------------------------------------------------------------
+

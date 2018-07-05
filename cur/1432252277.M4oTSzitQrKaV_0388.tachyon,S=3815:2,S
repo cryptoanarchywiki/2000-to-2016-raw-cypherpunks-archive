@@ -1,0 +1,86 @@
+From owner-cypherpunks@jfet.org  Sun Oct  2 12:54:32 2005
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.4/8.13.4/Debian-3) with ESMTP id j92GsI7d011911
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sun, 2 Oct 2005 12:54:18 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.4/8.13.4/Submit) id j92GsIwB011909
+	for cypherpunks-outgoing; Sun, 2 Oct 2005 12:54:18 -0400
+Date: Sun, 2 Oct 2005 18:54:12 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@jfet.org
+Subject: [cyphrpunk@gmail.com: Re: nym-0.2 released (fwd)]
+Message-ID: <20051002165412.GG2249@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.5.9i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2747
+Lines: 59
+
+----- Forwarded message from cyphrpunk <cyphrpunk@gmail.com> -----
+
+From: cyphrpunk <cyphrpunk@gmail.com>
+Date: Sun, 2 Oct 2005 09:12:18 -0700
+To: Jason Holt <jason@lunkwill.org>
+Cc: or-talk@freehaven.net, cryptography@metzdowd.com
+Subject: Re: nym-0.2 released (fwd)
+Reply-To: or-talk@freehaven.net
+
+A few comments on the implementation details of
+http://www.lunkwill.org/src/nym/:
+
+1. Limting token requests by IP doesn't work in today's internet. Most
+customers have dynamic IPs. Either they won't be able to get tokens,
+because someone else has already gotten one using their temporary IP,
+or they will be able to get multiple ones by rotating among available
+IPs. It may seem that IP filtering is expedient for demo purposes, but
+actually that is not true, as it prevents interested parties from
+trying out your server more than once, such as to do experimental
+hacking on the token-requesting code.
+
+I suggest a proof of work system a la hashcash. You don't have to use
+that directly, just require the token request to be accompanied by a
+value whose sha1 hash starts with say 32 bits of zeros (and record
+those to avoid reuse).
+
+2. The token reuse detection in signcert.cgi is flawed. Leading zeros
+can be added to r which will cause it to miss the saved value in the
+database, while still producing the same rbinary value and so allowing
+a token to be reused arbitrarily many times.
+
+3. signer.cgi attempts to test that the value being signed is > 2^512.
+This test is ineffective because the client is blinding his values. He
+can get a signature on, say, the value 2, and you can't stop him.
+
+4. Your token construction, sign(sha1(r)), is weak. sha1(r) is only
+160 bits which could allow a smooth-value attack. This involves
+getting signatures on all the small primes up to some limit k, then
+looking for an r such that sha1(r) factors over those small primes
+(i.e. is k-smooth). For k = 2^14 this requires getting less than 2000
+signatures on small primes, and then approximately one in 2^40 160-bit
+values will be smooth. With a few thousand more signatures the work
+value drops even lower.
+
+A simple solution is to do slightly more complex padding. For example,
+concatenate sha1(0||r) || sha1(1||r) || sha1(2||r) || ... until it is
+the size of the modulus. Such values will have essentially zero
+probability of being smooth and so the attack does not work.
+
+CP
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a>
+______________________________________________________________
+ICBM: 48.07100, 11.36820            http://www.leitl.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+
+[demime 1.01d removed an attachment of type application/pgp-signature which had a name of signature.asc]
+

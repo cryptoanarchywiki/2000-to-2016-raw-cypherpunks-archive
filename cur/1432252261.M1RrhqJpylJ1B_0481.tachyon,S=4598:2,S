@@ -1,0 +1,99 @@
+From owner-cypherpunks@Algebra.COM  Sun Feb 11 13:54:10 2001
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.72.0.53])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id NAA18888
+	for <kwantam@positron.mit.edu>; Sun, 11 Feb 2001 13:54:10 -0500
+Received: from ak47.algebra.com (root@ak47.algebra.com [208.233.99.160])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id NAA22081
+	for <rsw@mit.edu>; Sun, 11 Feb 2001 13:54:09 -0500 (EST)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f1BISeU18394
+	for cypherpunks-outgoing; Sun, 11 Feb 2001 12:28:40 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from sirius.infonex.com (sirius.infonex.com [216.34.245.2])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f1BISdq18380
+	for <cypherpunks@algebra.com>; Sun, 11 Feb 2001 12:28:39 -0600
+Received: (from cpunks@localhost) by sirius.infonex.com (8.8.8/8.8.8) id KAA04904; Sun, 11 Feb 2001 10:28:37 -0800 (PST)
+Received: from cyberpass.net (cyberpass.net [216.34.245.3]) by sirius.infonex.com (8.8.8/8.8.8) with ESMTP id KAA04900 for <cpunks@sirius.infonex.com>; Sun, 11 Feb 2001 10:28:34 -0800 (PST)
+Received: from slack.lne.com (CFetIdQ7bnT+ZAGzRoa8GVGd+KxW+lNP@[209.157.136.81]) by cyberpass.net (8.8.8/8.7.3) with ESMTP id KAA19291 for <cypherpunks@cyberpass.net>; Sun, 11 Feb 2001 10:31:14 -0800 (PST)
+Received: (from ericm@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id f1BISAx23816;
+	Sun, 11 Feb 2001 10:28:10 -0800
+Date: Sun, 11 Feb 2001 10:28:10 -0800
+From: Eric Murray <ericm@lne.com>
+To: John Young <jya@pipeline.com>
+Cc: cypherpunks@cyberpass.net
+Old-Subject: Re: Odd Addresses
+Message-ID: <20010211102810.A21273@slack.lne.com>
+References: <200102111756.MAA10145@smtp6.mindspring.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <200102111756.MAA10145@smtp6.mindspring.com>; from jya@pipeline.com on Sun, Feb 11, 2001 at 12:44:40PM -0500
+Subject:  Re: Odd Addresses
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 2250
+Lines: 55
+
+
+On Sun, Feb 11, 2001 at 12:44:40PM -0500, John Young wrote:
+> 
+> We have from time to time phantom "accesses" from odd 
+> addresses such as yesterday:
+> 
+>    http://161/1.035 
+
+an http:whatever is probably from the Referrer line.  It's not
+meaningful as a name of the machine that's accessing a page.
+That would be a machine name or IP address.
+
+
+Here's a line from an actual log file:
+213-99-180-52.uc.nombres.ttd.es - - [11/Feb/2001:18:07:28 +0000] "GET / HTTP/1.1" 200 2146 "http://buscador.ya.com/scripts/busqueda?item=laura&cat=internet&offset=40&palabras=all" "Mozilla/4.0 (compatible; MSIE 5.0; Windows 98; DigExt)"
+
+
+The first field 213-99-180-52.uc.nombres.ttd.es
+is the address of the machine that sent the request.
+
+The first field in quotes, starting with GET, is the HTTP request that
+213-99-180-52.uc.nombres.ttd.es sent.  The next two fields (200 2146)
+is the code that the web server returned, and the size of the data returned.
+The next part in quotes (http://buscador.ya.com....) is the Referrer field,
+which is what 213-99-180-52.uc.nombres.ttd.es sent as the last site
+that they'd visited, i.e. the one that linked to us.
+
+There's nothing that says that the Referrer tag has to be correct, or even
+present. (well, the HTTP spec probably says that it should be correct, but
+there's no way to enforce that).
+
+> These accesses and addresses do not show up in the log 
+> files but are listed in summaries of accesses produced by 
+> Analog on our dedicated server. When we run Analog of
+> what should be the same log file on our machine the 
+> addresses do not appear.
+
+There's probably a bug in the copy of Analog that your ISP is using.
+A look at the log file would tell.
+Another cause could be someone sending ASCII control characters in
+HTTP fields, which confuse Analog but which are translated into something
+else when you retreive the log files.  
+
+> The odd addresses change, none repeat, and
+> do not appear every day.
+> 
+> Got any ideas what such entries indicate? Machine 
+> camouflage, snoops by spooks, spoofs, debris,
+> taunts?
+
+Most likely software bugs.
+
+-- 
+  Eric Murray           Consulting Security Architect         SecureDesign LLC
+  http://www.securedesignllc.com                            PGP keyid:E03F65E5
+

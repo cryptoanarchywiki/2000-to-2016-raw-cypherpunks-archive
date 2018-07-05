@@ -1,0 +1,158 @@
+From owner-cypherpunks@al-qaeda.net  Thu Oct 11 10:43:25 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q9BEe4Fs030710
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 11 Oct 2012 10:40:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1349966404;
+	bh=J2oB/q1J7YUFKCrR2CziGEGx02PT0ec8vcUjHl4ok+w=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=Z8O4Uvtsaes0EZ/RfGLuZZmuaZ6a93UY43kLjlWsxEP26nlRVsGvU2GYYga2d5zn8
+	 haen9jQr52IHTtqptamTLEVvTkXn3PtyWZTVjSI8/ITbuC59Ia/AyyW5X88bGdARgI
+	 SxRd3B3050sJp4jPeL/OQ1XjGDFKNyJzjMpYfXOE=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q9BEe4Zp030709
+	for cypherpunks-outgoing; Thu, 11 Oct 2012 10:40:04 -0400
+Date: Thu, 11 Oct 2012 16:40:00 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: serval-project-developers@googlegroups.com, cypherpunks@al-qaeda.net,
+        info@postbiota.org
+Subject: Re: [ZS] Re: looking into cjdns
+Message-ID: <20121011143959.GO9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5469
+Lines: 125
+
+----- Forwarded message from Bryce Lynch <virtualadept@gmail.com> -----
+
+From: Bryce Lynch <virtualadept@gmail.com>
+Date: Thu, 11 Oct 2012 10:27:05 -0400
+To: doctrinezero@googlegroups.com
+Subject: Re: [ZS] Re: looking into cjdns
+Reply-To: doctrinezero@googlegroups.com
+
+On Wed, Oct 10, 2012 at 10:22 PM, Spencer Campbell
+<lacertilian@gmail.com> wrote:
+
+> My impression is that Byzantium's ad-hoc mesh network would look a whole lot
+> like the networks we're used to, though. If it grew big enough. Am I
+
+At OSI layers 3 and above, it is.  TCP/IP is TCP/IP.  At OSI layers 1
+and 2, it uses the ad-hoc mode specified by the 802.11 spec rather
+than infrastructure/managed mode (which is basically a lots of
+clients/one access point star topology).
+
+> mistaken? Maybe Byzantium doesn't scale the way I've assumed it does, and
+
+We're not sure how big it scales, to be honest.
+
+We're not concerned about how the IP routing algorithm is going to
+scale - those are well known and understood, and already scale to a
+couple of hundred nodes if not more.
+
+One of the biggest limitations of wi-fi in ad-hoc mode is range -
+consumer wi-fi is good to a couple of hundred meters at best.  The
+other is that there are vendors out there who are actively hostile to
+ad-hoc mode - Google among them.  At the International Summit for
+Community Wireless Networks in Barcelona, we wound up doing a
+presentation on it and found out from a lot of other projects what a
+serious problem it's been (search terms: "android bug 82").
+
+Now, for what it's worth it doesn't actually take a lot of nodes to
+cover a lot of space.  When we were field testing at CarolinaCon we
+covered an entire parking lot with a single unmodified node.
+
+> you'd end up with a sort of "clumpy" situation, where you have less of a
+> global Internet and more of a smattering of smaller imperfectly-connected
+
+That is correct, and that's pretty much what we expected.  That is why
+our problem space involves emergency first response and infrastructure
+failures.  We need to finish reworking things before we can start
+planning Battlemesh DC to do a real field test.
+
+> internets. I guess that's implied by the emphasis on wireless connections --
+> hard to get WiFi across continents. It seems clear that cjdns is intended to
+> scale to arbitrary sizes. So, the infrastructure goes down and you rely on
+
+The thing about cjdns is that it relies upon existing infrastructure,
+which might be hostile.  For example, we know that Bluecoat
+net.censorship equipment has been blocking the cjdns protocol since
+April of 2011, and some very interesting intel came out of it.
+Summarizing the presentation at HOPE 9 that a few of us from Telecomix
+gave:
+
+Bluecoat in California has a processor cluster that is dedicated to
+analyzing samples of network traffic, generating rules to a) detect
+and b) block new protocols, and pushes them to every Bluecoat device
+on the planet after automated unit testing (this is one of the reasons
+we knew they were lying when they said that they didn't know their
+boxen were deployed in the Middle East, we watched them push updates
+to the machines).  Total turnaround time from deployment of cjdns to
+blocking of cjdns: About five minutes.  It's not usable from any of
+the work sites I go to that use Bluecoat gear, either and hasn't been
+since that time.
+
+I have no idea if cjdns is blocked by any other censorship technologies.
+
+So, cjdns is useful until the infrastructure decides to make it unusable.
+
+> Byzantium until the new infrastructure (based, perhaps, on cjdns) comes
+> online? Is that the idea?
+
+cjdns isn't infrastructure - it's not a switch, a router, a network
+card, or anything like that.  Let's get terminology settled.
+
+Byzantium is designed to turn commodity computers into infrastructure;
+IP routing is performed, packets are forwarded (the Linux kernel is
+surprisingly good at that), and interfaces are used for the relay of
+traffic.  I don't see why a cjdns net couldn't be bootstrapped on top
+of a mesh running Byzantium, but I have some concerns about the two
+routing protocols not being compatible with one another.
+
+> Seems like it'd be more efficient to just give the emergency system the
+> ability to "grow up" into a new status quo. Then I wouldn't have to install
+
+That's sort of what we have in mind. :)
+
+> a new distro when the post-post-apocalypse rolls around. You have to be
+> practically there already, given that Byzantium interfaces with the
+> contemporary Internet without complaints, yeah?
+
+Pretty much.  That's also one of the reasons we're building
+application frameworks into Byzantium, so it's possible to run
+arbitrary servers on top of Byzantium in addition to just pushing
+packets around.
+
+> (Thanks for humoring me. I hope my profession of ignorance is less painful
+> for you than it is for me.)
+
+Don't worry about it.  It's not nearly as painful as this was:
+
+http://www.washingtoncitypaper.com/blogs/housingcomplex/2012/01/11/meet-the-new-ish-boss-chief-technology-officer-rob-mancini/
+
+-- 
+The Doctor [412/724/301/703] [ZS]
+https://drwho.virtadpt.net/
+"I am everywhere."
+
+-- 
+-- 
+Zero State mailing list:
+http://groups.google.com/group/DoctrineZero
+
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

@@ -1,0 +1,153 @@
+From owner-cypherpunks@Algebra.COM  Wed Jan 24 20:56:57 2001
+Received: from MIT.EDU (SOUTH-STATION-ANNEX.MIT.EDU [18.72.1.2])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id UAA03024
+	for <kwantam@positron.mit.edu>; Wed, 24 Jan 2001 20:56:57 -0500
+Received: from ak47.algebra.com by MIT.EDU with SMTP
+	id AA24596; Wed, 24 Jan 01 20:55:26 EST
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f0P0QcO09268
+	for cypherpunks-outgoing; Wed, 24 Jan 2001 18:26:38 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from einstein.ssz.com (cpunks@einstein.ssz.com [204.96.2.99])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f0P0QZO09216
+	for <cypherpunks@algebra.com>; Wed, 24 Jan 2001 18:26:36 -0600
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id SAA24151
+	for cypherpunks@algebra.com; Wed, 24 Jan 2001 18:35:59 -0600
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id SAA24143
+	for cypherpunks-outgoing; Wed, 24 Jan 2001 18:35:44 -0600
+Received: from mail5.registeredsite.com (root@mail5.registeredsite.com [64.224.9.14])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id SAA24139;
+	Wed, 24 Jan 2001 18:35:39 -0600
+Received: from mail.toucancapital.com ([64.224.107.190])
+	by mail5.registeredsite.com (8.11.1/8.11.1) with ESMTP id f0P0Q2130345;
+	Wed, 24 Jan 2001 19:26:06 -0500
+Received: from chimera [151.200.27.131] by mail.toucancapital.com
+  (SMTPD32-6.00) id A294E80500E8; Wed, 24 Jan 2001 19:25:56 -0500
+From: "Phillip Zakas" <pzakas@toucancapital.com>
+To: <cypherpunks@einstein.ssz.com>, <austin-cpunks@einstein.ssz.com>
+Cc: <cypherpunks@einstein.ssz.com>
+Old-Subject: CDR: RE: GnuPG and Perl GnuPG Interface for (En/De)cryption Question (fwd)
+Date: Wed, 24 Jan 2001 19:25:10 -0500
+Message-Id: <PHEOLKHKKADCALFJMBNIOEJLCFAA.pzakas@toucancapital.com>
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Priority: 3 (Normal)
+X-Msmail-Priority: Normal
+X-Mailer: Microsoft Outlook IMO, Build 9.0.2416 (9.0.2911.0)
+Importance: Normal
+X-Mimeole: Produced By Microsoft MimeOLE V5.50.4133.2400
+In-Reply-To: <Pine.LNX.3.96.1010124171455.5612F-100000@einstein.ssz.com>
+Reply-To: cypherpunks@ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Acceptable-Languages: English, Russian, German, French, Spanish
+Subject:  RE: GnuPG and Perl GnuPG Interface for (En/De)cryption Question (fwd)
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 3973
+Lines: 93
+
+
+Well here are two options:
+
+The elegant but somewhat painful method:
+1.  The client generates an encrypted credit card using the secret.  The
+client opens an ssl session with the server and uploads the encrypted credit
+card to the server (this proc can be automated at the client machine so your
+client doesn't need to go through many steps).
+2.  When retrieving information, the client to opens an ssl session with the
+server, sends the private key manually (via ssl) to the server, and have the
+server process the decryption in memory.
+The above requires the client to both upload the credit card and the secret
+key to the server.  The reference information you can use to locate the
+correct credit card could be the client's name or login name or address,
+etc. etc.
+
+The no so elegant but works almost all of the time method:
+1.  You enter the encrypted credit card number into the server database.
+2.  Client opens an SSL session with the server and submits the secret key
+(via ssl) to the server.  server decrypts the credit card in memory and
+performs a Mod 10 check on the result (if it fails the mod 10, the decrypt
+didn't work because it isn't a valid credit card #).  Another way to verify
+decryption is to store the last 1 digit of the credit card number and verify
+that against the decrypted card.  The best way, if you're attached to a
+payment gateway, is to verify the validity of the card via the merchant bank
+(this can be done at no charge to the customer, but it costs the merchant a
+min. fee -- usually around $.25).
+
+Of course the best thing to do is to authenticate the client to the server
+and ask the server to retrieve only the record pertaining to that client via
+a covert channel (the trusted information kind, not the cia/nsa kind).
+
+Phillip
+
+
+-----Original Message-----
+From: owner-cypherpunks@Algebra.COM
+[mailto:owner-cypherpunks@Algebra.COM]On Behalf Of Jim Choate
+Sent: Wednesday, January 24, 2001 6:15 PM
+To: austin-cpunks@einstein.ssz.com
+Cc: cypherpunks@einstein.ssz.com
+Subject: APM: GnuPG and Perl GnuPG Interface for (En/De)cryption
+Question (fwd)
+
+
+
+
+
+    ____________________________________________________________________
+
+           Before a larger group can see the virtue of an idea, a
+           smaller group must first understand it.
+
+                                           "Stranger Suns"
+                                           George Zebrowski
+
+       The Armadillo Group       ,::////;::-.          James Choate
+       Austin, Tx               /:'///// ``::>/|/      ravage@ssz.com
+       www.ssz.com            .',  ||||    `/( e\      512-451-7087
+                           -====~~mm-'`-```-mm --'-
+    --------------------------------------------------------------------
+
+---------- Forwarded message ----------
+Date: Wed, 24 Jan 2001 16:56:02 -0600
+From: David Bluestein II <dbii@mudpuddle.com>
+To: austin-pm@pm.org
+Subject: APM: GnuPG and Perl GnuPG Interface for (En/De)cryption Question
+
+I have a question. I want to use GnuPG (or any suitable open source
+alternative) to encrypt a credit card to store in a database. The client
+wants to decrypt them on the server and view them over an SSL connection. I
+can encrypt without a problem, but to decrypt I know I at least need the
+passphrase, but then that makes me leave the private key on the server
+(bad!). Is there a way to send both the passphrase and private key to the
+Perl GnuPG interface and have it decrypted in memory to send via SSL?
+
+We're trying to avoid having the client install the decryption software on
+their desktop (client's being such as they are) and just provide either the
+private key or the passphrase/Private key.
+
+Thanks-
+
+David
+
+----------
+David H. Bluestein II                         President & Lead Developer
+dbii@mudpuddle.com                         ii, inc.
+
+http://www.interaction.net
+-        Specializing in Designing Interactive Websites        -
+-              and Searchable Internet Databases                   -
+
+
+

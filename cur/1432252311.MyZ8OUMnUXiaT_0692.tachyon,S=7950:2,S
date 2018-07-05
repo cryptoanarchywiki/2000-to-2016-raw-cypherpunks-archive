@@ -1,0 +1,144 @@
+From owner-cypherpunks@al-qaeda.net  Tue Dec 20 08:12:21 2011
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id pBKD94ro029555
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 20 Dec 2011 08:09:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1324386544;
+	bh=+GoV82nMd/fgZLCCJrTRxkBT9A6GTMpFQgTd2hZ/3AU=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=Ia9CesjSi+ABbM3buZe+Utfj7RlelEfglXasdSxbLS9a7R++Y7B2NS9KuK/PXp6fQ
+	 Wqmef+9khAl8zPR/1GDFcadvgnvr5jf657R+4oIV6zk+Ux9ZLcFMnuoUtwwZ00HW2/
+	 ICdNIK+KpHl9CMfMpH5PLC4jJJOsnQWCEyIeXEqA=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id pBKD948P029554
+	for cypherpunks-outgoing; Tue, 20 Dec 2011 08:09:04 -0500
+Date: Tue, 20 Dec 2011 14:09:00 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: tt@postbiota.org, info@postbiota.org, cypherpunks@al-qaeda.net,
+        mixter@gmail.com
+Subject: An MIT Magic Trick: Computing On Encrypted Databases Without
+  Ever 	Decrypting Them
+Message-ID: <20111220130900.GR31847@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 6415
+Lines: 108
+
+http://www.forbes.com/sites/andygreenberg/2011/12/19/an-mit-magic-trick-computing-on-encrypted-databases-without-ever-decrypting-them/
+
+An MIT Magic Trick: Computing On Encrypted Databases Without Ever Decrypting
+Them
+
+CryptDB can perform the digital equivalent of pulling the desired file out of
+a locked filing cabinet without ever unlocking it.
+
+For the last three decades or so, the big problem in using encryption hasnbt
+been whether strongly encrypted files can be cracked. The problem remains
+that to actually do anything with encrypted databsearch it, sort it, or
+perform computations with itbthat data must be decrypted and exposed to
+prying eyes.
+
+Now the Google- and Citigroup-funded work of three MIT scientists holds the
+promise of solving that long-nagging issue in some of the computing worldbs
+most common applications. CryptDB, a piece of database software the
+researchers presented in a paper (PDF here) at the Symposium on Operating
+System Principles in October, allows users to send queries to an encrypted
+set of data and get almost any answer they need from it without ever
+decrypting the stored information, a trick that keeps the info safe from
+hackers, accidental loss and even snooping administrators. And while itbs not
+the first system to offer that kind of magically flexible cryptography, it
+may be the first practical one, taking a fraction of a second to produce an
+answer where other systems that perform the same encrypted functions would
+require thousands of years.
+
+Cryptographers have long sought to implement a system they call bfully
+homomorphic encryption,b in which a user can encrypt data into indecipherable
+strings of numbers, do math with those strings, and then decrypt the results
+to get the same answer he or she would have if the data hadnbt been encrypted
+at all. Thatbs a useful trick if you need to perform operations on health
+care or financial data in a situation like cloud computing, where the
+computer (or the IT administrator) doing the calculations canbt always be
+trusted to access the private numbers being crunched. IBM cryptographer Craig
+Gentry compares the idea to bone of those boxes with the gloves that are used
+to handle toxic chemicals,b as he once put it. bAll the manipulation happens
+inside the box, and the chemicals are never exposed to the outside world.b
+
+In fact, Gentry solved that problem of fully homomorphic encryption with a
+brilliant new system in 2009. But his theoretical solution had a practical
+problem: It multiplied the time to perform the calculation by around a
+trillion.
+
+CryptDB, on the other hand, manages to emulate fully homomorphic encryption
+for most of the functions of the SQL databases used in many applications,
+computing only with encrypted data and adding just 15% to 26% to those
+applicationsb computing time.
+
+The MIT researchersb approach was to avoid fancy new cryptography schemes,
+and instead piece together existing ones that get the job done. The RSA
+scheme, for instance, lets you multiply encrypted numbers, and another called
+the Paillier scheme lets you add them. For the simpler task of looking for
+matches in data, plenty of schemes allow you to compare encrypted information
+and see whether the scrambled codes are equal, and thus determine if the
+unencrypted data points were also the same.
+
+bThe insight we had, the cool idea, is that SQL queries in a database are
+composed of relatively few types of operations: equal to, less than, summing
+up, sorting,b says MIT professor of software technology Nickolai Zeldovich.
+bFor each operation, we were able to find an encryption scheme that is quite
+efficient at computing on encrypted data.b
+
+The cleverest part of CryptDB, however, is that itbs able to switch between
+crypto systems on the fly depending on the operation. The data in the
+database is encrypted in multiple layers of different encryption, what the
+researchers call an bonionb of encryption. Every layer allows different kinds
+of computation and has a different key. bYou just strip off the levels of the
+onion until you reach the level that allows a certain operation,b says MIT
+researcher Raluca Ada Popa.  The most secure schemes are used on the outside
+of that onion and the least secure are used on the inside. CryptDB manages to
+perform all its functions of a database without ever removing that last layer
+of the onion, so that the data always remains secure.
+
+CryptDB has its limits, the MIT researchers warnbno square roots, for one
+example. And while the data is never completely decrypted, it does bleakb
+information about the underlying data when enough outer layers of encryption
+are removed, revealing attributes like which data points are equal to each
+other. But in their paper they sampled operations from several real databases
+like one used by a Web forum and another by a grade-calculating application,
+and found that their encrypted system would allow the same calculations as an
+unencrypted database in 99.5% of those operations, and that data the
+researchers deemed bsensitiveb is never leaked in those test cases.
+
+The limitations of CryptDB arenbt insignificant, says Butler Lampson, a
+security-focused Microsoft Research fellow.  bIt might not be easy to get
+customers to understand the subset of queries this can and canbt handle,b he
+points out.
+
+But Lampson still argues that CryptDB is remarkably practical compared to
+other attempts at solving the problem of computing with encrypted data. bI
+donbt think webll see anyone using Gentrybs solution in our lifetimes,b he
+says. bBut itbs very likely webll actually see this applied in practice. I
+donbt see any real barrier.b
+
+At least two companies already seem interested: Google and Citigroup funded
+the research, along with the National Science Foundation. The Pentagonbs
+Defense Advanced Research Projects Agency (DARPA) has shown it wants in on
+fully homomorphic cryptography, too. The agency is putting up $20 million for
+anyone who can create a scheme that takes only 100,000 times as long as
+unencrypted calculationsba tough task, compared to Craig Gentrybs system from
+2009. But given that in many cases CryptDB performs 80,000 faster than
+DARPAbs goal, the MIT researchers shouldnbt be surprised to see the military
+come calling soon.
+
+The full paper on CryptDB is available here.
+
+http://people.csail.mit.edu/nickolai/papers/raluca-cryptdb.pdf
+

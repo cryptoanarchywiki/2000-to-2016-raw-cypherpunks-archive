@@ -1,0 +1,92 @@
+From owner-cypherpunks@al-qaeda.net  Fri Jun 29 05:36:51 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q5T9Y6Nk020012
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 29 Jun 2012 05:34:06 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q5T9Y6te020011
+	for cypherpunks-outgoing; Fri, 29 Jun 2012 05:34:06 -0400
+Date: Fri, 29 Jun 2012 11:34:02 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: [Freedombox-discuss] open source hardware exists
+Message-ID: <20120629093402.GK7109@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from John Gilmore <gnu@toad.com> -----
+
+From: John Gilmore <gnu@toad.com>
+Date: Thu, 28 Jun 2012 23:21:55 -0700
+To: freebirds@hushmail.com
+Cc: freedombox-discuss@lists.alioth.debian.org
+Subject: Re: [Freedombox-discuss] open source hardware exists
+
+> The first step is to ask Marvell. Please do.
+
+You don't have to ask Marvell.  The info is widely available.
+
+The DreamPlug has a JTAG interface that lets an external debugger stop
+the processor, access memory, etc.  The manufacturer (Global Scale
+Technologies) sells an easy JTAG interface kit for $39.  It attaches to
+USB on one end, and a few wires attach it to the JTAG connector on the
+DreamPlug.  (The same JTAG interface works with the GuruPlug and the
+D2Plug.)
+
+There's a free software debugger (openocd, Open On-Chip Debugger) that
+works with JTAG interfaces.  I have barely scratched the surface of
+using it.  I haven't found a great reference for what it can do, but see:
+
+  http://openocd.sourceforge.net/
+  http://openocd.sourceforge.net/2012/04/kernel-debugging/
+     (2-hr video tutorial on OpenOCD and kernel debugging)
+  http://www.madore.org/~david/linux/dreamplug.html#u-boot
+
+In general JTAG is a way to debug chips without removing them from the
+system.  It uses a few wires that are daisy-chained on the board to
+each complex chip in the system.  Software to drive a JTAG port sends
+commands serially down the "data in" wire and causes a bitstream to be
+shifted out of the chips and back to the software on the "data out"
+wire.  The interpretation of the bitstream depends on which chips are
+attached, and there are some standards for identifying them.  All
+chips with JTAG let you read the pins of the chip ("boundary scan"),
+and often write them as well.  Many chips also make internal values
+accessible (such as, in a processor, the current program counter,
+registers, etc).  In a system-on-chip, the JTAG interface pins will
+connect up to many different subsystems inside the chip (like the
+processor, the ethernet, the memory controller, the serial ports,
+etc), which can each be addressed from the JTAG interface.  For
+more details, see:
+
+  https://en.wikipedia.org/wiki/JTAG
+
+The JTAG interface doesn't let anybody send an Ethernet or WiFi packet
+and take over your system.  You need to plug a specific hardware
+connector into a hardware socket designed to fit with it (and on most
+systems that socket is inside the guts of the system, under the
+plastic or metal case).  But when you have the hardware under your
+physical control, JTAG is very powerful for accessing and/or
+reverse-engineering a system.  Many free-software folks use JTAG to
+figure out what a proprietary system's chips are doing, so they can
+write free software that works with them.  Like any tool, it can
+be used for "good" or "evil"...
+
+	John
+
+_______________________________________________
+Freedombox-discuss mailing list
+Freedombox-discuss@lists.alioth.debian.org
+http://lists.alioth.debian.org/cgi-bin/mailman/listinfo/freedombox-discuss
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

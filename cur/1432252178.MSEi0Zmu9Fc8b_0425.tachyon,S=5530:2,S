@@ -1,0 +1,117 @@
+From owner-cypherpunks@al-qaeda.net  Mon May 10 18:03:51 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.mit.edu (localhost [127.0.0.1])
+	by positron.mit.edu (8.12.11/8.12.11/Debian-3) with ESMTP id i4AM1xn1009917
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.mit.edu>; Mon, 10 May 2004 18:01:59 -0400
+Received: (from majordomo@localhost)
+	by positron.mit.edu (8.12.11/8.12.11/Debian-3) id i4AM1xM2009916
+	for cypherpunks-outgoing; Mon, 10 May 2004 18:01:59 -0400
+Date: Mon, 10 May 2004 17:54:59 -0400
+From: Adam Back <adam@cypherspace.org>
+To: Jason Holt <jason@lunkwill.org>
+Cc: cryptography@metzdowd.com, Cypherpunks <cypherpunks@minder.net>,
+        Adam Back <adam@cypherspace.org>
+Old-Subject: more hiddencredentials comments (Re: Brands' private
+  credentials)
+Message-ID: <20040510215459.GA22670@bitchcake.off.net>
+References: <20040510093528.GB13170@bitchcake.off.net>
+  <Pine.LNX.4.44.0405101846170.17720-100000@potato.zayda.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <Pine.LNX.4.44.0405101846170.17720-100000@potato.zayda.com>
+User-Agent: Mutt/1.4.1i
+X-Hashcash: 0:040510:jason@lunkwill.org:375eca6ed8fc26e5d891ee7f
+X-Hashcash: 0:040510:cryptography@metzdowd.com:58c0d8aaa6635191e417ab71
+X-Hashcash: 0:040510:cypherpunks@minder.net:dbb631b87bbddc52d4d06083
+X-Hashcash: 0:040510:adam@cypherspace.org:56f75e49ea1654bfd9a3b89c
+Subject: more hiddencredentials comments (Re: Brands' private
+  credentials)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3876
+Lines: 80
+
+On Mon, May 10, 2004 at 08:02:12PM +0000, Jason Holt wrote:
+> Adam Back wrote:
+> > [...] However the server could mark the encrypted values by encoding
+> > different challenge response values in each of them, right?
+> 
+> Yep, that'd be a problem in that case.  In the most recent (unpublished)  
+> paper, I addressed that by using R as the key for a ciphertext+MAC on the
+> actual message.  
+
+OK that sounds like it should work.  Another approach that occurs is
+you could just take the plaintext, and encrypt it for the other
+attributes (which you don't have)?  It's usually not too challenging
+to make stuff deterministic and retain security.  Eg. any nonces,
+randomizing values can be taken from PRMG seeded with seed also sent
+in the msg.  Particularly that is much less constraining on the crypto
+system than what Bert-Jaap Koops had to do to get binding crypto to
+work with elgamal variant.
+
+> In either case, though, you can't just trust that the server
+> encrypted against "patient OR doctor" unless you have both creds and
+> can verify that they each recover the secret.
+
+The above approach should fix that also right?
+
+> (And you're right, the AIDS example is not very compelling.  The
+> slides give a better one about FBI agents, but I'm still looking for
+> other examples of super-sensitive transactions where HCs would fit)
+
+dissident computing I think Ross Anderson calls it.  People trying to
+operate pseudonymously and perhaps hiding the function of their
+servers in a cover service.
+
+> Hugo Krawczyk gave a great talk at Crypto about the going-first problem in
+> IPSec, which is where I got the phrase.  He has a nice compromise in letting
+> the user pick who goes first, but for some situations I think hidden
+> credentials really would hit the spot.
+
+Unless it's signifcantly less efficient, I'd say use it all the time.
+
+> > I think it would be fair to call it anonymity system, just that the
+> > trust model includes a trusted server.  There are lots of things
+> > possible with a trusted server, even with symmetric crypto (KDCs).
+> 
+> Yeah, although I think most of them would require an on-line trusted
+> server.  But that just makes all sorts of things way too easy to be
+> interesting. :)
+
+Yes.  But you could explore public key based without IBE.  You may
+have to use IBE as a sub-protocol, but I think ideally want to avoid
+the IBE server being able to decrypt stuff.  Sacrificing the IBE
+communication pattern wouldn't seem like a big deal.
+
+Hmm well IBE is has a useful side-effect in pseudonymity systems
+because it also has the side-effect of saving the privacy problems in
+first obtaining the other parties key.  Other way to counteract that
+is to always include the psuedonym public key with the pseudonym name
+(which works for mailto: style URLs or whatever that are
+electronically distributed, but not for offline distributed).
+
+Btw one other positive side-effect of IBE is the server can't
+impersonate by issuing another certificate in a pseudonyms name
+because there is definitionally only one certificate.
+
+I was thinking particularly if you super-encrypt with the psuedonym's
+(standard CA) public key as well as the IBE public key you get the
+best of both feature sets.
+
+btw#2 You could probably come up with a way to prevent a standard (non
+IBE) CA from issuing multiple certs.  eg. if he does that and someone
+puts two certs together they learn CA private key, ala Brands
+credential kind of offline double spending protection.
+
+Kind of a cryptographically enforced version of the policy enforced
+uniqueness of serial numbers in X.509 certs.  And we change the policy
+to one cert per pseudonym (kind of sudden death if you lose the
+private key, but hey just don't do that; we'd have no other way to
+authenticate you to get a new cert in the same psuedonyms name anyway,
+so you may just as well backup your pseudonym private key).
+
+Adam
+

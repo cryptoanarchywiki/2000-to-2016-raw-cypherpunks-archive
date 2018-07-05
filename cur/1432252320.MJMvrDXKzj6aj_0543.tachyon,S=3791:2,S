@@ -1,0 +1,85 @@
+From owner-cypherpunks@Algebra.COM  Fri Jun 14 02:44:31 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.mit.edu (8.11.6/8.9.3) with ESMTP id g5E6iUX03769
+	for <rsw@jfet.org>; Fri, 14 Jun 2002 02:44:30 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id CAA15542
+	for <rsw@mit.edu>; Fri, 14 Jun 2002 02:41:51 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g5E6Lcft019521
+	for <cypherpunks-outgoing@ak47.algebra.com>; Fri, 14 Jun 2002 01:21:38 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g5E6LcFS019520
+	for cypherpunks-outgoing; Fri, 14 Jun 2002 01:21:38 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (dns.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g5E6LXft019499
+	for <cypherpunks@ak47.algebra.com>; Fri, 14 Jun 2002 01:21:35 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id g5E6LVi03941
+	for cypherpunks@ak47.algebra.com; Thu, 13 Jun 2002 23:21:31 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id g5E6KFt03933
+	for cypherpunks-goingout; Thu, 13 Jun 2002 23:20:15 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+From: Nomen Nescio <nobody@dizum.com>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@dizum.com>.
+To: cypherpunks@lne.com
+Old-Subject: Re: Safe RSA variant?
+Message-ID: <de4caae92db9fa91dcef3f5d0324dd3f@dizum.com>
+Date: Fri, 14 Jun 2002 08:20:04 +0200 (CEST)
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Re: Safe RSA variant?
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+X-spam: 0 
+Status: O
+Content-Length: 1461
+Lines: 36
+
+
+Jason Holt writes:
+> Trent generates primes p,q.  He publishes n=pq and some random value g.
+>
+> Trent calculates a and a' such that aa' = 1 % (p-1)(q-1) and a' is prime.  He
+> sends Alice a' and g^a%n.  a' is her secret exponent and g^a%n her public
+> value.
+
+Another way to think of g^a is as the a'-th root of g, since (g^a)^a' = g
+mod n.  If we instead use k instead of a', then Alice gets k and the kth
+root of g.
+
+> Bob can establish a shared secret with Alice if Alice got a' from Trent.  He
+> picks a random r and sends her g^ar%n.  She raises it to a' to compute the
+> shared secret g^r%n.
+
+In my notion, she publishes her kth root of g, Bob raises it to the rth
+power, and Alice then raises it to the kth power to recover g^r.
+
+> So the important questions are:
+>
+> * Given g^a%n and a', can Alice derive (p-1)(q-1)?  If so, she'd be able to
+> take over Trent's job.
+
+No, given g and the kth root of g, she clearly can't find phi(n), because
+every RSA signature supplies such a pair.
+
+> * Given g^k%n and k' for lots of different k, can we derive (p-1)(q-1) or
+> otherwise imitate Trent's ability to give out (g^k%n, k') pairs?
+
+I think this is OK too.  See the Strong RSA Assumption, for example at
+http://www.zurich.ibm.com/security/ace/sig.pdf.  Basically this says that
+you can't find kth roots mod an RSA modulus without knowing the factors.
+
+You might want to ask this on sci.crypt, they are pretty good with pure
+math questions like this one.
+

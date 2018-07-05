@@ -1,0 +1,127 @@
+From owner-cypherpunks@jfet.org  Fri Mar 31 17:12:11 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.5/8.13.5/Debian-3) with ESMTP id k2VMC4n5000755
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 31 Mar 2006 17:12:04 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.5/8.13.5/Submit) id k2VMC4Z8000754
+	for cypherpunks-outgoing; Fri, 31 Mar 2006 17:12:04 -0500
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;         s=beta;
+  d=gmail.com;        
+  h=received:message-id:date:from:to:subject:mime-version:content-type:content-transfer-encoding:content-disposition;
+  b=Uoag2h5AXYYLaeKoPWzLpthV9R4qIoLcSLHCv7Gu8s9r9jayoZilts0dFfa2oheRUfTREIxvexxplMgP9NdGxQBI05O2dqkPYFZns9Fd22UY/l4CaUcgGfj63Jvfm2SepzKHy10MFsWbWXRXE27rL2g5Z+61dhBWrjm+7DwkO3w=
+Message-ID: <4ef5fec60603311412u1f7589e5m318cfe15d5f887f5@mail.gmail.com>
+Date: Fri, 31 Mar 2006 14:12:02 -0800
+From: coderman <coderman@gmail.com>
+To: cypherpunks@jfet.org
+Subject: keys and cards and user interaction
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by proton.jfet.org
+  id k2VMC30l000711
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3669
+Lines: 96
+
+comments?  suggestions?
+
+"keys" store password/passphrase protected volumes with cryptographic
+keys, certs, and other credentials associated with digital identities.
+
+"cards" are read only volumes with the public keys and public
+identifiers associated with digital identities.
+
+it is very important that they not be confused, and that "keys" are
+only used on a trusted system.
+
+
+solution:
+
+"keys" are the only volume which will ever prompt for a
+password/passphrase to open them.  if you are asked for a password it
+should only be on a system you trust and as expected when using or
+managing your keys.  keys are stored on an XFS filesystem on USB or
+other media (USB by default) which contains the encrypted key store. 
+this scales well (multi-gig USB volumes) and uses existing crypted
+file system support to implement privacy.  Any number of other volumes
+(for example hdd installed OS'es) can be tied to this "keys" volume by
+storing the AES keys and disk identifiers associated with that volume
+inside the "keys" protected volume.
+
+the only boot targets which may use private "keys" are:
+ - the "keys" secure key management mode.
+  - the "install" mode to create new loop-aes keys and install OS on
+this trusted system.
+  - the "hdd" mode to boot an encrypted OS installation on a trusted system.
+
+the other boot targets should only reference public "cards" and will
+never prompt for authentication at boot or during operation.
+
+"cards" are ISO9660 filesystems that can be stored on a public USB
+memory stick or burned to mini-CDR / DVD-R, etc.  "cards" are public,
+and can be copied freely and will never ask for authentication.
+
+the "keys" authorized modes thus explicitly mount a USB volume as XFS
+when a "keys" volume is expected.  the key mgmt mode will explicitly
+mount as iso9660 when a "cards" volume is expected.  thus a confused
+user could not accidentally write secret "keys" data to a public
+"cards" volume, and vice versa.
+
+this also allows the key management mode to determine what kind of
+volume is present as indicated by the file system type. (the secure
+key management mode is the only mode where public "cards" can be
+imported to your secret "keys".  the hdd and install modes will never
+prompt for a public card.  note that the "live" boot mode may use
+"cards" to connect to remote services securely.)
+
+summary:
+
+"keys" storage:
+
+[XFS volume ...
+   (petname for this volume)
+   (public GUID / nonce)
+   (GPG or loop-aes encrypted file)
+<additional identies are stored under additional subdirs and the key
+mgmt mode will prompt for which identity to access/authenticate when
+managing keys for multiple ID's.  petnames must be distinct.>
+]
+
+example:
+.../coderman/  (petname)
+.../coderman/id.txt   (512 byte GUID / nonce in hex)
+.../coderman/keys.dat   (encrypted key store, gpg or loop-aes)
+.../mpeck/
+.../mpeck/id.txt
+.../mpeck/keys.dat
+
+coderman might be a social context while mpeck is a professional context.
+
+
+"cards" storage:
+[ ISO9660 volume ...
+  (sha512 hash of identity public key)
+  (identity public key)
+  (nickname or alias for identified entity)
+  (additional volumes or metadata)
+  (signatures for nicknames and other metadata)
+]
+
+example:
+.../1496b640690342ed/  (hex digits of first 8 bytes of sha512 digest
+of public.key)
+.../1496b640690342ed/digest.txt  (full hex digits of sha512 digest of
+public.key)
+.../1496b640690342ed/public.key
+.../1496b640690342ed/nickname.txt  ("coderman's public weblog")
+.../1496b640690342ed/nickname.sig
+.../1496b640690342ed/aaaaaa.dat   (arbitrary metadata - an image? etc)
+.../1496b640690342ed/aaaaaa.sig   (signature for above)
+.../1496b640690342ed/foo.dat   ""
+.../1496b640690342ed/foo.dig   ""
+

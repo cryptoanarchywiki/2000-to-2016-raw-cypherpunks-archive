@@ -1,0 +1,84 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Fri Nov  8 21:00:29 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id gA920TG15220
+	for <rsw@opamp.org>; Fri, 8 Nov 2002 21:00:29 -0500
+Received: from mononoke.wasabisystems.com (mononoke.wasabisystems.com [166.84.0.13])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id VAA07297
+	for <rsw@mit.edu>; Fri, 8 Nov 2002 21:00:28 -0500 (EST)
+Received: by mononoke.wasabisystems.com (Postfix, from userid 96)
+	id 2ADBA5E6B4; Fri,  8 Nov 2002 20:59:22 -0500 (EST)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by mononoke.wasabisystems.com (Postfix) with ESMTP id A142F5E67E
+	for <cryptography@wasabisystems.com>; Fri,  8 Nov 2002 20:59:21 -0500 (EST)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 65BA4D97FE; Fri,  8 Nov 2002 20:59:18 -0500 (EST)
+Received: from albatross.prod.itd.earthlink.net (albatross.mail.pas.earthlink.net [207.217.120.120])
+	by mononoke.wasabisystems.com (Postfix) with ESMTP id 738FA5E67E
+	for <cryptography@wasabisystems.com>; Fri,  8 Nov 2002 20:40:25 -0500 (EST)
+Received: from h-66-166-238-18.snvacaid.covad.net ([66.166.238.18] helo=[192.168.1.5])
+	by albatross.prod.itd.earthlink.net with esmtp (Exim 3.33 #1)
+	id 18AKbc-0004nZ-00; Fri, 08 Nov 2002 17:40:12 -0800
+X-Sender: frantz%pwpconsult.com@pop.business.earthlink.net
+Message-Id: <v03110701b9f215367c1e@[192.168.1.5]>
+In-Reply-To: <200211080440.RAA102091@ruru.cs.auckland.ac.nz>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Date: Fri, 8 Nov 2002 17:40:15 -0800
+To: pgut001@cs.auckland.ac.nz (Peter Gutmann), dahonig@cox.net,
+   smb@research.att.com, Dan Kaminsky <dan@doxpara.com>
+From: Bill Frantz <frantz@pwpconsult.com>
+Subject: Re: Did you *really* zeroize that key?
+Cc: cryptography@wasabisystems.com, cypherpunks@lne.com, ptrei@rsasecurity.com
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 1897
+Lines: 44
+
+At 8:40 PM -0800 11/7/02, Peter Gutmann wrote:
+>It's worth reading the full thread on vuln-dev, which starts at
+>http://online.securityfocus.com/archive/82/297827/2002-10-29/2002-11-04/0.
+>This discusses lots of fool-the-compiler tricks, along with rebuttals
+>on why they could fail.
+
+In that discussion, Dan Kaminsky wrote:
+>You also need to ignore that bizarre corner case where the same memory
+>   address is mapped to multiple *physical* addresses -- such a memory
+>   architecture could simply alter one of the addresses and tag the rest as
+>   "tainted" without in fact clearing them.  But I don't think anyone
+>   actually does this -- I'm at least significantly more sure of that than
+>   I am of the precise semantics of "volatile" vis-a-vis dead code
+>elimination.
+>
+>   Yours Truly,
+>
+>       Dan Kaminsky
+>       DoxPara Research
+>       http://www.doxpara.com
+
+There is a common example of this corner case where the memory is paged.
+The page containing the key is swapped out, then it is read back in and the
+key is overwritten, and then the page is deallocated.  Many OSs will not
+zero the disk copy of the key.
+
+Crypto coders have discussed many kludges to ensure that keys are not
+swapped out, but they are all quite system specific.  Since the problem we
+were trying to solve is different environments producing different results,
+I don't feel we are any closer to safe, portable code.
+
+Cheers - Bill
+
+
+-------------------------------------------------------------------------
+Bill Frantz           | The principal effect of| Periwinkle -- Consulting
+(408)356-8506         | DMCA/SDMI is to prevent| 16345 Englewood Ave.
+frantz@pwpconsult.com | fair use.              | Los Gatos, CA 95032, USA
+
+
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

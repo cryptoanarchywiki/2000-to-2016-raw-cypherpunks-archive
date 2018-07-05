@@ -1,0 +1,716 @@
+From cypherpunks-bounces@cpunks.org  Mon Jan 20 07:33:45 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0KCXGWY031479;
+	Mon, 20 Jan 2014 07:33:24 -0500
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; insecure key"
+	header.d=gmail.com header.i=@gmail.com header.b=CZ876M7G;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-qc0-f170.google.com (mail-qc0-f170.google.com
+ [209.85.216.170])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0KCXDeA031475
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Mon, 20 Jan 2014 07:33:15 -0500
+Received: by mail-qc0-f170.google.com with SMTP id e9so5978515qcy.29
+ for <cypherpunks@cpunks.org>; Mon, 20 Jan 2014 04:33:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:date:message-id:subject:from:to:content-type;
+ bh=mOeeXM4nvunXHpwyM62LdjBHx3r0I+YcrzJcnlVRRf0=;
+ b=CZ876M7GzL10qz6Gd6amgqbLIlvfnWrOovLKfgpHYnjcYTkbfuV3b1J/q69C8KoGs7
+ TwGkOIxtJX5j6c1pL0mgZVrPzJr+RmK21dZhkLjcWnrXYfuF3Z6mICYJdbKRLDuQVDzV
+ A/xgq0VTuNt8PaoAfrIBzXdhFuRRthnf3PKUJcmxVOwsgN5Z279w8HURB/ncjdkX40nJ
+ wZ/FWB6BSMzw7UGyGlWtTXPnqhWTohjMzvkVJvkIOFkTk41jvmBIbjogtlci5F+pT8qX
+ s0HbWHFN0EG3x9bpDadlhrMjoBnH2Dbma73k4KDb82Y77VkL1UD3wOnRTnc3bibq7aE0
+ VobQ==
+MIME-Version: 1.0
+X-Received: by 10.224.88.70 with SMTP id z6mr27550803qal.14.1390221185474;
+ Mon, 20 Jan 2014 04:33:05 -0800 (PST)
+Received: by 10.96.94.68 with HTTP; Mon, 20 Jan 2014 04:33:05 -0800 (PST)
+Date: Mon, 20 Jan 2014 04:33:05 -0800
+Message-ID: <CAJVRA1TK3kDUvj1OtC1wKaxy3EvB+HRo+F_EGmZNA9nQ6pku2g@mail.gmail.com>
+Subject: bespoke boot and runtime configuration [was Re: Debian System and
+ /dev/random]
+From: coderman <coderman@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: text/plain; charset=ISO-8859-1
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+On Sun, Jan 19, 2014 at 4:57 PM, coderman <coderman@gmail.com> wrote:
+> ....
+> since 2004 building my own rngd, my own FDE bootloader, my own
+> mandatory entropy health watchdog service,
+
+
+VIA Padlock enabled processors only.  FDE was loop-aes.  init enforces
+mtrngd[0] at boot in conservative configuration.  if in key mode
+without networking, failure of XSTORE at any time causes mtrngd to
+exit non zero then halt.  for normal operation defaults to sync,
+shutdown -h in 60 seconds.
+
+cypherpunks may write code, but sharing with anyone and everyone never
+the bargain ;)
+
+0. mtrngd - high performance entropy daemon for XSTORE
+  https://peertech.org/dist/mtrngd-0.7-2007.tgz
+ see also https://peertech.org/archives/viarng/
+
+---
+
+custom kernel, initramfs, initrd, install.tgz builds produced bootable
+ISO mastered with per-image unique entropy mixed at boot using custom
+pre-boot auth that launches desired OS once encrypted root volume is
+mounted.
+
+
+the FDE boot process at the time (~2005) worked like this:
+
+# first some settings / defaults
+export keydir=/janus/keys
+export addir=/janus/active-domain
+export logfile=/var/log/start.log
+export klogfile=/janus/active-domain/system.log
+export tmpmntdir=/mnt/tmp
+export aes_mode="AES256"
+
+
+# note that message and log calls assume console; e.g. dialog --msgbox
+
+# define some common tasks; note that we're single user here (no race)
+gen_tmpname () {
+  uuid=`cat /proc/sys/kernel/random/uuid`
+  echo "/tmp/.${uuid}.tmp"
+}
+
+LBL_LENGTH=53
+get_idlabel () {
+  dev="$1"
+  part=`echo $dev | sed 's/.*\///'`
+  num=`echo $part | sed 's/[a-z]*//g'`
+  drv=`echo $part | sed 's/[0-9]*//g'`
+  tmpf=$(gen_tmpname)
+  dd if=$dev of=$tmpf bs=1 count=$LBL_LENGTH
+  grep IDLABEL $tmpf 1>/dev/null 2>/dev/null
+  if (( $? != 0 )); then
+    rm -f $tmpf
+    return 1
+  fi
+  rm -f $tmpf
+  cat $tmpf | sed 's/^IDLABEL=//'
+}
+
+list_usb_storage_devs () {
+  l "begin list_usb_storage_devs"
+  done=0
+  timeout=4
+  while (( $done == 0 )); do
+    if [ -f /dev/makedevs.sh ]; then
+      l "invoking makedevs.sh"
+      /dev/makedevs.sh 1>/dev/null 2>/dev/null
+    fi
+    sleep 1
+    ccount=0
+    devs=$(ls /dev/sd* | grep '[0-9]')
+    for dname in $devs; do
+      l "testing device $dname for readable"
+      dd if=$dname of=/dev/null count=1 1>/dev/null 2>/dev/null
+      if (( $? == 0 )); then
+        l "$dname is readable"
+        ccount=`expr $ccount + 1`
+      fi
+    done
+    if (( $ccount > 0 )); then
+      done=1
+    fi
+    timeout=`expr $timeout - 1`
+    if (( $timeout == 0 )); then
+      done=1
+    fi
+  done
+
+  devs=$(ls /dev/sd* | grep '[0-9]')
+  for dname in $devs; do
+    l "testing device $dname for readable"
+    dd if=$dname of=/dev/null count=1 1>/dev/null 2>/dev/null
+    if (( $? == 0 )); then
+      l "$dname is readable"
+      echo $dname
+    fi
+  done
+}
+
+get_usb_dev_fstype () {
+  l "begin get_usb_dev_fstype"
+  if [ -z "$1" ]; then
+    return 1
+  fi
+  dname="$1"
+  l "verifying readability for $dname"
+  dd if=$dname of=/dev/null count=1 1>/dev/null 2>/dev/null
+  if (( $? != 0 )); then
+    l "$dname is not readable"
+    return 2
+  fi
+  if [ ! -d $tmpmntdir ]; then
+    l "creating non existant temp dir $tmpmntdir"
+    mkdir $tmpmntdir 1>/dev/null 2>/dev/null
+  fi
+  umount $tmpmntdir 1>/dev/null 2>/dev/null
+  ismnted=0
+  mount $dname $tmpmntdir 1>/dev/null 2>/dev/null
+  if (( $? != 0 )); then
+    sleep 3
+    mount $dname $tmpmntdir 1>/dev/null 2>/dev/null
+    if (( $? != 0 )); then
+      fstypes="xfs ext2 ext3 reiserfs vfat ntfs msdos iso9660 romfs usbfs"
+      for fst in $fstypes; do
+        if (( $ismnted == 0 )); then
+          l "attempting mount -t $fst $dname $tmpmntdir"
+          mount -t $fst $dname $tmpmntdir 1>/dev/null 2>/dev/null
+          if (( $? == 0 )); then
+            l "mounted $dname"
+            ismnted=1
+          fi
+        fi
+      done
+      if (( $ismnted == 0 )); then
+        l "unable to mount $dname at $tmpmntdir"
+        return 3
+      fi
+    fi
+  fi
+  fstype=$(mount -l | grep $dname | sed 's/.*type //' | sed 's/ .*//')
+  if [[ "$fstype" == "" ]]; then
+    l "unable to get fstype for $dname"
+    return 4
+  fi
+  echo $fstype
+  l "got $fstype for mounted volume $dname"
+  umount $tmpmntdir 1>/dev/null 2>/dev/null
+  return 0
+}
+
+## keystore management
+## a "keystore" stored on USB or microSD carried always on person
+## id.txt is an ascii nickname, keys.dat loop-aes encrypted file backed volume
+## and finally keys.gpg the disk encryption key wrapped with passphrase.
+
+list_keystores () {
+  l "begin list_keystores"
+  if [ -z "$1" ]; then
+    return 1
+  fi
+  basekeydir="$1"
+  domains=""
+  ddirs=`ls -1dF $basekeydir/* 2>/dev/null | grep '/$'`
+  for dir in $ddirs; do
+    dname=`basename $dir`
+    domains="$domains $dname"
+  done
+  echo $domains
+  return 0
+}
+
+select_keystore () {
+  l "begin select_keystore"
+  if [ -z "$1" ]; then
+    return 1
+  fi
+  basekeydir="$1"
+  domains=""
+  ddirs=`ls -1F $basekeydir/`
+  for dir in $ddirs; do
+    if [ -d $dir ]; then
+      dname=`basename $dir`
+      domains="$domains $dname"
+    fi
+  done
+  # MRP NOT IMPLEMENTED YET...
+  return 0
+}
+
+mount_keystore () {
+  l "begin mount_keystore"
+  if [ -z "$1" ]; then
+    return 1
+  fi
+  if [ -z "$2" ]; then
+    return 1
+  fi
+  domkeydir="$1"
+  mntpoint="$2"
+  name=`basename $domkeydir`
+
+  ld=$(locate_free_loopdev)
+  if [ -z "$ld" ]; then
+    return 2
+  fi
+
+  idfile="${domkeydir}/id.txt"
+  if [ -f "${domkeydir}/keys.dat" ]; then
+    keyfile="${domkeydir}/keys.dat"
+    open=1
+  else
+    if [ -f "${domkeydir}/keys.gpg" ]; then
+      keyfile="${domkeydir}/keys.gpg"
+      open=0
+    else
+      d "Invalid key store"
+      return 3
+    fi
+  fi
+
+  fsfile="${domkeydir}/fs.enc"
+  if [ ! -f $fsfile ]; then
+    d "Invalid key store"
+    return 4
+  fi
+
+  if (( $open == 1 )); then
+    cat $keyfile | losetup -p 0 -e $aes_mode $ld $fsfile
+    if (( $? != 0 )); then
+      d "Could not configure keys for loop device."
+      return 1
+    fi
+  else
+    gpgerrf=/tmp/.gpg_err
+    done=0
+    while (( $done == 0 )); do
+      d "Loading keystore $name"
+      gpg --decrypt $keyfile 2>$gpgerrf | losetup -p 0 -e $aes_mode $ld $fsfile
+      if (( $? != 0 )); then
+        sleep 2
+      else
+        done=1
+      fi
+    done
+  fi
+
+  mount -t ext2 $ld $mntpoint 1>/dev/null 2>/dev/null
+  if (( $? != 0 )); then
+    losetup -d $ld 1>/dev/null 2>/dev/null
+    return 1
+  fi
+  echo "$ld" >&2
+  return 0
+
+}
+
+
+### the main initialization sequence
+
+main () {
+  l "begin main"
+  # args?
+  d "Initializing ..."
+  doinit
+  # set run mode
+  janusmode="default"
+  grep JANUS_TARGET /proc/cmdline >/dev/null 2>&1
+  if (( $? == 0 )); then
+    janusmode=`cat /proc/cmdline | sed 's/.* JANUS_TARGET=//' | sed 's/ .*//'`
+  fi
+  export janusmode
+  grep VERBOSE /proc/cmdline >/dev/null 2>&1
+  if (( $? == 0 )); then
+    export VERBOSE=true
+  fi
+  done=0
+  while (( $done == 0 )); do
+    udevs=$(list_usb_storage_devs)
+    if [ -z "$udevs" ]; then
+      d "No USB storage devices found.  Please insert one and press enter:"
+      read
+      sleep 5
+    else
+      done=1
+    fi
+  done
+
+  if [ ! -d $keydir ]; then
+    mkdir -p $keydir 1>/dev/null 2>/dev/null
+  else
+    umount $keydir 1>/dev/null 2>/dev/null
+  fi
+  chmod 700 $keydir  1>/dev/null 2>/dev/null
+
+  unset xfsdevs
+  unset odevs
+  xfscount=0
+  for udev in $udevs; do
+    fstype=$(get_usb_dev_fstype $udev)
+    if [ -z "$fstype" ]; then
+      odevs="$odevs ${udev}=none"
+    else
+      if [[ "$fstype" == "xfs" ]]; then
+        xfsdevs="$xfsdevs $udev"
+        xfscount=`expr $xfscount + 1`
+      else
+        odevs="$odevs ${udev}=${fstype}"
+     fi
+    fi
+  done
+
+  prompt_mkxfs=0
+  if (( $xfscount == 0 )); then
+    e "No secure key storage domains found on USB devices!"
+    return 2
+  fi
+
+  if (( $xfscount > 1 )); then
+    d "Currently only one USB device is supported."
+    d "Please leave only a single secret USB key storage device and
+try again." noclear
+    sleep 2
+    return 3
+  fi
+
+  mount -t xfs $xfsdevs $keydir 1>/dev/null 2>/dev/null
+  if (( $? != 0 )); then
+    d "Unable to mount key storage"
+    sleep 2
+    return 3
+  fi
+
+  if [ ! -d $addir ]; then
+    mkdir -p $addir 1>/dev/null 2>/dev/null
+  fi
+  chmod 700 $addir 1>/dev/null 2>/dev/null
+
+  domains=$(list_keystores $keydir)
+  if [ -z "$domains" ]; then
+    e "No secure key storage domains found!"
+  else
+    l "selecting domain from set :${domains}:"
+    dc=0
+    for domain in $domains; do
+      dc=`expr $dc + 1`
+    done
+    if (( $dc > 1 )); then
+      select_keystore $keydir 2>/tmp/.res
+      if (( $? != 0 )); then
+        d "Error selecting domain."
+        sleep 2
+        return 5
+      fi
+      adomain=$(cat /tmp/.res)
+    else
+      adomain=$domains
+    fi
+    mount_keystore $keydir/$adomain $addir 2>/tmp/.res
+    if (( $? != 0 )); then
+      d "Error selecting domain."
+      sleep 2
+      return 5
+    fi
+    cldev=`cat /tmp/.res`
+  fi
+
+  touch $klogfile
+  do_disks_boot
+  l "completed boot menu, assuming restart"
+  if [[ "$VERBOSE" == "true" ]]; then
+    sleep 5
+  fi
+  return 0
+}
+
+
+# execute main then exit
+l "entering main"
+doinit
+exec /sbin/init
+
+
+
+### last but not least, modern linux makes this much easier (yay GUID!)
+###  otherwise shitty hacks required...
+
+get_part_keyfile () {
+  l "begin get_part_keyfile"
+  part=$1
+  num=`echo $part | sed 's/[a-z]*//g'`
+  drv=`echo $part | sed 's/[0-9]*//g'`
+  pdi="/proc/ide/${drv}/identify"
+  if [ ! -f $pdi ]; then
+    case $drv in
+'sda')
+busno="001"
+;;
+'sdb')
+busno="002"
+;;
+'sdc')
+busno="003"
+;;
+'sdd')
+busno="004"
+;;
+'sde')
+busno="005"
+;;
+'sdf')
+busno="006"
+;;
+      *)
+ busno="NOT_FOUND"
+    esac
+    uname=`lsusb | grep "Bus $busno" | grep "Device 002" | sed 's/
+.*Device 002: ID ....:.... //' | sed 's/[^a-zA-Z0-9]/_/g' | head -1`
+    pdi=/tmp/.tmp_pdi
+    echo "$uname" > $pdi
+    if [[ "$uname" == "" ]]; then
+      l "No disk identifier found for partition $part at expected $pdi"
+      return 1
+    fi
+  fi
+  did=`gpg --print-md sha512 $pdi 2>/dev/null | sed 's/.*://' |  sed 's/ //g'`
+  did=`echo $did | sed 's/ //g'`
+  kf="${addir}/${did}.${num}"
+  l "associated $kf to device $part"
+  echo $kf
+  return 0
+}
+
+get_label_keyfile () {
+  l "begin get_label_keyfile"
+  part=$1
+  num=`echo $part | sed 's/[a-z]*//g'`
+  drv=`echo $part | sed 's/[0-9]*//g'`
+  lid=$(get_idlabel $drv)
+  if (( $? != 0 )); then
+    l "unable to locate label for $drv"
+    return 1
+  fi
+  kf="${addir}/${lid}.${num}"
+  l "matched $kf to device $part"
+  echo $kf
+  return 0
+}
+
+
+
+## last but not least, the specifics of how the loop-aes mount and pivot done
+
+do_boot_enc_part () {
+  l "begin do_boot_env_part"
+  part=$1
+  kf=$(get_part_keyfile $part)
+  lkf=$(get_label_keyfile $part)
+  if [ -f $lkf ]; then
+    kf="$lkf"
+  fi
+  ld=$(locate_free_loopdev)
+  if [ -z "$ld" ]; then
+    l "Unable to locate free loop device."
+    return 1
+  fi
+  pdev="/dev/${part}"
+  cat $kf | losetup -p 0 -e $aes_mode $ld $pdev
+  if (( $? != 0 )); then
+    l "Unable to setup loop $ld for $pdev with keyfile $kf"
+    return 1
+  fi
+  mpoint="/mnt/${part}"
+  if [ ! -d $mpoint ]; then
+    mkdir -p $mpoint
+  fi
+  l "attempting to mount $part at $mpoint using loop device $ld"
+  mount -t xfs -w $ld $mpoint
+  if (( $? != 0 )); then
+    l "Unable to mount XFS partition at $mpoint"
+    losetup -d $ld
+    return 1
+  fi
+
+  # actual umount and pivot root
+  l "cd $mpoint"
+  cd $mpoint
+  cdir=`pwd`
+  l "unmounting filesystems before pivot_root in $cdir"
+  l "umount $addir"
+  umount $addir
+  l "losetup -d $cldev"
+  losetup -d $cldev
+  l "umount $keydir"
+  umount $keydir
+  if [ ! -d initrd ]; then
+    l "mkdir initrd"
+    mkdir initrd
+  fi
+  l "umount /proc/bus/usb"
+  umount /proc/bus/usb
+  l "umount /proc"
+  umount /proc
+  #if [ ! -f etc/save-fstab ]; then
+  #  cp etc/fstab etc/save-fstab
+  #fi
+  #cat etc/fstab | grep -v '^.dev.hd' | grep -v '^#' > /tmp/.sf
+  #echo "$pdev / xfs defaults 0 1" > etc/fstab
+  #cat /tmp/.sf >> etc/fstab
+  l "privot root filesystem onto target volume"
+  pivot_root . ./initrd
+  l "executing init..."
+  exec /sbin/init
+
+  # will never hit here
+  l "ERROR: init could not be executed?"
+  sleep 5
+  l "aborting exec..."
+  return 1
+}
+
+do_boot_norm_part () {
+  l "begin do_boot_norm_part"
+  part=$1
+  mpoint="/mnt/${part}"
+  if [ ! -d $mpoint ]; then
+    mkdir -p $mpoint
+  fi
+  l "attempting to mount $part at $mpoint"
+  mount -w /dev/$part $mpoint
+  if (( $? != 0 )); then
+    l "Unable to mount partition at $mpoint"
+    return 1
+  fi
+
+  # actual umount and pivot root
+  l "cd $mpoint"
+  cd $mpoint
+  cdir=`pwd`
+  l "unmounting filesystems before pivot_root in $cdir"
+  l "umount $addir"
+  umount $addir
+  l "losetup -d $cldev"
+  losetup -d $cldev
+  l "umount $keydir"
+  umount $keydir
+  if [ ! -d initrd ]; then
+    l "mkdir initrd"
+    mkdir initrd
+  fi
+  l "umount /proc/bus/usb"
+  umount /proc/bus/usb
+  #MRP l "umount /proc"
+  #umount /proc
+  l "pivot root filesystem onto target volume"
+  pivot_root . ./initrd
+  l "executing init from $cdir ..."
+  exec /sbin/init
+
+  # will never hit here
+  l "ERROR: init could not be executed?"
+  sleep 5
+  l "aborting exec..."
+  return 1
+}
+
+do_disks_boot () {
+  l "begin do_disks_boot"
+  argf=/tmp/.args
+  echo "--title \"Boot Encrypted Operating System\" " > $argf
+  echo "--menu \"Select the OS to boot:\" " >> $argf
+  echo "18 70 10" >> $argf
+
+  /dev/makedevs.sh 1>/dev/null 2>/dev/null
+  drives=`cat /proc/partitions | grep ' hd[a-z][0-9]' | sed 's/.*
+hd/hd/' | sort`
+  sdrives=`cat /proc/partitions | grep ' sd[a-z][0-9]' | sed 's/.*
+sd/sd/' | grep -v sda1 | sort`
+  count=0
+  for part in $drives $sdrives; do
+    kf=$(get_part_keyfile $part)
+    lkf=$(get_label_keyfile $part)
+    if [ -f $lkf ]; then
+      kf="$lkf"
+    fi
+    l "$part expects $kf"
+    if [ -f $kf ]; then
+      count=`expr $count + 1`
+      allkfs="${allkfs} part${part}:${kf}"
+      cnf="${kf}.alias"
+      cname=`cat $cnf`
+      if [[ "$cname" == "" ]]; then
+        cname=$part
+      fi
+      psize=`fdisk -l /dev/$part 2>/dev/null | grep Disk | sed s'/.*:
+//' | sed 's/,.*//'`
+      echo "\"Boot $cname\" \"Boot into encrypted $psize partition
+$part\" " >> $argf
+      l "found encrypted bootable $cname on $part"
+    else
+      l "non encrypted $part , no $kf found"
+      if [[ "$janusmode" == "adv" ]]; then
+        psize=`fdisk -l /dev/$part 2>/dev/null | grep Disk | sed
+s'/.*: //' | sed 's/,.*//'`
+        echo "\"Exec $part\" \"Boot into UNencrypted public
+partition\" " >> $argf
+      fi
+    fi
+  done
+  echo "Exit \"Reboot into a different target\" " >> $argf
+
+  dodispmenu=0
+  if [[ "$janusmode" == "adv" ]]; then
+    dodispmenu=1
+  fi
+  if (( $count > 1 )); then
+    dodispmenu=1
+  fi
+  if (( $dodispmenu )); then
+    dialog --file $argf --output-fd 2 2> /tmp/.res
+    if (( $? != 0 )); then
+      l "unable to launch dialog prompt"
+      return 2
+    fi
+    dispn=$(cat /tmp/.res)
+    selection=`echo ${dispn}`
+  else
+    if (( $count == 0 )); then
+      selection="Exit"
+      dispmsg "No operating systems found..."
+    else
+      selection="Boot $cname"
+    fi
+  fi
+  l "do_disks_mount selection: $selection"
+  case $selection in
+  Boot*)
+    for ckf in $allkfs; do
+      kf=`echo $ckf | sed 's/.*://'`
+      part=`echo $ckf | sed 's/:.*//' | sed 's/part//'`
+      cnf="${kf}.alias"
+      cname=`cat $cnf`
+      if [[ "$cname" == "" ]]; then
+        cname=$part
+      fi
+      tn=`echo $selection | sed 's/Boot //'`
+      if [[ "$tn" == "$cname" ]]; then
+        ddev=$part
+      fi
+    done
+    do_boot_enc_part $ddev
+    return $?
+    ;;
+  Exec*)
+    tn=`echo $selection | sed 's/Exec //'`
+    do_boot_norm_part $tn
+    ;;
+  *)
+    return 1
+  esac
+  return 0
+}
+

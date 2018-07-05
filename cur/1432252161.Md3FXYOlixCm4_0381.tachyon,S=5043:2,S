@@ -1,0 +1,110 @@
+From owner-cypherpunks@Algebra.COM  Fri Dec 21 18:17:09 2001
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.mit.edu (8.11.6/8.9.3) with ESMTP id fBLNH9I25376
+	for <kwantam@positron.mit.edu>; Fri, 21 Dec 2001 18:17:09 -0500
+Received: from ak47.algebra.com (ak47.algebra.com [208.233.99.160])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id SAA13774
+	for <rsw@mit.edu>; Fri, 21 Dec 2001 18:16:49 -0500 (EST)
+Received: from ak47.algebra.com (localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id fBLN1XC5016104
+	for <cypherpunks-outgoing@ak47.algebra.com>; Fri, 21 Dec 2001 17:01:33 -0600
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id fBLN1XQI016103
+	for cypherpunks-outgoing; Fri, 21 Dec 2001 17:01:33 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (dns.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id fBLN1RC5016089
+	for <cypherpunks@ak47.algebra.com>; Fri, 21 Dec 2001 17:01:28 -0600
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id fBLN1Ps06355
+	for cypherpunks@ak47.algebra.com; Fri, 21 Dec 2001 15:01:25 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id fBLN1CB06347
+	for cypherpunks-goingout; Fri, 21 Dec 2001 15:01:12 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Fri, 21 Dec 2001 18:01:06 -0500 (EST)
+From: dmolnar <dmolnar@hcs.harvard.edu>
+To: Len Sassaman <rabbi@quickie.net>
+cc: <cypherpunks@lne.com>
+Old-Subject: Re: More on remailers.
+In-Reply-To: <Pine.LNX.4.30.QNWS.0112211222230.10001-100000@thetis.deor.
+  org>
+Message-ID: <Pine.OSF.4.33.0112211642010.25268-100000@hcs.harvard.edu>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Loop: cypherpunks@lne.com
+X-spam: 15 
+Subject:  Re: More on remailers.
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+X-spam: 0 
+Status: O
+Content-Length: 2733
+Lines: 60
+
+
+On Fri, 21 Dec 2001, Len Sassaman wrote:
+
+
+> Publishing failure notifications with sender-provided keys, as Steve
+> Schear suggests, seems likely to have large implementation and usage
+> hurdles. (A separate user's public key for each remailer in the chain
+> would have to be sent along with each message, and managing this would
+> become quite difficult for the user.)
+
+One way around this management issue might be to use a public-key
+cryptosystem which supports "key blinding." (Note - A Google search
+reveals that this term seems to be used in other places as well, and it
+looks like the usage there is not quite consistent with the way it is used
+in this message. Caveat lector.)
+
+David Hopwood has done some amazing work on formalizing the concept, which
+informally goes something like this:
+
+A public-key cryptosystem supports "blinded keys" if there is an efficient
+randomized algorithm which takes a public key PK and outputs a new public
+key PK' such that
+
+	* [Key compatibility] Messages encrypted with PK' can be decrypted
+	by the secret key associated with PK. (Ideally with no
+	extra state required to decrypt these messages, unlike
+	blinded signatures, which must be "unblinded" to be useful.)
+
+	* [Key unlinkability] Given PK', an adversary cannot determine
+	that PK' was created by blinding PK.
+
+for this application, we also need something perhaps stronger
+
+	* Many many PK' can be created from the same PK
+	and none of them can be linked with each other (as well
+	as not linked with the original PK)
+
+This is somewhat like Ross Anderson's "compatible weak keys," except that
+it does not require that a new private key be created along with the new
+public key.
+
+With blinded keys, the management issue you mention becomes much simpler,
+I think.  Instead of managing dozens of public-private key pairs, you have
+only one pair (PK,SK). To create a one-use public key for the purpose of
+status notification, you create a blinded key PK'. Anything encrypted with
+PK' can be decrypted by your SK, but the key unlinkability properties
+prevent the remailers from correlating messages based on PK'.
+
+One way to create a key-blinded cryptosystem is to consider Elgamal public
+keys as the pair (g, y), where y = g^x for private key x. Then to blind a
+public key, pick a random blinding factor b and let the blinded key be
+(g^b, y^b). With this, you do not need to keep track of the blinding
+factor b; the change in generator to g^b will do that for you.  So you can
+get away without keeping any state on your end beyond your private key x.
+
+For more detail, currently the best thing to do is a groups.google.com
+search for David Hopwood and "BRH-DHAES." We keep meaning to write this
+up, but never get around to it.
+
+-David
+

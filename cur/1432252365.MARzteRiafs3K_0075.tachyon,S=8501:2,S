@@ -1,0 +1,227 @@
+From owner-cypherpunks@Algebra.COM  Mon Aug 13 08:06:50 2001
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id IAA03107
+	for <kwantam@positron.mit.edu>; Mon, 13 Aug 2001 08:06:50 -0400
+Received: from ak47.algebra.com (root@ak47.algebra.com [208.233.99.160])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id IAA14039
+	for <rsw@mit.edu>; Mon, 13 Aug 2001 08:06:46 -0400 (EDT)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f7DC1wI21342
+	for cypherpunks-outgoing; Mon, 13 Aug 2001 07:01:58 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from einstein.ssz.com (cpunks@einstein.ssz.com [204.96.2.99])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f7DC1vi21328
+	for <cypherpunks@algebra.com>; Mon, 13 Aug 2001 07:01:57 -0500
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id HAA30215
+	for cypherpunks@algebra.com; Mon, 13 Aug 2001 07:12:30 -0500
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id HAA30169
+	for cypherpunks-outgoing; Mon, 13 Aug 2001 07:10:47 -0500
+Received: from localhost (ravage@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) with SMTP id HAA30165
+	for <cypherpunks@einstein.ssz.com>; Mon, 13 Aug 2001 07:10:43 -0500
+Date: Mon, 13 Aug 2001 07:10:43 -0500 (CDT)
+From: Jim Choate <ravage@einstein.ssz.com>
+To: cypherpunks@einstein.ssz.com
+Old-Subject: CDR: NSA withdraws proposed mode of operation (fwd)
+Message-ID: <Pine.LNX.3.96.1010813071035.23972a-100000@einstein.ssz.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Reply-To: cypherpunks@einstein.ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Acceptable-Languages: English, Russian, German, French, Spanish
+Subject:  NSA withdraws proposed mode of operation (fwd)
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 6250
+Lines: 179
+
+
+
+---------- Forwarded message ----------
+Date: Fri, 10 Aug 2001 01:35:39 -0300
+From: "Paulo S. L. M. Barreto" <paulo.barreto@terra.com.br>
+To: coderpunks@toad.com
+Subject: NSA withdraws proposed mode of operation
+
+Many coderpunks probably already know the details; anyway, here's the story.
+Phillip Rogaway's description of the weaknesses found in NSA's Dual Counter
+Mode are at the bottom.
+
+Enjoy,
+
+Paulo.
+
+---------- Forwarded message ----------
+Date: Thu, 09 Aug 2001 07:25:34 -0400
+From: Robert Shea <rshea@radium.ncsc.mil>
+Subject: Dual Counter Mode (DCM)
+
+On behalf of Brian Snow, Technical Director, Information Assurance, NSA,
+
+the following message is forwarded to the AES Team at NIST:
+
+     NSA believes that a license-free high-speed integrity-preserving
+mode
+of operation is needed for the Advanced Encryption Standard, and was
+pleased to submit the "Dual Counter Mode" (DCM) as a participant in the
+series of AES Modes Workshops sponsored by NIST.
+
+     Recently Virgil Gligor and Pompiliu Donescu of the University of
+Maryland, Phillip Rogaway of the UC Davis and Chiang Mai University,
+David Wagner of Berkeley, and possibly others, have produced results
+concerning the secrecy and integrity claims made for DCM. We commend
+them for their work
+
+     We withdraw the Dual Counter Mode for consideration as a mode of
+operation for AES at this time, while we consider the observations and
+their
+ramifications. We believe a license-free high-speed integrity-preserving
+mode
+of operation is still needed for AES, and will continue to work on this
+problem
+as well as encourage others to do so.
+
+                Brian D. Snow
+                Technical Director
+                Information Assurance Directorate
+                National Security Agency
+
+----------------------------------------------------------------------
+ Topic: Comments on "Dual Counter Mode" (manuscript date: 4 July 2001)
+        (a modes-of-operation proposal by Mike Boyle and Chris Salter)
+ From:  Phillip Rogaway
+        UC Davis and Chiang Mai University
+ Date:  Aug 4, 2001
+----------------------------------------------------------------------
+
+
+1. DEFINITION OF DCM
+
+The definition of DCM isn't real clear, but this is what I understand.
+Let
+
+           P = P_1 P_2 ... P_j
+
+be the plaintext to encrypt, where one assumes each |P_i|=n and j>0.
+Let Key = (K, x_0) be the DCM key, where K keys an n-bit block cipher E
+(I refuse to use "W" for the block length!) and x_0 is a n-bit string.
+For concreteness, say n = 128.  Let N be an n-bit nonce.
+(The authors specify N = SEQ | SPI | padding, but I shall ignore this,
+it being, to me,  an inappropriate mixing of an application of a mode
+and the definition of that mode.)  The authors map (N, x_0) into a
+sequence of offsets (they call them "fills")
+
+         y_0 y_1 y_2 ... y_j y_{j+1}
+by
+         y_0 = x_0 + N      // addition mod 2^n, for example
+
+and, for i>0, y_i = multx(y_{i-1}), where, say,
+
+                / (a << 1)                      if msb(a)=0
+    multx(a) = |
+                \ (a << 1) xor 0^{120}10000111  if msb(a)=1
+
+
+That is, y_i = (x_0 + N) * x^i, where the multiplication is
+in GF(2^n).   Now define DCM_Key (N, P) as
+
+           C = C_1 C_2 ... C_j C_{j+1}
+where
+
+        C_i  = E_K( P_i xor y_i) xor y_i       for i in [1..j]
+    checksum = P_1 xor ... xor P_j xor N
+     C_{j+1} = E_K(checksum xor y_{j+1}) xor y_0
+
+
+2. COMPARISON WITH IAPM
+
+DCM is identical to IAPM except
+
+  (a) IAPM omits the nonce N from the checksum (why these
+      authors include the nonce I do not know); and
+  (b) IAPM suggested different (and smarter) ways to make
+      the offsets.
+
+
+3. THE CHANGES DON'T WORK
+
+The changes to IAPM break it; one can see rather easily that
+DCM does not achieve the usual definitions for privacy or
+authenticity.
+
+
+3.1 NO SEMANTIC SECURITY   (the customary privacy definition)
+
+For simplicity, assume lsb(x_0)=0.
+(This happens half the time so there is no
+problem making this assumption.)  First observe that nonces with
+related values map to offsets with related values.  In particular,
+nonces N and (N xor 1) (in a context like this "1" means 0^{n-1}1)
+map to offsets the first few of which are:
+
+       N       |-->   y_0,       y_1,       y_2
+       N xor 1 |-->   y_0 xor 1, y_1 xor 2, y_2 xor 4
+
+Let the adversary ask a query DCM_Key(0, 0), obtaining a ciphertext
+that starts with first block C_1; now note that first block of
+DCM_Key(1, 2) will be C_1 xor 2.   This violates privacy.
+(For example, you can easily tell apart the sequence of
+messages 0, 0  and 0, 2  when they are DCM-encrypted using
+nonces 0 and then 1.)  [Reminder: my notation is
+ciphertext = DCM_Key(nonce, plaintext)]
+
+
+3.2. NO AUTHENTICITY OF CIPHERTEXTS (the customary
+                                 authenticity definition)
+
+For convenience of description, assume that the first two bits
+and the last two bits of x_0 are 00 (which happens 1/16 of
+the time, anyway). Let the adversary ask queries:
+
+   DCM_Key(0, 0)   -->  getting C_1  C_2.
+   DCM_Key(1, 0 2) -->  getting C_1' C_2' C_3'
+
+Note: C_2   = E_K(x_0 << 2) xor x_0      and
+      C_2'  = E_K((x_0 + 1 << 2) xor 2) xor (x_0 + 1) << 2
+            = E_K(x_0 << 2) xor (x_0 << 2) xor 2
+
+So    C_2 xor x_0   =  C_2' xor (x_0<<2) xor 2
+and thus
+          x_0 xor (x_0 <<2) = C_2 xor C_2' xor 2
+
+Solve for x_0 (easy by our assumption that x_0 ends in 00).
+With x_0 now known, one can compute the y_0, y_1, y_2 values
+associated to any nonce.  Forging a ciphertext becomes easy.
+
+
+4. AND WHAT IF THE NONCE HAD BEEN SEQ | SPI | padding?
+
+I think it wouldn't have mattered.  With a choice of N = N' | comp(N'),
+say, where N' is a 64-bit nonce, N' and (N' xor 1) would still map
+to y_1 and y_1 xor 2, respectively, so you could play the same sorts
+of games.
+
+
+5. WHAT'S THE STORY HERE?
+
+The entire discussion of out-of-order-packets in the DCM note
+makes no real sense, as best as I can tell.  The authors "solution"
+amounts to throwing in a nonce -- which is of course present in all
+of the authenticated-encryption proposals already.  The introductory
+statements about the overhead of IAPM (and other proposals) seems to
+reflect a non-understanding of that mode.  And then the mode itself,
+which was so easily attacked.  All rather odd.
+
+
+
+

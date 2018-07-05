@@ -1,0 +1,105 @@
+From owner-cypherpunks@al-qaeda.net  Thu Jul  8 10:56:49 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i68FuYKU029826
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Thu, 8 Jul 2004 10:56:34 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i68FuYFl029824
+	for cypherpunks-outgoing; Thu, 8 Jul 2004 10:56:34 -0500
+Date: Thu, 8 Jul 2004 17:50:57 +0200 (CEST)
+From: Thomas Shaddack <shaddack@ns.arachne.cz>
+To: Cypherpunks <cypherpunks@al-qaeda.net>
+Subject: Querying SSL/TLS capabilities of SMTP servers
+Message-ID: <0407081735340.-1275484700@somehost.domainz.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 1992
+Lines: 81
+
+I cobbled up together a small bash shell script that does this. It lists 
+the MX records for a domain, and then tries to connect to each of them, 
+issue an EHLO command, disconnect, then list the output of the server, 
+alerting if the server supports STARTTLS. It should be easy to further 
+query the server for the certificate, using some external utility called
+from the script.
+
+It requires netcat and a pair of djbdns utilities. It's a bit crude, but 
+could be helpful.
+
+Script follows:
+--------------------- cut here --------------------------------------
+
+#!/bin/bash
+## Query the capabilities of mailservers for a domain.
+##
+## Requirements: nc (netcat), dnsmx and dnsip (from djbdns package)
+
+TMP=`mktemp /tmp/queryehlo.XXXXXX`
+EHLOSTRING="capquery"
+TIMEOUT=15
+
+function help()
+{
+cat << EOF
+queryehlo - query the capabilities of mailservers for a domain
+Usage: queryehlo <domain>
+EOF
+exit 0
+}
+
+function checkresources()
+{
+ERR="";
+if [ ! "`which nc 2>/dev/null`" ]; then
+echo "ERROR: nc (netcat) not available in \$PATH."
+echo "netcat should be part of standard distro, or can be acquired from eg."
+echo "   http://www.atstake.com/research/tools/network_utilities/".
+echo
+ERR="1"
+fi
+if [ ! "`which dnsmx 2>/dev/null`" ]; then
+echo "ERROR: dnsmx (from djbdns) not available in \$PATH."
+echo "djbdns can be downloaded from eg. http://cr.yp.to/djbdns.html"
+echo
+ERR="1"
+fi
+if [ "$ERR" == "1" ]; then exit; fi
+}
+
+function queryrelay()
+{
+if [ ! "$x" ]; then return; fi
+echo "Querying mail relay $1, `dnsip $x`"
+cat << EOF | nc -w $TIMEOUT $1 25 > $TMP
+EHLO $EHLOSTRING
+QUIT
+EOF
+if [ "`cat $TMP|grep STARTTLS`" ]; then
+ echo "*** RELAY ADVERTISES SMTP/TLS SUPPORT"
+ # insert eventual further interrogations here
+fi
+echo
+cat $TMP
+echo
+echo
+rm $TMP
+}
+
+
+checkresources
+if [ "$1" == "" ];       then help; fi
+if [ "$1" == "-h" ];     then help; fi
+if [ "$1" == "--help" ]; then help; fi
+
+
+dnsmx $1 | sort -n |
+while true; do
+  read x1 x; if [ "$?" == "1" ]; then break; fi
+  queryrelay $x;
+done
+

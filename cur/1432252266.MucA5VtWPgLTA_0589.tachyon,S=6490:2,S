@@ -1,0 +1,159 @@
+From cypherpunks-bounces@cpunks.org  Sun Jan 26 12:46:20 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0QHjDiI021360;
+	Sun, 26 Jan 2014 12:45:20 -0500
+Received: from mail.witmond.nl (mail.wtmnd.nl [80.100.189.3])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0QHj996021356
+ for <cypherpunks@cpunks.org>; Sun, 26 Jan 2014 12:45:11 -0500
+Received: from [10.1.2.6] (unknown [10.1.2.6])
+ by mail.witmond.nl (Postfix) with ESMTP id 69057C0B1B;
+ Sun, 26 Jan 2014 17:45:02 +0000 (UTC)
+Message-ID: <52E5499A.8000804@witmond.nl>
+Date: Sun, 26 Jan 2014 18:44:58 +0100
+From: Guido Witmond <guido@witmond.nl>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64;
+ rv:17.0) Gecko/20131103 Icedove/17.0.10
+MIME-Version: 1.0
+To: coderman <coderman@gmail.com>
+Subject: Re: and not a single Tor hacker was surprised...
+References: <CAJVRA1R0_fvsd9jhQLYnOKU5L0ZGLXPAQOG_cPkZaKr32BL7-g@mail.gmail.com>
+ <52DFDFCB.9090003@kjro.se>
+ <CAJVRA1SofFbh7FNRzSR_bW3D0+X_4Ok54HXPDyUjm0m7ZV9J=g@mail.gmail.com>
+ <52E3DDEF.8030402@witmond.nl>
+ <CAJVRA1Q3Bq=fCJfd0Sdi6LJ_2tD9FnPQaN0ATysDCDo_G_ZOfA@mail.gmail.com>
+In-Reply-To: <CAJVRA1Q3Bq=fCJfd0Sdi6LJ_2tD9FnPQaN0ATysDCDo_G_ZOfA@mail.gmail.com>
+X-Enigmail-Version: 1.5.1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="----enig2VOFLKXVSRBNIRLIBIGHU"
+Cc: cpunks <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 4284
+Lines: 111
+
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+------enig2VOFLKXVSRBNIRLIBIGHU
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+On 01/25/14 20:09, coderman wrote:
+> On Sat, Jan 25, 2014 at 7:53 AM, Guido Witmond <guido@witmond.nl>
+> wrote:
+>> ... Client certificates are part of my answer to MitM attacks.
+>>=20
+>> The other part is to forget about third-party CA's.
+>=20
+> my heart a twitter already!
+>=20
+> (these are the key points, and you hit them first.)
+
+Lurking at several cryptography mailing lists, gave me some hints :-)
+
+
+
+>> See http://eccentric-authentication.org/ to read more.
+>>=20
+>> I'd love to hear comments.
+>=20
+> i've come across this on other lists, and will one day provide a=20
+> better response.  my initial feedback relates to:
+>=20
+> - supported suites.  NULL encryption is still a valid TLS mode!
+
+1st. Although NULL encryption is a problem, I expect that most
+crypto-toolkit developers will disable these in their default
+configuration. From there it will bubble up the stack into the
+distributions. That's a lesson that NSA has thought us: make defaults saf=
+e!
+
+
+2nd. There is nothing in eccentric authentication that specifies one
+branch of public key mathematics  over another. I deliberately leave the
+choice of either RSA, EC, or others out. As I'm not a cryptographer, I
+can't make that decision. I do specify what I expect the protocol needs
+to accomplish. It's up to the experts to match the appropriate parts. My
+prototype used RSA/TLS/DNSSEC
+
+
+>=20
+> - end-point security (each site acting as a CA is like every bitcoin=20
+> user acting as a bank. you've elevated the threat model on the=20
+> unsuspecting.)
+
+Not really. Each site signs only for itself. There is no need to trust
+anything else than your own systems (Or the hoster who does the work for
+you). That trust level is already needed for every current web site.
+
+In fact, with a proper setup, the Root certificate's private key for the
+site does not live at the server, for signing, it uses a subRoot.
+
+Now when the site gets hacked, the hackers can create more accounts for
+themselves or invalidate other peoples' accounts. But the attackers can
+never impersonate any of the sites user accounts at other sites, as
+these use their own signing key. I believe it is more safe than hashing
+passwords.
+
+The more worrisome part are the end-users' computers. The Posix-model is
+not designed to protect users against themselves. Although, every user
+expects that to be the case. Things like microkernels, Capsicum,
+Qubes-OS, Genode, Pola, least authority designs are in DIRE need.
+
+>=20
+> - Namecoin and other decentralized alternatives to DNSSEC.
+>=20
+
+DNSSEC might be just as difficult as IPsec, or its private key might
+have already been leaked to NSA due to compromised hardware. We need to
+have alternatives.
+
+The eccentric-protocol can use other global unique naming schemes. The
+requirements are: easy and cheap enough so every website can get a
+unique and human memorize-able name. Namecoin might fit the
+requirements, or GNS (GnuNet).
+
+
+I hope this sparks the curiosity.
+
+With regards, Guido.
+
+
+------enig2VOFLKXVSRBNIRLIBIGHU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+Comment: Using GnuPG with Icedove - http://www.enigmail.net/
+
+iQIcBAEBAgAGBQJS5UmaAAoJEHPd8GglaNRmc2kQAIvSDqYtncH2Vm3d2dEQTJnl
+kBW/mH3yzIgFW4arnqpWP0mznrzX9E8a3E0YN9ofeuU1wVSFb2jp23VPMo2K4aaq
+V5MfnUImecCONXYR18H5lTyRog1m7gUwpBx+WMmoFWl23kZBpVMgxMJ+GMvgloa3
+tGk7HbkvuoEBjLhjWCGgVixnKhGB1vmqz3OO41PAp1FgM3QcdwqzseQxea9dk4/d
+WoIrFfPIfPXqHCDlZaIga3EEE9fuUn+HvtdXPQslhicVFTMavaGFSjrgVKUArRjM
+yXjPbJs1zKqIJyN7ACpGrUGqKTPXhD0l6j/HxtZit+FqJOVWbko0TaHPd66pT8wg
+EZ8G2ZY7MePIcqP+BdG0O53bz/2kB+H5TQcDt35lC7R/yaIF9bynum5q5ddfbqcz
+lSYzZXXvKOgOAdSzb2xsyrGbSXHtcAJUNDRE6Li2C0SeR/zyYteh1A07JOOTRBgF
+RHe5blaYkLzFV0kRFnk34HMttBoPTvIlOT16GIKMfi60cRq1fMXG3vLNQpzbomRU
+jks5tLF6/1Xd8dWv0B+gdxLe0RRo+PgSvS3j2jGBOZ3Wh73NYkf8cysMq+zhAFtw
+OKFjrwlotkOYwa3gZWr/o7ieVZSnxiMQ/32WRMNrXbifUMqGeRiypENNkCCPlZgS
+qkZwjCMJ3m3TV+nQ8UAB
+=j5+b
+-----END PGP SIGNATURE-----
+
+------enig2VOFLKXVSRBNIRLIBIGHU--
+

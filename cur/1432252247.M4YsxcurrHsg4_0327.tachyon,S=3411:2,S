@@ -1,0 +1,73 @@
+From owner-cypherpunks-outgoing@ssz.com  Sun Sep  3 12:03:40 2000
+Received: from MIT.EDU (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.69.0.28])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id MAA15282
+	for <kwantam@positron.mit.edu>; Sun, 3 Sep 2000 12:03:39 -0400
+Received: from einstein.ssz.com by MIT.EDU with SMTP
+	id AA10815; Sun, 3 Sep 00 12:04:03 EDT
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id LAA17091
+	for cypherpunks-outgoing; Sun, 3 Sep 2000 11:04:03 -0500
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id LAA17069
+	for cypherpunks@ssz.com; Sun, 3 Sep 2000 11:03:52 -0500
+Received: from mail.virtual-estates.net (cpunks@video-collage.com [160.79.196.177])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id LAA17060
+	for <cpunks@ssz.com>; Sun, 3 Sep 2000 11:03:43 -0500
+Received: (from cpunks@localhost)
+	by mail.virtual-estates.net (8.9.3+3.2W/8.9.1) id LAA03877;
+	Sun, 3 Sep 2000 11:45:29 -0400 (EDT)
+X-Authentication-Warning: video-collage.com: Processed from queue /var/spool/mqueue-majordomo
+X-Authentication-Warning: video-collage.com: Processed by cpunks with -C /usr/local/majordomo/sendmail.cf
+Received: from sirius.infonex.com (sirius.infonex.com [216.34.245.2])
+	by mail.virtual-estates.net (8.9.3+3.2W/8.9.3) with ESMTP id LAA03867
+	for <cypherpunks@algebra.com>; Sun, 3 Sep 2000 11:45:27 -0400 (EDT)
+X-Relay-Ip: 216.34.245.2
+Received: (from cpunks@localhost) by sirius.infonex.com (8.8.8/8.8.8) id IAA25165; Sun, 3 Sep 2000 08:47:25 -0700 (PDT)
+Received: from cyberpass.net (cyberpass.net [216.34.245.3]) by sirius.infonex.com (8.8.8/8.8.8) with ESMTP id IAA25139 for <cpunks@sirius.infonex.com>; Sun, 3 Sep 2000 08:47:08 -0700 (PDT)
+Received: from cypherspace.org (adam@modemcable228.178-201-24.mtl.mc.videotron.net [24.201.178.228]) by cyberpass.net (8.8.8/8.7.3) with ESMTP id IAA09664 for <cypherpunks@cyberpass.net>; Sun, 3 Sep 2000 08:49:12 -0700 (PDT)
+Received: (from adam@localhost) by cypherspace.org (8.8.3/8.6.12) id LAA00305; Sun, 3 Sep 2000 11:49:16 -0500
+Date: Sun, 3 Sep 2000 11:49:16 -0500
+Message-Id: <200009031649.LAA00305@cypherspace.org>
+From: Adam Back <adam@cypherspace.org>
+To: bill.stewart@pobox.com
+Cc: petro@bounty.org, cypherpunks@cyberpass.net
+In-Reply-To: <3.0.5.32.20000831095346.00983b80@idiom.com> (message from Bill
+	Stewart on Thu, 31 Aug 2000 09:53:46 -0700)
+Old-Subject: auditable gaming PRNGs (Re: PRNG server)
+Subject: CDR: auditable gaming PRNGs (Re: PRNG server)
+Sender: owner-cypherpunks@ssz.com
+Precedence: bulk
+Reply-To: cypherpunks@ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Language: English, Russian, German
+Status: O
+Content-Length: 707
+Lines: 24
+
+
+Seems to me you can do better with a gaming server.  If the gaming
+server servers RNGs in a sequence such that each sample in the
+sequence can be verified, they don't need to trust the server; or at
+least there is an audit function.
+
+Eg. say that the server publishes subsequent pre-images in a
+hashchain.
+
+h_0 
+h_{i+1} = h_i
+
+and the server computes h_i values up to i = 10^8 and then publishes
+them starting with h_{10^8}, h_{10^8-1}, ...
+
+Then anyone can verify that the random number is the preimage of the
+previous random number.
+
+You do something similar with a more efficient (log(n)) auditing
+function with merkle authentication trees.
+
+If they aren't doing this someone should clue them in.
+
+Adam
+

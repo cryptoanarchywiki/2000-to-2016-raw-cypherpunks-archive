@@ -1,0 +1,231 @@
+From owner-cypherpunks@Algebra.COM  Tue Dec 18 21:25:18 2001
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.mit.edu (8.11.6/8.9.3) with ESMTP id fBJ2PI215299
+	for <kwantam@positron.mit.edu>; Tue, 18 Dec 2001 21:25:18 -0500
+Received: from ak47.algebra.com (ak47.algebra.com [208.233.99.160])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id VAA04539
+	for <rsw@mit.edu>; Tue, 18 Dec 2001 21:25:28 -0500 (EST)
+Received: from ak47.algebra.com (localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id fBJ2HVCO018398
+	for <cypherpunks-outgoing@ak47.algebra.com>; Tue, 18 Dec 2001 20:17:31 -0600
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id fBJ2HVqO018397
+	for cypherpunks-outgoing; Tue, 18 Dec 2001 20:17:31 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from einstein.ssz.com (cpunks@einstein.ssz.com [204.96.2.99])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id fBJ2HPCO018375
+	for <cypherpunks@algebra.com>; Tue, 18 Dec 2001 20:17:27 -0600
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id UAA20078
+	for cypherpunks@algebra.com; Tue, 18 Dec 2001 20:21:59 -0600
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id UAA20067
+	for cypherpunks-outgoing; Tue, 18 Dec 2001 20:21:54 -0600
+Received: from cliff.mfn.org (cliff.mfn.org [204.238.179.8])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id UAA20063
+	for <cypherpunks@ssz.com>; Tue, 18 Dec 2001 20:21:50 -0600
+From: measl@mfn.org
+Received: from greeves.mfn.org (greeves.mfn.org [204.238.179.3])
+	by cliff.mfn.org (8.11.1/8.9.3) with ESMTP id fBJ2HEO44437
+	for <cypherpunks@ssz.com>; Tue, 18 Dec 2001 20:17:14 -0600 (CST)
+	(envelope-from measl@mfn.org)
+Date: Tue, 18 Dec 2001 20:17:14 -0600 (CST)
+To: cypherpunks@einstein.ssz.com
+Old-Subject: CDR: Non-political, so probably off-topic for CP :_)
+Message-ID: <Pine.BSF.4.21.0112182016090.14383-100000@greeves.mfn.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Reply-To: cypherpunks@ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Acceptable-Languages: English, Russian, German, French, Spanish
+Subject:  Non-political, so probably off-topic for CP :_)
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+X-spam: 20 
+Status: O
+Content-Length: 7708
+Lines: 174
+
+
+
+In case anyone has *any* interest...
+
+---------- Forwarded message ----------
+Date: Mon, 17 Dec 2001 14:29:43 -0500
+From: Franco Travostino <travos@nortelnetworks.com>
+Reply-To: anon@wireless.eecs.harvard.edu
+To: Anon Fwd <anon@wireless.eecs.harvard.edu>
+Subject: Re: Anon Fwd: analysis of covert channels in 
+    draft-kung-annfwd-framework
+
+
+Geoff,
+the security protocol that you're describing---i.e., generate a symmetric 
+key and ship it encrypted with the recipient's public key---seems very 
+expensive for a layer 3 forwarder (or, better, for what I think that that 
+beast is, really). I understand that  a) you have limited a forwarder's 
+scope to processing signalling data only, and b) PGP email, for one, use 
+keys pretty much the way you said. Yet, I think one could do much better 
+with a Diffie-Hellman cycle producing a batch of symmetric keys, which need 
+not to be exchanged across the wire. This is what IKE (rfc2409) does. IKE 
+has all sort of wrinkles to it in order to thwart DH vulnerabilities to 
+men-on-the-middle attackers. A forwarder implementing such solution could 
+attain a wide range of throughputs, possibly exceeding 1Gb/s with hardware 
+crypto-assists (as commodity VPN boxes show today). Public key operations 
+as you scoped will definitely lock you out of these ranges.
+
+-franco
+
+At 03:39 PM 12/15/2001, Geoffrey L Goodell wrote:
+>In our last meeting, we discovered that we could discard the various metadata
+>fields in our protocol, thus reducing the ability for attackers to discover
+>clients or servers by sending an exorbitant number of packets to a forwarder
+>and simultaneously monitoring the forwarder's output link.  So, with the
+>stipulation that the various field types have a specified size, and each
+>forwarder only provides exactly one of the three anonymity options (client,
+>server, and bidirectional), the only means by which attackers can correlate
+>their packets with packets found on the output link of the forwarder is to
+>examine the data contained in the fields themselves.  In order for a 
+>successful
+>attack to be possible, it must be possible for an attacker to correlate the
+>fields on the packet entering the forwarder with the packets leaving the
+>forwarder; in other words, individual fields leaving the forwarder must be
+>encrypted in such a manner to not be decryptable by the attacker into a form
+>that the attacker can recognize.
+>
+>SUMMARY: We discover that the single-hop protocols are demonstrably free of
+>covert channels, provided that the cipher upon which we ultimately decide is
+>also demonstrably free of covert channels.  We find that if we expect to get
+>away with packet sizes that do not grow linearly with the number of forwarders
+>on the path between the client and the server, multi-hop forwarding depends on
+>some sort of public-key infrastructure.
+>
+>THE "GOOD" NEWS: We need a public key infrastructure for our network of
+>forwarders.
+>
+>THE ACTUALLY-GOOD NEWS: Clients and servers need not be a part of this 
+>network,
+>though forwarders must be able to verify the authenticity of their public 
+>keys.
+>
+>DETAILS:
+>
+>----------
+>
+>I have examined the three single-hop protocols closely, and discovered the
+>following:
+>
+>1. Client Anonymity
+>
+>C's certificate and the request are passed along by the forwarder on the 
+>way to
+>the server, so an attacker posing as a client can find the location of a 
+>server
+>by monitoring the forwarder's output link.  This is acceptable, though, since
+>the protocol explicitly does not call for server anonymity.
+>
+>On the way back to the client, the message is encrypted in a symmetric key
+>chosen by the forwarder, and the symmetric key is encrypted with the client's
+>public key.  One apparent attack on this system would be to send a certificate
+>for an arbitrary public key for which the attacker holds the corresponding
+>private key; given enough computing power, the attacker could feasibly use 
+>this
+>private key to decrypt the symmetric key on packets leaving the forwarder and
+>verify which ones contained the reply datum the attacker sent.  We can
+>successfully defend against this attack by requiring that the forwarder verify
+>the authenticity of the client's public key.
+>
+>So, to my knowledge, this protocol does not have any threatening covert
+>channels.
+>
+>2. Server anonymity
+>
+>En route from the client to the server, the forwarder encrypts a packet with
+>a symmetric key and sends that key encrypted with the server's public key.  To
+>avoid an attack similar to the one suggested above with the client anonymity
+>protocol, we require that the forwarder verify the authenticity of the 
+>server's
+>public key.
+>
+>On the way back, the messages can easily be correlated by an attacker.  But,
+>symmetrically to above, the protocol explicitly does not call for client
+>anonymity, and thus allowing an attacker to find client locations is
+>acceptable.
+>
+>So, to my knowledge, this protocol does not have any threatening covert
+>channels.
+>
+>3. Bidirectional anonymity
+>
+>En route from the client to the server, the forwarder encrypts the fields with
+>a randomly generated symmetric key of its choosing, and sends the 
+>symmetric key
+>encrypted with the public key of the server.  Thus, we need the forwarder to
+>verify the authenticity of the server's public key.
+>
+>On the way back, the forwarder encrypts the fields with a randomly generated
+>symmetric key of its choosing, and sends the symmetric key encrypted with the
+>public key of the client.  Thus, we need the forwarder to verify the
+>authenticity of the client's public key.
+>
+>So, to my knowledge, this protocol does not have any threatening covert
+>channels.
+>
+>----------
+>
+>The multi-hop protocols as described in the Internet Draft are like the
+>single-hop protocols, with the important exception that specific fields
+>are passed directly between the forwarders.  Here, we have two problems:
+>
+>A. Since one of the encrypted fields contains more and more information as it
+>gets constructed, and never gets decrypted in the construction process, it
+>necessarily grows in size.  This in turn means that information about the
+>position of a particular forwarder in the path will necessarily be leaked.
+>
+>B. Since fields are passed directly between the forwarders without alteration,
+>they can be correlated by an attacker to find the path through the forwarding
+>network.  One possible solution to this is for the forwarders to choose
+>randomly-generated symmetric keys at each hop, and then encrypt the relevant
+>field with this key, and then send that key along, encrypted with the client's
+>or server's public key.  The trouble with this is that the size of the packet
+>becomes increasingly large, just as in (A).
+>
+>To eliminate the problem with linearly growing packets along the pathe need a
+>PKI for the network of forwarders so that forwarders can encrypt and 
+>decrypt at
+>each hop.  This reduces the packets to a constant size (whatever we agree
+>upon), and prevents the problems associated by the covert channels 
+>described in
+>(A) and (B) above.
+>
+>Geoff
+>
+>
+>
+>
+>To post: mail to anon@wireless.eecs.harvard.edu
+>To unsubscribe: mail anon@wireless.eecs.harvard.edu
+>   with "unsubscribe" (no quotes) in the subject line
+>To subscribe: mail anon@wireless.eecs.harvard.edu
+>   with "subscribe" (no quotes) in the subject line
+>To visit archive: go to http://wireless.eecs.harvard.edu/anon
+>Comments, suggestions? Send them to
+>   postmaster@wireless.eecs.harvard.edu
+
+
+Franco Travostino, Director Content Internetworking Lab
+Advanced Technology Investments
+Nortel Networks, Inc.
+600 Technology Park
+Billerica, MA 01821 USA
+Tel: 978 288 7708 Fax: 978 288 4690
+email: travos@nortelnetworks.com
+

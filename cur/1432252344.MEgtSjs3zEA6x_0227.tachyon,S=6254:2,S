@@ -1,0 +1,147 @@
+From owner-cypherpunks@al-qaeda.net  Tue Jun 19 10:10:09 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q5JE6wsQ007213
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 19 Jun 2012 10:06:59 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q5JE6wA3007212
+	for cypherpunks-outgoing; Tue, 19 Jun 2012 10:06:58 -0400
+Date: Tue, 19 Jun 2012 16:06:55 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: Re: [cryptography] Intel RNG
+Message-ID: <20120619140655.GL17120@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from coderman <coderman@gmail.com> -----
+
+From: coderman <coderman@gmail.com>
+Date: Tue, 19 Jun 2012 02:30:22 -0700
+To: Marsh Ray <marsh@extendedsubset.com>
+Cc: Crypto List <cryptography@randombit.net>
+Subject: Re: [cryptography] Intel RNG
+
+On Tue, Jun 19, 2012 at 12:48 AM, Marsh Ray <marsh@extendedsubset.com> wrote:
+>...
+> Right, 500 MB/s of random numbers out to be enough for anybody.
+
+these rates often are not useful. even busy secure web or VPN servers
+use orders of magnitude less.
+
+initialization of full disk crypto across an SSD RAID could consume
+it, but that's the only "practical" use case i've encountered so far
+:)
+
+that said, a typical host entropy gathering daemon is often
+insufficient, and even off-die serial bus and other old skewl sources
+were providing entropy in kbit/sec rates, not MByte/sec.
+
+
+> My main point in running the perf numbers was to figure out the
+> justification for this RNG not being vulnerable to entropy depletion attacks
+> in shared hosting environments.
+
+some (many?) HWRNG designs use bit accumulators that feed a register
+that is read by a userspace instruction.
+
+consider the following configuration:
+- this register is collecting single bits from two high speed
+oscillators that is sub-sampling single bits at a quarter clock.
+- only whitened / non-run bits collected, as set in a configuration
+write / initialization.
+
+in short: providing slow, non-deterministic output rates to this
+entropy instruction.
+
+if the instruction is configured to not-block, you could starve the
+available pool in one thread, in one process, by using it
+aggressively.
+if the instruction is configured to block, you could introduce
+significantly processing delays (unexpectedly so?) to other consumers
+in other threads of execution, or other processes.
+
+Intel did an end run around this problem with the DRBG, which is
+similar to urandom, in the sense that it does not provide a 1:1
+correlation of entropy in the system to entropy bits returned out, as
+you may get in /dev/random linux behavior, which blocks once the
+kernel entropy pool is exhausted. (that's another rant/tangent. let's
+not go there :)
+
+
+
+> Still, 150 clocks is a crazy long time for an instruction that doesn't
+> involve a cache miss or a TLB flush or the like.
+>...
+> So something is causing AES-NI to take 300 clocks/block to run this DRBG.
+> Again, more than 3x slower than the benchmarks I see for the hardware
+> primitive. My interpretation is that either RdRand is blocking due to
+> "entropy depletion", there's some internal data pipe bottleneck, or maybe
+> some of both.
+
+it is also seeding from the physical noise sources, running sanity
+checks of some type, and then handing over to DRBG. so there is
+clearly more involved than just a call to AES-NI. 3x as expensive
+doesn't sound unreasonable if the seeding and validation overhead is
+significant.
+
+
+
+> If in reality there's no way RDRAND can ever fail to return 64 bits of
+> random data, then Intel could document that fact and we could save the world
+> from yet another untested exceptional code path that only had a moderate
+> chance of working the first time it's really needed anyway.
+
+that's a great idea, and my reading of it is that they have said as
+much. perhaps they should more clearly state it so for the usual case.
+my understanding is that you will never fail unless the hardware
+itself "starts up"? with a broken physical source returning clearly
+invalid bits.
+
+E.g. "In the rare event that the DRNG fails during runtime, it would
+cease to issue random numbers rather than issue poor quality random
+numbers."
+
+
+as for stating that it should never "run dry", or fail to not return
+bits as long as the instruction is working, no matter how frequently
+it is invoked, see:
+
+"""
+With respect to the RNG taxonomy discussed above, the DRNG follows the
+cascade construction RNG model, using a processor resident entropy
+source to repeatedly seed a hardware-implemented CSPRNG. Unlike
+software approaches, it includes a high-quality entropy source
+implementation that can be sampled quickly to repeatedly seed the
+CSPRNG with high-quality entropy. Furthermore, it represents a
+self-contained hardware module that is isolated from software attacks
+on its internal state. The result is a solution that achieves RNG
+objectives with considerable robustness: statistical quality
+(independence, uniform distribution), highly unpredictable random
+number sequences, high performance, and protection against attack.
+....
+Protecting online services against RNG attacks [read: high entropy
+consumption servers]
+...
+Throughput ceiling is insensitive to the number of contending parallel threads
+"""
+
+take with a gran of salt; this is all from their documentation:
+  http://software.intel.com/en-us/articles/intel-digital-random-number-generator-drng-software-implementation-guide/
+_______________________________________________
+cryptography mailing list
+cryptography@randombit.net
+http://lists.randombit.net/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

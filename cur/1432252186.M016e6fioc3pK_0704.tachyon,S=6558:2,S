@@ -1,0 +1,143 @@
+From cypherpunks-bounces@cpunks.org  Wed Jan 15 07:30:25 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0FCU5A0000727;
+	Wed, 15 Jan 2014 07:30:07 -0500
+Received: from plane.gmane.org (plane.gmane.org [80.91.229.3])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0FCU09a000717
+ (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Wed, 15 Jan 2014 07:30:03 -0500
+Received: from list by plane.gmane.org with local (Exim 4.69)
+ (envelope-from <gcsc-cypherpunks@m.gmane.org>) id 1W3PbY-0003nj-AR
+ for cypherpunks@cpunks.org; Wed, 15 Jan 2014 13:29:56 +0100
+Received: from ppp37-190-36-17.pppoe.spdop.ru ([37.190.36.17])
+ by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
+ id 1AlnuQ-0007hv-00
+ for <cypherpunks@cpunks.org>; Wed, 15 Jan 2014 13:29:56 +0100
+Received: from yumkam by ppp37-190-36-17.pppoe.spdop.ru with local (Gmexim 0.1
+ (Debian)) id 1AlnuQ-0007hv-00
+ for <cypherpunks@cpunks.org>; Wed, 15 Jan 2014 13:29:56 +0100
+X-Injected-Via-Gmane: http://gmane.org/
+To: cypherpunks@cpunks.org
+From: Yuriy Kaminskiy <yumkam@gmail.com>
+Subject: Re: consistent pcp/pbp formats (was: Curve p25519 Replacements for
+ GnuPG?(x2 now) ..)
+Date: Wed, 15 Jan 2014 16:29:44 +0400
+Lines: 91
+Message-ID: <lb5uvc$lfe$1@ger.gmane.org>
+References: <20140114111653.GD3900@r4> <lb4en4$hdt$1@ger.gmane.org>
+ <20140115093443.GE3900@r4>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=KOI8-R
+Content-Transfer-Encoding: 7bit
+X-Complaints-To: usenet@ger.gmane.org
+X-Gmane-NNTP-Posting-Host: ppp37-190-36-17.pppoe.spdop.ru
+User-Agent: Mozilla/5.0 (X11; Linux x86_64;
+ rv:17.0) Gecko/20131005 Thunderbird/17.0.9
+In-Reply-To: <20140115093443.GE3900@r4>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+Thomas von Dein wrote:
+> On Wed, Jan 15, 2014 at 02:46:08AM +0400, Yuriy Kaminskiy wrote:
+>>> When the user generates a new key, the ed25519 secret key will be
+>>> generated first. The curve25519 secret will be derived from that, since
+>> In general, reusing keys for different purposes (signing and encryption)
+>> considered bad idea, even through it is possible (RSA signing and RSA
+>> encryption, DSA signing and ElGamal/DH encryption [fwiw, this one considered
+>> *very* bad idea]).
+> 
+> Well, the libsodium developers not only told me how to do it, it was
+> their idea. However, it's of course very simple to generate them
+> separate.
+
+It is *possible* to use same RSA keypair for encryption and signing (and earlier
+pgp versions used to that). Does not mean it is *good idea* (and newer
+openpgp/gnupg switched to use separate keys for signing/encryption/certificate
+signing purposes, by subkeys mechanism).
+
+(For DH/DSA it is even worse, you *can* reuse same keypair, but this leads to
+leak of secret key material. I'm not sure if same leak scenario apply to
+ECDH[curve25519]/EdDSA[ed25519], but better safe than sorry. And keypair reuse
+is bad from operational security pov anyway).
+
+>> 1) Recipient needs to know sender public key. Bad.
+
+[clarification: sender *long-term* public key; of course, receiver needs to know
+public key that was used for message encryption; but this key need not be same
+with sender *long-term* key]
+
+> That's the way curve25519 works. It would be possible to use one time
+> keys but for this there has to be some kind of key exchange process
+> before. But since pcp runs in offline mode, I'm not sure how to do this
+> in a user friendly way.
+
+I explained: include (single-use) public key in message, in place of "hash of
+sender key id").
+
+>> 2) Message remains decipherable by sender. Very bad.
+> 
+> No, it doesn't. In order to decrypt a message one needs the recipient
+> secret key and the sender public key.
+
+Yes, it does. With your protocol, message can be alternatively deciphered with
+   crypto_open_box(c, n, sender_public_key, receiver_secret_key);
+(by receiver, good) or, alternatively, with
+   crypto_open_box(c, n, receiver_public_key, sender_secret_key);
+(by sender, *BAD*).
+
+With openpgp (and with my suggested change), sender does not retain secret key
+used for message encryption, and thus cannot decipher his own message.
+
+>> 3) Sender public key/identity leaks with each message. Very bad.
+> 
+> Because?
+> 
+> While I don't know how stef does it in pbp, I only add the key id to the
+> cipher so that the recipient knows which key has to be used to decrypt.
+> I'm not sure how it is bad to publish a key id. That's daily business
+> with pgp as well.
+
+Incorrect. This is NOT daily business with pgp. Openpgp does not use long-term
+sender keypair when it encrypt message (otherwise, how could you encrypt message
+without using passphrase?) and does not leak sender keyid (/by default/ gnupg
+leaks /recipient/ keyid, but it can be disabled with --hidden-recipient).
+
+>> 4) Sender needs access to her secret key. Bad.
+> 
+> Again, this is how curve25519 is designed.
+
+This has NOTHING to do with either curve25519 (or nacl) design.
+It is only how *YOU* are using it.
+
+>> Just generate single-use keypair, send public part with message, throw away
+>> secret part right after encryption.
+> 
+> The sender needs a public key from the recipient anyways. And to be able
+> to decrypt the message, the recipient has to retain her secret key. 
+
+I said nothing about *recipient* secret key. Recipient, of course, need to
+access to her secret key to decipher message. And sender, of course, needs to
+know recipient long-term public key.
+
+>> Oh, well, NIH-NIH-NIH, let's invent our own square-wheel bycicle.
+> 
+> Funny, but neither I nor stef invented anything. DJB did. 
+
+DJB has nothing to do with your self-invented protocol.
+DJB invented bending tool. *You* decided to use it to make square wheels.
+
+P.S. there were thing that openpgp did horrible wrong: keyids (they are harmful
+and useless crap). Funnily, you repeated their misdesign.
+

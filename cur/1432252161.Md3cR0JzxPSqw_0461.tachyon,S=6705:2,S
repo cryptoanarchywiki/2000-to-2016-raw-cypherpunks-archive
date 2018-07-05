@@ -1,0 +1,192 @@
+From owner-cypherpunks@lne.com  Mon Oct 20 16:56:32 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p3/8.11.6-03-31-03) with ESMTP id h9KKuUR05021
+	for <rsw@jfet.org>; Mon, 20 Oct 2003 16:56:30 -0400
+Received: from slack.lne.com (slack.lne.com [127.0.0.1])
+	by slack.lne.com (8.12.10/8.12.10) with ESMTP id h9KKfrGh019594
+	(version=TLSv1/SSLv3 cipher=EDH-DSS-DES-CBC3-SHA bits=168 verify=NO)
+	for <cypherpunks-goingout345@slack.lne.com>; Mon, 20 Oct 2003 13:41:53 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.10/8.12.10/Submit) id h9KKfrmD019593
+	for cypherpunks-goingout345; Mon, 20 Oct 2003 13:41:53 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Mon, 20 Oct 2003 22:41:45 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@lne.com
+Subject: [mnet-devel] DOS in DHTs (fwd from amichrisde@yahoo.de)
+Message-ID: <20031020204145.GL15714@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+User-Agent: Mutt/1.4i
+X-Converted-To-Plain-Text: from multipart/signed by demime 0.97c
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 5313
+Lines: 160
+
+This list is so dead, a few forwards don't hurt. Won't make it a habit,
+though.
+
+----- Forwarded message from Some Guy <amichrisde@yahoo.de> -----
+
+From: Some Guy <amichrisde@yahoo.de>
+Date: Mon, 20 Oct 2003 17:32:38 +0200 (CEST)
+To: mnet-devel@lists.sourceforge.net
+Subject: [mnet-devel] DOS in DHTs
+
+Ok as promissed, here's a bit of analysis on DOS in DHTs and trade offs with
+performance.  Have a
+nice read.
+
+
+I'm going to discuss Denial of Service Attacks (DOS) from within P2P networks,
+not the underlieing
+network (TCP/IP), independently of what routing system is used.
+
+The resistance R of a network to a DOS censure attack is the number of
+nodes/resources an
+adversary is forced to attack in order to make it hard to retrieve a
+particular piece of data.
+
+---- Really stupid routing (RSR)
+Let's talk about the most resistant network style there is first, the old
+Gnutella network.  Since
+data can be anywhere, a adversary is pretty much forced to attack all the
+nodes in the system.
+R = O(N)
+
+---- Global Hashes
+Let's talk about some of the pretty academic DHTs, which provide nice
+peformance by mapping each
+key onto a specific target node via global hash.  Many of these systems have
+the resistance of
+only one or a fixed number of nodes.
+R = O(1)
+
+---- Intermediate networks
+In between these two networks we have systems like Entropy which break thier
+hashspace down into s
+(s=16) specialized cells via a global hash, which then use simple RSR.
+http://entropy.stop1984.com/en/entropy.html
+
+I'm going to do some analysis on this type of network, which should generally
+be valid for DOS in
+all DHTs.
+s = specialization of the network
+r = redundancy with which a piece of data is stored
+d = search depth or number of specialized nodes asked
+p = probablity that the data is found
+N = total number of nodes
+R = Resistance to a DNS attack
+
+Since an adversary would not know which nodes in one of Entropy's cells had
+the data, he would be
+forced to attack all of them.
+R = O(N/s)
+
+This should be clear:
+p = 1-(1-r*s/N)^d
+
+At constant p we can evaluate design trade-offs at large N.
+s*r*d = O(N)
+or R = O(r*d)   regardless of N.
+
+There is a three way geometric trade-off between redundancy of storage (insert
+HTL*frequency, or
+popularity), query depth (request HTL), and resistance to DOS.  This is what
+I'm calling the holy
+trinity of DOS in DHTs.  I believe it holds true for all DHTs using global
+hashes.
+
+You could for example design a network where:
+R = N^0.5
+and
+r = d
+Thus making r and d O(N^0.25), which you might be able to live with.
+
+Here are some sample parameters and p, to give you an idea of the trade-offs
+in a million node
+net:
+n	r	d	s	p
+1000000	100	100	100	0.633967659
+1000000	100	10	1000	0.65132156
+1000000	10	100	1000	0.633967659
+1000000	100	100	100	0.633967659
+1000000	1000	10	100	0.65132156
+1000000	1000	100	10	0.633967659
+1000000	10	1000	100	0.632304575
+1000000	100	1000	10	0.632304575
+1000000	1	1000	1000	0.632304575
+1000000	10	10	10000	0.65132156
+
+1000000	1000	1	1000	1
+1000000	100	20	1000	0.878423345
+1000000	20	20	1000	0.332392028
+
+
+---- Non-Global Hashing
+I've got another neat trick to improve things a bit.  A trusted group of nodes
+could use a private
+hashing function to redistribute data between them.  As long as the adversary
+can not infiltrate
+the group, he is forced to flood the whole group.  A request or insert need
+only travel one hop
+through the group.
+
+In networks where there is believed to be a certain fraction of adversarial
+nodes f, you can
+calculate the optimal clustering c to throw random nodes together in this
+way.
+
+This local hashing cann't be used to get around the trinity, but just win a
+considerable boost to
+performance.  In each specialized cell you could have clusters of nodes,
+instead of single ones.
+
+I've got other ideas that involve key sharing to try to make clusters that can
+scale higher, but
+I'm not sure it's feasible/nessesary.
+
+---- One more point
+Replication (r) doesn't have to mean coping the data.  I could premix route to
+r nodes and only
+tell them I have the data.  I still will have done O(r) work though.  Think of
+it this way.
+<work done to DNS> = O( <work done by insertion> * <work done by request> )
+
+Likewise "depth" (d) for searches doesn't have to be HTL; you can search
+several nodes in
+parallel, but the system will still have used O(d) resources.
+
+
+
+
+__________________________________________________________________
+
+Gesendet von Yahoo! Mail - http://mail.yahoo.de
+Logos und Klingeltvne f|rs Handy bei http://sms.yahoo.de
+
+
+-------------------------------------------------------
+This SF.net email sponsored by: Enterprise Linux Forum Conference & Expo
+The Event For Linux Datacenter Solutions & Strategies in The Enterprise
+Linux in the Boardroom; in the Front Office; & in the Server Room
+http://www.enterpriselinuxforum.com
+_______________________________________________
+mnet-devel mailing list
+mnet-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/mnet-devel
+
+----- End forwarded message -----
+-- Eugen* Leitl <a href="http://leitl.org">leitl</a>
+______________________________________________________________
+ICBM: 48.07078, 11.61144 http://www.leitl.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+
+[demime 0.97c removed an attachment of type application/pgp-signature]
+

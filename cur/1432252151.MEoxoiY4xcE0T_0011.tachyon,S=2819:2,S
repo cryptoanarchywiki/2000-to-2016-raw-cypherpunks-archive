@@ -1,0 +1,59 @@
+From owner-cypherpunks@al-qaeda.net  Tue Jul  6 16:20:22 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i66LKMlc005519
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Tue, 6 Jul 2004 16:20:22 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i66LKMxh005518
+	for cypherpunks-outgoing; Tue, 6 Jul 2004 16:20:22 -0500
+Date: Tue, 6 Jul 2004 23:15:06 +0200 (CEST)
+From: Thomas Shaddack <shaddack@ns.arachne.cz>
+To: Cypherpunks <cypherpunks@al-qaeda.net>
+Subject: Email tapping by ISPs, forwarder addresses, and crypto proxies
+Message-ID: <0407062304530.-1275484700@somehost.domainz.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 1819
+Lines: 35
+
+Reading some news about the email wiretapping by ISPs, and getting an 
+idea.
+
+There are various email forwarding services, which are nothing more than a 
+SMTP server with pairs of recipient@forwarder.com -- 
+recipient@hiscurrentisp.com.
+
+Messages in storage have much lower judicial protection than messages in 
+transit. (This does not have much technical merit, in the current 
+atmosphere of "damn the laws - there are terrorists around the corner", 
+but can be seen as a nice little potential benefit.)
+
+There can be an easy enhancement for such forwarder service; GnuPG proxy. 
+Every email that arrives to the forwarder address, before it is forwarded 
+to the real recipient, is piped through a GnuPG script; the recipient has 
+then to upload his public key during the registration of the target 
+address, otherwise the function is the same. For added benefit, the 
+forwarder should support SMTP/TLS (STARTTLS) extension, so the connections 
+from security-minded owners of their own mailservers would be protected.
+
+The recipient himself then can either run his own mailserver and download 
+mails through fetchmail, or receive mails using SMTP/ETRN (both methods 
+allow automated decryption of such wrapped mail during its receiving), or 
+use a POP/IMAP decryption proxy, or have a plugin in mail client.
+
+(I know, auto-decryption is dangerous, but we now talk about the system 
+for one's grandma, transparent to use.)
+
+The only vulnerable parts of the mail route then will be the sender's 
+computer, the pathway between the sender and the forwarder server (if 
+SMTP/TLS is not used correctly or at all), the forwarder server (if 
+compromised), and the recipient's computer. The way between the forwarder 
+and the recipient's ISP, including the recipient's mailbox, is secured.
+
+What do you think about this scheme?
+

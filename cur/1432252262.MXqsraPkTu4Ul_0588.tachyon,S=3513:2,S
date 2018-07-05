@@ -1,0 +1,80 @@
+From owner-cypherpunks@al-qaeda.net  Mon Jul  2 09:00:21 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q62CvWEH017853
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 2 Jul 2012 08:57:32 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q62CvWsg017852
+	for cypherpunks-outgoing; Mon, 2 Jul 2012 08:57:32 -0400
+Date: Mon, 2 Jul 2012 14:57:29 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: zs-p2p@googlegroups.com, info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: Re: [tahoe-dev] switching from introducers to gossip?
+Message-ID: <20120702125729.GU12615@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Brian <warner@lothar.com> -----
+
+From: Brian <warner@lothar.com>
+Date: Sun, 01 Jul 2012 19:45:00 -0700
+To: tahoe-dev@tahoe-lafs.org
+Subject: Re: [tahoe-dev] switching from introducers to gossip?
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6;
+	rv:13.0) Gecko/20120614 Thunderbird/13.0.1
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+On 7/1/12 5:56 PM, Tony Arcieri wrote:
+
+> Is there any reason why you can't simply have multiple introducers,
+> which may have inconsistent views of the world, but which otherwise
+> function identically? Clients can use information gathered from all
+> introducers they're connected to in order to make connections to other
+> storage nodes. It seems like all that's really missing is a system to
+> construct the union of the available storage nodes as enumerated by
+> multiple introducers.
+
+That's doable (it's basically what the #68 Google Summer of Code project
+produced), and it would be more robust than the current
+one-lone-Introducer (and we need the "union of announcements" feature in
+any case). But it wouldn't decrease the administrative burden.. in fact
+it would be worse than a single introducer.
+
+Imagine a grid that has two Introducers and everybody knows about both
+of them (I1 and I2). Now the operator of one (I1) of them announces that
+they're going to retire it, so somebody (I3) else volunteers to add a
+replacement. We'll start with I1+I2, then have I1+I2+I3, then finish
+with I2+I3.
+
+With the #68-GSoC -style "introducer.furls", after the volunteer spins
+up I3, everybody in the entire grid has to edit their configs to add
+I3's new FURL.
+
+With gossip, the volunteer adds I3 and then they're done. Everyone else
+learns about I3 from I1/I2, then remembers I3, and connects to it even
+though I1 is gone.
+
+If you generalize this, then all nodes can function as introducers, and
+there's no need for dedicated Introducer nodes. As long as at least one
+node with a public IP is up at any given time, everybody else can learn
+the current state of the world.
+
+cheers,
+ -Brian
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

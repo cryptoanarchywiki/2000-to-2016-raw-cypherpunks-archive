@@ -1,0 +1,83 @@
+From owner-cypherpunks@al-qaeda.net  Wed Mar 24 13:50:37 2010
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id o2OHoadN010906
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 24 Mar 2010 13:50:36 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id o2OHoa2C010905
+	for cypherpunks-outgoing; Wed, 24 Mar 2010 13:50:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;        
+  d=gmail.com; s=gamma;        
+  h=domainkey-signature:mime-version:received:in-reply-to:references    
+       :date:message-id:subject:from:to:cc:content-type         
+  :content-transfer-encoding;        
+  bh=JLiu5HJOtpYVGmGii0oaf1rlessvoZmyyknshJs7ycc=;        
+  b=fKOQoylGtxKaws722B9TSkO5oM5REu8lKWRUaddkq2hlRbCXp3slvYNSdFGQUASvPU  
+  1DCFGJUuxekfJ1icOIplXx12KMAp/O6UT1VuUE7Rskt/usZYw1W/pp8oqjUd5kJxy3ZG  
+         YDGZXiNTm1dGqovFy+QjrWshpxF5Vex0fMMV4=
+DomainKey-Signature: a=rsa-sha1; c=nofws;         d=gmail.com; s=gamma; 
+  h=mime-version:in-reply-to:references:date:message-id:subject:from:to 
+          :cc:content-type:content-transfer-encoding;        
+  b=aHbQVwLITZV2uzhd+LOA9zt2sKFuXrFfsWQr+mPSVGgrZejEItIrD+SeTdTEPXeoim  
+  kA8BKDRypP58Mordpc7ugCaGPo2EnNZ9Z/y33O2WKuXvIJDfCAA+3tVx2frMlM02MCEV  
+         1SrMj94v2w76NNYHgOdrEm2mQMlPYFf6UDvYc=
+MIME-Version: 1.0
+In-Reply-To: <982443.2099.qm@web112116.mail.gq1.yahoo.com>
+References: <20100324075530.GN1964@leitl.org> 	
+  <982443.2099.qm@web112116.mail.gq1.yahoo.com>
+Date: Wed, 24 Mar 2010 10:50:33 -0700
+Message-ID: <4ef5fec61003241050u7fa6da96w38f9b4dd62cae6ee@mail.gmail.com>
+Subject: Re: [vserver] Bought an entropykey - very happy
+From: coderman <coderman@gmail.com>
+To: Morlock Elloi <morlockelloi@yahoo.com>
+Cc: cypherpunks@al-qaeda.net
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2090
+Lines: 39
+
+On Wed, Mar 24, 2010 at 8:43 AM, Morlock Elloi <morlockelloi@yahoo.com>
+wrote:
+> While avalanche noise (hoping it doesn't start to tunnel - that current must
+be actively controlled as each junction is different) is a good source of
+randomness (up to megabits / sec / junction), "encrypting" it just means
+masking possible low entropy. I'd prefer to see raw conditoned stream than
+"encrypted" one (even web content looks high-entropy to Diehard when
+encrypted).
+>...
+
+i have loved the padlock engines on via cores since they hit the
+market in C5XL form with a single hw generator available via XSTORE.
+unlike many designs this free wheeling resource can provide a torrent
+of entropy sufficient to sate even the most gregarious consumption.
+
+as mentioned above, you need a fast user space entropy daemon sanity
+checking the raw, (probably) biased stream coming from hardware but it
+is still good practice to digest this entropy to obscure any potential
+generator state/bias heading into the host entropy pool.
+
+that is to say, of the two common modes for utilizing hw entropy:
+a. conservatively sample from a whitened, string filtered entropy
+source for a low rate of high quality output (see xstore config words)
+b. ramp un-whitened, un-filtered source(s) to maximum rate and AES/SHA
+mix for high throughput, high quality output while irreversibly
+masking generator bias/state present in the raw source stream.
+
+the latter is more effective in practice and capable of generation
+rates > 20Mbps with full FIPS sanity checks. the former tops out
+around 1Mbps or less with more transient latency spikes on read (when
+successive attempts to read fail to pass whiten+strfilter). note that
+padlock engine supports SHA and AES on die as well making these easy
+and fast to apply to generator output.
+
+if you are still concerned a more conservative configuration would
+estimate entropy density while feeding from raw input stream and add
+encrypted/digested product to the host entropy pool with the specified
+entropy density estimate adjusted downward to your requirements. (most
+OS'es support this)
+

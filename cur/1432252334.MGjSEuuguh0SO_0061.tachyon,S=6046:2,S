@@ -1,0 +1,152 @@
+From owner-cypherpunks@al-qaeda.net  Fri Sep 17 05:33:02 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i8HAWdrS003548
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Fri, 17 Sep 2004 05:32:39 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i8HAWdDh003547
+	for cypherpunks-outgoing; Fri, 17 Sep 2004 05:32:39 -0500
+Message-ID: <414ABC15.3060506@systemics.com>
+Date: Fri, 17 Sep 2004 11:27:33 +0100
+From: Ian Grigg <iang@systemics.com>
+User-Agent: Mozilla Thunderbird 0.7.1 (X11/20040707)
+X-Accept-Language: en-us, en
+MIME-Version: 1.0
+To: Joe Touch <touch@ISI.EDU>
+CC: Bill Stewart <bill.stewart@pobox.com>, cypherpunks@al-qaeda.net
+Subject: Re: potential new IETF WG on anonymous IPSec
+References: <20040909195729.4798957E2B@finney.org>
+  <6.0.3.0.0.20040910223501.0403c120@pop.idiom.com>
+  <4148C843.9000700@systemics.com> <414A02D5.3080702@isi.edu>
+In-Reply-To: <414A02D5.3080702@isi.edu>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Content-Length: 4651
+Lines: 117
+Status: O
+X-Status: 
+X-Keywords:                  
+X-UID: 1139
+
+Joe Touch wrote:
+> Ian Grigg wrote:
+
+>> On the backbone, between BGP peers, one would have thought
+>> that there are relatively few attackers, as the staff are
+>> highly trusted and the wires are hard to access - hence no
+>> active attacks going on and only some passive eavesdropping
+>> attacks.  Also, anyone setting up BGP routing knows the other
+>> party, so there is a prior relationship.
+> 
+> 
+> My understanding of the attacks this past spring is that:
+>     a) they were indeed on the backbone BGP peers
+>     b) that those peers had avoided setting up
+>        preshared keys or getting mutually-authenticatable
+>        certificates because of the configuration overhead
+>        (small on a per-pair basis, but may be large
+>        in aggregate)
+> 
+> While inspired by this issue, there may be other solutions (e.g., IMO 
+> IPsec) which are more appropriate for BGP peers.
+
+
+Thanks for the clarification.  Re-reading (all) of
+the above, I noticed that these are DOS attacks.
+(That changes things - crypto protocols don't really
+a priori stop or defeat DOS attacks.  They can help,
+or they may not, it all depends.)
+
+It's then important to examine the threat here.  Who is
+the attacker and what motives and tools does he have
+available?  It would be annoying to do all the work,
+only to discover that he has other tools that are just
+as easy...  (This is called what's-your-threat-model,
+sometimes abbreviated to WYTM?)
+
+>> The whole point of the CA model is that there is no prior
+>> relationship and that the network is a wild wild west sort
+>> of place
+> 
+> 
+> Except that certs need to be signed by authorities that are trusted.
+
+Right, in that the CA model seeks to add trust
+to the wild wild west by the provision of these
+signed / trusted certs.  Whether it achieves that
+depends on the details.  It is not wise to just
+assume it succeeds because someone said so.
+
+>> - both of these assumptions seem to be reversed
+>> in the backbone world, no?  So one would think that using
+>> opportunistic cryptography would be ideal for the BGP world?
+>>
+>> iang
+> 
+> 
+> I wouldn't think that the encryption need be opportunistic; in the BGP 
+> backbone world, as you noted, peers are known a-priori, and should have 
+> certs that could be signed by well-known, trusted CAs.
+
+Let's see if I can make these assumptions clearer, because
+I still perceive that CAs have no place in BGP, and you seem
+to be assuming that they do.
+
+In the world of PKIs, there are some big assumptions.  Here's
+two of them:
+
+    Alice and Bob don't know each other, and don't necessarily
+    trust each other.
+
+    There exists a central stable party that *both* Alice and
+    Bob know better than each other and can be trusted to pass
+    the trust on.  Known as a trusted third party, TTP, or a
+    certificate authority, CA, in particular.
+
+This situation exists in large companies for example - the
+company knows Alice and Bob better than they may know each
+other.  (In theory.)
+
+Now, whether it exists in any real world depends on which
+world pertains.  In the world of browsing, it is .. assumed
+to exist, but that can be challenged.  In the world of email,
+it pretty clearly doesn't exist - almost all (desired) email
+is done between known parties, and the two parties generally
+have much better ways of establishing and bootstrapping a
+crypto relationship than asking for some centralised party
+to do it.  (Hence, the relative success of PGP over S/MIME.)
+Ditto for the world of secure systems administration (SSH).
+
+When we come to BGP, it seems that BGP routing parties have
+a very high level of trust between them.  And this trust is
+likely to exceed by orders of magnitude any trust that a third
+party could generate.  Hence, adding certs signed by this TTP
+(well known CA or not) is unlikely to add anything, and will
+thus likely add costs for no benefit.
+
+If anyone tried to impose a TTP for this purpose, I'd suspect
+the BGP admins would ignore it.  Another way of thinking about
+it is to ask who would the two BGP operators trust more than
+each other?
+
+In such a world, a CA-signed certificate is an encumberance
+only, and seems to be matched by comments in the AnonSec
+draft that they are unlikely to be deployed.
+
+iang
+
+PS: on the general issue of doing what you call anonSec,
+I'd say, fantastic, definately overdue, could save IPSec
+from an embarrassingly slow adoption!  I do concur with all
+the other posts about how "anon" is the wrong word, but I'd
+say that getting the right term is not so important as doing
+the work!
+
+On the point of what the right word is, that depends on
+the technique chosen.  I haven't got that far in the draft
+as yet.
+

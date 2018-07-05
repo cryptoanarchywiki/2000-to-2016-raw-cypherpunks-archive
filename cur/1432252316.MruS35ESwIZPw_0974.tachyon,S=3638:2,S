@@ -1,0 +1,79 @@
+From owner-cypherpunks@al-qaeda.net  Fri Mar 30 05:04:55 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q2U91phf024399
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 30 Mar 2012 05:01:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1333098111;
+	bh=lBqtjHq21JBklVX3UROo/fwD9izS3c8SoOgospECCoI=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=3tINv+aiuru+Cjtm25o+W0RCyHbMJtv+EOBH4PiYn3sTehcxED1qjMMrWC8xRYJgE
+	 PUxwN1iax34I00C1Fp62YcZTN9+6qWxVo9+WlFY4PR0I2Pl0k/CXWO/oWIAJRi5goz
+	 8osRQWekEp0jS0W6nbI1dF4v/Sl9WOEen4+ET02w=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q2U91pqx024398
+	for cypherpunks-outgoing; Fri, 30 Mar 2012 05:01:51 -0400
+Date: Fri, 30 Mar 2012 11:01:47 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: [tor-talk] Choosing a name for a .onon
+Message-ID: <20120330090147.GV14482@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Maxim Kammerer <mk@dee.su> -----
+
+From: Maxim Kammerer <mk@dee.su>
+Date: Fri, 30 Mar 2012 04:52:40 +0300
+To: tor-talk@lists.torproject.org
+Subject: Re: [tor-talk] Choosing a name for a .onon
+Reply-To: tor-talk@lists.torproject.org
+
+On Fri, Mar 30, 2012 at 01:54, Seth David Schoen <schoen@eff.org> wrote:
+> Choosing the first 40 bits of a hash generally requires trying an average of 2b4b0
+> possibilities; my laptop does about 3-4 million SHA1 operations per second
+> (per CPU core) so it would take me 3-4 days (per CPU core) of computation
+> to try that many possibilities on my laptop.
+
+Due to proliferation of Bitcoin, there are now very efficient SHA-256
+generators for off-the-shelf GPUs. The numbers at [1] suggest
+performance that's at least two orders of magnitude faster than your
+laptop b and for double-SHA-256 instead of a single SHA-1 (which I
+assume can be done by the same software after some simple adaptation).
+
+[1] https://en.bitcoin.it/wiki/Mining_hardware_comparison
+
+> Of course this requires being able to change something trivial about the
+> public key when generating the .onion address.
+
+Not necessarily b you can generate the hash first, and then check
+whether the public key is legal. I.e., generate a 512-bit prime p, and
+then go on with producing a completely random 512-bit e, and checking
+whether SHA-1(ASN.1-RSAPublicKey(modulus=p*e, exponent=65537)) (which
+is how Tor computes the .onion address) produces the desired result.
+If it does, check whether e is prime. Density of primes in the range
+of e is ~1/512, so that's just 9 bits more of search space, and
+primality checking efficiency doesn't matter much.
+
+-- 
+Maxim Kammerer
+LibertC) Linux (discussion / support: http://dee.su/liberte-contribute)
+_______________________________________________
+tor-talk mailing list
+tor-talk@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-talk
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

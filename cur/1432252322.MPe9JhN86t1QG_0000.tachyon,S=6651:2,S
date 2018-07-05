@@ -1,0 +1,134 @@
+From owner-cypherpunks@Algebra.COM  Mon Aug 12 14:50:28 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7CIoSY20214
+	for <rsw@opamp.org>; Mon, 12 Aug 2002 14:50:28 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id OAA08498
+	for <rsw@mit.edu>; Mon, 12 Aug 2002 14:50:27 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7CIWlD6030869
+	for <cypherpunks-outgoing@ak47.algebra.com>; Mon, 12 Aug 2002 13:32:47 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g7CIWlko030868
+	for cypherpunks-outgoing; Mon, 12 Aug 2002 13:32:47 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7CIWZD6030849
+	for <cypherpunks@ak47.algebra.com>; Mon, 12 Aug 2002 13:32:36 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7CIWTEv030026
+	for cypherpunks@ak47.algebra.com; Mon, 12 Aug 2002 11:32:29 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7CIWSnk030019
+	for cypherpunks-goingout345; Mon, 12 Aug 2002 11:32:28 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Message-ID: <007101c241d2$487aa510$0400010a@bal600>
+From: "Brian A. LaMacchia" <bal@farcaster.com>
+To: cypherpunks@lne.com
+X-Orig-To: "Lucky Green" <shamrock@cypherpunks.to>,
+  <cypherpunks@lne.com>, <cryptography@wasabisystems.com>
+References: <004601c23d28$791bb3c0$6801a8c0@xpserver>
+Old-Subject: Re: Challenge to David Wagner on TCPA
+Date: Mon, 12 Aug 2002 00:27:22 -0700
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook Express 6.00.3663.0
+X-Loop: cypherpunks@lne.com
+X-spam: 5 
+Subject:  Re: Challenge to David Wagner on TCPA
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 4224
+Lines: 83
+
+
+I just want to point out that, as far as Palladium is concerned, we really
+don't care how the keys got onto the machine. Certain *applications* written
+on top of Palladium will probably care, but all the hardware & the security
+kernel really care about is making sure that secrets are only divulged to
+the code that had them encrypted in the first place.  It's all a big trust
+management problem (or a series of trust management problems) --
+applications that are going to rely on SCP keys to protect secrets for them
+are going to want some assurances about where the keys live and whether
+there's a copy outside the SCP.  I can certainly envision potential
+applications that would want guarantees that the key was generated on the
+SCP & never left, and I can see other applications that want guarantees that
+the key has a copy sitting on another SCP on the other side of the building.
+
+So the complexity isn't in how the keys get initialized on the SCP (hey, it
+could be some crazy little hobbit named Mel who runs around to every machine
+and puts them in with a magic wand).  The complexity is in the keying
+infrastructure and the set of signed statements (certificates, for lack of a
+better word) that convey information about how the keys were generated &
+stored.  Those statements need to be able to represent to other applications
+what protocols were followed and precautions taken to protect the private
+key.  Assuming that there's something like a cert chain here, the root of
+this chain chould be an OEM, an IHV, a user, a federal agency, your company,
+etc. Whatever that root is, the application that's going to divulge secrets
+to the SCP needs to be convinced that the key can be trusted (in the
+security sense) not to divulge data encrypted to it to third parties.
+Palladium needs to look at the hardware certificates and reliably tell
+(under user control) what they are. Anyone can decide if they trust the
+system based on the information given; Palladium simply guarantees that it
+won't tell anyone your secrets without your explicit request..
+
+                    --bal
+
+P.S. I'm not sure that I actually *want* the ability to extract the private
+key from an SCP after it's been loaded, because presumably if I could ask
+for the private key then a third party doing a black-bag job on my PC could
+also ask for it.  I think what I want is the ability to zeroize the SCP,
+remove all state stored within it, and cause new keys to be generated
+on-chip.  So long as I can zero the chip whenever I want (or zero part of
+it, or whatever) I can eliminate the threat posed by the manufacturer who
+initialized the SCP in the first place.
+
+Lucky Green <shamrock@cypherpunks.to> wrote:
+> Ray wrote:
+>>
+>>> From: "James A. Donald" <jamesd@echeque.com>
+>>> Date: Tue, 30 Jul 2002 20:51:24 -0700
+>>
+>>> On 29 Jul 2002 at 15:35, AARG! Anonymous wrote:
+>>>> both Palladium and TCPA deny that they are designed to restrict
+>>>> what applications you run.  The TPM FAQ at
+>>>> http://www.trustedcomputing.org/docs/TPM_QA_071802.pdf reads
+>>>> ....
+>>>
+>>> They deny that intent, but physically they have that capability.
+>>
+>> To make their denial credible, they could give the owner
+>> access to the private key of the TPM/SCP.  But somehow I
+>> don't think that jibes with their agenda.
+>
+> Probably not surprisingly to anybody on this list, with the exception
+> of potentially Anonymous, according to the TCPA's own TPM Common
+> Criteria Protection Profile, the TPM prevents the owner of a TPM from
+> exporting the TPM's internal key. The ability of the TPM to keep the
+> owner of a PC from reading the private key stored in the TPM has been
+> evaluated to E3 (augmented). For the evaluation certificate issued by
+> NIST, see:
+>
+> http://niap.nist.gov/cc-scheme/PPentries/CCEVS-020016-VR-TPM.pdf
+>
+>> If I buy a lock I expect that by demonstrating ownership I
+>> can get a replacement key or have a locksmith legally open it.
+>
+> It appears the days when this was true are waning. At least in the PC
+> platform domain.
+>
+> --Lucky
+>
+>
+> ---------------------------------------------------------------------
+> The Cryptography Mailing List
+> Unsubscribe by sending "unsubscribe cryptography" to
+> majordomo@wasabisystems.com
+

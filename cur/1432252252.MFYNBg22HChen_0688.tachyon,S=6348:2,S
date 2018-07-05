@@ -1,0 +1,138 @@
+From owner-cypherpunks@Algebra.COM  Thu Aug 29 13:10:20 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7THAGR27807
+	for <rsw@opamp.org>; Thu, 29 Aug 2002 13:10:20 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id NAA23649
+	for <rsw@mit.edu>; Thu, 29 Aug 2002 13:10:15 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7TFmOi4027886
+	for <cypherpunks-outgoing@ak47.algebra.com>; Thu, 29 Aug 2002 10:48:24 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g7TFmOOM027885
+	for cypherpunks-outgoing; Thu, 29 Aug 2002 10:48:24 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7TFmJi4027869
+	for <cypherpunks@ak47.algebra.com>; Thu, 29 Aug 2002 10:48:20 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7TFmH7i017690
+	for cypherpunks@ak47.algebra.com; Thu, 29 Aug 2002 08:48:17 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7TFgOUq017667
+	for cypherpunks-goingout345; Thu, 29 Aug 2002 08:42:24 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+X-Authentication-Warning: hydrogen.leitl.org: eugen owned process doing
+  -bs
+Date: Thu, 29 Aug 2002 17:42:09 +0200 (CEST)
+From: Eugen Leitl <eugen@leitl.org>
+To: <cypherpunks@lne.com>
+Old-Subject: [mnet-devel] ONE_HOP_PRIVACY (fwd)
+Message-ID: <Pine.LNX.4.33.0208291741460.17986-100000@hydrogen.leitl.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Loop: cypherpunks@lne.com
+X-spam: 45 
+Subject:  [mnet-devel] ONE_HOP_PRIVACY (fwd)
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 4086
+Lines: 90
+
+
+---------- Forwarded message ----------
+Date: Thu, 29 Aug 2002 01:39:05 -0300
+From: Zooko <zooko@zooko.com>
+To: mnet-devel@lists.sourceforge.net
+Subject: [mnet-devel] ONE_HOP_PRIVACY
+
+A discussion on IRC [1] led me to implement this simple hack.  It makes it
+so that all outgoing messages that can be sent through your preferred
+relayer
+are sent through your preferred relayer.  (If you turn on ONE_HOP_PRIVACY
+in your broker.conf file.)  If you also turn on SERVE_USING_RELAY under
+the YESNO section in your broker.conf, then the only peers who will learn
+your actual IP address will be the relay servers that you use and the meta
+trackers (with whom you must talk in order to get the IP addresses of the
+relay servers, as well as to get the public keys of the various peers).
+
+Needless (?) to say, this is not "strong" anonymity, as envisioned by David
+Chaum, capable of hiding your traffic against dedicated NSA spooks.
+It is, however, comparable to the kind of anonymity offered by networks
+such as Freenet.
+
+Regards,
+
+Zooko
+
+[1] server: irc.openprojects.net, channel #mnet
+
+--- common/MojoTransaction.py   28 Jul 2002 20:46:13 -0000      1.18
++++ common/MojoTransaction.py   29 Aug 2002 04:12:55 -0000
+@@ -1292,7 +1292,29 @@
+             # pick the most preferred connection strategy and use it
+             newcs = reduce(CommStrat.choose_best_strategy, commstrat_list)
+             del commstrat_list
+-            self._ch.use_comm_strategy(counterparty_id, newcs,
+orig_cs=counterparty_info['connection strategies'][0])
++            self._ch.use_comm_strategy(counterparty_id, newcs)
++
++            # XXX begin code for the OneHopPrivacy hack
++            if confman.is_true_bool('ONE_HOP_PRIVACY'):
++                thisisMT = false
++                for meta_tracker_id, meta_tracker_infodict in
+MetaTrackerLib.find_meta_trackers(self):
++                    if idlib.equal(meta_tracker_id, counterparty_id):
++                        thisisMT = true
++                        break
++                # copy one of these strategies and change its llstrat to be
+"relay through our preferred RS".
++                # Unless of course this *is* our preferred RS.  And unless
+of course we don't *have* a preferred RS.
++                preferredrsId =
+self._listenermanager._relayl._get_favorite()
++                if (not preferredrsId) and (not thisisMT):
++                    debugprint("WARNING: can't send message to %s because
+we currently have no preferred relay server and we are in OneHopPrivacy
+mode.\n", args=(counterparty_id,), v=0, vs="metatracking")
++                    fast_fail_handler(failure_reason="no preferred relay
+server while in OneHopPrivacy mode")
++                    return
++
++                if (not thisisMT) and (not idlib.equal(counterparty_id,
+preferredrsId)):
++                    onehopprivstrat = CommStrat.Crypto(newcs._pubkey,
+CommStrat.Relay(preferredrsId, counterparty_id, self), newcs._broker_id)
++                    self._ch.forget_comm_strategy(counterparty_id) #
+*force* us to forget the old one.  Else someone could make a TCP connection
+to us, and then we would start sending him messages over it.  Oh waitasec --
+he can already verify that we are who he suspects us to be by making a TCP
+connection and sending us a message encrypted with our public key.  Oh well.
++                    self._ch.use_comm_strategy(counterparty_id,
+inehopprivstrat)
++            # XXX end code for the OneHopPrivacy hack
++
+             try:
+                 # debugprintsend(diagstr="sending directly [a] ...", v=5,
+vs="conversation")
+                 self._ch.send_msg(counterparty_id, msg, mojooffer,
+hint=hint, fast_fail_handler=fast_fail_handler, timeout=timeout)
+
+
+
+
+-------------------------------------------------------
+This sf.net email is sponsored by: Jabber - The world's fastest growing 
+real-time communications platform! Don't just IM. Build it in! 
+http://www.jabber.com/osdn/xim
+_______________________________________________
+mnet-devel mailing list
+mnet-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/mnet-devel
+

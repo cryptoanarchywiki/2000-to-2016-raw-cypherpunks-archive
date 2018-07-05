@@ -1,0 +1,82 @@
+From owner-cypherpunks@al-qaeda.net  Sat Oct 27 11:35:10 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q9RFVp4Y031803
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sat, 27 Oct 2012 11:31:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1351351911;
+	bh=9lPCM9I4j/jRS1uZ20UKxOl0cmDRFi5RA7TVAdx1A4w=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=fLSQtqZDBzy2AclhVfqj8/kaw6ENds6MX1daLGrPA4klDQtLTXyOs9ETtC4J9qS0R
+	 3fQh/iQHDVw5+dndE+QbbEMZbYiPIMZkF3hNUmmHqOa9Jv/QXHS4+upmwKs74wFmRQ
+	 XF3uuONt3pcurjb2QLF1m+8yGs8VXzimuRXCdVVg=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q9RFVpx4031802
+	for cypherpunks-outgoing; Sat, 27 Oct 2012 11:31:51 -0400
+Date: Sat, 27 Oct 2012 17:31:47 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, zs-p2p@googlegroups.com, info@postbiota.org
+Subject: Re: [tahoe-dev] where is meta data store in tahoe?
+Message-ID: <20121027153147.GQ9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2272
+Lines: 50
+
+----- Forwarded message from Zooko Wilcox-O'Hearn <zooko@zooko.com> -----
+
+From: Zooko Wilcox-O'Hearn <zooko@zooko.com>
+Date: Sat, 27 Oct 2012 08:08:49 -0600
+To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+Subject: Re: [tahoe-dev] where is meta data store in tahoe?
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+On Thu, Oct 25, 2012 at 10:50 PM, hi <hi@guanyu.name> wrote:
+> where is meta data store in tahoe, is it stored on the tahoe client server?
+
+Hi. In typical Distributed File Systems like gluster, the contents of
+the files are distributed across many storage servers, and the
+"metadata" is managed by a single metadata server or a small cluster
+of metadata servers.
+
+By "metadata", Distributed File Systems folks mean the directory
+structure -- what files are under what paths -- and ownership and
+permission bits and timestamps, and also maybe some information about
+which storage servers are holding which files.
+
+In Tahoe-LAFS, the directory structure part of that is encrypted by
+the storage client and then uploaded to the same storage servers that
+hold the file data. Those storage servers can't tell whether a given
+block of ciphertext that they've been asked to hold contains encrypted
+file data or encrypted directory data.
+
+In Tahoe-LAFS, the "which storage server holds which file" question is
+answered by the client *searching* the servers for the file when it
+wants to read or write it. This means no metadata anywhere needs to be
+updated when storage servers come and go, but it does mean more
+network operations are needed to begin uploading or downloading a
+file. We use a consistent hashing scheme, with a "tweakable" extension
+invented by Brian Warner, to make it so that the client usually looks
+in the right place to find the file with its first guess.
+
+Regards,
+
+Zooko
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

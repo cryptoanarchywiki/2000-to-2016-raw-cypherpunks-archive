@@ -1,0 +1,282 @@
+From owner-cypherpunks@al-qaeda.net  Fri Feb  3 04:53:33 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q139oOdg014356
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 3 Feb 2012 04:50:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1328262624;
+	bh=f1xuE9Hz0Q+5aaeONP0M7kYaidKVmT96rvSVgUwpvVY=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=qlZuPzuGwC3CrxJuMvciseO1Ba4JurP8dWJCbPrlAFSMzu0bmQTorKxz0W2+FNOlc
+	 SMSTD9xCg9E/+YqGeSrszivKrAl8pCsrUuo+1GF8TSEOTqWVQI1XzhEmzZkfasASca
+	 4K307NlDVJb8nGwz6cyeQoCX89EYj7muVOBhOIh4=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q139oOg5014355
+	for cypherpunks-outgoing; Fri, 3 Feb 2012 04:50:24 -0500
+Date: Fri, 3 Feb 2012 10:50:20 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: [liberationtech] Fw: Concept for takedown-resistant
+  publishing
+Message-ID: <20120203095020.GM7343@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 11387
+Lines: 249
+
+----- Forwarded message from Daniel Margo <dmargo@eecs.harvard.edu> -----
+
+From: Daniel Margo <dmargo@eecs.harvard.edu>
+Date: Thu, 02 Feb 2012 20:02:37 -0500
+To: Kendra Albert <kalbert@cyber.law.harvard.edu>
+Cc: Victor Shnayder <shnayder@gmail.com>,
+	Matt Becker <matthewbbecker@gmail.com>,
+	Esther Lim <ehslim@gmail.com>,
+	Alicia Solow-Niederman <aliciasn@cyber.law.harvard.edu>,
+	liberationtech@lists.stanford.edu
+Subject: Re: [liberationtech] Fw: Concept for takedown-resistant publishing
+User-Agent: Mozilla/5.0 (X11; Linux x86_64;
+	rv:9.0) Gecko/20111229 Thunderbird/9.0
+
+Let me try to explain what is and isn't technically difficult about this  
+idea. Feel free to pass it around. I have cc'd the liberationtech list.
+
+Torrent is an open protocol. There are numerous open source torrent  
+libraries. Opera can download torrents natively, for Firefox there are  
+extensions to do this, and so far as I know every browser has some kind of 
+plug-able framework for MIME type (Internet media type) handling. To have a 
+browser download and then open a torrent of a page is totally realistic, 
+and probably not that much code.
+
+The problem is that this is not the actual technical challenge. The actual 
+challenges are these:
+1. Name resolution: How do I find the torrent file, and then the P2P cloud 
+itself?
+2. Updates: How do I share a Web site as a living, updating document?
+3. Server backend: Is it realistic to run a modern Web site without a  
+client-server relationship?
+
+1. Name resolution comes in two parts: finding the torrent file, and then 
+finding the actual P2P cloud. Web sites like The Pirate Bay function as 
+name resolution services for finding torrent files, but obviously any 
+single such server can be blocked. What I presume we actually desire is a 
+name resolution service just like DNS for Web sites: you type in a URL, it 
+gets resolved to a torrent file.
+
+URLs have a hostname and a path, e.g.  
+"www.hostname.com/path/to/torrent.file". "www.hostname.com" is resolved by 
+DNS to a server, and then "/path/to/torrent.file" is resolved by that  
+server. So unfortunately, you don't gain any takedown resistance by  
+hosting your torrent file at "www.myserver.com/my.torrent", because if  
+"www.myserver.com" is taken down, then "/my.torrent" can't be resolved. So 
+what you would actually need is for DNS to provide hostname resolution 
+directly into torrents. This is a sweet idea, but changing DNS is hard.
+
+Even if you could do that, well, what's in a "torrent file"? A torrent  
+file contains information to get you joined into the P2P cloud;  
+specifically, it contains the address of a tracker, a central server that 
+gates entry into the cloud. If the tracker is down or blocked by some 
+technology, you can't enter the cloud. This is primarily a weakness of the 
+BitTorrent protocol, and not the idea itself; there are extensions to 
+BitTorrent and other P2P protocols that are resilient to this weakness. But 
+fundamentally, finding your way into the P2P cloud is an act of name 
+resolution to find other peers in the cloud, which is most easily done by a 
+name resolution server, in this case the tracker. If we're going about 
+making changes to DNS, probably the most technically sane (but politically 
+unrealistic) solution would be for DNS itself to provide tracking 
+capability for the cloud. Again, that is a sweet idea, but changing DNS is 
+hard.
+
+I don't mean to suggest these issues are insurmountable, merely that this 
+is the actual Hard Part.
+
+2.  In order to support dynamic content there has to be a cryptographic  
+distinction between updates coming from the legitimate publisher of the  
+site (Alice), and subterfuge coming from Evil Eve. Cryptographic  
+authentication might be authenticated by the data being shared (e.g. this 
+data is signed by Alice, and everybody knows her signature) or by the P2P 
+network itself (e.g. in addition to sharing the torrent, the servers also 
+provide a distributed authentication service that will only accept updates 
+signed by Alice). I am by no means an expert on this subject, so I will 
+refrain from talking about it extensively, but I bring it up merely because 
+cryptography is non-optional for any dynamic scheme, and I'm not aware of 
+any update-able, cryptographically-secured P2P torrents. It sounds like 
+maybe they should exist? It also sounds Hard, and Google isn't turning 
+anything up.
+
+Again, I'm not suggesting these issues are insurmountable; in some sense  
+Google Docs does all this. But they do it with a pretty sophisticated  
+backend that glues many technologies together (I guarantee Google has a  
+killer internal name resolution and authentication service), and I have no 
+idea how Hard it would be to make those parts takedown-resistant (in the 
+sense that there are no central servers. There are unquestionably central 
+servers at Google).
+
+3. The real elephant in the room is that modern Web sites are best thought 
+of as programs, not files, and program distribution is infinitely harder 
+than file distribution. When you visit a Wordpress blog, what you appear to 
+receive is an HTML file: but in actuality that HTML was streamed by a PHP 
+script running on the server talking to a MySQL database. The number of 
+layers in this onion is arbitrary; it's anything you could run on a 
+computer. Arbitrary code, or I could hook MSPaint up to the thing if I 
+wanted it enough. Distributing *and executing* arbitrary code like this is 
+Quite Possibly Impossible, and if it is possible it is Very Far Away. At 
+any rate, BitTorrent can't do this.
+
+The word "arbitrary" is important. In specific cases, you can certainly  
+find a case-specific resolution. Diaspora is building something like a  
+distributed social network "program", and I do honestly believe that with a 
+lot of code and hard thinking, you could distribute a Wordpress blog's 
+backend on P2P. It would probably require a total rewrite of Wordpress such 
+that it wouldn't even be the same piece of software, and you would have to 
+solve the other Hard Problems above, but I think it is technically possible 
+at this time. But in the general case, you might have more luck working 
+towards a Singularity and then asking the Machine-Gods for an answer.
+
+What seems more realistic to me is taking snapshots of a Web site and  
+distributing those as files instead, rather than trying to distribute the 
+actual Web site program. That's why we designed Mirror As You Link to work 
+that way.
+
+These are all the hard issues I can think of, as a technical person with  
+some distributed systems background. There may be others, since in some  
+cases we're really exploring uncharted waters here.
+- Daniel Margo
+
+On 02/02/2012 10:40 AM, Kendra Albert wrote:
+> Some interesting stuff
+>
+> ---
+> Kendra Albert
+>
+> Research Assistant to Jonathan Zittrain
+> Berkman Center for Internet and Society
+> Harvard University
+>
+> Forwarded message:
+>
+>> *From:* Jonathan Zittrain <zittrain@law.harvard.edu>
+>> *To:* Rob Faris <rfaris@cyber.law.harvard.edu>
+>> *Cc:* emstark@gmail.com, Kendra Albert  
+>> <kalbert@cyber.law.harvard.edu>, Alicia Solow-Niederman (Google Docs)  
+>> <asolowniederman@gmail.com>
+>> *Date:* Wednesday, February 1, 2012 6:08:49 PM
+>> *Subject:* Re: Fwd: [liberationtech] Concept for takedown-resistant  
+>> publishing
+>>
+>> thanks
+>>
+>> At UTC-5 03:51 PM 2/1/2012, Rob Faris wrote:
+>>> I have no idea if this has any merit - but think of you when I see  
+>>> content mirroring.
+>>>
+>>>
+>>> -------- Original Message --------
+>>> Subject: [liberationtech] Concept for takedown-resistant publishing
+>>> Date: Wed, 01 Feb 2012 21:49:42 +0100
+>>> From: Fabio Pietrosanti (naif) <lists@infosecurity.ch>  
+>>> <mailto:lists@infosecurity.ch>
+>>> To: liberationtech@lists.stanford.edu  
+>>> <mailto:liberationtech@lists.stanford.edu>
+>>>
+>>>
+>>>
+>>> Hi all,
+>>>
+>>> with a brainstorming with various persons it went out an idea of a
+>>> concept of a takedown-resistat publishing system for website.
+>>>
+>>> I'm writing here to submit the concept idea to contribution/critics,
+>>> maybe someone will do it someday (if feasible).
+>>>
+>>> I tried to abstract two concept:
+>>>
+>>> a) What is a website?
+>>> A website is a set of information (text/images) that can be accessed by
+>>> a user trough a web browser.
+>>>
+>>> b) What do you need to be takedown-resistant?
+>>> Have a lot of mirrors, on as many server as possible around the globe.
+>>>
+>>> c) How do you make a lot of mirror available?
+>>> By making use a very simple and diffused technology for the mirroring,
+>>> possibly something that's already diffused across a lot of users.
+>>>
+>>> d) Which is the most known/used information distribution/mirroring
+>>> system used nowday?
+>>>
+>>> Bittorrent P2P system.
+>>> Bittorrent is the system that today is most used to do file-sharing,
+>>> de-facto spreading, distributing, mirroring files.
+>>> Bittorrent software is widely available and heavily diffused among
+>>> users.
+>>>
+>>> So, if it would be possible to let a browser easily access the content
+>>> available on bittorrent, it would be possible to easily create a
+>>> scalable, distributed and resistant network of mirrors capable of
+>>> resisting takedown.
+>>>
+>>> Obviously this require:
+>>> - That the content on bittorrent should be file containing all the
+>>> elements of the website glued together
+>>> - That the web browser should have capability to access a such content
+>>> on Bittorrent
+>>>
+>>> I am not entering into the technological discussion, if it's feasible or
+>>> not feasible (maybe not, maybe yes).
+>>>
+>>> As a concept, what do you think? Other ideas/extensions?
+>>>
+>>> -naif
+>>> _______________________________________________
+>>> liberationtech mailing list
+>>>
+>>> liberationtech@lists.stanford.edu  <mailto:liberationtech@lists.stanford.edu>
+>>>
+>>> Should you need to change your subscription options, please go to:
+>>>
+>>>
+>>> https://mailman.stanford.edu/mailman/listinfo/liberationtech
+>>>
+>>> If you would like to receive a daily digest, click "yes" (once
+>>> you click above) next to "would you like to receive list mail
+>>> batched in a daily digest?"
+>>>
+>>> You will need the user name and password you receive from the list
+>>> moderator in monthly reminders.
+>>>
+>>> Should you need immediate assistance, please contact the list moderator.
+>>>
+>>> Please don't forget to follow us on
+>>>
+>>> http://twitter.com/#!/Liberationtech  <http://twitter.com/#%21/Liberationtech>
+>
+_______________________________________________
+liberationtech mailing list
+liberationtech@lists.stanford.edu
+
+Should you need to change your subscription options, please go to:
+
+https://mailman.stanford.edu/mailman/listinfo/liberationtech
+
+If you would like to receive a daily digest, click "yes" (once you click above) next to "would you like to receive list mail batched in a daily digest?"
+
+You will need the user name and password you receive from the list moderator in monthly reminders.
+
+Should you need immediate assistance, please contact the list moderator.
+
+Please don't forget to follow us on http://twitter.com/#!/Liberationtech
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

@@ -1,0 +1,215 @@
+From owner-cypherpunks@al-qaeda.net  Tue Sep  6 17:26:02 2011
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id p86LMgEX021422
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 6 Sep 2011 17:22:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1315344162;
+	bh=PAHJufKfy57DvE4d6fvUgNBnPhKtyCsn0aGMUVhxpU8=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=5MhQ7EVEG4NC9HDAnTb5LPfM1xcelTly4DeUvOeZ6fVzJ+EeToWYBD01t8LexohPq
+	 Il8PotWDMm0IgNEmzDweQE8fxTrkp4zaotShFaGU4DCarujWL6ajjHaI/yk6w6e9/y
+	 48/5OXN4v0WBMKII5NEVrIS0Y/jUkKwUwvzHCisw=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id p86LMgJp021421
+	for cypherpunks-outgoing; Tue, 6 Sep 2011 17:22:42 -0400
+Date: Tue, 6 Sep 2011 23:22:38 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, tt@postbiota.org
+Subject: [cryptography] Diginotar Lessons Learned (long)
+Message-ID: <20110906212238.GF16334@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Lucky Green <shamrock@cypherpunks.to> -----
+
+From: Lucky Green <shamrock@cypherpunks.to>
+Date: Tue, 06 Sep 2011 14:10:34 -0700
+To: Crypto discussion list <cryptography@randombit.net>
+Subject: [cryptography] Diginotar Lessons Learned (long)
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64;
+	rv:6.0) Gecko/20110812 Thunderbird/6.0
+Reply-To: Crypto discussion list <cryptography@randombit.net>
+
+I can't help but chuckle about Diginotar's very public display of
+security incompetence. I mean, who in our line of work can be expected
+to keep a straight face when reading gems such as this one taken from
+the report by Diginotar's incidence response rapporteur:
+
+"The separation of critical components was not functioning or was not in
+place. We have strong indications that the CA-servers, although
+physically very securely placed in a tempest proof environment, were
+accessible over the network from the management LAN.
+
+The network has been severely breached. All CA servers were members of
+one Windows domain, which made it possible to access them all using one
+obtained user/password combination".
+
+http://www.rijksoverheid.nl/bestanden/documenten-en-publicaties/rapporten/2011/09/05/diginotar-public-report-version-1/rapport-fox-it-operation-black-tulip-v1-0.pdf
+
+We are also seeing a near universal call for "fixes" of the broken PKI
+paradigm. I couldn't agree more that fixes - and indeed redesigns - are
+badly needed and have been for some 15+ years. Pretty much since the day
+the word PKI was coined. What I hear much more rarely are discussions if
+the proposed fixes actually solve the problem. What I hear hardly ever
+are discussions as to which unintended consequences the proposed (and in
+some cases already implemented fixes) may bring.
+
+When designing an improvement to a system, it helps to keep in mind the
+original requirements the system was intended to address.
+
+In the case of SSL server certs, those requirements roughly were:
+
+- provide Joe Browser user with the ability to connect to a site with
+which Joe has no prior relationship while giving Joe sufficient
+confidence that the site is who they say they are without MITM for Joe
+to part with his credit card number. The public CA infrastructure,
+high-profile failures notwithstanding, has done a reasonable job meeting
+that requirement.
+
+- shift liability for this authentication from the browser vendors to a
+third-party (CA). The current system has done a flawless job at this.
+Defenses such as HSTS and cert pinning cannot do better and likely will
+do worse, since the browser vendors are getting more actively involved
+in the decision which sites to protect with the "best" level of
+security. Indeed, security designers and auditors for financial services
+firms that fail to demand inclusion of their site in HSTS and cert
+pinning lists are arguably falling behind on best practices.
+
+It is not inconceivable that we will see litigation against a browser
+vendor initiated by a website that was compromised by a bad cert after
+the browser vendor refused to include the website in their HSTS lists.
+Note that there is no chance that browser vendors will be willing to
+create the infrastructure and build up staffing levels such that all
+legitimated websites are protected by in-browser HSFS lists. Yet the
+more sites a browser vendor adds to their HSTS or cert pinning lists,
+the higher the risk of litigation becomes.
+
+- avoid the server vendor (at the time those requirements were
+identified the sever vendor was equal to the browser vendor) from
+incurring the costs of having to verify the authenticity of each website
+or domain.
+
+The labor cost of adding cert pinning for a domain from a browser
+vendor's perspective is identical to that of adding to the browser the
+hash of a CA operated by that domain. Which is identical to the cost a
+browser vendor would incur authenticating each website. Not going to happen.
+
+At scale, any such list cannot be handled via code updates, but has to
+be dynamically provided as a service by the browser vendor. Meaning the
+browser vendor becomes isomorphic to a root CA from the perspective of
+the users of that browser.
+
+- limit the cost of security to the server operator.
+Website and other encrypted service operators are annoyed as it is
+obtaining certificates from one CA. It is unreasonable to ask a website
+operator to engage in separate dealings with each browser vendor.
+Instead, both the website operator and the browser vendors will prefer
+dealing with a single entity (or small number) of trusted third parties
+(TTP). Such as a public CA.
+
+- no single trusted entity.
+Whether you design a security protocol or software counting widgets,
+there really is only one of three numbers that your design needs to be
+able to accommodate: one, a few, or a great many.
+
+In the public server authentication space, "one" translates to a global
+authority issuing credentials. It is not clear who that authority would
+be. Presumably the United Nations. What is clear is that national
+interests preclude the use of a single global authentication authority.
+It is conceivable for each country to have a local authentication
+authority, which would require each country to operate some
+authentication authority. There is no agreement how many countries exist
+on our planet, but the number is somewhere around 200. More than there
+are root CAs in the browsers today. Which gets us to the next number: "a
+few".
+
+A few represents the status quo. Under the status quo, a few CAs are
+issuing certs. Some CAs have a better security track record than others,
+though most CAs with an unblemished security record have simply not yet
+been attacked, failed to disclose attacks, or don't issue certs to
+customers on the Internet at large and therefore can afford to operate
+in a purely offline environment. The latter option is not available to
+CAs or other services that authenticate a large number of domains.
+
+When operated by national governments rather than global vendors, one
+can envision designs in which national CAs issue certificates only for
+entities located within the nation's borders. Such designs quickly lead
+to a requirement for a global database (see "one" above) or to a
+scenario in which Iran's national authority can issue certificates for
+gmail.com. Moreover, such a design carries the high risk of leading to a
+need for each site to obtain separate certs for each country in which it
+operates. That outcome would be welcomed by certain governments, be
+perhaps organizationally manageable for a large server operator such as
+Google, but be intractable for many other sites. In addition to likely
+being detrimental to both the exchange of ideas and security of the
+Internet as a whole.
+
+The "a great many" scenario translates to designs in which each browser
+reports the certs seen up to a central database, alerting the user if
+the cert presented by a server doesn't match (most) of those certs that
+were seen by users of the same service. Meaning the browser vendors or
+some global entity have to operate a server that more or less logs each
+https access. I am not sure how I feel about that. What I do know is
+that it creates a whole new attack surface for other types of attacks. I
+also believe that for example Tor users, a known target for fake SSL
+server certs, would unlikely consider such a design to be an improvement.
+
+Other designs in the "a great many" category log SSL server certs only
+locally, alerting the user when a certificate for a particular site
+previously visited has changed. I can see value in that features. But we
+need to realize that this feature will add to the SSL server cert alert
+fatigue users are already experiencing. Time and large field trials will
+tell if such a feature is a security net positive. It may increase the
+security posture of very security conscious Tor users. It will not solve
+the problem for the average Gmail user. Not even for the average Gmail
+user in Iran.
+
+- generate recurring revenue
+Often mentioned as the primary reason for the existence of CAs,
+generating recurring revenue is a driver for significant percentage of
+those in the CA business, but as we have seen above the overall number
+of entities that derive revenue from issuing certs is quite small. It
+is, well, "a few".
+
+The perceived benefits to the issuer are a powerful driver in the client
+cert space, where the desire for attribution makes the sum total of
+drivers in the SSL server cert space tiny by comparison. But we are not
+talking about client certs here. Most CAs do not make a significant
+amount money from issuing server certs and the handful of CAs that do
+likely would do just as well operating alternative authentication
+systems, be that on behalf of a national SSL server cert authority or on
+behalf of a browser vendor needing to maintain an HSTS list. The cost
+structure is dominated by validation costs at any rate and that holds
+true whether the end result is a signed cert or an entry in a browser's
+HSTS or cert pinning list.
+
+There are additional requirements that drive the existance of SSL server
+certs and public CAs. The requirements I outlined in this post will
+suffice to illustrate my point: unless some proposed SSL/CA
+replacement/augmentation system will do at least as well at meeting
+those requirements as the status quo, the design is unlikely to succeed
+in the marketplace. As you are being bombarded with design proposals
+promising improvement over the status quo in the next weeks and months -
+and are prehaps are working on designs of your own - it will be helpful
+to validate those designs against the requirements prior to chosing to
+implement the design.
+
+--Lucky Green
+_______________________________________________
+cryptography mailing list
+cryptography@randombit.net
+http://lists.randombit.net/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

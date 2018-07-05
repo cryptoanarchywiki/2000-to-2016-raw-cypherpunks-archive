@@ -1,0 +1,640 @@
+From rswatjfet.org+caf_=rsw=jfet.org@gmail.com  Mon Apr  6 16:44:30 2015
+Return-Path: <rswatjfet.org+caf_=rsw=jfet.org@gmail.com>
+Received: from mail-pd0-f173.google.com (mail-pd0-f173.google.com [209.85.192.173])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id t36KiShH001225
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <rsw@jfet.org>; Mon, 6 Apr 2015 16:44:29 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=BBbzCDTh;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: by pddn5 with SMTP id n5so55472139pdd.2
+        for <rsw@jfet.org>; Mon, 06 Apr 2015 13:44:23 -0700 (PDT)
+X-Received: by 10.67.4.195 with SMTP id cg3mr30689406pad.106.1428353063356;
+        Mon, 06 Apr 2015 13:44:23 -0700 (PDT)
+X-Forwarded-To: rsw@jfet.org
+X-Forwarded-For: rswatjfet.org@gmail.com rsw@jfet.org
+Delivered-To: rswatjfet.org@gmail.com
+Received: by 10.70.72.137 with SMTP id d9csp3548531pdv;
+        Mon, 6 Apr 2015 13:44:22 -0700 (PDT)
+X-Received: by 10.66.139.195 with SMTP id ra3mr29968642pab.21.1428353062022;
+        Mon, 06 Apr 2015 13:44:22 -0700 (PDT)
+Received: from localhost (antiproton.jfet.org. [209.141.47.85])
+        by mx.google.com with ESMTPS id a4si8151640pdn.18.2015.04.06.13.44.21
+        for <rswATjfet.org@gmail.com>
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 Apr 2015 13:44:22 -0700 (PDT)
+Received-SPF: neutral (google.com: 209.141.47.85 is neither permitted nor denied by domain of rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net) client-ip=209.141.47.85;
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 209.141.47.85 is neither permitted nor denied by domain of rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net) smtp.mail=rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net;
+       dkim=pass header.i=@gmail.com;
+       dmarc=pass (p=NONE dis=NONE) header.from=gmail.com
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id t36KfTnw001202;
+	Mon, 6 Apr 2015 16:41:30 -0400
+Received: from mail-wi0-f169.google.com (mail-wi0-f169.google.com
+ [209.85.212.169])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id t36KfPVt001198
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Mon, 6 Apr 2015 16:41:27 -0400
+Received: by wiun10 with SMTP id n10so47150490wiu.1
+ for <cypherpunks@cpunks.org>; Mon, 06 Apr 2015 13:41:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+ :cc:content-type;
+ bh=kdn4gXUL//dGfsnqlFsPUTvdCMXbbhxXKTrpMKS+k1c=;
+ b=BBbzCDTh5bmBrATpGoBGLOrCM/P9lAJSQB/NHLVpVE5EXSyxoEW4FMvmhUA5/sl+Z9
+ xKLAYeMNvK2nB2LsM+Vscir8IlEc3vErH8NwjiRfkwAYSjc/6zQmQwofaYmfM+jQGwau
+ elcJyPej6x6BVRBZu8NYcxv/vKogTPSw1KHiVkh6ovrzYp1xrQ5JLmeirEoEa7RX6Ed6
+ ZAP5a8BEr5XSnaNv9qr64vpBgd2oa9rxLVlB9ObUTbqHpv4gSf06+lAZOQwsIPLSn5sp
+ +pF4o5vXsegdsWTA53/Rs3hFQadJI0pNNn6CDXFziQEWQXfsUuH9nGLv7JpR6voiBgN8
+ nqwA==
+X-Received: by 10.180.126.41 with SMTP id mv9mr290385wib.72.1428352879903;
+ Mon, 06 Apr 2015 13:41:19 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.194.9.170 with HTTP; Mon, 6 Apr 2015 13:40:59 -0700 (PDT)
+In-Reply-To: <5522CECC.9090404@riseup.net>
+References: <op.xwltisiqbgbjo9@work-pc.lan>
+ <5521cb3c.88c98c0a.37e3.ffff93aa@mx.google.com>
+ <CAGRDzQVkoEJe-vKEiBbeXVkz2V3EKWOhDmSX9Rc+BuMQz25fFg@mail.gmail.com>
+ <55228455.5040500@riseup.net> <BE37C318-5D1E-4468-8947-B25EF1FE40EF@gmail.com>
+ <CAGRDzQWhCiLWPJ7D=Mefskz8_CjkTTv2wHKOokdHX1FeH7phJQ@mail.gmail.com>
+ <5522CECC.9090404@riseup.net>
+Date: Mon, 6 Apr 2015 22:40:59 +0200
+Message-ID: <CAGRDzQWBY40jCYLQD-gzMG0jSz4-8A52eh6v05izKVqiqcjN2g@mail.gmail.com>
+Subject: Re: Greenwald, Scahill step down from The Intercept
+To: Bethany <groundhog593@riseup.net>
+Content-Type: multipart/alternative; boundary=e89a8f839cb5054a8e0513145269
+Cc: cpunks <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+From: Cari Machet <carimachet@gmail.com>
+X-Gspam-Loop: antiproton.jfet.org
+Status: O
+Content-Length: 23260
+Lines: 552
+
+--e89a8f839cb5054a8e0513145269
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+bethany you are obviously NOT a journalist... its called exploitation
+
+i dont remember the images of the baby at hiroshima or the girl burned
+naked running in vietnam having the journalists fat head in the frame
+
+guess who gets their picture took with dead bodies? smiling american
+soldiers have in afghanistan and nazi's - i am sure you can look those
+images up for yourself i wont be a party to it
+
+just because you dont understand ethics doesnt mean they dont exist
+
+being filmed with dead bodies is absolutely a breech of journalistic ethics
+
+++++++++++++++++++
+
+thanks alexis for your analysis of tor i heartily agree with your
+conclusion
+
+look into a blow up of @emptywheel had regarding her protections of @pierre
+when the whole ukranian thing was revealed she has to do a lot of dancing
+to dodge the bullets coming her way ...
+
+when i get time later i will look it up for you
+
+On Mon, Apr 6, 2015 at 8:22 PM, Bethany <groundhog593@riseup.net> wrote:
+
+>
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA1
+>
+>
+>
+> On 06/04/15 12:59 PM, Cari Machet wrote:
+> > its not a 'claim' watch his film that was up for an academy award
+> >
+> > there is a scene in mogadishu where he is in the morgue there is a dead
+> body and him in the scene he is standing right next to it - the person wa=
+s
+> hit by a drone strike
+> >
+> > no journalist gets filmed with dead bodies it is unethical it never
+> happens
+> >
+> > perhaps if you were a journalist in the field you would understand
+>
+>
+>
+> Absolutely. The first thing any good journalist should think when he's
+> investigating drone strikes and is permitted to witness the examination o=
+f
+> a body of a victim is "shit, don't film me here, where I am! So gauche!"
+>
+> > On Mon, Apr 6, 2015 at 4:03 PM, Alexis Wattel <alexiswattel@gmail.com
+> <mailto:alexiswattel@gmail.com> <alexiswattel@gmail.com>> wrote:
+> >
+> >     Speaking about facts checking: intrigued by these allegations I
+> looked up wiki on Omydiar, and his network association is said to have
+> partnered with the CIA, which is not generally all about "philanthropy",
+> although this claim lack any reference.
+> >
+> >     Would someone know why is the Agency mentioned there?
+> >
+> >     Aside from that, financed projects include "mobile intelligence" fo=
+r
+> prospectors and deploying banks onto mobile phones to make sure everyone
+> even in Africa pays his fees to the landlords. They even dare to say it's
+> cheaper than cash. I wonder how that is.
+> >
+> >
+> >     Anyway... Wild allegations are very entertaining, but seriously
+> what's the real meaning of this about Tor?
+> >     Because no technical evidence suggest it is "backdoored" (whatever
+> that would mean, this is a trendy word, makes the one who says it sound s=
+o
+> l33t in journalism circles).
+> >
+> >     On the other hand, Tor devs are more and more often prone on
+> reminding that traffic analysis/correlation is not part of their threat
+> model. The problem is that it is nowadays a definitely proven capability =
+of
+> adversaries.
+> >
+> >     I really can't help thinking this is a deliberate desire of keeping
+> Tor at government's reach because the eternal argument they oppose do not
+> stand. They say that randomized wait times at each relay would make the
+> traffic too slow. But I remember using Tor 8 years ago when it took forev=
+er
+> to load a Web page, and still did I use it in spite of this major extra
+> effort, because anonymous surfing was such a blast.
+> >     Today the network is fast enough to be able to swap 25% speed for a
+> massive increase of anonymity.
+> >     The other solution, randomized length of packets with dummy padding
+> discarded at each relay would impact even less on responsiveness.
+> >
+> >     I honestly can't see why they legitimately refuse to implement this=
+.
+> >     They seem to think that the need to observe both ends is too hard.
+> Did they hear about the BGP routing attack that targeted Iceland? Funny h=
+ow
+> the Silk Road server was found a month later in... Oh shit, Iceland.
+> >
+> >     When you claim to protect activists with government money, you'd
+> better not show dubious intentions if people trust are what you depend on=
+.
+> Because that's why Tor was opened at first. The government officials need=
+ed
+> to hide among civilian traffic. They do need the people to run nodes.
+> >
+> >     Le 6 avril 2015 15:04:21 CEST, xezha <xezha@riseup.net
+> <mailto:xezha@riseup.net> <xezha@riseup.net>> a =E9crit :
+> >
+> >
+> > I think I may have to leave this list.
+> >
+> > Can you really not tell the difference between a real article and
+> something made up/joke/propaganda?
+> > Please be a little more critical and back up for claims before
+> slandering someones name. Even 5 minutes of research with google will
+> demonstrate that you are the only source of ANY claims about Jeremy
+> Scahills unethical journalism. You seem to have a screw loose.
+> >
+> > Xe
+> >
+> >
+> > On 06/04/15 02:35, Cari Machet wrote:
+> > > thank you!!
+> >
+> > > i just want to say that @jeremyscahill took a selfie with a (murdered=
+)
+> dead body which no & i mean no journalist does - no one ... he is a very
+> sick capitalist fascist
+> >
+> > > he has done more than this but i wont go on & on
+> >
+> > > On Mon, Apr 6, 2015 at 1:58 AM, Juan <juan.g71@gmail.com
+> <mailto:juan.g71@gmail.com> <juan.g71@gmail.com>
+> <mailto:juan.g71@gmail.com> <juan.g71@gmail.com>
+> <mailto:juan.g71@gmail.com> <juan.g71@gmail.com>> wrote:
+> >
+> > >     On Sat, 04 Apr 2015 22:29:06 -0700
+> > >     Seth <list@sysfu.com <mailto:list@sysfu.com> <list@sysfu.com>
+> <mailto:list@sysfu.com> <list@sysfu.com> <mailto:list@sysfu.com>
+> <list@sysfu.com>> wrote:
+> >
+> > >     > It's about damn time ;)
+> > >     >
+> > >     >
+> http://chronicle.su/2015/03/07/greenwald-scahill-step-down-from-the-inter=
+cept/
+> > >     >
+> > >     >
+> >
+> >
+> > >             is this some kind of stupid 'joke' ?
+> >
+> >
+> >
+> >
+> > > --
+> > > Cari Machet
+> > > NYC 646-436-7795 <tel:646-436-7795>
+> > > carimachet@gmail.com <mailto:carimachet@gmail.com>
+> <carimachet@gmail.com> <mailto:carimachet@gmail.com>
+> <carimachet@gmail.com> <mailto:carimachet@gmail.com>
+> <carimachet@gmail.com>
+> > > AIM carismachet
+> > > Syria +963-099 277 3243
+> > > Amman +962 077 636 9407
+> > > Berlin +49 152 11779219 <tel:%2B49%20152%2011779219>
+> > > Reykjavik +354 894 8650 <tel:%2B354%20894%208650>
+> > > Twitter: @carimachet <https://twitter.com/carimachet>
+> <https://twitter.com/carimachet> <https://twitter.com/carimachet>
+> <https://twitter.com/carimachet>
+> >
+> > > 7035 690E 5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187
+> >
+> > > Ruh-roh, this is now necessary: This email is intended only for the
+> > > addressee(s) and may contain confidential information. If you are not
+> the
+> > > intended recipient, you are hereby notified that any use of this
+> > > information, dissemination, distribution, or copying of this email
+> without
+> > > permission is strictly prohibited.
+> >
+> >
+> >
+> >
+> >
+> >
+> >
+> > --
+> > Cari Machet
+> > NYC 646-436-7795
+> > carimachet@gmail.com <mailto:carimachet@gmail.com>
+> <carimachet@gmail.com>
+> > AIM carismachet
+> > Syria +963-099 277 3243
+> > Amman +962 077 636 9407
+> > Berlin +49 152 11779219
+> > Reykjavik +354 894 8650
+> > Twitter: @carimachet <https://twitter.com/carimachet>
+> <https://twitter.com/carimachet>
+> >
+> > 7035 690E 5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187
+> >
+> > Ruh-roh, this is now necessary: This email is intended only for the
+> > addressee(s) and may contain confidential information. If you are not t=
+he
+> > intended recipient, you are hereby notified that any use of this
+> > information, dissemination, distribution, or copying of this email
+> without
+> > permission is strictly prohibited.
+> >
+> >
+>
+> -----BEGIN PGP SIGNATURE-----
+> Version: GnuPG v1
+>
+> iQEcBAEBAgAGBQJVIs7MAAoJELSH/HSoRBscScYH/i1n6ZzH77ZMwxNtHVFgX8kb
+> LCE18yEIlrh4fPPUyMC+JHOjR56jWJr6YTnr4XI359k+pVpOUujXd/LZq9655ws2
+> RS3Hs8dxhuYm4S3EdpIssEeN0wu5Z0+zOeoO2IE3VR2lO4sxe9tKRCjV5sSLUxGm
+> rIPc7BaknrGQjQoTtufJYVodT63uvKZ7r3OqMx/bwOIU60edcQrLjKAFaGeJ/Ges
+> aqrhd+QUE7DvpiRPv6BKfsOpcZT+isk2FyMmp/1muTQ/k+huZ85HwP7Ytc+DnKpj
+> d6lr06iQWaXFQD926cMsJIInsOQA6Sc2prig/MfF0XKTuzP5w7TQIhFojhf01Bk=3D
+> =3D9tv1
+> -----END PGP SIGNATURE-----
+>
+>
+
+
+--=20
+Cari Machet
+NYC 646-436-7795
+carimachet@gmail.com
+AIM carismachet
+Syria +963-099 277 3243
+Amman +962 077 636 9407
+Berlin +49 152 11779219
+Reykjavik +354 894 8650
+Twitter: @carimachet <https://twitter.com/carimachet>
+
+7035 690E 5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187
+
+Ruh-roh, this is now necessary: This email is intended only for the
+addressee(s) and may contain confidential information. If you are not the
+intended recipient, you are hereby notified that any use of this
+information, dissemination, distribution, or copying of this email without
+permission is strictly prohibited.
+
+--e89a8f839cb5054a8e0513145269
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">bethany you are obviously NOT a journalist... its called e=
+xploitation=A0<div><br></div><div>i dont remember the images of the baby at=
+ hiroshima or the girl burned naked running in vietnam having the journalis=
+ts fat head in the frame</div><div><br></div><div>guess who gets their pict=
+ure took with dead bodies? smiling american soldiers have in afghanistan an=
+d nazi&#39;s - i am sure you can look those images up for yourself i wont b=
+e a party to it =A0</div><div><br></div><div>just because you dont understa=
+nd ethics doesnt mean they dont exist=A0</div><div><br></div><div>being fil=
+med with dead bodies is absolutely a breech of journalistic ethics</div><di=
+v><br></div><div>++++++++++++++++++</div><div><br></div><div>thanks alexis =
+for your analysis of tor i heartily agree with your conclusion=A0</div><div=
+><br></div><div>look into a blow up of @emptywheel had regarding her protec=
+tions of @pierre when the whole ukranian thing was revealed she has to do a=
+ lot of dancing to dodge the bullets coming her way ...</div><div><br></div=
+><div>when i get time later i will look it up for you</div><img src=3D"http=
+://t.signaledue.com/e1t/o/5/f18dQhb0S7ks8dDMPbW2n0x6l2B9gXrN7sKj6v5dfb6W5vw=
+kZs7fZjrnW2BpKgF2zlZNzW8v-hnY1k1H6H0?si=3D5459291358625792&amp;pi=3D36ed5ba=
+4-7f1f-4cfc-9371-3356aa06d5ee" style=3D"display:none!important" height=3D"1=
+" width=3D"1"></div><div class=3D"gmail_extra"><br><div class=3D"gmail_quot=
+e">On Mon, Apr 6, 2015 at 8:22 PM, Bethany <span dir=3D"ltr">&lt;<a href=3D=
+"mailto:groundhog593@riseup.net" target=3D"_blank">groundhog593@riseup.net<=
+/a>&gt;</span> wrote:<br><blockquote class=3D"gmail_quote" style=3D"margin:=
+0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">
+ =20
+   =20
+ =20
+  <div bgcolor=3D"#FFFFFF" text=3D"#000000"><span class=3D"">
+    <br>
+    -----BEGIN PGP SIGNED MESSAGE-----<br>
+    Hash: SHA1<br>
+    <br>
+    <br>
+    <br></span><span class=3D"">
+    On 06/04/15 12:59 PM, Cari Machet wrote:<br>
+    <span style=3D"white-space:pre-wrap">&gt; its not a &#39;claim&#39; wat=
+ch his
+      film that was up for an academy award <br>
+      &gt;<br>
+      &gt; there is a scene in mogadishu where he is in the morgue there
+      is a dead body and him in the scene he is standing right next to
+      it - the person was hit by a drone strike<br>
+      &gt;<br>
+      &gt; no journalist gets filmed with dead bodies it is unethical it
+      never happens <br>
+      &gt;<br>
+      &gt; perhaps if you were a journalist in the field you would
+      understand</span><br>
+    <br>
+    <br>
+    <br></span>
+    Absolutely. The first thing any good journalist should think when
+    he&#39;s investigating drone strikes and is permitted to witness the
+    examination of a body of a victim is &quot;shit, don&#39;t film me here=
+,
+    where I am! So gauche!&quot;<br>
+    <br>
+    <span style=3D"white-space:pre-wrap"><span class=3D"">&gt; On Mon, Apr =
+6, 2015 at 4:03 PM,
+      Alexis Wattel &lt;<a href=3D"mailto:alexiswattel@gmail.com" target=3D=
+"_blank">alexiswattel@gmail.com</a>
+      <a href=3D"mailto:alexiswattel@gmail.com" target=3D"_blank">&lt;mailt=
+o:alexiswattel@gmail.com&gt;</a>&gt; wrote:<br>
+      &gt;<br>
+      &gt;=A0=A0=A0=A0 Speaking about facts checking: intrigued by these
+      allegations I looked up wiki on Omydiar, and his network
+      association is said to have partnered with the CIA, which is not
+      generally all about &quot;philanthropy&quot;, although this claim lac=
+k any
+      reference.<br>
+      &gt;<br>
+      &gt;=A0=A0=A0=A0 Would someone know why is the Agency mentioned there=
+?<br>
+      &gt;<br>
+      &gt;=A0=A0=A0=A0 Aside from that, financed projects include &quot;mob=
+ile
+      intelligence&quot; for prospectors and deploying banks onto mobile
+      phones to make sure everyone even in Africa pays his fees to the
+      landlords. They even dare to say it&#39;s cheaper than cash. I wonder
+      how that is.<br>
+      &gt;<br>
+      &gt;<br>
+      &gt;=A0=A0=A0=A0 Anyway... Wild allegations are very entertaining, bu=
+t
+      seriously what&#39;s the real meaning of this about Tor?<br>
+      &gt;=A0=A0=A0=A0 Because no technical evidence suggest it is &quot;ba=
+ckdoored&quot;
+      (whatever that would mean, this is a trendy word, makes the one
+      who says it sound so l33t in journalism circles).<br>
+      &gt;<br>
+      &gt;=A0=A0=A0=A0 On the other hand, Tor devs are more and more often =
+prone
+      on reminding that traffic analysis/correlation is not part of
+      their threat model. The problem is that it is nowadays a
+      definitely proven capability of adversaries.<br>
+      &gt;<br>
+      &gt;=A0=A0=A0=A0 I really can&#39;t help thinking this is a deliberat=
+e desire
+      of keeping Tor at government&#39;s reach because the eternal argument
+      they oppose do not stand. They say that randomized wait times at
+      each relay would make the traffic too slow. But I remember using
+      Tor 8 years ago when it took forever to load a Web page, and still
+      did I use it in spite of this major extra effort, because
+      anonymous surfing was such a blast.<br>
+      &gt;=A0=A0=A0=A0 Today the network is fast enough to be able to swap =
+25%
+      speed for a massive increase of anonymity.<br>
+      &gt;=A0=A0=A0=A0 The other solution, randomized length of packets wit=
+h
+      dummy padding discarded at each relay would impact even less on
+      responsiveness.<br>
+      &gt;<br>
+      &gt;=A0=A0=A0=A0 I honestly can&#39;t see why they legitimately refus=
+e to
+      implement this.<br>
+      &gt;=A0=A0=A0=A0 They seem to think that the need to observe both end=
+s is
+      too hard. Did they hear about the BGP routing attack that targeted
+      Iceland? Funny how the Silk Road server was found a month later
+      in... Oh shit, Iceland.<br>
+      &gt;<br>
+      &gt;=A0=A0=A0=A0 When you claim to protect activists with government
+      money, you&#39;d better not show dubious intentions if people trust
+      are what you depend on. Because that&#39;s why Tor was opened at
+      first. The government officials needed to hide among civilian
+      traffic. They do need the people to run nodes.<br>
+      &gt;<br></span><span class=3D"">
+      &gt;=A0=A0=A0=A0 Le 6 avril 2015 15:04:21 CEST, xezha &lt;<a href=3D"=
+mailto:xezha@riseup.net" target=3D"_blank">xezha@riseup.net</a>
+      <a href=3D"mailto:xezha@riseup.net" target=3D"_blank">&lt;mailto:xezh=
+a@riseup.net&gt;</a>&gt; a =E9crit :<br>
+      &gt;<br>
+      &gt;<br>
+      &gt; I think I may have to leave this list.<br>
+      &gt;<br>
+      &gt; Can you really not tell the difference between a real article
+      and something made up/joke/propaganda?<br>
+      &gt; Please be a little more critical and back up for claims
+      before slandering someones name. Even 5 minutes of research with
+      google will demonstrate that you are the only source of ANY claims
+      about Jeremy Scahills unethical journalism. You seem to have a
+      screw loose.<br>
+      &gt;<br>
+      &gt; Xe<br>
+      &gt;<br>
+      &gt;<br>
+      &gt; On 06/04/15 02:35, Cari Machet wrote:<br>
+      &gt; &gt; thank you!!<br>
+      &gt;<br>
+      &gt; &gt; i just want to say that @jeremyscahill took a selfie
+      with a (murdered) dead body which no &amp; i mean no journalist
+      does - no one ... he is a very sick capitalist fascist<br>
+      &gt;<br>
+      &gt; &gt; he has done more than this but i wont go on &amp; on<br>
+      &gt;<br></span><span class=3D"">
+      &gt; &gt; On Mon, Apr 6, 2015 at 1:58 AM, Juan
+      &lt;<a href=3D"mailto:juan.g71@gmail.com" target=3D"_blank">juan.g71@=
+gmail.com</a> <a href=3D"mailto:juan.g71@gmail.com" target=3D"_blank">&lt;m=
+ailto:juan.g71@gmail.com&gt;</a>
+      <a href=3D"mailto:juan.g71@gmail.com" target=3D"_blank">&lt;mailto:ju=
+an.g71@gmail.com&gt;</a>
+      <a href=3D"mailto:juan.g71@gmail.com" target=3D"_blank">&lt;mailto:ju=
+an.g71@gmail.com&gt;</a>&gt; wrote:<br>
+      &gt;<br>
+      &gt; &gt;=A0=A0=A0=A0 On Sat, 04 Apr 2015 22:29:06 -0700<br></span><s=
+pan class=3D"">
+      &gt; &gt;=A0=A0=A0=A0 Seth &lt;<a href=3D"mailto:list@sysfu.com" targ=
+et=3D"_blank">list@sysfu.com</a>
+      <a href=3D"mailto:list@sysfu.com" target=3D"_blank">&lt;mailto:list@s=
+ysfu.com&gt;</a> <a href=3D"mailto:list@sysfu.com" target=3D"_blank">&lt;ma=
+ilto:list@sysfu.com&gt;</a>
+      <a href=3D"mailto:list@sysfu.com" target=3D"_blank">&lt;mailto:list@s=
+ysfu.com&gt;</a>&gt; wrote:<br>
+      &gt;<br>
+      &gt; &gt;=A0=A0=A0=A0 &gt; It&#39;s about damn time ;)<br>
+      &gt; &gt;=A0=A0=A0=A0 &gt;<br>
+      &gt; &gt;=A0=A0=A0=A0 &gt;
+<a href=3D"http://chronicle.su/2015/03/07/greenwald-scahill-step-down-from-=
+the-intercept/" target=3D"_blank">http://chronicle.su/2015/03/07/greenwald-=
+scahill-step-down-from-the-intercept/</a><br>
+      &gt; &gt;=A0=A0=A0=A0 &gt;<br>
+      &gt; &gt;=A0=A0=A0=A0 &gt;<br>
+      &gt;<br>
+      &gt;<br>
+      &gt; &gt;=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 is this some kind of st=
+upid &#39;joke&#39; ?<br>
+      &gt;<br>
+      &gt;<br>
+      &gt;<br>
+      &gt;<br>
+      &gt; &gt; --<br>
+      &gt; &gt; Cari Machet<br></span>
+      &gt; &gt; NYC <a href=3D"tel:646-436-7795" value=3D"+16464367795" tar=
+get=3D"_blank">646-436-7795</a> &lt;tel:<a href=3D"tel:646-436-7795" value=
+=3D"+16464367795" target=3D"_blank">646-436-7795</a>&gt;<br>
+      &gt; &gt; <a href=3D"mailto:carimachet@gmail.com" target=3D"_blank">c=
+arimachet@gmail.com</a> <a href=3D"mailto:carimachet@gmail.com" target=3D"_=
+blank">&lt;mailto:carimachet@gmail.com&gt;</a>
+      <a href=3D"mailto:carimachet@gmail.com" target=3D"_blank">&lt;mailto:=
+carimachet@gmail.com&gt;</a>
+      <a href=3D"mailto:carimachet@gmail.com" target=3D"_blank">&lt;mailto:=
+carimachet@gmail.com&gt;</a><span class=3D""><br>
+      &gt; &gt; AIM carismachet<br>
+      &gt; &gt; Syria +963-099 277 3243<br>
+      &gt; &gt; Amman +962 077 636 9407<br></span>
+      &gt; &gt; Berlin <a href=3D"tel:%2B49%20152%2011779219" value=3D"+491=
+5211779219" target=3D"_blank">+49 152 11779219</a>
+      &lt;tel:%2B49%20152%2011779219&gt;<br>
+      &gt; &gt; Reykjavik <a href=3D"tel:%2B354%20894%208650" value=3D"+354=
+8948650" target=3D"_blank">+354 894 8650</a> &lt;tel:%2B354%20894%208650&gt=
+;<br>
+      &gt; &gt; Twitter: @carimachet
+      <a href=3D"https://twitter.com/carimachet" target=3D"_blank">&lt;http=
+s://twitter.com/carimachet&gt;</a>
+      <a href=3D"https://twitter.com/carimachet" target=3D"_blank">&lt;http=
+s://twitter.com/carimachet&gt;</a><span class=3D""><br>
+      &gt;<br>
+      &gt; &gt; 7035 690E 5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187<br>
+      &gt;<br>
+      &gt; &gt; Ruh-roh, this is now necessary: This email is intended
+      only for the<br>
+      &gt; &gt; addressee(s) and may contain confidential information.
+      If you are not the<br>
+      &gt; &gt; intended recipient, you are hereby notified that any use
+      of this<br>
+      &gt; &gt; information, dissemination, distribution, or copying of
+      this email without<br>
+      &gt; &gt; permission is strictly prohibited.<br>
+      &gt;<br>
+      &gt;<br>
+      &gt;<br>
+      &gt;<br>
+      &gt;<br>
+      &gt;<br>
+      &gt;<br>
+      &gt; -- <br>
+      &gt; Cari Machet<br>
+      &gt; NYC <a href=3D"tel:646-436-7795" value=3D"+16464367795" target=
+=3D"_blank">646-436-7795</a><br>
+      &gt; <a href=3D"mailto:carimachet@gmail.com" target=3D"_blank">carima=
+chet@gmail.com</a> <a href=3D"mailto:carimachet@gmail.com" target=3D"_blank=
+">&lt;mailto:carimachet@gmail.com&gt;</a><br>
+      &gt; AIM carismachet<br>
+      &gt; Syria +963-099 277 3243<br>
+      &gt; Amman +962 077 636 9407<br>
+      &gt; Berlin <a href=3D"tel:%2B49%20152%2011779219" value=3D"+49152117=
+79219" target=3D"_blank">+49 152 11779219</a><br>
+      &gt; Reykjavik <a href=3D"tel:%2B354%20894%208650" value=3D"+35489486=
+50" target=3D"_blank">+354 894 8650</a><br>
+      &gt; Twitter: @carimachet <a href=3D"https://twitter.com/carimachet" =
+target=3D"_blank">&lt;https://twitter.com/carimachet&gt;</a><br>
+      &gt;<br>
+      &gt; 7035 690E 5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187<br>
+      &gt;<br>
+      &gt; Ruh-roh, this is now necessary: This email is intended only
+      for the<br>
+      &gt; addressee(s) and may contain confidential information. If you
+      are not the<br>
+      &gt; intended recipient, you are hereby notified that any use of
+      this<br>
+      &gt; information, dissemination, distribution, or copying of this
+      email without<br>
+      &gt; permission is strictly prohibited.<br>
+      &gt;<br>
+      &gt;</span></span><br>
+    <br>
+    -----BEGIN PGP SIGNATURE-----<br>
+    Version: GnuPG v1<br>
+    <br>
+    iQEcBAEBAgAGBQJVIs7MAAoJELSH/HSoRBscScYH/i1n6ZzH77ZMwxNtHVFgX8kb<br>
+    LCE18yEIlrh4fPPUyMC+JHOjR56jWJr6YTnr4XI359k+pVpOUujXd/LZq9655ws2<br>
+    RS3Hs8dxhuYm4S3EdpIssEeN0wu5Z0+zOeoO2IE3VR2lO4sxe9tKRCjV5sSLUxGm<br>
+    rIPc7BaknrGQjQoTtufJYVodT63uvKZ7r3OqMx/bwOIU60edcQrLjKAFaGeJ/Ges<br>
+    aqrhd+QUE7DvpiRPv6BKfsOpcZT+isk2FyMmp/1muTQ/k+huZ85HwP7Ytc+DnKpj<br>
+    d6lr06iQWaXFQD926cMsJIInsOQA6Sc2prig/MfF0XKTuzP5w7TQIhFojhf01Bk=3D<br>
+    =3D9tv1<br>
+    -----END PGP SIGNATURE-----<br>
+    <br>
+  </div>
+
+</blockquote></div><br><br clear=3D"all"><div><br></div>-- <br><div class=
+=3D"gmail_signature"><div dir=3D"ltr"><div>Cari Machet<br>NYC 646-436-7795<=
+br><a href=3D"mailto:carimachet@gmail.com" target=3D"_blank">carimachet@gma=
+il.com</a><br>AIM carismachet<br>Syria +963-099 277 3243<br>Amman +962 077 =
+636 9407<br>Berlin +49 152 11779219 <br>Reykjavik +354 894 8650<br>Twitter:=
+ @carimachet &lt;<a href=3D"https://twitter.com/carimachet" target=3D"_blan=
+k">https://twitter.com/carimachet</a>&gt;<br><br></div>7035 690E 5E47 41D4 =
+B0E5 B3D1 AF90 49D6 BE09 2187<br><div><br>Ruh-roh, this is now necessary: T=
+his email is intended only for the <br>addressee(s) and may contain confide=
+ntial information. If you are not the <br>intended recipient, you are hereb=
+y notified that any use of this <br>information, dissemination, distributio=
+n, or copying of this email without <br>permission is strictly prohibited.<=
+br><br><br></div></div></div>
+</div>
+
+--e89a8f839cb5054a8e0513145269--
+

@@ -1,0 +1,109 @@
+From owner-cypherpunks@Algebra.COM  Mon Aug  5 02:11:21 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g756BKm01877
+	for <rsw@opamp.org>; Mon, 5 Aug 2002 02:11:20 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id CAA03989
+	for <rsw@mit.edu>; Mon, 5 Aug 2002 02:11:20 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g755UkV2022592
+	for <cypherpunks-outgoing@ak47.algebra.com>; Mon, 5 Aug 2002 00:30:46 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g755UkIc022591
+	for cypherpunks-outgoing; Mon, 5 Aug 2002 00:30:46 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g755UfV2022575
+	for <cypherpunks@ak47.algebra.com>; Mon, 5 Aug 2002 00:30:42 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g755Ue5p007154
+	for cypherpunks@ak47.algebra.com; Sun, 4 Aug 2002 22:30:40 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g755UUJl007147
+	for cypherpunks-goingout345; Sun, 4 Aug 2002 22:30:30 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Sun, 4 Aug 2002 22:30:14 -0700
+From: AARG! Anonymous <remailer@aarg.net>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@aarg.net>.
+To: eresrch@eskimo.com, cypherpunks@lne.com
+Old-Subject: Re: Other uses of TCPA
+Message-ID: <97ae2010fd503056b22ed1e86cdc0853@aarg.net>
+X-Loop: cypherpunks@lne.com
+X-spam: 20 
+Subject:  Re: Other uses of TCPA
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 3322
+Lines: 61
+
+
+Mike Rosing wrote:
+> :Mike Rosing wrote:
+> :> Who owns PRIVEK?  Who controls PRIVEK?  That's who own's TCPA.
+> :
+> :PRIVEK, the TPM's private key, is generated on-chip.  It never leaves
+> :the chip.  No one ever learns its value.  Given this fact, who would
+> :you say owns and controls it?
+>
+> OK, so why can't any joe hacker create their own PRIVEK?  _nobody_ knows
+> it's value?  Then how can anyone know if a chip is "real" or "imitation".
+> What happens when the motherboard dies again?  PRIVEK was copied out of
+> the chip to some "fob" right?  I thought you said the manufacturer put
+> the keys in at the factory.
+
+Maybe I wasn't too clear in my explanation.  I assume you know how public
+key cryptography works.  The TPM chip generates an RSA key pair.  This key
+pair is called the Endorsement Key.  The private key is called PRIVEK
+and never leaves the chip.  The public key is called PUBEK and although
+it is "sensitive", it does leave the chip under some circumstances.
+One of those circumstances is when the chip is manufactured and comes off
+the line.  It is powered up, generates the key pair, and exports PUBEK.
+At that point the chip manufacturer creates an X.509 certificate that
+signs PUBEK.
+
+It is this cert which proves that the PUBEK is a legitimate Endorsement
+Key.  While the cert is not widely shown (for privacy reasons), it is
+used in a TCPA protocol, and this is ultimately what makes it impossible
+for Joe Hacker to create a fake TCPA key.
+
+Now, the part about recovering from a dead chip refers to a different
+key.  It's called the "root of trust for storage" key, RTS.  This is used
+for encrypting data on the disk.  The PUBEK was used for communicating
+with third parties to prove that you had a legitimate TPM.  So there are
+two different keys used for two different purposes.  Both of them are
+generated on-chip, and no one ever learns either private key.
+
+If your chip dies, you lose the PUBEK but that doesn't matter, nothing
+is really locked to it.  You can just get a new motherboard and start
+using the new PUBEK from that one's TPM chip.  It's the RTS key that
+is a problem, because if you can't retrieve that, all the data on your
+disk that was sealed (encrypted) using the TCPA mechanisms could be lost.
+So they have a system to transfer the RTS key from one machine to another.
+
+I've been thinking about writing a few pages summarizing TCPA and how the
+crypto works, but then I think, why bother?  Everyone is already convinced
+that the system is the spawn of Satan.  Nobody cares about the facts.
+
+BTW I found a post by Ross Anderson,
+http://www.chiark.greenend.org.uk/pipermail/ukcrypto/2002-June/019463.html,
+in which he says that one of the worst claimed feaures from his TCPA FAQ
+(http://www.cl.cam.ac.uk/~rja14/tcpa-faq.html), censoring objectionable
+programs/data off people's computers against their will, actually doesn't
+rely on TCPA at all.  In fact he says they could do it with existing
+Windows OS's just as well.
+
+It's such an obviously nasty feature that I can't see them ever actually
+trying this, but in any case it really doesn't have anything to do
+with TCPA.  Maybe someone could ask Ross why his FAQ blames TCPA for a
+feature that he admits isn't really related!  But no, that would be crazy.
+Better to believe comfortable falsehoods than to seek the truth.
+

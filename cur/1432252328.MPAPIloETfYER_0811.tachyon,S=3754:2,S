@@ -1,0 +1,88 @@
+From owner-cypherpunks@al-qaeda.net  Fri Sep 28 07:04:29 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q8SB0igD027272
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 28 Sep 2012 07:00:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1348830044;
+	bh=WLl5s8WF8dqrecvjyVnO3ZHfU7mUn5gkYb2AgnOS7OQ=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=WKkWR6wEzi+e2u+IDt4Y7XDWe6NDYYu9hjFpop8ATPtsJnXuO3N4V+Bar0p05uWj4
+	 djXAmLZAOouIuuoFgVuVNZUYJ8Jw6uaCw2orVq7G9y0wxXl0nYrs9WTD4smCqqwSz3
+	 t22VK2wpbV0/ug97VgM5PUYTmW6jd2Xihnu4m6YA=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q8SB0ieM027271
+	for cypherpunks-outgoing; Fri, 28 Sep 2012 07:00:44 -0400
+Date: Fri, 28 Sep 2012 13:00:36 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: Re: [tor-talk] Tor and P2P
+Message-ID: <20120928110036.GM9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2356
+Lines: 56
+
+----- Forwarded message from grarpamp <grarpamp@gmail.com> -----
+
+From: grarpamp <grarpamp@gmail.com>
+Date: Wed, 26 Sep 2012 20:39:15 -0400
+To: tor-talk@lists.torproject.org
+Subject: Re: [tor-talk] Tor and P2P
+Reply-To: tor-talk@lists.torproject.org
+
+>> My question is, how would it scale and what would be the implications
+>> of such a system (every user would be a hidden service and would be
+>> constantly connected to other hidden services it wants to interact
+>> with)?
+
+> thrash the HS
+> directory system excessively, and probably overload the users' Tor
+> client processes to the point that they start pounding on the Tor
+> network in general
+
+I likely ran into some of this a while back with something I was
+working on, enough that it forced a hardware upgrade and future
+tests.
+
+If you're expecting to be doing lots of session initiation, I think
+you're going to hit some significant local CPU issues, especially
+those of you thinking of P2P applications running on "smaller than
+laptop" devices. An occaisional message in the manner in which you
+might normally 'text', would work ok. But if you expect to have
+some sort of pidgin/sip buddy list full of status and people bouncing
+around doing things, it could become ugly. Certainly far worse for
+torrenting as the extreme example. And when thousands of people
+come online with P2P like that... yeah.
+
+On the other hand, once the session state is up, things seem better
+and you're back to the usual latency, bandwidth and reliability
+limits of the relay system.
+
+P2P doesn't generally keep sessions up, so it's back to step one.
+
+
+> 1. Persistent hidserv connections. Reconnecting for each message via an
+> HTTP POST is right out. Way too many circuits+onionskins to scale.
+
+So it would be interesting to see where this could go.
+- Extending circuit and other timeouts for hidden services?
+- Storing related TCP or Tor states locally?
+_______________________________________________
+tor-talk mailing list
+tor-talk@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-talk
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

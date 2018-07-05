@@ -1,0 +1,63 @@
+From owner-cypherpunks@lne.com  Sun Aug  3 00:55:57 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h734trA16367
+	for <rsw@jfet.org>; Sun, 3 Aug 2003 00:55:54 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h734g2FG015139
+	for cypherpunks-goingout345; Sat, 2 Aug 2003 21:42:02 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Sun, 3 Aug 2003 05:41:21 +0100
+From: Adam Back <adam@cypherspace.org>
+To: "Trei, Peter" <ptrei@rsasecurity.com>
+Cc: cypherpunks@lne.com, Peter Gutmann <pgut001@cs.auckland.ac.nz>
+Subject: Re: Secure IDE?
+Message-ID: <20030803044121.GA15240144@exeter.ac.uk>
+References: <F504A8CEE925D411AF4A00508B8BE90A0558D231@exna07.securitydyn
+  amics.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <F504A8CEE925D411AF4A00508B8BE90A0558D231@exna07.securitydy
+  namics.com>
+User-Agent: Mutt/1.4.1i
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 1480
+Lines: 32
+
+On Thu, Jul 31, 2003 at 12:04:13PM -0400, Trei, Peter wrote:
+> [...]
+> > >with a good distribution of IVs
+> > 
+> > Where would you store them?  The feature of this is that it's fully
+> > transparent, so you can't store IVs anywhere.
+> 
+> I'm not really up on crypto file systems, but I beleive at least some
+> use the sector address as the IV. IVs don't need to be random,
+> secret, or unpredictable - they just need to be unrepeated. (I'm
+> assuming sector-at-a-time encryption).
+
+I believe that is what some of them are doing.  I think it's a little
+better to use some fast PRNG seeded from the sector (or eg HMAC of
+sector number or encryption of sector number if you have hardware).
+The sector number is changing in counter order and cancels with the
+plaintext difference.  I did some tests on a 10GB disk full of windows
+app and program data (accessed the raw windows partition from linux
+/dev/hda1) and if you do that (xor first block of sector with sector
+number) you get a fair few collisions.
+
+> > How would you do this without a custom BIOS (remember that their
+> > general product is for dropping into any PC)?
+
+one of the products on show at RSA earlier this year would boot from
+the IDE sector onto a virtual drive (it would pretend to be a boot
+sector over the IDE connector), then that boot sector has code to ask
+for your password, derive the key and load it, and then reboot onto
+the real drive.  If you pulled power from the drive it would forget
+the key.
+
+Adam
+

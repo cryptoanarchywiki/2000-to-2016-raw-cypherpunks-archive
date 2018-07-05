@@ -1,0 +1,203 @@
+From owner-cypherpunks@al-qaeda.net  Wed Nov 21 12:56:05 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id qALHqPEZ025293
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 21 Nov 2012 12:52:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1353520345;
+	bh=yuXGC2QDn96FqU8RhNibq09v0w+gCswXzToonzdr47Q=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=1an/OSXGGJsWbBZHtrI/BJD+2bRqJ7YK2QVhViGBKzWPOcdlxaiULy04EiN+mCk5G
+	 eaQk7OqC8HLJFJ55fEv5oPVhHj0rf6buR9zzKPAjpbKGV+Z8/pUFtiqzJ69DV8HNio
+	 tJRfVDo98N82O6N8gD5UiO5TVKd5XhdbCBth549M=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id qALHqPpV025292
+	for cypherpunks-outgoing; Wed, 21 Nov 2012 12:52:25 -0500
+Date: Wed, 21 Nov 2012 18:52:21 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: Re: [tahoe-dev] a few thoughts about the future of leasedb
+Message-ID: <20121121175221.GJ9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 7702
+Lines: 169
+
+----- Forwarded message from David-Sarah Hopwood <david-sarah@jacaranda.org> -----
+
+From: David-Sarah Hopwood <david-sarah@jacaranda.org>
+Date: Wed, 21 Nov 2012 17:42:48 +0000
+To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+Cc: Zooko Wilcox-O'Hearn <zooko@zooko.com>
+Subject: Re: [tahoe-dev] a few thoughts about the future of leasedb
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 6.0; en-GB;
+	rv:1.8.1.3) Gecko/20070326 Thunderbird/2.0.0.0 Mnenhy/0.7.5.666
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+On 21/11/12 16:36, Zooko Wilcox-O'Hearn wrote:
+> This is exciting, because it is the next step in LeastAuthority.com's
+> project that we're doing for DARPA b Redundant Array of Independent
+> Clouds.
+
+Yes, I'm excited :-)
+
+> Here are a few comments on the leasedb design b not issues which could
+> block the acceptance of this patch, but just topics for future
+> reference:
+> 
+>  b" https://github.com/davidsarah/tahoe-lafs/blob/1818-leasedb/docs/proposed/leasedb.rst#design-constraints
+> 
+>    "Writing to the persistent store objects is in general not an
+> atomic operation. So the leasedb also keeps track of which shares are
+> in an inconsistent state because they have been partly written. (This
+> may change in future when we implement a protocol to improve atomicity
+> of updates to mutable shares.)"
+> 
+>    I'm not 100% sure, but I *think* that this use of leasedb could be
+> replaced in the future by the end-to-end 2-phase-commit that I
+> recently posted about (#1755). End-to-end 2-phase-commit requires more
+> complex service from the storage server than the current one-shot
+> updates to mutable files do, but it requires less state to be stored
+> in the leasedb since the equivalent state is now stored in the storage
+> backend plus the LAFS client.
+
+Remember that those share states are needed anyway to avoid race conditions
+between adding and removing shares. There are no additional states just to
+support marking of potentially inconsistent shares.
+
+Also, clients will need to support non-leasedb servers for a while. (I'm
+looking forward to the point where they can drop that support, since it
+will allow deleting the rest of the code that implemented renewal secrets.)
+
+> In E2E 2PC, the storage backend has to
+> be able to receive and store updates to a mutable file (including the
+> initial upload of a large mutable file, which is the same as a large
+> update to an initially empty mutable file), while retaining the option
+> of rolling back to the previous version. This means the storage server
+> has to write these updates into the storage backend in some
+> non-destructive way and then have a relatively efficient way to
+> "switch over" from the old to the new version.
+> 
+>    If the storage server is able to do that, then it might be nice if
+> it can do it without relying on state held in the leasedb, because
+> then loss or corruption of the leasedb won't result in the corruption
+> of any files.
+
+There's no *persistent* state needed to do that, since if a server
+crashes, its foolscap connections will be dropped and the client will
+interpret that as a transaction abort (either immediately or after a
+timeout, depending on how clean the crash is). We're assuming that the
+leasedb stays consistent while its server is running.
+
+>  b" https://github.com/davidsarah/tahoe-lafs/blob/1818-leasedb/docs/proposed/leasedb.rst#accounting-crawler
+> 
+>    "A 'crawler' is a long-running process that visits share container
+> files at a slow rate, so as not to overload the server by trying to
+> visit all share container files one after another immediately."
+> 
+>    Since I opened the following group of tickets, I've become happier
+> with the idea of removing almost all uses of "crawler", leaving as the
+> only remaining use of it to generate the initial leasedb or
+> reconstruct the leasedb in case it has been lost or corrupted. I'm
+> waiting for Brian to notice these tickets and weigh in: #1833, #1834,
+> #1835, #1836.
+
++1
+
+>    This would change the leasedb design state machine by changing two triggers:
+> 
+>    - STATE_STABLE b NONE; trigger: The accounting crawler noticed that
+> all the store objects for this share are gone. implementation: Remove
+> the entry in the leasedb.
+> 
+>      This edge would still be here, but the trigger would be
+> different. There would be no crawler noticing such things, but this
+> edge would be triggered when a client requests a share, the storage
+> server looks in the leasedb and sees that the share is listed as
+> present, but then when it tries to read the share data it finds out
+> that all of the share data is gone.
+
++1
+
+>    - NONE b STATE_STABLE; trigger: The accounting crawler discovers a
+> complete share. implementation: Add an entry to the leasedb with
+> STATE_STABLE.
+> 
+>      Likewise, this edge would still be here, but the trigger would be
+> different. There would be no crawler noticing such things, but this
+> edge would be manually triggered by the server operator using an
+> "import" tool (probably option 4 from #1835).
+
+I'm still quite keen on my suggested variation of option 3 on #1835,
+let's call it 3a):
+
+# If [a share that has been added directly to backend storage] is ever
+# requested, the server could then notice that it exists and add it to
+# the leasedb. In that case, doing a filecheck on that file would be
+# sufficient.
+
+I think you didn't want to do that because you thought there would be
+a performance advantage in treating the leasedb as authoritative. But
+the check for whether a share is on disk when it isn't in the leasedb
+is an uncommon case, and does not affect performance in the common
+case. (It shouldn't matter if servers take longer to report that they
+*don't* have a share, because a downloader should use the first k
+servers to respond. Actually, I think the current downloader might be
+waiting longer than that, but if so, that is easy to fix.)
+
+>  b" https://github.com/davidsarah/tahoe-lafs/blob/1818-leasedb/docs/proposed/leasedb.rst#unresolved-design-issues
+> 
+>    "What happens if a write to store objects for a new share fails permanently?"
+> 
+>    I don't understand. If an attempt to write fails, how can you
+> distinguish between a temporary and permanent failure?
+
+A permanent failure is a failure after any retries.
+
+>    "What happens if only some store objects for a share disappear unexpectedly?"
+> 
+>    Log it, remove the share entry from the leasedb, and leave what's
+> left of the share data alone? Because perhaps operators or developers
+> want to investigate the exact shape of the lossage/corruption.
+
+That seems reasonable. Note that if the share is re-stored, it will
+overwrite (at least some of) those store objects.
+
+>    "Does the leasedb need to track corrupted shares?"
+> 
+>    This is the same question as the previous one b a corrupted share
+> is the same as a share with some of its objects missing.
+
+If we do 3a) and a share has a corrupted header, then each time the share
+is requested, the server will report that it *does* have the share (because
+its objects were listed by the backend query), and then it will fail to
+provide it (once it sees that the header is corrupted). That's why I
+distinguished the two cases.
+
+-- 
+David-Sarah Hopwood b%
+
+
+
+
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

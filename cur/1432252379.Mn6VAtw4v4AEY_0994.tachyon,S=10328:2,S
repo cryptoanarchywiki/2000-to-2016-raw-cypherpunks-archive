@@ -1,0 +1,195 @@
+From owner-cypherpunks@al-qaeda.net  Tue Dec  4 09:56:52 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id qB4EqppX025180
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 4 Dec 2012 09:52:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1354632771;
+	bh=jDsUQNTIRXn5awDRXImQBbGdeWrNPJBd8PJE64EOPSI=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=0O/TidflJle91GnC7j12vK897Thl+VCgLRxxyuBTJkL4Boc8q219kV5pRJM4JN30n
+	 YAgjGOCEPlyEwoMTGRl3Y7fT5unrV2mHFqHb9kcsM8OCz7Q5XIivD39VWhADbzfskq
+	 Aa4yaYFymU0zricRjMiBJ74hsyUBYNWgPVgi40x4=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id qB4Eqp79025179
+	for cypherpunks-outgoing; Tue, 4 Dec 2012 09:52:51 -0500
+Date: Tue, 4 Dec 2012 15:52:46 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: Re: [Freedombox-discuss] Thoughts on MAC Addresses
+Message-ID: <20121204145246.GL9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 8908
+Lines: 163
+
+----- Forwarded message from John Gilmore <gnu@toad.com> -----
+
+From: John Gilmore <gnu@toad.com>
+Date: Mon, 03 Dec 2012 22:21:04 -0800
+To: "Nick M. Daly" <nick.m.daly@gmail.com>
+Cc: freedombox-discuss@lists.alioth.debian.org
+Subject: Re: [Freedombox-discuss] Thoughts on MAC Addresses
+
+It is worthwhile considering the privacy implications of MAC
+addresses.  Here's some info.
+
+  *  MAC addresses on Ethernet gear come in two parts: the company ID
+     number, and the manufacturer-assigned extension number.  The
+     company ID reveals who built the Ethernet gear; the extension
+     number is similar to a serial number.  So, a database of MAC
+     addresses can be used to find equipment made by particular
+     manufacturers, for example if you know a vulnerability in that
+     product as shipped and want to exploit it; or if you are a
+     malevolent government intending to confiscate all hardware
+     that's likely to be running FreedomBox software.
+
+  *  Apple iPhones record the MAC addresses that are nearby, report
+     these to Apple, and Apple uses them to return a physical position
+     fix.  This is used to more rapidly cause the GPS algorithm to
+     converge on a position, and also used when GPS isn't working.
+     The phones often report their GPS position and any nearby MAC
+     addresses back to Apple servers.  (Apple formerly used startup
+     Skyhook Wireless for this service, but ended up disintermediating
+     them by covertly using their customers' iPhones to collect an
+     equivalent database.)  See:
+       https://en.wikipedia.org/wiki/Skyhook_Wireless
+     It's easy for hackers to query that database of MAC addresses
+     and locations, by pretending to be an iPhone seeking its location.
+
+  *  Google Street View vehicles recorded the MAC addresses of all
+     accessible WiFi access points that they passed.  Google then used
+     this database to guess at the physical location of Android mobile
+     phones who can also hear beacons from the same MAC addreses.
+     Android phones may now be doing what iPhones do, reporting nearby
+     MAC addresses plus the phone's GPS location to a Google server.
+
+  *  By default, every IPv6 interface's MAC address is in the low order
+     bits of its IPv6 address.  See RFC 4291 (IPv6 Addressing
+     Architecture) Section 2.5.1 and Appendix A; RFC 2464
+     (Transmission of IPv6 Packets over Ethernet Networks); RFC 4862
+     (IPv6 Stateless Address Autoconfiguration); RFC 4941 (Privacy
+     Extensions for Stateless Address Autoconfiguration in IPv6).  So,
+     anyone who ever communicates with a machine via IPv6 will
+     generally learn the MAC address of one of its interfaces, unless
+     that machine specifically uses the RFC 4941 privacy extensions to
+     generate a temporary random address and change it periodically.
+     (In Linux, the default is to not use such temporary addresses;
+     you can change that default by writing 1 to
+     /proc/sys/net/ipv6/conf/default/use_tempaddr.  You can change it
+     for all current devices by writing to
+     /proc/sys/net/ipv6/conf/all/use_tempaddr.  If you want privacy,
+     it's probably good to write a 1 to both.)
+
+  *  If someone who is in radio range of a WiFi access point can send
+     it packets that cause it to communicate over the Internet, that
+     someone can figure out the correlation between the access point's
+     MAC address and the IP address (v4 or v6) it uses over the
+     Internet.  For example, connecting to the access point and then
+     sending a DNS query for your own domain, will cause a DNS query
+     packet to be forwarded to your own domain server, from the global
+     IP address of the access point.  Your domain server can then log
+     that packet and correlate it with the access point's MAC address
+     seen by the wireless device that generated it.  Many closed
+     access points handle DNS packets even before authentication,
+     since they rely on Web page spoofing to force people to "log in"
+     or "check a box to agree to terms".  It's even simpler if the
+     access point is open.  If a police car crusing past a FreedomBox
+     can cause it to access a police Internet DNS site, they can map
+     the MAC address to the IP address of that FreedomBox.
+
+So, there are two aspects of MAC addresses that are problematic: that
+they are long-term identifiers, and that they actually reveal things
+about that device.
+
+If upon installation the FreedomBox software merely changed each
+machine's MAC address to a random value, we'd solve the second problem
+(avoid revealing who made the device).  However it's trickier than
+that, since we may not have a good source of randomness at
+installation time (making our addresses too predictable), and also,
+devices that have a random MAC address (instead of one assigned to a
+company on the IEEE-maintained registry of Ethernet manufacturers)
+might make it too obvious that the manufacturer's MAC address had been
+overwritten, which would lead totalitarians to pay more attention.
+
+We could carefully pick a random number and then package it into a MAC
+address that looks like it comes from a popular manufacturer.  For
+example, we could have a table of a hundred big manufacturers, and for
+each, the known range of "serial number" bits that they shipped.  We'd
+use part of our random number to pick a manufacturer, and another part
+to pick a valid-looking serial number within that manufacturer's
+products.  To avoid drawing scrutiny, we might have to be more
+selective, e.g. avoid putting a MAC address from a 10-megabit 1990s
+3Com Ethernet card onto a 2010s WiFi link.
+
+Changing the MAC address to a packaged random value *periodically* --
+perhaps daily or weekly -- would solve the first problem of its being
+a long-term identifier.  IPv6 can cope with that without trouble; it
+encourages interfaces to have multiple IPv6 addresses, deprecating old
+ones while allowing existing communications to work.  IPv4 can also
+cope with changed MAC addresses; within seconds, any neighbor on the
+Ethernet or radio who is communicating with the node will know the new
+MAC address that matches the same old IPv4 address.
+
+We would have to test any new candidate MAC address, before using it,
+by trying to communicate with it and seeing if anything responds.  See
+the "Duplicate Address Detection" algorithm in RFC 4862.
+
+> *If* preventing people from being identified by MAC addresses should be
+> a goal, how do we accomplish that?  The MAC address can, but shouldn't
+> be set in the firmware, we can't change it or set it, from the running
+> system, there.  That's good, because it means the bootloader can't be
+> changed on a running system.
+
+MAC addresses in all modern networking chips can be set from software.
+
+I think what you mean is that the *default* MAC address is stored in
+flash, near where the boot firmware is stored, and that some boards
+running Linux can't rewrite that flash memory.  "Can't" is probably
+too strong a word -- many can, but how to do so is often merely
+undocumented, providing a little security-by-obscurity.
+
+> So, where can we set the MAC address?  The obvious solution is to put it
+> into /etc/networking/interfaces, but that'll harm folks who want some
+> form of anonymity.  We can use 0:0:0:0:0:0 as a default MAC address in
+> /etc/networking/interfaces and folks who want to set a static one can
+> edit the file to set it there, while folks who want to use a MAC changer
+> can run a service hooked through Plinth.
+
+"ifconfig DEV hwaddr xx:xx:xx:xx:xx:xx" or "ip link set DEV
+xx:xx:xx:xx:xx:xx" lets you set the MAC address of DEV at any time
+from a shell, as root.  There is also an equivalent low level
+interface.
+
+We can't set 0:0:0:0:0:0 as every interface's MAC address.  There is
+good reason to have unique addresses on Ethernet interfaces.  On a
+given Ethernet, or in a given WiFi radio range, communication will
+fail if multiple interfaces have the same address (unless those
+interfaces specifically coordinate with each other, e.g. are plugged
+into the same node and use custom software to pretend to be a single
+interface).  If you and your neighbor both have a FreedomBox with WiFi
+address 0:0:0:0:0:0, there will be no way to send a packet to YOUR
+FreedomBox; your neighbor's box will also receive the packet and is
+just as likely to respond to it -- which will confuse the communication
+when BOTH boxes respond to it.
+
+	John
+
+_______________________________________________
+Freedombox-discuss mailing list
+Freedombox-discuss@lists.alioth.debian.org
+http://lists.alioth.debian.org/cgi-bin/mailman/listinfo/freedombox-discuss
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

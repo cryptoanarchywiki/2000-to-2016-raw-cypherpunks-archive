@@ -1,0 +1,94 @@
+From owner-cypherpunks-outgoing@EINSTEIN.ssz.com  Mon Nov  6 07:07:40 2000
+Received: from MIT.EDU (SOUTH-STATION-ANNEX.MIT.EDU [18.72.1.2])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id HAA04556
+	for <kwantam@positron.mit.edu>; Mon, 6 Nov 2000 07:07:39 -0500
+Received: from einstein.ssz.com by MIT.EDU with SMTP
+	id AA14222; Mon, 6 Nov 00 07:07:14 EST
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id GAA28788
+	for cypherpunks-outgoing; Mon, 6 Nov 2000 06:00:24 -0600
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id GAA28765
+	for cypherpunks@ssz.com; Mon, 6 Nov 2000 06:00:17 -0600
+Received: from domains.invweb.net (root@domains.invweb.net [198.182.196.32])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id GAA28755
+	for <cpunks@einstein.ssz.com>; Mon, 6 Nov 2000 06:00:14 -0600
+Received: (from openpgp@localhost)
+	by domains.invweb.net (8.9.3/8.9.3) id GAA30354;
+	Mon, 6 Nov 2000 06:53:10 -0500
+Date: Mon, 6 Nov 2000 06:53:10 -0500
+Message-Id: <20001106035239.A20293@eskimo.com>
+Originator: cypherpunks@openpgp.net
+From: Wei Dai <weidai@eskimo.com>
+To: Multiple recipients of list <cypherpunks@openpgp.net>
+Subject: CDR: Re: PipeNet protocol
+X-Listprocessor-Version: 6.0 -- ListProcessor by Anastasios Kotsikonas
+X-Comment: All list traffic is being monitored by the FEDS!!
+In-Reply-To: <200011060314.WAA01504@cypherspace.org>; from adam@cypherspace.org on Sun, Nov 05, 2000 at 10:11:54PM -0500
+Content-Type: text/plain; charset=us-ascii
+References: <200011060314.WAA01504@cypherspace.org>
+X-Loop: openpgp.net
+Sender: owner-cypherpunks@EINSTEIN.ssz.com
+Precedence: bulk
+Reply-To: cypherpunks@EINSTEIN.ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Language: English, Russian, German
+Status: O
+Content-Length: 2742
+Lines: 52
+
+On Sun, Nov 05, 2000 at 10:11:54PM -0500, Adam Back wrote:
+> For those that don't know about PipeNet Wei has a description here
+> [1].  PipeNet is a synchronous mix-net where users stay connected and
+> consume bandwidth 24x365 to avoid revealing when they are using it.
+> 
+> PipeNet's synchronous behavior would be implemented on top of TCP with
+> it's best-effort service by using the following scheduling algorithm
+> (from [1]):
+> 
+> | Each node expects one packet from each link id in each time unit.
+> | Extra packets are queued for processing in later time units.
+> | However, if a node does not receive a packet for a link id in a
+> | particular time unit, it stops normal processing of packets for that
+> | time unit and queues all packets.  This ensures that any delay is
+> | propagated through the entire network and cannot be used to trace a
+> | particular connection.
+> 
+> This is to defend against active attacks delaying packets to observe
+> the effect on the network and hence trace routes.
+> 
+> However I think this scheduling algorithm would have the side effect
+> of making this variant of PipeNet very vulnerable to DoS attacks.  Any
+> user can arbitrarily delay packet delivery for the entire network by
+> ceasing to send packets.
+> 
+> It would also seem that performance would degrade badly to effectively
+> the performance of the worst ping time link.
+
+That is all true. I guess what you meant by "insufficient" is in terms of
+performance and defense against DoS attacks, not defense against traffic
+analysis. If that's the case then I agree with you. I think a protocol
+that has good performance, defense against DoS attacks, and defense
+against traffic analysis may not exist. There may not even be a viable
+protocol that trades off between these properties. 
+
+The reason I have this suspicion is from a consideration of what the
+choices are when a node does not receive a packet in the time period that
+it expects to receive it. PipeNet chooses to propagate the delay to
+everyone else, and gets bad performance and defense against DoS attacks. 
+Freedom chooses to propagate the delay to no one else, and gets bad
+defense against traffic analysis. I don't see what else you can do that
+would avoid both of these problems. 
+
+There is a hope, however, that the performance and DoS problems of
+PipeNet could be solved in the future through other means. The
+performance issue is easier, since it just requires the underlying
+network to have better reliability and guarantee of service. The DoS
+problem could be solved if the underlying network is protected against
+DoS. Then we can require each user to place a large deposit on each node,
+which would be used to compensate everyone else for any delay caused by
+that user.
+
+

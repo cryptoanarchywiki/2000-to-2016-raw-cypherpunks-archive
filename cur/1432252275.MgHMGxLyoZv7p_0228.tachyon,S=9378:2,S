@@ -1,0 +1,176 @@
+From owner-cryptography+rsw=mit.edu@metzdowd.com  Sat May 21 09:29:23 2005
+Return-Path: <owner-cryptography+rsw=mit.edu@metzdowd.com>
+Received: from south-station-annex.mit.edu (SOUTH-STATION-ANNEX.MIT.EDU [18.72.1.2])
+	by positron.jfet.org (8.13.4/8.13.4/Debian-2) with ESMTP id j4LETLEs009102
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <rsw@opamp.org>; Sat, 21 May 2005 09:29:23 -0500
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by south-station-annex.mit.edu (8.12.4/8.9.2) with ESMTP id j4LEMpq7009744
+	for <rsw@opamp.org>; Sat, 21 May 2005 10:22:51 -0400 (EDT)
+Received: from red.metdow.com (red.metdow.com [209.166.243.235])
+	by pacific-carrier-annex.mit.edu (8.12.4/8.9.2) with ESMTP id j4LEMUwA002129
+	for <rsw@mit.edu>; Sat, 21 May 2005 10:22:31 -0400 (EDT)
+Received: by red.metdow.com (Postfix, from userid 1002)
+	id D9C7EF2AD; Sat, 21 May 2005 10:19:33 -0400 (EDT)
+X-Original-To: cryptography@metzdowd.com
+Delivered-To: cryptography@metzdowd.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by red.metdow.com (Postfix) with ESMTP id 049DEF297
+	for <cryptography@metzdowd.com>; Sat, 21 May 2005 10:19:32 -0400 (EDT)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id B8232D97E7; Sat, 21 May 2005 10:19:25 -0400 (EDT)
+X-Original-To: cryptography@metzdowd.com
+Received: from rwcrmhc13.comcast.net (rwcrmhc13.comcast.net [204.127.198.39])
+	by red.metdow.com (Postfix) with ESMTP id E759FF2B3
+	for <cryptography@metzdowd.com>; Sat, 21 May 2005 00:07:54 -0400 (EDT)
+Received: from [192.168.1.50] (c-67-166-56-27.hsd1.co.comcast.net[67.166.56.27])
+          by comcast.net (rwcrmhc13) with ESMTP
+          id <2005052104074601500ftd8oe>; Sat, 21 May 2005 04:07:47 +0000
+Message-ID: <428EB40C.3000204@garlic.com>
+Date: Fri, 20 May 2005 22:07:40 -0600
+From: Anne & Lynn Wheeler <lynn@garlic.com>
+User-Agent: Mozilla Thunderbird 1.0.2 (X11/20050317)
+X-Accept-Language: en-us, en
+MIME-Version: 1.0
+To: "James A. Donald" <jamesd@echeque.com>
+Cc: cryptography@metzdowd.com, cypherpunks@lne.com
+Subject: Re: What happened with the session fixation bug?
+References: <427CCA9B.29132.760A1FC@localhost>
+In-Reply-To: <427CCA9B.29132.760A1FC@localhost>
+X-Enigmail-Version: 0.89.5.0
+X-Enigmail-Supports: pgp-inline, pgp-mime
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: owner-cryptography@metzdowd.com
+Precedence: bulk
+X-Spam-Score: -2.599
+X-Spam-Flag: NO
+X-Scanned-By: MIMEDefang 2.42
+Status: O
+Content-Length: 6784
+Lines: 123
+
+James A. Donald wrote:
+> PKI was designed to defeat man in the middle attacks
+> based on network sniffing, or DNS hijacking, which
+> turned out to be less of a threat than expected.
+
+all of them may have been less than expected ... the comoningly 
+recognized SSL certificate issuers (that have their public key preloaded 
+into common browsers) sell their certificates and have processes that 
+look at whether you have a validly registered corporation. For most 
+practical purposes this has been for e-commerce sites and the objective 
+for the majority is protecting credit card numbers.
+
+however, the reported exploits .... and what seem to represent a 
+significantly larger ROI (fraud for effort invested) is to harvest the 
+merchant transaction file (containing all the accumulated transaction 
+information that would have taken months of listening to gather) ... aka 
+it is much easier to let the merchant gather and organize all the 
+information on behalf of the crook. slightly related posting ...
+http://www.garlic.com/~lynn/2001h.html#61 Security proportional to risk
+
+the original ssl e-commerce work
+http://www.garlic.com/~lynn/aadsm5.htm#asrn2
+http://www.garlic.com/~lynn/aadsm5.htm#asrn3
+
+had the user typing in the merchant webserver URL as a HTTPS session 
+from the start and then it would check the domain name in the returned 
+certificate (after all the digital signature gorp) with the domain name 
+typed in. this is rarely if ever happening ... the common justification 
+is running SSL during the shopping experience cuts the thruput by 80-90 
+percent. as a result, SSL is typically saved for the "check-out" button.
+
+so lets say you have been redirected to a fraudulent site and don't know 
+it because the SSL domain name stuff hasn't been done yet. then comes 
+time to do the check-out button. if it is a fraudulent site ... and 
+since the crooks would then be supplying the URL with the check-out 
+button ... the crooks are likely to have obtained a valid SSL 
+certificate for some domain and that domain will match whatever the 
+check-out button supplies.
+
+random past ssl certificate posts
+http://www.garlic.com/~lynn/subpubkey.html#sslcert
+
+crooks are capable of setting up valid dummy front companies ... it 
+isn't a very large effort.
+
+most of what the CA TTPs do when they are verifying stuff ... is that 
+the person applying for a certificate is in some way associated with a 
+valid company that they claim to be associated with.
+
+then the CA TTPs check with the domain name infrastructure to see if the 
+corporation that they just checked on ... is the same one listed as the 
+owner of the subject domain name (modulo the issue that there can be a 
+common company name, a DBA company name, and a legal company
+name ... all for the same corporation and all completely different names 
+... you sometimes will see this in credit card statements where the 
+store-front name and the company name on the statement are different).
+
+As observed, one of the things SSL was for a countermeasure for 
+integrity problems in the domain name infrastructure involving domain 
+name hijacking (where the mapping of the domain name to an ip-address 
+was altered to be a different ip-address, potentially fraudulent website).
+
+However, there have been more sophisticated domain name hijackings that 
+have occured where both the domain name infrastructure records had both 
+the name of the corporate owner as well as the ip-address altered. In 
+this more sophisticated form, a crook with a perfectly valid dummy front 
+corporation ... that has done the more sophisticated form of domain name 
+hijacking ... could apply for a perfectly valid SSL domain name 
+certificate ... and pass all the tests.
+
+in any case, that was my perception of what we were doing with SSL ten 
+years ago.
+
+PKI is slightly different. One of the reasons that we coined the term 
+"certificate manufactoring" was to try and differentiate what was 
+comingly being referred to as PKI ... and what SSL domain name 
+certificate stuff was actually doing.
+
+Note that there has been a proposal to somewhat address the more complex 
+form of domain name hijacking (both the company name take-over as well 
+as the ip-address take-over) ... which involves having domain name 
+owners register a public key when they get a domain name. Then all 
+future correspondance with the domain name infrastructure is digitally 
+signed ... which then can be veriefied with the onfile public key. as a 
+side note ... this is a non-PKI, certificateless implementation of 
+public key. In any case, with authenticated correspondance ... there 
+supposedly is less chance of domain name hijacking occuring.
+http://www.garlic.com/~lynn/subpubkey.html#certless
+
+This has somewhat been supported by the CA SSL domain name certification 
+industry. The have a complex, expensive, and error-prone identification 
+process to try to establish a valid corporation. And even then they are 
+at the mercy of whether the company name listed in the domain name 
+infrastructure is actually the correct company (i.e. their whole 
+infrastructure otherwise is useless).
+
+The other advantage ... is that the Certification Authority can require 
+that SSL domain name certificate applications also be digitally signed. 
+Then the CA can turn an expensive, time-consuming, and error-prone 
+identification process into a much simpler, cheaper, and reliable 
+authentication process ... by retrieving the onfile public key from the 
+domain name infrastructure for verifying the applicants digital 
+signature (again note that this is a non-PKI, certificateless 
+implementation that they would use as the trust basis for the whole SSL 
+domain name certificate operation).
+
+There is some slight catch22 to this for the SSL domain name certificate 
+business. First off, improving the integrity of the domain name 
+infrastructure for the Certification Authority industry ... would also 
+improve the integrity for everybody ... somewhat mitigating one of the 
+original supposed requirements for having SSL domain name certificates 
+in the first place. The other is that if the SSL certification industry 
+found it viable to base their trust infrastructure on the 
+certificateless, onfile public keys at the domain name infrastructure... 
+it might be possible that the rest of the world might find them 
+acceptable also. One could imagine a slightly modified SSL process where 
+the public key didn't come from a certificate ... but was an onfile 
+certificateless public key retrieved directly from the domain name 
+infrastructure (in much the same way the CA industry has proposed doing).
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+

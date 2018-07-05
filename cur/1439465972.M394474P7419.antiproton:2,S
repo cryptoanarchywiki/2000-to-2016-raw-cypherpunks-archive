@@ -1,0 +1,174 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t7DBdEYj007402;
+	Thu, 13 Aug 2015 07:39:16 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=Onw3Z99x;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-ig0-f169.google.com (mail-ig0-f169.google.com
+ [209.85.213.169])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t7DBdBAX007398
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 13 Aug 2015 07:39:12 -0400
+Received: by igfj19 with SMTP id j19so33853151igf.1
+ for <cypherpunks@cpunks.org>; Thu, 13 Aug 2015 04:39:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :cc:content-type;
+ bh=nMpnfa8tmtjYuhBTuVQpEjs09Psb5QwdseqJjeyZGbw=;
+ b=Onw3Z99xSx1Io1zb0kakrNfH8jrQKPe0+lFdQHibIxUDyQSW3CVY4IT4ImHFYLy8kf
+ C2kXuQ13C2Rs16HaV6YzNHTzSDgfMbN92DYPkh4XFSRgVEZ4ukFMPnZPTmbTPd7u/WAm
+ b+JW4mGCFdhSUMqmbm3G/ViH9iLT/Jp142KAcSwv8MySKNYn/QrySncV3w8tM1zkHCY7
+ mqgzfRZxYbZWs9ryl3ETuQHCeqA/uyE89MIqY2pehGb2N4xkvj2gOzE2cum3kmQ3RGb2
+ B06b+q1Iv6WJt3aVqowJX+bP9EHehpDgTvFi9B2TIQqZKtfRWKiJGeqKifb3dFnQ9uTx
+ cdRw==
+MIME-Version: 1.0
+X-Received: by 10.50.87.74 with SMTP id v10mr2516712igz.37.1439465946097; Thu,
+ 13 Aug 2015 04:39:06 -0700 (PDT)
+Received: by 10.36.44.69 with HTTP; Thu, 13 Aug 2015 04:39:05 -0700 (PDT)
+In-Reply-To: <20150813074017.GF2384@torproject.org>
+References: <55C59BBA.2020700@openmailbox.org>
+ <CAD2Ti2963Oiin8ZWdR5Pc4RrmEfteN2X0MtBAUMdQ6uQuPm1jA@mail.gmail.com>
+ <CAAd2PDJSmAR8UBLa62yzQTd4tF9S46q2cZgH0ErxtOyYH531Ww@mail.gmail.com>
+ <1439101342-sup-8277@metis.syd1.tesser.org>
+ <20150812234512.GE2384@torproject.org>
+ <CAD2Ti28+=dSmwqe_ZtJSDMZ1N-AJ5Lp=5OA6HpNHakhfwe1uMg@mail.gmail.com>
+ <20150813074017.GF2384@torproject.org>
+Date: Thu, 13 Aug 2015 07:39:05 -0400
+Message-ID: <CAD2Ti2_0JFRw7NBhXUL2J6P7vpmjPE-sxN_Jb6=Z6YGpiB=qPA@mail.gmail.com>
+Subject: Re: [tor-relays] clarification on what Utah State University exit
+ relays store ("360 gigs of log files")
+From: grarpamp <grarpamp@gmail.com>
+To: tor-relays@lists.torproject.org
+Content-Type: text/plain; charset=UTF-8
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 115
+
+On Thu, Aug 13, 2015 at 3:40 AM, Mike Perry <mikeperry@torproject.org> wrote:
+>> But consider looking at average flow lifetimes on the internet. There may
+>> be case for going longer, bundling or turfing across a range of ports to falsely
+>> trigger a record / bloat, packet switching and so forth.
+>
+> This interests me, but we need more details to determine what this looks
+> like in practice.
+
+NANOG list could link specific papers regarding nature of the internet.
+The various flow exporters have sensible default timeouts tend cover
+that ok for purposes intended.
+
+> I suspect that this is one case where the switch to one guard may have
+> helped us.
+
+In that various activities such as ssh, browsing, youtube, whatever
+are confined to being multiplexed in one stream, that makes sense.
+
+> However, Tor still closes the TCP connection after just one
+> hour of inactivity. What if we kept it open longer?
+
+The exporting host has open flow count limited by memory (RAM).
+A longer flow might be forced to span two or more records.
+The "flags" field of some tools and versions may not mark
+a SYN seen in records 2+, the rest of tuple would stay same.
+Active timeout gives periodic data on longer flows, typically
+retaining start time but implementations can vary on state.
+
+Here's an early IOS 12 default...
+  Active flows timeout in 30 minutes (1~60)
+  Inactive flows timeout in 15 seconds (10~600)
+
+Also consider what is wished to hide, big iso download,
+little http clicks, start time of some characteristic session
+rippling across or appearing at edges, active data pumping attack.
+And what custom flowish things and flow settings an adversary
+might be doing to observe those. Traditional netflow seems
+useful as idea base to form a better heuristic analysis system.
+
+> Or what if the first
+> hop was an encrypted UDP-based PT, where it was not clear if the session
+> was torn down or closed?
+
+In old netflow, UDP, where src/dst ip and port tuple is same,
+just times out into a record. Some new exotic DPI might form
+session context flow record based on application inside, crypto
+would stop the cleartext portion of DPI.
+
+Some flow tools don't reassemble so the frag game might slide
+by them in an arms race.
+
+> in this case I am worried it may end up silencing the people I'd really
+> like to hear from. I want real data from the field, here.
+
+There's no censor here. Other operators in the field can and should speak up
+on topic (and feel free to bash any my errors or lack of paper / code
+/ data posting).
+
+> You can say that, but then why isn't this being done in the real world?
+> The Snowden leaks seem to indicate exploitation is the weapon of choice.
+
+The Snowden leaks and Bamford also indicate NSA-UTAH, gigawatts, massive
+international cable tapping, CARNIVORE, NARUS, X-WHATEVER, etc.
+Exploitation could use a few offices full of hackers and some good peering
+points and hosts, not that huge $billions level of infrastructure and outside
+your borders expenditure. Though blackbagging to stand up an IP in the
+target net via an active tap could be useful, the driver to localize
+due to cost.
+
+> I suspect other factors are at work that prevent dragnet correlation
+> from being reliable, in addition to the economics of exploits today
+> (which may be subject to change). These factors are worth investigating
+> in detail, and ideally before the exploit cost profiles change.
+
+Yes, bigdata still has to conform to at least some kind of cost
+benefit analysis and substantiation too. Where is the line on that
+these days... 2^40, 2^56, 2^80...?
+
+> As such, I still look forward to hearing from someone who has worked at
+> an ISP/University/etc where this is actually practiced. What is in
+> *those* logs?
+
+The questions were of a general "intro to netflow" nature, thus
+the links, they and other resource describe all the data fields,
+formation of records, timeouts, aggregation, IPFIX extensibility, etc.
+Others and I on these lists know what "360 gigs" of netflow looks like.
+*What* specific info are you looking for beyond that?
+Applicability to exploit? Should people print out flows from a degenerate
+client and exit use case and line them up?
+
+More tools and tech...
+http://www.cisco.com/c/en/us/products/ios-nx-os-software/ios-netflow/index.html
+nfdump, silk
+https://en.wikipedia.org/wiki/Network_Based_Application_Recognition
+
+More generally, netflow is not the only passive analysis tool or idea
+out there. So focusing on it may be narrow, though it is popular tool.
+
+> Specifically: Can we get someone (hell, anyone really) from Utah to
+> weigh in on this one? ;)
+
+Well, I'll speculate that by now they've lawyered up and silenced their
+OP such that it's unlikely that we'll hear from them (short of coderman
+firing a broadside FOIA at them ;) (We're speculating it's 360 gigs of
+netflow.)
+
+> Otherwise, the rest is just paranoid speculation, and bordering on
+> trolled-up misinformation. :/
+
+https://www.youtube.com/watch?v=rh1Amz8s8MI
+http://www.multivax.com/last_question.html
+
+Everybody's now asking questions what is possible, my job is done ;)
+

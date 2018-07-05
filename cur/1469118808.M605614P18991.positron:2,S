@@ -1,0 +1,222 @@
+Return-path: <cypherpunks-bounces@cpunks.org>
+Envelope-to: rsw@positron.jfet.org
+Delivery-date: Thu, 21 Jul 2016 09:33:27 -0700
+Received: from antiproton.jfet.org ([209.141.47.85])
+	by positron.jfet.org with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.87)
+	(envelope-from <cypherpunks-bounces@cpunks.org>)
+	id 1bQGud-0004w2-MD
+	for rsw@positron.jfet.org; Thu, 21 Jul 2016 09:33:27 -0700
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u6LGQ9Bu031740;
+	Thu, 21 Jul 2016 12:26:09 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=literati-org.20150623.gappssmtp.com header.i=@literati-org.20150623.gappssmtp.com
+	header.b=L3iE5hi8; dkim-adsp=none (unprotected policy);
+	dkim-atps=neutral
+Received: from mail-oi0-f42.google.com (mail-oi0-f42.google.com
+ [209.85.218.42])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u6LGKkpE031671
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 21 Jul 2016 12:20:48 -0400
+Received: by mail-oi0-f42.google.com with SMTP id j185so124927709oih.0
+ for <cypherpunks@cpunks.org>; Thu, 21 Jul 2016 09:20:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=literati-org.20150623.gappssmtp.com; s=20150623;
+ h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+ bh=4BOXzb9gtv9pvMLjWGYISlWsMo1UtevYL8mR8ZMNNN4=;
+ b=L3iE5hi8jt0EWKjFJ7jOdEwaPdA2fpB/8uTlCqMjMRwbo7buFOD2b88nEzP6D724DO
+ ZuZpy8Fhlt9kp0s8//1cbF2FAPDIiK1UMjy6BuXtknbP/bxQ0pskmXB4OgPWnl9VQoUp
+ 9EEIpYbvXAtsXzz/8tzqqQ76F5SQmu4hAiNqwmiq4XAVbCGODJ3R7N1VJF8jHXskIllT
+ foEGgBe2vLE+ENtoHnto67TkXGjNrRGSzCNgVfOUI7AWuC7Q3SCdcRvrOG0BQhPwD77q
+ 7ELl9eiUQxf1FHoT3Yoadp5GM+fi4QfRhUGcPDgqeoaF3zOb61TdJkQASzklfBut8Hbu
+ w0Dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+ :message-id:subject:to;
+ bh=4BOXzb9gtv9pvMLjWGYISlWsMo1UtevYL8mR8ZMNNN4=;
+ b=MarOLvM2yRRJ5hCiKQUNkj7BgaTkv5SWUrN+K4aVuCxdxPq4RvV7wDQemvfDR7j55i
+ 1cNrLW/cnQg3YNap3snsLeEJ2ruh++SgcDdfzEt35ApMOlJ96oPQ47n3gYxYQAwvXnbE
+ QkT9o61RIcQwZVCtn8v8kNHWsqY+ThuvEDFbLRl16SE5FCMPTe+URxo0PJ+Y9bItLli7
+ mNaCg1CLoupWERQHzImo4pTC4tBHOcjhsSiHbjmGQ1C46BlrX3kMG+fjGINTmGPj8tNC
+ snZDrZSh22kmZsLLWnpAD4FS/OOGe03mQs8xOoq8wrKwMdRMlpzsuEqc9UfGh0i5io9V
+ SfBw==
+X-Gm-Message-State: ALyK8tIisdzV+5s3laqzWfoAJm2zsJg7Wmz2F2QcxCNVpdr52X7Va2iyPaaTxTin5vW1BSxY1MEMXBC1nWlpKA==
+X-Received: by 10.202.80.16 with SMTP id e16mr25672201oib.28.1469118041395;
+ Thu, 21 Jul 2016 09:20:41 -0700 (PDT)
+MIME-Version: 1.0
+References: <20160719084416.GE843@sivokote.iziade.m$>
+ <578ea182.822dc80a.feff0.d504@mx.google.com>
+ <CAHKdp-kb9VfFKPxU95qiO125MJsrBW6c-zyNqgOmViKnGxPLeg@mail.gmail.com>
+ <57909340.10a9370a.e8cdb.3e3c@mx.google.com>
+ <BE818FD1-9549-4D44-B367-3F24B1D3CA28@synfin.org>
+ <5790f0a6.0ba3370a.87c8c.8222@mx.google.com>
+In-Reply-To: <5790f0a6.0ba3370a.87c8c.8222@mx.google.com>
+From: Sean Lynch <seanl@literati.org>
+Date: Thu, 21 Jul 2016 16:20:32 +0000
+Message-ID: <CAHKdp-mjpm55c5vx6QmmOBJ5cq6WUFNfZztRydgO7e6+ySLhJw@mail.gmail.com>
+Subject: Re: Instead of only bashing tor, why not discuss the alternatives?
+To: juan <juan.g71@gmail.com>, cypherpunks@cpunks.org
+Content-Type: multipart/alternative; boundary=001a113d855cfdab1f053827b2ab
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 146
+
+--001a113d855cfdab1f053827b2ab
+Content-Type: text/plain; charset=UTF-8
+
+On Thu, Jul 21, 2016 at 9:05 AM juan <juan.g71@gmail.com> wrote:
+
+> On Thu, 21 Jul 2016 06:56:56 -0400
+> John <jnn@synfin.org> wrote:
+>
+> >
+> >
+> > On July 21, 2016 5:21:04 AM EDT, juan <juan.g71@gmail.com> wrote:
+> > >On Wed, 20 Jul 2016 16:51:49 +0000
+> > >Sean Lynch <seanl@literati.org> wrote:
+> > >
+> > >> On Tue, Jul 19, 2016 at 2:59 PM juan <juan.g71@gmail.com> wrote:
+> > >>
+> > >> > On Tue, 19 Jul 2016 11:44:16 +0300
+> > >> > Georgi Guninski <guninski@guninski.com> wrote:
+> > >> >
+> > >> > > Instead of only bashing tor, why not discuss the alternatives
+> > >> > > and move to something allegedly better?
+> > >> >
+> > >> >
+> > >> >         We need to get rid of tor first. Resources wasted on tor
+> > >are
+> > >> >         resources that can't be used in good projects.
+> > >> >
+> > >>
+> > >> They are not your resources to redirect,
+> > >
+> > >     No they are not mine. They belong to the people who the US
+> > >     gov't/military robs. No taxes no tor.
+> >
+> > Well, phrasing I guess, but most of the relays just belong to
+> > volunteers.
+>
+>         Apologies John, I really don't mean to pick on you
+>         personally.
+>
+>         I'd point out though that the organization exists thanks to
+>         state funding. The whole thing would be rather different if all
+>         the participants were volunteers.
+>
+>         (are all high speed nodes also run by and paid for volunteers?)
+>
+
+Whatever I may think of your other beliefs about the organization, the
+funding model is definitely a problem. Same goes for Mozilla taking money
+from Google, MS, eBay, etc. Organizations building important infrastructure
+need to be independent.
+
+
+>
+> > I run a relay most of the time, although I dont consider
+> > it one of the top 5 or even top 10 services I maintain on that
+> > particular box... It's kind of just a half ass interesting service to
+> > fuck with occasionally.
+> >
+> > John
+> >
+> >
+> >
+>
+>
+
+--001a113d855cfdab1f053827b2ab
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><br><br><div class=3D"gmail_quote"><div dir=3D"ltr">On Thu=
+, Jul 21, 2016 at 9:05 AM juan &lt;<a href=3D"mailto:juan.g71@gmail.com">ju=
+an.g71@gmail.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" =
+style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">On =
+Thu, 21 Jul 2016 06:56:56 -0400<br>
+John &lt;<a href=3D"mailto:jnn@synfin.org" target=3D"_blank">jnn@synfin.org=
+</a>&gt; wrote:<br>
+<br>
+&gt;<br>
+&gt;<br>
+&gt; On July 21, 2016 5:21:04 AM EDT, juan &lt;<a href=3D"mailto:juan.g71@g=
+mail.com" target=3D"_blank">juan.g71@gmail.com</a>&gt; wrote:<br>
+&gt; &gt;On Wed, 20 Jul 2016 16:51:49 +0000<br>
+&gt; &gt;Sean Lynch &lt;<a href=3D"mailto:seanl@literati.org" target=3D"_bl=
+ank">seanl@literati.org</a>&gt; wrote:<br>
+&gt; &gt;<br>
+&gt; &gt;&gt; On Tue, Jul 19, 2016 at 2:59 PM juan &lt;<a href=3D"mailto:ju=
+an.g71@gmail.com" target=3D"_blank">juan.g71@gmail.com</a>&gt; wrote:<br>
+&gt; &gt;&gt;<br>
+&gt; &gt;&gt; &gt; On Tue, 19 Jul 2016 11:44:16 +0300<br>
+&gt; &gt;&gt; &gt; Georgi Guninski &lt;<a href=3D"mailto:guninski@guninski.=
+com" target=3D"_blank">guninski@guninski.com</a>&gt; wrote:<br>
+&gt; &gt;&gt; &gt;<br>
+&gt; &gt;&gt; &gt; &gt; Instead of only bashing tor, why not discuss the al=
+ternatives<br>
+&gt; &gt;&gt; &gt; &gt; and move to something allegedly better?<br>
+&gt; &gt;&gt; &gt;<br>
+&gt; &gt;&gt; &gt;<br>
+&gt; &gt;&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0We need to get rid of t=
+or first. Resources wasted on tor<br>
+&gt; &gt;are<br>
+&gt; &gt;&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0resources that can&#39;=
+t be used in good projects.<br>
+&gt; &gt;&gt; &gt;<br>
+&gt; &gt;&gt;<br>
+&gt; &gt;&gt; They are not your resources to redirect,<br>
+&gt; &gt;<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0No they are not mine. They belong to the peopl=
+e who the US<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0gov&#39;t/military robs. No taxes no tor.<br>
+&gt;<br>
+&gt; Well, phrasing I guess, but most of the relays just belong to<br>
+&gt; volunteers.<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Apologies John, I really don&#39;t mean to pick=
+ on you<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 personally.<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 I&#39;d point out though that the organization =
+exists thanks to<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 state funding. The whole thing would be rather =
+different if all<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 the participants were volunteers.<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 (are all high speed nodes also run by and paid =
+for volunteers?)<br></blockquote><div><br></div><div>Whatever I may think o=
+f your other beliefs about the organization, the funding model is definitel=
+y a problem. Same goes for Mozilla taking money from Google, MS, eBay, etc.=
+ Organizations building important infrastructure need to be independent.</d=
+iv><div>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0=
+ .8ex;border-left:1px #ccc solid;padding-left:1ex"><br>
+&gt; I run a relay most of the time, although I dont consider<br>
+&gt; it one of the top 5 or even top 10 services I maintain on that<br>
+&gt; particular box... It&#39;s kind of just a half ass interesting service=
+ to<br>
+&gt; fuck with occasionally.<br>
+&gt;<br>
+&gt; John<br>
+&gt;<br>
+&gt;<br>
+&gt;<br>
+<br>
+</blockquote></div></div>
+
+--001a113d855cfdab1f053827b2ab--
+

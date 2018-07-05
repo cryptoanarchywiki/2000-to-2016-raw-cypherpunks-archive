@@ -1,0 +1,98 @@
+From owner-cypherpunks@lne.com  Wed Jun  4 01:24:08 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h545O6q32450
+	for <rsw@jfet.org>; Wed, 4 Jun 2003 01:24:06 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h5456rsV010795
+	for cypherpunks-goingout345; Tue, 3 Jun 2003 22:06:53 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Wed, 4 Jun 2003 10:34:52 +0800
+From: Ng Pheng Siong <ngps@netmemetic.com>
+To: cypherpunks@lne.com
+X-Orig-To: "James A. Donald" <jamesd@echeque.com>
+Cc: Peter Gutmann <pgut001@cs.auckland.ac.nz>, bill.stewart@pobox.com,
+   cryptography@metzdowd.com, cypherpunks@lne.com, ekr@rtfm.com,
+   rsalz@datapower.com, sguthery@mobile-mind.com
+Subject: Re: Maybe It's Snake Oil All the Way Down
+Message-ID: <20030604023452.GA862@vista.netmemetic.com>
+References: <200306031304.h53D4dl25250@medusa01.cs.auckland.ac.nz>
+  <3EDCB916.14077.15D755CF@localhost>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3EDCB916.14077.15D755CF@localhost>
+User-Agent: Mutt/1.4i
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2714
+Lines: 65
+
+On Tue, Jun 03, 2003 at 03:04:54PM -0700, James A. Donald wrote:
+> I never figured out how to use a certificate to authenticate a
+> client to a web server, how to make a web form available to one
+> client and not another.  Where do I start?
+
+Start by looking up the OpenSSL wrappers for your favourite high-level
+"scripting" language. There exists wrappers for Perl, Python, tcl, Ruby,
+etc. Some popular languages have several.
+
+Many of these programming language environments come with HTTP server
+implementations, and many of the OpenSSL wrappers hook into said HTTP
+server code to add HTTPS, and a number demonstrate how to do client-side
+certificates.
+
+My M2Crypto adds HTTPS to the popular web application server Zope
+(www.zope.org) and has some code to hook client-side certificates into
+Zope's own user authentication machinery. (By faking HTTP basic
+authentication, just like Apache's SSL do.) Once you have that, you can
+choose to serve whatever content you want.
+
+
+> What I and everyone else does is use a shared secret, a
+> password stored on the server, whereby the otherwise anonymous
+> client gets authenticated, then gets an ephemeral cookie
+> identifying him.. 
+
+It seems HMAC'ing cookies are getting popular for this purpose.
+OpenACS, another popular web application server uses this:
+
+   http://openacs.org/doc/openacs-4/security-design.html
+
+My Python crypto kit has an implementation of the scheme described here:
+
+    http://www.pdos.lcs.mit.edu/cookies/pubs/webauth.html
+
+I'll be interested to hear this list's view on such schemes. From my
+app-plumber's perspective, such a technique for is good enough provided it
+is 'secure' enough.
+
+People understand passwords. Private keys, certificates, smart cards, etc.,
+are more difficult. (I recall a paper on PGP UI useability testing called
+"Why Johnny cannot encrypt" or something like that.)
+
+
+> As a result we each have a large number of shared secret
+> passwords, whereby we each log into a large number of
+> webservers.  Was this what the people who created this protocol
+> intended?
+
+Actually, this is the crypto-wielding-open-source-hacker-wannabe's wet
+dream: So what you need now to track (or generate strong) passwords is a
+GUI "password safe"! (Like the one offered on (the old?) Counterpane site.)
+
+Again, Perl, Python, Ruby, yada yada, you name it, people are going to
+implement them for free. ;-)
+
+Especially since there are usually 3-5 GUI toolkits and 2-4 database toolkits
+for these language environments. Enough combinations to suit everyone.
+
+
+-- 
+Ng Pheng Siong <ngps@netmemetic.com> 
+
+http://firewall.rulemaker.net  -+- Manage Your Firewall Rulebase Changes
+http://www.post1.com/home/ngps -+- Open Source Python Crypto & SSL
+

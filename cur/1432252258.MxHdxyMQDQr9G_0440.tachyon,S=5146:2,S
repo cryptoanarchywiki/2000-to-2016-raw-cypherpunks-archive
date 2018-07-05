@@ -1,0 +1,106 @@
+From owner-cypherpunks@al-qaeda.net  Wed Sep 24 04:43:52 2008
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id m8O8hJUt014915
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 24 Sep 2008 04:43:19 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id m8O8hJrv014914
+	for cypherpunks-outgoing; Wed, 24 Sep 2008 04:43:19 -0400
+Date: Wed, 24 Sep 2008 10:43:14 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Re: (micro)payments for anonymous routing in Tor?
+Message-ID: <20080924084314.GM25850@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4169
+Lines: 81
+
+----- Forwarded message from Josh Albrecht <thejash@gmail.com> -----
+
+From: Josh Albrecht <thejash@gmail.com>
+Date: Wed, 24 Sep 2008 03:44:39 -0400
+To: or-talk@freehaven.net
+Subject: Re: (micro)payments for anonymous routing in Tor?
+Reply-To: or-talk@freehaven.net
+
+> * payments turn it into a service with an expected outcome.  Assumably
+> (among others) that is 1) your anonymity is maintained and 2) your payment
+> is completed successfully.  What happens _when_ something goes wrong? As of
+> now, the first thing that Tor says is "This is experimental software. Do not
+> rely on it for strong anonymity. " It would have to add, "Do not rely on
+> this to successfully route your financial transactions" and while the first
+> is a warning most can accept, the second may really scare us.
+
+This came up on IRC as well.  Someone pointed out that the paper's
+assumption of "honest but curious" banks might not be valid (ie, the
+bank might cheat).  However, there are a few counter-arguments to that
+that I see.
+
+For the S-coins, it will be immediately obvious to a relay that the
+bank is cheating, because the relay can validate whether the payment
+is good or not on its own.  For the A-coins, the answer is trickier.
+The relays can still check the validity of the payment, but the client
+could be "double-spending".  If the bank pays A-coins even in the case
+of double-spending, the bank can never cheat.  The downside is that
+anonymous clients can then cheat to get slightly more value for
+A-coins than they put in.  This is a serious problem because it would
+allow the client to pay multiple relays that they control, essentially
+duplicating their money for free.
+
+Thus, the bank must decline all payment for double-spent A-coins, or
+at least allow only one payment for any A-coin.  However, clients can
+still validate that the bank is not cheating by withdrawing and
+depositing A-coins at any time in an attempt to catch the bank
+cheating.  This is more of an economic argument--the bank has an
+incentive to maintain user trust so that it can continue to do
+business.  The value gained by cheating some users of A-coins would
+likely be less than the expected gain from NOT having to worry about
+the risk of someone demonstrating that the bank is cheating.
+
+Also, the values at stake are:  1.  very small, and 2.  greater than
+the current profit of zero for relay operators.  It's not that relay
+operators have to rely on Tor for their financial security--they
+could, with this scheme, make some modest amount to cover their costs.
+ No single relay operator should ever have a significant amount of
+money in the system that could possibly be at risk.
+
+> On Wed, Sep 24, 2008 at 12:05 AM,  <tor-operator@sky-haven.net> wrote:
+> How do you pay anonymously yet have the system fairly permit "paid" traffic to
+> have higher priority?  With anonymity intact, how do you audit and enforce
+> this policy?
+>
+
+I think your first question was about how to ensure that giving
+priority to certain traffic does not introduce any new attacks against
+anonymity?  In that case, I'm not sure, but it is not at all clear to
+me that this would decrease anonymity.  Does anyone see such an
+attack?
+
+As for the second question, I think it was:  what prevents relay
+operators from choking off all unpaid traffic, in order to maximize
+profits?  As an answer to that, I'd say that not much prevents them
+from doing that.  Perhaps there are anonymity benefits to allowing
+unpaid traffic as well (since there would be more ambiguity as to the
+original source of the traffic).  There might also be ethical benefits
+to allowing unpaid traffic, ie, much the same motivation for the
+current operators of Tor relays.  Finally, if this were the default
+behavior, novice users would be unlikely to change it, and that alone
+might be enough bandwidth for unpaid users.
+
+Thanks for the thoughts!
+ - Josh
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

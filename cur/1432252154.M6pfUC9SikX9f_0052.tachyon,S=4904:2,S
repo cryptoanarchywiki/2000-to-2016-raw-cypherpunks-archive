@@ -1,0 +1,103 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Tue Aug 20 22:33:52 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7L2XqB09382
+	for <rsw@opamp.org>; Tue, 20 Aug 2002 22:33:52 -0400
+Received: from lion.ninthwonder.com (lion.ninthwonder.com [151.199.66.147])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id WAA29360
+	for <rsw@mit.edu>; Tue, 20 Aug 2002 22:33:51 -0400 (EDT)
+Received: by lion.ninthwonder.com (Postfix, from userid 96)
+	id 3701D3071E; Tue, 20 Aug 2002 22:32:44 -0400 (EDT)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by lion.ninthwonder.com (Postfix) with ESMTP id D5AFF30706
+	for <cryptography@wasabisystems.com>; Tue, 20 Aug 2002 22:32:42 -0400 (EDT)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 949DED97C9; Tue, 20 Aug 2002 22:32:42 -0400 (EDT)
+Received: from mercury.ex.ac.uk (mercury.ex.ac.uk [144.173.6.26])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 336EF30706
+	for <cryptography@wasabisystems.com>; Tue, 20 Aug 2002 22:24:38 -0400 (EDT)
+Received: from cronus ([144.173.6.20] helo=cronus.ex.ac.uk)
+	by mercury.ex.ac.uk with esmtp (Exim 3.33 #1)
+	id 17hLAT-002lgF-00; Wed, 21 Aug 2002 03:24:21 +0100
+Date: Wed, 21 Aug 2002 03:24:21 +0100
+From: Adam Back <adam@cypherspace.org>
+To: Cypherpunks <cypherpunks@minder.net>
+Cc: cryptography@wasabisystems.com, Adam Back <adam@cypherspace.org>
+Subject: Re: Cryptographic privacy protection in TCPA
+Message-ID: <20020821032421.A1059401@exeter.ac.uk>
+References: <0b9f4829b10ce20154d1cca436a26860@aarg.net> <20020818165856.A991609@exeter.ac.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <20020818165856.A991609@exeter.ac.uk>; from adam@cypherspace.org on Sun, Aug 18, 2002 at 04:58:56PM +0100
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 2779
+Lines: 62
+
+On Sun, Aug 18, 2002 at 04:58:56PM +0100, Adam Back wrote:
+> [...] "Also relevant is An Efficient System for Non-transferable
+> Anonymous Credentials with Optional Anonymity Revocation", Jan
+> Camenisch and Anna Lysyanskaya, Eurocrypt 01
+> 
+> 	http://eprint.iacr.org/2001/019/
+> 
+> These credentials allow the user to do unlinkable multi-show without
+> involving a CA.  They are somewhat less efficient than Chaum or Brands
+> credentials though.  But for this application does this removes the
+> need to trusting a CA, or even have a CA: the endorsement key and
+> credential can be inserted by the manufacturer, can be used
+> indefinitely many times, and are not linkable.
+
+There was some off-list discussion about possibility for sharing these
+credentials once a given credential is extracted from it's TPM by a
+user who broke the tamper resistance of his TPM.
+
+I also said:
+
+> [...] Credentials which are shared are easier to revoke -- knowledge
+> of the private keys typically will render most schemes linkable and
+> revocable.  This leaves only online lending which is anyway harder
+> to prevent.
+
+Because Camenisch credentials are unlinkable multi-show it makes it
+harder to recognize sharing, so the user could undetectably share
+credentials with a small group that he trusts.  
+
+(By comparison with linkable pseudonymous credentials and a privacy CA
+the issuer and/or verifier would see unusually high activity from a
+given pseudonym or TPM endorsement key if the corresponding credential
+were shared too widely.)
+
+However if the Camenisch (unlinkable multi-show) credential were
+shared too widely the issuer may also learn the secret key and hence
+be able to link and so revoke the overly-shared credentials.  This
+combats sharing though to a limited extent.
+
+Another idea to improve upon this inherent risk of sharing too widely
+may be to use a protocol which it is not safe to do parallel shows
+with.  (Some ZKPs are not secure when you engage in multiple show
+protocols in parallel.  Usually this is considered a bad thing, and
+steps are taken to allow safe parallel show.)  
+
+For this application a show protocol which it is not safe to engage in
+parallel shows may frustrate sharing: someone who shared the
+credential too widely would have difficulty coordinating amongst the
+sharees not to show the same credential in parallel.  I notice
+Camenisch et al mention steps to avoid parallel showing problem, so
+perhaps that feature could be reintroduced.
+
+In contrast, the TPM can easily ensure that the credential is not used
+in parallel shows.
+
+Adam
+--
+http://www.cypherspace.org/adam/
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

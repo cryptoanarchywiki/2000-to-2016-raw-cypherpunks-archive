@@ -1,0 +1,128 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u5NHsYKX015824;
+	Thu, 23 Jun 2016 13:54:35 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=bDvPAMPO;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-it0-f52.google.com (mail-it0-f52.google.com
+ [209.85.214.52])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u5NHsWKv015820
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 23 Jun 2016 13:54:33 -0400
+Received: by mail-it0-f52.google.com with SMTP id g127so76300627ith.0
+ for <cypherpunks@cpunks.org>; Thu, 23 Jun 2016 10:54:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
+ bh=FS8Pnni7zsmUEktX3pBe9GGAa+8f94pDEgqDOw3zDu0=;
+ b=bDvPAMPOnE8oKzLLeh5d2TwjXE9Lj7yfYuuFK4yjL/QgryWMow/PbvumpmHldN92z+
+ 5mNOuQXiCxm42XzSqkXA8HzAQflJfnMupGq47EHuq55OYDJfMilHbBE2jJ9EPabKN91W
+ 4BXUPQItV/AbqMXRwpVeYw0e6ta6g2Yf/jzK63vHBC0f1LvABwb7keXAbNF7sO/Q95Ai
+ Izaz30cCYYnECWsdzUxIztv8NkedIz1pm+QFcZj8IdYBUFMaA13xk27niv/0zlHVINEz
+ 1QXPBy0shcqL7FyjOUTwM/IOHeBkwoPKKzjLYKVovT0vx8dYFMiopQmbfsdO6io19yOy
+ P6lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+ :message-id:subject:to;
+ bh=FS8Pnni7zsmUEktX3pBe9GGAa+8f94pDEgqDOw3zDu0=;
+ b=eAB+YJaz0RshkXYQGTv11GL+jKuSns/becepcNSQnrs8sSFJLht42ZdtKNbHFBCK4s
+ XqiCWqY3D4tqcwp8pHynDPUV6wgl2YX6LhbmKgc/cmaWnveih4cGpqD1V0f7FzY0ZKft
+ xTw+dFJlEpaRFB+XLX0m+B+x+dVRe4BcWNXX6XvONvaCT8T4nu1A6YeclE+H+dHNGsBB
+ fAzP+M3YcDbTdXQoNH8LjZD1r8M1ivHV1ZMzEW+GjIN26zDVpC2wPGGXDSgcM/RLKMw+
+ 1U+uv4vkJ9lQmJ0883CPct8q+QcZGoBIZpsbsqfpy6aLXf+PblRHxZmsb+4HOuf+ijrg
+ VLhg==
+X-Gm-Message-State: ALyK8tLrTszt+TwEuFpE2Vna6PnxDoj2n2uXjLBm3e8nWR/v/KD9Bqb1J67EuQNbJZ+sOjMLQhukNlrQnHv1Kw==
+X-Received: by 10.36.253.3 with SMTP id m3mr2122135ith.52.1466704466570; Thu,
+ 23 Jun 2016 10:54:26 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.50.184.165 with HTTP; Thu, 23 Jun 2016 10:53:57 -0700 (PDT)
+In-Reply-To: <576c205d.6640b00a.78560.47f0@mx.google.com>
+References: <CAG2tMp6ifHKNoP6cfF7gMWp5eHVEwOJuBsGYVoGSvpPn72Vcbw@mail.gmail.com>
+ <d0e6db7279148f9eafdda74678adb972@cryptolab.net>
+ <CAG2tMp7EY3UtEE+eZZQJ_rvHFnM77dcjR-kAgQOK0KSV8LfhbA@mail.gmail.com>
+ <CAG2tMp5pyWsG_6doHL8i4yO+NN2X2fkENAJ0Qkz5=yidE-R2nQ@mail.gmail.com>
+ <576b0d29.c8249f0a.fdc44.32aa@mx.google.com>
+ <CAG2tMp5Yw4k2WQ05FEcQfQYtdvMqEve85XxinNmZ7bus6jqavg@mail.gmail.com>
+ <576b20a2.e701b00a.1d4b5.415d@mx.google.com>
+ <CAG2tMp4s1HTNOHw5Or7OKwcox1u9FPp9oUKJjcanb8Hb2rHi2w@mail.gmail.com>
+ <CAG2tMp4Pzg=4h9pXOZqX1cek8tpWNZbCJbN5XPtjAUu7zetahg@mail.gmail.com>
+ <CAEm6KbLxHJBPt1yYvf1ny=bgJMDKF514zhu=9nP9j=92ApWroQ@mail.gmail.com>
+ <576c205d.6640b00a.78560.47f0@mx.google.com>
+From: =?UTF-8?B?0JDQu9C10LrRgdCw0L3QtNGA?= <afalex169@gmail.com>
+Date: Thu, 23 Jun 2016 20:53:57 +0300
+Message-ID: <CAEm6KbLUJj34qFdnmfsc0kKeu6ya+vr9RFhDdpJ+L38Wz3OPCQ@mail.gmail.com>
+Subject: Re: Hi, Boyce! (was Fwd: tor-talk subscription update)
+To: CypherPunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=94eb2c11ce52b872bb0535f5be9c
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 56
+
+--94eb2c11ce52b872bb0535f5be9c
+Content-Type: text/plain; charset=UTF-8
+
+2016-06-23 20:47 GMT+03:00 juan <juan.g71@gmail.com>:
+
+>        Juan, are there any words that can describe such an ugly, cowardly
+> and
+> > idiotic behavior?
+> > I can't find in my vocabulary. Nor english and nor russian.
+>
+> *I have one word for it : American  =)*
+>
+>
+
+
+> There are totalitarians everywhere of course.
+> *But totalitarians         pretending to be the moral rulers of the
+> universe? *Only
+>         Americans can do that.
+>
+
++1!, my friend!
+Thanks for solving this enigma :D
+
+--94eb2c11ce52b872bb0535f5be9c
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div class=3D"gmail_extra"><br><div class=3D"gmail_quote">=
+2016-06-23 20:47 GMT+03:00 juan <span dir=3D"ltr">&lt;<a href=3D"mailto:jua=
+n.g71@gmail.com" target=3D"_blank">juan.g71@gmail.com</a>&gt;</span>:<br><b=
+lockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-le=
+ft:1px solid rgb(204,204,204);padding-left:1ex"><div id=3D":1de" class=3D""=
+>=C2=A0 =C2=A0 =C2=A0=C2=A0 Juan, are there any words that can describe suc=
+h an ugly, cowardly and<br>
+&gt; idiotic behavior?<br>
+&gt; I can&#39;t find in my vocabulary. Nor english and nor russian.<br><br=
+> <b>I have one word for it : American=C2=A0 =3D)</b><br>=C2=A0
+</div></blockquote><div>=C2=A0</div><blockquote class=3D"gmail_quote" style=
+=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding=
+-left:1ex"><div id=3D":1de" class=3D"">There are totalitarians everywhere o=
+f course. <b>But totalitarians<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 pretending to be the moral rulers of the univer=
+se? </b>Only<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Americans can do that.</div></blockquote></div>=
+<br>+1!, my friend!<br>Thanks for solving this enigma :D<br></div><div clas=
+s=3D"gmail_extra"><br><div dir=3D"ltr"><div style=3D"color:rgb(0,0,0);font-=
+family:georgia,serif;text-align:center" dir=3D"ltr"><font size=3D"2"><span =
+style=3D"color:rgb(0,0,255)"><b><span style=3D"line-height:115%;font-family=
+:&quot;Cambria Math&quot;,&quot;serif&quot;" lang=3D"RU"></span></b></span>=
+</font></div></div>
+</div></div>
+
+--94eb2c11ce52b872bb0535f5be9c--
+

@@ -1,0 +1,118 @@
+From owner-cypherpunks@jfet.org  Wed Jan 25 19:22:53 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.5/8.13.5/Debian-3) with ESMTP id k0Q0MTei014639
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 25 Jan 2006 19:22:29 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.5/8.13.5/Submit) id k0Q0MTf3014638
+	for cypherpunks-outgoing; Wed, 25 Jan 2006 19:22:29 -0500
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;         s=beta;
+  d=gmail.com;        
+  h=received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+  b=iFFNkkqru+hiXLpyla2Wow14gResLTgGlZQqSPCYP9yZk6Gmu0mzf7PNYdGCJsfgOav0zBKKrMeMr9vHDXoSvB8kgm6Z0Yx7+SsK8r7KeD7K5dwoBttOfc+8VjHWw/ZVJhleg3Y/b+u/MLqiCnBk5wp20qN41nItPNwinkTcVIM=
+Message-ID: <da7b3ce30601251622w34b5c82ft44aa8513c1810a69@mail.gmail.com>
+Date: Wed, 25 Jan 2006 16:22:22 -0800
+From: Hal Finney <hal.finney@gmail.com>
+To: Eugen Leitl <eugen@leitl.org>
+Subject: Re: [dave@farber.net: [IP] Anti-terrorism software that
+  balances privacy and security?]
+Cc: cypherpunks@jfet.org, ryrivard@gmail.com, lauren@vortex.com
+In-Reply-To: <da7b3ce30601251552g1401b14em3c82df808d9dbbc1@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+References: <20060125125756.GL2301@leitl.org> 	
+  <da7b3ce30601251552g1401b14em3c82df808d9dbbc1@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by proton.jfet.org
+  id k0Q0MNN9014602
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4390
+Lines: 82
+
+One other point regarding this. Reading the IP list where it came
+from, there were a number of concerns raised about how this is a mass
+surveillance technology that would turn us into a Big Brother state.
+This is a reasonable issue these days but I think the technology is
+less threatening and more neutral than this.
+
+it is less threatening because I don't think it is efficient enough to
+be useful. A few years back I looked at another application of the
+same idea, Private Information Retrieval for anonymously receving
+email. You could have a mail server with say a thousand messages on
+it, and you want to receive message #327, without the server knowing
+which message you would get. So you give it 1000 encrypted bits, all
+of them encrypted zeros except for the 327th which is an encrypted 1.
+The server multiplies each encrypted bit by the corresponding message
+and adds them together, which gives it an encryption of message 327,
+that it sends to you. It doesn't know which one you read. This is good
+in theory but in practice it takes about a multiply per bit in the
+whole database. If you have 1000 messages at 4K bytes each, that is 32
+million bits or 32 million multiplies to compute a result. It's too
+slow. I think the new technique has a similar work factor.
+
+The neutrality comes from the potential for using it in more
+privacy-protecting applications. If it did become possible to have an
+efficient version, it could be used to let people search data streams
+for words of interest without identifying what the words are.
+Eventually this technology could lead to the Holy Grail for
+privacy-preserving search: a blinded Google. Imagine if you could do a
+Google search, and the search engine were not able to tell what you
+were searching for! All these concerns about search engines recording
+our activities would be gone. Of course their business models would
+disappear too, but hey, you can't get rid of bathwater without
+throwing out a few babies, right?
+
+Anyway, the technology may never allow this extreme application, but
+the general idea of private search is good for far more than the
+government surveillance case that everyone is worried about. I'd hate 
+to see this technology get a bad rep just because some PR hack spun it
+that way.
+
+Hal
+
+On 1/25/06, Hal Finney <hal.finney@gmail.com> wrote:
+> This was discussed at Crypto last year - it was a pretty cool result.
+> Basically it uses "computing on encrypted instances" technology. A
+> filter site runs (potentially) open-source software which is looking
+> for certain key words and saving messages that match; but the site
+> can't tell which exact words are being searched for, and it can't tell
+> when they get matched.
+>
+> However it's not quite as amazing as it sounds. There is a long list
+> of all possible words, that are stored in the clear. Then there is an
+> encrypted bit mask that tells which of these words the security agency
+> is searching for. The open software compares each message against each
+> word and creates a bit mask of which ones match. Then it does some
+> fancy crypto to compare this bit mask with the encrypted one, and
+> compute an encrypted 1 or 0 as to whether the message matched one of
+> the words of interest. It then multiplies this encrypted 1 or 0 by the
+> message, getting either an encryption of the message or zero, and adds
+> this into an encrypted buffer. More tricks are used to keep messages
+> from overwriting each other in the buffer, given that the filter
+> software doesn't know when it is writing meaningful data or just an
+> encrypted zero.
+>
+> All in all it was a clever idea but suffered from two problems. The
+> first is that it would be computationally expensive; each operation
+> requires a lot of exponentiations. And the second is that the word
+> list is public, so even though you don't know exactly which words from
+> the list are of interest, you (and the bad guys) would be able to see
+> all the words they might be searching for, which could be a security
+> leak.
+>
+> Hal
+>
+> On 1/25/06, Eugen Leitl <eugen@leitl.org> wrote:
+> > ----- Forwarded message from David Farber <dave@farber.net> -----
+> >
+> > From: David Farber <dave@farber.net>
+> > Date: Wed, 25 Jan 2006 07:56:16 -0500
+> > To: ip@v2.listbox.com
+> > Subject: [IP] Anti-terrorism software that balances privacy and security?
+> > X-Mailer: Apple Mail (2.746.2)
+> > Reply-To: dave@farber.net
+

@@ -1,0 +1,143 @@
+From owner-cypherpunks@al-qaeda.net  Fri Dec  2 05:03:25 2011
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id pB29w2mF006819
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 2 Dec 2011 04:58:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1322819883;
+	bh=4YyEcYiKcths3dn40/XnNf2+qYDpi4/wsiT2HEEjDRs=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=bUOs8h8krS5mEsr8ND2iPPvObjGe+VHps7RhRKA/VI/2oLsauwJgxgJiDn+x6Dzjp
+	 xYlmCv0rdBdT3OAUX1Fl1O5BVSU9cqeUAQ2pnCsj0q01B5HVKZ66cDLaetrPFZe3v3
+	 qJ/L366dCYXRjLA7t9Ux1C1z4AU/HoaGD1DZAMoo=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id pB29w2r1006818
+	for cypherpunks-outgoing; Fri, 2 Dec 2011 04:58:02 -0500
+Date: Fri, 2 Dec 2011 10:58:00 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Re: [cryptography] really sub-CAs for MitM deep packet
+  inspectors? 	(Re: Auditable CAs)
+Message-ID: <20111202095759.GW31847@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5178
+Lines: 110
+
+----- Forwarded message from Adam Back <adam@cypherspace.org> -----
+
+From: Adam Back <adam@cypherspace.org>
+Date: Fri, 2 Dec 2011 09:33:44 +0100
+To: Peter Gutmann <pgut001@cs.auckland.ac.nz>
+Cc: cryptography@randombit.net
+Subject: Re: [cryptography] really sub-CAs for MitM deep packet inspectors?
+	(Re: Auditable CAs)
+User-Agent: Mutt/1.5.21 (2010-09-15)
+
+Well I was aware of RA things where you do your own RA and on the CA side
+they limit you to issuing certs belonging to you, if I recall thawte was
+selling those.  (They pre-vet your ownership of some domains foocorp.com,
+foocorpinc.com etc, and then you can issue www.foocorp.com, *.foocorp.com 
+.. however you dont get a CA private key, you get web integration with the 
+RA
+so you dont have to do the email verification dance for each cert you
+create).
+
+Handing over a signed sub-CA is a much higher level of risk, unless perhaps
+it has a constraint on the domain names of certs it can sign baked into it,
+which is possible.
+
+To hand over a blank cheque sub-CA cert that could sign gmail.com is
+somewhat dangerous.  But you notice that geotrust require it to be in a
+hardware token, and some audits blah blah, AND more importantly that you
+agree not to create certs for domains you dont own.
+
+Start of the thread was that Greg and maybe others claim they've seen a cert
+in the wild doing MitM on domains the definitionally do NOT own.
+
+(The windows 2k box sounds scary for sure, and you better hope that's not a
+general unrestricted sub-CA cert, but even then you could admit its similar
+to the security practices of diginotar.) 
+
+Secure as the weakest link, and the weakest link just keeps getting lower.  
+It would be interesting to know if there really are CAs lax enough to issue
+a sub-CA cert to a windows box with no hardware container for the private
+key.  (Not that it makes that much difference... hack the RA and the private
+key doesnt matter so much).
+
+The real question again is can we catch a boingo or corp lan or government
+using a MitM sub-CA cert, and then we'll know which CA is complicit in
+issuing it, and delist them.
+
+Adam
+
+On Fri, Dec 02, 2011 at 07:07:19PM +1300, Peter Gutmann wrote:
+> Ben Laurie <ben@links.org> writes:
+>
+>> They appear to actually be selling sub-RA functionality, but very hard to
+>> tell from the press release.
+>
+> OK, so it does appear that people seem genuinely unaware of both the fact that
+> this goes on, and the scale at which it happens.  Here's how it works:
+>
+> 1. Your company or organisation is concerned about the fact that when people
+> go to their site (even if it's an internal, company-only one), they get scary
+> warnings.
+>
+> 2. Your IT people go to a commercial CA and say "we would like to buy the
+> ability to issue padlocks ourselves rather than having to buy them all off
+> you".
+>
+> 3. The CA goes through an extensive consulting exercise (billed to the
+> company), after which they sell the company a padlock-issuing license, also
+> billed to the company.  The company is expected to keep records for how many
+> padlocks they issue, and pay the CA a further fee based on this.
+>
+> 4. Security is done via the honour system, the CA assumes the company won't do
+> anything bad with their padlock-issuing capability (or at least I've never
+> seen any evidence of a CA doing any checking apart from for the fact that
+> they're not getting short-changed).
+>
+> This is why in the past I've repeatedly referred to "unknown numbers of
+> unknown private-label CAs", we have absolutely no idea how many of these
+> private-label CAs are out there or who they are or who controls them, but
+> they're probably in the tens, if not hundreds, of thousands, and many are
+> little more than a Windows server on a corporate LAN somewhere (and I mean
+> that literally, it was odd to sit in front of a Windows 2000 box built from
+> spare parts located in what used to be some sort of supplies closet and think
+> "I can issue certs that chain to $famous_ca_name from this thing" :-).
+>
+> Going through the process is like getting a BS 7799 FIPS 140 certification,
+> you pay the company doing the work to get you through the process, and you
+> keep paying them until eventually you pass.  The only difference is that while
+> I've heard of rare cases of companies failing BS 7799, I've never heard of
+> anyone failing to get a padlock-issuing license.
+>
+> Are people really not aware of this?  I thought it was common knowledge.  If
+> it isn't, I'll have to adapt a writeup I've done on it, which assumes that
+> this is common knowledge.
+>
+> Peter.
+>
+> _______________________________________________
+> cryptography mailing list
+> cryptography@randombit.net
+> http://lists.randombit.net/mailman/listinfo/cryptography
+_______________________________________________
+cryptography mailing list
+cryptography@randombit.net
+http://lists.randombit.net/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

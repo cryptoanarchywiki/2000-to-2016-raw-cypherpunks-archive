@@ -1,0 +1,152 @@
+From owner-cypherpunks@al-qaeda.net  Thu Feb 17 17:58:40 2005
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.3/8.13.3/Debian-6) with ESMTP id j1HNvZTp029377
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Thu, 17 Feb 2005 17:57:35 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.3/8.13.3/Submit) id j1HNvZ5B029376
+	for cypherpunks-outgoing; Thu, 17 Feb 2005 17:57:35 -0600
+Mime-Version: 1.0
+X-Sender: rah@localhost
+Message-Id: <p0611048fbe3acb1d22ac@[68.167.57.91]>
+Date: Thu, 17 Feb 2005 17:28:59 -0500
+To: cryptography@metzdowd.com, cypherpunks@al-qaeda.net
+From: "R.A. Hettinga" <rah@shipwright.com>
+Subject: Re: [p2p-hackers] SHA1 broken?
+Content-Type: text/plain; charset="us-ascii"
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 6486
+Lines: 127
+
+--- begin forwarded text
+
+
+Delivered-To: p2p-hackers@zgp.org
+To: p2p-hackers@zgp.org
+Subject: Re: [p2p-hackers] SHA1 broken?
+Date: Thu, 17 Feb 2005 14:25:36 -0800 (PST)
+From: hal@finney.org ("Hal Finney")
+Reply-To: "Peer-to-peer development." <p2p-hackers@zgp.org>
+Sender: p2p-hackers-bounces@zgp.org
+
+The problem with the attack scenario where two versions of a program are
+created with the same hash, is that from what little we know of the new
+attacks, they aren't powerful enough to do this.
+
+All of the collisions they have shown have the property where the two
+alternatives start with the same initial value for the hash; they then
+have one or two blocks which are very carefully selected, with a few
+bits differing between the two blocks; and at the end, they are back
+to a common value for the hash.
+
+It is known that their techniques are not sensitive to this initial value.
+They actually made a mistake when they published their MD5 collision,
+because they had the wrong initial values due to a typo in Schneier's
+book.  When people gave them the correct initial values, they were able
+to come up with new collisions within a matter of hours.
+
+If you look at their MD5 collision in detail, it was two blocks long.
+Each block was almost the same as the other, with just a few bits
+different.  They start with the common initial value.  Then they run
+the first blocks through.  Amazingly, this has only a small impact on
+the intermediate value after this first block.  Only a relatively few
+bits are different.
+
+If you or I tried to take two blocks with a few bits different and feed
+them to MD5, we would get totally different outputs.  Changing even
+one bit will normally change half the output bits.  The fact that they
+are able to change several bits and get only a small difference in the
+output is the first miracle.
+
+But then they do an even better trick.  They now go on and do the
+second pair of blocks.  The initial values for these blocks (which are
+the outputs from the previous stage) are close but not quite the same.
+And amazingly, these second blocks not only keep things from getting
+worse, they manage to heal the differences.  They precisely compensate
+for the changes and bring the values back together.  This is the second
+miracle and it is even greater.
+
+Now, it would be a big leap from this to being able to take two arbitrary
+different initial values and bring them together to a common output.
+That is what would be necessary to mount the code fraud attack.  But as
+we can see by inspection of the collisions produced by the researchers
+(who are keeping their methodology secret for now), they don't seem to
+have that power.  Instead, they are able to introduce a very carefully
+controlled difference between the two blocks, and then cancel it.
+Being able to cancel a huge difference between blocks would be a problem
+of an entirely different magnitude.
+
+Now, there is this other idea which Zooko alludes to, from Dan Kaminsky,
+www.doxpara.com, which could exploit the power of the new attacks to
+do something malicious.  Let us grant that the only ability we have is
+that we can create slightly different pairs of blocks that collide.
+We can't meaningfully control the contents of these blocks, and they
+will differ in only a few bits.  And these blocks have to be inserted
+into a program being distributed, which will have two versions that
+are *exactly the same* except for the few bits of difference between
+the blocks.  This way the two versions will have the same hash, and this
+is the power which the current attacks seem to have.
+
+Kaminsky shows that you could still have "good" and "bad" versions of
+such a program.  You'd have to write a program which tested a bit in
+the colliding blocks, and behaved "good" if the bit was set, and "bad"
+if the bit was clear.  When someone reviewed this program, they'd see
+the potential bad behavior, but they'd also see that the behavior was
+not enabled because the bit that enabled it was not set.  Maybe the
+bad behavior could be a back door used during debugging, and there is
+some flag bit that turns off the debugging mode.  So the reviewer might
+assume that the program was OK despite this somewhat questionable code,
+because he builds it and makes sure to sign or validate the hash when
+built in the mode when the bad features are turned off.
+
+But what he doesn't know is, Kaminsky has another block of data prepared
+which has that flag bit in the opposite state, and which he can substitute
+without changing the hash.  That will cause the program to behave in its
+"bad" mode, even though the only change was a few bits in this block
+of random data.  So this way he can distribute a malicious build and it
+has the hash which was approved by the reviewer.
+
+And as Zooko points out, this doesn't have to be the main developer
+who is doing this, anyone who is doing some work on creating the final
+package might be able to do so.
+
+On the other hand, this attack is pretty blatant once you know it is
+possible.  The lesson is that a reviewer should be suspicious of code
+whose security properties depend on the detailed contents of blocks
+of random-looking data.  One problem with this is that there are some
+circumstances where it could be hard to tell.  Zooko links to the example
+of a crypto key which could have weak and strong versions.  The strong
+version could be approved and then the weak version substituted.
+There are also some crypto algorithms that use random-looking blocks of
+data which could have weak and strong versions.
+
+So it's not always as easy as it sounds.  But most code will not have
+these problems, and for those programs it would be pretty conspicuous
+to implement Kaminsky's attacks.  At present, that looks to be the best
+someone could do with SHA-1 or even MD5.
+
+Hal Finney
+_______________________________________________
+p2p-hackers mailing list
+p2p-hackers@zgp.org
+http://zgp.org/mailman/listinfo/p2p-hackers
+_______________________________________________
+Here is a web page listing P2P Conferences:
+http://www.neurogrid.net/twiki/bin/view/Main/PeerToPeerConferences
+
+--- end forwarded text
+
+
+-- 
+-----------------
+R. A. Hettinga <mailto: rah@ibuc.com>
+The Internet Bearer Underwriting Corporation <http://www.ibuc.com/>
+44 Farquhar Street, Boston, MA 02131 USA
+"... however it may deserve respect for its usefulness and antiquity,
+[predicting the end of the world] has not been found agreeable to
+experience." -- Edward Gibbon, 'Decline and Fall of the Roman Empire'
+

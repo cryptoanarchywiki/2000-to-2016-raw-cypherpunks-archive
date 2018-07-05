@@ -1,0 +1,175 @@
+From cypherpunks-bounces@cpunks.org  Wed Sep 25 06:25:39 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r8PAOok7005814;
+	Wed, 25 Sep 2013 06:24:55 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r8PAOi4H005810
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Wed, 25 Sep 2013 06:24:46 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 592AE543E2D; Wed, 25 Sep 2013 12:24:43 +0200 (CEST)
+Date: Wed, 25 Sep 2013 12:24:43 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: Re: [p2p-hackers] BitWeav: open P2P micropublishing
+Message-ID: <20130925102443.GS10405@leitl.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature"; boundary="kkR+e461NAt1t3hS"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 5719
+Lines: 136
+
+
+--kkR+e461NAt1t3hS
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+----- Forwarded message from Liam Edwards-Playne <liamzebedee@yahoo.com.au>=
+ -----
+
+Date: Wed, 25 Sep 2013 12:13:48 +1000
+=46rom: Liam Edwards-Playne <liamzebedee@yahoo.com.au>
+To: p2p-hackers@lists.zooko.com
+Subject: Re: [p2p-hackers] BitWeav: open P2P micropublishing
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:24.0) Gecko/20100101 Thunder=
+bird/24.0
+Reply-To: theory and practice of decentralized computer networks <p2p-hacke=
+rs@lists.zooko.com>
+
+A good point about the SHA2-256 + RIPEMD-160 usage that I hadn't
+considered. I'll change the design to use a single truncated SHA2-256
+hash. As for length extension attacks, I don't believe I should be
+concerned, should I? The transfer of messages within the network is
+dependent on a defined protocol, so any extra bytes would just be
+interpreted as a malformed message.
+
+Out of interest, could you elaborate on the potential weaknesses in
+the pairing?
+
+
+As for a decentralised identity, it's an interesting problem, but I'll
+be focusing on the micropublishing idea first. With my last project, I
+delved into too many areas, trying to decentralise DNS, creating an
+improved Kademlia DHT, providing a framework for P2P mutable
+documents. Ultimately I built nothing (but learnt a lot).
+
+Nonetheless I think technology develops too quickly to define any sort
+of single specification for an online identity. The best we have are
+public keys certified by webs of trust.
+
+Le 25/09/13 08:16, Sean Lynch a =C3=A9crit :
+> I don't think Bitcoin's SHA2-256 + RIPEMD-160 usage is based on
+> sound crypto. It's not terrible but it's also a little bit silly
+> since a collision in SHA2-256 will be a collision in the pair,
+> which means all you're doing is shortening the hash while avoiding
+> the length extension attack. There are also potential weaknesses in
+> the pair that may not exist in either one due to the fact that the
+> pairing has not been well studied. You could accomplish the same
+> end with less CPU and less code by using a truncated SHA-512 hash.
+>=20
+> Otherwise, I tend to agree with your goals and approach, though I
+> think it may be more impactful to simply bring the decentralized
+> identity aspect of it to the web. The fact that I have no portable
+> identity with which to comment on or post arbitrary content around
+> the web is very annoying. At best, the current system could be
+> described as federated, but even that's not entirely true since few
+> sites actually support OpenID and fewer users know what their
+> OpenID URL is.
+>=20
+>=20
+> On Mon, Sep 23, 2013 at 9:48 PM, Liam Edwards-Playne
+> <liamzebedee@yahoo.com.au <mailto:liamzebedee@yahoo.com.au>> wrote:
+>=20
+>     I've been working on a new open micropublishing network that's
+>     entirely peer-to-peer, relying on a publish-subscribe overlay to
+>     facilitate scalable distribution of messages on hashtags, profiles
+>     and threads.
+>=20
+>     You can peruse its design in this document:
+>     http://bitweav.org/whitepaper.pdf
+>=20
+>     Its main features:
+>      - first of its kind to support publish/subscribe to topics
+>     (profiles, hashtags, threads)
+>      - doesn't use rendez-vous nodes for topics (meaning only nodes
+>     who are subscribed to a topic will help distribute messages on it)
+>      - message threading and replies. multilingual support.
+>      - more scalable approach to message dissemination using rings,
+>     rather than gossip-based flooding (see ch. 7 of whitepaper)
+>=20
+>     I'd appreciate any constructive criticism / discussion and if
+>     anyone would like to help I would greatly appreciate it. I'm
+>     currently developing the frontend graphical client, afterwhich I
+>     will progress to implementing the backend daemon.
+>=20
+>     Cheers,
+>     Liam Edwards-Playne.
+>     _______________________________________________
+>     p2p-hackers mailing list
+>     p2p-hackers@lists.zooko.com <mailto:p2p-hackers@lists.zooko.com>
+>     http://lists.zooko.com/mailman/listinfo/p2p-hackers
+>=20
+>=20
+>=20
+>=20
+> _______________________________________________
+> p2p-hackers mailing list
+> p2p-hackers@lists.zooko.com
+> http://lists.zooko.com/mailman/listinfo/p2p-hackers
+
+
+_______________________________________________
+p2p-hackers mailing list
+p2p-hackers@lists.zooko.com
+http://lists.zooko.com/mailman/listinfo/p2p-hackers
+
+
+----- End forwarded message -----
+--=20
+Eugen* Leitl <a href=3D"http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+
+--kkR+e461NAt1t3hS
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSQrnrAAoJEPRuNImsiU7FhFAP/ibQrX/hzh8YY3l8Gl0s0yp9
+gX4BxlI3gRsivIm2/yxWGA2va6/UcolGc9cVwla60wfskHT6D2EXaU6wxS46lGhu
+CIvrcZovtFvYhGPwYoTlni3mOAL8D5C5BImx5ki2jqgxLR7fELftqlktiOh4cUET
+6gjE14hjw0Odt10nJhtXogQATM12F6IJhudlvSSZi7MndDXkYFdmbp63RR6eH+Ml
+m+yPWtLyoqD3gRibrRkiG5jz8az7+SsKtxipW4OUyycO6bTRjVngqkPfCQFDL5/b
+2WIcZoqmfJa+O41PIzDk8bzGf4TU0Eb7tr5JtuWt0Xznq99iwKjkb2c85ueqE8An
+yeIF8J1/bEneSv/6lXjzKgRw9ZeQGxX6bOUBAs/kintMjBTnnUuZZrZX86BVTRky
+Xv4HC9VlIeoICNP5YDrauanGaqr6fBzCrVhKFFNagQ8wzU8uBE11d9MVhoE79uWj
+4l+GzIWE2kVlcWDhA367gPUQsjAq/GBo66ZiS98D796PSHvNuC6xF1cQKiFONZet
+s16NeMaXhlYn5eMy+B01X3xV+ZULVUmu8NDrHQ3Tg7X7kq82u3XV96WaxKesQbOP
+PzRjFwPJFYQueo34gdG1Z/glh3Xe9KUdS29X0IzuuHEsd/t3s9qpn0zSrED1zFCS
+PwAjesw37XnzSf5xDBzh
+=1f9k
+-----END PGP SIGNATURE-----
+
+--kkR+e461NAt1t3hS--
+

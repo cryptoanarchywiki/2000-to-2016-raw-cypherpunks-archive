@@ -1,0 +1,93 @@
+From owner-cypherpunks@jfet.org  Mon Oct 24 10:44:06 2005
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.4/8.13.4/Debian-3) with ESMTP id j9OEhWmS017683
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 24 Oct 2005 10:43:32 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.4/8.13.4/Submit) id j9OEhWaE017682
+	for cypherpunks-outgoing; Mon, 24 Oct 2005 10:43:32 -0400
+Date: Mon, 24 Oct 2005 16:43:23 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@jfet.org
+Subject: [djm@mindrot.org: Re: [smb@cs.columbia.edu: Skype security
+  evaluation]]
+Message-ID: <20051024144323.GC2249@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.5.9i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2782
+Lines: 65
+
+----- Forwarded message from Damien Miller <djm@mindrot.org> -----
+
+From: Damien Miller <djm@mindrot.org>
+Date: Mon, 24 Oct 2005 12:39:42 +1000 (EST)
+To: cryptography@metzdowd.com
+Cc: saag@mit.edu
+Subject: Re: [smb@cs.columbia.edu: Skype security evaluation]
+
+On Sun, 23 Oct 2005, Joseph Ashwood wrote:
+
+>----- Original Message ----- Subject: [Tom Berson Skype Security Evaluation]
+>
+>Tom Berson's conclusion is incorrect. One needs only to take a look at the
+>publicly available information. I couldn't find an immediate reference
+>directly from the Skype website, but it uses 1024-bit RSA keys, the coverage
+>of breaking of 1024-bit RSA has been substantial. The end, the security is
+>flawed. Of course I told them this now years ago, when I told them that
+>1024-bit RSA should be retired in favor of larger keys, and several other
+>people as well told them.
+
+More worrying is the disconnect between the front page summary and the
+body of the review. If one only reads the summary, then one would only see
+the gushing praise and not the SSH protocol 1-esque use of a weak CRC as a
+integrity mechanism (section 3.4.4) or what sounds suspiciously like a
+exploitable signed vs. unsigned issue in protocol parsing (section 3.4.6).
+
+Also disappointing is the focus on the correct implementation of
+cryptographic primitives (why not just use tested commercial or
+open-source implementations?) to the exclusion of other more interesting
+questions (at least to me):
+
+- What properties does the proprietary key agreement protocol offer (it
+  sounds a bit like an attenuated version of the SSH-1 KEX protocol and,
+  in particular, doesn't appear to offer PFS).
+
+- Does the use of RC4 follow Mantin's recommendations to discard the
+  early, correlated keystream?
+
+- How does the use of RC4 to generate RSA keys work when only 64 bits of
+  entropy are collected from Skype's RNG? (Section 3.1)
+
+- Why does Skype "roll its own" entropy collection functions instead of
+  using the platform's standard one?
+
+- Ditto the use of standard protocols? (DTLS would seem an especially
+  obvious choice).
+
+- What techniques (such as privilege dropping or separation) does Skype
+  use to limit the scope of a network compromise of a Skype client?
+
+-d
+
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a>
+______________________________________________________________
+ICBM: 48.07100, 11.36820            http://www.leitl.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+
+[demime 1.01d removed an attachment of type application/pgp-signature which had a name of signature.asc]
+

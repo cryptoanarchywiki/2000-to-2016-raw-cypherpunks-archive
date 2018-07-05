@@ -1,0 +1,219 @@
+Return-path: <cypherpunks-bounces@cpunks.org>
+Envelope-to: rsw@positron.jfet.org
+Delivery-date: Thu, 04 Aug 2016 03:43:56 -0700
+Received: from antiproton.jfet.org ([209.141.47.85])
+	by positron.jfet.org with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.87)
+	(envelope-from <cypherpunks-bounces@cpunks.org>)
+	id 1bVG84-00050M-1w
+	for rsw@positron.jfet.org; Thu, 04 Aug 2016 03:43:56 -0700
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u74AYFwE003184;
+	Thu, 4 Aug 2016 06:34:15 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=CmTLTU/O;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-it0-f47.google.com (mail-it0-f47.google.com
+ [209.85.214.47])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u74AYB1h003180
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 4 Aug 2016 06:34:13 -0400
+Received: by mail-it0-f47.google.com with SMTP id f6so1169886ith.0
+ for <cypherpunks@cpunks.org>; Thu, 04 Aug 2016 03:34:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+ :cc; bh=I5kn/VJfesbgJUOQ9+YvoQxZ9G3O4dQkVgyB5eFVgwI=;
+ b=CmTLTU/OAgPHcjNKxPUCAzBNmX0JBphsSdo3xZIZocg1Ivz8RgrUXAxw0Lp14g+GA7
+ ZIcqTrvzH84ygW6tTmMnHBLuQXBwnAyymViQfk7LSnY8Ecq6dl9nXCOoY56jJnuBfy/i
+ ApJW79FuiDfluiA/6Ux8uHDbbyWxwV0yNWqqFCqf/xo1mGKzWtBKzaO8jXb91BokRMkO
+ ugo073FcHVy5IY2WsFF06Dqt+ZwRfYPzH62LkqY0VC+n9lo224t+9kSEyM8sQlYbfDzi
+ FGSBTZuLcKq1rWeg3S/yfPL+utxoceW7wcHHj24lZ8XEErWO1XS5P4aLTcBWuOQenHE4
+ Sv/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+ :message-id:subject:to:cc;
+ bh=I5kn/VJfesbgJUOQ9+YvoQxZ9G3O4dQkVgyB5eFVgwI=;
+ b=OfFvXBdAWnAJXkfDo+4tKlaLplww+I6fGa6rCX91BLxot1bU7V6X7IGK0liPbeOgFz
+ ltWCQz2Yp5EbctWHCXI9s8W8HYJjOe+oo7xaCuYWa2tg2JGqa7a1QZH4NV56+4InVQPY
+ DVz9xeNJPuIlR5isx2vS5sOkdDT9L4Nx58r05EgibRhCEP2BHW9bvMj6TdzlJLfSkMgd
+ wYvOHjTjsEVrTqdLAxuyXyVonPuNNyso1BcbfRgVTm8H+w1jOx9d1qQjOY4qwv9Qbgff
+ AVtxJ0sZAO90RP7lSbeEmXXr2GiABZZn+DY8TWsSFUH7iwh4A6ZrF2M1a7e1jFV7m6to
+ aPbA==
+X-Gm-Message-State: AEkoous38DMpRr1bC+nhZc3PdZL+q1oIhkjorGg4bJGF3SNYoz6QKrgW+Pc7H9yxO+w3Rqf5pOUIvAbO8S9XSg==
+X-Received: by 10.36.104.146 with SMTP id v140mr76404889itb.12.1470306846237; 
+ Thu, 04 Aug 2016 03:34:06 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.107.170.26 with HTTP; Thu, 4 Aug 2016 03:33:45 -0700 (PDT)
+In-Reply-To: <CAG2tMp5VUSFrJJXVXU35VBkY4trmH8K+7yECpnQAvfX7iRF3qQ@mail.gmail.com>
+References: <CAG2tMp6-KfNr0VgiddoLxHcHw6CzyU=uLJCdCsvo9EsBE8gTeQ@mail.gmail.com>
+ <CAG2tMp5mEQfm6VU3vk4TXOcZ6PPKgnZ0q4ho3QVHtLj7KF4wiA@mail.gmail.com>
+ <CAG2tMp7coBDAgA=Zv29cou+YTw6NTrCw=40unOoqep86H0oxgA@mail.gmail.com>
+ <CAG2tMp6VOSB0Q-Q1Z1g6cz3YS6OQbaSONEcXDxDCfOD0QztevQ@mail.gmail.com>
+ <CAG2tMp4QqnPUZcyqjr78YLxwWpv91h_wsYEnAyt1M7oAUTBowQ@mail.gmail.com>
+ <CAG2tMp4ad18cJ-O+ycMVVA722WR3Wi3yTgoGET6Uf+gvcD9ZSQ@mail.gmail.com>
+ <CAG2tMp5MQaDC5c8cZ4EeMFoc0kmdAp0S+dG8fUc8+jkiP5F5uA@mail.gmail.com>
+ <CAG2tMp512JL9-6r+6Cgqp5n__Aa49WCPv+UmrKmAT7OXP7xwvg@mail.gmail.com>
+ <CAG2tMp5dWWyBcRUmO8EEoUjPZLGnBqBCX-B8mpzKKNsGsGWhUg@mail.gmail.com>
+ <CAG2tMp7R2Lo0RN11qkC_iC9-4=2gHzpbcZEOoLtRFkCJ6Cf_KA@mail.gmail.com>
+ <CAG2tMp70VXbY+0GJs3HApMq71TcBympeLg3QUuDDdHwmC6Cqwg@mail.gmail.com>
+ <CAG2tMp4=q0aFUjcS8Gei2J9FqYfQnsWg0E5Vh_OtGjVuJ-_V0Q@mail.gmail.com>
+ <CAG2tMp55nML9+v0hnLVfe+OqPsCMUNiB66FR-VjmTn3pkGSTRw@mail.gmail.com>
+ <CAG2tMp7M3BpOUOcv6fkOYK=cYvYCWmg3nFrL8QSGBF0JPr5pjg@mail.gmail.com>
+ <CAG2tMp5A5AxiYHR4JQ-ECFCy80nsa8-xxYw5gs5vMEfHtHKRgg@mail.gmail.com>
+ <CAG2tMp4HdMnuXO7K5OvAie1+f1bsU5_iDg-nEcy=PTvJfV+XFA@mail.gmail.com>
+ <CAG2tMp6sd1r-FwLWd2SmQTQ-JJJpCPyU9hDKKKkew8symGGtJQ@mail.gmail.com>
+ <CAG2tMp5CmWA9rzgwDpe9XDYbOcKooAq15PrDD1UtorcnPZo--Q@mail.gmail.com>
+ <CAG2tMp5VUSFrJJXVXU35VBkY4trmH8K+7yECpnQAvfX7iRF3qQ@mail.gmail.com>
+From: Cari Machet <carimachet@gmail.com>
+Date: Thu, 4 Aug 2016 13:33:45 +0300
+Message-ID: <CAGRDzQVgYsDFKraSm-1TZ4aBpy37Y_yYaztcy81k=-Av012HKA@mail.gmail.com>
+Subject: Re: Anarchist Bibliography, please? (was Re: Deconstructing an
+ Institutional Slander...)
+To: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+Content-Type: multipart/alternative; boundary=001a1143ff7a47f72a05393c7d95
+Cc: cpunks <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 129
+
+--001a1143ff7a47f72a05393c7d95
+Content-Type: text/plain; charset=UTF-8
+
+anything by bakunin but also read about his life
+
+he opposed socialism because of its statism > authoritarianism
+
+https://en.wikipedia.org/wiki/Mikhail_Bakunin
+
+https://libcom.org/files/Bakunin%20on%20Anarchy%20(1971).pdf
+
+the internet archive has a section on him
+
+https://archive.org/index.php
+
+he wrote some but worked on the front lines as well so had a high education
+
+
+
+On Thu, Aug 4, 2016 at 10:00 AM, Cecilia Tanaka <cecilia.tanaka@gmail.com>
+wrote:
+
+> On Jul 29, 2016 10:36 PM, "juan" <juan.g71@gmail.com> wrote:
+> >
+> >         Are you talking about equality before the law? (which logically
+> entails anarchism btw)
+>
+> Juan dear,
+>
+> Instead arguing with you about vocabulary, real meaning of some words or
+> not, limits of some concepts, gender equality, men and women, storks and
+> babies, I decided asking for help and avoid a possible gaffe or being
+> unfair with you.  :P
+>
+> I was thinking about asking you some suggestions of good anarchist
+> readings, because I made some searches and  - wow! -  the bibliography is
+> really huge.  I need some help to separate the wheat from the shaft,
+> please.  Or a guide "Advanced Anarchism for Dummies".  I know only the baby
+> steps, sorry.  :(
+>
+> I asked Steve some suggestions in private, but it's better to ask
+> publicly, so more people can profit the clues.  Oh, you know, he loves
+> books, uses cute emoticons and makes oink oink.  He's a good reference for
+> me, hahaha!!  ;)
+>
+> Tender kisses for all of you!  <3
+>
+> Ceci
+>
+
+
+
+-- 
+Cari Machet
+NYC 646-436-7795
+carimachet@gmail.com
+AIM carismachet
+Syria +963-099 277 3243
+Amman +962 077 636 9407
+Berlin +49 152 11779219
+Reykjavik +354 894 8650
+Twitter: @carimachet <https://twitter.com/carimachet>
+
+7035 690E 5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187
+
+Ruh-roh, this is now necessary: This email is intended only for the
+addressee(s) and may contain confidential information. If you are not the
+intended recipient, you are hereby notified that any use of this
+information, dissemination, distribution, or copying of this email without
+permission is strictly prohibited.
+
+--001a1143ff7a47f72a05393c7d95
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">anything by bakunin but also read about his life=C2=A0<div=
+><br></div><div>he opposed socialism because of its statism &gt; authoritar=
+ianism</div><div><br></div><div><a href=3D"https://en.wikipedia.org/wiki/Mi=
+khail_Bakunin">https://en.wikipedia.org/wiki/Mikhail_Bakunin</a></div><div>=
+<br></div><div><a href=3D"https://libcom.org/files/Bakunin%20on%20Anarchy%2=
+0(1971).pdf">https://libcom.org/files/Bakunin%20on%20Anarchy%20(1971).pdf</=
+a></div><div><br></div><div>the internet archive has a section on him</div>=
+<div><br></div><div><a href=3D"https://archive.org/index.php">https://archi=
+ve.org/index.php</a><br></div><div><br></div><div>he wrote some but worked =
+on the front lines as well so had a high education</div><div><br></div><div=
+>=C2=A0=C2=A0</div></div><div class=3D"gmail_extra"><br><div class=3D"gmail=
+_quote">On Thu, Aug 4, 2016 at 10:00 AM, Cecilia Tanaka <span dir=3D"ltr">&=
+lt;<a href=3D"mailto:cecilia.tanaka@gmail.com" target=3D"_blank">cecilia.ta=
+naka@gmail.com</a>&gt;</span> wrote:<br><blockquote class=3D"gmail_quote" s=
+tyle=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"><p>O=
+n Jul 29, 2016 10:36 PM, &quot;juan&quot; &lt;<a href=3D"mailto:juan.g71@gm=
+ail.com" target=3D"_blank">juan.g71@gmail.com</a>&gt; wrote:<br>
+&gt;<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 Are you talking about equality before the =
+law? (which logically entails anarchism btw)</p>
+<p>Juan dear,</p>
+<p>Instead arguing with you about vocabulary, real meaning of some words or=
+ not, limits of some concepts, gender equality, men and women, storks and b=
+abies, I decided asking for help and avoid a possible gaffe or being unfair=
+ with you.=C2=A0 :P</p>
+<p>I was thinking about asking you some suggestions of good anarchist readi=
+ngs, because I made some searches and=C2=A0 - wow! -=C2=A0 the bibliography=
+ is really huge.=C2=A0 I need some help to separate the wheat from=C2=A0the=
+ shaft, please.=C2=A0 Or a guide &quot;Advanced Anarchism for Dummies&quot;=
+.=C2=A0 I know only the baby steps, sorry.=C2=A0 :(</p>
+<p>I asked Steve some suggestions in private, but it&#39;s better to ask pu=
+blicly, so more people can profit the clues.=C2=A0 Oh, you know, he loves b=
+ooks, uses cute emoticons and makes oink oink.=C2=A0 He&#39;s a good refere=
+nce for me, hahaha!!=C2=A0 ;)</p>
+<p>Tender kisses for all of you!=C2=A0 &lt;3</p>
+<p>Ceci</p>
+</blockquote></div><br><br clear=3D"all"><div><br></div>-- <br><div class=
+=3D"gmail_signature" data-smartmail=3D"gmail_signature"><div dir=3D"ltr"><d=
+iv>Cari Machet<br>NYC 646-436-7795<br><a href=3D"mailto:carimachet@gmail.co=
+m" target=3D"_blank">carimachet@gmail.com</a><br>AIM carismachet<br>Syria +=
+963-099 277 3243<br>Amman +962 077 636 9407<br>Berlin +49 152 11779219 <br>=
+Reykjavik +354 894 8650<br>Twitter: @carimachet &lt;<a href=3D"https://twit=
+ter.com/carimachet" target=3D"_blank">https://twitter.com/carimachet</a>&gt=
+;<br><br></div>7035 690E 5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187<br><div><b=
+r>Ruh-roh, this is now necessary: This email is intended only for the <br>a=
+ddressee(s) and may contain confidential information. If you are not the <b=
+r>intended recipient, you are hereby notified that any use of this <br>info=
+rmation, dissemination, distribution, or copying of this email without <br>=
+permission is strictly prohibited.<br><br><br></div></div></div>
+</div>
+
+--001a1143ff7a47f72a05393c7d95--
+

@@ -1,0 +1,182 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u7ANDkh3002899;
+	Wed, 10 Aug 2016 19:13:46 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=xYeSoRHI;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-ua0-f173.google.com (mail-ua0-f173.google.com
+ [209.85.217.173])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u7ANDhoN002894
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Wed, 10 Aug 2016 19:13:44 -0400
+Received: by mail-ua0-f173.google.com with SMTP id 74so94584923uau.0
+ for <cypherpunks@cpunks.org>; Wed, 10 Aug 2016 16:13:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
+ bh=zc5n9RFp23KqNMZfs80jTqp4Tw73ioTN5g8Y1rKD6wc=;
+ b=xYeSoRHI7s2DeDFFnU1R1ZP7FIfckgbiAfpO5qZ010qtx/l4hcprj3bCS2NiBKhV+W
+ gNhR1qY3HtGcjuwilfcibyCvwB4un3FpGjIpoVobMuYc0pDcRxCTDpu7/x+S0IK8Rup6
+ Mv7AGru0oqXWbrPk7dj53CbI2EnBvoHZoA5KZH0k10LrXsduxmeTEqitGiAvkF8IC8JA
+ ON0utXVhR+bqfmnWj+C72zOP70oxemnRlTM2Tz5EYBIL0rqUTvb4zKdie2xvnWfW5Ceh
+ wXHMMo94OBzqs4jVY5wwbnf1c+bLnV15JFGIOETY+JdGNDxavVe9XYT7za0aIq2zK2cp
+ TAnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+ :message-id:subject:to;
+ bh=zc5n9RFp23KqNMZfs80jTqp4Tw73ioTN5g8Y1rKD6wc=;
+ b=h/h760Zm/D/pdIyhBibuPtIF74nb65+bUGLEAH+92EhEWEKDhXybsTEdFaB+vkQWIa
+ jDuU4aBplNzkyCcI2qqfvQaX6yKinYIV7QoM81FBob5AEb1xsVccmzIhwFURQBOIwHJZ
+ 08cEwzy/7eYKitUBNAvIoTlXJ4ZptQRl7Wb3K0CKIBWHBydJumPVY1+Ah8ix6GPYZ8c+
+ UPo6JlHaELyO4OLs8b5+YOvzTrOI0LpeK02OZ06zNXuRud85jS+/YAwpaoYiwePSAnbW
+ hvioNdAVXAvELanv2GGwyxaRdq4eHV5YxpQyvGriagMa6G/j84803E1MzGmZ5k9cTS5X
+ chlw==
+X-Gm-Message-State: AEkoouufIEp8gqJUlmIzUe0Jm2EVp8hLw+lHBEvfv/12qn+2DDosJf37zrpXYFYYgt8JwR3+UXlq758d4TAE1g==
+X-Received: by 10.176.0.212 with SMTP id 78mr2807576uaj.107.1470870817289;
+ Wed, 10 Aug 2016 16:13:37 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.176.3.45 with HTTP; Wed, 10 Aug 2016 16:13:35 -0700 (PDT)
+Received: by 10.176.3.45 with HTTP; Wed, 10 Aug 2016 16:13:35 -0700 (PDT)
+In-Reply-To: <20160809194322.GA24863@synfin.org>
+References: <CAG2tMp7R2Lo0RN11qkC_iC9-4=2gHzpbcZEOoLtRFkCJ6Cf_KA@mail.gmail.com>
+ <CAG2tMp70VXbY+0GJs3HApMq71TcBympeLg3QUuDDdHwmC6Cqwg@mail.gmail.com>
+ <CAG2tMp4=q0aFUjcS8Gei2J9FqYfQnsWg0E5Vh_OtGjVuJ-_V0Q@mail.gmail.com>
+ <CAG2tMp55nML9+v0hnLVfe+OqPsCMUNiB66FR-VjmTn3pkGSTRw@mail.gmail.com>
+ <CAG2tMp7M3BpOUOcv6fkOYK=cYvYCWmg3nFrL8QSGBF0JPr5pjg@mail.gmail.com>
+ <CAG2tMp5A5AxiYHR4JQ-ECFCy80nsa8-xxYw5gs5vMEfHtHKRgg@mail.gmail.com>
+ <CAG2tMp4HdMnuXO7K5OvAie1+f1bsU5_iDg-nEcy=PTvJfV+XFA@mail.gmail.com>
+ <CAG2tMp6sd1r-FwLWd2SmQTQ-JJJpCPyU9hDKKKkew8symGGtJQ@mail.gmail.com>
+ <CAG2tMp5CmWA9rzgwDpe9XDYbOcKooAq15PrDD1UtorcnPZo--Q@mail.gmail.com>
+ <CAG2tMp5VUSFrJJXVXU35VBkY4trmH8K+7yECpnQAvfX7iRF3qQ@mail.gmail.com>
+ <20160809194322.GA24863@synfin.org>
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+Date: Wed, 10 Aug 2016 20:13:35 -0300
+Message-ID: <CAG2tMp5GOAZvGPLqfEX_Owi1GddpyxC+vGpoEc3naCbdGShRKw@mail.gmail.com>
+Subject: Re: Anarchist Bibliography, please? (was Re: Deconstructing an
+ Institutional Slander...)
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=001a113ac77a933f090539bfcc63
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 108
+
+--001a113ac77a933f090539bfcc63
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+On Aug 9, 2016 4:43 PM, "John Newman" <jnn@synfin.org> wrote:
+>
+> Although, they do get a little too precious about veganism for my, err,
+tastes... ;)
+
+Being vegan is very fun for lighthearted trolls.  I can use it as excuse
+for everything and always will be people thinking I am talking seriously.
+;)
+
+Currently, I am saying to some friends that hunting pok=C3=A9mons is not ve=
+gan
+at all, hahaha!!  ;D
+
+> Reading about the russian revolution recently was very depressing.
+Personally I don't hold much hope for humanity..I figure the solution to
+Fermis paradox is self-evident. We are going to fucking destroy ourselves.
+Live it up while you can ;)
+
+While the end doesn't arrive, I was reading a bit about Victoria Woodhull
+[1] and cute soldering kits.  I really appreciated to learn a bit more
+about her.  Great girl, wow!  :D
+
+Yep, thinking about the future can be very depressing, but it's fun to
+think about all the possibilities.  I really think technology and goodwill
+can make a better world for everybody and  - wow! -  there are lots of
+interesting, amazing people in the whole world.
+
+Being alive is still fun, even when everything makes no sense.  Life is
+very crazy in some moments.
+
+Now, I was trying to mention a Hardy Har Har quote to make you laugh and
+discovered the eternal pessimist hyena is more bitter and depressive in the
+Brazilian version, haha!!  ;D
+
+It's funnier, much more dramatic, but was strange to discover how much the
+translations can adapt or modify the original talks.  Here the hyena always
+complains "I know it won't work...  Oh Heavens!  Oh day!  Oh bad luck!"
+instead "Oh me, oh my, oh dear"...   :P
+
+This kind of unexpected fun thing keeps me alive and my mood, more or less,
+good.  You know, life is a bitch and sucks, but, in some moments, it is
+very expensive, dramatic and doesn't suck well.  ;)
+
+In any case, there are lots of good people and wonderful music in the
+world.  And children.  Children always are the hope for a better future!  <=
+3
+
+Tender kisses, warm hugs and lots of hope!  :*
+
+-  c.
+
+[1] <https://en.wikipedia.org/wiki/Victoria_Woodhull>
+
+--001a113ac77a933f090539bfcc63
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p>On Aug 9, 2016 4:43 PM, &quot;John Newman&quot; &lt;<a href=3D"mailto:jn=
+n@synfin.org">jnn@synfin.org</a>&gt; wrote:<br>
+&gt;<br>
+&gt; Although, they do get a little too precious about veganism for my, err=
+, tastes... ;)</p>
+<p>Being vegan is very fun for lighthearted trolls.=C2=A0 I can use it as e=
+xcuse for everything and always will be people thinking I am talking seriou=
+sly.=C2=A0 ;)</p>
+<p>Currently, I am saying to some friends that hunting pok=C3=A9mons is not=
+ vegan at all, hahaha!!=C2=A0 ;D</p>
+<p>&gt; Reading about the russian revolution recently was very depressing. =
+Personally I don&#39;t hold much hope for humanity..I figure the solution t=
+o Fermis paradox is self-evident. We are going to fucking destroy ourselves=
+. Live it up while you can ;)</p>
+<p>While the end doesn&#39;t arrive, I was reading a bit about Victoria Woo=
+dhull [1] and cute soldering kits.=C2=A0 I really appreciated to learn a bi=
+t more about her.=C2=A0 Great girl, wow!=C2=A0 :D</p>
+<p>Yep, thinking about the future can be very depressing, but it&#39;s fun =
+to think about all the possibilities.=C2=A0 I really think technology and g=
+oodwill can make a better world for everybody and=C2=A0 - wow! -=C2=A0 ther=
+e are lots of interesting, amazing people in the whole world.=C2=A0 </p>
+<p>Being alive is still fun, even when everything makes no sense.=C2=A0 Lif=
+e is very crazy in some moments.</p>
+<p>Now, I was trying to mention a Hardy Har Har quote to make you laugh and=
+ discovered the eternal pessimist hyena is more bitter and depressive in th=
+e Brazilian version, haha!!=C2=A0 ;D</p>
+<p>It&#39;s funnier, much more dramatic, but was strange to discover how mu=
+ch the translations can adapt or modify the original talks.=C2=A0 Here the =
+hyena always complains &quot;I know it won&#39;t work...=C2=A0 Oh Heavens!=
+=C2=A0 Oh day!=C2=A0 Oh bad luck!&quot; instead &quot;Oh me, oh my, oh dear=
+&quot;...=C2=A0=C2=A0 :P</p>
+<p>This kind of unexpected fun thing keeps me alive and my mood, more or le=
+ss, good.=C2=A0 You know, life is a bitch and sucks, but, in some moments, =
+it is very expensive, dramatic and doesn&#39;t suck well.=C2=A0 ;)</p>
+<p>In any case, there are lots of good people and wonderful music in the wo=
+rld.=C2=A0 And children.=C2=A0 Children always are the hope for a better fu=
+ture!=C2=A0 &lt;3</p>
+<p>Tender kisses, warm hugs and lots of hope!=C2=A0 :*</p>
+<p>-=C2=A0 c.</p>
+<p>[1] &lt;<font color=3D"#000000"><a href=3D"https://en.wikipedia.org/wiki=
+/Victoria_Woodhull">https://en.wikipedia.org/wiki/Victoria_Woodhull</a></fo=
+nt><font color=3D"#000000">&gt;</font> <br>
+</p>
+
+--001a113ac77a933f090539bfcc63--
+

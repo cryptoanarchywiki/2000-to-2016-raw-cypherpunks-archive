@@ -1,0 +1,109 @@
+From owner-cypherpunks-outgoing@einstein.ssz.com  Mon Nov  6 02:32:05 2000
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.72.0.53])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id CAA04220
+	for <kwantam@positron.mit.edu>; Mon, 6 Nov 2000 02:32:05 -0500
+Received: from einstein.ssz.com (mdom@einstein.ssz.com [204.96.2.99])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id CAA11419
+	for <rsw@MIT.EDU>; Mon, 6 Nov 2000 02:32:04 -0500 (EST)
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id BAA27599
+	for cypherpunks-outgoing; Mon, 6 Nov 2000 01:32:19 -0600
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id BAA27589
+	for cypherpunks@ssz.com; Mon, 6 Nov 2000 01:32:16 -0600
+Received: from domains.invweb.net (root@domains.invweb.net [198.182.196.32])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id BAA27563
+	for <cpunks@einstein.ssz.com>; Mon, 6 Nov 2000 01:32:12 -0600
+Received: (from openpgp@localhost)
+	by domains.invweb.net (8.9.3/8.9.3) id CAA04555;
+	Mon, 6 Nov 2000 02:25:58 -0500
+Date: Mon, 6 Nov 2000 02:25:58 -0500
+Message-Id: <Pine.LNX.4.21.0011052219050.12272-100000@bolt.sonic.net>
+Originator: cypherpunks@openpgp.net
+From: Ray Dillinger <bear@sonic.net>
+To: Multiple recipients of list <cypherpunks@openpgp.net>
+Subject: CDR: Re: PipeNet protocol
+X-Listprocessor-Version: 6.0 -- ListProcessor by Anastasios Kotsikonas
+X-Comment: All list traffic is being monitored by the FEDS!!
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+MIME-Version: 1.0
+In-Reply-To: <200011060314.WAA01504@cypherspace.org>
+X-Loop: openpgp.net
+Sender: owner-cypherpunks@einstein.ssz.com
+Precedence: bulk
+Reply-To: cypherpunks@einstein.ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Language: English, Russian, German
+Status: O
+Content-Length: 3264
+Lines: 66
+
+
+
+On Sun, 5 Nov 2000, Adam Back wrote:
+
+>| Each node expects one packet from each link id in each time unit.
+>| Extra packets are queued for processing in later time units.
+>| However, if a node does not receive a packet for a link id in a
+>| particular time unit, it stops normal processing of packets for that
+>| time unit and queues all packets.  This ensures that any delay is
+>| propagated through the entire network and cannot be used to trace a
+>| particular connection.
+>
+>This is to defend against active attacks delaying packets to observe
+>the effect on the network and hence trace routes.
+>
+>However I think this scheduling algorithm would have the side effect
+>of making this variant of PipeNet very vulnerable to DoS attacks.  Any
+>user can arbitrarily delay packet delivery for the entire network by
+>ceasing to send packets.
+
+It also limits the ability of Pipenet to scale.  Basically, the more
+people you get, the longer the time periods become (because every 
+node has to send every other node a packet, and it takes longer to 
+receive a million packets than it takes to receive a dozen).  Once 
+you are down to being able to send only one packet per hour to any 
+particular place, you are effectively scrod as far as getting anything 
+done.  Routing through other pipenet nodes is possible, of course, but 
+all the net sources and sinks of data would quickly either overload 
+with queued packets, or be forced to inundate the whole system with 
+nulls on a very regular basis.  
+
+I've been looking at a mode where nodes are considered "located" 
+relative to each other in some kind of fake coordinate space - not 
+necessarily correlated with physical location.  Once you introduce 
+a coordinate space, you can use concepts of direction to help 
+route things.  Break up the coordinate plane with a compass rose 
+into sixteen semi-octants, and each round, you transmit to your 
+nearest neighbor in each octant and also to randomly selected ones 
+at medium, long, and very long distance.   That way, you can 
+guarantee that if you're not contacting the intended recipient 
+of a packet you're forwarding this round, you will at the very 
+least be contacting a node that's "closer" to the intended 
+recipient than yourself.  If you consistently route the packet 
+to any node closer than you, without overshooting, it is 
+guaranteed to arrive in a finite number of hops  (overshooting 
+may be feasible in practice, but I haven't been able to prove 
+this property where overshooting is allowed.  However, a limited 
+number of overshoots ought to be okay - that's more effective in
+the average case and reverts to the provable case after the 
+allowed overshoots run out. ).
+
+I think it would defeat traffic analysis, because the selection 
+of who sends packets to whom is perfectly random each time, subject 
+to the vagaries of the coordinate space.   The analysts could tell 
+who your closest neighbors were in the coordinate space, and could 
+eventually build up a model of the coordinate space and figure out 
+your coordinates in it - but no other information is revealed by 
+the selection of whom you transmit to each time.  
+
+If you wanted to keep the locations fluid, you could hash all 
+the coordinates each night at midnight GMT.  
+
+					Bear
+
+
+
+

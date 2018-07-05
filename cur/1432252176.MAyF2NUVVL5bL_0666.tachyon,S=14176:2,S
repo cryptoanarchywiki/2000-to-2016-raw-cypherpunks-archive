@@ -1,0 +1,258 @@
+From owner-cypherpunks@al-qaeda.net  Wed Dec 22 15:32:41 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (majordomo@localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.1/8.13.1/Debian-20) with ESMTP id iBMLUKpU013242
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Wed, 22 Dec 2004 15:30:20 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.1/8.13.1/Submit) id iBMLUKmB013241
+	for cypherpunks-outgoing; Wed, 22 Dec 2004 15:30:20 -0600
+Mime-Version: 1.0
+X-Sender: rah@localhost
+Message-Id: <p06110444bdef9695d0d6@[68.167.57.91]>
+X-Clips-URL: <http://sys-con.com/story/print.cfm?storyid=47592>
+Date: Wed, 22 Dec 2004 16:25:14 -0500
+To: cryptography@metzdowd.com, cypherpunks@al-qaeda.net
+From: "R.A. Hettinga" <rah@shipwright.com>
+Subject: Finally, the Killer PKI Application
+Content-Type: text/plain; charset="us-ascii"
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+X-Keywords:                  
+X-UID: 16507
+Status: O
+Content-Length: 13056
+Lines: 230
+
+<http://sys-con.com/story/print.cfm?storyid=47592>
+
+(SYS-CON)(Printview)
+
+Finally, the Killer PKI Application
+Web Services as an application - and a challenge
+December 22, 2004
+Summary
+Enterprise PKI has a bad name. Complex, costly, difficult to deploy and
+maintain - all these criticisms have dogged this technology since it first
+appeared. To the dismay of so many CIOs, few applications have stepped up
+to make effective use of PKI. But this may soon change: Web services
+promotes a security model that demands the flexibility that an enterprise
+PKI deployment can offer.
+By Scott Morrison 
+
+Enterprise PKI has a bad name. Complex, costly, difficult to deploy and
+maintain - all these criticisms have dogged this technology since it first
+appeared. To the dismay of so many CIOs, few applications have stepped up
+to make effective use of PKI. But this may soon change: Web services
+promotes a security model that demands the flexibility that an enterprise
+PKI deployment can offer.
+
+ The Trend Away from Channel-Level Security
+If you lumped all the existing, production-level Web services applications
+together, and categorized their security models, you would probably
+discover some interesting trends. First, an awful lot of these don't
+address security at all, which probably owes more to the relative
+immaturity of Web services technology than to a conscious choice on the
+part of developers. The bulk of the remainder will simply delegate security
+entirely to SSL - or in some cases, a VPN connection.
+
+ SSL isn't a bad choice. It provides confidentiality and integrity.
+Automatic sequence numbering stands guard against replay attacks. Servers
+are always authenticated using a certificate that binds the server's DNS
+name to the Subject, a strategy to defeat man-in-the-middle and
+impersonation attacks. This does rely heavily on the integrity of the DNS
+system, but by and large it is viewed as an acceptable risk. SSL even
+offers optional client-side certificate authentication, which is powerful,
+though in practice rarely implemented.
+
+ Probably the most unheralded quality of SSL is channel continuity. Once a
+session is set up - and once the client and server mutually authenticate
+(with the client using a certificate under SSL, through HTTP
+authentication, or an application-level means such as forms) - a level of
+trust is established on the open socket so that it is available for
+multiple transactions without repeating this lengthy process each time.
+There is great value in a transparently maintained security context, and it
+is easy to take for granted.
+
+ Of course, one of the reasons behind SSL's success on the Web was that,
+although it utilizes public key cryptography, it doesn't need full-blown
+PKI. Most SSL-enabled Web servers use certs issued by the "browser cartel,"
+those CAs fortunate enough to have their root certificates automatically
+installed within the trust store of the most popular browsers. And with the
+exception of a few early consumer banking products - which have largely
+been abandoned - almost nobody steps up to the baroque logistics of
+client-side certificates on the Web. The ability to delegate PKI to a third
+party greatly simplified security on the Web; this was one of the reasons
+SSL became good enough for most online transactions, even when challenged
+in the early days by technically elegant, though complex, solutions like
+SET (Secure Electronic Transaction).
+
+ But SSL's greatest weakness is that it is oriented toward synchronous
+transactions, requiring a direct connection between participants. It's like
+an encrypted telephone conversation, which is probably something alien to
+you and me, but I suppose that James Bond uses it regularly. Both parties
+need to be available, multiple passes are necessary to set up a secure
+context, and all of the information - the critical points alongside the
+mundane ("how's the weather in London?") - is encrypted wholesale, which
+can be a costly processor burden.
+
+ This is why SSL is an insufficient security model for Web services.
+Despite the name - an unfortunate one that is probably one of the great
+misnomers in the history of technology - Web services isn't really about
+the Web. In one realization, it does use existing Web infrastructure,
+including HTTP transport, Web application servers, etc. However, Web
+services is fundamentally a one-way messaging paradigm for computer
+communications, composed around a simple XML message structure with an
+extensible header model.
+
+ Web service messages may not piggyback on HTTP at all. They might flow
+across a message-oriented middleware (MOM) such as IBM's MQSeries, or be
+carried asynchronously by that other ubiquitous infrastructure, SMTP. SOAP
+messages are designed to flow through a network of intermediates, not
+unlike IP packets being passed between routers. Intermediates may be
+required to view header information to make processing decisions based on
+application-level protocol. A channel-based security model, one that
+encrypts everything and requires synchronous responses from a receiver,
+simply isn't appropriate in such a Web services architecture.
+
+ Security in the Message
+The solution to this problem, as put forth in standards by OASIS and the
+W3C, is to absorb security into the message itself. That is, provide a
+means of authentication, integrity, and confidentiality that is integral to
+the message, and completely decoupled from transport channels. Thus, the
+message security remains consistent and trustworthy whether it flows over
+regular HTTP across a P2P network using proprietary protocols, is persisted
+to a file, or even printed onto a piece of paper. Ironically, it's closer
+to the time-honored cryptographic tradition of writing encrypted
+information into a message and sending it via a messenger than it is to Mr.
+Bond's fancy, synchronous encrypting telephone. This may strike you as
+lower tech, but a security model that supports asynchronous messaging has
+great architectural advantages.
+
+ In the Oasis Web Services Security (WSS) standard, each SOAP message
+stands alone, and can have security applied uniquely. It includes
+mechanisms for encrypting any content in the message at a very finely
+grained level. For example, rather than applying a cipher to the entire
+message, only those parts that are deemed necessary to cryptographically
+secure need be encrypted, such as a credit card number. This means that
+public parts of a message, such as header fields that might be relevant to
+an intermediate making a routing decision, can be left in the clear.
+
+ Of course, any part of a SOAP message is subject to modification by an
+attacker as it traverses potentially hostile networks. To address this, WSS
+provides a mechanism to sign message content, with a granularity identical
+to encryption. Thus, not only can a message author encrypt the credit card
+element, they can sign it to ensure that no substitution in transit goes
+undetected. The same protection can be extended to unencrypted, public
+elements, such as timestamps inserted into the header.
+
+ A Role for PKI
+WSS goes to great lengths to remain flexible and not to specify a
+particular encryption/signing technology. It's certainly possible to build
+a WSS-compliant system based on shared secrets that are exchanged
+out-of-band of the WSS specification (though this disqualifies a
+transaction from any claims to nonrepudiation, as well as subjecting it to
+a toxic list of potential security flaws). Nevertheless, you would be
+hard-pressed to find a vendor's WSS implementation that isn't based on
+public key infrastructure. Furthermore, everyone is building systems
+predicated to have key pairs on both sides of a transaction: at the message
+producer (client), and the message consumer (server). So PKI is back.
+
+ This is good news if you spent a lot of money a few years back on a large,
+enterprise-wide PKI rollout. It was painful, and probably unrecognized, but
+now the investment may finally be realized. If you avoided PKI until now,
+Web services may be the application that forces your organization to
+swallow this often bitter pill.
+
+ The Typical Pattern
+To understand why PKI is so essential to the typical WSS implementation, it
+helps to examine a common interaction model (see Figure 1). A single
+message is secured for transmission between two parties. This is a
+sessionless scenario, meaning that there is no prenegotiated, temporary
+security token shared between parties. In other words, there is no shared
+secret between the producer and the consumer, such as a key used for
+symmetric encryption and HMAC signing. Emerging standards, such as
+WS-Secure Conversation and WS-Trust, provide for negotiated security tokens
+and define well-known key derivation mechanisms similar to SSL's session
+key scheme. In this instance, we are illustrating how a message can be
+secured directly using only the key pair and certificate held by the
+producer, and the certificate for the consumer.
+
+ Figure 2 shows a map of the message exchanged between the producer and the
+consumer. In this simplified message, the body has been encrypted using a
+two-step process described in WSS. First the producer generates a random
+symmetric key to encrypt the body content, using a symmetric algorithm like
+triple-DES or AES. A specialized security header describes the exact
+algorithm and key length. Note the contrast here to SSL, which supports
+negotiation of cipher suites and key lengths. This is largely to
+accommodate a diversity of clients, any of whom may be subject to
+cryptography export restrictions. Here we assume a prior, out-of-band
+agreement on cipher capabilities.
+
+ So how does this shared secret become, well, shared? It's pretty simple.
+The producer encrypts this symmetric key with the consumer's public key,
+ensuring that only that party can decrypt the message. This encrypted key
+is then embedded in the security header, with a reference to the key pair
+needed to unlock it (often, this is implemented using the subject key
+identifier field from the receiver's certificate). In the security header,
+anyone can read the encrypted key, but only the designated receiver can
+decrypt it, and use it to further decipher the message content. Thus, no
+complex, multipass protocol is required to negotiate a security session
+key. Each message stands alone.
+
+ Encryption, however, is only one component of the security story, albeit
+an important one. As it stands, the encrypted message body is subject to
+substitution by a malicious party, as are critical header fields such as
+the timestamp, which is necessary for servers to uniquely identify messages
+and apply an effective replay defense. Furthermore, the consumer has no
+means to authenticate the message producer: encryption for a particular
+receiver does not identify the author - the message could have come from
+anyone.
+
+ To address this shortcoming, our message producer calculates digests of
+the encrypted message body and critical header fields, and places these
+into yet another block in the security header. It signs this block,
+aggregating the digested components into a single, simultaneous
+integrity/origin authentication statement. The producer includes its
+certificate (or a reference to it) in the security header so that the
+receiver can validate the signature and follow any certificate chain in the
+certificate to a trust anchor. Now the consumer can have confidence that a
+specific producer authored the message, it was not altered in transit, and
+most importantly, that it was designated specifically for this consumer.
+
+ What is important to recognize here is that all parties in this
+transaction have key pairs and certificates. Without PKI, the model doesn't
+work.
+
+ Conclusion
+Clearly, Web services is a great opportunity for PKI, but it's also a great
+challenge. Most vendors' toolkits have a deliberately vague coupling to
+commercial PKI systems. As always, it's what the standards loosely describe
+that becomes the source of problems. Interfacing to a particular key store
+type or location, coercing servers to check CRLs or use OCSP can be
+troublesome. It's best to start proactively, rolling out your PKI system
+before its services are demanded by a Web services application. And the
+demand will come. SSL is sufficient for Web-like, client/server
+application, but large enterprise computing is built on asynchronous
+messaging; this is where Web services will shine, and where PKI will become
+essential.
+
+
+About the author
+
+
+Scott Morrison is director of Architecture at Layer 7 Technologies. Layer 7
+provides technology for managing and coordinating Web services security and
+transaction policy across loosely coupled systems (more)
+
+
+-- 
+-----------------
+R. A. Hettinga <mailto: rah@ibuc.com>
+The Internet Bearer Underwriting Corporation <http://www.ibuc.com/>
+44 Farquhar Street, Boston, MA 02131 USA
+"... however it may deserve respect for its usefulness and antiquity,
+[predicting the end of the world] has not been found agreeable to
+experience." -- Edward Gibbon, 'Decline and Fall of the Roman Empire'
+

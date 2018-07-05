@@ -1,0 +1,123 @@
+From cypherpunks-bounces@cpunks.org  Mon Oct 14 05:04:48 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9E94l0W032342;
+	Mon, 14 Oct 2013 05:04:47 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9E94hON032334
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Mon, 14 Oct 2013 05:04:45 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id C08B6543E75; Mon, 14 Oct 2013 11:04:42 +0200 (CEST)
+Date: Mon, 14 Oct 2013 11:04:42 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: Re: [Cryptography] prism-proof email in the degenerate case
+Message-ID: <20131014090442.GT10405@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 3863
+Lines: 85
+
+----- Forwarded message from Nico Williams <nico@cryptonector.com> -----
+
+Date: Fri, 11 Oct 2013 10:53:03 -0500
+From: Nico Williams <nico@cryptonector.com>
+To: Jerry Leichter <leichter@lrw.com>
+Cc: ray@unipay.nl, cryptography@metzdowd.com
+Subject: Re: [Cryptography] prism-proof email in the degenerate case
+Message-ID: <20131011155302.GA8170@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+
+On Thu, Oct 10, 2013 at 04:22:50PM -0400, Jerry Leichter wrote:
+> On Oct 10, 2013, at 11:58 AM, "R. Hirschfeld" <ray@unipay.nl> wrote:
+> > Very silly but trivial to "implement" so I went ahead and did so:
+> > 
+> > To send a prism-proof email, encrypt it for your recipient and send it
+> > to irrefrangible@mail.unipay.nl....
+> Nice!  I like it.
+
+Me too.  I've been telling people that all PRISM will accomplish
+regarding the bad guys is to get them to use dead drops, such as comment
+posting on any of millions of blogs -- low bandwidth, undetectable.  The
+technique in this thread makes the use of a dead drop obvious, and adds
+significantly to the recipient's work load, but in exchange brings the
+bandwidth up to more usable levels.
+
+Either way the communicating peers must pre-agree a number of things --
+a traffic analysis achilles point, but it's one-time vulnerability, and
+chances are people who would communicate this way already have such
+meetings.
+
+> A couple of comments:
+> 
+> 1.  Obviously, this has scaling problems.  The interesting question is
+> how to extend it while retaining the good properties.  If participants
+> are willing to be identified to within 1/k of all the users of the
+> system (a set which will itself remain hidden by the system), choosing
+> one of k servers based on a hash of the recipient would work.  (A
+> concerned recipient could, of course, check servers that he knows
+> can't possibly have his mail.)  Can one do better?
+
+Each server/list is a channel.  Pre-agree on channels or use hashes.  If
+the latter then the hashes have to be of {sender, recipient}, else one
+party has a lot of work to do, but then again, using just the sender or
+just the recipient helps protect the other party against traffic
+analysis.  Assuming there are millions of "channels" then maybe
+something like
+
+    H({sender, truncate(H(recipient), log2(number-of-channels-to check))})
+
+will do just fine.  And truncate(H(recipient, log2(num-channels))) can
+be used for introduction purposes.
+
+The number of servers/lists divides the total work to do to receive a
+message.
+
+> 2.  The system provides complete security for recipients (all you can
+> tell about a recipient is that he can potentially receive messages -
+> though the design has to be careful so that a recipient doesn't, for
+> example, release timing information depending on whether his
+> decryption succeeded or not).  However, the protection is more limited
+> for senders.  A sender can hide its activity by simply sending random
+> "messages", which of course no one will ever be able to decrypt.  Of
+> course, that adds yet more load to the entire system.
+
+But then the sender can't quite prove that they didn't send anything.
+In a rubber hose attack this could be a problem.  This also applies to
+recipients: they can be observed fetching messages, and they can be
+observed expending power trying to find ones addressed to them.
+
+Also, there's no DoS protection: flooding the lists with bogus messages
+is a DoS on recipients.
+
+Nico
+-- 
+_______________________________________________
+The cryptography mailing list
+cryptography@metzdowd.com
+http://www.metzdowd.com/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

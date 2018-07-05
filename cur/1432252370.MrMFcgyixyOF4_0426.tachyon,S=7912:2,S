@@ -1,0 +1,179 @@
+From owner-cypherpunks@jfet.org  Tue May 30 09:04:57 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.6/8.13.6/Debian-1) with ESMTP id k4UD4CDq020093
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 30 May 2006 09:04:12 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.6/8.13.6/Submit) id k4UD4CpQ020092
+	for cypherpunks-outgoing; Tue, 30 May 2006 09:04:12 -0400
+Message-ID: <BAY116-F365C75D3D97EC1131621709B920@phx.gbl>
+X-Originating-IP: [72.225.215.149]
+X-Originating-Email: [camera_lumina@hotmail.com]
+X-Sender: camera_lumina@hotmail.com
+In-Reply-To: <20060529165320.GF26713@leitl.org>
+From: "Tyler Durden" <camera_lumina@hotmail.com>
+To: eugen@leitl.org, cypherpunks@jfet.org
+Subject: Status of opportunistic encryption
+Date: Tue, 30 May 2006 09:03:55 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; format=flowed
+X-OriginalArrivalTime: 30 May 2006 13:03:59.0573 (UTC)
+  FILETIME=[843B3850:01C683E9]
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 6720
+Lines: 149
+
+Another thought.
+Even if everyone else doesn't encrypt, are their opportunities to "crypto 
+load" some services with useless, though encrypted information? Of course, 
+the loading can't make the service useless or even notceably degrade, or it 
+won't be available in the long run.
+
+For instance, it seems to me that for some P2P services, it might be very 
+useful to constantly encypt and then "share" biggish files, even if no one 
+can actually de-encrypt the file. If the bandwidth of such encrypted files 
+is reasonable (though not a degrading % of the network's bandwidth), then 
+that service becomes a useful channel for transmitting information that's 
+actually encrypted, otherwise the one PGP-encrypted file that gets sent 
+through Kazaa or whatever is like a red cow standing in a sea of 
+black-and-whites. It's arguably less secure than not encrypting (ie, they 
+-might- not be able to read the text, but they damn sure know that this 
+sender/receiver is very interesting).
+
+Actually, this may notbe too hard to acheive through something like Kazaa. 
+All that would be needed is N "bots" that "share" a steady stream of 
+encrypted files with each other.
+
+Of course, it's far better if they do some kind of identity-hopping somehow, 
+or perhaps sit behind a wall of anonymity.
+
+But this doesn't require encouraging everyone to encrypt.
+
+In other words, if you've got a needle you want to hide it's far better to 
+plop some bigass haystack on it.
+
+-TD
+
+
+>From: Eugen Leitl <eugen@leitl.org>
+>To: cypherpunks@jfet.org
+>Subject: [Victor.Duchovni@MorganStanley.com: Re: Status of opportunistic  
+>encryption]
+>Date: Mon, 29 May 2006 18:53:20 +0200
+>
+>----- Forwarded message from Victor Duchovni
+><Victor.Duchovni@MorganStanley.com> -----
+>
+>From: Victor Duchovni <Victor.Duchovni@MorganStanley.com>
+>Date: Mon, 29 May 2006 12:03:05 -0400
+>To: cryptography@metzdowd.com
+>Subject: Re: Status of opportunistic encryption
+>Reply-To: cryptography@metzdowd.com
+>User-Agent: Mutt/1.4.1i
+>
+>On Mon, May 29, 2006 at 07:21:29AM +0200, Florian Weimer wrote:
+>
+> > * Sandy Harris:
+> >
+> > > Recent news stories seem to me to make it obvious that anyone with
+>privacy
+> > > concerns (i.e. more-or-less everyone) should be encrypting as much of
+>their
+> > > communication as possible. Implementing opportunistic encryption is 
+>the
+> > > best way I know of to do that for the Internet.
+> > >
+> > > I'm somewhat out of touch, though, so I do not know to what extent 
+>people
+> > > are using it now. That is my question here.
+> >
+> > It seems to me opportunistic encryption has moved to the application
+> > layer, at least as far as Internet mail is concerned.  Many MTAs use
+> > TLS automatically with whatever certificates they can get.  Of course,
+> > this only guards against active attacks, but it seems to me that this
+> > is a reasonable threat model.
+>
+>It only guards against *passive* eavesdropping. Active attacks can
+>forge DNS MX records, inject BGP routes, ... Actual MITM resistant
+>peer authentication with SMTP+TLS is extremely rare. I know it happens
+>sometimes because I have it running for a small number of destinations,
+>otherwise I would suspect that nobody is doing it.
+>
+>     http://www.postfix.org/TLS_README.html#client_tls_harden
+>
+>Once the new 2.3 TLS code is folded into the production Postfix 2.3
+>snapshots (at which point the new documentation will be published), see
+>
+>     http://www.postfix.org/TLS_README.html#client_tls_levels
+>     http://www.postfix.org/TLS_README.html#client_tls_policy
+>
+>Preview:
+>
+>   It is regrettably the case, that TLS secure-channels (fully 
+>authenticated
+>   and immune to man-in-the-middle attacks) impose constraints on the 
+>sending
+>   and receiving sites that preclude ubiquitous deployment. One needs to
+>   manually configure this type of security for each destination domain,
+>   and in many cases implement non-default TLS policy table entries for
+>   additional domains hosted at a common secured destination. With Postfix
+>   2.3, we make secure-channel configurations substantially easier to
+>   configure, but they will never be the norm. For the generic domain with
+>   which you have made no specific security arrangements, this security
+>   level is not a good fit.
+>
+>   Historical note: while the documentation of these issues and many of
+>   the related features are new with Postfix 2.3, the issue was well
+>   understood before Postfix 1.0, when Lutz Jaenicke was designing
+>   the first unofficial Postfix TLS patch. See, his original post
+>   http://thread.gmane.org/gmane.ietf.apps-tls/304/focus=304 and the first
+>   response http://thread.gmane.org/gmane.ietf.apps-tls/304/focus=305. The
+>   problem is not even unique to SMTP or even TLS, similar issues exist
+>   for secure connections via aliases for HTTPS and Kerberos. SMTP merely
+>   uses indirect naming (via MX records) more frequently.
+>
+>I should also note that once one abandons the (still) unrealistic
+>assumption of a secure DNS, it is not just SMTP + TLS that runs into
+>trouble.
+>
+>For example, many Kerberos client libraries do a forward lookup (to
+>alias- expand CNAMEs) and some perversely a reverse lookup (often the
+>owner of the IP address is the worst source of the machine's name), and
+>then give you a mutually authenticated channel to whatever principal
+>they construct from now rather questionable data. This carries over
+>to SASL GSSAPI, where GSSAPI abstraction makes working around this
+>(in practice nobody tries even with native Kerberos) even harder.
+>
+>Consequently, also SSH with GSS KEX, is not MITM resistant when the
+>attacker can tamper with DNS responses.
+>
+>Ultimately, to close similar security issues in many other protocols,
+>we need a secure DNS, but I am somewhat pessimistic about the likelihood
+>of this happening soon.
+>
+>--
+>
+>  /"\ ASCII RIBBON                  NOTICE: If received in error,
+>  \ / CAMPAIGN     Victor Duchovni  please destroy and notify
+>   X AGAINST       IT Security,     sender. Sender does not waive
+>  / \ HTML MAIL    Morgan Stanley   confidentiality or privilege,
+>                                    and use is prohibited.
+>
+>---------------------------------------------------------------------
+>The Cryptography Mailing List
+>Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+>
+>----- End forwarded message -----
+>--
+>Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+>______________________________________________________________
+>ICBM: 48.07100, 11.36820            http://www.ativel.com
+>8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+>
+>[demime 1.01d removed an attachment of type application/pgp-signature which 
+>had a name of signature.asc]
+

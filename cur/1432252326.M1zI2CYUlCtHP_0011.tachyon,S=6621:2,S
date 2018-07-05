@@ -1,0 +1,125 @@
+From cypherpunks-bounces@cpunks.org  Wed Dec 11 03:12:53 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id rBB8Cpcr025186;
+	Wed, 11 Dec 2013 03:12:52 -0500
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; insecure key"
+	header.d=gmail.com header.i=@gmail.com header.b=jgZwuXuG;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-qc0-f180.google.com (mail-qc0-f180.google.com
+ [209.85.216.180])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id rBB8AT7G025145
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Wed, 11 Dec 2013 03:10:31 -0500
+Received: by mail-qc0-f180.google.com with SMTP id w7so4843910qcr.11
+ for <cypherpunks@cpunks.org>; Wed, 11 Dec 2013 00:10:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :content-type; bh=I9BWSYYQpXJnYJYjndMrdbDMimIwr20Yn4VEcZuoYpM=;
+ b=jgZwuXuGe2OZzAAObjybh4J5lbamvaw7+oQyPnVvo/CMDNB1+BZ6k53DZ4byBMoEQQ
+ PUrexZ2GWEpR88TWhQ0z0Ggk955DcxzD8PhYeShpdQ+Mvc77mARDRt+5nmurPrkY1WU5
+ R7iFxJcrLf/7dCG+HSbqmZn5KGLLNE+rfWJ2ml3sCvzCMr7kBBt2mJr1FK2PxXxZ0jUY
+ 0lj5Oacab1ildZgbkxAFPtejsWCcRQrZCC521M8PbqPBSIFdSB9MXpFJWl5QqugzlW+j
+ fLoshACgXnVaMnLA21q43Bu/N2wyHO/T4oJfP7r6k7RO0GRFWEx9EyoEigf2MFTvu8yD
+ FaOQ==
+MIME-Version: 1.0
+X-Received: by 10.224.28.72 with SMTP id l8mr142048qac.35.1386749424122; Wed,
+ 11 Dec 2013 00:10:24 -0800 (PST)
+Received: by 10.96.94.68 with HTTP; Wed, 11 Dec 2013 00:10:24 -0800 (PST)
+In-Reply-To: <52A78712.8000801@gmail.com>
+References: <E871618D-B334-4C34-963F-9B1D88A3DDC4@warpspeed.com>
+ <227BEBDF-7DDF-4CE2-92E8-F6D3CF274E58@gmail.com>
+ <CANog7L5KN+Kn3OOBW8BXZTw6pR0x4VEfCjxYq7OeB5sv=aui8w@mail.gmail.com>
+ <52A78712.8000801@gmail.com>
+Date: Wed, 11 Dec 2013 00:10:24 -0800
+Message-ID: <CAJVRA1TqHf+uwVShR2MQGQE-t7iAtSDrkW1agF_n2-aOpPVy3g@mail.gmail.com>
+Subject: Fwd: [zs-p2p] [Cryptography] Fwd: [IP] 'We cannot trust' Intel and
+ Via's chip-based crypto, FreeBSD developers say
+From: coderman <coderman@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: text/plain; charset=ISO-8859-1
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+---------- Forwarded message ----------
+From: Bill Cox <waywardgeek@gmail.com>
+Date: Tue, Dec 10, 2013 at 1:26 PM
+Subject: Re: [zs-p2p] [Cryptography] Fwd: [IP] 'We cannot trust' Intel
+and Via's chip-based crypto, FreeBSD developers say
+To: cryptography@metzdowd.com
+
+
+I think there may be weaknesses in Intel's hardware RNG.  I took a
+good look at Intel's hardware random number generator source. There's
+a paper analyzing it here:
+
+http://www.cryptography.com/public/pdf/Intel_TRNG_Report_20120312.pdf
+
+The basic idea is that back-to-back inverters, when powered on, flip
+one way or the other randomly, sort of like DRAM memory when our
+computer's power on.  By powering on a single pair of back-to-back
+inverters over and over, they can generate a random bit per cycle, at
+about 3 Giga-bits/second, which is amazing!  Here's my concerns about
+the the paper:
+
+- I saw no mathematical analysis of how much noise exists in the
+system and how strongly it will influence the result each cycle. There
+were generalities about how the noise could cause the output to be
+random, but no numbers at all.
+- There is an assumption that the capacitors are charged/discharged by
+10% of the standard deviation of the noise.  I saw no justification
+for this.  It seems they simply assumed best case.
+- The paper is about as objective as a mother talking about her
+children.  For example: "Overall, the Ivy Bridge RNG is a robust
+design with a large margin of safety that ensures good random data is
+generated even if the ES is not operating as well as predicted." Based
+on what?
+- I am not convinced they have the right model for the entropy source.
+ They add noise to the bias on the capacitors, and compare that to 0
+to determine the next output bit in their model.  I think the main
+source of noise may be the randomness in number of electrons
+added/subtracted each cycle, and that the back-to-back inverters in
+the absence of other noise may be acting almost as an ideal
+comparator.  However, if this were the case, even if there were 10%
+noise in the number of electrons, there would be considerable
+correlation between bits.
+
+I also have questions about the design itself.  My main concern is
+that noise on the VDD rail could easily determine the output.  For
+example, if the transistors are mismatched, which of course they will
+be, and the bias is set exactly right on the caps so there's a 50-50
+chance of a 0 or 1, and suddenly VDD drops 10% due to a rising edge of
+the the main system clock, then the inverter with higher gate
+thresholds will become weak faster than the other one, thus
+determining which one wins.  Since this circuit runs asynchronously
+from the main system clock, I could easily see the 3MHz system clock
+phase relative to the entropy generator clock determining most of the
+results from the entropy source, while looking fairly random. Any
+weakness in the raw random data stream is hidden from us by the AES
+encryption done as a post-process.
+
+I simulated back-to-back inverters in my .35u low power CMOS process
+in SPICE to see if I could figure out how to make a practical circuit
+using Intel's topology.  If it works, it would be fantastic.  I think
+I can get rid of most of the supply noise issues.  I had a similar
+problem in my "Infinite Noise Multiplier", so I switched to powering
+the circuit with nothing but large W and L constant current sources,
+and using the range from 0V to Vref, rather than 0V to VDD, because
+Vref is stable relative to AVSS. However, I wasn't able to get enough
+noise to make Intel's ciruit work, though that may be due to
+limitations in the SPICE simulator.
+
+Has anyone else had success using Intel's RNG topology?
+

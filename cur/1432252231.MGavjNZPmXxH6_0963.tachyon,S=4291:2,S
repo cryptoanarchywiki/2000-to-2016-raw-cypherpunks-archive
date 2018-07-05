@@ -1,0 +1,84 @@
+From owner-cypherpunks@lne.com  Mon Jun 30 01:06:48 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h5U56k623397
+	for <rsw@jfet.org>; Mon, 30 Jun 2003 01:06:46 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h5U4wTsq018299
+	for cypherpunks-goingout345; Sun, 29 Jun 2003 21:58:29 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+To: Bill Stewart <bill.stewart@pobox.com>
+Cc: cryptography@metzdowd.com, cypherpunks@lne.com
+Subject: Re: Attacking networks using DHCP, DNS - probably kills DNSSEC
+  NOT
+References: <5.1.1.6.2.20030629132842.033e71d0@idiom.com>
+  <5.1.1.6.2.20030629132842.033e71d0@idiom.com>
+  <5.1.1.6.2.20030629152707.026516d0@idiom.com>
+From: Simon Josefsson <jas@extundo.com>
+X-Payment: hashcash 1.2 0:030630:bill.stewart@pobox.com:9c3bc13737b7810a
+X-Hashcash: 0:030630:bill.stewart@pobox.com:9c3bc13737b7810a
+X-Payment: hashcash 1.2
+  0:030630:cryptography@metzdowd.com:05e63aa2a35e9b4c
+X-Hashcash: 0:030630:cryptography@metzdowd.com:05e63aa2a35e9b4c
+X-Payment: hashcash 1.2 0:030630:cypherpunks@lne.com:3e83a2ce79d9d98c
+X-Hashcash: 0:030630:cypherpunks@lne.com:3e83a2ce79d9d98c
+Date: Mon, 30 Jun 2003 06:58:02 +0200
+In-Reply-To: <5.1.1.6.2.20030629152707.026516d0@idiom.com> (Bill
+  Stewart's message of "Sun, 29 Jun 2003 19:17:18 -0700")
+Message-ID: <ilubrwggo11.fsf_-_@latte.josefsson.org>
+User-Agent: Gnus/5.1003 (Gnus v5.10.3) Emacs/21.3.50 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+X-Spam-Status: No, hits=-32.4 required=5.0
+  tests=EMAIL_ATTRIBUTION,IN_REP_TO,QUOTED_EMAIL_TEXT,REFERENCES,
+  REPLY_WITH_QUOTES,USER_AGENT_GNUS_UA autolearn=ham	version=2.50
+X-Spam-Checker-Version: SpamAssassin 2.50 (1.173-2003-02-20-exp)
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2291
+Lines: 41
+
+Bill Stewart <bill.stewart@pobox.com> writes:
+
+>>* Your laptop see and uses the name "yahoo.com.attackersdomain.com".
+>>   You may be able to verify this using your DNSSEC root key, if the
+>>   attackersdomain.com people have set up DNSSEC for their spoofed
+>>   entries, but unless you are using bad software or judgment, you will
+>>   not confuse this for the real "yahoo.com".
+>
+> The DNS suffix business is designed so that your laptop tries
+> to use "yahoo.com.attackersdomain.com", either before "yahoo.com"
+> or after unsuccessfully trying "yahoo.com", depending on implementation.
+> It may be bad judgement, but it's designed to support intranet sites
+> for domains that want their web browsers and email to let you
+> refer to "marketing" as opposed to "marketing.webservers.example.com",
+> and Netscape-derived browsers support it as well as IE.
+
+It can be a useful feature, but it does not circumvent DNSSEC in any
+way, that I can see.  DNSSEC see yahoo.com.attackersdomain.com and can
+verify that the IP addresses for that host are the one that the owner
+of the y.c.a.c domain publishes, and that is what DNSSEC delivers.
+The bad judgement I referred to was if your software, after DNSSEC
+verification, confuses yahoo.com with yahoo.com.attackersdomain.com.
+
+>>Of course, everything fails if you ALSO get your DNSSEC root key from
+>>the DHCP server, but in this case you shouldn't expect to be secure.
+>>I wouldn't be surprised if some people suggest pushing the DNSSEC root
+>>key via DHCP though, because alas, getting the right key into the
+>>laptop in the first place is a difficult problem.
+>
+> I agree with you and Steve that this would be a Really Bad Idea.
+> The only way to make it secure is to use an authenticated DHCP,
+> which means you have to put authentication keys in somehow,
+> plus you need a reasonable response for handling authentication failures,
+> which means you need a user interface as well.
+> It's also the wrong scope, since the DNSSEC is global information,
+> not connection-oriented information, so it's not really DHCP's job.
+
+I think it is simpler to have the DNSSEC root key installed with the
+DNSSEC software.  If someone can replace the root key in that
+distribution channel, they could also modify your DNSSEC software, so
+you are no worse off.
+

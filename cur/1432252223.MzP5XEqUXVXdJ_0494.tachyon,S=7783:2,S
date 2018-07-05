@@ -1,0 +1,176 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Wed Aug  7 21:26:26 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g781QKs16503
+	for <rsw@opamp.org>; Wed, 7 Aug 2002 21:26:21 -0400
+Received: from lion.ninthwonder.com (lion.ninthwonder.com [151.199.66.147])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id VAA28282
+	for <rsw@mit.edu>; Wed, 7 Aug 2002 21:26:11 -0400 (EDT)
+Received: by lion.ninthwonder.com (Postfix, from userid 96)
+	id C94CB30722; Wed,  7 Aug 2002 21:14:16 -0400 (EDT)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 358D630720
+	for <cryptography@wasabisystems.com>; Wed,  7 Aug 2002 21:14:15 -0400 (EDT)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id E475BD97C9; Wed,  7 Aug 2002 21:14:14 -0400 (EDT)
+Received: from mercury.ex.ac.uk (mercury.ex.ac.uk [144.173.6.26])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 8066D30706
+	for <cryptography@wasabisystems.com>; Wed,  7 Aug 2002 17:21:44 -0400 (EDT)
+Received: from cronus ([144.173.6.20] helo=cronus.ex.ac.uk)
+	by mercury.ex.ac.uk with esmtp (Exim 3.33 #1)
+	id 17cYFT-001kM6-00; Wed, 07 Aug 2002 22:21:43 +0100
+Date: Wed, 7 Aug 2002 22:21:42 +0100
+From: Adam Back <adam@cypherspace.org>
+To: AARG!Anonymous <remailer@aarg.net>
+Cc: cypherpunks@lne.com, cryptography@wasabisystems.com,
+   Adam Back <adam@cypherspace.org>
+Subject: Re: Challenge to TCPA/Palladium detractors
+Message-ID: <20020807222142.A596971@exeter.ac.uk>
+References: <edd3dc1428a55c3d76050e88f74b3ed7@aarg.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <edd3dc1428a55c3d76050e88f74b3ed7@aarg.net>; from remailer@aarg.net on Wed, Aug 07, 2002 at 12:50:29PM -0700
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 5676
+Lines: 134
+
+On Wed, Aug 07, 2002 at 12:50:29PM -0700, AARG!Anonymous wrote:
+> I'd like the Palladium/TCPA critics to offer an alternative proposal
+> for achieving the following technical goal:
+> 
+>   Allow computers separated on the internet to cooperate and share data
+>   and computations such that no one can get access to the data outside
+>   the limitations and rules imposed by the applications.
+
+The TCPA/Palladium folks have been working on this for apparently
+around 5 years.  We don't yet have a complete definition of what
+Palladium is, but anyway...
+
+> Can you fix those problems and still achieve the basic goal, above?
+
+It may be that some interesting hardware, TOR and OS design changes
+could be added which could change the balance.  Other aspects are as
+John Denker said more to do with who will control keys and policies
+and how much effective user control and choice remains over these
+policies.
+
+
+My initial thoughts were around hardware and TOR enforced in-flow and
+out-flow control to trusted agents.
+
+This idea was seeded by the smart-card setting of Stefan Brands
+digital credentials.  (Read [1] if you are interested, it's a very
+clever idea, related to observers in cryptogaphic protocols in
+hardware settings).
+
+Briefly the observer in Brands protocol (and observers have been
+proposed in other cryptogaphic literature also) tackles an analogous
+problem with cryptographic assurance in the special purpose case of
+privacy preserving credentials, e-cash and other applications that can
+be built from those techniques.
+
+You have a tamper-resistant smart card.  However the user can't
+reasonably audit the behavior of the smart-card processor because it
+intentionally hides it's keys from the user.  Even if the source is
+published, audited, and claims and endoresments about the hardware
+made, the user still can't easily audit or reasonablly trust what is
+actually in his smart-card.
+
+The tamper-resistant smart card is somewhat related to the crypto
+functions of the SCP in Palladium or the TPM in TCPA, but the observer
+approach may offer lessons for TCPA/Palladium in general at higher
+levels.
+
+The tamper-resistant smart card is considered untrusted and hostile to
+user privacy.  The tamper-resistant smart card processor and software
+is acting in the interests of the credential issuer / ecash issuer to
+prevent the user double-spending coins (*) / using credentials more
+times than allowed.
+
+The user has a general purpose computer running software he can
+completely audit, control observe running and modify.  The smart-card
+has to make all communications with ecash acccepting merchants,
+certificate verifiers etc via the general purpose computer the
+smart-card is connected to.  The general purpose computer implements
+the observer protocols.
+
+The smart-card setting variant of Brands protocol cryptographically
+assures 2 things:
+
+- the ecash issuer / credential CA can be assured that the user can
+not double spend (or in general violate other properties mediated by
+the tamper-resistant smart card)
+
+- the user is cryptographically assured that the smart-card can not
+invade his privacy.  
+
+This works because the in-flows and out-flows to the smart card are
+hardware assured to pass via the general purpose computer, auditable,
+use published formats and are cryptographically blinded, to the extent
+of optimally frustrating even subliminal channels, via steganography
+and the like.
+
+
+In the same way that TCPA/Palladium are a generalisation of the dongle
+concept, this would be a generalisation of the cryptographic concept
+of observers.
+
+So for your convenience here's a cut and paste of that initial thought
+on applying the observer principle to general purpose TCPA/Palladium
+platform from the previous message with subject "Palladium: hardware
+layering model":
+
+I wrote in that message:
+
+| One idea I think would be interest is as follows:
+| 
+| - the TOR (which lives in ring-0) _could_ be used together with the OS
+| to force all trusted-agent in-flows and out-flows (network traffic) to
+| go through code under supervisor mode control.
+| 
+| I don't think this is likely in the current design; but this change
+| would be an improvement:
+|  
+| - it would at least allow user audit and control of in-flows and
+| out-flows;  
+|  
+| - the user could block suspicious phone-home information out-flows,  
+| 
+| - the user could read out-flows and demand un-encrypted documented
+| formats, or if encrypted, encrypted with keys the supervisor mode gets
+| copies of.
+| 
+| - similarly in-flow control is interesting, because with no in-flows a
+| trusted agent could be more liberally allowed to make out-flows (if it
+| has no input knowledge, and is in a code compartment, and the user
+| gave it no sensitive it doesn't know anything to leak.)
+
+this is not a fully fleshed out idea as I only thought of it
+yesterday, and can't fully analyse it's implications because we don't
+yet know proper details of what Palladium hardware is, nor how
+microsofts proposed Palladium enhanced windows would be implemented on
+that hardware.
+
+Adam
+
+(*) Actually he will still be caught and identified with Brands ecash
+protocols when the coins are deposited if he does double-spend coins
+after breaking hardware tamper-resistance, but that is a level of
+detailed not central to this discussion.
+
+[1] "A Technical Overview of Digital Credentials", Stefan Brands, Feb
+2002, to appear in International Journal on Information Security.
+
+See Section 8.
+
+http://www.xs4all.nl/~brands/overview.pdf
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

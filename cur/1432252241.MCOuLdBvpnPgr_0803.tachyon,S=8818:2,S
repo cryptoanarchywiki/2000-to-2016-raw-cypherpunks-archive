@@ -1,0 +1,173 @@
+From owner-cypherpunks@Algebra.COM  Thu Aug  1 20:28:55 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g720Stm29229
+	for <rsw@opamp.org>; Thu, 1 Aug 2002 20:28:55 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id UAA11009
+	for <rsw@mit.edu>; Thu, 1 Aug 2002 20:28:54 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g72065OX023985
+	for <cypherpunks-outgoing@ak47.algebra.com>; Thu, 1 Aug 2002 19:06:05 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g72065Q6023984
+	for cypherpunks-outgoing; Thu, 1 Aug 2002 19:06:05 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g72060OX023963
+	for <cypherpunks@ak47.algebra.com>; Thu, 1 Aug 2002 19:06:01 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7205xaH015501
+	for cypherpunks@ak47.algebra.com; Thu, 1 Aug 2002 17:05:59 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7205ikh015494
+	for cypherpunks-goingout345; Thu, 1 Aug 2002 17:05:44 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+X-Authentication-Warning: panix2.panix.com: jays owned process doing -bs
+Date: Thu, 1 Aug 2002 20:05:38 -0400 (EDT)
+From: Jay Sulzberger <jays@panix.com>
+To: AARG!Anonymous <remailer@aarg.net>
+Cc: ptrei@rsasecurity.com, <cypherpunks@lne.com>,
+   <cryptography@wasabisystems.com>, Jay Sulzberger <jays@panix.com>
+Old-Subject: RE: Challenge to David Wagner on TCPA
+In-Reply-To: <15848a6fde52312200b0ab232c1ff953@aarg.net>
+Message-ID: <Pine.NEB.4.44.0208011958500.26028-100000@panix2.panix.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  RE: Challenge to David Wagner on TCPA
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 6365
+Lines: 123
+
+
+On Thu, 1 Aug 2002, AARG!Anonymous wrote:
+
+> Peter Trei writes:
+>
+> > I'm going to respond to AARGH!, our new Sternlight, by asking two questions.
+> >
+> > 1. Why can't I control what signing keys the Fritz chip trusts?
+> >
+> > If the point of TCPA is make it so *I* can trust that *my* computer
+> > to run the software *I* have approved, and refuse to run something
+> > which a virus or Trojan has modifed (and this, btw, is the stated
+> > intention of TCPA), then why the hell don't I have full control over
+> > the keys? If I did, the thing might actually work to my benefit.
+> >
+> > The beneficiary of TCPA when I don't have ultimate root control is
+> > not I. It is someone else. That is not an acceptable situation.
+>
+> You might be surprised to learn that under the TCPA, it is not necessary
+> for the TPM (the so-called "Fritz" chip) to trust *any* signing keys!
+>
+> The TCPA basically provides two kinds of functionality: first, it can
+> attest to the software which was booted and loaded.  It does this by
+> taking hashes of the software before transferring control to it, and
+> storing those hashes in its internal secure registers.  At a later
+> time it can output those hashes, signed by its internal signature
+> key (generated on-chip, with the private key never leaving the chip).
+> The system also holds a cert issued on this internal key (which is called
+> the Endorsement key), and this cert is issued by the TPM manufacturer
+> (also called the TPME).  But this functionality does not require storing
+> the TPME key, just the cert it issued.
+>
+> Second, the TCPA provides for secure storage via a "sealing" function.
+> The way this works, a key is generated and used to encrypt a data blob.
+> Buried in the blob can be a hash of the software which was running
+> at the time of the encryption (the same data which can be reported
+> via the attestation function).  Then, when the data is decrypted and
+> "unsealed", the hash is compared to that which is in the TPM registers
+> now.  This can make it so that data which is encrypted when software
+> system X boots can only be decrypted when that same software boots.
+> Again, this functionality does not require trusting anyone's keys.
+>
+> Now, there is an optional function which does use the manufacturer's key,
+> but it is intended only to be used rarely.  That is for when you need to
+> transfer your sealed data from one machine to another (either because you
+> have bought a new machine, or because your old one crashed).  In this
+> case you go through a complicated procedure that includes encrypting
+> some data to the TPME key (the TPM manufacturer's key) and sending it
+> to the manufacturer, who massages the data such that it can be loaded
+> into the new machine's TPM chip.
+>
+> So this function does require pre-loading a manufacturer key into the
+> TPM, but first, it is optional, and second, it frankly appears to be so
+> cumbersome that it is questionable whether manufacturers will want to
+> get involved with it.  OTOH it is apparently the only way to recover
+> if your system crashes.  This may indicate that TCPA is not feasible,
+> because there is too much risk of losing locked data on a machine crash,
+> and the recovery procedure is too cumbersome.  That would be a valid
+> basis on which to criticize TCPA, but it doesn't change the fact that
+> many of the other claims which have been made about it are not correct.
+>
+> In answer to your question, then, for most purposes, there is no signing
+> key that your TPM chip trusts, so the issue is moot.  I suggest that you
+> go ask the people who misled you about TCPA what their ulterior motives
+> were, since you seem predisposed to ask such questions.
+>
+>
+> > 2. It's really curious that Mr. AARGH! has shown up simultaneously
+> > on the lists and on sci.crypt, with the single brief of supporting TCPA.
+> >
+> > While I totally support his or her right to post anonymously, I can only
+> > speculate that anonymity is being used to disguise some vested
+> > interest in supporting TCPA. In other words, I infer that Mr. AARGH!
+> > is a TCPA insider, who is embarassed to reveal himself in public.
+> >
+> > So my question is: What is your reason for shielding your identity?
+> > You do so at the cost of people assuming the worst about your
+> > motives.
+>
+> The point of being anonymous is that there is no persistent identity to
+> attribute motives to!  Of course I have departed somewhat from this rule
+> in the recent discussion, using a single exit remailer and maintaining
+> continuity of persona over a series of messages.  But feel free to make
+> whatever assumptions you like about my motives.  All I ask is that you
+> respond to my facts.
+>
+>
+> > Peter Trei
+> >
+> >  PS: Speculating about the most tyrannical uses to which
+> > a technology can be put has generally proved a winning
+> > proposition.
+>
+> Of course, speculation is entirely appropriate - when labeled as such!
+> But David Wagner gave the impression that he was talking about facts
+> when he said,
+>
+>    "The world is moving toward closed digital rights management systems
+>    where you may need approval to run programs," says David Wagner,
+>    an assistant professor of computer science at the University of
+>    California at Berkeley.  "Both Palladium and TCPA incorporate features
+>    that would restrict what applications you could run."
+>
+> Do you think he was speculating?  Or do you agree that if he makes
+> such statements, he should base them on fact?  TCPA appears to have
+> no mechanism for the user to need approval in order to run programs.
+> That is how the facts look to me, and if anyone can find out otherwise,
+> I would appreciate knowing.  Maybe someone could ask David Wagner what
+> he based the above claim on?
+
+By your own account the system is designed to give root in an manner
+claimed to be incorrigible by me, but certainly inconvenient to me, to
+others.  May I ask whether your definition of TCPA includes the legal and
+economic infrastructures whose purpose is to require that at some date in
+the future all computers sold be TCPA enabled?  If so what is the claimed
+advantage to me here?  Since I can certainly today let you ssh in to my box
+and run stuff in a sandbox and I can certainly decide to not observe you
+running your stuff.
+
+TCPA in any form offers no advantages whatsoever except to the
+Englobulators.
+
+oo--JS.
+

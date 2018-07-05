@@ -1,0 +1,108 @@
+From owner-cypherpunks@al-qaeda.net  Sun Nov 27 06:03:15 2011
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id pARAvdIX020523
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sun, 27 Nov 2011 05:57:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1322391459;
+	bh=mRWMTZacxoiIxXM2YXf3xq6pSRDzjBoQaenMHuuGjHs=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=GEwi3P6ZQeAW2+b5fA2X7eMpNJ4VZmQnihWX0XpucB/usRVaMpScALOjc7YMjZtap
+	 1pn3FzXeHJdulqmrK9uvQbx0Mg1dQilYzZ/1k114f4EfeRM5Eb0er9XNmpRWDhz+oW
+	 zy3+ydg3Qow//n0qWOM5lj1cMp2KQpsWAWSjF+pY=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id pARAvdJf020522
+	for cypherpunks-outgoing; Sun, 27 Nov 2011 05:57:39 -0500
+Date: Sun, 27 Nov 2011 11:57:36 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: [serval-project-dev] Architecture questions
+Message-ID: <20111127105736.GK31847@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3503
+Lines: 76
+
+----- Forwarded message from Jeremy Lakeman <jeremy@servalproject.org> -----
+
+From: Jeremy Lakeman <jeremy@servalproject.org>
+Date: Sun, 27 Nov 2011 19:41:30 +1030
+To: serval-project-developers@googlegroups.com
+Subject: Re: [serval-project-dev] Architecture questions
+Reply-To: serval-project-developers@googlegroups.com
+
+Yes we currently default to using BATMAN to generate the route's
+between nodes on the network. We also support olsr as the underlying
+mesh routing protocol. And we can run our software with a network of
+just an access point and its clients, mainly to support clients that
+don't allow the right wifi modes for mesh networking. And longer term
+we intend to replace the mesh routing layer with our own protocol
+layer.
+
+Our long term goals also include removing the need for running a full
+blown asterisk installation, and SIP client, on a phone with
+effectively only one extension. This would also drastically reduce our
+installation size.
+
+The main pieces of work that will need to be done for any port as I see them;
+- see if we can connect to, or start, an adhoc wifi network. May be impossible.
+- compile and run dna for number -> network address resolution.
+- minimal VOIP server, perhaps with simplified network protocol, to
+handle in/out call state. Porting asterisk might work, but is
+overkill.
+- UI layer for user interaction, dialing, answering and configuration.
+
+On Sun, Nov 27, 2011 at 6:21 PM, Ben Hughes <ben@benrhughes.com> wrote:
+> This is my basic understanding of the Serval architecture, please let me
+> know if it's misguided:
+>
+> - BATMAN is the underlying protocol that is used to connect nodes on the
+> mesh
+> - DNA is a layer on top of batman that lets you use claimed numbers (and a
+> public/private key pair) to identify nodes on the batman mesh
+> - when you make a mesh call, DNA resolves the number to a batman ip, and
+> then attempts to establish a SIP connection (via asterix) to that address
+>
+> I know that there's more to it than that (social verification of claimed
+> numbers, bridging networks, DID etc) but is that basically correct?
+>
+> If so, batman seems as though it's a vital (and complex) component in the
+> stack. And from what I can tell, it seems pretty tied to *nix.
+>
+> If I'm looking to port DNA to WP7, do I first need to port batman? Or put
+> another way: is there any value in a batman-less DNA?
+>
+> Cheers,
+>
+> Ben
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "Serval Project Developers" group.
+> To post to this group, send email to
+> serval-project-developers@googlegroups.com.
+> To unsubscribe from this group, send email to
+> serval-project-developers+unsubscribe@googlegroups.com.
+> For more options, visit this group at
+> http://groups.google.com/group/serval-project-developers?hl=en.
+>
+
+-- 
+You received this message because you are subscribed to the Google Groups "Serval Project Developers" group.
+To post to this group, send email to serval-project-developers@googlegroups.com.
+To unsubscribe from this group, send email to serval-project-developers+unsubscribe@googlegroups.com.
+For more options, visit this group at http://groups.google.com/group/serval-project-developers?hl=en.
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

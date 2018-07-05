@@ -1,0 +1,112 @@
+From owner-cypherpunks@al-qaeda.net  Wed Jul  7 15:14:15 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i67KE85x005846
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Wed, 7 Jul 2004 15:14:08 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i67KE8V6005845
+	for cypherpunks-outgoing; Wed, 7 Jul 2004 15:14:08 -0500
+Date: Wed, 7 Jul 2004 16:09:31 -0400
+From: Adam Back <adam@cypherspace.org>
+To: Hal Finney <hal@finney.org>
+Cc: cypherpunks@al-qaeda.net, Adam Back <adam@cypherspace.org>
+Subject: Re: Email tapping by ISPs, forwarder addresses, and crypto
+  proxies
+Message-ID: <20040707200931.GA8588@bitchcake.off.net>
+References: <20040706214743.5D26657E2A@finney.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20040706214743.5D26657E2A@finney.org>
+User-Agent: Mutt/1.4.1i
+X-Hashcash: 0:040707:hal@finney.org:559a7c36037d7f2a242d06c3
+X-Hashcash: 0:040707:cypherpunks@al-qaeda.net:0de2bc86cd11700d38de18de
+X-Hashcash: 0:040707:adam@cypherspace.org:7a150d0a5bc59f85e061de8d
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4138
+Lines: 80
+
+This is somewhat related to what ZKS did in their version 1 [1,2] mail
+system.
+
+They made a transparent local pop proxy (transparent in that it
+happened at firewall level, did not have to change your mail client
+config).  In this case they would talk to your real pop server,
+decrypt the parts (they were reply-block like onions), remove
+duplicates (as with mixmaster etc you can send duplicates via separate
+remailers to improve reliability).  So the transparent proxy would
+leave alone your normal mail that you received in the pop box and
+remove duplicates only from the reply-block delivered pseudonymous
+mail.
+
+Actually they implemented the reply-block from scratch, it always
+seemed to me it would have been less development work to use mixmaster
+(it was implemented before I started).  The ZKS reply block did not
+even use chunking (ala mixmaster) so traffic analysis would have been
+trivial as the message size would show through.
+
+At least that's what I recall, no chunking.  However I am finding the
+security issues paper [1] says otherwise.  The 1.0 architecture
+document [2] is ambiguous, there is no mention of chunking.
+
+(I've sent mail to one of the original developers to check I have it
+right).
+
+It was also unreliable because it did not use SMTP, it used its own
+transport AMTP and its own retry-semantics on nodes called
+MAIPs. (Mail AIPs, an AIP is an "Anonymous Internet Proxy").
+
+
+Then we implemented a replacement version 2 mail system that I
+designed.  The design is much simpler.  With freedom anonymous
+networking you had anyway a anonymous interactive TCP feature.  So we
+just ran a standard pop box for your nym.  Mail would be delivered to
+it directly (no reply block) for internet senders.  Freedom senders
+would send via anonymous IP again to get sender anonymity.  Used qmail
+as the mail system.
+
+Unfortunately they closed down the freedom network pretty soon after
+psuedonymous mail 2.0 [3] was implemented.
+
+There is an interesting trade-off here.  The interactive
+communications are perhaps more vulnerable to real-time powerful
+adversary traffic analysis than mixmaster style mixed chunked
+delivery.  However they are less vunerable to subpoena because they
+are forward-secret on a relativey short time-frame.  (1/2 hr if I
+recall; however more recent designs such as chainsaw internal
+prototype, and cebolla [4] by ex-ZKSer Zach Brown change keys down to
+second level by using a mix of backward-security based on symmetric
+key hashing (and deleting previous key) and forward security using DH.)
+
+It would be nice to get both types of anonymity, but I suspect for
+most typical users the discovery / subpeona route is the major danger,
+and if that is thwarted it is unlikely that their activities would
+warrant the effort of real time analysis.  Well we have carnivore now,
+so they could potentially do real-time traffic analysis more routinely
+if they were to distribute enough collaborating analysis carnivore
+plugins.
+
+Adam
+
+[1] http://www.homeport.org/~adam/zeroknowledgewhitepapers/security-issues.pdf
+[2] http://www.homeport.org/~adam/zeroknowledgewhitepapers/arch-notech.pdf
+[3] http://www.cypherspace.org/adam/pubs/freedom2-mail.pdf
+[4] http://www.cypherspace.org/cebolla/
+
+On Tue, Jul 06, 2004 at 02:47:43PM -0700, "Hal Finney" wrote:
+> Recently there was a proposal for a nym receiving service,
+> http://www.freehaven.net/doc/pynchon-gate/, by Bran Cohen and Len
+> Sassaman.  They have a complicated protocol for downloading email
+> anonymously.  To hide the complexity, they propose to set up a POP
+> compatible mail server agent on the user's computer running as a daemon
+> process (Windows service).  He would configure his mailer to connect to
+> localhost:4949 or whatever, just like any other POP server.  The service
+> would periodically go out and poll for email using the fancy protocol,
+> but then it would make it available to the local mail agent in perfectly
+> vanilla form.  The point is that this architecture hides the complexity
+> and makes it transparent for end users to use arbitrarily complex crypto
+> for mail receiving.  Something similar would be perfect for your idea.
+

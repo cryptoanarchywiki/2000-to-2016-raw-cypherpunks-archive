@@ -1,0 +1,201 @@
+From cypherpunks-bounces@cpunks.org  Mon Oct 14 02:25:18 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9E6OeZG027917;
+	Mon, 14 Oct 2013 02:24:44 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9E6OZHN027908
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Mon, 14 Oct 2013 02:24:38 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 73160543E99; Mon, 14 Oct 2013 08:24:35 +0200 (CEST)
+Date: Mon, 14 Oct 2013 08:24:35 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: [tor-dev] Attention Otters
+Message-ID: <20131014062435.GF10405@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 6176
+Lines: 163
+
+----- Forwarded message from Arlo Breault <arlolra@gmail.com> -----
+
+Date: Sun, 13 Oct 2013 21:28:09 -0700
+From: Arlo Breault <arlolra@gmail.com>
+To: me@tomlowenthal.com, griffin@cryptolab.net, sukhbir@torproject.org, nickm@torproject.org, dgoulet@ev0ke.net
+Cc: tor-assistants@lists.torproject.org, tor-dev@lists.torproject.org
+Subject: [tor-dev] Attention Otters
+Message-ID: <5C68F77BAD8D432BB29EC4EBEE0432B6@gmail.com>
+X-Mailer: sparrow 1.6.4 (build 1178)
+Reply-To: tor-dev@lists.torproject.org
+
+Not sure the following is entirely clear or complete,
+but I tried to capture the concerns from the meeting
+and the ensuing discussion.
+
+Hope it helps.
+
+Arlo
+
+
+
+Attentive Otter Plan
+====================
+ 
+Goal
+----
+ 
+Add instant-messaging to the Tor browser bundle in order to provide a secure
+communication tool which supports the free flow of information online.
+ 
+Overview
+--------
+ 
+Instantbird [1] is a cross-platform IM client based on Mozilla's XULRunner.
+The following presents the necessary steps to turn Instantbird into the
+future Tor Messenger.
+ 
+A Way Forward
+-------------
+ 
+1. Remove libpurple dependence
+ 
+This is a trivial amount of work and changes to the build to support it would
+be accepted upstream. They are already considering moving libpurple, and the
+added protocols it supports, to an add-on for reasons of licensing/code
+quality. JS implementations of the following protocols exist: XMPP, Google
+Talk, Facebook, IRC, Twitter, with Yahoo landing soon and AIM/ICQ started but
+further away. 
+ 
+2. OTR support
+ 
+Instantbird currently lacks support for OTR. Two pieces are needed here: a
+suitable OTR implementation, and an interface between the client and that
+library (essentially, the role that pidgin-otr plays).
+ 
+To get started, for the OTR library, a js-ctypes wrapper of libotr should be
+used in conjunction with the message observer API. Code [2] from a few years 
+ago towards this end has been written but probably needs to be dusted off and
+extended. An effort is underway at Mozilla to implement OTR in JS using NSS,
+which could be dropped in as a replacement. A patch has been submitted [3] but it looks far from complete, so I wouldn't expect it anytime soon. When asked, they said it won't be ready for *a while*. Should the NSS implementation fail to materialize entirely, they would still be willing to take the
+ctypes wrapper and libotr, as it doesn't present any licensing issues. In his
+analysis, Mike suggested converting the ctypes wrapper to an XPCOM
+wrapper but it's unclear why that's preferable.
+
+The front-end side seems like a larger undertaking. This involves not only
+the interaction with the message observer API but handling the quirks in the
+various protocols (think /me in IRC), authentication including SMP, and
+importing and storing long-term keys. Sukhe estimated at least a month of
+development time and expressed an interest in being the one to undertake it.
+ 
+On the bright side, the Instantbird team seems eager for OTR support and this 
+work will most likely be upstreamed.
+ 
+3. Disable logging
+ 
+An add-on may be required to ensure certain desirable configurations, like
+logging disable by default. A difference in goals between UX for the
+average user and the TIMBB user may force us to maintain these changes.
+ 
+4. Tor controller
+ 
+Tor Launcher will be used as the controller. Sukhe has already reported
+having this working.
+
+Using only JS protocol implementations means all traffic goes through
+nsIChannels, making proxy support fairly easy to verify. For DNS,
+network.proxy.socks_remote_dns should be set. DNS SRV should not be an issue
+seeing as how it isn't supported by Mozilla [4]. Should test for other
+UDP traffic leaks.
+ 
+5. Messaging window
+ 
+Jail it to type=content. Preferably everything is displayed in plaintext,
+with HTML disabled or at least sanitized with an XSS filter [5]. Disable JS
+and other features. Make use of all the preferences from TorBirdy.
+ 
+6. Installer and updates
+ 
+Leverage the work that's already being done on Mozilla's updater for the TBB.
+ 
+7. Deterministic builds
+ 
+Deterministic builds for the TBB was a major undertaking. I can't imagine
+this case being any different, less the experience and groundwork already
+laid.
+ 
+8. Sandboxing
+ 
+Come up with a practical, cross-platform way to sandbox the application.
+I don't have an answer here. Maybe you do.
+ 
+9. Audit
+ 
+- Instantbird's render attack surface (content window, XSS filter, etc.)
+- Crypto in NSS and how JS uses it
+- Interface between the UI and OTR
+- Proxy by-pass
+- And more ...
+ 
+10. Translations
+ 
+Instantbird is available in 14 languages, including French and Spanish.
+However, none are RTL and we want to support Arabic and Farsi. Messaging
+should already work for RTL languagues though, they've fixed a few bugs
+to ensure it, and reflecting the UI is reported to not be a ton of work.
+They are definitely willing to accept patches here.
+ 
+11. Other considerations
+ 
+- Disable Instantbird's built-in auto-updater and crash reporter
+- For sure OTR on by default, but maybe disallow any non-OTR comm. entirely
+- CA verification: TOFU mode? Pin popular domains?
+- Disable older TLS/SSL suites
+- Consider the interaction between all three Tor bundles (FF, TB, IM). Tor
+Launcher could attempt to authenticate and read settings from an already
+running control port.
+- Choose a different default profile folder (to avoid picking up plugins
+and other unsafe settings)
+ 
+References
+----------
+ 
+[1] http://instantbird.com/
+[2] https://gitorious.org/fireotr/fireotr
+[3] https://bugzilla.mozilla.org/show_bug.cgi?id=779052#c20
+[4] https://bugzilla.mozilla.org/show_bug.cgi?id=14328
+[5] https://mxr.mozilla.org/comm-beta/source/chat/modules/imContentSink.jsm
+
+
+
+
+_______________________________________________
+tor-dev mailing list
+tor-dev@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-dev
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

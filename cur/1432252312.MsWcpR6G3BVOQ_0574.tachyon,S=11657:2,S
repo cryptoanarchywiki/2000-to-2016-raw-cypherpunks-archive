@@ -1,0 +1,233 @@
+From owner-cypherpunks@al-qaeda.net  Sat Dec  8 05:24:17 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id qB8AK15i012774
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sat, 8 Dec 2012 05:20:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1354962001;
+	bh=gG3wCyRHVVPVlG13iH0kkpiMe+xZ2zidydOagTZl6W0=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=3LqKTFqJr53MsyRalW1WmBHkdgndqRlFY7w62fLhbd7x4Uog/rVoWVOzWxyKdYBEy
+	 zI1/SxMI0fDl+apthHEUhKNtxsjY5dYbzcdE5OxmjGhm7Jf+BiRqdTGdAN2VsQW2zi
+	 brlaxh+MkRdyaZ7h7RpVflX4BEuE1PNsK3sgjhVc=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id qB8AK1Tt012772
+	for cypherpunks-outgoing; Sat, 8 Dec 2012 05:20:01 -0500
+Date: Sat, 8 Dec 2012 11:19:57 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: doctrinezero@googlegroups.com, zs-p2p@googlegroups.com, info@postbiota.org,
+        cypherpunks@al-qaeda.net
+Subject: Re: [tahoe-dev] LAFS Weekly Dev Hangout notes, 2012-12-06
+Message-ID: <20121208101957.GI9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 10132
+Lines: 198
+
+----- Forwarded message from Paul Rabahy <prabahy@gmail.com> -----
+
+From: Paul Rabahy <prabahy@gmail.com>
+Date: Fri, 7 Dec 2012 17:45:10 -0500
+To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+Subject: Re: [tahoe-dev] LAFS Weekly Dev Hangout notes, 2012-12-06
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+First off, let me say that I enjoyed listening in to the hangout even
+though I couldn't participate. For the last year or 2 I have been thinking
+about building a distributed, untrusted storage system. When I found
+Tahoe-lafs, I was ecstatic that it had already implemented about 90% of the
+ideas that I had thought of and that it sounds like the remaining 10% are
+being worked on.
+
+I have some comments on Zooko's Proof-of-Retrievability paper.
+1. Great job writing this. It was very easy to read and get up to speed
+without having to read 10 other whitepapers first to understand the basics.
+(I have some background in cryptography/secure computing from college)
+
+2. I completely agree with the 3 levels of bad behavior (Greed, Malice, and
+Adaptive Malice). In addition, I believe there should be a fourth level
+which I will call "Accidental Greed". In this case, the sever stores the
+data, responds to all requests properly, but one day fails (either a POR or
+GetData request) for some unknown reason. This server will acknowledge
+their mistake and attempt to reverse it once they are notified (restore
+backups, patch bug, etc.).
+2a. For POR, Zooko nailed this. We don't have to care about "Accidental
+Greed" at the protocol level because if we cover our-self for Malice or
+Adaptive Malice we already have a solution.
+
+3. I am convinced that to prevent Malice or Adaptive Malice, there cannot
+be a difference between running a POR or GetData. If there is either type
+of attacker could respond correctly to the POR but incorrectly to the
+GetData.
+3a. For my use cases I feel that having POR and GetData can have different
+traffic patterns and not affect my experience as a customer. I realize that
+will introduce a gap in the protocol so that Adaptive Malice could defeat
+the POR. I would like for POR to cover me 90% of the time, but occasionally
+I will actually download a file and will be able to catch the Adaptive
+Malice server at that point. (This might seem like a contradiction, but
+Tahoe already has the enormously powerful feature of erasure coding to
+protect me from an occasional malicious server even if POR fails.)
+
+4. Unfortunately Zooko lost me in Part 2b and 3. I understand the trade-off
+between "(a) reduced performance for downloads, and/or (b) increased
+bandwidth usage for verification", but I was never able to understand how
+Tahoe is supposed to be convinced that a share is retrievable without even
+contacting the server containing the share.
+4a. Several times during the hangout, it was mentioned that increasing N
+and K would help POR to work better. I don't follow that argument. I agree
+that setting N higher increases the retrievability of a file (because it
+can withstand more malicious servers), but I don't see how increasing
+either of these will help me single out the malicious server.
+
+5. I need to do more reading on the current Tahoe verify system, but I
+don't understand how Tahoe can verify a file using B Bandwidth where B is
+less than F Filesize.
+5a. Using the Tahoe defaults (K = 3, N = 10) and assuming that F = 1(MB) it
+will take 3.33(MB) to store all ten shares. Each share will take .333(MB)
+to store. To verify the file, wouldn't you have to retrieve at least K
+shares therefor B would equal .333(MB) * 3(K) = 1MB(F). To me, it seems we
+didn't save any bandwidth.
+5b. (Ah, just thought of this as I was writing). Does Tahoe maintain some
+sort of tree/share based hash so that it can verify individual shares or
+parts of a share without verifying the entire file? If so, I can see the
+bandwidth savings.
+
+6. I agree that TOR/distributed verification could help in the case of an
+Adaptive Malicious server, but until I have a clearer understanding of my
+points 5 and 6, I'm not sure if this description of POR will be have a
+benefit for my use case.
+
+Hopefully these points make sense. Let me know if I made anything confusing.
+PRabahy
+
+
+On Thu, Dec 6, 2012 at 3:42 PM, Zooko Wilcox-O'Hearn <zooko@zooko.com>wrote:
+
+> In attendance: Brian, David-Sarah, Zooko (scribe), Andrew, PRabahy (silent)
+>
+> The meeting started about 10 minutes late and ran more than 30 minutes
+> past its scheduled stop-time. (Because we were too engaged to stop at
+> the stop-time since we were sorting out the question of whether
+> Zooko's "Strong Proof-of-Retrievability" concept was inherently as
+> inefficient as simply downloading the whole file.)
+>
+> Caveat Lector! I might have forgotten some stuff. I haven't taken the
+> time to add explanations for most of what follows. My own biases shine
+> through willy nilly.
+>
+>
+> * The LAFS-PoR.rst text file was cleverly hidden behind an obstacle course.
+>
+> * 'Ephemeral Elliptic Curve Diffie-Hellmanb= My friend Zooko excels at
+> redefining "What 'everyone' or what 'no-one' uses."'
+>
+> * leasedb+cloud-backend
+>    * LeastAuthority.com has at long last delivered Milestone 3 to
+> DARPA. Milestone 1 was a design document Milestone 2 was Cloud/S3
+> backend, and Milestone 3 was leasedb.
+>    * https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1818 /
+> https://github.com/davidsarah/tahoe-lafs/tree/1818-leasedb is the
+> implementation of leasedb against trunk (disk backend)
+>    * https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1819 /
+> https://github.com/davidsarah/tahoe-lafs/tree/1819-cloud-merge is the
+> merge of that with the cloud backend
+>    * The 1819-cloud-merge branch passes all unit tests, and passes
+> manual testing by David-Sarah. It is currently being evaluated on
+> behalf of DARPA by their contractors, BITSYS.
+>    * next steps:
+>       * Keep 1818-leasedb and 1819-cloud-merge out of Tahoe-LAFS v1.10.
+>       * Let Brian review them.
+>       * David-Sarah is still re-recording the patch series for
+> 1819-cloud-merge.
+>       * Zooko is still code-reviewing the patches.
+>       * Check for the transition experience b what happens the first
+> time you upgrade, for example.
+>       * There is at least one incomplete detail about transition:
+> starter leases don't get added (there isn't a ticket for this b we
+> should open one).
+>       * Zooko and David-Sarah want to implement #1834 and related
+> tickets b not necessarily before we land it on trunk, but before we
+> release 1.11. Or we could do it on the branch before we land it on
+> trunk.
+>
+> * Tahoe-LAFS v1.10
+>    * Let's package up what we have currently on trunk (plus, Zooko
+> added to these notes after the meeting, possibly a few other good
+> patches that are basically already done, are very non-disruptive b
+> such as documentation-only patches b and/or have forward-compatibility
+> implications, such as #1240, #1802, #1789, #1477, #901, #1539, #1643,
+> #1842, and #1679).
+>    * Everyone review pending tickets!
+> https://tahoe-lafs.org/trac/tahoe-lafs/milestone/1.10.0
+>    * The next Weekly Dev Hangout will be about Tahoe-LAFS v1.10
+>    * goal: get trunk to meet our desires for Tahoe-LAFS v1.10, release
+> from trunk
+>    * Brian wants to fix #1767, which has forward-compatibility
+> implications.
+>
+> * tarcieri's new HTML
+>    * not for 1.10
+>    * It changes only the front page and so the other pages are
+> inconsistent with the new front page.
+>    * But commit it to a branch ASAP and demonstrate to tarcieri that
+> we're serious about merging it to trunk as soon as it is complete.
+>
+> * Proof-of-Retrievability
+>    * Zooko has written a rough draft of a tahoe-dev post/science
+> paper, arguing that real "Strong" Proof-of-Retrievability is possible,
+> that the current exemplars in the crypto literature fail to provide
+> Strong Proofs-of-Retrievability, and that Tahoe-LAFS combined with Tor
+> would make a nice basis on which to build a Strong
+> Proof-of-Retrievability, and that if it did, it would be a practical
+> censorship-resistance tool.
+>    * Brian posed some good challenges in practical terms about the
+> performance and bandwidth costs.
+>    * The key difference that makes this new concept of
+> Proof-of-Retrievability different and better than previous attempts is
+> that it uses multiple storage servers (which are hopefully not
+> colluding with one another), and erasure-coding in order to keep total
+> upload and storage costs fixed even while scaling a single file,
+> horizontally, to a large number of storage servers.
+>    * That's also the key to answering Brian's challenge b that sort of
+> spreading across storage servers alllows one to gain verification
+> assurance b *even* against Adaptive Malicious Storage Servers b at a
+> fraction of the aggregate bandwidth cost of a full download. If there
+> were only a single storage server then Juels-2009 and
+> Brian-in-this-meeting would be right that no efficient Strong PoR is
+> possible.
+>    * Next steps: Zooko needs to rewrite the second half of the current
+> document to emphasize these insights gained from this meeting and to
+> streamline it. Several experts have volunteered to review it already.
+> Then: post it to tahoe-dev?
+>    * David-Sarah has some idea that Brian and Zooko don't quite get
+> about improving the quantitative advantage to the defender by
+> increasing erasure coding parameters and storing multiple shares per
+> server.
+>    * Let's get drunk and argue about whether God can see into the future.
+> _______________________________________________
+> tahoe-dev mailing list
+> tahoe-dev@tahoe-lafs.org
+> https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+>
+
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

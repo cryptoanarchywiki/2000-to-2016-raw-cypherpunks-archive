@@ -1,0 +1,137 @@
+From owner-cypherpunks@jfet.org  Sun Jan  1 12:52:04 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.5/8.13.5/Debian-3) with ESMTP id k01Hom80017183
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sun, 1 Jan 2006 12:50:48 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.5/8.13.5/Submit) id k01HomQD017182
+	for cypherpunks-outgoing; Sun, 1 Jan 2006 12:50:48 -0500
+Message-ID: <BAY103-F1648027F09E126E0E502769B2A0@phx.gbl>
+X-Originating-IP: [72.225.201.174]
+X-Originating-Email: [camera_lumina@hotmail.com]
+X-Sender: camera_lumina@hotmail.com
+In-Reply-To: <4ef5fec60512311832r245dc2f7y2cd5261b73363dcf@mail.gmail.com>
+From: "Tyler Durden" <camera_lumina@hotmail.com>
+To: coderman@gmail.com
+Cc: jya@cryptome.net, cypherpunks@jfet.org
+Subject: Re: [dave@farber.net: [IP] more on AP Story Justice Dept.
+  Probing Domestic Spyin
+Date: Sun, 01 Jan 2006 12:50:44 -0500
+Mime-Version: 1.0
+Content-Type: text/plain; format=flowed
+X-OriginalArrivalTime: 01 Jan 2006 17:50:44.0631 (UTC)
+  FILETIME=[E3B1FA70:01C60EFB]
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5111
+Lines: 105
+
+Yes...I thought about a one-time pad approach. I'm not well read enough to 
+say whether what I've described technically counts as a one time pad, but it 
+seems to have many similarities to what you're talking about.
+
+A "weakness" is that if the "message" is intercepted and deencrypted, the 
+interceptor (is this Alice?) could then retrieve the message.
+
+HOWEVER, they must retrieve the message in a short amount of time, possibly 
+even hours, UNLESS Alice & friends can core-dump the entire probable network 
+and, somehow, (later if they wish by appropriate Network Clock monkeying) 
+find within it the stored other pieces of the message. I suspect that this 
+problem can be made intractable even to Quantum computers, but don't quote 
+me on that.
+
+No doubt they've thought of this scenario, so be on the lookout for little 
+hooks. Another nice thing is that they CAN'T always rubber-house it out of 
+you: Even you can't get it if they've beaten you're keyboarding hands so 
+badly you can't access it within the alotted time. (Of course, the "message" 
+can tell you how much time you've got before the other network-clouded 
+pieces expire).
+
+Oh, and the usual games of fake messages should apply, but in this case 
+there are some advantages to having some universally. network-enabled 
+"default" messages. (And if you hit one of -those- messages, the real 
+message should be destroyed automatically.)
+
+-TD
+
+
+>From: coderman <coderman@gmail.com>
+>To: Tyler Durden <camera_lumina@hotmail.com>
+>CC: jya@cryptome.net, cypherpunks@jfet.org
+>Subject: Re: [dave@farber.net: [IP] more on AP Story Justice Dept. Probing 
+>Domestic Spyin
+>Date: Sat, 31 Dec 2005 18:32:33 -0800
+>
+>On 12/31/05, Tyler Durden <camera_lumina@hotmail.com> wrote:
+> > ...
+> > Of course, NSA will likely grab&store the hidden piece as well
+>
+>i would count on it, as it's a good bet the answer is yes rather than no.
+>
+>
+> > but I submit
+> > one might be able to make this a fairly intractable problem, 
+>particularly if
+> > information about -where- the appropriate piece is stored is itself
+> > destroyed. (ie, they may have the piece, but they dont know which 
+>message it
+> > belongs).
+>
+>i'm working on a one time pad based IPsec key daemon with a similar
+>purpose to what you describe.  i'll be posting here for feedback when
+>it's ready but the basic premise is that it provides strong ephemeral
+>IPsec keying using one time pads previously exchanged between peers.
+>as long as the pads are generated and secured properly[1] you don't
+>need to care if $TLA has kept your IPsec traffic archives in their
+>acres of computing machinery.
+>
+>likewise, if large qubit quantum computers suddenly become feasible or
+>multi ring GCF gets really fast, you don't need to worry about past
+>key exchanges (also archived) being compromised, as with pub key based
+>ISAKMP implementations.
+>
+>last, such a mode needs no open ports[2], so the attack surface for
+>remote exploitation is limited to the IP level - only authenticated
+>traffic is passed up the stack, everything else is dropped.
+>
+>as long as your OTP's are truly random and never compromised, the key
+>exchange will be secure and the only way to attack your traffic
+>remotely will be brute force of AES256.
+>
+>[1]. securing pads is really the crux of the issue here.  i'm using
+>modified linux distributions for key generation (a host with no
+>networking capability - kernel omits all network functionality) and
+>IPsec termination (boot from CD/DVD, require USB fob / hardware token
+>+ passphrase for auth to access pads stored in encrypted volume).
+>
+>[2]. this is true with an explanation: for the initial session ICMP
+>payloads are sent in the clear (not IPsec) to perform the encrypted
+>key exchange using OTP's.  once IPsec is initialized, ICMP is also
+>directed through IPsec via the SPD and future rekeying uses OTP's on
+>top of the existing IPsec SA.  i'll have more details later but in
+>short all traffic is authenticated or dropped, most of it
+>authenticated via IPsec, and the only exception being key exchange via
+>ICMP which is authenticated via OTP only until the first SA is
+>established.
+>
+>the advantage of using OTP's in addition to security is simplicity:
+>all buffers are fixed size, key material is small (per instance) and
+>the operations fast (no montgomery multiplication on very large
+>numbers).  even at a 1Hz rekey interval you could fit a years worth of
+>key exchange OTP in 100MBytes of storage.
+>
+>the disadvantage is you probably need hardware entropy generation to
+>produce the pads in a reasonable time.  i'm using the VIA C5XL and C5P
+>processors for testing / runtime and these can produce more than
+>enough entropy for large pads without sucking /dev/random dry.
+>
+>last but not least, the implicit out of band pad exchange with trusted
+>peers is reasonable for private group networking and other smaller
+>networks but would be very difficult to scale to a large organization.
+>  this is a feature in my eyes, as private group networks are what this
+>is intended for and meatspace pad exchange a desired requirement to
+>ensure trust is properly placed.
+

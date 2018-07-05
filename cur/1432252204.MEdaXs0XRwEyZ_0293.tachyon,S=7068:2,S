@@ -1,0 +1,186 @@
+From owner-cypherpunks@jfet.org  Thu Oct 19 08:56:26 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.7/8.13.7/Debian-1) with ESMTP id k9JCu6x5029144
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 19 Oct 2006 08:56:06 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.7/8.13.7/Submit) id k9JCu649029143
+	for cypherpunks-outgoing; Thu, 19 Oct 2006 08:56:06 -0400
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;   s=s1024; d=yahoo.com;
+  h=Message-ID:Received:Date:From:Subject:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding;
+  b=Gab3o7M1uHylP7AKx/t74wLi7eRlyX40n+i+RY+c2wWMFWhluG6ANMQo6u1Dd7/lPNTk5GA9trF6hnGckq3pSR0fnRMlORhBvhB5YgO3nIQaUgAsUih/JOK5XqtNjYKN2coixmyiFrK5ZGOBUK59W+Kc4mHLDMXZ5qUQvPtwVWg=
+   ;
+Message-ID: <20061019125559.67751.qmail@web33310.mail.mud.yahoo.com>
+Date: Thu, 19 Oct 2006 05:55:59 -0700 (PDT)
+From: Sarad AV <jtrjtrjtr2001@yahoo.com>
+Subject: Regarding Windows Vista Disk Encryption Algorithm.
+To: PracticalSecurity@hbarel.com
+Cc: cypherpunks@jfet.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5696
+Lines: 156
+
+Hello,
+
+I ran across this paper titled "AES-CBC + Elephant
+diffuser A Disk Encryption Algorithm for Windows
+Vista". 
+Paper downloadable at:
+http://download.microsoft.com/download/0/2/3/0238acaf-d3bf-4a6d-b3d6-0a0be4bbb36e/BitLocker
+Cipher200608.pdf
+or
+http://blogs.msdn.com/si_team/archive/2006/09/15/756622.aspx
+
+There are a few questions I would like to know about.
+
+pg 3:[ Bitlocker makes use of a tamper resistant chip
+security chip mounted on the motherboard. Bitlocker
+makes use of the TPM security chip that will be
+incorprated in most PC's.]
+
+How do we know if future PC's make use of this chip on
+their motherboards in future and how can we trust this
+chip?
+
+pg 3.[The seal/unseal functions of the TPM allow
+selective access to cryptographic keys based on PCR
+values. The seal function is used to encrypt a key
+into a string which can only be decrypted by that same
+TPM. Furthermore, the TPM will decrypt the string if
+and 
+only if the selected PCRs have the value that was
+specified during the seal operation. In other words:
+we can store a key in an encrypted string so that it
+can only be accessed when selected PCRs have a
+particular value.
+
+During the boot process the PCRs are used to keep
+track of the code that runs. The key used to encrypt
+the disk is sealed against a particular set of PCR
+values. During a normal boot the PCRs reach the same
+values, and the key can be unsealed by the TPM. If an
+attacker boots into any other operating system, the
+machine will be fully functional but the PCR values
+will be different and the TPM will not unseal the key.
+Thus, other operating systems cannot read the data on
+the disk, or find out how to modify the disk to reset
+the
+Administrator password.]
+
+It prevents the protected operating system from being
+operational as the key cannot unlocked. The encrypted
+disk can still be removed from the machine with the
+security chip and re-inserted elsewhere and its
+contents dumped for further analysis. Doesn't a data 
+recovery expert usually work under the assumption that
+the encryption keys are unavailable? 
+   Isn't this the case, if we are looking at stolen
+laptop(S)?
+    If the disk can be removed and dumped, what
+advantage does the TPM security chip provide over
+software encryption?
+
+
+pg 6.
+[BitLocker also allows users to use a PIN that the TPM
+checks, or a USB key that contains a cryptographic
+key.Without the right PIN or USB key the laptop
+doesn't have the right information to even find the
+disk decryption key, so the information is safe unless
+the PIN is written on a post-it stuck to the machine,
+or the USB key is left in the laptop bag. In practice,
+we expect that many laptops will be used in the
+TPM-only mode and that scenario is the main driver for
+the disk cipher design.]
+
+But if we work with the assumption that the attacker/
+recovery expert will not be able to find the key on
+the disk ,is there any need to implement the TMP
+security chip? Is the assumption reasonable?
+
+
+pg 7.
+[A software implementation of AES runs in around 20-25
+cycles per byte on a P4 class CPU.(Synthetic
+benchmarks can achieve somewhat higher speeds, but
+they exclude various overheads encountered in real
+system implementations.) Other overhead adds around 5
+cycles per byte for a total of 25-30 cycles per byte.
+Based on this data, our performance analysis concluded
+that a single pass of AES, for example using AES in
+CBC mode, would have acceptable performance. An
+algorithm
+twice as slow as AES (45-55 cycles/byte) would be on
+the edge of being unacceptable, and a high-risk choice
+given the many uncertainties in the analysis. Anything
+slower than that would be unacceptable.]
+
+2.6 BitLocker encryption algorithm requirements
+pg 7 & 8
+[We get the following major requirements for our
+BitLocker encryption algorithm:
+...
+It is fast enough that the slow-down of the laptop is
+acceptable to most users. Our best estimate is that a
+speed of 40 cycles/byte or faster will be acceptable.]
+
+It looked like that the AES-CBC implementation was
+part of the hardware security chip to speeden it up.
+>From the above, judging by the clock speed, it however
+appears that AES-CBC is software implemented by
+BitLocker?
+
+
+pg 9.
+3.2 AES-CBC
+[Any time you want to encrypt data, AES-CBC is a
+leading candidate. In this case it is not suitable,
+due to the lack of diffusion in the CBC decryption
+operation. If the attacker
+introduces a change 'delta' in ciphertext block i,
+then plaintext block i is randomized, but plaintext
+block i + 1 is changed by 'delta'. In other words, the
+attacker can flip arbitrary bits in one block at the
+cost of randomizing the previous block. This can be
+used 
+to attack executables. You can change the instructions
+at the start of a function at the cost of damaging
+whatever data is stored just before the function. With
+thousands of functions in the code, it should be
+relatively easy to mount an attack.]
+
+This appears to be why the diffusers are being used.
+The overview of the AES-CBC + diffusors if given in
+Figure 1, pg 13.
+
+pg 16.
+[Our AES implementation uses about 20 cycles/byte for
+AES-CBC on a a Pentium 4. The diffuser takes about 10
+cycles/byte.The overall cipher speed is just over 30
+cycles per byte, including various overhead.]
+
+Appendix A on pg 18 gives a sketch of a proof on why
+AES-CBC+Diffusers are atleast as secure as AES-CBC.
+The diffusers consumes about 1/3 rd of the cycles per
+byte. Given this overhead is it useful to implement
+the diffusers unless the implementation can be shown
+to be more secure than AES-CBC?
+
+Thankyou,
+Sarad.
+
+
+
+
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around 
+http://mail.yahoo.com 
+

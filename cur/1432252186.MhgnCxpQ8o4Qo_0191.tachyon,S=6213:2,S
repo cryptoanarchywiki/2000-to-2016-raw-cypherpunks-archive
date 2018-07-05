@@ -1,0 +1,126 @@
+From owner-cypherpunks@Algebra.COM  Fri May 24 20:17:40 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.mit.edu (8.11.6/8.9.3) with ESMTP id g4P0Hej01616
+	for <rsw@jfet.org>; Fri, 24 May 2002 20:17:40 -0400
+Received: from ak47.algebra.com (ak47.algebra.com [208.233.99.160])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id UAA24138
+	for <rsw@mit.edu>; Fri, 24 May 2002 20:17:39 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g4ONfCGs009447
+	for <cypherpunks-outgoing@ak47.algebra.com>; Fri, 24 May 2002 18:41:12 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g4ONfCb5009445
+	for cypherpunks-outgoing; Fri, 24 May 2002 18:41:12 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (dns.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g4ONf5Gs009371
+	for <cypherpunks@ak47.algebra.com>; Fri, 24 May 2002 18:41:07 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id g4ONf3612655
+	for cypherpunks@ak47.algebra.com; Fri, 24 May 2002 16:41:03 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id g4ONebY12642
+	for cypherpunks-goingout; Fri, 24 May 2002 16:40:37 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Fri, 24 May 2002 16:40:36 -0700
+From: Eric Murray <ericm@lne.com>
+To: cypherpunks@lne.com
+Old-Subject: S/MIME and web of trust (was Re: NAI pulls out the DMCA stick)
+Message-ID: <20020524164036.A12498@slack.lne.com>
+References: <20020522110202.A1992@lightship.internal.homeport.org>
+  <006501c2022a$cf4765c0$c33a080a@LUCKYVAIO>
+  <3CEE2134.2450.C43632@localhost>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <3CEE2134.2450.C43632@localhost>; from jamesd@echeque.com
+  on Fri, May 24, 2002 at 11:17:08AM -0700
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  S/MIME and web of trust (was Re: NAI pulls out the DMCA stick)
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+X-spam: 0 
+Status: RO
+Content-Length: 3665
+Lines: 72
+
+
+On Fri, May 24, 2002 at 11:17:08AM -0700, jamesd@echeque.com wrote:
+>     --
+> On 23 May 2002 at 0:24, Lucky Green wrote:
+> > Tell me about it. PGP, GPG, and all its variants need to die
+> > before S/MIME will be able to break into the Open Source
+> > community, thus removing the last, but persistent, block to an
+> > instant increase in number of potential users of secure email by
+> > several orders of magnitude.
+> 
+> My impression is that S/MIME sucks big ones, because it commits
+> one to a certificate system based on verisign or equivalent.
+
+It uses X.509, which is supposed to be a hierarchical certificate system. 
+Verisign is just the dominant X.509 CA.
+
+But as others have pointed out, its possible to become one's own X.509
+CA and issue oneself certs.  Netscape and IE browsers will accept certs
+from completely made up CAs.  You might have to click on a few "do you
+really want to do this" dialog boxes but that's it.  All you need is a
+copy of Openssl and directions off a web site..
+
+Additionally, there is nothing that prevents one from issuing certs
+that can be used to sign other certs.  Sure, there are key usage bits
+etc but its possible to ignore them.  It should be possible to create
+a PGP style web of trust using X.509 certs, given an appropriate set of
+cert extensions.  If Peter can put a .gif of his cat in an X.509 cert
+there's no reason someone couldn't represent a web of trust in it.
+
+Each user would self-sign their cert.  Or self-sign a CA cert and
+use that to sign a cert, same thing.  Trust would be indicated
+by (signed) cert extensions that indicate "I trust Joe Blow X amount as
+a signer of keys".  Each time you added a trust extension you would
+generate a new cert using the same key.  Each trust extension would
+indicate the entity, their key id (hash of public key), and the degree of
+trust.  When you added a trust extension you'd give a copy of the enw
+cert to the entity you just added.  They can then append these
+certs onto their cert when they authenticate to someone.
+
+When authenticating, you verify the other guys cert, something he signed
+with his private key, then all the other people's certs that he sends
+in addition to his own, all of which attest to his trustworthiness.
+Ideally, you also trust some of the same people, so you now have their
+signed "statements" attesting to a degree of trust in the new guy.
+[note, there's probably a conceptal flaw in this since  I'm loopy from
+allergy drugs today and probably not thinking as clearly as I think I
+am, so be polite when you point out my error.  In any case, the point
+is that its possible to do a web of trust in x.509, not that I have a
+fully formed scheme for implementing it]
+
+Since all this is in X.509, S/MIME MTAs accept it (unless they are
+programmed to not accept self-signed CAs, in which case your MTA is a
+slave to Verisign et. al).  You'd need an external program to verify the
+web of trust, but that's about it.  And to be honest, exactly zero of the
+PGP exchanges I have had have actually used the web of trust to really
+verify a PGP key.  I've only done it in testing.  In the real world,
+I either verify out of band (i.e. over the phone) or don't bother if
+the other party is too clueless to understand what I want to do and getting
+them to do PGP at all has already exausted my paticnce.
+
+
+But why bother?
+
+Even if I could do this X.509 web of trust tomorrow, no one besides a
+few crypto-geeks would use it.  People just don't give a shit about other
+people reading their email.  Most people can't even be bothered to use
+a decent password or shred their credit-card statements.  Only criminals
+have anything to hide, right?
+
+
+--
+Eric
+

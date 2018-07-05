@@ -1,0 +1,115 @@
+From cypherpunks-bounces@cpunks.org  Sun Oct 20 18:18:09 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9KMHA9D028704;
+	Sun, 20 Oct 2013 18:17:18 -0400
+Received: from mail-02.1984.is (mail-02.1984.is [93.95.224.7])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9KMH6LE028697
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Sun, 20 Oct 2013 18:17:09 -0400
+Received: from [79.97.71.97] (helo=Neptune)
+ by mail-02.1984.is with esmtpsa (TLSv1.2:DHE-RSA-AES128-SHA:128)
+ (Exim 4.80) (envelope-from <cathalgarvey@cathalgarvey.me>)
+ id 1VY1Ix-0003EO-Of
+ for cypherpunks@cpunks.org; Sun, 20 Oct 2013 22:16:59 +0000
+Date: Sun, 20 Oct 2013 23:16:50 +0100
+From: Cathal Garvey <cathalgarvey@cathalgarvey.me>
+To: cypherpunks@cpunks.org
+Subject: Re: Information Content Estimation
+Message-ID: <20131020231650.238cef24@Neptune>
+In-Reply-To: <80b87fa9-a7ff-4ed3-83d6-872d9debeac2@email.android.com>
+References: <9d1ecd9f-3095-4c87-8fc4-4848dcdf07a4@email.android.com>
+ <80b87fa9-a7ff-4ed3-83d6-872d9debeac2@email.android.com>
+X-Mailer: Claws Mail 3.8.1 (GTK+ 2.24.10; i486-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=PGP-SHA512;
+ boundary="Sig_/YCldKfbVDXPqykyJ7DSH=_p"; protocol="application/pgp-signature"
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 2857
+Lines: 71
+
+--Sig_/YCldKfbVDXPqykyJ7DSH=_p
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+In case anyone else was wondering, I answered my own question, although
+I have yet to learn whether this is efficient for large files. The
+answer so far appears to be libmagic, bindings for which in Python are
+available as "filemagic". Can then be used like so:
+
+-> import ssl, magic
+-> M =3D magic.Magic()
+-> M.id_buffer(ssl.RAND_bytes(50))
+:: 'data'
+-> M.id_buffer("This is text, plain and simple")
+:: 'ASCII text, with no line terminators'
+-> M.id_buffer("This is text, plain and simple\nand it has more than one
+-> line")
+:: 'ASCII text'
+-> M.id_buffer(rand)
+:: 'data'
+-> M.close()
+
+(For anyone who's read the docs, yes you're supposed to use a context
+manager with filemagic, and no it doesn't work on Py3.3 near as I can
+see)
+
+So I'll run with this if nobody has better ideas; user submits data, if
+it returns "data" on a check with filemagic/libmagic, it's considered
+encrypted (because encrypted data should be indistinguishable from
+random data), otherwise it's rejected.
+
+On Sat, 19 Oct 2013 20:41:01 +0100
+"Cathal Garvey (Phone)" <cathalgarvey@cathalgarvey.me> wrote:
+
+> Hey all,
+> Am mulling over a federated datastore for zero-knowledge web
+> applications, using hashcash as a "commitment" price for otherwise
+> gratis data storage. All very straightforward, but: Zero knowledge is
+> as much for host protection as client protection. Hosts don't WANT
+> plaintext.
+>=20
+> Short of stupidly CPU-intensive stuff like letter counting, UTF8
+> decoding, etc, how might a server verify it's receiving encrypted
+> data? I was thinking a function that estimates apparent entropy and
+> rejects anything that doesn't look random enough to be encrypted,
+> what such functions are available, fast, widely implemented?
+
+
+--Sig_/YCldKfbVDXPqykyJ7DSH=_p
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCgAGBQJSZFZSAAoJEL0iNgSYi5CZKrwQAJQgwG4UOUP8dEeNUcs0S9oZ
+3/yAJc0hA0pB72LO5zruK1llAizESgABt8JQYwrBc2b69v8HzAu92oPo9rhp8yr7
+AUrziGtoPJpIKYOo7ksyOeWjIQOSObv6bZmq9eEL2h0+D4ZT9BIE4rq75xneBt72
+SjvYtEOPp7swuoWKoLZgvwmW/LZIpK2hgBRxW8zSrmVMx5O2Tb6OuVZ/Pmt2I3Qf
+Cq9OoOHHqtxG/XLd96Ska2cVzN8gGy2cdWo9ucdGdBGLeG/C2jJvVy4A60XZlZt4
+E9InHunFCJ1BPoSxhcmRo/Nk87x9G34x1+z3d++XKq2o6hNNKTYRAub7XegiNM6X
+Kjvt6XAAV4TtYV6iavKLon9s6ujus5LGljTg1h8DD8Qn0e+xxNHTjxWLuwM7joWv
+h67NuiWSZkuXi/wK3KOxkq61YM9nh/dHKATzj5keGjUAwJQYzIUCTQO3EGxcjVZ4
+GVyGkT2ZGw9V6onzW0Vsmao91Lt2JsFGUFO8HSy4lU7F1UlA6i3uUwTLlVjSpqJR
+u8nK6D2D2shwoeL9M1KZ5lFJHaevVYGah9UqWZNlRmMgM1ohB4evFM6Z6tydXtT1
+XEFJZqAUhZiU9rAFFkrn/ZbLAfaEqDdq+38LB2qlDtOt/40xGrhBN1HdrNlN36yC
+tMawq2HpJUud4T9OBN95
+=BGKe
+-----END PGP SIGNATURE-----
+
+--Sig_/YCldKfbVDXPqykyJ7DSH=_p--
+

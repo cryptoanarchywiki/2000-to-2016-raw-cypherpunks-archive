@@ -1,0 +1,127 @@
+From cypherpunks-bounces@cpunks.org  Sun Aug 11 08:45:16 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r7BCjCkh001686;
+	Sun, 11 Aug 2013 08:45:12 -0400
+Authentication-Results: proton.jfet.org; dkim=pass
+	reason="2048-bit key; insecure key"
+	header.d=gmail.com header.i=@gmail.com header.b=yHqFe62E;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-lb0-f169.google.com (mail-lb0-f169.google.com
+ [209.85.217.169])
+ by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r7BCj7qx001664
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Sun, 11 Aug 2013 08:45:10 -0400
+Received: by mail-lb0-f169.google.com with SMTP id u10so4229607lbi.28
+ for <cypherpunks@cpunks.org>; Sun, 11 Aug 2013 05:45:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :content-type; bh=wl9nnyqkZ3Ch2NdBAJVYFTJXZusff8bXkNXRvvP6DsE=;
+ b=yHqFe62ESpaoA/yQnjsMRYlc7QTunOMwsGjCwsSMl3y8NLrlv6ES0hivN0Shc9/J9d
+ j9p1yLRIiCc8vhyBt+StlqvovhiqXlcbziyl00y5Bh43vPl0COwoHjOVoRMFAzc3QeAs
+ 6ElSCOWUy0Kls8o3oJIOZH5YsWRx7aAoj7yCHLE/uczxYW9ricd1HX4GVBpT8xNo0k3o
+ MwFbVXRz9rWkQViNDDPsSIS6T7LbXosuDzDUUfgXMpn5aSNbIt9UkgLJVQgJHUK1S/wK
+ 7z0MuAVzQrYRJz8uc5QuJ2Wa9tyEyahMVxUfeSz4Lu04UVD8/B8xDw6KkFmjcGrADyot
+ UBiA==
+MIME-Version: 1.0
+X-Received: by 10.152.116.37 with SMTP id jt5mr9558792lab.2.1376225102485;
+ Sun, 11 Aug 2013 05:45:02 -0700 (PDT)
+Received: by 10.112.79.101 with HTTP; Sun, 11 Aug 2013 05:45:02 -0700 (PDT)
+In-Reply-To: <CAJVRA1T5N=DF1zZpXZRsbaPFe069vyeR996CchGNVkKAwumnuw@mail.gmail.com>
+References: <20130809144310.GA29800@tuzo>
+ <CAJVRA1T5N=DF1zZpXZRsbaPFe069vyeR996CchGNVkKAwumnuw@mail.gmail.com>
+Date: Sun, 11 Aug 2013 05:45:02 -0700
+Message-ID: <CAJVRA1T70nTYojfD7BjBk0QSJrPeRibgR8xdv20pGsdyP01tsQ@mail.gmail.com>
+Subject: Re: Lavabit and End-point Security
+From: coderman <coderman@gmail.com>
+To: cypherpunks@cpunks.org
+Content-Type: text/plain; charset=ISO-8859-1
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+some questions, some answers, ...
+
+On Sun, Aug 11, 2013 at 2:27 AM, coderman <coderman@gmail.com> wrote:
+> ...
+> 1. use a common distro, but rebuild critical components - bootloader,
+> initramfs, openssl, openssh, the kernel, gnutls, libgmp, use 64bit,
+> etc.
+
+this means rebuild hardened versions of these libraries from source;
+  excluding insecure cipher suites in an OpenSSL build for example,
+  altering architecture optimizations, supported features, in others,
+
+the goal being that an exploit targeted to a vanilla distribution will
+more likely fail with observable error or crash, rather than succeed
+silently.
+
+many exploits are very brittle in this respect, with any change in
+symbol offsets or capabilities rendering them completely ineffective.
+
+
+
+> 2. use isolation and RBAC, Qubes, VirtualBox, VMWare, Parallels,
+> remember that VM escapes are available and expected. defense in depth
+> can never be too deep.
+
+virtualization implies chained exploits for full compromise. combined
+with the above you've drastically increased the cost of a successful
+attack with modest effort. the likelihood of detection (by appearing
+vulnerable yet not being so) is also increased.
+
+remember that VMMs and hypervisors are themselves potentially
+vulnerable software systems suitable for hardening and customization.
+
+
+
+> 3. use constrained network access - identify anomalies, control
+> bandwidth, firewall ingress and egress aggressively. this implies
+> constant monitoring to detect such events. (another exercise left to
+> the reader)
+
+data exfiltration can be very visible via network behavior if you're
+paying attention.  cross referencing connection state in your upstream
+router vs. local OS view of sockets can identify discrepancies where
+compromise has concealed covert connections. malware communicating
+directly on an ethernet or wireless adapter outside of the OS is also
+visible at this junction.
+
+
+
+> 4. rootkit and backdoor your own systems - use the dirty tricks to
+> observe and constrain your system before someone else uses dirty
+> tricks to compromise your system.
+
+this is mostly a variant of #1 at a kernel / system level.  like
+notepad.exe connecting to the internet, there are some syscall, file
+access, and network requests which are clearly anomalous and
+indicators of compromise.
+
+
+
+> 5. don't forget physical security - this is the universal oversight
+> and most effective end run around all other operational and technical
+> security measures. there is a reason physical access so often implies
+> "game over" and why black bag jobs are still and will continue to be
+> effective against all targets.
+
+this is a storied tangent unto itself...
+
+
+last but not least: you must develop a routine of continuous hardening
+and improvement. these steps are not done once and finished; they are
+elements within a larger strategy of operational rigor defending
+against motivated and capable attackers. asking for my "hardened linux
+build" is missing the point entirely!
+

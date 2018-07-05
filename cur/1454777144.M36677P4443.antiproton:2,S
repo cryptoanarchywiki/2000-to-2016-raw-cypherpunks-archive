@@ -1,0 +1,193 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u16Gj3E8004427;
+	Sat, 6 Feb 2016 11:45:06 -0500
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=u8m35x2h;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-ig0-f175.google.com (mail-ig0-f175.google.com
+ [209.85.213.175])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u16GixgW004420
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Sat, 6 Feb 2016 11:45:00 -0500
+Received: by mail-ig0-f175.google.com with SMTP id hb3so32671570igb.0
+ for <cypherpunks@cpunks.org>; Sat, 06 Feb 2016 08:45:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+ :cc:content-type;
+ bh=m8lc3Q9bjUlBy7RI4ZfrtOzzScObQ98iLf+Ttu8qPek=;
+ b=u8m35x2hK1rtgTnGCYpRvb1buJ4DBBE+vfYsOhI8HvxEH0M1bddIRKI35P20N1tF4Q
+ d5BYMEhhxvnYxhaPFNZHo346ZnezK+sTxSFCPNcadIxiXBlhwmxSx9+b2Ps/oivcTh2I
+ szLrugE6pHFJ4grjgdQ2TxrgF6JmQopvgejFPVKR/gpc4AoY57plcfTjmJhEVCGciDj4
+ gOFg3Y149i5Yc/ibq1nUb1vj2nJEuP28CP7nbtav6guOGAfqFOMyE2vXf+WASYlGVLwi
+ N3vlc6abWIrUyR4BZjihBPn9LO4qxqcfPOt6EdMqPmZ4Hr2pTVdeTVAUYYXKVWwl1nsx
+ rDOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+ :message-id:subject:to:cc:content-type;
+ bh=m8lc3Q9bjUlBy7RI4ZfrtOzzScObQ98iLf+Ttu8qPek=;
+ b=TgxVck41p+BzbdLfJGIAhdY2+IoDVWeYvxLS9/9vGjG5HR0sKCtY1HpiFOjfsk6lLq
+ kaDn/pQGqXbqw8Oycs3+IFT8I/H7FYqD70IxsMC9RW1lDzbSpTPGWetmIOtt3EzqOhlX
+ Y3R7FBosyNmc0xNZXFeA31eWb6O5Fc+b3vwEpi9zWRMOWupLViAyfXJq9dsU673dUxDr
+ ji/JADEAe7/eRT7Jvp51Y4utFW9ScRcNF4aUusLP9F9sZq9mXCJhBvW9UVBxnsGKDeLn
+ dh1LCE2xTmxiQr5RIKeAqff+QYVmb65BJejmqIWariwSAluib2Os19+lZEAc3eZCJAdY
+ X3Lw==
+X-Gm-Message-State: AG10YORDQacwNeUYOWLuSbN14NAE/gTVMzWQOt4u6VJGMZBiMYbODrNeqTQlTVBvfemlB6jTDMxlCt/g9gyLdA==
+X-Received: by 10.50.124.72 with SMTP id mg8mr15107086igb.22.1454777093687;
+ Sat, 06 Feb 2016 08:44:53 -0800 (PST)
+MIME-Version: 1.0
+Received: by 10.107.145.70 with HTTP; Sat, 6 Feb 2016 08:44:34 -0800 (PST)
+In-Reply-To: <56B61378.30706@riseup.net>
+References: <CANFTA0-poVPP2nHwFmZOUc8VKq=P4oup5jGED_AfsE7tA-f4Lg@mail.gmail.com>
+ <CAHKdp-kG+4Pkr9CL952akYVLig4z2dbfZFSecV00YM_7OmvwJg@mail.gmail.com>
+ <CAGRDzQUM1OUx239JCv=Ho8GqXo2AzV93yuObLCBLkkxAaZTxig@mail.gmail.com>
+ <CAGRDzQWM8aX-HvBJJ9oXLjn6tjWHKAu2VcyhoB2HdgWu0Zs3bg@mail.gmail.com>
+ <CAHKdp-m7G5RFTUhxOfUjYL5MqPdpt84gwUuYDb0tQSX_=Nx0ZA@mail.gmail.com>
+ <56b4f3ba.d4f28c0a.1c75a.fffff056@mx.google.com>
+ <CAGRDzQWAgK+wsTafWkGcqbfHNcc1g8RZ-ACkDxjDcDG-xi8DnQ@mail.gmail.com>
+ <CAHKdp-m7fZVHzvDu_Q8=wODpkAMtAJkSBnniuco0Yybm2E9hGQ@mail.gmail.com>
+ <CAGRDzQW5FA_AK8WRBag4Zi3XHoMkz-MVG6yD+tt769df2uS6gw@mail.gmail.com>
+ <CAGRDzQVOeb_B+WVc2TmX-oMBazDiFw1ykvW=nP=O9M2kQ=8okw@mail.gmail.com>
+ <56b53670.4ac98c0a.7672b.1586@mx.google.com>
+ <CAGRDzQVMv=p5yQak6Rsq0UXEyVcgzXSd=WffWVC=AFzW84priw@mail.gmail.com>
+ <56b5636d.6d148c0a.ed84d.2adf@mx.google.com>
+ <CAJVRA1QHYFmGH0txZYKfEL3hM_1S-06sObKdhmnrMoveCGeRdw@mail.gmail.com>
+ <CAEm6KbJ_588U6o+AZUpVu6RapoEx5eawdmaQJEau71+rNX=dfQ@mail.gmail.com>
+ <56B61378.30706@riseup.net>
+From: Cari Machet <carimachet@gmail.com>
+Date: Sat, 6 Feb 2016 17:44:34 +0100
+Message-ID: <CAGRDzQVV_-dbPetCARygkQaTECL=8D29u1sxX=1Yi6bZscbz=A@mail.gmail.com>
+Subject: Re: The Intercept steps up after catching a reporter faking data and
+ sources
+To: Rayzer <Rayzer@riseup.net>
+Content-Type: multipart/alternative; boundary=089e010d9616e593ab052b1caf62
+Cc: cpunks <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 113
+
+--089e010d9616e593ab052b1caf62
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+rayzer ideology =3D grudgeholdism
+
+On Sat, Feb 6, 2016 at 4:38 PM, Rayzer <Rayzer@riseup.net> wrote:
+
+> =D0=90=D0=BB=D0=B5=D0=BA=D1=81=D0=B0=D0=BD=D0=B4=D1=80 wrote:
+> >
+> >     I find it quite funny how  people who routinely post pro-government
+> >             garbage are not 'trolls', including, you know high ranking
+> CIA
+> >             mafiosos. Furthermore, the CIA mafiosos and lapdogs call
+> other
+> >             people 'trolls'...
+> >
+> >
+> > Oh, i love it. Thanks juan!
+> >
+>
+> According the Juan, afaict, everything and everyone is pro-gubmint
+> except him.
+>
+> Trigger Warning! "Vanguard"
+>
+> --
+> RR
+> "Through counter-intelligence it should be possible to pinpoint potential
+> trouble-makers ... And neutralize them, neutralize them, neutralize them"
+>
+>
+>
+
+
+--=20
+Cari Machet
+NYC 646-436-7795
+carimachet@gmail.com
+AIM carismachet
+Syria +963-099 277 3243
+Amman +962 077 636 9407
+Berlin +49 152 11779219
+Reykjavik +354 894 8650
+Twitter: @carimachet <https://twitter.com/carimachet>
+
+7035 690E 5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187
+
+Ruh-roh, this is now necessary: This email is intended only for the
+addressee(s) and may contain confidential information. If you are not the
+intended recipient, you are hereby notified that any use of this
+information, dissemination, distribution, or copying of this email without
+permission is strictly prohibited.
+
+--089e010d9616e593ab052b1caf62
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">rayzer ideology =3D grudgeholdism<img src=3D"http://t.side=
+kickopen35.com/e1t/o/5/f18dQhb0S7ks8dDMPbW2n0x6l2B9gXrN7sKj6v5dfb6W5vwkZs7f=
+ZjrnW2BpKgF2zlZNzW8v-hnY1k1H6H0?si=3D5459291358625792&amp;pi=3Dc507edc3-05f=
+c-4daf-b721-d15b99ab7748" style=3D"display:none!important" height=3D"1" wid=
+th=3D"1"></div><div class=3D"gmail_extra"><br><div class=3D"gmail_quote">On=
+ Sat, Feb 6, 2016 at 4:38 PM, Rayzer <span dir=3D"ltr">&lt;<a href=3D"mailt=
+o:Rayzer@riseup.net" target=3D"_blank">Rayzer@riseup.net</a>&gt;</span> wro=
+te:<br><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-=
+left:1px #ccc solid;padding-left:1ex"><div class=3D"HOEnZb"><div class=3D"h=
+5">=D0=90=D0=BB=D0=B5=D0=BA=D1=81=D0=B0=D0=BD=D0=B4=D1=80 wrote:<br>
+&gt;<br>
+&gt;=C2=A0 =C2=A0 =C2=A0I find it quite funny how=C2=A0 people who routinel=
+y post pro-government<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0garbage are not &#39;tr=
+olls&#39;, including, you know high ranking CIA<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0mafiosos. Furthermore, =
+the CIA mafiosos and lapdogs call other<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0people &#39;trolls&#39;=
+...<br>
+&gt;<br>
+&gt;<br>
+&gt; Oh, i love it. Thanks juan!<br>
+&gt;<br>
+<br>
+</div></div>According the Juan, afaict, everything and everyone is pro-gubm=
+int<br>
+except him.<br>
+<br>
+Trigger Warning! &quot;Vanguard&quot;<br>
+<div class=3D"HOEnZb"><div class=3D"h5"><br>
+--<br>
+RR<br>
+&quot;Through counter-intelligence it should be possible to pinpoint potent=
+ial trouble-makers ... And neutralize them, neutralize them, neutralize the=
+m&quot;<br>
+<br>
+<br>
+</div></div></blockquote></div><br><br clear=3D"all"><div><br></div>-- <br>=
+<div class=3D"gmail_signature"><div dir=3D"ltr"><div>Cari Machet<br>NYC 646=
+-436-7795<br><a href=3D"mailto:carimachet@gmail.com" target=3D"_blank">cari=
+machet@gmail.com</a><br>AIM carismachet<br>Syria +963-099 277 3243<br>Amman=
+ +962 077 636 9407<br>Berlin +49 152 11779219 <br>Reykjavik +354 894 8650<b=
+r>Twitter: @carimachet &lt;<a href=3D"https://twitter.com/carimachet" targe=
+t=3D"_blank">https://twitter.com/carimachet</a>&gt;<br><br></div>7035 690E =
+5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187<br><div><br>Ruh-roh, this is now ne=
+cessary: This email is intended only for the <br>addressee(s) and may conta=
+in confidential information. If you are not the <br>intended recipient, you=
+ are hereby notified that any use of this <br>information, dissemination, d=
+istribution, or copying of this email without <br>permission is strictly pr=
+ohibited.<br><br><br></div></div></div>
+</div>
+
+--089e010d9616e593ab052b1caf62--
+

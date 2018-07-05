@@ -1,0 +1,117 @@
+From owner-cypherpunks@al-qaeda.net  Fri Jan 11 14:30:04 2013
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id r0BJRPat025366
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 11 Jan 2013 14:27:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1357932445;
+	bh=X6Kw1I4+Mb5LB2EUAs8OmzqnSxXAlbxWOa0fW9PbhY8=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=HKgJbo33/D09A1W2g1uXeLK/JdrUADYHK7mCrP/8UgzZrdWMt1Pg4YKhZNp8Xidnx
+	 wT7DTm8C2tHw78lBdbngwFn3NvMVwJHarnOI6h7GTU1t3/09oOiyQa/1zozkczNh8q
+	 b5yX+7pAQ3Y2VvCxgEO0hanEZUj28CY97TW9b7BY=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id r0BJRPhL025365
+	for cypherpunks-outgoing; Fri, 11 Jan 2013 14:27:25 -0500
+Date: Fri, 11 Jan 2013 20:27:22 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, zs-p2p@googlegroups.com, info@postbiota.org
+Subject: Re: [p2p-hackers] Distributed identity, chat, publishing, and 
+  sharing
+Message-ID: <20130111192722.GN30918@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3569
+Lines: 84
+
+----- Forwarded message from Tony Arcieri <tony.arcieri@gmail.com> -----
+
+From: Tony Arcieri <tony.arcieri@gmail.com>
+Date: Fri, 11 Jan 2013 10:43:07 -0800
+To: theory and practice of decentralized computer networks <p2p-hackers@lists.zooko.com>
+Subject: Re: [p2p-hackers] Distributed identity, chat, publishing,
+	and sharing
+Reply-To: theory and practice of decentralized computer networks <p2p-hackers@lists.zooko.com>
+
+On Fri, Jan 11, 2013 at 10:08 AM, Sean Lynch <seanl@literati.org> wrote:
+
+> Very interesting. "Cryptosphere" is a good name for such a system,
+> though from what you describe there the project seems more concerned
+> about identifying content than people, whereas my idea centers around
+> identifying people, with content being secondary.
+>
+
+It's all equally important, although I intend to identify nodes or peers
+rather than people (who may operate many nodes).
+
+Can you elaborate on this? By metadata I was thinking of things like
+> filename, content description, ratings, etc.
+>
+
+I was thinking of a log of how much data was transferred and the transfer
+rate. The type of metadata you're describing is kept secret in my system.
+
+
+> Given that the part that needs to be small is the public key, what's the
+> benefit of using the same private key? Once you have an Ed25519 public
+> key, you can always do an authenticated Diffie-Hellman exchange with an
+> ephemeral session key, which gives you perfect forward security if any
+> individual session private key is compromised.
+>
+
+The point of doing this is so both ends can authenticate the other party as
+the same party who signed data they're interested in. CurveCP still uses DH
+to generate an ephemeral session key.
+
+I was to CodesInChaos earlier on about this approach on the CurveCP and he
+said he looked into it before and thought it seemed sound.
+
+I ran across CurveCP before and had forgotten about it. Embedding and
+> congestion control are primary requirements for me, and libutp fits the
+> bill, even allowing the user to provide a callback for sending and
+> receiving data, which is where I'd apply the encryption.
+
+
+Yeah, uTP is definitely nice in that it has the congestion part licked
+(perhaps too well). It would be neat to try to take the CurveCP encryption
+protocol design and sort of layer it on top of uTP.
+
+
+> All of the applications could even be written in Javascript and
+> distributed through the network itself, signed by their authors. They
+> could run as web workers using a particular protocol to talk to the main
+> app if the network runs in a browser, or in QtScript if it's a native Qt
+> app. I have no idea how to securely run untrusted JS in Java, though.
+>
+
+Yeah, this is definitely something else I am extremely interested in. I
+have been looking at a friend's capabilities-based JavaScript wrapper
+around <iframe sandbox> which seemed like it'd be an interesting way to
+sandbox web applications being loaded from a system like the Cryptosphere.
+They could talk back to a parent iframe via postMessages and request
+various services from the system. See:
+
+https://github.com/tildeio/oasis.js
+
+-- 
+Tony Arcieri
+
+_______________________________________________
+p2p-hackers mailing list
+p2p-hackers@lists.zooko.com
+http://lists.zooko.com/mailman/listinfo/p2p-hackers
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

@@ -1,0 +1,200 @@
+From owner-cypherpunks@al-qaeda.net  Sun Jul 10 05:23:19 2011
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id p6A9JsxI006704
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sun, 10 Jul 2011 05:19:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1310289594;
+	bh=9gKK0mdEUnDJCXgQuX6WuHF//K9M0yQrXBBxkCZckIQ=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=kMkubQi4OzT7hRrq2M3t6lzPH9ZUI30X4We31pfrYivkOsq9e+6CRy6taGVKEzsHK
+	 4hM22BZF4qMqhb811HriUKNpBDLq0LYWLBv53QxFmjMnlBiq3iRiDJeTkQwmAJeRSZ
+	 KB0tjQp8nNd7Enl8unnBxhgBPcxNNBEASAAngtSI=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id p6A9Jsof006703
+	for cypherpunks-outgoing; Sun, 10 Jul 2011 05:19:54 -0400
+Date: Sun, 10 Jul 2011 11:19:51 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: [tahoe-lafs-weekly-news] TWN #6
+Message-ID: <20110710091951.GI16178@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 7146
+Lines: 166
+
+----- Forwarded message from Patrick R McDonald <marlowe@antagonism.org> -----
+
+From: Patrick R McDonald <marlowe@antagonism.org>
+Date: Sat, 9 Jul 2011 21:50:13 -0400
+To: tahoe-dev@tahoe-lafs.org, tahoe-lafs-weekly-news@tahoe-lafs.org
+Subject: [tahoe-lafs-weekly-news] TWN #6
+User-Agent: Mutt/1.5.21 (2010-09-15)
+Reply-To: tahoe-dev@tahoe-lafs.org
+
+
+
+=====================================================
+ Tahoe-LAFS Weekly News, issue number 6, July 9, 2011
+=====================================================
+
+Welcome to the Tahoe-LAFS Weekly News (TWN).  Tahoe-LAFS_ is a secure,
+distributed storage system. `View TWN on the web`_ *or* `subscribe to
+TWN`_.
+
+.. _Tahoe-LAFS: http://tahoe-lafs.org
+.. _View TWN on the web: http://tahoe-lafs.org/trac/tahoe-lafs/wiki/TahoeLAFSWeeklyNews
+.. _subscribe to TWN: http://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-lafs-weekly-news
+
+Announcements and News
+======================
+
+Tahoe-LAFS Summit
+-----------------
+
+As promised here are the updates from the Summit.  Thanks to everyone
+who provided me notes.  Once again, please enjoy the feeds by nejucomo_
+and secorp.
+
+Ladies and gentleman, we have a visualizer thanks to Brian Warner.  The
+visualizer demonstrates how encryption and hashing take significantly
+less time than network operations.  It shows network issues which are
+explained (lock-step progress per-segment means higher K leads to more
+servers slowing each other down, redundant computation of the
+satisfaction algorithm leads to gaps between segments), as well as 
+unexplained (one server has response time X, all the others have
+response time ~Y, Y is about an order of magnitude greater than X).
+
+Currently, the visualizer could use some usuability improvements.  It is
+best understood with Brian explaining its functionality to you.  Tahoe
+would greatly appreciate anyone who would like to work on 1265_ to make
+the visualizer more user friendly.  Items needed are more labels and
+documents.
+
+Currently the visualizer will use a significant portion of CPU to render
+an image if it is asked to display all items available.  Any Javascript
+performance experts (or others interested) who could patch it to only
+render visible and meaningful items will receive a write up in TWN.
+
+We discussed append-only caps. `Moxie Marlinspike`_ and Zooko want
+append-only caps as they are the correct security property for backups.
+The implementations sketched out at the Summit seem overly complicated.
+There are questions if append-only caps require such complication or if
+we could implement a simpler solution which would cover all the
+different threat models.  The threat models include servers conspiring
+to rollback, someone/something compromising the capability and
+uncoordinated writes and/or servers being off-line.  If such
+complication can not be removed and still cover all the threat models,
+should the Tahoe developers explore a simpler design which covers less
+threat models?  Please send us your thoughts either to the `mailing
+list`_ or join us in #tahoe-lafs in Freenode.
+
+Peter Secor reported on Tahoe's funds.  We have donations of 244.56b,
+received donations of about $30/month from Flattr.  Thank you to all
+donors!  We spend more than $30/month on Peter's costs to run our
+servers.  Thanks Peter for running our servers.
+
+Josh, David-Sarah and Zooko worked on 999_.  This ticket is adapting the
+codebase to support multiple backends including Amazon S3.  There is a
+distinct possibility this ticket could be included in the upcoming 1.9.0
+release.
+
+David-Sarah implemented Dropbox-like functionality.
+
+.. _nejucomo: http://www.ustream.tv/channel/tahoe-lafs-summit
+.. _secorp: http://www.ustream.tv/channel/tahoe-lafs-summit-end
+.. _1265: http://tahoe-lafs.org/trac/tahoe-lafs/ticket/1265
+.. _`mailing list`: http://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-lafs-weekly-news
+.. _`Moxie Marlinspike`: http://www.thoughtcrime.org
+.. _999: http://tahoe-lafs.org/trac/tahoe-lafs/ticket/999
+
+Tahoe on Plug Computers
+-----------------------
+
+More good news from the `FreedomBox Foundation`_.  Tahoe just runs with
+an "apt-get install" on plug computers.
+
+.. _`FreedomBox Foundation`: http://lists.alioth.debian.org/pipermail/freedombox-discuss/2011-July/002043.html
+
+Interview with the Developers
+=============================
+
+There is no interview this week as well.  Sorry for the delay.  We will
+be returning to our regular interview schedule next week.  Are there any
+questions you want me to ask the developers or a specific developer?
+Perhaps there is a topic and you want various developers' opinions on
+it.  Please let me know and I will ask it here.
+
+Open Source Project of the Week
+===============================
+
+The Open Source Project of the Week is FranC'ois Deppierraz's `Android
+client`_.  This is the killer application for me for Tahoe.  No longer
+am I tied to my laptop or my desktop to use Tahoe.  I can use Tahoe
+wherever my cell phone can carry me.  I am really looking forward to
+running this on my Nook Color when I root it later this year.
+
+Warning: you may be thinking that fdz's Android client is actually doing
+encryption on your phone. Alas, no, it is delegating that to a
+remote gateway running on a server.
+
+.. _`Android client`: http://github.com/ctrlaltdel/TahoeLAFS-android
+
+>From the tahoe-dev Mailing List
+===============================
+
+The `DMCA discussion`_ continues.
+
+Zooko asked when `patches need to be completed`_ to be included in
+1.9.0_.
+
+.. _`DMCA discussion`: http://tahoe-lafs.org/pipermail/tahoe-dev/2011-July/006525.html
+.. _`patches need to be completed`: http://tahoe-lafs.org/pipermail/tahoe-dev/2011-July/006526.html
+.. _1.9.0: http://tahoe-lafs.org/trac/tahoe-lafs/roadmap
+
+Patch Needing Review of the Week
+================================
+
+The Patch Needing Review of the Week is 1425_.  This patch allows webapi
+gateway operators to block access to files natively in Tahoe rather than
+through of a frontend proxy (i.e. nginx, Apache).  The patch creates a
+blacklist file, with a list of storage-index strings and a reason for
+each.  This patch may be useful in enabling webapi gateway operators to
+effectively deal with DMCA complaints.
+
+.. _1425: http://tahoe-lafs.org/trac/tahoe-lafs/ticket/1425
+
+----
+
+*The Tahoe-LAFS Weekly News is published once a week by The Tahoe-LAFS
+Software Foundation, President and Treasurer: Peter Secor. Scribes:
+Patrick "marlowe" McDonald, Zooko Wilcox-O'Hearn, Editor: Zooko.* `View
+TWN on the web`_ *or* `subscribe to TWN`_ *. Send your news stories to*
+marlowe@antagonism.org_ *b submission deadline: Friday night.*
+
+.. _marlowe@antagonism.org: mailto:marlowe@antagonism.org
+
+
+
+
+_______________________________________________
+tahoe-lafs-weekly-news mailing list
+tahoe-lafs-weekly-news@tahoe-lafs.org
+http://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-lafs-weekly-news
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

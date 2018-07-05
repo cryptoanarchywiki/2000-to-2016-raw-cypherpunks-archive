@@ -1,0 +1,133 @@
+From cypherpunks-bounces@cpunks.org  Fri Oct 18 05:57:01 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9I9uTPq011360;
+	Fri, 18 Oct 2013 05:56:33 -0400
+Received: from mail-02.1984.is (mail-02.1984.is [93.95.224.7])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9I9uPDM011355
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Fri, 18 Oct 2013 05:56:27 -0400
+Received: from [79.97.71.97] (helo=Neptune)
+ by mail-02.1984.is with esmtpsa (TLSv1.2:DHE-RSA-AES128-SHA:128)
+ (Exim 4.80) (envelope-from <cathalgarvey@cathalgarvey.me>)
+ id 1VX6n4-0000RM-HT
+ for cypherpunks@cpunks.org; Fri, 18 Oct 2013 09:56:18 +0000
+Date: Fri, 18 Oct 2013 10:56:08 +0100
+From: Cathal Garvey <cathalgarvey@cathalgarvey.me>
+To: cypherpunks@cpunks.org
+Subject: Re: Curious RNG stalemate [was: use of cpunks]
+Message-ID: <20131018105608.1e6b875c@Neptune>
+In-Reply-To: <20131018075446.GS10405@leitl.org>
+References: <CAD2Ti2_Y4V+d_kLEmoyUmUXLXvA8CCg8Hi50GW2ZGAZZ+eb0Rg@mail.gmail.com>
+ <20131017204727.B32E8EB07@a-pb-sasl-quonix.pobox.com>
+ <20131017221211.3b81105d@Neptune>
+ <F542A7CF-E560-4E41-9831-C16BA0C22C2C@callas.org>
+ <3b006fcb-dffd-4fae-98b3-d8461d4e8f71@email.android.com>
+ <20131018075446.GS10405@leitl.org>
+X-Mailer: Claws Mail 3.8.1 (GTK+ 2.24.10; i486-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=PGP-SHA512;
+ boundary="Sig_/Vp53iYmYjelvLRFx8Yjc9KD"; protocol="application/pgp-signature"
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 3419
+Lines: 85
+
+--Sig_/Vp53iYmYjelvLRFx8Yjc9KD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+I've found a few since, too; some I could build right away.
+
+Leading to a n00b question: if you have a custom-built HWRNG, and you
+*don't need the full output* but just a complementary source of entropy
+for /dev/random, how would one seed /dev/random with the HWRNG without
+washing out the good entropy already in /dev/random?
+
+That is, I gather some CSPRNGs can consider relative weights of RNG
+inputs, seeding the pool more often from some than others, or
+sanitising some inputs more than other. So my custom-built HWRNG, with
+possibly not-trustworthy output for crypto usages, would be a nice
+ancillary input to /dev/random if I could be sure it would be only used
+to supplement, never to replace, more proven and trustworthy sources.
+
+Bonus question; if I take the direct output of my HWRNG, and use it
+with a hash function and a long, random seed that is invariant, that
+should even out the bits of output and help account for fluctuations in
+true entropy, right?
+That is:
+
+mypassphrase =3D SHA512(b'some long string of high-entropy seed data')
+entropy =3D HWRNG_READ(64)
+entropy =3D SHA512(entropy, mypassphrase)
+seed_dev_random(entropy)
+
+On Fri, 18 Oct 2013 09:54:46 +0200
+Eugen Leitl <eugen@leitl.org> wrote:
+
+> On Fri, Oct 18, 2013 at 08:16:51AM +0100, Cathal Garvey (Phone) wrote:
+> > Accepted, entirely, but if "noisy diodes" are all you need for
+> > quantum entropy, why are designs for OSHW entropy generators so
+> > scarce?=20
+>=20
+> Are they?
+>=20
+> http://www.maximintegrated.com/app-notes/index.mvp/id/3469
+>=20
+> This is analog electronics 101. All you have is to sample
+> that at sufficient rate on the cheap. That used to be a problem, but
+> no longer is
+>=20
+> http://www.rtl-sdr.com/
+>=20
+> > I suggested smoke alarms not through radioactivity-fetishism but
+> > because of ubiquity and low cost, likely low difficulty to adapt.
+>=20
+> We do not want a dinky little entropy drip. We want a
+> regular firehose. The USB RTL samples at 1.4 MSamples/s.=20
+> Total part costs is probably 20 USD, in bulk.
+>=20
+> Why is nobody selling a kit like that? Because worrying about
+> sufficient entropy in crypto settings is a terribly niche thing.
+> Sadly.
+>=20
+> Now try for a decent clock. (Hint: time-nuts. And did you
+> know they use CSACs for IED trigger jamming?).
+
+
+--Sig_/Vp53iYmYjelvLRFx8Yjc9KD
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCgAGBQJSYQW4AAoJEL0iNgSYi5CZEYgP/3XI8ekJ2XB8PisGe2mgPfdu
+bL0YGiX+npqq/UHb7pteWh9/c+y2H8320WNjw3wpe3cGaXwqc2WpUQq1pW7keyqM
+PdQ0rm7M9Zvsv8BuQVMoU2ZENlOTYwEYr+v79ZaJadaGgqDscmssp0g7FP0PbxuS
+7zZveN4TGTntEZT4PA8meUN1EqkL6MKH71i/0spVioH+6Q9+gseeXhiSpYI0mkIW
+rd0d7pVOM8d4tH/+QVFw9Tao9QwiTlGBpTIT0HDBIXWgoRQynBmcZSzNrGns0q+B
+3IANecko3rqQc+R18n8FBY+1g0oC4NRZCUjC9ZHrcN/OyUYHEnVqOjUPzxqK6dBr
+T4vaBWzJWbTsx26GPjXNsvZp/UySArDM2Lub+tUwS9F/sf6urc5z4PiT6uSXGgh/
+9vdP1BfRkFICoOMcD8jTSW/muRAR9B/ypdzYHtUdgFB8PK5H8VYbamESFZGcYWtt
+suW4n+dtluOIrBLWRgOuC3tOLotxK/s8BRV3rPcbQllWAB4MVo0R89LhU/V+cRLZ
+yb7F7lsO+hwI4DEt5PDdOQSlUAlXOm1KzeCl6UIAcOnDJc2f1iQ/nVSMiWJJDDUN
+SKX+Ff1rgB9EWdzYIoGwncFnYPVQTMfsCsw7CrFOXpaCO+wxF7c6OHmWES9pYfgE
+/Hj0/jtQfOs/Q1iX+gdp
+=RJRe
+-----END PGP SIGNATURE-----
+
+--Sig_/Vp53iYmYjelvLRFx8Yjc9KD--
+

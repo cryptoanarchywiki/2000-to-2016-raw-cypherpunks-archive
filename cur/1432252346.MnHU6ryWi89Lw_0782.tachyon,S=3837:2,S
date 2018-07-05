@@ -1,0 +1,85 @@
+From owner-cypherpunks@lne.com  Sat Apr 26 18:52:13 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h3QMqBt17187
+	for <rsw@jfet.org>; Sat, 26 Apr 2003 18:52:11 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h3QMi5RV021381
+	for cypherpunks-goingout345; Sat, 26 Apr 2003 15:44:05 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Sat, 26 Apr 2003 23:44:02 +0100
+From: Adam Back <adam@cypherspace.org>
+To: Tim May <timcmay@got.net>
+Cc: cypherpunks@lne.com, Adam Back <adam@cypherspace.org>
+Subject: more about anonymous mail (Re: Making Money in Digital Money)
+Message-ID: <20030426234402.A7988036@exeter.ac.uk>
+References: <20030426134155.GA28448@lightship.internal.homeport.org>
+  <775AB29B-7809-11D7-865D-000A956B4C74@got.net>
+  <20030426232127.A8084118@exeter.ac.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <20030426232127.A8084118@exeter.ac.uk>; from
+  adam@cypherspace.org on Sat, Apr 26, 2003 at 11:21:27PM +0100
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2505
+Lines: 53
+
+I wrote about freedom 2.0 mail system:
+> So these interactive connections are immediately forward-secret, and
+> therefore you have much better protection against subpeona attack.
+> However they are more vulnerable to all-powerful observer attacks who
+> could probably figure out which pseudonym was which by sending lots of
+> unique sized email and then watching traffic patterns flow through the
+> network.
+
+So a couple of other comments:
+
+- Ulf Moeller, Anton Stiglic and I published our thoughts about how
+someone could go about doing the passive adversary traffic analysis
+attacks on interactive systems such as the freedom anonymous network:
+
+	Apr 01 - "Traffic Analysis Attacks and Trade-Offs in Anonymity
+	Providing systems", Information Hiding 2001, Adam Back, Ulf
+	Moeller and Anton Stiglic
+
+	http://www.cypherspace.org/adam/pubs/traffic.pdf
+
+- and in fact the version 1 freedom mail system had other issues: the
+mail was not split up into fixed sized chunks (as it is with
+mixmaster), so it suffered the same vulnerabilities that type I based
+nymservers do: it was in addition equally vunlerable to traffic
+analysis.  I'd take this version 1 freedom mail vulnerability to
+indiate that in essentially all respects version 2 was more secure
+than version 1; though some of the version 1 design-issues could have
+been fixed in similar ways that are proposed in the mixminion project.
+
+
+The mixminion project project (aka Type III remailer) design and
+implementation attempts to avoid these issues by merging reply block
+functionality into a mixmaster like fixed sized message mix net.
+
+Mixminion actually uses Single Use Reply Blocks (SURBs) to in addition
+reduce vulnerability to flooding attacks (where someone just sends
+lots of messages to see where they arrive as they flow down the reply
+block).  The recipient I think is expected to send a few SURBs to nyms
+he communicates with, and to send SURBs to the nymserver to pick up
+mail from regular internet mail senders (who are not using the
+mixminion client).
+
+If I understand it is also planned that the mixminion / Type III
+protocol will be implemented within mixmaster as mixmaster version 4.
+(The current alpha mixminion code is a separate code base, written in
+python scripting language).
+
+The other good thing about mixminion / type III protocol is that
+finally type I remailers with their traffic analysis issues could be
+phased out.  (Their remaining reason for existance was to support
+reply-block functionality for nymservers).
+
+Adam
+

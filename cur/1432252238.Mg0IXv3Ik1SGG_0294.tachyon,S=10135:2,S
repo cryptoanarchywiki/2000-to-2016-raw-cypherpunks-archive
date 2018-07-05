@@ -1,0 +1,166 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Mon Sep 30 22:06:49 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g9126mV04610
+	for <rsw@opamp.org>; Mon, 30 Sep 2002 22:06:48 -0400
+Received: from lion.ninthwonder.com (lion.ninthwonder.com [151.199.66.147])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id WAA26080
+	for <rsw@mit.edu>; Mon, 30 Sep 2002 22:06:47 -0400 (EDT)
+Received: by lion.ninthwonder.com (Postfix, from userid 96)
+	id DC6723070F; Mon, 30 Sep 2002 22:04:33 -0400 (EDT)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 9292230706
+	for <cryptography@wasabisystems.com>; Mon, 30 Sep 2002 22:04:32 -0400 (EDT)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 3CA28D97FA; Mon, 30 Sep 2002 22:04:32 -0400 (EDT)
+Received: from hermes.cs.auckland.ac.nz (hermes.cs.auckland.ac.nz [130.216.35.151])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 153F230706
+	for <cryptography@wasabisystems.com>; Mon, 30 Sep 2002 21:55:25 -0400 (EDT)
+Received: from ruru.cs.auckland.ac.nz (ruru-nfs.cs.auckland.ac.nz [130.216.35.12])
+	by hermes.cs.auckland.ac.nz (8.12.4/8.12.4) with ESMTP id g911sW4b023758;
+	Tue, 1 Oct 2002 13:54:32 +1200
+Received: (from pgut001@localhost) by ruru.cs.auckland.ac.nz (8.9.3/8.8.6/cs-slave) id NAA93137; Tue, 1 Oct 2002 13:54:30 +1200 (NZST) (sender pgut001@cs.auckland.ac.nz)
+Date: Tue, 1 Oct 2002 13:54:30 +1200 (NZST)
+Message-ID: <200210010154.NAA93137@ruru.cs.auckland.ac.nz>
+From: pgut001@cs.auckland.ac.nz (Peter Gutmann)
+To: cryptography@wasabisystems.com, cypherpunks@lne.com
+Subject: Real-world steganography
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 8179
+Lines: 131
+
+I recently came across a real-world use of steganography which hides extra
+data in the LSB of CD audio tracks to allow (according to the vendor) the
+equivalent of 20-bit samples instead of 16-bit and assorted other features.
+According to the vendors, "HDCD has been used in the recording of more than
+5,000 CD titles, which include more than 250 Billboard Top 200 recordings and
+more than 175 GRAMMY nominations", so it's already fairly widely deployed.
+>From http://www.hdcd.com/partners/proaudio/overview.html:
+
+[...]
+
+Hidden Code Addition/Output Dither/Quantization
+
+The final step in the reduction to 16 bits is to add high-frequency weighted
+dither and round the signal to 16-bit precision. The dither increases in
+amplitude in the frequency range of 16 to 22.05 kHz, leaving the noise floor
+flat below 16 kHz where the critical bands of hearing associated with tonality
+occur. As part of the final quantization, a pseudo-random noise hidden code is
+inserted as needed into the least significant bit (LSB) of the audio data. The
+hidden code carries the decimation filter selection and Peak Extend and Low
+Level Range Extend parameters. Inserted only 2?5 percent of the time, the
+hidden code is completely inaudible-effectively producing full 16-bit
+undecoded playback resolution. The result is an industry-standard 44.1-kHz,
+16-bit recording compatible with all CD replication equipment and consumer CD
+players.
+
+[...]
+
+The paper describing the process is available under the somewhat misleading
+name http://www.hdcd.com/partners/proaudio/AES_Paper.pdf.  The description of
+the stego en/decoding process is on p.15 (it's a rather long excerpt, but it's
+interesting stuff):
+
+As part of the final quantization, a hidden code side channel is inserted into
+the LSB when it is necessary for the encoder to inform the decoder of any
+change in the encoding algorithm. It takes the form of a pseudo-random noise
+encoded bit stream which occupies the least significant bit temporarily,
+leaving the full 16 bits for the program material most of the time. Normally,
+the LSB is used for the command function less than five percent of the time,
+typically only one to two percent for most music. Because the hidden code is
+present for a small fraction of the time and because it is used as dither for
+the remaining 15 bits when it is inserted, it is inaudible. This was confirmed
+experimentally with insertion at several times the normal fraction of time.
+
+[...]
+
+The mechanism which allows insertion of commands only when needed consists of
+encapsulating the command word and parameter data in a "packet". A
+synchronizing pattern is prepended to the data and a checksum is appended. The
+resulting packet is then scrambled using a feedback shift register with a
+maximal length sequence and inserted serially, one bit per sample, into the
+LSB of the audio data. The decoder sends the LSB's of the audio data to a
+complementary shift register to unscramble the command data. A pattern
+matching circuit looks for the synchronizing pattern in the output of the
+descrambler, and when it finds it, it attempts to recover a command. If the
+command has a legal format and the checksum matches, it is registered as a
+valid packet for that channel. The arrival of a valid packet for a channel
+resets a code detect timer for that channel. If both channels have active
+timers, then code is deemed to be present and the filter select data is
+considered valid immediately. However, any command data which would effect the
+level of the signal must match between the two channels in order to take
+effect. The primary reason for this is to handle the case where an error on
+one channel destroys the code. In such a case, the decoder will mistrack for a
+short time until the next command comes along, which is much less audible than
+a change in gain on only one channel, causing a shift in balance and lateral
+image movement. If either of the code detect timers times out, then code is
+deemed not to be present, and all commands are canceled, returning the decode
+system to its default state. If the conditions on the encoder side are not
+changing, then command packets are inserted on a regular basis to keep the
+code detect timers in the decoder active and to update the decoder if one
+starts playing a selection in the middle of a continuous recording.
+
+Since the decoder is constantly scanning the output of the de-scrambler shift
+register for valid command packets even when none are present, the possibility
+exists that there may be a false trigger. For audio generated by the encoder,
+this possibility is eliminated in the absence of storage and transmission
+errors by having the encoder scan the LSB of the audio data looking for a
+match. If a match to the synchronizing pattern is found, the encoder inverts
+one LSB to destroy it.
+
+Modern digital storage and transmission media incorporate fairly sophisticated
+error detection and correction systems. Therefore, we felt that only moderate
+precautions were necessary in this system. The most likely result of an error
+in the signal is a missed command, which can result in a temporary mis-
+tracking of the decoding, as mentioned above. Given the low density of command
+data, and the small changes to the signal which the process uses, these errors
+are seldom more audible than the error would be in the absence of the process.
+The chances of a storage error being falsely interpreted as a command are
+extremely small.
+
+For material not recorded using the encoder, a small probability for a false
+trigger does exist. Given a moderate length for the scrambling shift register
+so that its mapping behaves in a noise-like fashion and a choice of
+synchronizing pattern which avoids patterns likely to appear in audio data
+with a higher than average probability, susceptibility to false triggers can
+be made arbitrarily small by increasing the length of the part of the packet
+requiring a match. In the case of the current system, the combination of the
+synchronizing pattern with the bit equivalence for all valid commands plus
+check sum results in a required match equivalent to 39 sequential bits. For a
+stereo signal, in which a match must occur in both channels within a one
+second interval and the commands in both channels must specify the same gains,
+this amounts to an expectation of one event in approximately 150 million years
+of audio.
+
+The scrambling operation uses a feedback shift register designed for a maximal
+length sequence in which data taken from taps in the register are added using
+modulo two arithmetic, equivalent to an 'exclusive or' operation, and fed back
+to the input of the register. For a given register length there are certain
+configurations of taps which will produce a sequence of one and zero values at
+the output that does not repeat until 2N-1 values have emerged, where N is the
+length of the shift register. This corresponds to the number of possible
+states of the shift register minus one illegal state, and is called a maximal
+length sequence. Such an output sequence has very noise-like properties and,
+in fact, is the basis of some noise generators. We use the noise-like behavior
+of the generator to scramble the command signals by adding them modulo two to
+the input of the shift register, as for example in Figure 7a. This has the
+advantage that a second similar shift register with taps in the same places
+but with only feed forward addition modulo two (Figure 7b) will reproduce the
+original input sequence when fed with the output of the first one. The fact
+that the decode side has no feedback means that the initialization
+requirements are limited to having N input samples prior to the beginning of
+decoding, which means that the decoder will "lock up" very quickly. In this
+scheme, the presence of a bit error anywhere in the length of a packet plus
+initialization sequence will completely scramble the data, preventing
+recovery. However, in practice, this has not been a problem for reasons
+described above.
+
+Peter.
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

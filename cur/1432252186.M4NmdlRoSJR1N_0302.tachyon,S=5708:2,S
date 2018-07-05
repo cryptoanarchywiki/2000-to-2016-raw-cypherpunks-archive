@@ -1,0 +1,126 @@
+From owner-cypherpunks@Algebra.COM  Thu Feb 22 16:59:39 2001
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.72.0.53])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id QAA26221
+	for <kwantam@positron.mit.edu>; Thu, 22 Feb 2001 16:59:39 -0500
+Received: from ak47.algebra.com (root@ak47.algebra.com [208.233.99.160])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id QAA08810
+	for <rsw@mit.edu>; Thu, 22 Feb 2001 16:59:38 -0500 (EST)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f1MKwJw20109
+	for cypherpunks-outgoing; Thu, 22 Feb 2001 14:58:19 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from einstein.ssz.com (cpunks@einstein.ssz.com [204.96.2.99])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f1MKwGs20089
+	for <cypherpunks@algebra.com>; Thu, 22 Feb 2001 14:58:16 -0600
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id PAA31573
+	for cypherpunks@algebra.com; Thu, 22 Feb 2001 15:08:46 -0600
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id PAA31560
+	for cypherpunks-outgoing; Thu, 22 Feb 2001 15:07:11 -0600
+Received: from localhost (ravage@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) with SMTP id PAA31556
+	for <cypherpunks@einstein.ssz.com>; Thu, 22 Feb 2001 15:07:09 -0600
+Date: Thu, 22 Feb 2001 15:07:09 -0600 (CST)
+From: Jim Choate <ravage@ssz.com>
+To: cypherpunks@einstein.ssz.com
+Old-Subject: CDR: Remailer Functions (Re: Testing for encryption. (fwd))
+Message-ID: <Pine.LNX.3.96.1010222142849.5925p-100000@einstein.ssz.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Reply-To: cypherpunks@ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Acceptable-Languages: English, Russian, German, French, Spanish
+Subject:  Remailer Functions (Re: Testing for encryption. (fwd))
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 3470
+Lines: 78
+
+
+
+Which raises an interesting question for me, Plan 9 has no remailer and
+I've decided to take that on as a first project. However, I want to
+combine the features of say majordomo with several different sorts of
+anonymity (ranging from stripping From: headers to full encryption). For
+the time being I'm refering to it as 'igor'.
+
+I believe fundamentally that putting routing info in the body of the
+traffic is evil. So I intend to use the Subject: with default delimiters
+(ie [igor: *]). So if you wanted to send to SSZ CDR under igor and strip
+your headers the command might be Subject: Foobar [igor: strip_header].
+The [*] is itself always stripped. There will also be a no_log that won't
+log the receipt or transmission in any system file. You could of course
+chain commands. While I do intend to allow igor to use a 'set' of trusted
+remailers using PKE the actual selection of remailers will be decided by
+the listproc and not the user. They'll only be able to do, for example,
+
+[igor: encrypt, mix, strip_header, no_log, check_pgp]
+
+This would for example encrypt the body using the inter-igor PK's. It
+would send the email w/ cover traffic to some number of remailers (maybe
+mix_# also?). It would strip the header before it did anything so in
+effect the recipient will see the last remailers header and that's it. No
+log would instruct all igor nodes to not log the traffic. And finally it
+would ensure that the original source traffic fit the PGP format (it would
+support other algorithms through loadable modules.
+
+Inter-igor traffic relating to a particular piece of mail would be wrapped
+around the actual traffic under question (the body would never be touched
+by igor's hands directly). I've still not decided exactly what scope this
+command set will cover.
+
+With respect to mix, what I intend is each igor will have a list of
+trusted single-hop receivers. It will randomly select n (or m if n>m) of
+these and use the PK's to encrypt the traffic. It will only send/receive
+from this trusted list. So if you tell igor to use 3 layers of remailer
+then each node can only know of it's immediate neighbors and won't have
+any way of determining where any neighbor received it from (Yes, the
+wording of the last couple of sentences is a tad vague).
+
+It will of course support the sorts of features that majordomo has as
+well.
+
+What other sorts of features might be useful?
+
+---------- Forwarded message ----------
+Date: Thu, 22 Feb 2001 12:07:23 -0800
+From: David Honig <honig@sprynet.com>
+
+Actually these functions belong in the listserver (remailer) not the SMTP
+agent.
+
+1. filter on: 
+	list of acceptable substrings such as headers, 'CDR:' tokens, etc.; and/or 
+	entropy threshold and/or; 
+	recognized digsigs from members of the list
+
+2. decrypt
+
+3. for each list member
+	encrypt msg from previous step and send
+
+
+    ____________________________________________________________________
+
+           Before a larger group can see the virtue of an idea, a
+           smaller group must first understand it.
+
+                                           "Stranger Suns"
+                                           George Zebrowski
+
+       The Armadillo Group       ,::////;::-.          James Choate
+       Austin, Tx               /:'///// ``::>/|/      ravage@ssz.com
+       www.ssz.com            .',  ||||    `/( e\      512-451-7087
+                           -====~~mm-'`-```-mm --'-
+    --------------------------------------------------------------------
+
+

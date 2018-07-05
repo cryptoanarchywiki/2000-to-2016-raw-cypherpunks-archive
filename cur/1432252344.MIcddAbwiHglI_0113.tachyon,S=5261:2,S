@@ -1,0 +1,108 @@
+From owner-cypherpunks@al-qaeda.net  Wed Jul 22 17:24:58 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id n6MLOCLA008410
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 22 Jul 2009 17:24:12 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id n6MLOClU008409
+	for cypherpunks-outgoing; Wed, 22 Jul 2009 17:24:12 -0400
+Date: Wed, 22 Jul 2009 23:24:07 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: why hyperelliptic curves?
+Message-ID: <20090722212406.GT23524@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4288
+Lines: 83
+
+----- Forwarded message from Zooko Wilcox-O'Hearn <zooko@zooko.com> -----
+
+From: Zooko Wilcox-O'Hearn <zooko@zooko.com>
+Date: Sat, 18 Jul 2009 11:03:45 -0600
+To: Tanja Lange <tanja@hyperelliptic.org>,
+	"James A. Donald" <jamesd@echeque.com>,
+	Cryptography List <cryptography@metzdowd.com>
+Subject: why hyperelliptic curves?
+X-Mailer: Apple Mail (2.753.1)
+
+Oh, and by the way the way that TahoeLAFS uses public key  
+cryptography highlights some of the weaknesses of current public key  
+techniques and some of the strengths of possible future techniques  
+such as hyperelliptic curves.  (I know that Tanja Lange has done a  
+lot of work on those.)
+
+TahoeLAFS generates a unique public-private key pair for each mutable  
+file and each directory.  (Immutable files don't use public key  
+cryptography at all -- they are secured solely with a stream cipher  
+and secure hashes.)  The "file handle" or "capability" to a mutable  
+file or directory contains the actual public key (if it is a read- 
+only capability) or the actual private key (if it is a read-write  
+capability).  Therefore some of our most important measures of  
+performance are public key size and keypair generation time.   
+Unfortunately, we blundered into using one of the worst possible  
+public key signature algorithms for such requirements: RSA!  Our  
+current project is replacing RSA with ECDSA.  TahoeLAFS v2.0 will  
+support ECDSA-based capabilities (in addition to RSA-based ones for  
+backward compatibility).
+
+TahoeLAFS also requires more than two levels of privilege.  With  
+traditional public/private keys there are exactly two levels: you  
+either know the private key or you don't.  We need to have an  
+intermediate level of privilege -- someone who doesn't know the  
+private key but who does know something that not everyone knows.   
+(Everyone knows the public key.)  We use these three levels of  
+privilege to create read-write capabilities, read-only capabilities  
+and verify capabilities.   (A verify capability gives the ability to  
+check integrity of the ciphertext, which everyone has, because  
+everyone knows the public key).  If this doesn't make sense to you  
+then see if my longer explanation in lafs.pdf makes any more sense.
+
+Anyway, if it is true that hyperelliptic curves have a security level  
+commensurate with the number of bits in the public key, then  
+hyperelliptic curves with semi-private keys would be the ideal public  
+key crypto signature scheme for TahoeLAFS.  Unfortunately, semi- 
+private keys aren't proven secure nor properly peer-reviewed, and  
+hyperelliptic curves aren't well implemented or widely appreciated.   
+Hopefully someday TahoeLAFS v3.0 will support semi-private- 
+hyperelliptic-curve-based capabilities (in addition to RSA and ECDSA  
+for backward compatibility).
+
+Regards,
+
+Zooko Wilcox-O'Hearn
+
+P.S.  Oh, I told a lie in the interests of brevity when I said that  
+file handles contain actual public keys or actual private keys.  RSA  
+keys are way too big for that.  So instead we go through interesting  
+contortions to make a "surrogate" value which can be used to check  
+the correctness of the RSA key (i.e. the surrogate value is derived  
+from the RSA key by secure hashing) as well as can be used to control  
+access to the RSA key (the RSA key is encrypted with a stream cipher  
+using the surrogate value as the symmetric encryption key).  The  
+surrogate value therefore offers the same integrity and access  
+control properties as the RSA key itself (when the user also has  
+access to the encrypted RSA key itself), but it is sufficiently short  
+to embed directly into the file handles a.k.a. capabilities.  This  
+too is explained more fully in lafs.pdf.
+
+[1] http://allmydata.org/~zooko/lafs.pdf
+[2] http://allmydata.org/trac/tahoe/ticket/217#comment:50
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

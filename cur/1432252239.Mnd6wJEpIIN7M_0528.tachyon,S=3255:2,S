@@ -1,0 +1,69 @@
+From owner-cypherpunks@jfet.org  Tue Oct  4 14:08:44 2005
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.4/8.13.4/Debian-3) with ESMTP id j94I82fF003597
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 4 Oct 2005 14:08:02 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.4/8.13.4/Submit) id j94I82HJ003596
+	for cypherpunks-outgoing; Tue, 4 Oct 2005 14:08:02 -0400
+Message-Id: <6.2.5.4.2.20051004100012.05c333a8@qualcomm.com>
+X-Mailer: QUALCOMM Windows Eudora Version 6.2.5.4 (Beta)
+Date: Tue, 04 Oct 2005 10:13:32 -0700
+To: "R.A. Hettinga" <rah@shipwright.com>
+From: Greg Rose <ggr@qualcomm.com>
+Subject: Re: Venona not all decrypted?
+Cc: cryptography@metzdowd.com, cypherpunks@jfet.org
+In-Reply-To: <p06230975bf6742558c47@[68.167.57.91]>
+References: <p06230975bf6742558c47@[68.167.57.91]>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2105
+Lines: 41
+
+At 16:20 2005-10-03 -0400, R.A. Hettinga wrote:
+>I just heard that the Venona intercepts haven't all been decrypted, and
+>that the reason for that was there "wasn't enough budget to do so".
+>
+>Is that "not enough budget" to apply the one-time pads they already have,
+>or is that the once-and-futile exercise of "decrypting" ciphertext with no
+>one-time pad to go with it?
+
+Here's my understanding of how Venona worked, and why budget would be 
+a problem. I could be completely off base, though.
+
+The OTPs were only very occasionally misused, by being used more than 
+once. So the breaks occurred when two separate messages, or possibly 
+fragments of messages, were combined in such a way as to cancel out 
+the OTP, then the resulting running-key cipher was solved to yield 
+the two messages. I don't think that the NSA had access to the pads 
+themselves, except after having recovered the messages (and hence the 
+pad for those messages). So there really isn't likelihood that that 
+pad would be reused even more times.
+
+To detect that a pad has been reused, you basically have to line up 
+two ciphertexts at the right places, combine them appropriately, and 
+run a statistical test on the result to see if it shows significant 
+bias. This is an O(n^2.m) problem, where n is the number of units to 
+be tested (maybe whole messages, maybe pages of OTP, maybe at the 
+character level? Who knows?) and m represents enough text to reliably 
+detect a collision. There was a very large amount of intercepted 
+data, and it's presumably all stored on tapes somewhere, so that n^2 
+factor probably involves actually mounting tapes and stuff.
+
+But in a way, you're right; it should, with today's technology, be 
+possible to just read all the tapes once onto a big RAID, and set the 
+cluster to work for a year or two.
+
+Greg.
+
+
+Greg Rose                                    INTERNET: ggr@qualcomm.com
+Qualcomm Incorporated     VOICE: +1-858-651-5733   FAX: +1-858-651-5766
+5775 Morehouse Drive                    http://people.qualcomm.com/ggr/
+San Diego, CA 92121   232B EC8F 44C6 C853 D68F E107 E6BF CD2F 1081 A37C
+

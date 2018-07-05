@@ -1,0 +1,103 @@
+From full-disclosure-bounces@lists.grok.org.uk  Sat Dec 14 07:34:01 2013
+Return-Path: <full-disclosure-bounces@lists.grok.org.uk>
+Received: from lists.grok.org.uk (lists.grok.org.uk [212.98.70.170])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id rBECXxvr004877
+	for <rsw@jfet.org>; Sat, 14 Dec 2013 07:34:00 -0500
+Authentication-Results: antiproton.jfet.org; dkim=fail
+	reason="verification failed; insecure key"
+	header.d=gmail.com header.i=@gmail.com header.b=A9E3PbmA;
+	dkim-adsp=none (insecure policy); dkim-atps=neutral
+Received: from lists.grok.org.uk (localhost [127.0.0.1])
+	by lists.grok.org.uk (Postfix) with ESMTP id 208715A4;
+	Sat, 14 Dec 2013 12:33:38 +0000 (GMT)
+X-Original-To: full-disclosure@lists.grok.org.uk
+Delivered-To: full-disclosure@lists.grok.org.uk
+Received-SPF: pass (lists.grok.org.uk: domain of coderman@gmail.com designates
+ 209.85.128.51 as permitted sender)
+Received: from mail-qe0-f51.google.com (mail-qe0-f51.google.com
+ [209.85.128.51])
+ by lists.grok.org.uk (Postfix) with ESMTP id 77B313C4
+ for <full-disclosure@lists.grok.org.uk>; Sat, 14 Dec 2013 12:33:32 +0000 (GMT)
+Received: by mail-qe0-f51.google.com with SMTP id 1so2540298qee.10
+ for <full-disclosure@lists.grok.org.uk>; Sat, 14 Dec 2013 04:33:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:date:message-id:subject:from:to:content-type;
+ bh=tuEb4kVah4xfuyEsl6wG/5cGN0woNe6V03L49sydA0w=;
+ b=A9E3PbmAKGaS1WHzBGcT2TpnwjgItlcsVDrwpqEWP7K3cEVPYHDccxsFXE/aP0v6N+
+ sD1yrK+ka2V9spVYPwL9AGSrbqIA6niIFqwChF+tDook2OyqFEFqSQvBgLr9VTKbOyLj
+ 0eB/QfHki7vJtXw5H6LN3qCO8ut0rSLy2wmJjxot2AToHXa9OG0U7UzygF1Fo+4sZpZh
+ /SQHfAlRFbFeUABSgzv0w9GEmpbSnW99kul0KrbIz7Wawb5kWiNAm+4n7KWDqS6BrbtC
+ 22tdLdx/3br8yejudPDKMbBrce4j2U/pPdCgmiOeaK4m0+WAKU4lIONpAuDwNqkp9bGo
+ Xa3w==
+MIME-Version: 1.0
+X-Received: by 10.224.40.195 with SMTP id l3mr13965548qae.44.1387024411317;
+ Sat, 14 Dec 2013 04:33:31 -0800 (PST)
+Received: by 10.96.94.68 with HTTP; Sat, 14 Dec 2013 04:33:31 -0800 (PST)
+Date: Sat, 14 Dec 2013 04:33:31 -0800
+Message-ID: <CAJVRA1RZJgO2wOKsY8pMxnwpHPnLgx9DiW4_1CzxotT==f3rFw@mail.gmail.com>
+From: coderman <coderman@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>,
+        Full Disclosure <full-disclosure@lists.grok.org.uk>
+Subject: [Full-disclosure] RDRAND used directly when default engines loaded
+ in openssl-1.0.1-beta1 through openssl-1.0.1e
+X-BeenThere: full-disclosure@lists.grok.org.uk
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: A lightly-moderated mailing list for the discussion of security
+ issues <full-disclosure.lists.grok.org.uk>
+List-Unsubscribe: <https://lists.grok.org.uk/mailman/options/full-disclosure>, 
+ <mailto:full-disclosure-request@lists.grok.org.uk?subject=unsubscribe>
+List-Archive: <http://lists.grok.org.uk/pipermail/full-disclosure/>
+List-Post: <mailto:full-disclosure@lists.grok.org.uk>
+List-Help: <mailto:full-disclosure-request@lists.grok.org.uk?subject=help>
+List-Subscribe: <https://lists.grok.org.uk/mailman/listinfo/full-disclosure>, 
+ <mailto:full-disclosure-request@lists.grok.org.uk?subject=subscribe>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: full-disclosure-bounces@lists.grok.org.uk
+Sender: "Full-Disclosure" <full-disclosure-bounces@lists.grok.org.uk>
+
+as per the FreeBSD announcement[0] and others[1][2] direct use of
+RDRAND as sole entropy source is not recommended.
+
+from Westmere onward you could use AES-NI to make crypto fast in
+OpenSSL.  a common theme is to initialize OpenSSL via
+ENGINE_load_builtin_engines() which lets OpenSSL take advantage of
+this acceleration.
+
+with Sandy Bridge you also got RDRAND. now load_builtin_engines
+results in the application using RDRAND directly for all entropy, in
+addition to accelerating AES.
+
+
+if you are using an application linked with openssl-1.0.1-beta1
+through openssl-1.0.1e you should do one of the following:
+
+a.) rebuild your OpenSSL with OPENSSL_NO_RDRAND defined.
+
+b.) call RAND_set_rand_engine(NULL) after ENGINE_load_builtin_engines().
+
+c.) git pull latest openssl with commit: "Don't use rdrand engine as
+default unless explicitly requested." - Dr. Stephen Henson
+
+the OPENSSL_NO_RDRAND option is recommended; an inadvertent call to
+load engines elsewhere could re-enable this bad rng behavior.
+
+
+best regards,
+
+
+0. "FreeBSD Developer Summit: Security Working Group, /dev/random"
+  https://wiki.freebsd.org/201309DevSummit/Security
+
+1. "Surreptitiously Tampering with Computer Chips"
+  https://www.schneier.com/blog/archives/2013/09/surreptitiously.html
+
+2. "How does the NSA break SSL? ... Weak random number generators"
+  http://blog.cryptographyengineering.com/2013/12/how-does-nsa-break-ssl.html
+
+_______________________________________________
+Full-Disclosure - We believe in it.
+Charter: http://lists.grok.org.uk/full-disclosure-charter.html
+Hosted and sponsored by Secunia - http://secunia.com/
+

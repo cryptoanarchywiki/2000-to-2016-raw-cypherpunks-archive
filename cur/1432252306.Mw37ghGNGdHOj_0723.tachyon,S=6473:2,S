@@ -1,0 +1,133 @@
+From owner-cypherpunks@al-qaeda.net  Sat Sep  5 06:05:48 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id n85A5lPv004237
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sat, 5 Sep 2009 06:05:47 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id n85A5l73004236
+	for cypherpunks-outgoing; Sat, 5 Sep 2009 06:05:47 -0400
+Date: Sat, 5 Sep 2009 12:05:43 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: so how do *you* manage your keys, then? part 3
+Message-ID: <20090905100543.GQ4508@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Zooko Wilcox-O'Hearn <zooko@zooko.com> -----
+
+From: Zooko Wilcox-O'Hearn <zooko@zooko.com>
+Date: Wed, 2 Sep 2009 13:50:21 -0600
+To: tahoe-dev@allmydata.org, Cryptography List <cryptography@metzdowd.com>
+Subject: so how do *you* manage your keys, then? part 3
+X-Mailer: Apple Mail (2.753.1)
+
+So How Do You Manage Your Keys Then, part 3 of 5
+
+In part one of this series [1] I described how Tahoe-LAFS combines  
+decryption, integrity-checking, identification, and access into one  
+bitstring, called an "immutable file read-cap" (short for  
+"capability").  In part two [2] I described how users can build tree- 
+like structures of files which contain caps pointing to other files,  
+and how the cap pointing to the root of such a structure can reside  
+on a different computer than the ciphertext.  (Which is necessary if  
+you want someone to store the ciphertext for you but you don't want  
+to give them the ability to read the file contents.)
+
+In this installment, consider the question of whether you can give  
+someone a cap (which acts as a file handle) and then change the  
+contents of the file that the cap points to, while preserving their  
+ability to read with the original cap.
+
+This would be impossible with the immutable file read-caps that we  
+have been using so far, because each immutable file read cap uses a  
+secure hash function to identify and integrity-check exactly one  
+file's contents -- one unique byte pattern.  Any change to the file  
+contents will cause the immutable file read-cap to no longer match.   
+This can be a desirable property if what you want is a permanent  
+identifier of one specific, immutable file.  With this property  
+nobody -- not even the person who wrote the file in the first place  
+-- is able to cause anyone else's read-caps to point to any file  
+contents other than the original file contents.
+
+But sometimes you want a different property, namely that an  
+authorized writer *can* change the file contents and readers will be  
+able to read the new file contents without first having to acquire a  
+new file handle.
+
+To accomplish this requires the use of public key cryptography,  
+specifically digital signatures.  Using digital signatures, Tahoe- 
+LAFS implements a second kind of capability, in addition to the  
+immutable-file capability, which is called a "mutable file  
+capability".  Whenever you create a new mutable file, you get *two*  
+caps to it: a write-cap and a read-cap.  (Actually you can always  
+derive the read-cap from the write-cap, so for API simplicity you get  
+just the write-cap to your newly created mutable file.)
+
+Possession of the read-cap to the mutable file gives you two things:  
+it gives you the symmetric encryption key with which you decrypt the  
+file contents, and it gives you the public key with which you check a  
+digital signature in order to be sure that the file contents were  
+written by an authorized writer.  The decryption and signature  
+verification both happen automatically whenever you read data from  
+that file handle (it downloads the digital signature which is stored  
+with the ciphertext).
+
+Possession of the write-cap gives two things: the symmetric key with  
+which you can encrypt the ciphertext, and the private key with which  
+you can sign the contents.  Both are done automatically whenever you  
+write data to that file handle.
+
+The important thing about this scheme is that what we crypto geeks  
+call "key management" is almost completely invisible to the users.   
+As far as the users can tell, there aren't any "keys" here!  The only  
+objects in sight are the file handles, which they already use all the  
+time.
+
+All users need to know is that a write-cap grants write authority  
+(only to that one file), and the read-cap grants read authority.   
+They can conveniently delegate some of their read- or write-  
+authority to another user, simply by giving that user a copy of that  
+cap, without delegating their other authorities. They can bundle  
+multiple caps (of any kind) together into a file and then use the  
+capability to that file as a handle to that bundle of authorities.
+
+At least, this is the theory that the object-capability community  
+taught me, and I'm pleased to see that -- so far -- it has worked out  
+in practice.
+
+Programmers and end users appear to have no difficulty understanding  
+the access control consequences of this scheme and then using the  
+scheme appropriately to achieve their desired ends.
+
+Installment 4 of this series will be about Tahoe-LAFS directories  
+(those are the most convenient way to bundle together multiple caps  
+-- put them all into a directory and then use the cap which points to  
+that directory).  Installment 5 will be about future work and new  
+crypto ideas.
+
+Regards,
+
+Zooko
+
+[1] http://allmydata.org/pipermail/tahoe-dev/2009-August/002637.html  
+# installment 1: immutable file caps
+[2] http://allmydata.org/pipermail/tahoe-dev/2009-August/002656.html  
+# installment 2: tree-like structure (like encrypted git)
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

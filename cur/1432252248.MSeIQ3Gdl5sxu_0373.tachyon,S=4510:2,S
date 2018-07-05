@@ -1,0 +1,92 @@
+From owner-cypherpunks@al-qaeda.net  Sun Feb 10 00:03:06 2008
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.13.8/8.13.8/Debian-3) with ESMTP id m1A52fCV025345
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sun, 10 Feb 2008 00:02:41 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.8/8.13.8/Submit) id m1A52f2N025344
+	for cypherpunks-outgoing; Sun, 10 Feb 2008 00:02:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;        
+  d=gmail.com; s=gamma;        
+  h=domainkey-signature:received:received:message-id:date:from:to:subject:mime-version:content-type:content-transfer-encoding:content-disposition;
+          bh=voLwLjgfQozJuVnpZm+xBqSX1BR2PD0N4CAS20fVKLE=;        
+  b=O2Tok3HJ/k6PS62ZVGf3s0teKBJjSQxhuKJa2745PxDQBSMbBACoh8Z+C7v6GR6Bgcu8cuB3JGWaOWITaZGl/9LloR+14aJCSMGGhbKq2ttLhcz8mdm5M2l3/OGKHH3QuAWsD35ljqe0MeN9O2Ri0j9V+XoGR68/CR7nF6K277I=
+DomainKey-Signature: a=rsa-sha1; c=nofws;         d=gmail.com; s=gamma; 
+  h=message-id:date:from:to:subject:mime-version:content-type:content-transfer-encoding:content-disposition;
+  b=G2MKaHJfAqqjeRdTBBvTEyn6O2V4/DMXN19a4GxpJMm4ebeo4TMB5GiuPoCIKmdp0v8AnUhk8Q0/PsCeFId9+VglsWLRl3m1gmIZYErItp1n5DRB3hxDNbJ/1yWPb41rX6cDJ+acDMc4pDRr/0moRBjN9JT9y+LCL9DuibbKTvs=
+Message-ID: <4ef5fec60802092102j13b3012cyfbf578dc1b502325@mail.gmail.com>
+Date: Sat, 9 Feb 2008 21:02:38 -0800
+From: coderman <coderman@gmail.com>
+To: cypherpunks@al-qaeda.net
+Subject: Toshiba tips random-number generator IC, is disingenuous
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2659
+Lines: 59
+
+i've been using the VIA padlock XSTORE instruction for entropy since
+at least 2003, back when the C5XL hit the stage and you had a single
+source (a combination of three free wheeling oscillators).
+
+the next revision, the C5P, and all C5/C7 cores since than have
+included two of these sources, individually selectable or capable of
+working in tandem. (6 oscillators)
+
+the throughput of these devices varies from 200k-2Mbps in a most
+paranoid configuration, with whitener enabled and a conservative
+sampling, up to more than 100Mbps in dual full throttle configuration
+(which should only be used when the on die AES or SHA1 is applied to
+obscure TRNG bias).
+
+http://www.eetimes.com/rss/showArticle.jhtml?articleID=206106199
+"""
+Toshiba Corp. has claimed a major breakthrough in the field of
+security technology: It has devised the world's highest-performance
+physical random-number generator (RNG) circuit.
+
+The device generates random numbers at a data rate of 2.0 megabits a
+second, according to Toshiba in a paper presented at the International
+Solid-State Circuits Conference (ISSCC) here.
+"""
+
+i must assume they are splitting hairs here, as VIA is not the only
+one to outperform such benchmarks, but you do buy the whole chip, not
+a stand-alone TRNG IC component.
+
+in any case, it is amusing that they got such mileage from a
+masturbatory press release, while things like padlock, integrating
+crypto directly into CPU instructions, seems to garner less respect
+and press.
+
+last but not least, i recently purchased an Everex 15.4" StepNote
+NC1610 Laptop PC w/ Via C7-M Processor [0].  spend the $30 to bring
+this up to 2G of ram, and you've got an excellent little linux laptop
+that can handle full disk crypto with ease (i've even benchmarked
+loop-aes with 32 rounds in AES-256, just for fun, which the XCRYPT
+instruction handles without breaking a sweat).
+
+if you're concerned about all that border search stupidity, and tired
+of software FDE or cryptainer compromises, this is a great
+alternative.
+
+i've long been a fan of these cores, and i think any cypherpunk would
+appreciate the capability these tiny, low power chips posses in terms
+of crypto horsepower.
+
+[i will, however, never forgive them for the abomination that is the
+padlock hash engine.  why they required the SHA instruction to
+finalize, limited the digest input size, and requiring an elaborate
+fault to get an un-finalized state, is beyond me.  however, the rest
+of the chip makes of up such a shortcoming, all things considered]
+
+best regards,
+
+0. $448.00 - Everex 15.4" StepNote NC1610 Laptop PC w/ Via C7-M Processor
+    http://www.walmart.com/catalog/product.do?product_id=7754611
+

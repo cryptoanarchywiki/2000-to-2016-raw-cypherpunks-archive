@@ -1,0 +1,102 @@
+From owner-cypherpunks@jfet.org  Sat Oct  1 07:29:30 2005
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.4/8.13.4/Debian-3) with ESMTP id j91BT3tm013633
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sat, 1 Oct 2005 07:29:03 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.4/8.13.4/Submit) id j91BT3u2013632
+	for cypherpunks-outgoing; Sat, 1 Oct 2005 07:29:03 -0400
+Date: Sat, 1 Oct 2005 13:28:53 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@jfet.org
+Subject: [arma@mit.edu: Why some Tor servers are slow (was Re: TOR Park
+  Exit Node Question)]
+Message-ID: <20051001112853.GC2249@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.5.9i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3318
+Lines: 74
+
+----- Forwarded message from Roger Dingledine <arma@mit.edu> -----
+
+From: Roger Dingledine <arma@mit.edu>
+Date: Fri, 30 Sep 2005 18:46:01 -0400
+To: or-talk@freehaven.net
+Subject: Why some Tor servers are slow (was Re: TOR Park Exit Node Question)
+User-Agent: Mutt/1.5.9i
+Reply-To: or-talk@freehaven.net
+
+On Fri, Sep 30, 2005 at 02:04:46PM +0300, Giorgos Pallas wrote:
+> >What I mean is, is it normal for the Tonga server to claim over 4 MB of
+> >bandwidth ? If so, why are other servers that are on a 100 Mbit link not
+> >reporting more bandwidth ?
+
+Tonga is using dual AMD64's. Moria also uses those CPUs. They seem to
+be extremely fast at crypto (and everything else).
+
+Tonga also advertises port 80 and 443, so it's useful for people
+stuck behind fascist firewalls.
+
+Tonga also opened up its exit policy to attract more traffic. Servers
+that have lots of unused capacity, and are fast and have high uptime, and
+offer unusual ports like the default file-sharing ports, will bootstrap
+themselves by advertising a little bit, attracting more clients, and
+so on.
+
+(I'm not sure I actually like the fact that Tonga opened up its file
+sharing ports, since it puts more load on the rest of the network too,
+but I guess since we're still in development, a little bit of stress
+like this can be good for us.)
+
+> >While typing this it occurred to me that the default
+> >MaxAdvertisedBandwith is 2 MB and that Tonga has probably set it higher...
+
+Actually, the default MaxAdvertisedBandwidth is 128 TB. I believe
+you're thinking of BandwidthRate.
+
+> Whis has also been a question of mine. Why my tor router handles a very
+> low traffic volume (~30 KB in and out) while at the same time has 100%
+> connectivity, 100Mbps of real bandwidth and stays up for more than a
+> week (until it crashes due to memory ;-)... Could anyone help with that?
+> It's frustrating wanting to share (bandwidth in our case) with the
+> community but not being able to do so!
+
+There is something wrong with the masquerade Tor server. You can see it
+yourself (you may have to try from someplace other than masquerade's LAN,
+though) -- run "telnet 155.207.113.227 9001" and hit enter about 10 times.
+
+Notice how it's really sluggish and takes a long time before it hangs up.
+
+Now run "telnet 82.94.251.206 443" and do the same thing. Notice how it
+realizes the ssl handshake has failed after about 5 lines. This is how
+it's supposed to be.
+
+So masquerade is somehow not putting much attention into its ssl
+handshakes. This could be because its network connection is actually
+through a proxy or a firewall that is dropping some of the packets or
+slowing things down tremendously. It could also be that it's running on
+a 100 mhz 486, or its ulimits are set to something crazy-low, or it's
+busy ray-tracing a movie, or something else.
+
+I'd be curious to learn what's up with it. I've seen this behavior before
+on Windows machines behind cable modems and crappy NAT boxes.
+
+--Roger
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a>
+______________________________________________________________
+ICBM: 48.07100, 11.36820            http://www.leitl.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+
+[demime 1.01d removed an attachment of type application/pgp-signature which had a name of signature.asc]
+

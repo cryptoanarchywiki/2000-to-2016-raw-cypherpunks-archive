@@ -1,0 +1,159 @@
+From owner-cypherpunks@al-qaeda.net  Mon Aug 27 13:05:42 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q7RGxQMh025765
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 27 Aug 2012 12:59:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1346086766;
+	bh=7JOpWIYbFFT44CcMWi0d8sGgVXwtmykKGvUsXVNORqI=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=6tpgNjhzMsIXpLePSNt/PxUxSFTk8Q+ib8byROqT3OntanGe0QIKbU6GArfC7wz5B
+	 kuUB8sA04bHWTvei4e17JHNgW9zms0K5oHuA98nMbpgPYcnYi2h5n8y8HxZkbQKcp4
+	 jZggKAW6tlCsdr7uA7U7jpngxnGe7JI9DxfpyxAU=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q7RGxQii025764
+	for cypherpunks-outgoing; Mon, 27 Aug 2012 12:59:26 -0400
+Date: Mon, 27 Aug 2012 18:59:22 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: Re: [tor-talk] End-to-end correlation for fun and profit
+Message-ID: <20120827165922.GR12615@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5988
+Lines: 127
+
+----- Forwarded message from Mike Perry <mikeperry@torproject.org> -----
+
+From: Mike Perry <mikeperry@torproject.org>
+Date: Fri, 24 Aug 2012 15:12:42 -0700
+To: tor-talk@lists.torproject.org
+Subject: Re: [tor-talk] End-to-end correlation for fun and profit
+Reply-To: tor-talk@lists.torproject.org
+
+Thus spake Ted Smith (tedks@riseup.net):
+
+> On Mon, 2012-08-20 at 10:33 +0300, Maxim Kammerer wrote:
+> > Hello gentlemen,
+> <snip>
+> > [1] http://pastebin.com/hgtXMSyx
+> 
+> I ran this script on the current consensus. The full results (the
+> nodes-sniff-summary file) are below my signature. How did you compile
+> the country-codes to IPs list? That wasn't produced by the script.
+> 
+> It's comforting that this approach yields quickly diminishing returns.
+> Going from 25 to 60 networks only gets you a 10% increase in networks
+> surveillance (if I'm reading the output correctly), and returns plateau
+> entirely at that point (I'm considering about two percent to be in the
+> noise, which may not be appropriate to this domain).
+> 
+> Also, it's not immediately clear whether eavesdropping those networks
+> would actually get you strong enough correlation to accurately
+> de-anonymize users[1]. If our rodent(?) friend(s?) could comment on
+> this, I'd appreciate their expertise.
+
+The Raccoon has made a believer out of me, but there are some limits to
+both of his/her proofs.. The full proofs can still be found here:
+http://web.archive.org/web/20100416150300/http://archives.seul.org/or/dev/Sep-2008/msg00016.html
+https://lists.torproject.org/pipermail/tor-dev/2012-March/003347.html
+
+The actual numbers from the examples of the first proof are affected by
+the resolution of the data retention. The core concept of the proof
+seems to hold no matter what (that full dragnet n^2 correlation is hard,
+and the amount of similar co-incident traffic - aka the base rate - is
+what makes it hard), but if the adversary has full observation of *all*
+traffic data, they *might* be able to do better than 99.9% true positive
+rate. It's not clear that low-resolution connection-level data retention
+or even sampled netflow data can provide anywhere near that true
+positive rate, though.
+
+A full adversary may also get to combine repeat observations (assuming
+it is possible to identify them as from the same user), but the post
+mentions that.
+
+Incidentally, my guess is that's probably one of the reasons for the
+huge boondoggle^W datacenter in Utah. They probably realized that to
+reliably track large botnet activity, they really needed to log all data
+forever. Well, keep sitting on the unpublished 0day software
+vulnerabilities, guys. That should totally help you solve both those
+problems, once and for all. Oh wait. ;)
+
+Anyways, the key thing I think the first proof tells us is that even
+sloppy defenses against correlation attacks are likely to work against
+dragnet surveillance/data retention, especially if you have a lot of
+co-incident traffic to blend in with and if the data retention
+resolution is low.
+
+I think this alone can justify experimentation with traffic padding
+to/from Guard nodes, where bandwidth is relatively cheap and plentiful.
+It especially justifies minimal amounts of Guard node padding to defend
+against the single-ended version of the end-to-end correlation attack,
+which is also known as the "website traffic fingerprinting attack". The
+single ended version is even *more* vulnerable to the properties of
+background traffic than the double-ended version, and has far fewer
+reliably recognizable traffic features to extract from data streams as
+well. See this blog post and its links for more details:
+https://blog.torproject.org/blog/experimental-defense-website-traffic-fingerprinting 
+
+It's my personal opinion that we should also experiment with Guard
+padding against the website traffic fingerprinting attack, and see
+how far that gets us against e2e correlation while we're at it.
+
+Unfortunately, current academic religious dogma tends to hold that
+correlation is unbeatable no matter what. This publication and research
+bias already has hindered and will likely continue to hinder research
+into viable defenses :(.
+
+
+The second proof wrt tagging attacks scared the crap out of me. However,
+the "c/n" compromise result at the end hinges crucially on nodes that
+fail circuits being able to attract additional traffic to make up for
+it. The bandwidth authorities might do this to a certain extent
+currently, and will certainly do it if operated in "PID feedback mode".
+However it's still not clear that the 3 guard node round-robin circuit
+selection properties of Tor wouldn't end up also hampering the attack
+against specific clients (unless the Guard nodes' keys were stolen and
+the attack is locally targeted).
+
+Either way, it's caused me to drive Nick nuts by pushing hard to include
+at least *some* kind of simple defense for circuit failure attacks on
+the client-side. How much of that actually survives in 0.2.3.x in a
+functional form remains to be seen :/.
+
+
+
+P.S. Incidentally, you used to be able to get the full copy of the first
+proof in the old seul archives at
+http://archives.seul.org/or/dev/Sep-2008/msg00016.html, but since seul
+is currently down with unknown hardware and disk issues,
+http://web.archive.org/web/20100416150300/http://archives.seul.org/or/dev/Sep-2008/msg00016.html
+might be the last full public copy other than your repost. I've added
+the Raccoon on Cc so s/he can hopefully do a full repost if the seul
+archives end up being destroyed forever.
+
+
+-- 
+Mike Perry
+
+
+
+_______________________________________________
+tor-talk mailing list
+tor-talk@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-talk
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

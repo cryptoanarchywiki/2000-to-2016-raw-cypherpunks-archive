@@ -1,0 +1,166 @@
+From owner-cypherpunks-outgoing@EINSTEIN.ssz.com  Tue Nov 28 23:08:20 2000
+Received: from MIT.EDU (SOUTH-STATION-ANNEX.MIT.EDU [18.72.1.2])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id XAA28309
+	for <kwantam@positron.mit.edu>; Tue, 28 Nov 2000 23:08:19 -0500
+Received: from einstein.ssz.com by MIT.EDU with SMTP
+	id AA06745; Tue, 28 Nov 00 23:07:36 EST
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id WAA07866
+	for cypherpunks-outgoing; Tue, 28 Nov 2000 22:05:12 -0600
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id WAA07857
+	for cypherpunks@ssz.com; Tue, 28 Nov 2000 22:05:07 -0600
+Received: from mail.virtual-estates.net (cpunks@video-collage.com [160.79.196.177])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id WAA07832
+	for <cpunks@ssz.com>; Tue, 28 Nov 2000 22:05:01 -0600
+Received: (from cpunks@localhost)
+	by mail.virtual-estates.net (8.9.3+3.2W/8.9.1) id WAA02969;
+	Tue, 28 Nov 2000 22:59:41 -0500 (EST)
+X-Authentication-Warning: video-collage.com: Processed from queue /var/spool/mqueue-majordomo
+X-Authentication-Warning: video-collage.com: Processed by cpunks with -C /usr/local/majordomo/sendmail.cf
+Received: from sirius.infonex.com (sirius.infonex.com [216.34.245.2])
+	by mail.virtual-estates.net (8.9.3+3.2W/8.9.3) with ESMTP id WAA02957
+	for <cypherpunks@algebra.com>; Tue, 28 Nov 2000 22:59:28 -0500 (EST)
+X-Relay-Ip: 216.34.245.2
+Received: (from cpunks@localhost) by sirius.infonex.com (8.8.8/8.8.8) id TAA12759; Tue, 28 Nov 2000 19:59:24 -0800 (PST)
+Received: from cyberpass.net (cyberpass.net [216.34.245.3]) by sirius.infonex.com (8.8.8/8.8.8) with ESMTP id TAA12753 for <cpunks@sirius.infonex.com>; Tue, 28 Nov 2000 19:59:17 -0800 (PST)
+Received: from cypherspace.org (adam@modemcable010.209-202-24.nowhere.mc.videotron.ca [24.202.209.10]) by cyberpass.net (8.8.8/8.7.3) with ESMTP id UAA26534 for <cypherpunks@cyberpass.net>; Tue, 28 Nov 2000 20:01:43 -0800 (PST)
+Received: (from adam@localhost) by cypherspace.org (8.8.3/8.6.12) id WAA01102; Tue, 28 Nov 2000 22:41:07 -0500
+Date: Tue, 28 Nov 2000 22:41:07 -0500
+Message-Id: <200011290341.WAA01102@cypherspace.org>
+From: Adam Back <adam@cypherspace.org>
+To: cypherpunks@cyberpass.net
+Cc: hal@finney.org
+In-Reply-To: <20001128180014.30727.qmail@nym.alias.net> (message from lcs
+	Mixmaster Remailer on 28 Nov 2000 18:00:14 -0000)
+Old-Subject: ecash, cut & choose and private credentials (Re: Jim Bell)
+Subject: CDR: ecash, cut & choose and private credentials (Re: Jim Bell)
+Sender: owner-cypherpunks@EINSTEIN.ssz.com
+Precedence: bulk
+Reply-To: cypherpunks@EINSTEIN.ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Language: English, Russian, German
+Status: O
+Content-Length: 5344
+Lines: 117
+
+
+[Hey Hal, what happened to your Chaum's ecash description?  Can't find
+it to link to].
+
+Anonymous wrote:
+> Ray wrote:
+> > Even if she provides enough 
+> > tokens to completely populate the cut-and-choose protocol, 
+> > those tokens still have to have splits of valid identification 
+> > information for somebody in them - and giving them all to 
+> > Bob so that Bob could complete the protocol with the bank - 
+> > would imply that Bob is privy to that information.
+> 
+> There are far more efficient offline systems than cut and choose.
+> You need to get past the A's and into the B's and C's in your
+> protocol list.  Check more recent work from Brands and Chaum.
+
+Here's a short description of Chaum's [2] ecash and credentials vs
+Brands' [1] more general and flexibile private credentials and ecash.
+
+So as both anonymous and Ray know cut and choose refers to the method
+of encoding identity into coin.  The basic problem is that Chaum's
+blind signature doesn't the signer see what he is signing.
+
+So cut and choose is just the user encodes identity in a number of
+candidate coins, and the bank chooses one at random and the user must
+reveal the rest.  This allows tunable probability of cheating (not
+encoding identity in the chosen coin).  This is done in such a way
+that a coin showing protocol will reveal the identity if the coin is
+spent twice (due to random values chosen by the merchant resulting in
+two simultaneous equations with two unknowns -- one of them the
+identity).
+
+Cut and choose is computation and communication inefficient.
+
+Brands' private credentials stuff uses a technique he calls secret key
+certificates to allow the issuer and the user to both see the
+attributes being signed.  The user ends up with a certificate on the
+attributes and the ability to prove the validity of the certificate
+during a certificate showing protocol.
+
+The user can also choose to selectively disclose attributes during
+disclosure, for example if there are two attributes he can reveal one
+(the coin denomination) and not the other (his identity).
+
+With Chaum's ecash you have to use the cut and choose protocol which
+is inefficient, with Brands' protocol the user and the issuer engage
+in a protocol with 3 moves (Discrete Log based variant) or 2 moves
+(RSA based variant) which is both computation and communication
+efficient.
+
+With Chaum's ecash you have to encode the coin denomination by having
+a separate public certification key for each denomination.  You don't
+have to do this with Brands' private credentials, as you can put this
+in an attribute.
+
+Also the number of attributes is arbitrary, so if it makes sense to
+have more attributes in the general private credential case, you can.
+
+(For example sex, age, nationality, passport credential, etc. you can
+reveal any combination you choose after certification.)
+
+You can also show fairly arbitrary boolean expressions involving the
+attributes and not reveal anything other than the truth of the
+expression.  (Eg. Female US citizen over 60 or Male Canadian citizen
+under 18, and not reveal sex, citizenship or age).
+
+The certificates are linkable (ie the verifier or merchant can tell
+that you are the same pseudonymous person who last showed the
+certificate), because there is a public key chosen by the user and the
+public key is revealed during the show protocol.
+
+There is also a refresh protocol where the user can give a used
+certificate and get a fresh certificate without having to show the
+attribute vales of the certificate -- the certifier just knows he is
+certifying the same as last time.  The refreshed cert would be
+unlinkable at show time from the original cert.
+
+For ecash purposes you can use private credentials to make both
+offline and online cash.
+
+So private credentials are nice and flexible for building generalised
+private credentials, and also more flexible and so allow you to do
+some things more efficiently, and do some things not directly possible
+with Chaum's credentials.
+
+Unfortunately both Brands' and Chaum's ecash and credential schemes
+are patented.  David Wagner et al also had some ideas about an ecash
+coin [3] composed roughly of a public key based MAC (ie the user can't
+verify the validity of the coin directly -- only the bank can do
+that), plus a zero-knowledge proof that the bank hasn't marked the
+coin.  This may be unpatened in that it's not directly a certificate,
+it's a MAC, plus a zero-knowledge proof so it seems like a fairly
+different process.  I don't think you can do efficient offline ecash
+with Wagner et al's mechanism -- I'd guess it's more comparable with
+the functionality offered by Chaum's blind signature.
+
+There is a high level white paper describing the applications of
+Brands' private credentials and comparing to Chaum's credentials:
+
+at the bottom Brands Private Credentials White Paper.
+
+[1] http://www.zeroknowledge.com/media/default.asp
+
+[2] Hal Finney used to have a description of Chaum's protocol on rain.org
+but he's at www.finney.org/~hal/ now and I can't find the link.  (Cc'd
+to see if he still has it.)  Actually I did once see a description of
+Brands stuff by Hal also... still have that too?
+
+[3] Ben Laurie has a paper describing Wagner et al's MAC + ZKP ecash /
+credential protocol as theory2.pdf.
+
+http://anoncvs.aldigital.co.uk/lucre/
+
+Adam
+
+Disclaimer: As always my comments are my own.
+

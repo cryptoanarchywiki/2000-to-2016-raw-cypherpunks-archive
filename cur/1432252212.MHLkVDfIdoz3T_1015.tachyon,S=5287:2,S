@@ -1,0 +1,101 @@
+From owner-cypherpunks@jfet.org  Sun Oct 30 00:18:11 2005
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.4/8.13.4/Debian-3) with ESMTP id j9U4Hdrn021541
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sun, 30 Oct 2005 00:17:39 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.4/8.13.4/Submit) id j9U4HbgS021534
+	for cypherpunks-outgoing; Sun, 30 Oct 2005 00:17:37 -0400
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;         s=beta;
+  d=gmail.com;        
+  h=received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+  b=o/hPVQUvaLNxcHuXfucd0FLP3DD3bHedamOErv2X7bh3TNNvZVIh6m3KIP/bI03dGEsmr/DJHeoquji2XYW2ybZYnmpN2PE7oSZ22rJw9Zmhhi4sFHU0PnOcYPmfjDSem8kwcbJIHcKLfMKlRZ+von0SEm0RTTLbbjUmEgxjZEw=
+Message-ID: <792ce4370510292117kd379aden794034252ce45fe@mail.gmail.com>
+Date: Sat, 29 Oct 2005 21:17:25 -0700
+From: cyphrpunk <cyphrpunk@gmail.com>
+To: "Daniel A. Nagy" <nagydani@epointsystem.org>
+Subject: Re: [fc-discuss] Financial Cryptography Update: On Digital
+  Cash-like Payment Systems
+Cc: cypherpunks@jfet.org, cryptography@metzdowd.com, iang@systemics.com,
+        akoltay@epointsystem.org
+In-Reply-To: <20051028234456.GA12429@epointsystem.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+References: <p06230922bf6de4127cbb@68.167.57.91> 	
+  <792ce4370510281418l74b01072kb43ea37584fd50f1@mail.gmail.com> 	
+  <20051028234456.GA12429@epointsystem.org>
+Content-Transfer-Encoding: 7bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by proton.jfet.org
+  id j9U4HQbt021500
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3429
+Lines: 63
+
+On 10/28/05, Daniel A. Nagy <nagydani@epointsystem.org> wrote:
+> Irreversibility of transactions hinges on two features of the proposed
+> systetm: the fundamentally irreversible nature of publishing information in
+> the public records and the fact that in order to invalidate a secret, one
+> needs to know it; the issuer does not learn the secret at all in some
+> implementnations and only learns it when it is spent in others.
+>
+> In both cases, reversal is impossible, albeit for different reasons. Let's
+> say, Alice made a payment to Bob, and Ivan wishes to reverse it with the
+> possible cooperation of Alice, but definitely without Bob's help. Alice's
+> secret is Da, Bob's secret is Db, the corresponding challenges are,
+> respectively, Ca and Cb, and the S message containing the exchange request
+> Da->Cb has already been published.
+>
+> In the first case, when the secret is not revealed, there is simply no way to
+> express reverslas. There is no S message with suitable semantics semantics,
+> making it impossible to invalidate Db if Bob refuses to reveal it.
+
+The issuer can still invalidate it even though you have not explicitly
+defined such an operation. If Alice paid Bob and then convinces the
+issuer that Bob cheated her, the issuer could refuse to honor the Db
+deposit or exchange operation. From the recipient's perspective, his
+cash is at risk at least until he has spent it or exchanged it out of
+the system.
+
+The fact that you don't have an "issuer invalidates cash" operation in
+your system doesn't mean it couldn't happen. Alice could get a court
+order forcing the issuer to do this. The point is that reversal is
+technically possible, and you can't define it away just by saying that
+the issuer won't do that. If the issuer has the power to reverse
+transactions, the system does not have full ireversibility, even
+though the issuer hopes never to exercise his power.
+
+
+> In the second case, Db is revealed when Bob tries to spend it, so Ivan can,
+> in principle, steal (confiscate) it, instead of processing, but at that
+> point Da has already been revealed to the public and Alice has no means to
+> prove that she was in excusive possession of Da before it became public
+> information.
+
+That is an interesting possibility, but I can think of a way around
+it. Alice could embed a secret within her secret. She could base part
+of her secret on a hash of an even-more-secret value which she would
+not reveal when spending/exchanging. Then if it came to where she had
+to prove that she was the proper beneficiary of a reversed
+transaction, she could reveal the inner secret to justify her claim.
+
+
+> Now, one can extend the list of possible S messages to allow for reversals
+> in the first scenario, but even in that case Ivan cannot hide the fact of
+> reversal from the public after it happened and the fact that he is prepared
+> to reverse payments even before he actually does so, because the users and
+> auditors need to know the syntax and the semantics of the additional S
+> messages in order to be able to use Ivan's services.
+
+That's true, the public visibility of the system makes secret
+reversals impossible. That's very good - one of the problems with
+e-gold was that it was never clear when they were reversing and
+freezing accounts. Visibility is a great feature. But it doesn't keep
+reversals from happening, and it still leaves doubt about how final
+transactions will be in this system.
+
+CP
+

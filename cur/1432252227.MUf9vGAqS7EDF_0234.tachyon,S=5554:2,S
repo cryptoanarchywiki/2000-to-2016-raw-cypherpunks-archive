@@ -1,0 +1,139 @@
+From owner-cypherpunks-outgoing@ssz.com  Sun Oct  8 18:57:08 2000
+Received: from MIT.EDU (SOUTH-STATION-ANNEX.MIT.EDU [18.72.1.2])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id SAA20122
+	for <kwantam@positron.mit.edu>; Sun, 8 Oct 2000 18:57:07 -0400
+Received: from einstein.ssz.com by MIT.EDU with SMTP
+	id AA26380; Sun, 8 Oct 00 18:57:00 EDT
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id RAA25454
+	for cypherpunks-outgoing; Sun, 8 Oct 2000 17:50:25 -0500
+Received: from glitch.crosswinds.net (glitch.crosswinds.net [209.208.163.35])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id RAA25450
+	for <cypherpunks@EINSTEIN.ssz.com>; Sun, 8 Oct 2000 17:50:20 -0500
+Received: from 08-196.068.popsite.net (08-196.068.popsite.net [64.24.82.196])
+	by glitch.crosswinds.net (8.9.3/8.9.3) with SMTP id SAA43241;
+	Sun, 8 Oct 2000 18:42:49 -0400 (EDT)
+	(envelope-from despot@crosswinds.net)
+Message-Id: <200010082242.SAA43241@glitch.crosswinds.net>
+Date: Sun, 08 Oct 2000 18:35:03 
+From: despot <despot@crosswinds.net>
+To: cypherpunks@einstein.ssz.com
+Cc: dmolnar@hcs.harvard.edu
+Subject: CDR: Re: Disposable remailers
+X-Mailer: Private Idaho 3.52t
+Sender: owner-cypherpunks@ssz.com
+Precedence: bulk
+Reply-To: cypherpunks@ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Language: English, Russian, German
+Status: O
+Content-Length: 4151
+Lines: 104
+
+On Fri, 6 Oct 2000, dmolnar wrote:
+
+> On Fri, 6 Oct 2000, despot wrote:
+>
+> > But, this disposable remailer idea is solid. As a quick 
+example
+> > scheme, if there were some sort of remailer protocol that
+> > functioned like routing protocols, as disposable remailers 
+came
+> > online, they could announce themselves to other remailers.
+> > Pseudorandom hopping from one disposable remailer to another 
+could
+> > occur in a remailer-chained message, instead of manually
+> > encrypting a message for a chain of remailers. The sender 
+could
+
+I will inject one missing piece of my example, the final remailer 
+address
+(and perhaps even the whole message) should be obfuscated by the 
+hop count.
+This way only the last disposable remailer before the final 
+remailer has this information.
+
+> This reminds me of something I was looking at this spring. 
+Markus
+> Jakobsson has two papers on "A Practical Mix" and "Flash Mixing" 
+which
+> look at mix-nets in a different way than we see in remailers. 
+There,
+> instead of a message being successively encrypted for a 
+particular
+> path through a series of remailers, the remailers pass a 
+prepared
+> encrypted message around and perform a distributed computation 
+on it. At
+> the end of the computation, the decrypted name of the recipient
+> automagically pops out.
+
+> Anyway, both papers deal with a collection of mix servers fixed 
+in
+> advance. It seems that disposable remailers would work well with
+> extensions of these protocols modified to deal with dynamic 
+leave and
+> joins of servers. Add this to wireless and you have mobile 
+disposable
+> remailers.
+
+Ok, I am stretching my memory here, but...
+
+I read about mix-nets and the "Flash Mixing" paper months ago, so 
+I may be a bit off. If I remember correctly, you have network of 
+mix servers. Any set of these mix servers can be used to perform 
+the mix, and as long as one is "honest," the result will be 
+private. These servers communicate over some sort of broadcast 
+channel.
+
+Lets say C is a list of the ciphertexts (c0...ci) after encrypting 
+messages M (m0...mi) with a public key. C flows through the 
+mix-net where it is re-encrypted, permuted, sorted, etc by each 
+mix server (so each mix server has a modified copy of the list) 
+and out pops C'. C' is a list of ciphertexts corresponding to M.
+
+For the Flash Mix, the mix servers can confirm to a high 
+probability that C' was computed correctly. As long as one of the 
+mix servers is honest and an attacker does not know, I think it 
+is, 2 plaintexts corresponding to input ciphertexts, then there is 
+a high probability of privacy. More so, I believe there are even 
+dummy inputs in the list C to help strengthen this scheme against 
+attacks.
+
+So, off the top of my head, issues with extending this scheme to 
+disposable remailers...
+
+Well, the list size immediately comes to mind for 
+memory-constrained devices. The resistance to attack is dependent 
+on the list size and the number of lists (which corresponds to the 
+number of mix servers used). Adding nodes should have no impact as 
+they would not be part of the current mixes. Dropping nodes not 
+used in any mixes would be fine, but what happens when a node 
+being used in a mix fails? The mix could start over, using 
+pseudorandomly selected nodes perhaps. The system also seems to 
+fall prey to malicious remailers. For the flash mix, I believe, it 
+is assumed that nodes will perform properly more often than not, 
+but this seems to be the rarer case in a disposable remailer 
+structure. The means of communication would need to be looked at, 
+especially with this dynamic environment. How to eliminate nodes 
+that are found to be malfunctioning from being used by other  
+nodes? A few trusted, "honest" nodes should be available to the 
+mixes in order to ensure privacy. And so on... :)
+
+> So a further question would be whether we can design a mix 
+protocol
+> which can
+> a) take advantage of all these cheap, (hopefully) distinct
+> devices and their computation power
+> but
+> b) doesn't give the commodity devices enough power to
+> break the mix, even if many (almost all??) of them act in
+> concert.
+
+Indeed...
+
+-andrew
+
+

@@ -1,0 +1,198 @@
+Return-path: <cypherpunks-bounces@cpunks.org>
+Envelope-to: rsw@positron.jfet.org
+Delivery-date: Mon, 18 Jul 2016 05:34:50 -0700
+Received: from antiproton.jfet.org ([209.141.47.85])
+	by positron.jfet.org with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.87)
+	(envelope-from <cypherpunks-bounces@cpunks.org>)
+	id 1bP7l4-0003JO-8z
+	for rsw@positron.jfet.org; Mon, 18 Jul 2016 05:34:50 -0700
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u6ICOsxW031117;
+	Mon, 18 Jul 2016 08:24:56 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=bVlqMtwR;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-vk0-f48.google.com (mail-vk0-f48.google.com
+ [209.85.213.48])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u6ICOnZZ031113
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Mon, 18 Jul 2016 08:24:51 -0400
+Received: by mail-vk0-f48.google.com with SMTP id s189so27089104vkh.1
+ for <cypherpunks@cpunks.org>; Mon, 18 Jul 2016 05:24:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to;
+ bh=61IH16q1AUif3RtxTJmdCbnGje5usdI8xWgfUKbkuww=;
+ b=bVlqMtwRtMVH3WUQANXnE1RnU56MdNuLR0SxpkVGpVCnJKog6g8KaONXD3ckPCaqSr
+ yIHen1jhW9X4AtoiksX1+zrT7n4+x8fzN6ITgEpXq4IXXeWYq9FYWBqf2kVWTkqzzCM5
+ 45JfDPiVrhyApx+PcwKmJ4q+i2bBiCrQBSbvY5NbKMmd5OKEUIOz0JxGENMc42H6aozO
+ Hwm0Vw1GXnlKbbWGZvgbPUJJZXecAx5qhXJ5NPn7WErbbSDoXozFwDuY2F9DuGQrAnmX
+ SAo6NuwCoVezeBwdYB/Za7B3+R1cS8jEPG+MKI9eXae7GndZjTB6ndfhJPlSc3p2uHgU
+ MVsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to;
+ bh=61IH16q1AUif3RtxTJmdCbnGje5usdI8xWgfUKbkuww=;
+ b=M+bcy9FG9XWSZ3OEOmYooOSCQHCodIfLd69nCPushwTQj3kdOX5T+jy4CHfFjtNFiN
+ 1CnUpE8GVZiWcSw2rSk33bygj0BGTNE/oEkd2eGIiyG6kKQWNLmAAl5dYvfIyGFLydpg
+ W565+kz2e5a2R79lZX0qBNtNL7/7TrDyqGTNIYZPGivmh7SlLjo2ZzvHBATSXtp3ZHZi
+ MoqyH3dzHeFyxnB5HRwuETqB5jB8wdDgpiPJ/rIVQ+/M6e7o3iKfFM2osC/UYMHVM49g
+ 1VIfz9XWc6B0wogfHOpK3nV5/1oeFlUgCv3GwbGBwV61Fm/vUvEae/vRguywq5iBgqLn
+ ywYA==
+X-Gm-Message-State: ALyK8tJ/IdGxp4xYSpboOa/fcb4Sh/quPH6o5jU4lShF5/kQXpDRoHQXA2LR4lsW333+4uzfB8HR+SqRCvp+ow==
+MIME-Version: 1.0
+X-Received: by 10.31.161.81 with SMTP id k78mr17484170vke.122.1468844683268;
+ Mon, 18 Jul 2016 05:24:43 -0700 (PDT)
+Received: by 10.176.2.138 with HTTP; Mon, 18 Jul 2016 05:24:42 -0700 (PDT)
+Received: by 10.176.2.138 with HTTP; Mon, 18 Jul 2016 05:24:42 -0700 (PDT)
+In-Reply-To: <CAEm6Kb+3XG-wa9Bxn70EvqBz0X=x2N4vFvHjBsFvxAi3LhD92Q@mail.gmail.com>
+References: <20160717121345.GO16437@x220-a02>
+ <20160717123729.GA687@sivokote.iziade.m$>
+ <20160717130315.GP16437@x220-a02>
+ <20160717134318.GC687@sivokote.iziade.m$>
+ <CAEm6KbKFdf07_nQ2s6cs6Wp9MDTDQqsXA=7xCpdJG9LB+Qyv0A@mail.gmail.com>
+ <20160717145957.GU16437@x220-a02>
+ <CAEm6KbKXS0QbwyR+UErCC0Oa10Sa7W2XwUBWhHiY_7Hx9qb0NQ@mail.gmail.com>
+ <20160717160220.GB16437@x220-a02>
+ <578bf24b.dacb370a.38973.5bc1@mx.google.com>
+ <20160718034726.GF16437@x220-a02>
+ <CAEm6Kb+3XG-wa9Bxn70EvqBz0X=x2N4vFvHjBsFvxAi3LhD92Q@mail.gmail.com>
+Date: Mon, 18 Jul 2016 09:24:42 -0300
+Message-ID: <CAG2tMp5JBNPjmxffGHJQ3SVATNw7gX4kQ5X377ucLJ+6n_xVfQ@mail.gmail.com>
+Subject: Re: on grokiing intention
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=001a1143fa9c9397c30537e80d0b
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 117
+
+--001a1143fa9c9397c30537e80d0b
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+Zenaan and Alexander,
+
+It's fun in some moments, but I decided to avoid feeding dumb trolls.  Time
+and patience are very limited resources, so it probably will be my last
+message for you both.  You are really boring, meh!  :(
+
+Sorry, I don't respect dumb, stupid and pretentious people, with a huge
+complex of superiority and an ego bigger than Putin's baldness.
+
+But if you both want to complain about who has the biggest ego, please,
+always remember:  -  I am fabulous, b=C2=A1tches.  You both are donkeys, I =
+am a
+colorful unicorn.  You walk, I parade.  You will be dust, I will be
+glitter!  <3
+
+Hahaha!!  Just joking for the lulz, but remember I am a professional troll
+and you both are begginners and not so smart.  ;)
+
+I am not a pig, but I prefer being juicy, tasty bacon than repulsive
+Vegemite.  And I really love pearls.  They look great with dresses and high
+heels.  Very classy!  <3
+
+At least, I am really happy, because Zenaan finally stopped writing me in
+private and copying me in every stupid message sent to a person of this
+group.  It was ridiculous and non sense, but he spent more than a month to
+perceive he was being ignored and/or rejected.  Very slow and disgusting
+guy, ugh!  :(((
+
+Happy oink, oink for you both!  (=CB=86(oo)=CB=86)
+
+Cecilia, adopting Zen Chinchilla Philosophy from now on, hihi...  ;)
+
+PS 1:  -  A person who really cares about another person, at least, try to
+write correctly their name.  The problem was not misspelling Georgi's name,
+but showing you simply don't care about him, even after spending zillions
+of words trying to prove you really care about others.  Pure
+contradiction.  "D'oh!" again, slow guy.
+
+PS 2:  -  You probably will appreciate the "Zen Chinchilla Philosophy",
+Mirimir.  Some years ago, I adapted an idea just to annoy a stupid guy and
+used a chinchilla as example.  It worked well, but I should write a "Zen
+Chichilla Manifesto" just for fun.  You know, I am so cute as a
+chinchilla.  But  - thank God! -  not so furry, haha!!  ;D
+
+Repeating:  -  Please, if I die in the next days, tell everybody that all
+these disgusting and repetitive messages licking Putin's b@lls, ignoring
+all the Russian government's fails, and against "The West", "The Empire",
+etc, etc, killed me with infinite and painful boredom, ugh!  It's a cruel
+torture, a real crime against the humanity!  :P
+
+But, well, everything in Australia wants to kill you.  Aparently, also
+Zenaan, even when pretending to be an eternal misunderstood victim of
+society's ignorance.  Oh, poor Zen!  :'(
+
+https://www.yahoo.com/style/everything-in-australia-wants-to-kill-you-photo=
+-by-126005221362.html
+
+--001a1143fa9c9397c30537e80d0b
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p>Zenaan and Alexander,</p>
+<p>It&#39;s fun in some moments, but I decided to avoid feeding dumb trolls=
+.=C2=A0 Time and patience are very limited resources, so it probably will b=
+e my last message for you both.=C2=A0 You are really boring, meh!=C2=A0 :(<=
+/p>
+<p>Sorry, I don&#39;t respect dumb, stupid and pretentious people, with a h=
+uge complex of superiority and an ego bigger than Putin&#39;s baldness.</p>
+<p>But if you both want to complain about who has the biggest ego, please, =
+always remember:=C2=A0 -=C2=A0 I am fabulous, b=C2=A1tches.=C2=A0 You both =
+are donkeys, I am a colorful unicorn.=C2=A0 You walk, I parade.=C2=A0 You w=
+ill be dust, I will be glitter!=C2=A0 &lt;3</p>
+<p>Hahaha!!=C2=A0 Just joking for the lulz, but remember I am a professiona=
+l troll and you both are begginners and not so smart.=C2=A0 ;)</p>
+<p>I am not a pig, but I prefer being juicy, tasty bacon than repulsive Veg=
+emite.=C2=A0 And I really love pearls.=C2=A0 They look great with dresses a=
+nd high heels.=C2=A0 Very classy!=C2=A0 &lt;3</p>
+<p>At least, I am really happy, because Zenaan finally stopped writing me i=
+n private and copying me in every stupid message sent to a person of this g=
+roup.=C2=A0 It was ridiculous and non sense, but he spent more than a month=
+ to perceive he was being ignored and/or rejected.=C2=A0 Very slow and disg=
+usting guy, ugh!=C2=A0 :(((</p>
+<p>Happy oink, oink for you both!=C2=A0 (=CB=86(oo)=CB=86) </p>
+<p>Cecilia, adopting Zen Chinchilla Philosophy from now on, hihi...=C2=A0 ;=
+)</p>
+<p>PS 1:=C2=A0 -=C2=A0 A person who really cares about another person, at l=
+east, try to write correctly their name.=C2=A0 The problem was not misspell=
+ing Georgi&#39;s name, but showing you simply don&#39;t care about him, eve=
+n after spending zillions of words trying to prove you really care about ot=
+hers.=C2=A0 Pure contradiction.=C2=A0 &quot;D&#39;oh!&quot; again, slow guy=
+.</p>
+<p>PS 2:=C2=A0 -=C2=A0 You probably will appreciate the &quot;Zen Chinchill=
+a Philosophy&quot;, Mirimir.=C2=A0 Some years ago, I adapted an idea just t=
+o annoy a stupid guy and used a chinchilla as example.=C2=A0 It worked well=
+, but I should write a &quot;Zen Chichilla Manifesto&quot; just for fun.=C2=
+=A0 You know, I am so cute as a chinchilla.=C2=A0 But=C2=A0 - thank God! -=
+=C2=A0 not so furry, haha!!=C2=A0 ;D</p>
+<p>Repeating:=C2=A0 -=C2=A0 Please, if I die in the next days, tell everybo=
+dy that all these disgusting and repetitive messages licking Putin&#39;s b@=
+lls, ignoring all the Russian government&#39;s fails, and against &quot;The=
+ West&quot;, &quot;The Empire&quot;, etc, etc, killed me with infinite and =
+painful boredom, ugh!=C2=A0 It&#39;s a cruel torture, a real crime against =
+the humanity!=C2=A0 :P</p>
+<p>But, well, everything in Australia wants to kill you.=C2=A0 Aparently, a=
+lso Zenaan, even when pretending to be an eternal misunderstood victim of s=
+ociety&#39;s ignorance.=C2=A0 Oh, poor Zen!=C2=A0 :&#39;(</p>
+<p><a href=3D"https://www.yahoo.com/style/everything-in-australia-wants-to-=
+kill-you-photo-by-126005221362.html">https://www.yahoo.com/style/everything=
+-in-australia-wants-to-kill-you-photo-by-126005221362.html</a></p>
+
+--001a1143fa9c9397c30537e80d0b--
+

@@ -1,0 +1,287 @@
+From owner-cypherpunks@jfet.org  Fri Jun 29 20:41:17 2007
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.13.8/8.13.8/Debian-3) with ESMTP id l5U0f8Ru015310
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 29 Jun 2007 20:41:08 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.8/8.13.8/Submit) id l5U0f8Ta015309
+	for cypherpunks-outgoing; Fri, 29 Jun 2007 20:41:08 -0400
+Mime-Version: 1.0
+Message-Id: <p06240864c2ab553acfcf@[68.167.57.91]>
+Date: Fri, 29 Jun 2007 20:33:19 -0400
+To: "Philodox Clips List" <clips@philodox.com>, cypherpunks@jfet.org
+From: "R.A. Hettinga" <rah@shipwright.com>
+Subject: [p2p-hackers] announcing Allmydata-Tahoe v0.4
+Content-Type: text/plain; charset="us-ascii"
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 8866
+Lines: 263
+
+--- begin forwarded text
+
+
+To: theory and practice of decentralized computer networks
+<p2p-hackers@lists.zooko.com>,
+	tahoe-dev@allmydata.org,
+	"General discussions concerning capability systems."
+<cap-talk@mail.eros-os.org>
+From: Zooko O'Whielacronx <zooko@zooko.com>
+Date: Fri, 29 Jun 2007 18:16:25 -0600
+Subject: [p2p-hackers] announcing Allmydata-Tahoe v0.4
+Reply-To: theory and practice of decentralized computer networks
+<p2p-hackers@lists.zooko.com>
+Sender: p2p-hackers-bounces@lists.zooko.com
+
+<x-flowed>NEW VERSION RELEASED
+
+We are pleased to announce the release of version 0.4 of Allmydata-
+Tahoe, a
+secure, decentralized storage grid under a free-software licence.
+This is
+the follow-up to v0.3 which was released June 6, 2007 (see [1]).
+
+Since then we've made several improvements, including:
+
+* Add encrypted, mutable directories, so that you can organize your
+files
+    into directories, change the contents of directories, and share your
+    directories with your friends, without thereby sharing your
+directories
+    with anyone else -- not even with the owners of the servers that
+host
+    your directories.
+
+* make it so that web browsers can connect to the Tahoe node securely
+with
+    https (ticket #55)
+
+
+For complete details, see this web page which shows all ticket changes,
+repository checkins, and wiki changes from June 11 to today, June 29:
+[2].
+
+Allmydata-Tahoe v0.4 is incompatible with v0.3 due to the new encrypted
+directory structure, among other things.  (Note that this applies
+only to
+directories -- individual files uploaded with v0.3 are probably
+downloadable
+with v0.4.)
+
+
+WHAT IS IT GOOD FOR?
+
+The source code that we are releasing is the current working
+prototype for
+Allmydata's next-generation product.  This release is targeted at
+hackers
+and users who are willing to use a minimal, text-oriented web user
+interface.
+
+This software is not yet recommended for storage of highly
+confidential data
+nor for important data which is not otherwise backed up, but it is
+useful
+for experimentation, prototyping, and extension.
+
+This release of Allmydata-Tahoe is suitable for Use Case #2: "groups of
+friends who want to share backup and file-sharing" (see the wiki page
+"UseCases": [3]).  It is easy to set up a private grid which is securely
+shared among a specific, limited set of friends.  Files uploaded to this
+shared grid will be available to all friends, even when some of the
+computers are unavailable.  It is also easy to use a public grid, but to
+encrypt individual files and directories so that only intended
+recipients
+can read them.
+
+
+LICENCE
+
+Tahoe is offered under the GNU General Public License (v2 or later),
+with
+the added permission that, if you become obligated to release a
+derived work
+under this licence (as per section 2.b), you may delay the
+fulfillment of
+this obligation for up to 12 months.
+
+
+INSTALLATION
+
+This release of Tahoe works on Linux/x86, Linux/amd64, Mac/Intel, Mac/
+PPC,
+Windows-native, and Cygwin.
+
+To install, download the tarball [4], untar it, go into the resulting
+directory, and follow the directions in the README [5].
+
+
+USAGE
+
+Once installed, create a "client node".  Instruct this client node to
+connect to a specific "introducer node" by means of config files in the
+client node's working directory.  To join a public grid, copy in
+the .furl
+files for that grid.  To create a private grid, run your own
+introducer, and
+copy its .furl files.  See the README for step-by-step instructions.
+
+Each client node runs a local webserver (enabled by writing the
+desired port
+number into a file called 'webport').  The front page of this webserver
+shows the node's status, including which introducer is being used and
+which
+other nodes are connected.  Links from the status page lead to others
+that
+give access to a shared virtual filesystem, in which each directory is
+represented by a separate page.  Each client node also has a separate
+(non-shared) virtual filesystem.  Each directory page shows a list of
+the
+files available there, with download links, and forms to upload new
+files.
+
+Other ways to access the filesystem are planned: please see the
+roadmap.txt
+[6] for some rough details.
+
+
+HACKING AND COMMUNITY
+
+Please join the mailing list [7] to discuss the ideas behind Tahoe and
+extensions of and uses of Tahoe.  Patches that extend and improve
+Tahoe are
+gratefully accepted -- roadmap.txt shows the next improvements that
+we plan
+to make and CREDITS lists the names of people who've contributed to the
+project.  You can browse the revision control history, source code, and
+issue tracking at the Trac instance [8].  Please see the buildbot
+[9], which
+shows how Tahoe builds and passes unit tests on each checkin, and the
+code
+coverage results [10] and percentage-covered graph [11], which show
+how much
+of the Tahoe source code is currently exercised by the test suite.
+
+
+NETWORK ARCHITECTURE
+
+Each peer maintains a connection to each other peer.  A single distinct
+server called an "introducer" is used to discover other peers with
+which to
+connect.
+
+To store a file, the file is encrypted and erasure coded, and each
+resulting
+share is uploaded to a different peer.  The secure hash of the encrypted
+file and the encryption key are packed into a URI, knowledge of which is
+necessary and sufficient to recover the file.
+
+To fetch a file, starting with the URI, a subset of shares is downloaded
+from peers, the file is reconstructed from the shares, and then
+decrypted.
+
+A single distinct server called a "vdrive server" maintains a global
+mapping
+from pathnames/filenames to URIs.
+
+We are acutely aware of the limitations of decentralization and
+scalability
+inherent in this version.  In particular, the completely-connected
+property
+of the grid and the requirement of a single distinct introducer and
+vdrive
+server limits the possible size of the grid.  We have plans to loosen
+these
+limitations (see roadmap.txt).  Currently it should be noted that the
+grid
+already depends as little as possible on the accessibility and
+correctness
+of the introduction server and the vdrive server.  Also note that the
+choice
+of which servers to use is easily configured -- you should be able to
+set up
+a private grid for you and your friends almost as easily as to
+connect to
+our public test grid.
+
+
+SOFTWARE ARCHITECTURE
+
+Tahoe is a "from the ground-up" rewrite, inspired by Allmydata's
+existing
+consumer backup service.  It is primarily written in the Python
+programming
+language.
+
+Tahoe is based on the Foolscap library [12] which provides a remote
+object
+protocol inspired by the capability-secure "E" programming language
+[13].
+Foolscap allows us to express the intended behavior of the
+distributed grid
+directly in object-oriented terms while relying on a well-engineered,
+secure
+transport layer.
+
+The network layer is provided by the Twisted library [14].
+Computationally
+intensive operations are performed in native compiled code, such as the
+"zfec" library for fast erasure coding (also available separately:
+[15]).
+
+Tahoe is sponsored by Allmydata, Inc. [16], a provider of consumer
+backup
+services.  Allmydata, Inc. contributes hardware, software, ideas, bug
+reports, suggestions, demands, and money (employing several Allmydata-
+Tahoe
+hackers and allowing them to spend part of their work time on the
+next-generation, free-software project).  We are eternally grateful!
+
+
+Zooko O'Whielacronx and Brian Warner
+on behalf of the Allmydata-Tahoe team
+June 29, 2007
+Boulder, Colorado and San Francisco, California
+
+
+[1]  http://allmydata.org/trac/tahoe/timeline?
+from=2007-06-29&daysback=17&changeset=on&ticket=on&wiki=on&update=Update
+[3]  http://allmydata.org/trac/tahoe/wiki/UseCases
+[4]  http://allmydata.org/source/tahoe/tahoe-0.4.tar.gz
+[5]  http://allmydata.org/trac/tahoe/browser/README?rev=844
+[6]  http://allmydata.org/trac/tahoe/browser/roadmap.txt
+[7]  http://allmydata.org/cgi-bin/mailman/listinfo/tahoe-dev
+[8]  http://allmydata.org/trac/tahoe
+[9]  http://allmydata.org/buildbot
+[10] http://allmydata.org/tahoe-figleaf/figleaf/
+[11] http://allmydata.org/tahoe-figleaf-graph/hanford.allmydata.com-
+tahoe_figleaf.html
+[12] http://twistedmatrix.com/trac/wiki/FoolsCap
+[13] http://erights.org/
+[14] http://twistedmatrix.com/
+[15] http://allmydata.org/trac/tahoe/browser/src/zfec
+[16] http://allmydata.com
+
+
+_______________________________________________
+p2p-hackers mailing list
+p2p-hackers@lists.zooko.com
+http://lists.zooko.com/mailman/listinfo/p2p-hackers
+
+</x-flowed>
+
+--- end forwarded text
+
+
+-- 
+-----------------
+R. A. Hettinga <mailto: rah@ibuc.com>
+The Internet Bearer Underwriting Corporation <http://www.ibuc.com/>
+44 Farquhar Street, Boston, MA 02131 USA
+"... however it may deserve respect for its usefulness and antiquity,
+[predicting the end of the world] has not been found agreeable to
+experience." -- Edward Gibbon, 'Decline and Fall of the Roman Empire'
+

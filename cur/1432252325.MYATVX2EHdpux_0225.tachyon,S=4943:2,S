@@ -1,0 +1,143 @@
+From owner-cypherpunks@al-qaeda.net  Mon Aug 20 15:49:22 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q7KJhBmT005935
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 20 Aug 2012 15:43:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1345491791;
+	bh=tAv1i1j/ECP1ohNG5lS/gwTToVFA99hoyP3+8iHymvo=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=W4D/8J9rOkOJ3kDuMZVaaiQ7AcJ0Rg66xZo5Vxisl2KX0NJjUKM2d/Xnvpr+2rzjk
+	 zlQyCuGL67cGd4Q3omKhbg0DbC4nTOv9gFmzZ1Yxd3yexmA7MvMx3R19EVq9lMSsL/
+	 gMXzjbfy23kuyadtNFqrGh58b0iX39qIu66dGZEo=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q7KJhBUV005934
+	for cypherpunks-outgoing; Mon, 20 Aug 2012 15:43:11 -0400
+Date: Mon, 20 Aug 2012 21:43:07 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: zs-p2p@googlegroups.com, info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: [tor-talk] End-to-end correlation for fun and profit
+Message-ID: <20120820194307.GB12615@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3459
+Lines: 109
+
+----- Forwarded message from Maxim Kammerer <mk@dee.su> -----
+
+From: Maxim Kammerer <mk@dee.su>
+Date: Mon, 20 Aug 2012 10:33:29 +0300
+To: tor-talk@lists.torproject.org
+Subject: [tor-talk] End-to-end correlation for fun and profit
+Reply-To: tor-talk@lists.torproject.org
+
+Hello gentlemen,
+
+Here and there I see references to bglobalb or bstate-levelb powerful
+adversaries when it comes to end-to-end traffic correlation b i.e.,
+it's supposed to be very hard. Because Tor network has many nodes,
+there are guard nodes, there is research, blog posts, CIA funding
+(well, not anymore, but similar funding from EU is in the works),
+useless bureaucracy, college kids playing in serious development, yada
+yada b you know the drill.
+
+Anyway, let's do some math. Below, you will find a table where left
+column denotes the number of Guard+Exit+Fast+Stable Tor relays one
+needs to sniff at Class-C level, and right column denotes the
+probability that a given circuit will go through both intercepted
+entry and exit nodes. This is slightly imprecise, because same node
+can't be both entry and exit for a circuit, and there are other
+ignored intricacies (e.g., port policies) that push the estimates in
+the other direction b the reason is that I am better with writing
+quick scripts [1] than with Excel. The consensus taken for analysis is
+from a few hours ago, and I read Tor server code from current stable
+version in Gentoo (0.2.2.35) b this probably doesn't matter.
+
+10 11.50%
+11 14.56%
+12 16.52%
+13 16.80%
+14 17.69%
+15 17.98%
+16 18.90%
+17 19.20%
+18 19.50%
+19 20.46%
+20 20.46%
+21 21.76%
+22 22.77%
+23 23.43%
+24 23.43%
+25 24.48%
+26 24.48%
+27 24.82%
+28 25.55%
+29 25.90%
+30 25.90%
+
+As you can see, sniffing just 25 Class-C networks (or 42 individual
+nodes) lets an adversary correlate ~25% of (non-.onion) circuits.
+Which networks are these?
+
+DE 31.172.30.[1-4]
+GB 146.185.23.179
+NL 77.247.181.{162,164}
+RO 109.163.233.{200,201,205}
+CA 198.96.155.3
+US 199.48.147.{35,36,37,38,39,40,41}
+DE 212.84.206.250
+FR 178.32.211.{130,140}
+US 204.8.156.142
+US 173.254.216.[66-69]
+SE 78.108.63.44
+US 96.44.189.102
+GB 178.33.169.35
+CZ 212.79.110.28
+US 66.180.193.219
+DE 88.198.100.{230,233}
+LU 212.117.180.65
+SE 81.170.186.175
+CH 62.220.135.129
+SE 84.55.117.251
+DE 85.31.187.132
+CA 8.18.172.156
+FR 213.251.185.74
+US 69.42.212.2
+FR 37.59.82.50
+
+All of these servers are in US/CA or EU jurisdiction, so even an
+unsophisticated LE operation can issue ~20 wiretapping orders at ISP
+level (many of these networks are operated by same hosting providers),
+and immediately deanonymize ~25% of Tor traffic. So far for anonymity!
+
+Oh, and if you are just into looking what sites Tor users visit, the
+situation is even better b intercepting the same 25 Class-C networks
+will let you see 72% of the traffic. Picking better non-Guard Exits
+will improve this figure to 78%. That's right b 4/5th of Tor traffic
+exits through just 25 LANs.
+
+[1] http://pastebin.com/hgtXMSyx
+
+-- 
+Maxim Kammerer
+LibertC) Linux: http://dee.su/liberte
+_______________________________________________
+tor-talk mailing list
+tor-talk@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-talk
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

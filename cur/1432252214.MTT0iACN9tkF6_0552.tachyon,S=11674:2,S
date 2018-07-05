@@ -1,0 +1,275 @@
+From owner-cypherpunks@lne.com  Tue Nov 25 10:14:39 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p3/8.11.6-03-31-03) with ESMTP id hAPFEZd20587
+	for <rsw@jfet.org>; Tue, 25 Nov 2003 10:14:36 -0500
+Received: from slack.lne.com (slack.lne.com [127.0.0.1])
+	by slack.lne.com (8.12.10/8.12.10) with ESMTP id hAPEi7Aq008674
+	(version=TLSv1/SSLv3 cipher=EDH-DSS-DES-CBC3-SHA bits=168 verify=NO)
+	for <cypherpunks-goingout345@slack.lne.com>; Tue, 25 Nov 2003 06:44:07 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.10/8.12.10/Submit) id hAPEi7tQ008673
+	for cypherpunks-goingout345; Tue, 25 Nov 2003 06:44:07 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Tue, 25 Nov 2003 15:43:32 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@lne.com
+Subject: Re: [mnet-devel] Grid Of Trust -- pre-design (fwd from
+  zooko@zooko.com)
+Message-ID: <20031125144332.GQ23337@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+User-Agent: Mutt/1.4i
+X-Converted-To-Plain-Text: from multipart/signed by demime 0.97c
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 10263
+Lines: 242
+
+----- Forwarded message from Zooko O'Whielacronx <zooko@zooko.com> -----
+
+From: "Zooko O'Whielacronx" <zooko@zooko.com>
+Date: 25 Nov 2003 09:37:31 -0500
+To: mnet-devel@lists.sourceforge.net
+Subject: Re: [mnet-devel] Grid Of Trust -- pre-design
+
+
+ Some Guy wrote:
+>
+> Hey guys who ever wants to take first peek at my baby DHT/premix idea please
+take a peek and
+> crtitique it.  It's a bit rough around the edges and there's plenty of room
+for modification, but
+> I'm pretty sure the ideas are sound.
+>
+> http://de.geocities.com/amichrisde/Grid_Of_Trust.html
+>
+> The basic idea is to force data and nodes to be randomly distributed in a
+grid.  This provides
+> resistance against serveral types of attacks.
+>
+> Feel free to comment on or off list.
+
+Here is the text of that web page, for the sake of future generations who are
+required to read the mnet-devel archives as part of their education:
+
+
+                                 Grid Of Trust
+
+   This isn't a design document.  It's more of a proposal for what could be
+   to make sure all the attacks are really covered.
+
+Topology
+
+   Nodes are distributed randomly into cells of a hypercube with d
+   dimensionals.  Each axis is broken down into g pieces such that the
+   hypercube contains gd cells.
+
+   Nodes in a cell can connect to all nodes in cells whose coordinates vary
+   in at most one dimension.  This is different than CAN where only dirrect
+   neighbors have links.  A DHT based on this type of a network should only
+   require d hops to handle a request.  The cost is of coarse a higher
+   neihbor count.
+
+   We will define x as the expected population or a cell and N as the total
+   number of nodes.
+   x = N/(gd)
+
+   We will define m as the expected neighbor count.
+   m = x(d*(g-1)+1)
+
+   So let us visualize a small network with g=8 and d=2 which looks like a
+   chess board.  Let N=256 so x=4.  Messages can move like rooks on this
+   chess board, so requests can be handled in 2 hops.  So we can caculate the
+   neihbor count as:
+   m = 4*(15) = 60
+
+   --todo add pretty picture
+
+   Now let us consider a larger network g=10 d=6 and x=4, so N=4,000,000.
+   Messages should be routable in 6 hops and for the niehbor count we get:
+   m = 4*(6*9+1) = 220
+
+   This still would be acceptable for freenet like applications.
+
+   When x and g are held constant m is O(log(N)) just like CAN.
+
+   For large N the probability a cell is vacant is e-x.  So at x=4 this
+   chance is about 1.83%.  This should be acceptable if some redundancy is
+   used.  Not that when a message has serveral dimensions to move along, the
+   chance that there is no dirrect way becomes very low.
+
+Node Placement
+
+   Nodes must be placed randomly into the network to prevent, serveral types
+   of attacks which involve an adversary selecting the locations of the grid
+   he would like to control.  In order to do this a node is forced to pay for
+   it's identity with a large hash cash calculation.  The hash cash then
+   determines the node's location in the grid.
+
+   One space optimization, is to store all the identification in the public
+   key.  The first time user picks an N=pq.  He then tries to make an e such
+   that it's first 32 bits contain the julian date, it is relatively prime to
+   (p-1)(q-1), and SHA-1(<e,N>) has the first h bits zero.  We can then set h
+   to be so high it takes a 1CPU-day to calculate the key.
+
+   We then use some globaly defined salt per dimension Si, which we encript
+   with the <e,N> to give us the identities location L in the grid.
+   Li = (Si emod N) mod g
+
+Boot Strapping
+
+   Boot strapping is pretty straight forward.  A new node must have contact
+   with one node in the system.  It uses this node to route a message to the
+   target cell, a node there sends its IP:Port encripted with the public key
+   of the identity back.  The node the decrypts this to get the IP out.  It
+   never has dirrect contact to any of the other nodes along the routing
+   path.  Once the new node connects to the node in its home cell, it can get
+   all the other IPs and keys from it.
+
+   It could be the case that the cell is vacant, or that one doesn't want to
+   trust the single node from the home cell.  It is easy for such a boot
+   strap message to be routed to find a node from a cell connected to the
+   target cell.  The same protocol can be used.  So one might have to repeat
+   the process d times to get nodes from all the dimensions.
+
+   Note that this type of bootstrapping will probably only have to happen
+   once for a node.  Once a strip of g*x nodes all know each other, some of
+   them can leave and join with out having to worry too much about not being
+   able to find anyone when they come back.
+
+DHT Functionality
+
+   Similar to the way in which a node must be kept from deciding what cell it
+   wants to serve in, we must ensure that the cells to which keys for
+   requests and inserts are mapped can not be selected by an advesary.  Based
+   on the application key of which there may be many types a routing key is
+   calculated based on a small hash cash proportional to the some
+   requirements of the key like:
+     * size of the data
+     * priority of messages
+     * possiblity and maximum rate of rewrite
+     * expiration rate of the data
+     * expiration date of the key
+   The hash cash which is calculated will then be given back to the
+   application to use for the a pointer.  The actual routing key is the hash
+   of the hash cash and other key data that went into the hash cash
+   calculation.  This ensures that a hard hash cash calculation must be done
+   before determining what node(s) will be responsible for handling the key.
+
+   For example you want to make a pretty picture freesite.  For your picture
+   you know it's not going to change or at least nobody is going to link
+   dirrectly to the picture, so you calculate a cheap on time hash cash for
+   it, which is included in your HTML.  For your HTML you decide you want to
+   be able to change it once a day so you buy a more expensive hash cash for
+   it.  This is given to others who want to see or link to your site.
+
+   Requests with substandard hash cash don't have to be dropped they can just
+   be treated with lower priority.
+
+   File sharing data should ooz slowly through a network, while browsing
+   requests should skip over them.
+
+Premix Routing
+
+   Tarzan provides a very good model for premix routing.  One problem is that
+   they rely on IP subnets as a resource to limit adversaries and they
+   require all nodes to contact all other nodes periodically in order to
+   verify identities.  The Grid solves this problem.
+
+   Since an advesary can only create a certain amount of valid identities and
+   those identities are spread around evenly, there is no way for an
+   advesarial node to present a large list of faulty neighbors.  If the
+   advesary provides the tunnel user with a very small list this would be
+   obvious too.
+
+   If that weren't enough, we could demand certificates from multiple nodes
+   in a cell to verify neighbor lists.
+
+   It should also be noted that the DHT traffic can provide perfect cover
+   traffic.
+
+Resource Accounting
+
+   Since the relationships between nodes are long term and identity isn't
+   free, barder is a great economic model.  Over the long term two neihbor
+   nodes can add up how much work they did for each other, and do some simple
+   statistics to see if anyone is being a "leach".  No centralized authority
+   is required.
+
+   Premix bandwidth is always charged back the dirrection the tunnel
+   originates from.
+
+Topology Aware Routing
+
+   Since routing can go in multiple dimensions and mutliple nodes inhabit the
+   same cells, there is great flexibility in which way messages can be
+   routed.  Messages can be forwarded along the path with the lowest latency
+   and to nodes with low load.  This is similare to how you navigate American
+   streets with a car avoiding the streets and avenues with too much traffic.
+
+Attack Models
+
+  Cancer Node Censorship Attack
+
+   In this model an adversary runs a few nodes where particular requests are
+   likely to be handled in order to drop or mishandle them.
+
+   The Grid prevents this by randomly distributing expensive identities
+   throughout.  In that large 4,000,000 node network only 1 in a million
+   identities would be in the target cell.  If each identity cost 1 CPU-day,
+   an adversary would have to buy lots of hardware and work really long.
+
+  Spy and Flood
+
+   There is a slightly better chance of getting a node to wind up connected
+   to the target cell: 54/1,000,000.  From here the advesary could lauch
+   classic SYN floods or try to hack nodes in the target cell, since he would
+   know thier IPs.
+
+   This still is a prohibitive amount of  work. A little bit of redundacy
+   will also dramatically increase resistance further.
+
+  DHT Flood
+
+   In this attack model the advesary tries to generate messages, which all
+   must be handeled by nodes in the target area.  The hash cash should
+   prevent this from happening for most types of keys.  Since you have to pay
+   first and then you know the route.  Messages for things with more
+   expensive hash cash could be processed first, to avoid shortcoming of
+   cheaper key types.
+
+   boconstrictor attack --naa
+
+Other Wacky Ideas
+
+   Clusters
+   Big Clusters
+   Using levels to deal with heterogenity
+   Baby Mode - Slower bootstrap
+   setstats 1
+
+
+-------------------------------------------------------
+This SF.net email is sponsored by: SF.net Giveback Program.
+Does SourceForge.net help you be more productive?  Does it
+help you create better code?  SHARE THE LOVE, and help us help
+YOU!  Click Here: http://sourceforge.net/donate/
+_______________________________________________
+mnet-devel mailing list
+mnet-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/mnet-devel
+
+----- End forwarded message -----
+-- Eugen* Leitl <a href="http://leitl.org">leitl</a>
+______________________________________________________________
+ICBM: 48.07078, 11.61144            http://www.leitl.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+http://moleculardevices.org         http://nanomachines.net
+
+[demime 0.97c removed an attachment of type application/pgp-signature]
+

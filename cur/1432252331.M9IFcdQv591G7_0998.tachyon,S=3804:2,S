@@ -1,0 +1,82 @@
+From owner-cypherpunks@Algebra.COM  Fri May 31 16:18:06 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.mit.edu (8.11.6/8.9.3) with ESMTP id g4VKI5T05125
+	for <rsw@jfet.org>; Fri, 31 May 2002 16:18:05 -0400
+Received: from ak47.algebra.com (ak47.algebra.com [208.233.99.160])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id QAA10024
+	for <rsw@mit.edu>; Fri, 31 May 2002 16:17:49 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g4VHV8KG030407
+	for <cypherpunks-outgoing@ak47.algebra.com>; Fri, 31 May 2002 12:31:08 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g4VHV8MJ030405
+	for cypherpunks-outgoing; Fri, 31 May 2002 12:31:08 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from einstein.ssz.com (cpunks@[207.200.56.4])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g4VHToKG030210
+	for <cypherpunks@algebra.com>; Fri, 31 May 2002 12:29:50 -0500
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id MAA03415
+	for cypherpunks@algebra.com; Fri, 31 May 2002 12:33:14 -0500
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id MAA03408
+	for cypherpunks-outgoing; Fri, 31 May 2002 12:33:08 -0500
+Received: from centaur.acm.jhu.edu (postfix@centaur.acm.jhu.edu [128.220.223.65])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id MAA03404
+	for <cypherpunks@einstein.ssz.com>; Fri, 31 May 2002 12:33:06 -0500
+Received: by centaur.acm.jhu.edu (Postfix, from userid 528)
+	id 086C213E9B; Fri, 31 May 2002 13:29:21 -0400 (EDT)
+Received: from localhost (localhost [127.0.0.1])
+	by centaur.acm.jhu.edu (Postfix) with ESMTP id 07B3D37BEA
+	for <cypherpunks@einstein.ssz.com>; Fri, 31 May 2002 13:29:21 -0400 (EDT)
+Date: Fri, 31 May 2002 13:29:21 -0400 (EDT)
+From: Jack Lloyd <lloyd@acm.jhu.edu>
+To: <cypherpunks@einstein.ssz.com>
+Old-Subject: CDR: Re: How can i check the authenticity of a private key
+In-Reply-To: <Pine.GSU.4.44.0205310611310.15598-100000@eskimo.com>
+Message-ID: <Pine.LNX.4.33L2.0205311239260.26880-100000@centaur.acm.jhu.edu>
+X-GPG-Key-ID: 4DCDF398
+X-GPG-Key-Fingerprint: 2DD2 95F9 C7E3 A15E AF29 80E1 D6A9 A5B9 4DCD F398
+X-Red-Robot-Approved: CRUSH ALL HU-MANS!
+Organization: JHU ACM/CS/SRL
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Reply-To: cypherpunks@einstein.ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Acceptable-Languages: English, Russian, German, French, Spanish
+Subject:  Re: How can i check the authenticity of a private key
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+X-spam: 0 
+Status: O
+Content-Length: 724
+Lines: 19
+
+
+On Fri, 31 May 2002, Mike Rosing wrote:
+
+> With ECC you just recompute the public key from the private
+> key and make sure it matches what's out in public.  With
+> RSA you just pick some random value (not zero or 1) and
+> see if r^(e*d) = 1 mod N, or if you know p and q (where
+> N = p*q) check that e*d = 1 mod (p-1)*(q-1).  It's the
+> same thing as encrypting/decrypting something to see if
+> you get the same thing back.  If not, something is wrong.
+
+Also with RSA, if you know p/q, you should probably check to see if they're
+actually prime. :)
+
+For DSA, assuming only one of the keys has been changed, checking y == g^x
+mod p should detect it. Again, checking primality (and that q divides p-1)
+seems prudent.
+
+ -Jack
+

@@ -1,0 +1,84 @@
+From owner-cypherpunks@al-qaeda.net  Sun Feb  3 16:18:01 2013
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id r13LBoTe006357
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sun, 3 Feb 2013 16:11:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1359925910;
+	bh=A135944+alTLMTWR8odu17TQYl+lfIIGhDi0+f2VcMc=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=37r9sOX9m6rnLJ3Rdf4SNkgs24MgPvXftFSHQGI7HJhEVvf759vggVbnywGrYrWJc
+	 g3sg3sVuGB9z0GmuJPRpazpDSlZTQOeZKpgyhYq+l0X489c03IWKR/PU05hkEk2UmL
+	 jrP+Ns0jg2EBdgy5TxU3YlE6NVl6+XLoAPezppkQ=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id r13LBoXr006356
+	for cypherpunks-outgoing; Sun, 3 Feb 2013 16:11:50 -0500
+Date: Sun, 3 Feb 2013 22:11:44 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: Re: [tor-talk] TOR Fone - p2p secure and anonymous VoIP tool
+Message-ID: <20130203211144.GD6172@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2287
+Lines: 52
+
+----- Forwarded message from "Fabio Pietrosanti (naif)" <lists@infosecurity.ch> -----
+
+From: "Fabio Pietrosanti (naif)" <lists@infosecurity.ch>
+Date: Sun, 03 Feb 2013 21:46:47 +0100
+To: tor-talk@lists.torproject.org
+Subject: Re: [tor-talk] TOR Fone - p2p secure and anonymous VoIP tool
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8;
+	rv:17.0) Gecko/20130107 Thunderbird/17.0.2
+Reply-To: tor-talk@lists.torproject.org
+
+On 2/3/13 9:23 PM, coderman wrote:
+> "push-to-talk" with procedure words over zrtp would be applicable. use
+> FEC to accommodate reasonable loss over datagram Tor.
+>
+> both Whisper Systems and Guardian Project are working on PTT
+> capabilities, iirc.
+>
+> last but not least, the codec makes no difference until larger issues
+> are worked out, for those arguing about OPUS vs. G729a/729.1 vs Speex,
+> etc. in practice the G729 implementations in cSipSimple (over ZRTP)
+> seem to be best, but this is most likely the other implementations
+> sucking. i have high hopes for a better OPUS codec...
+
+For my daily-for-profit-job i made in past stuff for secure telephony
+over GPRS that:
+- can have variable latencies on CS1 between 800ms-2200ms
+- is a reliable transport (the low level of the OS does retransmissions
+at GSM RLP level)
+
+To work over high latency (and tipically also low-bandwidth) with
+reliable transport (like TCP/Tor) you need to use those multimedia strategy:
+- setup a large static jitter buffer (you define the added artificial
+latency of the call to compensate variable latency)
+- reduce transport protocol overhead by setting a large "packetization time"
+- detect retransmission behaviours, in that case apply small TX cutting
+(transmission)
+
+With such approach you can avoid "PTT" and even if the communication
+will sounds like an old analog satellite connection, it works.
+
+Fabio
+_______________________________________________
+tor-talk mailing list
+tor-talk@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-talk
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

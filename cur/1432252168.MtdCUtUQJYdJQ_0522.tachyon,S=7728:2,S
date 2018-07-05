@@ -1,0 +1,193 @@
+From cypherpunks-bounces@cpunks.org  Fri Jan 24 03:17:15 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0O8HBdk022509;
+	Fri, 24 Jan 2014 03:17:12 -0500
+Received: from mx1.mfn.org ([204.238.179.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0O8H8K6022505
+ for <cypherpunks@cpunks.org>; Fri, 24 Jan 2014 03:17:09 -0500
+Received: from mx1 (mx1 [204.238.179.8])
+ by mx1.mfn.org (Postfix) with ESMTP id 9B1E5243CB
+ for <cypherpunks@cpunks.org>; Fri, 24 Jan 2014 01:52:24 -0600 (CST)
+Date: Fri, 24 Jan 2014 01:52:24 -0600 (CST)
+From: "J.A. Terranson" <measl@mfn.org>
+To: cypherpunks@cpunks.org
+Subject: Re: [dsfjdssdfsd] software tools for testing entropy (was: Any plans
+ for drafts or discussions on here?) (fwd)
+Message-ID: <Pine.LNX.4.64.1401240152100.13764@mx1.mfn.org>
+X-ABUSE-NOTICE\: NOTIFY POSTMASTER FOR ABUSE ISSUES
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+
+The thread continues...
+
+//Alif
+
+-- 
+Those who make peaceful change impossible,
+make violent revolution inevitable.
+
+An American Spring is coming:
+   one way or another.
+
+
+
+
+---------- Forwarded message ----------
+Date: Thu, 23 Jan 2014 16:32:25 -0800
+From: =JeffH <Jeff.Hodges@KingsMountain.com>
+To: IETF Pseudorandom Number Generator PRNG discussion list
+    <dsfjdssdfsd@ietf.org>
+Subject: Re: [dsfjdssdfsd] software tools for testing entropy (was: Any plans
+    for drafts or discussions on here?)
+
+> are there good software tools for testing entropy, that could help
+> applications determine if the underlying system is giving them good
+> input?
+
+well, from..
+
+[0] Akram, Raja Naeem, Konstantinos Markantonakis, and Keith Mayes.
+"Pseudorandom Number Generation in Smart Cards: An Implementation,
+Performance and Randomness Analysis." New Technologies, Mobility and
+Security (NTMS), 2012 5th International Conference on. IEEE, 2012.
+http://digirep.rhul.ac.uk/file/315c7a7e-4963-4a62-189f-4ad198a79f30/5/Paper.pdf
+
+..there's the sections reproduced at [1] below which may (or may not) be
+helpful.
+
+also, NIST has these resources..
+
+NIST SP 800-22: A Statistical Test Suite for Random and Pseudorandom
+Number Generators for Cryptographic Application.
+http://csrc.nist.gov/publications/nistpubs/800-22-rev1a/SP800-22rev1a.pdf
+
+Random Number Generators (RNG) Testing Requirements:
+http://csrc.nist.gov/groups/STM/cavp/index.html#04
+
+RNG Test Vectors
+http://csrc.nist.gov/groups/STM/cavp/documents/rng/rngtestvectors.zip
+
+
+One could also ask the authors of [0] if they might share their impl.
+
+hth,
+
+=JeffH
+
+
+[1]
+E. Experimental Proof
+
+To provide experimental proof, the NIST statistical test suite
+was applied. Each algorithm was provided with a common
+seed file, and generated sequences from it were saved in a
+binary file. This binary file was used as input to the statistical
+test. Point to note here is that seed files given to all algorithms
+were the same. The reason for doing so was to analyse
+differences in the quality of output while using the same
+entropy source.
+
+For statistical analysis, each algorithm was executed to
+generate 1,048,578 pseudorandom sequences of 128 bits.
+Concatenating the outputs into a binary file that was then used
+for NIST SP 800-22 statistical analysis. The results of each
+algorithm are listed in Appendix A. Taking into account the
+Common Criteria AIS 20 [18], our implementation fulfils the
+requirements for the K4 DRNG. Below is the discussion on
+how our implementation satisfies these requirements.
+
+1) K1 DRNG: Its a simple requirement that states that if
+the generated values is of set C =f c1, c2, c3, .., cm g
+then all members of the set should be distinct regardless
+of the statistical properties.
+
+2) K2 DRNG: Requires that the implementation should
+satisfy the statistical properties such as monobit test,
+poker test and tests on runs. Our implementations were
+subjected to the NIST SP 800-22 test suite.
+
+3) K3 DRNG: This requires that the entropy of the PRNG
+is at least 80. All SHA based algorithms has 440 bits
+seed and block cipher based algorithms has 128 bits
+seed. All of the seed values were chosen from an
+external high entropy source that is carefully tested.
+
+4) K4 DRNG: This level requires that the PRNG should be
+forward-secure. A PRNG is forward-secure if after n iteration
+of the PRNG, a malicious user is unable to guess
+the internal state of the generator. The implemented
+PRNG feed back to the internal seed that is changing in
+each of the iterations. Furthermore, block cipher based
+implementation of the PRNG use different key in each
+of the iterations. Even retrieving a cryptographic key
+would not help a malicious user to successfully know
+the entire state of the seed file.
+
+In our implementations we tested SHA and block cipher
+based algorithms for the PRNGs. In general block cipher based
+algorithms, only a single key is used for the entire lifetime of
+the generator. However, we have tested that a PRNG could be
+modified to use a new key on each execution of the generator.
+The internal key generation mechanism of the block cipher
+based PRNG implementations are light weight and they do not
+hamper the overall performance of the generator. Therefore, it
+could be argued that it provides a more secure block cipher
+based PRNG then an PRNG that only uses a single key for
+entire lifetime.
+
+Table IV details the percentage of passing sequences pro
+duced by individual algorithms. As it is evident from table III
+and IV, there is not a big difference between the implemented
+algorithms both in terms of performance and percentage of
+sequence passing the NIST statistical tests. Of particular note,
+if we take the accumulated average of the passing sequences
+percentage in the table IV an interesting result emerges. The
+SHA-1 performs comparative better than other algorithms
+and AES based PRNG has the least accumulated average
+of passing sequence as illustrated in figure 4. This measure
+represents the randomness of the generated sequences - not
+the security of the algorithm. If we also account for the
+performance, SHA based algorithms perform better than the
+encryption based algorithms (e.g. DES and AES).
+
+V. CONCLUSION AND FUTURE RESEARCH DIRECTIONS
+...
+Our research into the possibility of using a test suite like
+NIST SP 800-SP to check pseudorandom number generators in
+smart cards has showed that it is a workable concept. The tests
+listed in the NIST SP 800-22 are substantially more then the
+one recommended for the smart card pseudorandom number
+generators in AIS20 [18] and AIS31 [13]. This research has
+demonstrated that even with limited resources and an entropy
+constrained environment like a smart card, good quality pseudorandom
+sequences can be generated that can satisfy all the
+requirements for a PRNG even the ones that are used for
+general purpose computers.
+...
+
+---
+end
+
+
+
+
+_______________________________________________
+dsfjdssdfsd mailing list
+dsfjdssdfsd@ietf.org
+https://www.ietf.org/mailman/listinfo/dsfjdssdfsd
+

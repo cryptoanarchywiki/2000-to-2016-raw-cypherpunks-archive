@@ -1,0 +1,122 @@
+From owner-cypherpunks@Algebra.COM  Wed Dec 20 01:40:51 2000
+Received: from MIT.EDU (SOUTH-STATION-ANNEX.MIT.EDU [18.72.1.2])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id BAA03569
+	for <kwantam@positron.mit.edu>; Wed, 20 Dec 2000 01:40:51 -0500
+Received: from [208.233.99.160] by MIT.EDU with SMTP
+	id AA28395; Wed, 20 Dec 00 01:39:54 EST
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id eBK6Mis02259
+	for cypherpunks-outgoing; Wed, 20 Dec 2000 00:22:44 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from emma.parrhesia.com (emma.parrhesia.com [209.133.38.21])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id eBK6Mh602246
+	for <cypherpunks@algebra.com>; Wed, 20 Dec 2000 00:22:43 -0600
+X-Relay-Ip: 209.133.38.21
+Received: (from gbroiles@localhost)
+	by emma.parrhesia.com (8.9.3/8.9.3) id WAA18327;
+	Tue, 19 Dec 2000 22:23:05 -0800 (PST)
+Date: Tue, 19 Dec 2000 22:23:02 -0800
+From: Greg Broiles <gbroiles@netbox.com>
+To: "Scoville, Chad" <CScoville@thrupoint.net>
+Cc: cypherpunks@Algebra.COM
+Old-Subject: Re: Crypto questions
+Message-Id: <20001219222300.A18060@ideath.parrhesia.com>
+References: <000601c069d1$62ca7290$a91819ac@NDBCap.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+X-Mailer: Mutt 1.0i
+In-Reply-To: <000601c069d1$62ca7290$a91819ac@NDBCap.com>; from CScoville@thrupoint.net on Tue, Dec 19, 2000 at 10:35:58AM -0500
+Subject:  Re: Crypto questions
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 4436
+Lines: 83
+
+
+On Tue, Dec 19, 2000 at 10:35:58AM -0500, Scoville, Chad wrote:
+> 
+> I've been actively reading posts on this list for about two years now, and
+> I'm in he process of actually trying to design/implement a data network
+> where security is of the utmost priority. Where is a good starting point to
+> find out about packages using algorithms which are unbreakable as of yet.
+> All of the traffic will remain domestically within the US. The traffic will
+> be SMTP.
+
+Several points come to mind -
+
+"Unbreakable" algorithms are mostly a distraction. What's important is the
+relationship between the cost of breaking them and the value of the data
+you're protecting. Less familiar algorithms (like the new AES selection)
+may sound exciting - their relative newness means that there aren't a lot
+of known attacks or weaknesses, which is good and bad at the same time.
+It's good because nobody can ambush you in a meeting by waving a copy
+of a 10-year-old journal article discussing an obscure failure mode for
+that algorithm/protocol. It's bad because you may install an expensive
+system and then get ambushed with a journal article (or an exploit)
+that hasn't even been thought of yet.
+
+Still, attackers aren't likely to attack the strong part of your system,
+they'll attack the weak part - so you can't really say "Well, I've got
+4096-bit Blortifast, I'm safe", until you've secured the machines which
+will run the system, the buildings they're in, and the people who run the
+machines and the buildings. Even if a slow reference implementation of
+your chosen algortithm is only vulnerable to brute-force cracks, you
+can't assume that your implementation as installed is also that secure -
+there may be implementation failures on the part of developers, installers,
+administrators, or users which weaken security. 
+
+I'd rather have a bulletproof DES implementation than an imperfect 3DES
+implementation - with a known quantity, I can handle risks myself by
+getting extra protection (like superencryption) or by not sending really
+sensitive data. Hidden failures in apparently strong implementations trick
+you into a false sense of security.
+
+The other thing to consider is that even if you succeed in installing a
+perfectly secure pipeline between two systems or locations, your 
+organization (or your client's organization) hasn't necessarily met their
+goals - you mention that you want to protect SMTP traffic. That's a good
+goal - but you didn't mention making sure that the sender-side has good
+security with its clients, or that the receiver-side has good security
+with its clients .. which means that even if the SMTP boxes are themselves
+secure, and the network connection between them is secure (and that's a
+very generous assumption), the installation won't be secure from a user or
+auditor's perspective if unauthorized people have access to the client
+connections on either side to monitor or spoof in-bound and out-bound
+mail traffic (via SMTP, POP, or IMAP). Securing communications with
+clients - not just between mail servers - is somewhere between hard and
+impossible, depending on how many people you're thinking of, and the
+degree of security.
+
+Some people have chosen to secure messages, not pipelines between 
+machines, because then their security doesn't depend so much on the
+integrity of the machines in between - they're still susceptible to
+denial-of-service or replay attacks, but it's unlikely that the 
+confidentiality or attribution of messages will be breached.
+
+Having said all of that grouchy stuff, you probably won't get a lot safer
+than picking a good IPsec implementation from a big vendor and keeping
+its patches current - no need to dig into the guts of what protocol(s)
+you're using. (Beyond that, you're working with political and financial
+constraints, not primarily technical ones. If this were my problem, I'd
+use OpenBSD on COTS PC hardware - but that's me.) 
+
+> It would be illmatic if someone could reccomend a good reading list
+> (current) on the bleeding edge of cryptography.
+
+Have you joined the IACR? 
+
+You also might find Schneier's _Secrets and Lies_ thought-provoking; I
+think he's too pessimistic (which makes up for Applied Crypto's
+excessive optimism) but it is certainly useful, and overdue. 
+_Network Security_ by Kaufman, Perlman, and Speciner is not bleeding-
+edge but is absolutely worthy of your attention anyway.
+
+--
+Greg Broiles gbroiles@netbox.com
+PO Box 897
+Oakland CA 94604
+

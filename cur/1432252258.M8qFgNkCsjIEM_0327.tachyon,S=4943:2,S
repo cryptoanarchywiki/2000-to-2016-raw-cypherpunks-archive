@@ -1,0 +1,95 @@
+From owner-cypherpunks@al-qaeda.net  Mon Apr 19 05:59:29 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: (from majordomo@localhost)
+	by POSITRON.MIT.EDU (8.11.6p3/8.11.6-03-31-03) id i3J9xRs21271
+	for cypherpunks-outgoing; Mon, 19 Apr 2004 05:59:27 -0400
+X-Authentication-Warning: positron.mit.edu: majordomo set sender to owner-cypherpunks@al-qaeda.net using -f
+Date: Mon, 19 Apr 2004 05:57:06 -0400
+Message-ID: <822834ccf70ba583de22bc4ccbe6f504@anonymous>
+From: An Metet   <anmetet@freedom.gmsociety.org>
+Comments: This message did not originate from the Sender address above. 
+  It was remailed automatically by anonymizing remailer software. 
+  Please report problems or inappropriate use to the 	remailer
+  administrator at <abuse@freedom.gmsociety.org>.
+To: cypherpunks@al-qaeda.net
+Subject: Re: Anonymity vs reputation question
+Message-ID: <ddb1bcc9919ea135865baf42ceab56a7@freedom.gmsociety.org>
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3906
+Lines: 71
+
+> Thinking about something, I found an interesting problem. It is possible
+> to set up a reputation-based system with nyms, where every nym is an
+> identity with attached reputation.
+>
+> Is it possible to have a system where nyms can share reputation without
+> divulging the links between them? That would allow the possibility of eg.
+> publishing as a "new" identity while still having the "weight" of an
+> already established seasoned professional.
+
+Yes, you can do this, but there are some problems.
+
+First, what is a reputation?  Reputations are in people's minds.  Any nym
+will have a different reputation with different people.  The only way
+the new nym could have exactly the same reputation with everyone would
+be for it to be explicitly linked to the old nym, defeating the purpose
+of switching.
+
+Therefore the new nym's reputation will have to be a simple subset of
+the reputation of the old nym, in order that many nyms will have equal
+reputation and the new one won't be linked.  This suggests a simple
+boolean ranking where one or more respected figures can give their
+endorsement to a nym, and then the new nym can start up and say that it
+is endorsed by so-and-so.  As long as that person gave out quite a few
+endorsements then there will not be too much linkage to the old nym.
+
+As someone mentioned, this is the problem which is solved by cryptographic
+credentials, like those of Chaum or Brands.  The "reputation judge"
+gives out an endorsement credential to those nyms he deems worthy; then
+through various cryptographic techniques these credentials can be shown
+by the new nyms.
+
+A simple version of this would be to use the same Chaum blind signatures
+that are used for ecash.  When the reputation judge gives out the
+credential, in addition to signing the nym, he also issues a blind
+signature on a blinded identity offered by the nym owner.  The judge
+can't see what nym he is signing, but later that nym can show that its
+identity is signed by the reputation judge.  Brands credentials basically
+work this same way.
+
+A problem with this is that only one new nym gets endorsed, so the
+holder can only switch identities once.  To fix this, the judge could
+issue several blind signatures, say about 5, which would accommodate
+that many identity switches.
+
+An even simpler approach would be for the reputation judge to create a
+common public key to be used as a signing key by everyone he endorses.
+When he endorses someone he reveals to them, privately, the secret key
+used to sign with the common public key.  Then all nyms who have received
+the endorsement can sign with the common key in addition to their own.
+When the nym switches identities he still knows the common signing key
+and can sign with it along with the new nym.
+
+The problem with this class of systems is that if anyone leaks the common
+private key, then the security of the endorsement is lost and anyone
+can pretend to be endorsed.  A similar flaw with the previous proposal
+is that if someone gets several blind endorsements, they might give some
+away or sell some, and the new buyers might misuse them, cheapening the
+value of the endorsement.
+
+Yet another method, good if there aren't more than a dozen or so nyms
+which are endorsed, is to use a ring or group signature.  The reputation
+judge publishes a list of keys that he endorses, and then anyone on the
+list can make a signature which can be verified as coming from one of
+the keys, but there is no way to tell which one made it.
+
+This has a security problem similar with the 2nd approach, that someone
+on the list could secretly give away his private key to other people,
+and they could sign bad messages, with no way to tell which person
+on the list created them.  The reputation judge could address this by
+withdrawing his endorsement of the last few list members, and seeing if
+the problem goes away, but it would be a complicated and messy situation.
+

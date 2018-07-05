@@ -1,0 +1,64 @@
+From owner-cypherpunks@jfet.org  Thu Nov  3 17:56:25 2005
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.4/8.13.4/Debian-3) with ESMTP id jA3Mt2FT000399
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 3 Nov 2005 17:55:02 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.4/8.13.4/Submit) id jA3Mt2jE000398
+	for cypherpunks-outgoing; Thu, 3 Nov 2005 17:55:02 -0500
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;         s=beta;
+  d=gmail.com;        
+  h=received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+  b=TXvrWLGD1vlMps9tpOp6sAV5ILYahHw1/RyUNiZfXU8bXROOBH4W1O6hR+d11NrzTipMaYtfGouGSxxIRLDNdSlCos79FjBDM/vd25MdZ1WRwW2l/uirLqguEyaCva6OjnuBOHNrkpCe9VOewI18JwfEYWCFySQ9DRksAvOx9ss=
+Message-ID: <792ce4370511031454j67372483h4a6d54e23da6c8f2@mail.gmail.com>
+Date: Thu, 3 Nov 2005 14:54:59 -0800
+From: cyphrpunk <cyphrpunk@gmail.com>
+To: "Kuehn, Ulrich" <Ulrich.Kuehn@telekom.de>
+Subject: Re: [smb@cs.columbia.edu: Skype security evaluation]
+Cc: cypherpunks@jfet.org, cryptography@metzdowd.com
+In-Reply-To: <9D78CC84C35AEF43A69CA95639D376DABB19B1@S4DE9JSAAMU.ost.t-com.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+References: <9D78CC84C35AEF43A69CA95639D376DABB19B1@S4DE9JSAAMU.ost.t-com.de>
+Content-Transfer-Encoding: 7bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by proton.jfet.org
+  id jA3Mt0lL000364
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 1494
+Lines: 30
+
+On 10/31/05, Kuehn, Ulrich <Ulrich.Kuehn@telekom.de> wrote:
+> There are results available on this issue: First, a paper by
+> Boneh, Joux, and Nguyen "Why Textbook ElGamal and RSA Encryption
+> are Insecure", showing that you can essentially half the number
+> of bits in the message, i.e. in this case the symmetric key
+> transmitted.
+
+Thanks for this pointer. In the case of Skype it would be consistent
+with the security report if they are encrypting random 128 bit values
+under each other's RSA keys, unpadded, and exchanging them, then
+hashing the pair of 128 bit values together to generate their session
+keys.
+
+The paper above shows an easy birthday attack on such encryptions.
+Approximately 18% of 128 bit numbers can be expressed as a product of
+two 64-bit numbers. For such keys, if the ciphertext is C, consider
+all 2^64 values m1 and m2, and compare m1^e with C/m2^e. This can be
+done in about 2^64 time and memory, and if the plaintext is in that
+18%, it will be found as m1*m2.
+
+Based on these comments and others that have been made in this thread,
+the Skype security analysis seems to have major flaws. We have a
+reluctance in our community to criticize the work of our older
+members, especially those like Berson who have warm personalities and
+friendly smiles. But in this case the report leaves so much
+unanswered, and focuses inappropriately on trivial details like
+performance and test vectors, that overall it can only be called an
+entirely unsatisfactory piece of work.
+
+CP
+

@@ -1,0 +1,158 @@
+From owner-cypherpunks@al-qaeda.net  Fri Nov 30 11:32:31 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id qAUGSUu4010994
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 30 Nov 2012 11:28:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1354292910;
+	bh=ICDHK9XMPwsk//ZlD5adR3yDsCmdjfvNNAovPSBrQdk=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=OyTdG86Yo+PBdHEP35pLCsdb1e/RDpSSWTMDoS6fjLc2hsxFidCi1GmlVR3LDrWAI
+	 hmY33J7HwhqifJue6VjANeprUjjQFmi6/x0exAbwyw/vvaktci1/coilHK/9hRo3uH
+	 th797WDBeJg/h8/xXVoDfRo/cYIIc4IV62YBmofs=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id qAUGSUvd010993
+	for cypherpunks-outgoing; Fri, 30 Nov 2012 11:28:30 -0500
+Date: Fri, 30 Nov 2012 17:28:27 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Some notes toward a fully distributed, serverless 
+  socnet/communications network using CouchDB.
+Message-ID: <20121130162827.GX9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4429
+Lines: 125
+
+----- Forwarded message from Bryce Lynch <virtualadept@gmail.com> -----
+
+From: Bryce Lynch <virtualadept@gmail.com>
+Date: Fri, 30 Nov 2012 11:25:18 -0500
+To: doctrinezero@googlegroups.com, zs-p2p@googlegroups.com
+Subject: Some notes toward a fully distributed, serverless socnet/communications
+	network using CouchDB.
+Reply-To: zs-p2p@googlegroups.com
+
+This is a dump from one of my desktop note-taking apps.  It's not fully
+fleshed out, and in fact a fair amount of discussion needs to take place
+before it will be.  As always, if we can re-use and extend an existing
+application, we should so we can apply time and energy toward making it do
+exactly what we want rather than potentially reinventing a wheel:
+
+CouchDB (https://couchdb.apache.org/) is a distributed NoSQL database which
+stores JSON documents rather than information in rows and columns in tables
+
+documents are managed with MVCC (Multi-Version Concurrency Control), and
+the network is designed for eventual consistency
+
+automatic conflict resolution
+
+CouchDB nodes can connect to one another to replicate data very easily
+
+designed to operate offline - do what you want with your local copy of the
+data, and when you reconnect it'll automatically resynch with the rest of
+the CouchDB network you set up
+
+designed for ad-hoc connections - whatever connection it has, when it has
+it, it can use it to connect to the network
+
+lightweight - the proof of concept Twitter-like app (Toast) supported
+thousands of transactions per second while running on an older Macbook Air
+
+accessed in the fashion of a hash table, i.e. with key/value references
+
+queries are done with JavaScript
+
+the API is bog-standard HTTP(S)
+
+can be interacted with using wget, curl, or a web browser
+
+runs on everything from Windows to Android
+
+because it includes its own HTTP(S) server, it is capable of hosting apps
+within the database itself, so you don't need an external framework (like
+PHP, Rails, or Django)
+
+apps are written in HTML5 and JavaScript, stored as documents in the
+database
+
+apps are trivial to deploy
+
+book is online, free to download and read, can be found on Github also:
+http://guide.couchdb.org/
+
+we can conceivably use CouchDB to implement Network25 (and whatever other
+information storage solutions we will eventually want to use)
+
+installation can be a single installer for every platform - download this,
+double click on it, when it's ready it'll tell you
+
+every document can have its own schema, which is simple to determine
+because it works just like a hash table (key/value)
+
+public profile document (gets replicated)
+{
+_id: "Bryce A. Lynch",
+_interests: ["long walks on the beach", "moonlit nights", "massively
+distributed systems"],
+_friends: ["friend", "friend", ...],
+_publickey: "<public key>",
+...
+}
+
+private profile document (doesn't get replicated, stored on machine,
+optionally encrypted and must be unlocked with a passphrase when the
+Network25 app is started)
+{
+_id: "Bryce A. Lynch",
+_publickey: "<public key",
+_privatekey: "<you no can haz>",
+...
+}
+
+dump the list of keys and sort through their associated values one at a time
+
+because there is no central server - every client is also a server - this
+also means that we could, in theory, protect arbitrary volumes of data in a
+given Network25 user's account with public key crypto
+
+for every user of Network25, there is a document containing the public keys
+of that user's friends
+
+documents can be encrypted to the public keys of only a subset of that
+user's friends, such that only their private keys can (automatically)
+decrypt them:
+{
+_id: "<SHA256 hash here>",
+_post: "<cyphertext here>",
+_encrypted: "yes",
+_authorized_accounts: ["<somebody>", "<somebody>", "<somebody>",
+"<somebody>", ...],
+}
+
+-- 
+The Doctor [412/724/301/703] [ZS (MED)]
+https://drwho.virtadpt.net/
+"I am everywhere."
+
+-- 
+You received this message because you are subscribed to the Google Groups "ZS-P2P" group.
+To post to this group, send email to zs-p2p@googlegroups.com.
+To unsubscribe from this group, send email to zs-p2p+unsubscribe@googlegroups.com.
+For more options, visit https://groups.google.com/groups/opt_out.
+
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

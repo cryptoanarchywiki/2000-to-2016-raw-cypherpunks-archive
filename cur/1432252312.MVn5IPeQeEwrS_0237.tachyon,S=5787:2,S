@@ -1,0 +1,165 @@
+From cypherpunks-bounces@cpunks.org  Fri Jan 10 07:14:40 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0ACDdFn015898;
+	Fri, 10 Jan 2014 07:13:45 -0500
+Received: from pakastelohi.cypherpunks.to (postfix@pakastelohi.cypherpunks.to
+ [82.94.251.205])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0ACDZCN015894
+ for <cypherpunks@cpunks.org>; Fri, 10 Jan 2014 07:13:36 -0500
+Received: from gwens-MacBook-Pro.local (localhost [127.0.0.1])
+ by pakastelohi.cypherpunks.to (Postfix) with ESMTP id 9D671C0129
+ for <cypherpunks@cpunks.org>; Fri, 10 Jan 2014 13:13:30 +0100 (CET)
+Message-ID: <52CFE3E9.5040400@cypherpunks.to>
+Date: Fri, 10 Jan 2014 04:13:29 -0800
+From: gwen hastings <gwen@cypherpunks.to>
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7;
+ rv:17.0) Gecko/20130107 Thunderbird/17.0.2
+MIME-Version: 1.0
+To: "cypherpunks@cpunks.org" <cypherpunks@cpunks.org>
+Subject: Pretty Curved Privacy.. ECC Curve p25519 util(Bernstein approved
+ curve)
+X-Enigmail-Version: 1.5.1
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+>From the README...
+
+DESCRIPTION
+
+Pretty Curved Privacy (pcp1) is a commandline utility which can be used
+to encrypt files. pcp1 uses eliptc curve cryptography for encryption
+(CURVE25519 by Dan J. Bernstein). While CURVE25519 is no worldwide
+accepted standard it hasn't been compromised by the NSA - which might be
+better, depending on your point of view.
+
+Caution: since CURVE25519 is no accepted standard, pcp1 has to be
+considered as experimental software. In fact, I wrote it just to learn
+about the curve and see how it works.
+
+Beside some differences it works like GNUPG. So, if you already know how
+to use gpg, you'll feel almost home.
+QUICKSTART
+
+Lets say, Alicia and Bobby want to exchange encrypted messages. Here's
+what the've got to do.
+
+First, both have create a secret key:
+
+ Alicia                             Bobby
+ pcp1 -k                            pcp1 -k
+
+After entering their name, email address and a passphrase to protect the
+key, it will be stored in their vault file (by default ~/.pcpvault).
+
+Now, both of them have to export the public key, which has to be
+imported by the other one. With pcp you can export the public part of
+your primary key, but the better solution is to export a derived public
+key especially for the recipient:
+
+ Alicia                             Bobby
+ pcp1 -p -r Bobby -O alicia.pub     pcp1 -p -r Alicia -O bobby.pub
+
+They've to exchange the public key somehow (which is not my problem at
+the moment, use ssh, encrypted mail, whatever). Once exchanged, they
+have to import it:
+
+ Alicia                             Bobby
+ pcp1 -P -I bobby.pub               pcp1 -P -I alicia.pub
+
+They will see a response as this when done:
+
+ key 0x29A323A2C295D391 added to .pcpvault.
+
+Now, Alicia finally writes the secret message, encrypts it and sends it
+to Bobby, who in turn decrypts it:
+
+ Alicia                             Bobby
+ echo "Love you, honey" > letter
+ pcp1 -e -i 0x29A323A2C295D391 -I letter -O letter.z85
+ cat letter.z85 | mail bobby@foo.bar
+
+                                    pcp1 -d -I letter.z85 | less
+
+And that's it.
+
+Please note the big difference to GPG though: both Alicia AND Bobby have
+to enter the passphrase for their secret key! That's the way CURVE25519
+works: you encrypt a message using your secret key and the recipients
+public key and the recipient does the opposite, he uses his secret key
+and your public key to actually decrypt the message.
+
+Oh - and if you're wondering why I named them Alicia and Bobby: I was
+just sick of Alice and Bob. We're running NSA-free, so we're using other
+sample names as well.
+INSTALLATION
+
+There are currently no packages available, so pcp has to be compiled
+from source. Follow these steps:
+
+First, you will need libsodium:
+
+ git clone git://github.com/jedisct1/libsodium.git
+ cd libsodium
+ ./autogen.sh
+ ./configure && make check
+ sudo make install
+ sudo ldconfig
+ cd ..
+
+Next, pcp:
+
+ git clone git://github.com/tlinden/pcp.git
+ cd pcp
+ ./configure
+ sudo make install
+ cd ..
+
+Optionally, you might run the unit tests:
+
+ make test
+
+DOCUMENTATION
+
+To learn how to use pcp, read the manpage:
+
+ man pcp1
+7.
+Licensed under the GNU GENERAL PUBLIC LICENSE version 3.
+HOME
+
+The homepage of Pretty Curved Privacy can be found on
+http://www.daemon.de/PrettyCurvedPrivacy. The source is on Github:
+https://github.com/TLINDEN/pcp
+
+-- 
+Tentacle #99
+
+ecc public key curve p25519(pcp 0.15)
+
+1l0$WoM5C8z=yeZG7?$]f^Uu8.g>4rf#t^6mfW9(rr910
+
+Governments are instituted among men,
+ deriving their just powers from the consent of the governed,
+that whenever any form of government becomes destructive
+of these ends, it is the right of the people to alter or
+ abolish it, and to institute new government, laying its
+ foundation on such principles, and organizing its powers
+ in such form, as to them shall seem most likely to effect
+ their safety and happiness.’
+
+https://github.com/TLINDEN/pcp.git to get pcp(curve25519 cli)
+

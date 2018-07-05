@@ -1,0 +1,142 @@
+From owner-cypherpunks@lne.com  Fri Nov 21 23:43:14 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p3/8.11.6-03-31-03) with ESMTP id hAM4hCq17524
+	for <rsw@jfet.org>; Fri, 21 Nov 2003 23:43:12 -0500
+Received: from slack.lne.com (slack.lne.com [127.0.0.1])
+	by slack.lne.com (8.12.10/8.12.10) with ESMTP id hAM4PYuf029034
+	(version=TLSv1/SSLv3 cipher=EDH-DSS-DES-CBC3-SHA bits=168 verify=NO)
+	for <cypherpunks-goingout345@slack.lne.com>; Fri, 21 Nov 2003 20:25:35 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.10/8.12.10/Submit) id hAM4PYXJ029033
+	for cypherpunks-goingout345; Fri, 21 Nov 2003 20:25:34 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Message-ID: <2A1D4C86842EE14CA9BC80474919782E01113202@mou1wnexm02.vcorp.ad.vrsn.com>
+From: "Hallam-Baker, Phillip" <pbaker@verisign.com>
+To: "Hallam-Baker, Phillip" <pbaker@verisign.com>,
+   "'Steve Schear'"
+  <s.schear@comcast.net>
+Cc: cypherpunks@lne.com, asrg@ietf.org
+Subject: RE: [Asrg] Re: [Politech] Congress finally poised to vote on
+  anti -spam bill [sp]
+Date: Fri, 21 Nov 2003 20:25:24 -0800
+MIME-Version: 1.0
+X-Mailer: Internet Mail Service (5.5.2653.19)
+Content-Type: text/plain; charset="iso-8859-1"
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 4204
+Lines: 109
+
+Yeah, Yeah dictionary attacks...
+
+The key is that the search space is actually thinly populated enough to make
+dictionary attack hard. Most usernames are 6 characters or more, many
+include numbers, that is about 26^6 worth of search space per domain. Of
+course this is not evenly populated, but the odd thing is that the usernames
+turn out to be more random than the average password. This is because random
+is not unguessable. Many usernames are surnames, many are compounds of
+initial plus surname, only a relative handfull are commonly used names and
+those tend to get grabbed fast. so you have a pretty big search space,
+millions of possibilities and that for each one of fifty million domains. 
+
+The same does not hold for do-not-call lists. The problem there is that
+something like 80% of the numbers available at active exchanges are already
+allocated. Most of the stock of unused numbers are on exchanges that have
+not yet been allocated. Since something like 30% of subscribers sign up for
+do not call the result is that dictonary attacks are easy.
+
+
+Also we add out of service addresses that get spammed anyway to the list. So
+the list is not an accurate way to find out if an address is in service or
+not. Alan knows quite a few addresses that get spammed that are invalid.
+
+> -----Original Message-----
+> From: Hallam-Baker, Phillip [mailto:pbaker@verisign.com]
+> Sent: Friday, November 21, 2003 7:21 PM
+> To: 'Steve Schear'
+> Cc: cypherpunks@lne.com; asrg@ietf.org
+> Subject: RE: [Asrg] Re: [Politech] Congress finally poised to vote on
+> anti -spam bill [sp]
+> 
+> 
+> We need to consider the technical workings of the do-not-spam 
+> list and the
+> requirements that we would like the FTC to meet.
+> 
+> I propose as a minimum:
+> 
+> 1) Allow individual subscribers to list their email addresses with the
+> service.
+> 2) Permit mail sender to quickly determine whether a given 
+> email is on the
+> list
+> 3) Be distributable in a form that does not permit use as a 
+> mailing list.
+> 4) Permit the storage of attributes in association with each listing,
+> minimally the date of subscription.
+> 
+> In addition we might add:
+> 
+> 5) Allow domain name owners to list their domains.
+> 6) Provide for authentication of listing requests
+> 
+> 
+> These requirements can be met using completely generic and to 
+> my knowledge
+> unencumbered technology. For the purposes of avoiding patent 
+> encumberabces I
+> disclose the following - I published note on the basic idea 
+> of using a one
+> way hash to conceal an email address on a do not spam list in 
+> 1995, I also
+> implemented the scheme at that time. The idea is not entirely 
+> novel, hash
+> databases have been used for at least twenty years, there may also be
+> similar ideas in the cryptography litterature.
+> 
+> My proposal would be to use a message authentication function such as
+> HMAC-SHA1 with a  key such as SHA1 ("FTC Do Not Spam List") 
+> to create a
+> unique digest function for the purpose. There is a security 
+> consideration
+> here, use of a digest such as SHA1(email) might lead to 
+> chosen protocol
+> attacks.
+> 
+> To add an individual email address "alice@example.com" to the list we
+> calculate HMAC ("alice@example.com") to create the key. A 
+> domain may be
+> represented by the string "example.com".
+> 
+> To determine whether the address "bob@example.com" is on the 
+> list it is
+> necessary to test for both the specific email address and the domain.
+> 
+> [This can be made to meet arbitrarily complex requirements]
+> 
+> 
+> The list is distributed as a set of key/value pairs. Sorting the list
+> according to the key values allows rapid lookups by means of 
+> binary search,
+> or since the hash function is guaranteed homogenous using 
+> ranged search
+> using the hash value as an estimator for the index position. It is not
+> necessary to distribute the list sorted.
+> 
+> There are also a few tricks that can be used to reduce the 
+> usefulness of
+> such a list for address validation.
+> 
+> This same concept can be used to conceal the filter terms used in
+> cersorware.
+> 
+> 		Phill
+> 
+> _______________________________________________
+> Asrg mailing list
+> Asrg@ietf.org
+> https://www1.ietf.org/mailman/listinfo/asrg
+

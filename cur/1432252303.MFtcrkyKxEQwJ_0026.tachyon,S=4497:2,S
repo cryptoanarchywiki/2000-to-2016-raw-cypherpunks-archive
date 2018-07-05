@@ -1,0 +1,104 @@
+From cryptography-owner@c2.net  Wed Oct 11 23:40:59 2000
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.72.0.53])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id XAA10974
+	for <kwantam@positron.mit.edu>; Wed, 11 Oct 2000 23:40:59 -0400
+Received: from blacklodge.c2.net (blacklodge.c2.net [140.174.185.245])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id XAA20383;
+	Wed, 11 Oct 2000 23:40:52 -0400 (EDT)
+Received: from localhost (daemon@localhost) by blacklodge.c2.net (8.8.8/8.7.3) with SMTP id UAA26160; Wed, 11 Oct 2000 20:40:58 -0700 (PDT)
+Received: by blacklodge.c2.net (bulk_mailer v1.11); Wed, 11 Oct 2000 20:39:15 -0700
+Received: (from majordom@localhost) by blacklodge.c2.net (8.8.8/8.7.3) id UAA25628 for cryptography-outgoing; Wed, 11 Oct 2000 20:39:13 -0700 (PDT)
+Message-Id: <4.1.20001011195157.0099edf0@pop.ix.netcom.com>
+Message-Id: <4.1.20001011195157.0099edf0@pop.ix.netcom.com>
+X-Sender: kelsey.j@pop.ix.netcom.com
+X-Mailer: QUALCOMM Windows Eudora Pro Version 4.1 
+Date: Wed, 11 Oct 2000 20:13:20 -0400
+To: "Arnold G. Reinhold" <reinhold@world.std.com>,
+        Vin McLellan <vin@shore.net>
+From: John Kelsey <kelsey.j@ix.netcom.com>
+Subject: Re: Rijndael & Hitachi
+Cc: <coderpunks@toad.com>, cryptography@c2.net, cypherpunks@cyberpass.net
+In-Reply-To: <v04210101b608fc1f04ec@[24.218.56.92]>
+References: <4.2.2.20001008163631.00c6cc40@shell1.shore.net>
+ <4.2.2.20001005031644.00b1a570@shell1.shore.net>
+ <4.2.2.20001004024006.00be6d60@shell1.shore.net>
+ <4.2.2.20001002220826.00bdb370@shell1.shore.net>
+ <4.2.2.20001004024006.00be6d60@shell1.shore.net>
+ <4.2.2.20001005031644.00b1a570@shell1.shore.net>
+ <4.2.2.20001008163631.00c6cc40@shell1.shore.net>
+Mime-Version: 1.0
+Old-Content-Type: text/plain; charset="us-ascii"
+Sender: owner-cryptography@c2.net
+Content-Type: application/pgp; format=text; x-action=sign
+Status: O
+Content-Length: 2584
+Lines: 67
+
+-----BEGIN PGP SIGNED MESSAGE-----
+
+At 01:44 PM 10/10/00 -0400, Arnold G. Reinhold wrote:
+
+...
+>I was thinking it might be useful to define a "Paranoid
+>Encryption Standard (PES)" that is a concatenation of all
+>five AES finalists, applied in alphabetical order, all with
+>the same key (128-bit or 256-bit).  If in fact RC6 is the
+>only finalist still subject to licensing by its developer,
+>it could be replaced by DEAL (alphabetized under "D"). Since
+>DEAL is based on DES, it brings the decades of testing and
+>analysis DES has received to the party.
+
+This basic idea is discussed in Massey and Maurer's ``The
+Importance of Being First'' paper.  There are a couple
+issues:
+
+a.  The keys need to be independent.  (Otherwise, imagine if
+cipher #1 is DES encryption, and cipher #2 is DES
+decryption.)
+
+b.  There order of the ciphers matters for the kind of
+security proof you can do.  If you do Twofish, then
+Rijndael, you can prove that a known-plaintext attack on
+this system = a known plaintext attack on Twofish and a
+chosen-plaintext attack on Rijndael.  (That is, the combined
+system can be no easier to break than the easier of a
+known-plaintext attack on Twofish or a chosen-plaintext
+attack on Rijndael.)
+
+A smarter way to do this is to do OFB-mode or counter-mode
+with all N ciphers.  That way, you can prove that breaking
+the resulting cipher is equivalent to breaking OFB mode
+encryption under all N of the ciphers.
+
+>DEAL was dinged in
+>the first round because "it is claimed that DEAL-192 is no
+>more secure than DEAL-128" and "equivalent keys are claimed
+>for a fraction (2**-64) of the 192-bit and 256-bit key
+>spaces."
+>http://csrc.nist.gov/encryption/aes/round1/r1report.htm#sec2.3.1
+>I don't think either issues is reason to exclude DEAL in
+>this role, though if there were tweaks to DEAL that resolved
+>them, they might be worth including.
+
+The dings in DEAL wouldn't amount to much in this setting,
+in practice.  (Okay, so the dings in DEAL wouldn't ever
+matter in practice, unless you wanted to use DEAL alone for
+a hashing construction.)
+
+>Arnold Reinhold
+
+ --John Kelsey, Counterpane Internet Security, kelsey@counterpane.com
+PGP Fingerprint: 5D91 6F57 2646 83F9  6D7F 9C87 886D 88AF
+
+-----BEGIN PGP SIGNATURE-----
+Version: PGPfreeware 6.5.1 Int. for non-commercial use
+<http://www.pgpinternational.com>
+Comment: foo
+
+iQCVAwUBOeUCFiZv+/Ry/LrBAQF0bwP+OGBvMrvtcFQyOupBv4ulvTzjMtFWcSMU
+FfRRzFq3YSw3M2KkBsFiK2RPJJngh2LBfGLLSW8F5COpXkWmByKbrABqNsWufx5V
+8fBexLjwZwC2zyJq/R+ynfdlx7IqYycjL1ZpRek2hwL5VYFKu2CCROCU9xcAunXK
+6KEPFGPQ7iQ=
+=yCFE
+-----END PGP SIGNATURE-----
+

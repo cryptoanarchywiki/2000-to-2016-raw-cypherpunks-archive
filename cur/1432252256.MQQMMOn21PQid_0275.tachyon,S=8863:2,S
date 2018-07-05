@@ -1,0 +1,208 @@
+From cypherpunks-bounces@cpunks.org  Wed Aug 21 05:56:43 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r7L9uTFr032299;
+	Wed, 21 Aug 2013 05:56:30 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r7L9uNnU032295
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Wed, 21 Aug 2013 05:56:26 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 36F24543E43; Wed, 21 Aug 2013 11:56:23 +0200 (CEST)
+Date: Wed, 21 Aug 2013 11:56:23 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: Re: [cryptography] Preventing Time Correlation Attacks on Leaks:
+ Help! :-)
+Message-ID: <20130821095623.GT29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 7085
+Lines: 169
+
+----- Forwarded message from Ben Laurie <ben@links.org> -----
+
+Date: Wed, 21 Aug 2013 05:51:38 -0400
+From: Ben Laurie <ben@links.org>
+To: "Fabio Pietrosanti (naif)" <lists@infosecurity.ch>
+Cc: Crypto discussion list <cryptography@randombit.net>
+Subject: Re: [cryptography] Preventing Time Correlation Attacks on Leaks: Help! :-)
+
+On 21 August 2013 03:35, Fabio Pietrosanti (naif) <lists@infosecurity.ch>wrote:
+
+>  Hey Peter,
+>
+> thanks for your analysis!
+>
+> I think we need to provide some additional input!
+>
+> In the context of GlobaLeaks where, stating from our Threat Model at
+> https://docs.google.com/document/d/1niYFyEar1FUmStC03OidYAIfVJf18ErUFwSWCmWBhcA/pub, the Whistleblower can also be NON anonymous but approach a submission
+> with "Confidential" level (over HTTPS over the internet) .
+>
+> No anonymity, but forced disclaimer (
+> https://github.com/globaleaks/GlobaLeaks/issues/260) and acceptance to
+> take the risk.
+>
+> So, let's say that whistleblower is already in a bad position, but he
+> accepted this condition.
+>
+> We are not considering in any way to add actions/protection on
+> Whistleblower-Side but only on Receiver-Side that is where the "bad guy"
+> would be able to read Notification information sent and apply Time
+> Correlation on the Whistleblower-Action.
+>
+> Today if a Whistleblower make a submission, the system immediatelly send a
+> notification to the Receiver.
+>
+> That's bad, because it leave a trace that allow time correlation.
+>
+> Who can read Receiver's email and traffic, can make a correlation on other
+> data source where the whistleblower may leave traffic-traces (like a proxy,
+> but also internet traffic dump, phisical badge/access logs, surveillance
+> camera, etc) .
+>
+> Which kind of logic / algorithm to apply on the Receiver's notification
+> timing in order to prevent / reduce the likelihood that a time correlation
+> pattern is possible?
+>
+> A random delay between a lower bounday and an upper boundary seems like
+> the most simple and effective approach to defeat this kind of correlation.
+>
+> However this does not work on very low-traffic globaleaks node.
+>
+> What do you think?
+>
+
+I think that if you want to send messages that are hard to trace, there's
+an existing technology: mixmaster, with an existing server network.
+
+Or, better yet, finish off mixminion,
+
+Even better: implement Minx (the fixed version).
+
+
+>
+>
+> --
+> Fabio Pietrosanti (naif)
+> HERMES - Center for Transparency and Digital Human Rightshttp://logioshermes.org - http://globaleaks.org - http://tor2web.org
+>
+>
+>
+> Il 8/21/13 4:17 AM, Peter Maxwell ha scritto:
+>
+>
+>  Hi Fabio,
+>
+>  While I don't mean to be dismissive, I suspect your threat model is
+> flawed for the following reasons:
+>
+>  i. Most mid to large companies would not permit the use of Tor within
+> their infrastructure and even if the hypothetical company did, it doesn't
+> take a whole lot of effort to track down the handful of users within a
+> company using Tor/stunnel/ssh/VPN.  For that matter, I understand some
+> companies even install private CA certificates into the browsers on company
+> computers and decrypt outgoing SSL/TLS traffic at their
+> web-proxy/firewall... in that situation, you're WB is going to stand out
+> like a sore thumb as they'll be the only TLS connection that isn't being
+> decrypted (because it's Tor).  So unless you want your whistle-blowers to
+> literally advertise their presence as worthy of attention, they aren't
+> going to do the leak from an company system directly.
+>
+>  ii. So, presuming i. is valid - and I suspect anyone who has worked
+> within a competent security operations team will tell you the same - then
+> you must assume the whistle-blower will do the leak from either their
+> personal systems, a burn computer or a public system.  If we make the
+> assumption that the WB has taken the data out of the company/organisation
+> on removable media or otherwise made it available to themselves outside the
+> company infrastructure in a secure manner (while sometimes difficult, that
+> is still far easier than i.) then your attacker can only see the WB's
+> traffic if they are actively monitoring the WB's use of computers outside
+> the company, in which case said WB has far bigger problems to worry about.
+>  If the attacker cannot monitor the timing of the leak, your problem is not
+> framed in the manner you've presented.
+>
+>  iii. Even if your model was realistic, you cannot adequately defend
+> against traffic analysis for such a low-traffic network: you need other
+> traffic to hide in, lots of it, from other users within the same company -
+> it's not realistic for this type of service.
+>
+>  iv. There are more subtle problems you are going to come across, not
+> least of which are issues such as document tagging/water-marking/document
+> versioning and the ability for the attacker - your hypothetical manager -
+> to correlate leaked documents against the access rights and access patterns
+> of potential whistle-blowers.  For that matter, simple forensic analysis of
+> staff computers is usually more than sufficient (and yes, organisations do
+> this).
+>
+>
+>  It's also Isle of Man that people like hiding their ill-gotten-gains in,
+> not "Island of Mann" ;-)  Interestingly, I think anyone who has used Isle
+> of Man accounts for tax avoidance are scuppered as the HMRC has signed an
+> agreement with the authorities there for automatic disclosure.
+>
+>
+>  Anyway, as far as I can see it, you have two different scenarios to
+> consider with one being significantly more difficult to solve than the
+> other:
+>
+>
+>  A. The scenario where the whistle-blower is able to take the data out
+> the company on removable media or paper-copy.  This is the easy one to
+> solve.  Personally I would favour a combination of asymmetric encryption
+> with single-use keypairs and USB sticks in the post, but I'm old fashioned
+> that way.
+>
+>  B. The scenario where the whistle-blower has to leak from the
+> company/organisation's network.  This is extremely difficult indeed.  If I
+> were approaching this problem myself, my first considerations would be: how
+> to make the traffic look like normal web-traffic; how to ensure no forensic
+> traces are left; and how to do that without installation of third-party
+> software as that is a dead give-away.  If the quantity of data is larger
+> than a few hundred Mb, the problem is probably not solvable.
+>
+>
+>  That's my tuppence-worth, hope that helps,
+>
+>  Peter
+>
+>
+>
+>
+> _______________________________________________
+> cryptography mailing list
+> cryptography@randombit.net
+> http://lists.randombit.net/mailman/listinfo/cryptography
+>
+>
+
+_______________________________________________
+cryptography mailing list
+cryptography@randombit.net
+http://lists.randombit.net/mailman/listinfo/cryptography
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

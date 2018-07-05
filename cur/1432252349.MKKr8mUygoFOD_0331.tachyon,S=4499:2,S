@@ -1,0 +1,104 @@
+From cypherpunks-bounces@cpunks.org  Thu Apr 10 09:06:34 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id s3AD64TY031396;
+	Thu, 10 Apr 2014 09:06:09 -0400
+Authentication-Results: antiproton.jfet.org; dkim=fail
+	reason="verification failed; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=ZHENrEWr;
+	dkim-adsp=none (unprotected policy); dkim-atps=neutral
+Received: from mail-qa0-f53.google.com (mail-qa0-f53.google.com
+ [209.85.216.53])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id s3AD62WI031392
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 10 Apr 2014 09:06:04 -0400
+Received: by mail-qa0-f53.google.com with SMTP id w8so3870462qac.12
+ for <cypherpunks@cpunks.org>; Thu, 10 Apr 2014 06:05:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:sender:in-reply-to:references:date:message-id:subject
+ :from:to:cc:content-type;
+ bh=yLVgh6A7nXzVlKgy5Z243A8BAhIz7VhOI46MvnPEu5E=;
+ b=ZHENrEWrfzzd8dvW1krAHm0u/ffSvad8gqhSHWREElFvs6r0k/QDCD78bEUvylo+F1
+ u40XZZ2VhS+Dka2L/DDeoHrT8kvyxEswD3E2oJcRkIFOSqWLMXpnvoa6lnO2iO15BcNm
+ CgYJr/9+tSMqp2dJIAA1t2xztBJ0OXDcbCjWPp2LL5w6Dglx+kdLy8iQD4P+wNxT/LUS
+ A/l+wqq2CEdjsZML/W/k1kXrZHU9lI4IBoFOIvZZrz32zAi8LSEvbrrJrYc+WLchCGVv
+ ZCxtXYtS89l7j5i81bfM7jhd9jbd+PrOCWt19fVy9aDKuVVqztpokiZ+OMDJlFwvG8lA
+ /1rg==
+MIME-Version: 1.0
+X-Received: by 10.229.53.136 with SMTP id m8mr20449689qcg.4.1397135159823;
+ Thu, 10 Apr 2014 06:05:59 -0700 (PDT)
+Received: by 10.96.210.1 with HTTP; Thu, 10 Apr 2014 06:05:59 -0700 (PDT)
+In-Reply-To: <1397126438.1729.11.camel@shire>
+References: <1397126438.1729.11.camel@shire>
+Date: Thu, 10 Apr 2014 15:05:59 +0200
+X-Google-Sender-Auth: KCY9UXhIqG4W10kC03jjrIGia3I
+Message-ID: <CAH5b-BX0mFTG7DuvRR03jRFn+foh8L2rS2ND_AV00V2zXerzrg@mail.gmail.com>
+Subject: Re: Two possible vulnerabilities in OpenSSL?
+From: yersinia <yersinia.spiros@gmail.com>
+To: Peter Malone <peter@petermalone.org>
+Content-Type: text/plain; charset=UTF-8
+Cc: "cypherpunks@cpunks.org" <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.16
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 1586
+Lines: 46
+
+On Thu, Apr 10, 2014 at 12:40 PM, Peter Malone <peter@petermalone.org> wrote:
+> Hey there,
+>
+> I was auditing OpenSSL last night. I looked at several files and found
+> the following:
+>
+>  https://github.com/openssl/openssl/blob/master/ssl/t1_lib.c#L2893
+> /* Determine if we need to see RI. Strictly speaking if we want to
+> * avoid an attack we should *always* see RI even on initial server
+> * hello because the client doesn't see any renegotiation during an
+> * attack. However this would mean we could not connect to any server
+> * which doesn't support RI so for the immediate future tolerate RI
+> * absence on initial connect only.
+> */
+>
+> Well that's awful coding.
+>
+> Unless I'm mistaken, the following memcmp is vulnerable to a remote
+> timing attack.
+> https://github.com/openssl/openssl/blob/master/ssl/ssl_lib.c#L1974
+> static int ssl_session_cmp(const SSL_SESSION *a,const SSL_SESSION *b)
+> {
+>   if (a->ssl_version != b->ssl_version)
+>        return(1);
+>   if (a->session_id_length != b->session_id_length)
+>        return(1);
+>   return(memcmp(a->session_id,b->session_id,a->session_id_length));
+> }
+>
+> I posted both of these findings to the full disclosure list last night.
+> I figured someone on this list might find it interesting as well.
+Yes, I had noticed your post on FD. In my opinion you are right,
+the value that is compared can come from the outside.
+It would be the same problem that is discussed (also) here. Perhaps
+the solution might look like
+the same.
+
+https://trac.torproject.org/projects/tor/ticket/3122
+
+thanks
+
+Best regards
+>
+> Cheers,
+> Peter.
+>
+

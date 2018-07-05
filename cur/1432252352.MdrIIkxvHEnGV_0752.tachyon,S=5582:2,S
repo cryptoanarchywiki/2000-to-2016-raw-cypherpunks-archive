@@ -1,0 +1,122 @@
+From owner-cypherpunks@al-qaeda.net  Fri Dec 21 13:37:30 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id qBLIXOQR016697
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 21 Dec 2012 13:33:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1356114804;
+	bh=xf5As1/sBRjavVgpdL8oEb1b7B62HrERa2HUesEEa6c=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=tHQoc/82cge3+1SDq0vsTsmTuSPBjvGD3tHTGQtqjhCGO0Tzs6/kd2xvdhEbh0j9T
+	 FJEh+mjYi4iu6JKD2jAw4+1sYMxjmNQU4JadV7YuNpbAEkIEzX51vpJK6d3JNM9rkA
+	 6zXhQ9Pfu0pfiN74JcXmhT6im/jDVZiloM29RasE=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id qBLIXORm016696
+	for cypherpunks-outgoing; Fri, 21 Dec 2012 13:33:24 -0500
+Date: Fri, 21 Dec 2012 19:33:20 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: [cryptography] introducing =?utf-8?Q?BLAKE?= 
+  =?utf-8?B?MiDigJQ=?= an alternative to SHA-3, SHA-2 and MD5
+Message-ID: <20121221183320.GN9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4070
+Lines: 87
+
+----- Forwarded message from Zooko O'Whielacronx <zookog@gmail.com> -----
+
+From: Zooko O'Whielacronx <zookog@gmail.com>
+Date: Fri, 21 Dec 2012 11:28:01 -0700
+To: Discussion of cryptography and related <cryptography@randombit.net>
+Subject: [cryptography] introducing BLAKE2 b an alternative to SHA-3, SHA-2 and MD5
+
+Folks:
+
+SHA-3 (Keccak) is a fine alternative to SHA-2, has a substantially
+different design from the SHA-2 family, and has excellent performance
+in hardware.
+
+However, many use cases need an alternative to MD5 b something with
+better security properties than MD5 but with high performance in
+software. To that end, we've defined BLAKE2, an optimized version of
+SHA-3 finalist BLAKE that is faster than MD5 on Intel 64-bit CPUs.
+
+https://blake2.net
+
+Target applications include cloud storage (my current field), revision
+control tools, software distribution, host-based intrusion detection,
+and digital forensics b areas where MD5 and SHA1 currently dominate.
+
+We do not think that this superior software performance comes at a
+cost of reduced security. We argue that much of the extensive security
+analysis performed on BLAKE during the SHA-3 process applies to BLAKE2
+and shows no cause for concern about BLAKE2's security. Please see the
+blake2.pdf white paper for the details of that argument.
+
+In addition, I'll make an argument here that we did not put into the
+white paper:
+
+A guiding factor in NIST's choice of Keccak over BLAKE for SHA-3 was
+that they wanted SHA-3 to be substantially different from SHA-2 so
+that it could serve as a fallback in case a breakthrough suddenly
+revealed SHA-2 to be vulnerable. This was NIST's reason for choosing
+Keccak over BLAKE even though by their own estimation BLAKE's security
+margin was comparable to Keccak's and the depth of cryptanalysis that
+had been applied to BLAKE was greater than that applied to Keccak.
+
+That is a good strategy for choosing an algorithm to serve as an
+emergency fallback, in case SHA-2 suddenly breaks. On the other hand
+if SHA-2 has remains unbroken, and you are considering the security of
+BLAKE2, then the fact that it is a traditional Add-Rotate-XOR design
+like SHA-2 should give increased confidence. When the SHA-3 project
+began, there was concern among many cryptographers that a breakthrough
+might appear at any moment and reveal SHA-2 to be vulnerable. Since
+that hasn't happened after years of study, this concern has faded, and
+SHA-2 appears for now to have withstood the test.
+
+I think a similar argument could be made for the way that BLAKE2
+re-uses the ChaCha/Salsa20 stream cipher, which has not been found to
+have any serious vulnerability.
+
+In addition to the superior software performance of the basic
+single-threaded, linear mode, BLAKE2 includes variants optimized for
+32-bit architectures, for SIMD/multicore processors, for Merkle-Tree
+applications, and for message integrity checking.
+
+I'm particularly keen on the SIMD/multicore variant, a parallelized
+mode named "BLAKE2*p", because almost all modern CPUs b even a lot of
+the cheap and power-efficient 32-bit ARM chips b come with efficient
+SIMD features. It looks like it will be possible to have 4-way or
+8-way parallelized BLAKE2*p which are many *times* as efficient as
+MD5, on both short files and long files. Once we've finished porting,
+measuring, and experimenting with the different modes of BLAKE on
+different machines, we intend to write a "b2sum" command-line tool,
+which we hope will eventually replace "md5sum" in the unix user's
+toolset.
+
+(Thanks to the performance engineering of J.P.Aumasson and Samuel Neves.)
+
+Regards,
+
+Zooko
+_______________________________________________
+cryptography mailing list
+cryptography@randombit.net
+http://lists.randombit.net/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

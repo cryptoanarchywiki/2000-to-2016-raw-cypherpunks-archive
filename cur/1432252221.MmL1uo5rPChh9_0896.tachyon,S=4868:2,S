@@ -1,0 +1,101 @@
+From owner-cypherpunks@al-qaeda.net  Thu Nov 15 19:07:51 2007
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.13.8/8.13.8/Debian-3) with ESMTP id lAG07glE015857
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 15 Nov 2007 19:07:42 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.8/8.13.8/Submit) id lAG07g2t015856
+	for cypherpunks-outgoing; Thu, 15 Nov 2007 19:07:42 -0500
+Date: Thu, 15 Nov 2007 12:30:04 -0600 (CST)
+From: "J.A. Terranson" <measl@mfn.org>
+To: cypherpunks@al-qaeda.net
+Subject: Possible backdoor in FIPS SP 800-90 PRNG (fwd)
+Message-ID: <Pine.LNX.4.64.0711151229540.28024@mx1.mfn.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3909
+Lines: 77
+
+---------- Forwarded message ----------
+Date: Thu, 15 Nov 2007 11:08:05 -0800 (PST)
+From: Hal Finney <hal@finney.org>
+To: cryptography@metzdowd.com
+Subject: Possible backdoor in FIPS SP 800-90 PRNG
+
+Slashdot this morning has a posting about the possibility of a back door
+in the elliptic curve random number generator in FIPS SP 800-90.
+
+http://it.slashdot.org/article.pl?sid=07/11/15/184204 has links to an
+article by Bruce Schneier at wired.com, the standard, and the presentation
+with the new result.
+
+The work is by Dan Shumow and Niels Ferguson and was presented at the
+Crypto 2007 rump session. Basically there are two elliptic curve points,
+and if you know the discrete logarithm of one relative to the other,
+you can reverse engineer the internal state just from the RNG outputs.
+It's a very nice piece of analysis.
+
+The problem is that NIST publishes a pair of points that they suggest you
+use, in Appendix A.1, without giving any hint of how they were derived.
+This leaves open the possibility that they were selected in such a way
+as to exploit the Shumow/Ferguson back door.
+
+Now, here's the strange thing. In Appendix A.2 NIST says that you can use
+your own pair of points if you want to. But, they caution very strongly
+that in that case, anyone relying on the PRNG should verify that the pair
+of points were generated randomly. They describe a specific procedure for
+generating random points in a provable way (via hashing some other data)
+and require that the seeds that were used be saved and made available
+to the verifier.
+
+They don't say anything about why this is important, but the work by
+Shumow and Ferguson now makes it clear. Otherwise there is the possibility
+of a very serious back door.
+
+So this raises the obvious question, why didn't NIST publish the seeds
+that were used to generate the default points from Appendix A.1? It
+seems odd that they are so insistent about using a verifiable procedure
+to create points, and then they don't say whether they followed it
+themselves.
+
+If they did use that procedure, NIST could simply publish the seeds for
+the point generation and everyone will be able to verify that the points
+are random and there is no back door.
+
+Unfortunately there is a complication, which is that one of the pair of
+points is inherited from FIPS 186-3, the Digital Signature Standard. The
+EC PRNG uses the curve and base point from EC DSS. It then chooses another
+point, and the two points are used for the PRNG. It's not particularly
+likely that the base point from EC DSS was generated via the randomizing
+technique prescribed for the EC RNG. And even if the 2nd point for the
+EC RNG is in fact generated randomly and they can prove it, it would not
+rule out the possibility that the base point from EC DSS had actually
+been pre-selected to allow for a back door. It is crucial that both
+points be generated randomly for the EC RNG to be secure.
+
+Ironically, the EC DSS standard does publish a seed used for a
+PRNG to generate the elliptic curves, so as to assure that they are
+random. However based on my reading of IEEE P1363 which tells how to do
+this, it does not appear that the seed constrains the base point, only
+the curve parameters. Unless NIST did use a verifiably random method to
+generate the base points in EC DSS and the 2nd points in EC PRNG then
+there is no foundation for security.
+
+Therefore the only reasonable way forward is for NIST to either publish
+the seeds that were used for these points, if they exist, or to revise
+the standard to use new points and publish the seeds for both of them.
+There is no need to re-use the points from FIPS 186-3, a new pair of
+points should be chosen for the PRNG via the specified randomization.
+
+Hal Finney
+PGP Corporation
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+

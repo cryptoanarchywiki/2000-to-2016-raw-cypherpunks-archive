@@ -1,0 +1,111 @@
+From cypherpunks-bounces@cpunks.org  Sat Jan 11 02:35:59 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0B7Znva024667;
+	Sat, 11 Jan 2014 02:35:50 -0500
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; insecure key"
+	header.d=gmail.com header.i=@gmail.com header.b=z9eYERC+;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-oa0-f51.google.com (mail-oa0-f51.google.com
+ [209.85.219.51])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0B7ZkEB024663
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Sat, 11 Jan 2014 02:35:48 -0500
+Received: by mail-oa0-f51.google.com with SMTP id m1so6036109oag.24
+ for <cypherpunks@cpunks.org>; Fri, 10 Jan 2014 23:35:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :cc:content-type;
+ bh=PTkPfeX7e7KZ1t+6y/Egx75OwzsagGpdFPRBQX5bSb0=;
+ b=z9eYERC+2c/hdrYWDrPdpZVBJSDis+LfVfVvVC8q0B6spbjL6Mwv2jL9Qkpvp4kBOK
+ CZflnTOYm82dIJ4zKgw0bo+QwWAyyUpTE2+gTQfSxuTJwiGc9f9GtYq6Ja76fn8Ci7+B
+ dZnvowE+2mNb0URGmtYppgJRcgOLY0c0OKo62iUY4Twvl0Vse4z1f1Jb4V+8cGFWQR2K
+ QG/nqzpOXSPksZHhXLGK4MzTJKiA0WWCjg+7Lw1owhDp3lAxptz1TJX/wWDKm3NsE2J6
+ fffCH8jTbBC5081jXG5NBQiayR0su3v2ny4ljQ2n17o11nfxHuLGdWIPbMxYtnQVRWCf
+ ah5g==
+MIME-Version: 1.0
+X-Received: by 10.60.76.227 with SMTP id n3mr11701774oew.52.1389425739349;
+ Fri, 10 Jan 2014 23:35:39 -0800 (PST)
+Received: by 10.60.115.42 with HTTP; Fri, 10 Jan 2014 23:35:39 -0800 (PST)
+In-Reply-To: <CAOLP8p71YW7wv-Xqw4xKMu58dv7Bv=xryn-m_AEWSVbmasUrLg@mail.gmail.com>
+References: <CAOLP8p71YW7wv-Xqw4xKMu58dv7Bv=xryn-m_AEWSVbmasUrLg@mail.gmail.com>
+Date: Sat, 11 Jan 2014 02:35:39 -0500
+Message-ID: <CAD2Ti29XLZ1-v3jJqD3Y-ySimRGroV5yXrUNB3bF2ep6K53NOg@mail.gmail.com>
+Subject: Re: [Cryptography] Dumb idea: open-source hardware USB key for crypto
+From: grarpamp <grarpamp@gmail.com>
+To: "cryptography@metzdowd.com" <cryptography@metzdowd.com>
+Content-Type: text/plain; charset=UTF-8
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+On Fri, Jan 10, 2014 at 5:53 PM, Bill Cox <waywardgeek@gmail.com> wrote:
+> I've been noodling the idea of a USB stick designed in a way that we
+> can trust the crypto that goes on there.  It's a hard problem, but
+> there seems to be some guidelines that could help:
+>
+> - Open source hardware - schematics and everything including board
+> layout need to be free
+> - No ICs that could be compromised.  Any CPU would have to be a
+> soft-core in an FPGA, with an open-source design
+> - FPGA configuration memory both readable and writable over a JTAG port
+> - External flash program memory also read/writeable through JTAG
+> - Reasonable hardware RNG where every node in the circuit can be probed
+> - Signal isolation from the PC: solid state relays would swap a simple
+> memory back and forth between the PC side and USB stick side.  Maybe
+> power draw should be randomized to obscure any processing going on.
+> RF shielding should cover the USB stick.  No other communication
+> should be possible.  This is similar to an air gap.
+> - A community supported audit trail verifying produced USB keys are secure
+>
+> The idea still has issues.  Where would I be able to store secret keys
+> securely such that an attacker who stole my USB stick could not
+> recover it?  Anyway, it's just a fun idea.  I'd love to have such a
+> device in my pocket.  There's a lot of applications I can think of
+> that could benefit from it, from electronic voting to
+> microtransactions.  As one security expert once said in an
+> electronic-voting discussion I followed, no machine ever connected to
+> the Internet has proven secure.  Could we make such a beast?  I
+> probably don't really have time to work on it, but if a group were
+> building it, I'd participate.
+
+Many of these open hardware ideas come down to the fab level...
+can you examine (and trust) the fab process. Sure, publish all your
+schematics, VHDL, die masks, etc. But unless some number of
+random people can routinely make unannounced access-all-areas
+verification visits to the fab to verify those masks are the ones in use,
+it's moot. Or unless they can pull unannounced random samples
+and decap and analyse them, it's moot. That's why I've previously
+suggested people get together to making hardware RNG's out of
+discrete components... you don't have those worries then.
+
+I agree with the softcore loadable fpga and probe points ideas, they're
+good things. But in general, once you exceed a certain number of
+presupplied closed source and relatively unauditable gates [1], you
+should consider yourself potentially and generally fucked... and
+start taking a serious defense in depth approach.
+
+[1] Let's call it the number required to perform dumb leaks or take
+pseudo intelligent actions against you. The current lineup from
+Intel/AMD certainly fall in this category.  As would quite a few
+lesser things... ARM, phones, cards, etc... firmware things.
+Does it not scare you that the next PC you're about to buy
+for your firewall is one of these systems, potentially hiding out
+to honor magic packets? Look at AMD's new CPU's coming
+out in a few weeks... besides gate count we all know about, it
+has embedded ARM cores. And just who is going to bring
+the aforesaid open model upon this class of gear? So it's
++1 for spooks.
+

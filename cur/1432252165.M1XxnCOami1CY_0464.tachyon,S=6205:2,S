@@ -1,0 +1,131 @@
+From owner-cypherpunks@al-qaeda.net  Tue Aug 30 00:48:47 2011
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id p7U4jc6U025740
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 30 Aug 2011 00:45:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1314679538;
+	bh=el5iuRAdo1+fbWRhQhfnFit7EYdeFUjFNIiajDgwcqs=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=bQ/j0CI0VCoefANt4ptHgsu61mtcaD1TPJraM4GgrrRLNjvu1f00C8s7vfhlvJ3bU
+	 jcVtpvpaPN8MCFShzAss9YA63YIiYpN9Xr4rH/PXaxUuXnmIr6Qqw4B7eLblA6XGvz
+	 HEGpbYe1FAfo0nePe3wuUOz8GuNU7mLirFGAMrlk=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id p7U4jcnI025739
+	for cypherpunks-outgoing; Tue, 30 Aug 2011 00:45:38 -0400
+Date: Tue, 30 Aug 2011 10:12:21 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: Re: [p2p-hackers] A globally distributed peer-to-peer data
+  archive
+Message-ID: <20110830081221.GE16334@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Tony Arcieri <tony.arcieri@gmail.com> -----
+
+From: Tony Arcieri <tony.arcieri@gmail.com>
+Date: Mon, 29 Aug 2011 13:04:24 -0700
+To: David Barrett <dbarrett@quinthar.com>
+Cc: theory and practice of decentralized computer networks <p2p-hackers@lists.zooko.com>
+Subject: Re: [p2p-hackers] A globally distributed peer-to-peer data archive
+Reply-To: theory and practice of decentralized computer networks <p2p-hackers@lists.zooko.com>
+
+On Sat, Aug 27, 2011 at 11:39 AM, David Barrett <dbarrett@quinthar.com>wrote:
+
+> Perhaps I misunderstand Tahoe.  Is it intended for groups to share data
+> (eg, I add a file, you discover and download it), or is it purely for me to
+> backup my data?
+>
+> If the latter -- if it's purely for individual backup -- then I agree
+> there's no risk from the RIAA: you're not sharing it so there's no problem.
+>
+> But if the former -- if there's some way I can join your Tahoe cluster and
+> access data that's already there -- then would you be willing to let the
+> RIAA join your cluster with the keys to access the data there?
+>
+
+I think Tahoe fits either use case of a shared file repository or a
+distributed backup system. There are two levels of credentials you can
+share: the introducer furls, which grant access to your grid, and the
+rootcap for a particular directory on the grid, which grants access to a
+specific set of files. By Tahoe's design you should be able to give the RIAA
+the introducer furls to your grid. They can then create directories and
+store data on your grid, and will accept encrypted chunks of files from
+other peers. However, unless they actually have a rootcap for directories
+containing infringing content, they have no way of knowing whether or not
+the chunks they receive from other peers contain this data or not, since
+it's encrypted.
+
+
+> Because for something like Tahoe to work on a global scale, eventually
+> you're not going to know with certainty all the other members -- and any one
+> of those could in fact be the RIAA trolling for people to sue.
+>
+
+I'm envisioning a system where there wouldn't be an encrypted introducer URL
+to gain access to the grid, instead additional methods to provide a web of
+trust and collaborative filtering of particular peers would be used to
+prevent abuse. However, I think Tahoe's rootcap system is still essential.
+Cryptographic credentials would be required to access any data on the grid.
+
+For example, is it possible to determine who (username or IP) added the
+> content in the first place?
+
+
+To my knowledge Tahoe doesn't log which nodes are responsible for the
+creation of content on the grid. Instead there are rootcaps which control
+read and write access to directories on the grid, and anyone with the
+"writecap" can add content to a particular directory. I may be mistaken as I
+have just started using Tahoe. In the system I'm envisioning, the anonymity
+of who created a particular file would definitely be preserved.
+
+
+>  Is there some way to differentiate between when a node is requesting a
+> specific piece of content from you, versus when it's just rebalancing some
+> tree?
+>
+> If so, then it's limited to groups of trusting friends -- still a great
+> tool, but not a vast treasure of human knowledge as it sounds like you want
+> to build.
+>
+> But if not, if it's truly impossible to know whether a node is downloading
+> and storing something because the user actually wants it or because the
+> system forced them to get it unaware, then that could be a pretty good
+> defense against overzealous copyright enforcement.
+>
+> Though I wonder if a simpler model is to just start with something like
+> BitTorrent, except every time you download anything, you also download
+> something else randomly.  So half of the content you download/seed is what
+> you actually picked, and the other half is random.  Then there's no way from
+> the outside to tell which was for you, versus which is caching random
+> content to increase the uptime and performance of the whole system.
+
+
+I'd certainly agree BitTorrent could be the underlying technology underlying
+this system, layering the discovery and crypto on top of a BitTorrent-based
+system underneath, although I'd prefer it has more filesystem-like semantics
+like Tahoe. Perhaps BitTorrent with an "earliest-first" instead of
+"rarest-first" chunk selection mechanism would work.
+
+-- 
+Tony Arcieri
+
+_______________________________________________
+p2p-hackers mailing list
+p2p-hackers@lists.zooko.com
+http://lists.zooko.com/mailman/listinfo/p2p-hackers
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

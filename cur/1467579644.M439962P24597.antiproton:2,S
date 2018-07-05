@@ -1,0 +1,207 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u63KxmRm024558;
+	Sun, 3 Jul 2016 16:59:52 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=CK9Td4M8;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-vk0-f51.google.com (mail-vk0-f51.google.com
+ [209.85.213.51])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u63Kxiru024554
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Sun, 3 Jul 2016 16:59:46 -0400
+Received: by mail-vk0-f51.google.com with SMTP id c2so211514518vkg.1
+ for <cypherpunks@cpunks.org>; Sun, 03 Jul 2016 13:59:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to;
+ bh=weBWFt8+6Jjg4jG4MmGySO5yZaOofbJ3wtgzIQ5+tEA=;
+ b=CK9Td4M8Eleq1smW0RJvjT6Lrv2LbVRfFyXCCyxTNzgfCy1pEDaW7DJ8cRie5J5SIM
+ l6pUi1E9L2ZdJXibpfxMYemYzPJeAVxSQ8JqUuW2QAVW6e9z7RqM5WJMUuLPy9lUIJn6
+ 453DgQtZ40nBBjuFcS8Tt4diuG2nX/V24I3F7CJ15kRunACPBd/poehtvAJniVN+rMQJ
+ xxdQ6kBQwJMOo7n6aPAG1ZeB214CtLB1ixbEQFgVEFPLgxJvEKQ/+v0L30Oi+UhKh+Ao
+ 6MNThyREbRVVXfz/OPcPEtucW1DmX963h8RASkTAeCnLuVxaDqJfC2J6O6NbJTmdASaj
+ Tt/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to;
+ bh=weBWFt8+6Jjg4jG4MmGySO5yZaOofbJ3wtgzIQ5+tEA=;
+ b=bHw4kdEjQ5envvRFSz33mTf3xe4+IQ/+ANAMblWyDWArpE4mH0mHAU4QEz8SB05YKR
+ QZagMs1TsJz/ipPI5226VFjqyasn20DrfRGI/Sgn/ecszYqgxZoHBZLP8gqUFYodJiwI
+ bAzzH/c19J4xHVofQPgIW2qq/zbaof7zzo7MaAwgDYWqy2ryqUw+Gh39lzwtNPqXE3px
+ o4fbn3eSpiLE7AwHcERswYTYXvMcjQAHLh43L8zEJATnG9orzPuwJI+F0k72rTtM9XWb
+ CdDK1Bih2BqGKIbfuAF9qxe3aXzywRni5A5/Oma8v/IVGkYNCUsEO0oA8XKUqrcfN463
+ bcSA==
+X-Gm-Message-State: ALyK8tIBBVKoABdwiEGwMPF01MOpzNNtbCcD5zUmSZMGOcrM8917T99yw9r5bGy7ybA98TtElHiAq+yOB/XnbQ==
+MIME-Version: 1.0
+X-Received: by 10.31.56.69 with SMTP id f66mr3723750vka.135.1467579578781;
+ Sun, 03 Jul 2016 13:59:38 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Sun, 3 Jul 2016 13:59:37 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Sun, 3 Jul 2016 13:59:37 -0700 (PDT)
+In-Reply-To: <577960d5.8d38c80a.6ba10.ffff8609@mx.google.com>
+References: <20160628084946.GB3088@x220-a02> <20160701231029.GU11626@x220-a02>
+ <CAG2tMp6+TrCbx6OUZr1HCywAFu84yBBRLqgA+0=PCYek2tP_7A@mail.gmail.com>
+ <20160702010005.GB5207@x220-a02>
+ <CAG2tMp4qEsSm7-_EuAOjzEPKE+Ybh8GT_nXAh0XARvyMDCa=bg@mail.gmail.com>
+ <5778112d.8e63370a.7ac2f.ffff816d@mx.google.com>
+ <CAG2tMp7omFpzYRLWNLDVHXy1jE2PY7XdWDHoe1=iypTu_B=VZw@mail.gmail.com>
+ <CAG2tMp78EY+MuhD2XeUcr2px+F7qayhN=yUpvJQn06gOUi4BCw@mail.gmail.com>
+ <CAG2tMp4rSLMT3yq_XhjS1deCACW1UG8QY5TG1u_=-LULHWSVkg@mail.gmail.com>
+ <577960d5.8d38c80a.6ba10.ffff8609@mx.google.com>
+Date: Sun, 3 Jul 2016 17:59:37 -0300
+Message-ID: <CAG2tMp4OcN4MFN-G_P3bf7jZNwEJu18eTZgUWKzM3Bk8RM6P3Q@mail.gmail.com>
+Subject: Re: TSA Thugs: TSA Agents Beat And Jail Disabled Teen With Brain
+ Cancer
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=001a1143f0ec7918820536c17f02
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 135
+
+--001a1143f0ec7918820536c17f02
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+On Jul 3, 2016 4:06 PM, "juan" <juan.g71@gmail.com> wrote:
+>
+> >  [Cecilia]  I admiss I didn't like Boyce, Dani Moth, Quinn and Ted's
+messages, but I am not "making excuses" for their country, Juan.
+>
+>         You aren't? But a country like the US wouldn't exist without
+scumbags like the ted smiths, boyces, quinns, that psycho steven, the
+syversons and his lapdogs.
+
+Juan, my dear, US already have lots of people making excuses for them and
+being well paid for it.  Don't worry, I won't waste my time with it.  I
+simply told you what I think about countries, governments and people.
+
+The same way there are lots of awesome persons in all the countries, there
+are lots of bad persons  ("scumbags"?)  in all the countries too.
+
+(Sorry, I still don't know exactly what "scumbag" means, because there are
+several bizarre definitions in Brazilian posts  ("gentalha"?  wtf?),  but
+probably there are lots of scumbags in all the places, haha!!)
+
+> >  [Cecilia]  Quinn is intolerant and has narrow patterns of decency, but
+he is a good person and I like him, Juan.
+>
+>         You are seriously fucked up then.
+
+Well, I am sure Quinn thinks exactly the same thing all the times when I
+say I like you in public, my dear Juan...  hihi...  ;)
+
+> >  [Cecilia]  You are not exactly tolerant and open-minded too, haha!!  ;=
+D
+>
+>         That comes from you, who support the US nazis? Ha ha.
+
+I never said that I am tolerant and open-minded, Juan.  Sorry if you felt
+offended with my words.  I don't support any kind of 'nazis'.  Radical
+people are extremely boring.
+
+> >  [Cecilia]  Sorry, I don't believe in all researches because I have
+lots of researchers as friends and colleagues and I was a researcher in
+several moments of my life too
+>
+>         So? You know they are all dishonest, including yourself?
+
+Hmm...  Sorry, after talking about deaths, wars and rapes, I confess I was
+thinking only in Portuguese.  Always is the most comfortable language for
+me.
+
+Pardon, reading now what wrote yesterday, there are more mistakes and I
+didn't write some words when talking about the rapes.  Both made me feel
+the same way, the same deep panic of death, the same smell of fear.  Sorry
+for it.
+
+"Eu n=C3=A3o acredito em todas as pesquisas" here doesn't mean necessarily =
+that
+I really do _not_ believe in _all_ researches.  If I really wouldn't
+believe in all researches, in Portuguese, I would use 'double negative',
+what doesn't exist in English, sorry.  I would say "Eu n=C3=A3o acredito em
+nenhuma pesquisa", Juan.  I simply translated - literally - what I thought
+in that moment and doesn't make sense in English, sorry.
+
+I was trying to say that not necessarily I believe in all researches, that
+I don't believe in some of them...  Does it sound better now or should I
+try again?  :P
+
+--001a1143f0ec7918820536c17f02
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p>On Jul 3, 2016 4:06 PM, &quot;juan&quot; &lt;<a href=3D"mailto:juan.g71@=
+gmail.com">juan.g71@gmail.com</a>&gt; wrote:<br>
+&gt;<br>
+&gt; &gt;=C2=A0 [Cecilia]=C2=A0 I admiss I didn&#39;t like Boyce, Dani Moth=
+, Quinn and Ted&#39;s messages, but I am not &quot;making excuses&quot; for=
+ their country, Juan.<br>
+&gt;<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 You aren&#39;t? But a country like the US =
+wouldn&#39;t exist without scumbags like the ted smiths, boyces, quinns, th=
+at psycho steven, the syversons and his lapdogs.</p>
+<p>Juan, my dear, US already have lots of people making excuses for them an=
+d being well paid for it.=C2=A0 Don&#39;t worry, I won&#39;t waste my time =
+with it.=C2=A0 I simply told you what I think about countries, governments =
+and people.</p>
+<p>The same way there are lots of awesome persons in all the countries, the=
+re are lots of bad persons=C2=A0 (&quot;scumbags&quot;?)=C2=A0 in all the c=
+ountries too.</p>
+<p>(Sorry, I still don&#39;t know exactly what &quot;scumbag&quot; means, b=
+ecause there are several bizarre definitions in Brazilian posts=C2=A0 (&quo=
+t;gentalha&quot;?=C2=A0 wtf?),=C2=A0 but probably there are lots of scumbag=
+s in all the places, haha!!)</p>
+<p>&gt; &gt;=C2=A0 [Cecilia]=C2=A0 Quinn is intolerant and has narrow patte=
+rns of decency, but he is a good person and I like him, Juan.<br>
+&gt;<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 You are seriously fucked up then. </p>
+<p>Well, I am sure Quinn thinks exactly the same thing all the times when I=
+ say I like you in public, my dear Juan...=C2=A0 hihi...=C2=A0 ;)</p>
+<p>&gt; &gt;=C2=A0 [Cecilia]=C2=A0 You are not exactly tolerant and open-mi=
+nded too, haha!!=C2=A0 ;D<br>
+&gt;<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 That comes from you, who support the US na=
+zis? Ha ha.</p>
+<p>I never said that I am tolerant and open-minded, Juan.=C2=A0 Sorry if yo=
+u felt offended with my words.=C2=A0 I don&#39;t support any kind of &#39;n=
+azis&#39;.=C2=A0 Radical people are extremely boring.</p>
+<p>&gt; &gt;=C2=A0 [Cecilia]=C2=A0 Sorry, I don&#39;t believe in all resear=
+ches because I have lots of researchers as friends and colleagues and I was=
+ a researcher in several moments of my life too<br>
+&gt;<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 So? You know they are all dishonest, inclu=
+ding yourself?</p>
+<p>Hmm...=C2=A0 Sorry, after talking about deaths, wars and rapes, I confes=
+s I was thinking only in Portuguese.=C2=A0 Always is the most comfortable l=
+anguage for me.=C2=A0 </p>
+<p>Pardon, reading now what wrote yesterday,=C2=A0there are more mistakes a=
+nd I didn&#39;t write some words when talking about the rapes.=C2=A0 Both m=
+ade me feel the same way, the same deep panic of death, the same smell of f=
+ear.=C2=A0 Sorry for it.</p>
+<p>&quot;Eu n=C3=A3o acredito em todas as pesquisas&quot; here doesn&#39;t =
+mean necessarily that I really do _not_ believe in _all_ researches.=C2=A0 =
+If I really wouldn&#39;t believe in all researches, in Portuguese, I would =
+use &#39;double negative&#39;, what doesn&#39;t exist in English, sorry.=C2=
+=A0 I would say &quot;Eu n=C3=A3o acredito em nenhuma pesquisa&quot;, Juan.=
+=C2=A0 I simply translated - literally - what I thought in that moment and =
+doesn&#39;t make sense in English, sorry.</p>
+<p>I was trying to say that not necessarily I believe in all researches, th=
+at I don&#39;t believe in some of them...=C2=A0 Does it sound better now or=
+ should I try again?=C2=A0 :P<br>
+</p>
+
+--001a1143f0ec7918820536c17f02--
+

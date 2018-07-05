@@ -1,0 +1,994 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id tA1L92NL026960;
+	Sun, 1 Nov 2015 16:09:05 -0500
+Authentication-Results: antiproton.jfet.org; dkim=fail
+	reason="verification failed; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=CoglARkA;
+	dkim-adsp=none (unprotected policy); dkim-atps=neutral
+Received: from mail-lb0-f180.google.com (mail-lb0-f180.google.com
+ [209.85.217.180])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id tA1L8ux1026956
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Sun, 1 Nov 2015 16:08:58 -0500
+Received: by lbjm5 with SMTP id m5so76390098lbj.3
+ for <cypherpunks@cpunks.org>; Sun, 01 Nov 2015 13:08:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:sender:in-reply-to:references:from:date:message-id
+ :subject:to:cc:content-type;
+ bh=ribWLLwI+wEylNwlbryPtYhMnKdopJXuboBREjJO1uI=;
+ b=CoglARkAdvVRoetOBEQJ8qY8N8131hEw9fKFru0PHm+ryVqH/dne4Yp+OKtjjO9oen
+ mBkotB9XcmKTI4OMimPoBJtn8GI5bRhunXgWt/5I3qi8Grkyfu6A8ZevDKXPGd2XGn0o
+ JaJRB+rNcUTCOTIYirvq3m4YT7M/uoIwRYs+wiOkbW30Lq0W3feiWIstsG/b8B1DTrgd
+ jQo68dQW8cHxAXulsTrM9iefE3hc6QFhF9Hlnwyy7XwmZLzpF46ppeMeNvXZqRnmdmzQ
+ vcgyGRrkWHBnNbdiXXD0qm8IfX2k6F/uMClGf5x39FYtGm7IOMRqikE8VhGh/MLd0pAL
+ DYhQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=odewijk_nl.20150623.gappssmtp.com; s=20150623;
+ h=mime-version:sender:in-reply-to:references:from:date:message-id
+ :subject:to:cc:content-type;
+ bh=ribWLLwI+wEylNwlbryPtYhMnKdopJXuboBREjJO1uI=;
+ b=MIv5tqedK7ZLKM6Jd6/NW0w+PQ3iIRBnoN8k3zx0h71SZmGtqpUYaSDXxLyoQ7aQkj
+ GJRr9p8xcUSSbLNdoYczCJs3ozrE8DkqKcJBONVTrdWH8KqDPquiBhKG4Sdgwy3Qg9Ro
+ oQqBTbUqxTAfDxXvhjvfUd98uvCuRekPvBW6rZ4bIO0Y9lmRsOio//1gfsegIYNJ8lXR
+ mwxu2S+VjeKeVT2KGQVW4gQlJ78K+JtUXaPPIhidAnhcQmWxTidBYU1kZDa2BENFgFFl
+ GbNbuJdce6TzGvmCE7kJAJUtR6G1W7E0NXqTY4f0ldle/MZYPmQxfO5xn986GJeRTbZS
+ C4FA==
+X-Received: by 10.112.205.194 with SMTP id li2mr8603629lbc.75.1446412130706;
+ Sun, 01 Nov 2015 13:08:50 -0800 (PST)
+MIME-Version: 1.0
+Received: by 10.25.159.76 with HTTP; Sun, 1 Nov 2015 13:08:30 -0800 (PST)
+In-Reply-To: <5633e047.b3588c0a.28e5f.1db7@mx.google.com>
+References: <CAHWD2rJNTxt2+=0rPkkc+323pTn-njkvJVgUE624LShu2xg1Eg@mail.gmail.com>
+ <150b0aeef50.276e.4d489027c0c4d0c1b1ca03a1f48f1ffb@misanthropia.org>
+ <20151028231728.1A96CC00019@frontend1.nyi.internal>
+ <CAOsGNSThwv=c9K4v4HkD27PD+wY9+XykyTNOWs=7FOwPpxctZw@mail.gmail.com>
+ <150b1290920.276e.4d489027c0c4d0c1b1ca03a1f48f1ffb@misanthropia.org>
+ <20151029013945.C7D9FC00012@frontend1.nyi.internal>
+ <CAHWD2rLJ0RgxcGZi=mKD=OfYYtCy1j9sfbzDKOVZuuX5EPCnJg@mail.gmail.com>
+ <56327869.361f8c0a.efb1c.692d@mx.google.com>
+ <CAHWD2rLBHnMHYnLZfYWfvvY9vQnxxrTp5Pk88H5mFoXO6+KW7g@mail.gmail.com>
+ <5633e047.b3588c0a.28e5f.1db7@mx.google.com>
+From: =?UTF-8?Q?Lodewijk_andr=C3=A9_de_la_porte?= <l@odewijk.nl>
+Date: Sun, 1 Nov 2015 22:08:30 +0100
+X-Google-Sender-Auth: m_uhGp8iE-9HiHIlT4DNlVpCWXE
+Message-ID: <CAHWD2r+h3OsK0eAhU50PnRVBv-tULNWqQbYFbkOyqMyeAdOSDQ@mail.gmail.com>
+Subject: Re: Shiny stuff and designer societies
+To: Juan <juan.g71@gmail.com>
+Content-Type: multipart/alternative; boundary=001a11c3ce563febbf052381115c
+Cc: "cypherpunks@cpunks.org" <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 921
+
+--001a11c3ce563febbf052381115c
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+I rather like this calmer tone. It makes it much easier to think about what
+you're saying.
+
+2015-10-30 22:32 GMT+01:00 Juan <juan.g71@gmail.com>:
+
+> On Thu, 29 Oct 2015 22:23:39 +0100
+> Lodewijk andr=C3=A9 de la porte <l@odewijk.nl> wrote:
+>
+>
+> >         So a criminal monopoly is going to define what 'justice' is,
+> > >         and enforce it, too.
+> > >
+> >
+> > What's worse, it'll redefine criminal!
+>
+>         Of course. So, why should any sane person support such a
+>         system?
+>
+
+Because it helps you. Consistently applied and effective justice reduces
+the crime rates. By defining crime to be behaviors that are:
+
+* Game theory wise bad - like driving (very) fast being good for you, bad
+for everyone else. Or contract enforcement - having serious enforcement
+even for less valuable contracts is very hard (=3Dexpensive) to do. The edg=
+e
+of acceptable is sought, and usually differs significantly per person.
+(Asbestos processing company CEO saying it's a good thing workers are
+unaware of the dangers, it makes for greater profit, and therefore prevents
+informing the workers. Past the line? Maybe, but it was legal and didn't
+cause public retaliation*)
+
+* Fragile but preferable - no petty theft (like jackets) makes it much
+easier to be in shared spaces, but any enforcement is more expensive than
+the jacket stolen. It's very hard to prevent petty theft. But also
+shoplifting, being honest about products (Volkswagen's lies might've forced
+other manufacturers to perform fraud), etc
+
+* Simply too unkind - fraud, murder, serious harassment (although the
+border is hard to place), theft of freedom (rape is both harassment and
+theft of freedom), (not all but many ways of) causing pain or injury, etc
+
+I think it's important to create law that's conservative and very morally
+and ethically neutral. For me that's the difference between being a force
+for evil and a force for good.
+
+I ran into a fascinating example yesterday, a group of women was mad a
+friend for leaving without saying she would (which is a strange thing to
+do, why not say bye?), and for leaving with a guy although she has a
+boyfriend. I don't know her boyfriend arrangement, or how they're doing,
+but seemingly that made no difference in the first place. They were forming
+a loyal monogamy cartel! They did not respect their friend's ethical/moral
+choice. But I can't say it was entirely unreasonable, if she claimed to be
+exclusive to the guy it's probably very unkind.
+
+To clarify; this was a case of micro-oppression. Their friends were clearly
+intend on excluding her and otherwise sanctioning her for her behavior,
+although her behavior was, well, her conscious choice. They could've
+decided not to care about her, and they wouldn't be upset about her
+leaving. But they cared and sanctioned instead. If you don't like a person
+you should attempt to disconnect and isolate first, I think.
+
+I think justice should not depend upon ethics very much at all. If it does
+it should incorporate the ethics of those involved into it's judgement, but
+if you do this justice will become arbitrary complex and faults are likely.
+(faulty justice is severe unkindness)
+
+* justice increases the cost of retaliation - this is one of the biggest
+disadvantages. An eye for several eyes might seem pretty reasonable as for
+retaliation, but we punish this severely everywhere now. (I'd prefer not
+wasting an eye) (real world: you may not stop NAM - a Dutch natural gas
+company - from draining so much gas beneath the earth underneath your feet
+that the earth gives way and fills the void with your house, because the
+gas draining is legal, because it's hard to estimate the risk of pumping
+the gas, and because it's very profitable (maybe worth more than the house
+anyway))
+
+>         You can keep repeating absurd, mainstream propaganda without
+> > >         any regard to logic, but what's the point? What can you
+> > >         achieve?
+> > >
+> >
+> > Complex agreements, abstaining from violence, huge organizations, etc.
+> > These are valuable, aren't they?
+>
+>         Abstaining from violence? States are the most violent
+>         organizations on the planet.
+
+
+It's a fucking for virginity kind of thing. And it's because our states are
+so well matched - you need only be comfortably more armstrong than the
+other wrestlers. (why that means you need to be able to nuke the entire
+enemy a few times over, even after considering countermeasures, well, uhm,
+we all make mistakes. Either that or the propaganda lies about the
+countermeasures' effectiveness! So, is the USGOV incompetent or shrewd? )
+
+
+> As to the complex arrangements
+>         that can exist in a society, you don't need the state to
+>         have them.
+>
+
+True, but we have made it far easier by ways of state. Certain arrangements
+are impossible without an allmighty third party. For example, you will
+never expend 100 euro's to retrieve 50. So, a promise of paying 50 euro's
+is not a very good promise if there's no cheaper way of enforcing that
+payment. This is often possible, through reputation or the like, but not
+always, and it's always difficult (=3Dcosts).
+
+Having a third party say "I'll suffer any expense, and I sure can, to
+ensure the enforcement of this promise, and will be sure punish the
+violator severely", means the total enforcement cost becomes 0 - not even a
+fool will challenge an adversary that truly means that.
+
+That entity needn't be the state, but it's better the more
+disproportionately powerful it is. Also because of vagueness. In "maybe
+more powerful" situations a test of power is sometimes required. And if
+there's more than two powerful parties they will weaken oneself with such a
+test. (what doesn't kill you wounds you still)
+
+
+>         It's also debatable why huge organizations are 'valuable'.
+>
+
+Economies of scale is one reason. The other is singular ginormous efforts.
+The pyramids are an example, but also the space race, this boat
+<https://upload.wikimedia.org/wikipedia/commons/e/e5/Barzan_%28ship%2C_2015=
+%29_03.jpg>,
+terraforming projects, and huge softwares too. And soon astroid mining,
+space solar, eradication of certain diseases, etc, etc, etc, etc
+
+Not just commerce; CERN is awesome!
+
+(but big is also scary)
+
+
+> > Ideally, there's a political game that is able to generate
+> > "appropriate" political choices. It's not a republic, a trade union,
+> > tribal understandings, etc, etc, per se, but there's always something.
+> >
+> > Without this system we are screwed anyway.
+>
+>
+>         That's vague. What system are you alluding to, and who is 'we'?
+>
+
+It's tricky. I meant that, one way or another, we arrive at "political"
+decisions. One could say that the parts involved in arriving at that
+decision are a system. If the system sucks, we're screwed.
+
+It's much better to have a system that generates "appropriate" choices.
+Sometimes the right choice is undefined, but a choice must be made still.
+For example; a carbon emission auctioning system, which is the right choice
+given Capitalism, Game Theory and something bad increasing with carbon
+emission, is not implementable without filling out an essential parameter,
+how bad do we accept things to get?
+
+Like, maybe I'm okay trading an "idyllic truly empty desert" for "cesspool
+of all things poisonous" if we profit a lot from it. ( if value of desert <
+value of cesspool + value of profit.) CNGOV decided that was a good trade,
+and I (strongly) agree. The BBC
+<http://www.bbc.com/future/story/20150402-the-worst-place-on-earth> did
+not. (lake here
+<https://www.google.com/maps/place/40%C2%B037'32.9%22N+109%C2%B040'10.1%22E=
+/@40.6257967,109.66948,5179m/data=3D!3m1!1e3!4m2!3m1!1s0x0:0x0>
+)
+
+(game theory and fluctuating public opinion makes natural protection not a
+good thing to leave to markets)
+
+
+> If we do have that system
+> > we *should* use it.
+>
+>         Statism? That system is designed to benefit special interests.
+>         Unless you belong to some special faction, it won't do you any
+>         good.
+>
+
+I meant, if we have a good way to generate general interest choices (or,
+idk, "appropriate" interest choices) then we should use it.
+
+I think the "special interest" should be humanity as a whole, averaged with
+SUM(PERSON_i)
+
+
+> > And we can use it to determine the absolute widest boundaries of what
+> > is permitted, boundaries which you may not wander out of.
+>
+>         Determine, how?
+>
+
+Through the political system. It depends on the system of course.
+
+Related;
+I think we can produce a formal logic for politics. It can model the
+effects of a policy choice, and project them into a single dimension. The
+single dimension is "desirability" or "euro's", it's supposed to be the
+same thing anyway.
+
+It'll be very challenging to do that formal logic properly. I don't think
+it's useful in every situation. Mapping is easy for economic situations,
+but very hard for emotions.
+
+Particularly challenging would be, say, family law. When is it reasonable
+to split a family? When Suffering_family < Suffering_society? Not if you
+prefer to leave people alone, then it's Suffering_family + neutrality_bias
+< Suffering_society. Also, both Suffering_family and Suffering_society will
+be the results of combining a very large amount of factors.
+
+One could model the amount of coercion upon an actor, how much a tax
+exemption would create incentives.
+
+I'm sorry for not having good examples. My understanding of formal logic is
+not that great, and I haven't actually tried to model a government's
+considerations. I think formal logic is the successor of "legalese", harder
+to speak and read, but once the mapping and relating is done the reasoning
+is absolute. Much easier to find mistakes, be precise, and much harder to
+make mistakes regarding governance.
+
+(note: formal logics dealing with fuzziness are even much harder to
+write/read, but will be a definite must)
+
+
+> > We can produce incentive schemes, to encourage the correct behavior.
+>
+>         What is the 'correct' behaviour?
+>
+
+For the system's actors to behave as they should, as determined by the
+system. In a republic a politician is intended to act in the best interest
+of its supporters. Businesses can at times provide great enough incentive
+to causes them to act otherwise.
+
+
+> > In fact, if the system works it needs no restrictions.
+> >
+> > We've yet to find a system that works.
+>
+>         Define 'works'.
+>
+
+Does what it says on the tin.
+
+
+> > >         Come on Lodewijk. Why don't you do your homework? Learn the
+> > > ABC of poltical theory.
+> >
+> > I tried doing homework, but the books were full of propaganda.
+>
+>         Well yes, there are varying levels of propaganda in political
+>         philosophy. There are some sound principles too.
+>
+>         You think people should be free, and things organized according
+>         to 'market principles' in some areas, but not in others.
+>         Problem is, being 'free' to follow arbitrary rules isn't
+>         exactly freedom.
+>
+
+Freedom is not very strongly defined anyway. It means you can't be "forced"
+to do something, but it's very rare for death not to be an alternative
+choice. Reality narrows our choices most significantly, but through law and
+enforcement we can change the "economic landscape" and cause what once was
+the best choice ('deepest valley') to become only meh, or very not good
+('high ridge'). I guess freedom is when you have no (clear) optimal
+choices, which isn't actually preferable.
+
+But I think we understand people so badly that it's better to make them
+responsible for their own mistakes, rather than sometimes make a wrong
+choice for them. As our understanding of "the human condition" grows, so
+does our ability to make choices that are actually better according to
+certain measures (certain measures because nihilism informs clearly that
+nothing truly matters). Perhaps freedom is being allowed to choose the
+measure.
+
+Mathematically it makes sense to have competition and free markets. In
+practice the actors do not obey perfectly, and cause a lot of reality.
+Additionally, while a market is finding it's optimum (the best way to do a
+certain thing) competition actually has significant cost. Sometimes reality
+shifts faster than markets anneal, and we get stuck with a lot of
+competition instead of expediting that energy to moving towards the ideal
+solution. (also game theory)
+
+
+> > Do tell me Juan, how do we prevent a "criminal monopoly"? Isn't it
+> > better to make a very good "criminal monopoly"?
+>
+>         Literally? A very good criminal monopoly would excel at being
+>         criminal. I don't think that's what you want?
+>
+
+There you go using criminal as if it means something :)
+
+Uhm, the ideal criminal monopoly, to me, would be criminal enough to ensure
+it's own existence, and do things I like as well. Like advancing humanity.
+(competing with the aliens that might already be underway, or finding a way
+for them to want to join our superior political system so we may advance
+together against yet more aliens that might not exist, and then to delay
+the heat death of the universe, I suppose)
+
+
+> > > > But, there is no nations.
+> > >
+> > > Ah, so your monopoly of crime is going to tyranize the whole
+> > > planet. Cute.
+> > >
+> >
+> > The system spans the globe, the crimes are all the peoples'.
+>
+>
+>         Whatever. A world state is a pretty bad idea.
+>
+
+Depends on what it does. It sure beats having competing governments.
+Racism, inflation and excessive military power are what you get, not much
+more afaik. (and replication of efforts)
+
+
+> > I have the right because I can. Powers *are* rights.
+>
+>         That's not what 'right(s)' means. Or rather that's the kind of
+>         'rights' that governments rely upon. Arbitrary dictates backed
+>         by force.
+
+
+Rights are defined by government, a self restraint alike "I'll never drink
+again". But I don't think that's very meaningful. Rights are supposed to be
+impossible to violate. If the government is incapable of violating the
+right, then it's a right. But by that point it's synonymous with a
+citizen's power. In practice "rights" are barriers, not absolute restraints=
+.
+
+Ugh, linguistics.
+
+        You are misunderstanding what natural rights are. Natural
+>         rights are a more legalistic description of common sense
+>         morality.
+>
+>         You can probably kill a few random people right now if you
+>         want. Say, use a car to run people over. But the fact that you
+>         *can* kill people means killing people is morally right?
+>
+>         Same thing with natural rights. The fact that natural rights
+>         can be violated doesn't mean they don't exist.
+>
+
+Natural rights are entirely different from rights. It is as you say, a plea
+for encoding some specific morality into law. Claiming something is a
+natural right seems to imply that it's been a right since before the
+politics determined what is and isn't a right. I think it's pretty
+meaningless, but I deeply empathize with the emotions involved.
+
+I could hear myself screaming that my natural rights are being violated.
+(as a futile plea after I give up hope)
+
+
+> > Ask the pigs, cows, rabbits, ferrits, birds, and all the other
+> > animals we do whatever we want to.
+>
+>         We are not talking about political philosophy applied
+>         to non-human animals right now.
+>
+
+I think if humans have natural rights, then why don't animals? Maybe you
+think they do, maybe you think they don't. But the same goes for humans,
+some people think something should be a right, some people don't. But for
+justice to be applied consistently we need there to be a clearly defined
+set of rules, so we should agree upon that set of rules. We're not very
+good at it :(
+
+
+> > Ask the mountains thought to have
+> > spirits.
+>
+>         That's a poetic license.
+>
+
+Can't ignore a mountain's natural rights, man.
+
+
+
+> > Listen to them and you will hear but weeping for lack of
+> > strength.
+> >
+> > Ofc, I'm the asshole for saying this.
+>
+>         Well, at least you are sincere...
+>
+
+Thanks!
+
+
+>         I would point out (again) that  1) your understanding of
+>         natural rights isn't...right. 2) that even current states
+>         pretend to get their powers from 'natural rights'.
+>
+
+I think my understanding is still not aligned. What states pretend to get
+their powers from 'natural rights'? I thought it used to be "God played
+lottery and my name came up" for kings, queens and pharaohs. And at some
+point that line could just be omitted because of legacy/buy-in.
+
+I think when a (messenger of) the state comes up and goes "you better pay
+your tax or I'll whip your ass" then that's, well, where they get their
+power, and natural rights don't really come into the whipping.
+
+
+>         It's called 'representative government' and it's allegedly
+>         based on 'consent'. Look it up =3DP
+
+
+Pretty sure it's more about whipping.
+
+If it really was consent I could send a letter to the king informing him
+I've had enough of his shit and I'll just fend for myself in the western
+sahara, or on a boat or something, but I think they'll still come get me if
+I break the law ((most) Dutch law applies to citizens abroad).
+
+
+> > I think in practice it will be easier to make the system a compelling
+> > opt-in. If you don't want to be in it, it is probably not good
+> > enough.
+>
+>         Oh that's a good point. So now you wearing your anarchist hat?
+>         =3DP
+>
+
+It's my plan for world domination. I just make a system that's so nice
+everyone will come running. Probably easier than whipping everyone into
+obedience. It could even be no-conflict with the governments, running two
+systems in parallel until either gets attention starved.
+
+> >         It's a 'necessary evil'? (doubly retarded since you don't
+> > >         believe in 'evil' eh? )
+> >
+> > I honestly do not know.
+> >
+> > This is a very complex issue spanning all industries. I think the
+> > patent system is a steaming pile of mercantile shit. The core idea is
+> > not so crazy though - idea's can be stolen, so they must be property.
+> > But you don't lose the idea when it gets stolen.
+> >
+> > It ruins the creative industries - we've made our fantasies protected
+> > property, subject not to the potential for art but the will of
+> > businessmen. Countless stories go untold. The stories that do get
+> > told are smudged with corporate inserts and ruinous inserted
+> > political messages. (look for racism/feminist inserts, they're
+> > everywhere and they usually fail to actually be unracist or feminist)
+>
+>         Yep.
+>
+
+Thanks for showing me the word mercantile. It's like a newspeak
+thinkbarrier is lifted.
+
+> I don't see where this goes. Perhaps a powers =3D rights argument?
+>
+>         It's a reductio ad absurdum of the  "power =3D rights" argument.
+>
+>         "might makes right" is sarcasm, not a literal statement.
+>
+
+Ah, yes. The syntactic similarity of right and rights.
+
+--001a11c3ce563febbf052381115c
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">I rather like this calmer tone. It makes it much easier to=
+ think about what you&#39;re saying.<div class=3D"gmail_extra"><br><div cla=
+ss=3D"gmail_quote">2015-10-30 22:32 GMT+01:00 Juan <span dir=3D"ltr">&lt;<a=
+ href=3D"mailto:juan.g71@gmail.com" target=3D"_blank">juan.g71@gmail.com</a=
+>&gt;</span>:<br><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px =
+0px 0.8ex;border-left-width:1px;border-left-color:rgb(204,204,204);border-l=
+eft-style:solid;padding-left:1ex">On Thu, 29 Oct 2015 22:23:39 +0100<br>
+<span class=3D"">Lodewijk andr=C3=A9 de la porte &lt;<a href=3D"mailto:l@od=
+ewijk.nl">l@odewijk.nl</a>&gt; wrote:<br>
+<br>
+<br>
+</span><span class=3D"">&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0So a criminal=
+ monopoly is going to define what &#39;justice&#39; is,<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0and enforce it, too.<br>
+&gt; &gt;<br>
+&gt;<br>
+&gt; What&#39;s worse, it&#39;ll redefine criminal!<br>
+<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 Of course. So, why should any sane perso=
+n support such a<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 system?<br></blockquote><div><br></div><div>Bec=
+ause it helps you. Consistently applied and effective justice reduces the c=
+rime rates. By defining crime to be behaviors that are:</div><div><br></div=
+><div>* Game theory wise bad - like driving (very) fast being good for you,=
+ bad for everyone else. Or contract enforcement - having serious enforcemen=
+t even for less valuable contracts is very hard (=3Dexpensive) to do. The e=
+dge of acceptable is sought, and usually differs significantly per person. =
+(Asbestos processing company CEO saying it&#39;s a good thing workers are u=
+naware of the dangers, it makes for greater profit, and therefore prevents =
+informing the workers. Past the line? Maybe, but it was legal and didn&#39;=
+t cause public retaliation*)</div><div><br></div><div>* Fragile but prefera=
+ble - no petty theft (like jackets) makes it much easier to be in shared sp=
+aces, but any enforcement is more expensive than the jacket stolen. It&#39;=
+s very hard to prevent petty theft. But also shoplifting, being honest abou=
+t products (Volkswagen&#39;s lies might&#39;ve forced other manufacturers t=
+o perform fraud), etc</div><div><br></div><div>* Simply too unkind - fraud,=
+ murder, serious harassment (although the border is hard to place), theft o=
+f freedom (rape is both harassment and theft of freedom), (not all but many=
+ ways of) causing pain or injury, etc</div><div><br></div><div>I think it&#=
+39;s important to create law that&#39;s conservative and very morally and e=
+thically neutral. For me that&#39;s the difference between being a force fo=
+r evil and a force for good.</div><div><br></div><div>I ran into a fascinat=
+ing example yesterday, a group of women was mad a friend for leaving withou=
+t saying she would (which is a strange thing to do, why not say bye?), and =
+for leaving with a guy although she has a boyfriend. I don&#39;t know her b=
+oyfriend arrangement, or how they&#39;re doing, but seemingly that made no =
+difference in the first place. They were forming a loyal monogamy cartel! T=
+hey did not respect their friend&#39;s ethical/moral choice. But I can&#39;=
+t say it was entirely unreasonable, if she claimed to be exclusive to the g=
+uy it&#39;s probably very unkind.</div><div><br></div><div>To clarify; this=
+ was a case of micro-oppression. Their friends were clearly intend on exclu=
+ding her and otherwise sanctioning her for her behavior, although her behav=
+ior was, well, her conscious choice. They could&#39;ve decided not to care =
+about her, and they wouldn&#39;t be upset about her leaving. But they cared=
+ and sanctioned instead. If you don&#39;t like a person you should attempt =
+to disconnect and isolate first, I think.</div><div><br></div><div>I think =
+justice should not depend upon ethics very much at all. If it does it shoul=
+d incorporate the ethics of those involved into it&#39;s judgement, but if =
+you do this justice will become arbitrary complex and faults are likely. (f=
+aulty justice is severe unkindness)</div><div>=C2=A0<br></div><div>* justic=
+e increases the cost of retaliation - this is one of the biggest disadvanta=
+ges. An eye for several eyes might seem pretty reasonable as for retaliatio=
+n, but we punish this severely everywhere now. (I&#39;d prefer not wasting =
+an eye) (real world: you may not stop NAM - a Dutch natural gas company - f=
+rom draining so much gas beneath the earth underneath your feet that the ea=
+rth gives way and fills the void with your house, because the gas draining =
+is legal, because it&#39;s hard to estimate the risk of pumping the gas, an=
+d because it&#39;s very profitable (maybe worth more than the house anyway)=
+)</div><div><br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px=
+ 0px 0px 0.8ex;border-left-width:1px;border-left-color:rgb(204,204,204);bor=
+der-left-style:solid;padding-left:1ex"><span class=3D"">&gt;=C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0You can keep repeating absurd, mainstream propaganda wi=
+thout<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0any regard to logic, but what&#3=
+9;s the point? What can you<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0achieve?<br>
+&gt; &gt;<br>
+&gt;<br>
+&gt; Complex agreements, abstaining from violence, huge organizations, etc.=
+<br>
+&gt; These are valuable, aren&#39;t they?<br>
+<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 Abstaining from violence? States are the=
+ most violent<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 organizations on the planet. </blockquote><div>=
+<br></div><div>It&#39;s a fucking for virginity kind of thing. And it&#39;s=
+ because our states are so well matched - you need only be comfortably more=
+ armstrong than the other wrestlers. (why that means you need to be able to=
+ nuke the entire enemy a few times over, even after considering countermeas=
+ures, well, uhm, we all make mistakes. Either that or the propaganda lies a=
+bout the countermeasures&#39; effectiveness! So, is the USGOV incompetent o=
+r shrewd? )</div><div>=C2=A0</div><blockquote class=3D"gmail_quote" style=
+=3D"margin:0px 0px 0px 0.8ex;border-left-width:1px;border-left-color:rgb(20=
+4,204,204);border-left-style:solid;padding-left:1ex">As to the complex arra=
+ngements<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 that can exist in a society, you don&#39;t need=
+ the state to<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 have them.<br></blockquote><div><br></div><div>=
+True, but we have made it far easier by ways of state. Certain arrangements=
+ are impossible without an allmighty third party. For example, you will nev=
+er expend 100 euro&#39;s to retrieve 50. So, a promise of paying 50 euro&#3=
+9;s is not a very good promise if there&#39;s no cheaper way of enforcing t=
+hat payment. This is often possible, through reputation or the like, but no=
+t always, and it&#39;s always difficult (=3Dcosts).</div><div><br></div><di=
+v>Having a third party say &quot;I&#39;ll suffer any expense, and I sure ca=
+n, to ensure the enforcement of this promise, and will be sure punish the v=
+iolator severely&quot;, means the total enforcement cost becomes 0 - not ev=
+en a fool will challenge an adversary that truly means that.</div><div><br>=
+</div><div>That entity needn&#39;t be the state, but it&#39;s better the mo=
+re disproportionately powerful it is. Also because of vagueness. In &quot;m=
+aybe more powerful&quot; situations a test of power is sometimes required. =
+And if there&#39;s more than two powerful parties they will weaken oneself =
+with such a test. (what doesn&#39;t kill you wounds you still)</div><div>=
+=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0=
+.8ex;border-left-width:1px;border-left-color:rgb(204,204,204);border-left-s=
+tyle:solid;padding-left:1ex">=C2=A0 =C2=A0 =C2=A0 =C2=A0 It&#39;s also deba=
+table why huge organizations are &#39;valuable&#39;.<br></blockquote><div><=
+br></div><div>Economies of scale is one reason. The other is singular ginor=
+mous efforts. The pyramids are an example, but also the space race, <a href=
+=3D"https://upload.wikimedia.org/wikipedia/commons/e/e5/Barzan_%28ship%2C_2=
+015%29_03.jpg">this boat</a>, terraforming projects, and huge softwares too=
+. And soon astroid mining, space solar,=C2=A0eradication of certain disease=
+s, etc, etc, etc, etc</div><div><br></div><div>Not just commerce; CERN is a=
+wesome!</div><div><br></div><div>(but big is also scary)</div><div>=C2=A0</=
+div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;bor=
+der-left-width:1px;border-left-color:rgb(204,204,204);border-left-style:sol=
+id;padding-left:1ex"><span class=3D"">&gt; Ideally, there&#39;s a political=
+ game that is able to generate<br>
+&gt; &quot;appropriate&quot; political choices. It&#39;s not a republic, a =
+trade union,<br>
+&gt; tribal understandings, etc, etc, per se, but there&#39;s always someth=
+ing.<br>
+&gt;<br>
+&gt; Without this system we are screwed anyway.<br>
+<br>
+<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 That&#39;s vague. What system are you al=
+luding to, and who is &#39;we&#39;?<br></blockquote><div><br></div><div>It&=
+#39;s tricky. I meant that, one way or another, we arrive at &quot;politica=
+l&quot; decisions. One could say that the parts involved in arriving at tha=
+t decision are a system. If the system sucks, we&#39;re screwed.</div><div>=
+<br></div><div>It&#39;s much better to have a system that generates &quot;a=
+ppropriate&quot; choices. Sometimes the right choice is undefined, but a ch=
+oice must be made still. For example; a carbon emission auctioning system, =
+which is the right choice given Capitalism, Game Theory and something bad i=
+ncreasing with carbon emission, is not implementable without filling out an=
+ essential parameter, how bad do we accept things to get?</div><div><br></d=
+iv><div>Like, maybe I&#39;m okay trading an &quot;idyllic truly empty deser=
+t&quot; for &quot;cesspool of all things poisonous&quot; if we profit a lot=
+ from it. ( if value of desert &lt; value of cesspool + value of profit.) C=
+NGOV decided that was a good trade, and I (strongly) agree. The <a href=3D"=
+http://www.bbc.com/future/story/20150402-the-worst-place-on-earth">BBC</a>=
+=C2=A0did not. (lake=C2=A0<a href=3D"https://www.google.com/maps/place/40%C=
+2%B037&#39;32.9%22N+109%C2%B040&#39;10.1%22E/@40.6257967,109.66948,5179m/da=
+ta=3D!3m1!1e3!4m2!3m1!1s0x0:0x0">here</a>)=C2=A0</div><div><br></div><div>(=
+game theory and fluctuating public opinion makes natural protection not a g=
+ood thing to leave to markets)</div><div><br></div><div><br></div><blockquo=
+te class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left-widt=
+h:1px;border-left-color:rgb(204,204,204);border-left-style:solid;padding-le=
+ft:1ex"><span class=3D"">&gt; If we do have that system<br>
+</span>&gt; we *should* use it.<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Statism? That system is designed to benefit spe=
+cial interests.<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Unless you belong to some special faction, it w=
+on&#39;t do you any<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 good.<br></blockquote><div><br></div><div>I mea=
+nt, if we have a good way to generate general interest choices (or, idk, &q=
+uot;appropriate&quot; interest choices) then we should use it.</div><div><b=
+r></div><div>I think the &quot;special interest&quot; should be humanity as=
+ a whole, averaged with SUM(PERSON_i)</div><div>=C2=A0<br></div><blockquote=
+ class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left-width:=
+1px;border-left-color:rgb(204,204,204);border-left-style:solid;padding-left=
+:1ex"><span class=3D"">&gt; And we can use it to determine the absolute wid=
+est boundaries of what<br>
+&gt; is permitted, boundaries which you may not wander out of.<br>
+<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 Determine, how?<br></blockquote><div><br=
+></div><div>Through the political system. It depends on the system of cours=
+e.</div><div><br></div><div>Related;</div><div>I think we can produce a for=
+mal logic for politics. It can model the effects of a policy choice, and pr=
+oject them into a single dimension. The single dimension is &quot;desirabil=
+ity&quot; or &quot;euro&#39;s&quot;, it&#39;s supposed to be the same thing=
+ anyway.</div><div><br></div><div>It&#39;ll be very challenging to do that =
+formal logic properly. I don&#39;t think it&#39;s useful in every situation=
+. Mapping is easy for economic situations, but very hard for emotions.=C2=
+=A0</div><div><br></div><div>Particularly challenging would be, say, family=
+ law. When is it reasonable to split a family? When Suffering_family &lt; S=
+uffering_society? Not if you prefer to leave people alone, then it&#39;s Su=
+ffering_family + neutrality_bias &lt; Suffering_society. Also, both Sufferi=
+ng_family and Suffering_society will be the results of combining a very lar=
+ge amount of factors.</div><div><br></div><div>One could model the amount o=
+f coercion upon an actor, how much a tax exemption would create incentives.=
+</div><div><br></div><div>I&#39;m sorry for not having good examples. My un=
+derstanding of formal logic is not that great, and I haven&#39;t actually t=
+ried to model a government&#39;s considerations. I think formal logic is th=
+e successor of &quot;legalese&quot;, harder to speak and read, but once the=
+ mapping and relating is done the reasoning is absolute. Much easier to fin=
+d mistakes, be precise, and much harder to make mistakes regarding governan=
+ce.</div><div><br></div><div>(note: formal logics dealing with fuzziness ar=
+e even much harder to write/read, but will be a definite must)</div><div>=
+=C2=A0<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0=
+px 0.8ex;border-left-width:1px;border-left-color:rgb(204,204,204);border-le=
+ft-style:solid;padding-left:1ex"><span class=3D"">&gt; We can=C2=A0produce =
+incentive schemes, to encourage the correct behavior.<br>
+<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 What is the &#39;correct&#39; behaviour?=
+<br></blockquote><div><br></div><div>For the system&#39;s actors to behave =
+as they should, as determined by the system. In a republic a politician is =
+intended to act in the best interest of its supporters. Businesses can at t=
+imes provide great enough incentive to causes them to act otherwise.</div><=
+div>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0=
+px 0.8ex;border-left-width:1px;border-left-color:rgb(204,204,204);border-le=
+ft-style:solid;padding-left:1ex"><span class=3D"">
+&gt; In=C2=A0fact, if the system works it needs no restrictions.<br>
+&gt;<br>
+&gt; We&#39;ve yet to find a system that works.<br>
+<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 Define &#39;works&#39;.<br></blockquote>=
+<div><br></div><div>Does what it says on the tin.</div><div>=C2=A0</div><bl=
+ockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-lef=
+t-width:1px;border-left-color:rgb(204,204,204);border-left-style:solid;padd=
+ing-left:1ex"><span class=3D"">
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0Come on Lodewijk. Why don&#39;t =
+you do your homework? Learn the<br>
+&gt; &gt; ABC of poltical theory.<br>
+&gt;<br>
+&gt; I tried doing homework, but the books were full of propaganda.<br>
+<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 Well yes, there are varying levels of pr=
+opaganda in political<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 philosophy. There are some sound principles too=
+.<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 You think people should be free, and things org=
+anized according<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 to &#39;market principles&#39; in some areas, b=
+ut not in others.<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Problem is, being &#39;free&#39; to follow arbi=
+trary rules isn&#39;t<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 exactly freedom.<br></blockquote><div><br></div=
+><div>Freedom is not very strongly defined anyway. It means you can&#39;t b=
+e &quot;forced&quot; to do something, but it&#39;s very rare for death not =
+to be an alternative choice. Reality narrows our choices most significantly=
+, but through law and enforcement we can change the &quot;economic landscap=
+e&quot; and cause what once was the best choice (&#39;deepest valley&#39;) =
+to become only meh, or very not good (&#39;high ridge&#39;). I guess freedo=
+m is when you have no (clear) optimal choices, which isn&#39;t actually pre=
+ferable.</div><div><br></div><div>But I think we understand people so badly=
+ that it&#39;s better to make them responsible for their own mistakes, rath=
+er than sometimes make a wrong choice for them. As our understanding of &qu=
+ot;the human condition&quot; grows, so does our ability to make choices tha=
+t are actually better according to certain measures (certain measures becau=
+se nihilism informs clearly that nothing truly matters). Perhaps freedom is=
+ being allowed to choose the measure.<br></div><div><br></div><div>Mathemat=
+ically it makes sense to have competition and free markets. In practice the=
+ actors do not obey perfectly, and cause a lot of reality. Additionally, wh=
+ile a market is finding it&#39;s optimum (the best way to do a certain thin=
+g) competition actually has significant cost. Sometimes reality shifts fast=
+er than markets anneal, and we get stuck with a lot of competition instead =
+of expediting that energy to moving towards the ideal solution. (also game =
+theory)</div><div>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"ma=
+rgin:0px 0px 0px 0.8ex;border-left-width:1px;border-left-color:rgb(204,204,=
+204);border-left-style:solid;padding-left:1ex"><span class=3D"">&gt; Do tel=
+l me Juan, how do we prevent a &quot;criminal monopoly&quot;? Isn&#39;t it<=
+br>
+&gt; better to make a very good &quot;criminal monopoly&quot;?<br>
+<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 Literally? A very good criminal monopoly=
+ would excel at being<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 criminal. I don&#39;t think that&#39;s what you=
+ want?<br></blockquote><div><br></div><div>There you go using criminal as i=
+f it means something :)</div><div><br></div><div>Uhm, the ideal criminal mo=
+nopoly, to me, would be criminal enough to ensure it&#39;s own existence, a=
+nd do things I like as well. Like advancing humanity. (competing with the a=
+liens that might already be underway, or finding a way for them to want to =
+join our superior political system so we may advance together against yet m=
+ore aliens that might not exist, and then to delay the heat death of the un=
+iverse, I suppose)</div><div>=C2=A0</div><blockquote class=3D"gmail_quote" =
+style=3D"margin:0px 0px 0px 0.8ex;border-left-width:1px;border-left-color:r=
+gb(204,204,204);border-left-style:solid;padding-left:1ex"><span class=3D"">=
+&gt; &gt; &gt; But, there is no nations.<br>
+&gt; &gt;<br>
+&gt; &gt; Ah, so your monopoly of crime is going to tyranize the whole<br>
+&gt; &gt; planet. Cute.<br>
+&gt; &gt;<br>
+&gt;<br>
+&gt; The system spans the globe, the crimes are all the peoples&#39;.<br>
+<br>
+<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 Whatever. A world state is a pretty bad =
+idea.<br></blockquote><div><br></div><div>Depends on what it does. It sure =
+beats having competing governments. Racism, inflation and excessive militar=
+y power are what you get, not much more afaik. (and replication of efforts)=
+</div><div>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0p=
+x 0px 0px 0.8ex;border-left-width:1px;border-left-color:rgb(204,204,204);bo=
+rder-left-style:solid;padding-left:1ex">&gt; I have the right because I can=
+. Powers *are* rights.<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 That&#39;s not what &#39;right(s)&#39; means. O=
+r rather that&#39;s the kind of<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;rights&#39; that governments rely upon. Ar=
+bitrary dictates backed<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 by force.</blockquote><div><br></div><div>Right=
+s are defined by government, a self restraint alike &quot;I&#39;ll never dr=
+ink again&quot;. But I don&#39;t think that&#39;s very meaningful. Rights a=
+re supposed to be impossible to violate. If the government is incapable of =
+violating the right, then it&#39;s a right. But by that point it&#39;s syno=
+nymous with a citizen&#39;s power. In practice &quot;rights&quot; are barri=
+ers, not absolute restraints.</div><div><br></div><div>Ugh, linguistics.</d=
+iv><div><br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px=
+ 0px 0.8ex;border-left-width:1px;border-left-color:rgb(204,204,204);border-=
+left-style:solid;padding-left:1ex">=C2=A0 =C2=A0 =C2=A0 =C2=A0 You are misu=
+nderstanding what natural rights are. Natural<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 rights are a more legalistic description of com=
+mon sense<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 morality.<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 You can probably kill a few random people right=
+ now if you<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 want. Say, use a car to run people over. But th=
+e fact that you<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 *can* kill people means killing people is moral=
+ly right?<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Same thing with natural rights. The fact that n=
+atural rights<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 can be violated doesn&#39;t mean they don&#39;t=
+ exist.<br></blockquote><div><br></div><div>Natural rights are entirely dif=
+ferent from rights. It is as you say, a plea for encoding some specific mor=
+ality into law. Claiming something is a natural right seems to imply that i=
+t&#39;s been a right since before the politics determined what is and isn&#=
+39;t a right. I think it&#39;s pretty meaningless, but I deeply empathize w=
+ith the emotions involved.<br></div><div><br></div><div>I could hear myself=
+ screaming that my natural rights are being violated. (as a futile plea aft=
+er I give up hope)</div><div>=C2=A0</div><blockquote class=3D"gmail_quote" =
+style=3D"margin:0px 0px 0px 0.8ex;border-left-width:1px;border-left-color:r=
+gb(204,204,204);border-left-style:solid;padding-left:1ex"><span class=3D"">=
+&gt; Ask the pigs, cows, rabbits, ferrits, birds, and all the other<br>
+&gt; animals we do whatever we want to.<br>
+<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 We are not talking about political philo=
+sophy applied<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 to non-human animals right now.<br></blockquote=
+><div><br></div><div>I think if humans have natural rights, then why don&#3=
+9;t animals? Maybe you think they do, maybe you think they don&#39;t. But t=
+he same goes for humans, some people think something should be a right, som=
+e people don&#39;t. But for justice to be applied consistently we need ther=
+e to be a clearly defined set of rules, so we should agree upon that set of=
+ rules. We&#39;re not very good at it :(</div><div>=C2=A0</div><blockquote =
+class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left-width:1=
+px;border-left-color:rgb(204,204,204);border-left-style:solid;padding-left:=
+1ex"><span class=3D"">
+&gt; Ask the mountains thought to have<br>
+&gt; spirits.<br>
+<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 That&#39;s a poetic license.<br></blockq=
+uote><div><br></div><div>Can&#39;t ignore a mountain&#39;s natural rights, =
+man.</div><div><br></div><div>=C2=A0</div><blockquote class=3D"gmail_quote"=
+ style=3D"margin:0px 0px 0px 0.8ex;border-left-width:1px;border-left-color:=
+rgb(204,204,204);border-left-style:solid;padding-left:1ex"><span class=3D""=
+>&gt; Listen to them and you will hear but weeping for lack of<br>
+&gt; strength.<br>
+&gt;<br>
+&gt; Ofc, I&#39;m the asshole for saying this.<br><br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 Well, at least you are sincere...<br></b=
+lockquote><div><br></div><div>Thanks!</div><div>=C2=A0</div><blockquote cla=
+ss=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left-width:1px;=
+border-left-color:rgb(204,204,204);border-left-style:solid;padding-left:1ex=
+">=C2=A0 =C2=A0 =C2=A0 =C2=A0 I would point out (again) that=C2=A0 1) your =
+understanding of<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 natural rights isn&#39;t...right. 2) that even =
+current states<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 pretend to get their powers from &#39;natural r=
+ights&#39;.<br></blockquote><div><br></div><div>I think my understanding is=
+ still not aligned. What states pretend to get their powers from &#39;natur=
+al rights&#39;? I thought it used to be &quot;God played lottery and my nam=
+e came up&quot; for kings, queens and pharaohs. And at some point that line=
+ could just be omitted because of legacy/buy-in.</div><div><br></div><div>I=
+ think when a (messenger of) the state comes up and goes &quot;you better p=
+ay your tax or I&#39;ll whip your ass&quot; then that&#39;s, well, where th=
+ey get their power, and natural rights don&#39;t really come into the whipp=
+ing.</div><div>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margi=
+n:0px 0px 0px 0.8ex;border-left-width:1px;border-left-color:rgb(204,204,204=
+);border-left-style:solid;padding-left:1ex">=C2=A0 =C2=A0 =C2=A0 =C2=A0 It&=
+#39;s called &#39;representative government&#39; and it&#39;s allegedly<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 based on &#39;consent&#39;. Look it up =3DP</bl=
+ockquote><div><br></div><div>Pretty sure it&#39;s more about whipping.</div=
+><div><br></div><div>If it really was consent I could send a letter to the =
+king informing him I&#39;ve had enough of his shit and I&#39;ll just fend f=
+or myself in the western sahara, or on a boat or something, but I think the=
+y&#39;ll still come get me if I break the law ((most) Dutch law applies to =
+citizens abroad).</div><div>=C2=A0</div><blockquote class=3D"gmail_quote" s=
+tyle=3D"margin:0px 0px 0px 0.8ex;border-left-width:1px;border-left-color:rg=
+b(204,204,204);border-left-style:solid;padding-left:1ex"><span class=3D"">&=
+gt; I think in practice it will be easier to make the system a compelling<b=
+r>
+&gt; opt-in. If you don&#39;t want to be in it, it is probably not good<br>
+&gt; enough.<br>
+<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 Oh that&#39;s a good point. So now you w=
+earing your anarchist hat?<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =3DP<br></blockquote><div><br></div><div>It&#39=
+;s my plan for world domination. I just make a system that&#39;s so nice ev=
+eryone will come running. Probably easier than whipping everyone into obedi=
+ence. It could even be no-conflict with the governments, running two system=
+s in parallel until either gets attention starved.</div><div><br></div><blo=
+ckquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left=
+-width:1px;border-left-color:rgb(204,204,204);border-left-style:solid;paddi=
+ng-left:1ex"><span class=3D"">&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0It=
+&#39;s a &#39;necessary evil&#39;? (doubly retarded since you don&#39;t<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0believe in &#39;evil&#39; eh? )<=
+br>
+&gt;<br>
+&gt; I honestly do not know.<br>
+&gt;<br>
+&gt; This is a very complex issue spanning all industries. I think the<br>
+&gt; patent system is a steaming pile of mercantile shit. The core idea is<=
+br>
+&gt; not so crazy though - idea&#39;s can be stolen, so they must be proper=
+ty.<br>
+&gt; But you don&#39;t lose the idea when it gets stolen.<br>
+&gt;<br>
+&gt; It ruins the creative industries - we&#39;ve made our fantasies protec=
+ted<br>
+&gt; property, subject not to the potential for art but the will of<br>
+&gt; businessmen. Countless stories go untold. The stories that do get<br>
+&gt; told are smudged with corporate inserts and ruinous inserted<br>
+&gt; political messages. (look for racism/feminist inserts, they&#39;re<br>
+&gt; everywhere and they usually fail to actually be unracist or feminist)<=
+br>
+<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 Yep.<br></blockquote><div><br></div><div=
+>Thanks for showing me the word mercantile. It&#39;s like a newspeak thinkb=
+arrier is lifted.</div><div><br></div><blockquote class=3D"gmail_quote" sty=
+le=3D"margin:0px 0px 0px 0.8ex;border-left-width:1px;border-left-color:rgb(=
+204,204,204);border-left-style:solid;padding-left:1ex"><span class=3D"">
+&gt; I don&#39;t see where this goes. Perhaps a powers =3D rights argument?=
+<br><br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 It&#39;s a reductio ad absurdum of the=
+=C2=A0 &quot;power =3D rights&quot; argument.<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;might makes right&quot; is sarcasm, not a=
+ literal statement.<br></blockquote><div><br></div><div>Ah, yes. The syntac=
+tic similarity of right and rights.</div></div></div></div>
+
+--001a11c3ce563febbf052381115c--
+

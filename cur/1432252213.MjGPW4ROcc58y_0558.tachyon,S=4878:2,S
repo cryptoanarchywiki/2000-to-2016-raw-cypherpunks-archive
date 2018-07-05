@@ -1,0 +1,101 @@
+From cypherpunks-bounces@cpunks.org  Tue Dec 24 06:21:34 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id rBOBLI1s032038;
+	Tue, 24 Dec 2013 06:21:21 -0500
+Authentication-Results: antiproton.jfet.org; dkim=fail
+	reason="verification failed; insecure key"
+	header.d=gmail.com header.i=@gmail.com header.b=CzROWE/h;
+	dkim-adsp=none (insecure policy); dkim-atps=neutral
+Received: from mail-oa0-f44.google.com (mail-oa0-f44.google.com
+ [209.85.219.44])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id rBOBLGKC032034
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Tue, 24 Dec 2013 06:21:17 -0500
+Received: by mail-oa0-f44.google.com with SMTP id m1so6891090oag.31
+ for <cypherpunks@cpunks.org>; Tue, 24 Dec 2013 03:21:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :cc:content-type;
+ bh=CjqF7lZqRrnruCr8H88U/8neCdgcK3p9LwxU0/gEuR8=;
+ b=CzROWE/h+Si8BZ6x/3gSmfBBOfsW0p0HueKrGodkIoVCz9Zg0F1U3Xi9OKBCAFFDuj
+ C+KNkLxuaOeHrw6CsGh154J+of0XNTlyzlRBDkFV4cQPPMwroBaCstFSGfeDE2mK4/CM
+ E9AjVCMAIIHHfV/dvHSNuydtgU5v5o8cjgLt9/Y7q/lPhEbrtdpcfGP0sQfl296eyrRs
+ n13wSvj7rtpxlsE3hzQ7EYxU7/U+llB4yhgLjHwuRNT/ysUeXUKuLo1wOXo73g5BtVZq
+ +Fs6VTeZhNvaELovXxwHhJ3idZEE4HndnruUz47K8aOb87eZ4RUOmCivUs7/A0i9ISST
+ gNUg==
+MIME-Version: 1.0
+X-Received: by 10.182.102.7 with SMTP id fk7mr21554372obb.28.1387884069968;
+ Tue, 24 Dec 2013 03:21:09 -0800 (PST)
+Received: by 10.60.115.42 with HTTP; Tue, 24 Dec 2013 03:21:09 -0800 (PST)
+In-Reply-To: <20131224100135.GA20486@jack>
+References: <CAD2Ti28MwGU_5gLxMUG61En6NT059rWP=Qbk1O74Vc8hTCrLGw@mail.gmail.com>
+ <20131224100135.GA20486@jack>
+Date: Tue, 24 Dec 2013 06:21:09 -0500
+Message-ID: <CAD2Ti2-M87x+fQvcm-=JPv=_DrgOY-9q2R=_nx6czo3xNUGPGg@mail.gmail.com>
+Subject: Re: [cryptography] The next gen P2P secure email solution
+From: grarpamp <grarpamp@gmail.com>
+To: danimoth <danimoth@cryptolab.net>
+Content-Type: text/plain; charset=UTF-8
+Cc: cypherpunks@cpunks.org, cryptography@randombit.net,
+        p2p-hackers@zim.maski.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+On Tue, Dec 24, 2013 at 5:01 AM, danimoth <danimoth@cryptolab.net> wrote:
+> In these months there was a lot of talking about "metadata", which SMTP
+> exposes regardless of encryption or authentication. In the design of
+> this p2p system, should metadata's problem kept in consideration or not?
+> IMHO exposing danimoth@cryptolab or my <key> it's the same, as there is
+> a function between them. I2P and/or Tor adds complexity to avoid such
+> mapping to any non-state-level adversary.
+
+I'd assume the design will rightly provide complete end2end encryption between
+your source spool and your recipients spool over whatever bits are in between,
+as a result of having the key, equivalent to the node, equivalent to
+the address.
+Store and forward might need to expose only the destination key to the storage
+and routing net. A direct circuit would not.
+
+All the legacy 'received' headers are gone by definition. A full raw message
+might contain some required bits for continued use with your favorite mail tools
+post handoff to you:
+
+>From - As with today, this may or may not end up being authenticateable by the
+recipient. Since the net itself would seem to need to be anonymous, then it is
+likely not. Nor is it a problem if it is... you just generate yourself
+a new node if concerned.
+To, Cc, Bcc
+Date
+Subject
+Message-ID
+[Threading]
+Body
+
+Antispam/antivirus becomes responsibility of the sender/recipient so no
+headers there. No legacy dkim, spf, etc, either.
+
+There may be a new set of transport preference headers if the design calls
+for it. ie: You might be able to use the net with full mail clients
+like mutt, thunderbird.
+Or with a light 'messaging' client protocol. Each of which might have
+a slightly different
+interface into and out of the node.
+
+Addresses might look like:
+[user/function or protocol/arbitrary string]@[node pubkey/hash]
+
+I've no idea, only to see if interested people think some sort of nextgen
+P2P/DHT system is actually possible at scale.
+

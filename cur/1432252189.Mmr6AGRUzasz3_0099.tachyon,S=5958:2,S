@@ -1,0 +1,68 @@
+From owner-cypherpunks@al-qaeda.net  Tue Jul  3 09:24:49 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q63DM2OG011643
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 3 Jul 2012 09:22:02 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q63DM2db011642
+	for cypherpunks-outgoing; Tue, 3 Jul 2012 09:22:02 -0400
+Date: Tue, 3 Jul 2012 15:21:59 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Re: [cryptography] Key extraction from tokens (RSA SecurID,
+  etc) 	via padding attacks on PKCS#1v1.5
+Message-ID: <20120703132159.GS12615@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Michael Nelson <nelson_mikel@yahoo.com> -----
+
+From: Michael Nelson <nelson_mikel@yahoo.com>
+Date: Mon, 2 Jul 2012 15:56:24 -0700 (PDT)
+To: "cryptography@randombit.net" <cryptography@randombit.net>
+Subject: Re: [cryptography] Key extraction from tokens (RSA SecurID,
+	etc) via padding attacks on PKCS#1v1.5
+X-Mailer: YahooMailWebService/0.8.120.356233
+Reply-To: Michael Nelson <nelson_mikel@yahoo.com>
+
+There seems to be a bit of uncertainty about this attack. B I'm hearing a lot of misunderstanding from customers. Here is my summary. B I'll first give a concrete example explaining key wrap and unwrap. B Skip this post if you know all this stuff. B Then I'll generalize a bit, and finally comment on RSA's response.
+
+Suppose that you have a symmetric key (eg a KEK) in one HSM that you want to transport to another HSM. B The target HSM generates an RSA private key, and you send the cert off to the first HSM, where you wrap (encrypt) the symmetric key under that cert. B You take this wrapped key across to the target HSM. B There, you "unwrap" it, which means that you send the encrypted blob into the target HSM, which internally decrypts the symmetric key and stores it, but does not give you back the plain symmetric key.
+
+If the target HSM notices that the encrypted blob is corrupted, then it will give you an error message. B This is a leak of information, but that's life. B Normally such a covert channel would at most help you to mount a brute force attack, which is impractical owing to the size of the key space and other things.
+
+However, if the target HSM allows you to ask it to unwrap (decrypt) the key under the assumption that pkcs v1.5 padding has been used, then by careful manipulation of the encrypted blob, you can use the failed decryptions to deduce the plain key, after only a few thousand submissions.
+
+It does not matter whether the symmetric key was encrypted using the pkcs1 v1.5 padding. (Matthew Green mentioned this in his post.) B The flaw in the HSM is that it will attempt to use the deprecated padding during the decryption. B Loosely, it looks for certain bytes and tells you whether it found them.
+
+It also does not matter whether you are using pkcs11 APIs, and whether you are doing key wrap/unwrap, and whether the data is a key. B Any secret piece of data encrypted under an RSA cert can be potentially extracted, via any kind of crypto module, as long as the module will use the deprecated padding mechanism.
+
+It also does not matter whether the device is actually a device. B  An SSL server that will decrypt things assuming pkcs1 v1.5 padding, and give failure messages, is potentially vulnerable (this has been known for a decade).
+
+Various USB tokens have played the role of the HSM in the recent research. B How have RSA Corp. personned up? B The RSA blog said:
+
+"The vulnerability outlined by the researchers makes it possible (however unlikely) that an attacker with access to the userbs smartcard device and the userbs smartcard PIN could gain access to a symmetric key or other encrypted data sent to the smartcard."B 
+
+This is a fairish statement. B Though I think "unlikely" needs clarifying. B It's not that common for end users to do the importation onto such a device that leads to the attack, so in that sense it's unlikely. B However, if you do do such an import, the attack is likely. B I can certainly imagine provisioning scenarios that are vulnerable, though I can't say if people are actually doing them. B So I'd say that anyone using the tokens for this sort of thing should be warned immediately. B Also, the RSA blogger should have been a little more candid and conceded that they have been remiss, and said what they will do to fix it. B Later, they quote the token team:
+
+"This is not a useful attack. The researchers engaged in an academic exercise to point out a specific vulnerability in the protocol, but an attack requires access to the RSA SecurID 800 smartcard (for example, inserted into a compromised machine) and the userbs smartcard PIN. If the attacker has the smart card and PIN, there is no need to perform any attack, so this research adds little additional value as a security finding."
+
+This is quite false. B The legitimate owner of the token, or a security officer provisioning the token, can get information (marked unextractable) he is not supposed to get, PIN or no PIN. B There are definite real world scenarios in which this attack is a serious break.
+_______________________________________________
+cryptography mailing list
+cryptography@randombit.net
+http://lists.randombit.net/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

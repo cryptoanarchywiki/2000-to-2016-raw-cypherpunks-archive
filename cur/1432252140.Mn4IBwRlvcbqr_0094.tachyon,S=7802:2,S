@@ -1,0 +1,165 @@
+From owner-cypherpunks@Algebra.COM  Fri Aug 30 23:24:08 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7V3O7I01724
+	for <rsw@opamp.org>; Fri, 30 Aug 2002 23:24:07 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id XAA25013
+	for <rsw@mit.edu>; Fri, 30 Aug 2002 23:24:06 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7V1HMR4010917
+	for <cypherpunks-outgoing@ak47.algebra.com>; Fri, 30 Aug 2002 20:17:22 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g7V1HMa2010916
+	for cypherpunks-outgoing; Fri, 30 Aug 2002 20:17:22 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7V1HJR4010898
+	for <cypherpunks@ak47.algebra.com>; Fri, 30 Aug 2002 20:17:20 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7V1HHe1025353
+	for cypherpunks@ak47.algebra.com; Fri, 30 Aug 2002 18:17:17 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7V1Ekj0025316
+	for cypherpunks-goingout345; Fri, 30 Aug 2002 18:14:46 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Fri, 30 Aug 2002 18:14:32 -0700 (PDT)
+From: Meyer Wolfsheim <wolf@priori.net>
+X-Sender: <ngoldman@thetis.deor.org>
+To: <cypherpunks@lne.com>
+Old-Subject: Mitigating Dangers of Compromised Anonymity
+Message-ID: <Pine.LNX.4.30.QNWS.0208301630440.16227-100000@thetis.deor.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Mitigating Dangers of Compromised Anonymity
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 5558
+Lines: 118
+
+
+Operating an anonymity service or providing privacy enhancing
+technologies to the public poses potential risks to the provider if
+sufficiently motivated entities wish to prevent the availability of such
+technology.
+
+In particular danger are individuals whose meatspace identity and nyms are
+not publicly linked. If the attacker is able to compromise a nym and
+silence the individual in meatspace, other anonymity providers and the
+general public will have no way of knowing that this has occurred.
+
+This is information that is important to the public (who will want to know
+if a remailer's operator has disappeared, though his remailer is still
+operating) and to the other operators (who may be next.)
+
+Given the practice of remops hiding their identities, it would be somewhat
+difficult to connect the sudden tragic death of a quiet computer
+programmer in Arkansas with the abrupt silence of the operator of a
+remailer in New York, whose ID is unknown to all but a very few.[1]
+
+Given the necessity of providing on-going administration for a remailer
+server, and the lack of a viable IP-level anonymity system, a remop's
+identity is almost surely known to any attacker who can observe network
+traffic. Operating a remailer while concealing one's name from the general
+public makes it easier for this attacker to hide one's disappearance from
+the public, or delay their knowledge. Still, there are many compelling
+reasons to operate an anonymity service or provide anonymity software
+without revealing one's name. It would be desirable for a remop to be able
+to do so without putting himself at greater than normal risk.
+
+Discussions with some members of the remailer operator community [2] have
+lead me to propose the following "I am alive" monitoring system for
+anonymous members.  Although it was designed with remailer operators in
+mind, this system could benefit other groups which face problems similar
+to the ones described above (such as human rights workers and people with
+Muslim-sounding last names who have recently emigrated to America).
+
+
+"I'm not Dead Yet"
+
+1. This system assumes that a stable, reliable monitoring server can be
+operated in a fixed location on the Internet.
+
+The server stores a list of email addresses it is monitoring, a public PGP
+key for each nym, and a datestamp "s" (which is a number in seconds) for
+each nym.
+
+The server is configured with an "allowed silence period" variable "T",
+which is an integer equal to the number of days a monitored member may be
+without contact with the server and still be considered safe.
+
+2. Users add themselves to the system by sending a signed administrative
+request to the server's email address and providing the public key to be
+used. Updates to the personal information for that nym can only be changed
+by further administrative email requests signed by the same key.
+
+3. The monitoring server publishes a unique random nonce each day on its
+website and posted to USENET (in a suitable place such as
+alt.privacy.anon-server).
+
+The server will store a rolling list of nonces and their issuance date for
+the duration of T.
+
+4. Members being monitored obtain this nonce, sign it with the key held by
+the server, and submit an "I am alive" notification.
+
+5. Upon receipt of this notification, the server resets the datestamp s
+equal to the nonce issuance time.
+
+6. If age of s (present time in seconds minus s) for any nym entry reaches
+(T-3)*86400, the nym address is pinged with a message -- "Are you alive?".
+If the nym's owner were alive and had simply forgotten to check in, he
+could respond within three days to avoid a false alert.
+
+7. If the age of s reaches T*86400, a "Missing Nym" alert is issued,
+either to all of the other members of the monitoring service, a separate
+alerts list, or a public forum.
+
+8. The missing nym owner can declare a false alert by checking in through
+the normal fashion. (There's an application for reputation tracking on
+nyms who cry wolf).
+
+Notes:
+
+a) Nym owners will wish to communicate with the monitoring server
+through anonymous remailers, as to avoid revealing their identities to the
+monitoring system.
+
+b) This system makes no distinction between nyms and true names. It can
+monitor email addresses of either. This could provide a useful system even
+if one is not using a real nym.
+
+c) The PGP keys supplied to the nym server for purpose of ID verification
+should be signing-only keys not used for any other purpose. This will
+eliminate justification for a legal or quasi-legal entity to seize the
+key.  If a member is in the position to have his keys demanded from him,
+it will be obvious that this is only being done for one purpose: so that
+the public can be tricked into thinking he is alive and free (when
+presumably he will not be.) This should aid him in his decision to comply
+or not.
+
+
+-MW-
+
+--
+
+[1] Anonymity software developers who publish their products anonymously
+are also potentially at risk. RProcess, the author of a popular Windows
+remailer client and a Mixmaster-compatible Windows remailer server
+suddenly "disappeared" from alt.privacy.anon-server a little over two
+years ago. His absence was noticed almost immediately, because he had been
+involved in several discussions and a major project at the time of his
+disappearance -- but had he been a remailer operator or a developer with
+little direct interaction with the public, he may have not been missed.
+
+[2] Peter Palfrader, Roger Dingledine, Len Sassaman, and Eric Arneson
+contributed suggestions to this system. Bill Stewart provided the initial
+suggestions.
+

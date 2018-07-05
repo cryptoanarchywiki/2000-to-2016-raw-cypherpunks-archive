@@ -1,0 +1,197 @@
+From owner-cypherpunks-outgoing@ssz.com  Wed Oct 18 01:30:12 2000
+Received: from MIT.EDU (SOUTH-STATION-ANNEX.MIT.EDU [18.72.1.2])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id BAA11788
+	for <kwantam@positron.mit.edu>; Wed, 18 Oct 2000 01:30:12 -0400
+Received: from einstein.ssz.com by MIT.EDU with SMTP
+	id AA10248; Wed, 18 Oct 00 01:29:59 EDT
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id AAA20798
+	for cypherpunks-outgoing; Wed, 18 Oct 2000 00:30:11 -0500
+Received: from hcs.harvard.edu (hcs.harvard.edu [140.247.73.252])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id AAA20794
+	for <cypherpunks@einstein.ssz.com>; Wed, 18 Oct 2000 00:30:08 -0500
+Received: from localhost (dmolnar@localhost)
+	by hcs.harvard.edu (8.9.3/8.9.3) with ESMTP id BAA04719;
+	Wed, 18 Oct 2000 01:20:13 -0400 (EDT)
+Date: Wed, 18 Oct 2000 01:20:13 -0400 (EDT)
+From: dmolnar <dmolnar@hcs.harvard.edu>
+To: "Riad S. Wahby" <rsw@MIT.EDU>
+Cc: cypherpunks@einstein.ssz.com
+Subject: CDR: Re: why should it be trusted?
+In-Reply-To: <20001017153616.A9145@positron.mit.edu>
+Message-Id: <Pine.OSF.4.05.10010172303170.3762-100000@hcs.harvard.edu>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-cypherpunks@ssz.com
+Precedence: bulk
+Reply-To: cypherpunks@ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Language: English, Russian, German
+Status: O
+Content-Length: 8263
+Lines: 161
+
+
+
+On Tue, 17 Oct 2000, Riad S. Wahby wrote:
+
+> Jordan Dimov <jdimov@cis.clarion.edu> wrote:
+> > I don't believe anyone has ever proved that an NP-hard problem can not be
+> > solved in polynomial time. 
+> 
+> "NP-hard ... a complexity class of problems that are intrinsically
+> harder than those that can be solved by a nondeterministic Turing
+> machine in polynomial time" (Algorithms and Theory of Computation
+> Handbook, 19--20).
+
+Strictly speaking, this is a conjecture, which is what Jordan was pointing
+out in the original post. We do not have any proof for the above
+statement, just our long experience trying and failing to solve these
+problems.  
+
+Different people give different weight to this experience. There really
+are people out there who think P = NP. I am NOT one of these. 
+
+In any case, factoring is not known to be NP-hard, in the technical sense 
+which I'll mention below. In fact, the following "evidence" indicates
+that factoring is in some sense easier than general NP-hard problems: the
+running time for GNFS is O(e^1.92 (log N)  N^1/3)  for a number with 
+N bits while the running time for the best generic SAT solving algorithm I
+know of is in the neighborhood of O(1+something^N) -- there's a better
+algorithm known for factoring than for generic SAT. 
+But that's nothing more than suggestive, especially since it doesn't
+involve algorithms for other NP-hard problems. 
+
+Another example of a problem which is believed to be in NP - P and yet
+not NP-hard is graph isomorphism. There is an O(n^ln n) algorithm known,
+yet the problem is not known to be NP-hard. At the same time, that bound
+is just about polynomial...
+
+> 
+> > Not being able to solve a problem in polynomial time with current
+> > techniques does not make it unsolvable.
+> 
+> While I agree that the limitations of current techniques do not
+> dictate what is possible, it _is_ possible to show that a certain
+> problem has a best-case order of growth (for something simple, think
+> of gate-level addition; its best case is provably Theta(log(N)) ).
+> 
+
+Yes, that's right, lower bounds *can* be proved. Unfortunately, they tend
+to be very *hard* to prove. Especially for general computations. A
+superpolynomial lower bound on the work required to solve a problem in NP
+would separate P from NP, so I don't think one such is known right now. 
+
+So AFAIK the question is open. Different people have different attitudes
+towards its resolution. This is all very nice, but it runs a high risk of
+becoming based solely on feeling and assertion very quickly.
+
+Often you can get a very nice lower bound in a so-called "restricted
+model" in which only a few operations are allowed -- the n log n lower
+bound for sorting given in many CS algorithm classes is of this type. The
+bound is correct, but it says literally nothing about radix sort, bucket
+sort, etc. because those sorts use operations not in the model spoken
+about by the bound.
+
+The cryptographic analogue might be the so-called "generic group model" --
+a model in which all you have is a group's generators, the ability to
+compose elements, and the ability to test for identity. You *can* prove
+that there is no algorithm in this model which solves discrete log in time
+better than about O(2^n/2) (I may be off by a bit).  But for the
+particular group Z_p^*, there is a much much better algorithm for finding
+discrete logs which takes advantage of that group's special structure
+(i.e. GNFS).
+
+This should suggest some of the difficulty in acheiving lower bounds which
+we as cryptographers might care about. For more suggestion of such
+difficulty, a book on complexity theory like Papadimitriou might be
+worth looking at. 
+
+
+> In this case, what Tim means is that work is being done towards
+> showing that the best-case order of growth for factorization is faster
+> than polynomial, hence it is NP-hard.
+		   ^^^^^^^^^^^^^^^^^^^ 
+
+You want to say "Hence it is in NP - P".
+ 
+The term "NP-hard" has a technical meaning, namely that the problem can
+be "reduced" to all problems in NP. Here "reduced" is another technical
+term which in turn needs to be defined carefully. I've screwed up that
+definition before and it's too late to look it up, so I regret that I'll
+leave it as is unless someone really wants it. 
+
+ It is known that if NP != P, then there is a hierarchy of decision
+problems which are neither in P nor NP-hard; the proof unfortunately takes
+the form of a diagonalization style construction on Turing machines and so
+doesn't tell us anything about what the natural problems might be. The
+result *does* tell us, however, that it is *not* enough for a problem to
+have a superpolynomial lower bound on decision for it to be NP-hard --
+there's more work which must be done to show NP-hardness.
+
+It's possible that factoring is neither NP-hard nor in P, but still hard
+enough to be useful for cryptography. Similarly, it is possible that graph
+isomorphism is not NP-hard, yet is so close to P as to be practically
+efficient (and not at all useful for cryptography).
+
+(BTW - as an aside, "NP-complete" means that a problem is both in NP and
+NP-hard ... a problem may be actually harder than NP, in EXP or
+something, and still be NP-hard. or we may not actually _know_ whether
+the problem is in NP or not).  
+
+In any case, whether or not a problem is NP-hard is sort of irrelevant. As
+a general notion, NP-completeness seems disappointing for cryptography.
+There are a lot of known NP-complete problems, but few of these seem to be
+hard enough on average to build cryptosystems with. Even fewer can be used
+for public-key cryptography.  Some more discussion of these points may be
+found in Russell Impagliazzo's paper on "A Personal View of Average Case
+Complexity," which is on his UCSD page.
+
+If you look at the major problems used for public key cryptosystems, you
+see the Diffie Hellman assumption, factoring, and RSA. None of these AFAIK
+is known to be NP-hard and no one expects them to be. There was even a
+theorem due to Brassard in 1979 which suggested that the problem of
+"breaking" public key cryptosystems cannot be NP-hard...but it only
+applies to deterministic cryptosystems, so it doesn't say that much.
+For more on that, see Oded Goldreich and Shafi Goldwasser "On the
+Possibility of Basing Cryptography on the Assumption P \neq NP",
+in the theory of cryptography library at UCSD, now eprint.iacr.org.
+Note that when they say "cryptography" they mostly mean "public key
+cryptography." 
+
+On the other hand, this notion of _reduction_ , of showing that one
+problem is "as hard as" another, has been VERY useful. This is how you can
+prove that OAEP is a good padding scheme - you give a reduction between
+breaking an OAEP-padded RSA message and breaking RSA directly. You can
+prove that there aren't any stupid subtle padding mistakes...
+
+
+Anyway, that was a lot of silly detail.
+
+ From what I can tell, the point is just this: as Tim pointed out, there
+are problems for which the best known algortihms cause growth which dwarfs
+any sort of cracking farm we can imagine. If the adversary builds a 1000x
+bigger machine, we add 200 bits to the key and he's back at spending 10
+million years.  But as Jordan pointed out, no one knows that these are the
+best algorithms or useful lower bounds on solving the problems.
+
+Now it becomes a discussion on what you believe the NSA can do or can't
+do, the relative smartness of mathematicians inside and outside the NSA,
+and all that other stuff. Fine, but it's a discussion which runs the risk
+of becoming quasi-theological very quickly...and frankly it's one which
+just isn't that interesting the way it is usually run. 
+
+I think it is more interesting to figure out what kinds of expertise the
+NSA might have that the academic sector doesn't, and especially
+interesting to find some way of confirming or denying. A way which doesn't
+involve "a friend of a friend of a friend with a .mil address stationed in
+Saudi Arabia for 4 months during Desert Storm."  Tamper-resistant hardware
+expertise has been mentioned here; we had that patent notice a few months
+ago about speech transcription for ECHELON; we have SKIPJACK, KEA, and now
+SHA-2 to play with; TEMPEST research is now quasi-legendary; there's
+likely more fun things to figure out about these guys. 
+
+-David
+

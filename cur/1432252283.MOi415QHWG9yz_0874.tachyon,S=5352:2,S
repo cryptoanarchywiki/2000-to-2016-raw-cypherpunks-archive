@@ -1,0 +1,106 @@
+From owner-cryptography+rsw=mit.edu@metzdowd.com  Mon May 12 20:26:35 2003
+Return-Path: <owner-cryptography+rsw=mit.edu@metzdowd.com>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h4D0QYt15041
+	for <rsw@opamp.org>; Mon, 12 May 2003 20:26:35 -0400
+Received: from red.metdow.com (72.muf123.nycm.n54ny05r18.dsl.att.net [12.103.123.72])
+	by fort-point-station.mit.edu (8.12.4/8.9.2) with ESMTP id h4D0QXbf016841
+	for <rsw@mit.edu>; Mon, 12 May 2003 20:26:33 -0400 (EDT)
+Received: by red.metdow.com (Postfix, from userid 1002)
+	id 37FB7182FA9; Tue, 13 May 2003 00:23:48 +0000 (UTC)
+X-Original-To: cryptography@metzdowd.com
+Delivered-To: cryptography@metzdowd.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by red.metdow.com (Postfix) with ESMTP id 6BFCD182F8D
+	for <cryptography@metzdowd.com>; Tue, 13 May 2003 00:23:46 +0000 (UTC)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 6248DD97CE; Mon, 12 May 2003 20:23:45 -0400 (EDT)
+X-Original-To: cryptography@metzdowd.com
+Received: from mercury.ex.ac.uk (mercury.ex.ac.uk [144.173.6.26])
+	by red.metdow.com (Postfix) with ESMTP id AA9AA182F6A
+	for <cryptography@metzdowd.com>; Mon, 12 May 2003 20:46:08 +0000 (UTC)
+Received: from [144.173.6.20] (helo=cronus.ex.ac.uk)
+	by mercury.ex.ac.uk with esmtp (Exim 4.14)
+	id 19FKBS-00Qdlv-Ng; Mon, 12 May 2003 21:46:06 +0100
+Date: Mon, 12 May 2003 21:45:57 +0100
+From: Adam Back <adam@cypherspace.org>
+To: Matt Crawford <crawdad@fnal.gov>
+Cc: bear <bear@sonic.net>, cypherpunks@lne.com, cryptography@metzdowd.com,
+   Adam Back <adam@cypherspace.org>
+Subject: economics of spam (Re: A Trial Balloon to Ban Email?)
+Message-ID: <20030512214557.A9261480@exeter.ac.uk>
+References: <Pine.LNX.4.40.0305091741380.17410-100000@bolt.sonic.net> <200305121353.h4CDrP2Y022329@gungnir.fnal.gov>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <200305121353.h4CDrP2Y022329@gungnir.fnal.gov>; from crawdad@fnal.gov on Mon, May 12, 2003 at 08:53:25AM -0500
+Sender: owner-cryptography@metzdowd.com
+Precedence: bulk
+Status: O
+Content-Length: 3104
+Lines: 62
+
+Bear discussed using hashcash-alike tokens as a challenge response
+from the filtering MTA back to the sender giving the sender a chance
+to compute a hashcash token.
+
+This approach has the problem you identify -- namely that email is
+store and forward; email can and often does go through multiple MTAs
+on it's path to delivery, and the MTA doing the filtering may be
+multiple hops from the sender.  Indeed sometimes the filterer is the
+end-user who is also intermittently connected.
+
+It's more convenient and fits better in the store-and-forward setting
+if all email already includes the token at time of sending.  If it
+turns out to be needed, then there is no interactive 
+challenge-response needed.
+
+Then the question is whether computing the token at sending time would
+be incovenient for the normal sender.  This depends on what parameters
+you choose.  A few seconds probably wouldn't be noticed, especially as
+with deep MUA integration the token can be computed on each recipient
+address as soon as it is selected for receipt.  Depending on MUA usage
+therefore the token could be computed while the sender is composing
+the message.
+
+In addition it is expected that there would be a mechanism whereby
+regular correspondents would white list each other.  (Probably
+automatically via their mail clients).
+
+Whether you think a few seconds is sufficient depends on your views of
+the economics of spamming.  Ie how close to losing break-even the
+spammers are, and whether a few seconds of CPU per message is enough
+to significantly increase the cost.  This article for example
+discusses the economics of spam:
+
+http://www.eprivacygroup.com/article/articlestatic/58/1/6
+
+they give an example of a spam campaign with a 0.0023% response rate,
+and a yeild of $19 per response.  They estimate the cost of sending
+the spam was less than 0.01c per message.  I've seen significantly
+lower estimates for the sending costs.  To deter a given spam campaign
+we just have to increase the cost to the point of making it
+unprofitable given the response rate and profit per responder.  The
+other side of this equation is what a second of CPU costs in monetary
+terms to a spammer.  (To an end user it is essentially free because
+his CPU is mostly idle anyway; the limiting factor for the user is his
+preference for fast mail delivery (and in the dialup case an
+unwillingness to sit waiting for tokens to be calcluated before his
+mail can be sent).
+
+Adam
+
+On Mon, May 12, 2003 at 08:53:25AM -0500, Matt Crawford wrote:
+> This doesn't fit Joe Lunchbox's current model in which he dumps his
+> outgoing mail onto his provider's server and turns off his machine.
+> His provider either has to deliver synchronously and bounce the
+> computational payment burden back to Joe, pay it for him, or bounce
+> the message.  In the latter case, the receiver who demanded cycles
+> needs to recognize the problem it set and accept the answer on a
+> later date.
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+

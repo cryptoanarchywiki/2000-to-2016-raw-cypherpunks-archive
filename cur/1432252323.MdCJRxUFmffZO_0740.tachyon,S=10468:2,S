@@ -1,0 +1,212 @@
+From owner-cypherpunks@al-qaeda.net  Tue Jul  3 11:23:06 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q63FK134014075
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 3 Jul 2012 11:20:01 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q63FK1gw014074
+	for cypherpunks-outgoing; Tue, 3 Jul 2012 11:20:01 -0400
+Date: Tue, 3 Jul 2012 17:19:57 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: Re: [tahoe-dev] switching from introducers to gossip?
+Message-ID: <20120703151957.GX12615@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Zooko O'Whielacronx <zookog@gmail.com> -----
+
+From: Zooko O'Whielacronx <zookog@gmail.com>
+Date: Tue, 3 Jul 2012 12:17:15 -0300
+To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+Subject: Re: [tahoe-dev] switching from introducers to gossip?
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+On Sun, Jul 1, 2012 at 9:51 PM, Brian <warner@lothar.com> wrote:
+>
+
+... snipping out a lot of useful, clearly written details about the
+new introduction and accounting mechanisms ...
+
+> I think we can probably accomodate that. I'm optimizing for our two main use cases: friendnet and paid-service.
+>
+> In the friendnet, nearly all nodes are both a client *and* a server.
+
+This is not true of the grid I'm most familiar with: volunteergrid2.
+In that grid almost every node is either a client or a server --
+almost no nodes act as both. (I think. This is just judging from
+reading the volunteergrid2-l mailing list.)
+
+Maybe we need two different names, one for the "p2p style" friendnet
+that you describe in your letter (partially quoted below) and the
+other for the "sysadmins offering one another access to their servers"
+friendnet, such as volunteergrid2.
+
+> The main question is whether nodes which are both clients and servers should have a single key, or two separate keys (I prefer a single key, because it makes reciprocal storage-permission grants easier).
+
+I don't understand enough to have an opinion on that specific
+question, but in general I think there is a growing tension between
+"p2p style" and "client/server style", and the above smells like
+baking "p2p style" into the introduction protocol.
+
+> What I really want is to make it super-easy for a new user to get their node running and connected to their friend's existing grid. And, more importantly, for that *first* friend to set up that grid.
+...
+>   The first friend (Alice) hears about Tahoe from her favorite blog, and installs it with her favorite package manager.
+...
+>   She hits the "Invite A Friend" button,
+...
+>   All grid members get a control panel where they can see who else is using their storage, allow/deny access, and control where their own node places shares. By default, anyone who gets invited to join the grid gets full access to storage on all members' servers, but access can be revoked at any time.
+
+I think that's great! I love the idea! I hope you keep working on it,
+and I will endeavour to help. If we succeed, it will be the
+long-awaited reincarnation of the Mojo Nation dream.
+
+But, it is rather different in deployment/management from what our
+current users do with our current software. Maybe it won't work out.
+It requires engineering effort to implement and maintain, makes the
+behavior of the software harder to predict, and introduces more
+complex failure modes.
+
+If possible, I would like to support people continuing to use
+Tahoe-LAFS as service administered by diligent sysadmins even while
+extending it to be deployable by inattentive end users as you've
+envisioned.
+
+I think not too far down this path there might come a time to split
+Tahoe-LAFS into separate packages targeted at different deployment
+scenarios. Note that the i2p folks appear to have already forked it
+for this reason -- in order to maintain different deployment features!
+Also note that you, Brian, have published some experimental
+forks/variants focused on different deployment patterns.
+
+If you want "user friendly p2p software", then you probably want:
+
+b" Which services? Each node operates, by default, multiple services --
+storage server, storage client == web gateway, introducer/gossiper,
+and in the future other services like relay server (to help get around
+incomplete connectivity of the underlying network -- #445).
+
+b" Which IP addresses? Nodes automatically detect their own IP
+addresses, such as by inspecting the output of "/sbin/ifconfig" or
+"route.exe", or opening a TCP connection to some helpful STUNT/ICE
+server and asking that server what IP address your packets appear to
+be coming from (#50).
+
+b" Which connections? Nodes advertise multiple IP addresses / DNS names
+(possibly including those auto-discovered as above, plus any that were
+manually entered by the user (#754), plus 127.0.0.1 or any
+globally-non-routeable IP addresses revealed by ifconfig, and possibly
+in the future including indirection through a relay server), peers
+attempt to connect to nodes on all advertised IP addresses / DNS names
+in parallel, then use whichever connections succeeded.
+
+b" How to handle NAT/firewall/inconveniently-behaving-router? Nodes
+utilize the latest and greatest Romulan packet technology, such as
+UPnP (#49), "NAT hole punching" techniques (#169) or even B5TP (#1179)
+or relay service (#445) to breeze through such impediments as though
+they weren't even there.
+
+b" Reverse connections? If a TCP connection is established from node A
+to node B, then B can use that in the "reverse direction" to make
+requests of A, just as well as A can use it to make requests of B.
+This means that if A is behind a firewall which allows outgoing but
+not incoming connections to be established, and A established an
+outgoing connection to B, then B can use A as a server, but C, which
+for some reason didn't get a connection from A, cannot use A as a
+server. (#1086)
+
+If you want "sysadmin-friendly software" then you probably want the
+opposite of all these features!
+
+b" Which services? Each node operates, by default, only the services
+that the operator manually configured it to run. Even better you can
+install the software sufficient to run a specific kind of node, e.g. a
+storage server, without installing the software that would let it run
+other servers, such as introducers or storage clients (#1694).
+
+b" Which IP addresses? Nodes do not automatically detect their own IP
+addresses, but instead use only the IP address that their sysadmin
+manually told them to use. This is especially important for tor and
+i2p people where any auto-discovered IP address threatens the user's
+safety (#517).
+
+b" Which connections? You try to establish the prescribed TCP
+connection(s) to your server. If that fails, you log/announce failure.
+In the future you might even be able to configure it to run
+exclusively over HTTP(S) and then pass all of its connections through
+your HTTP proxies and Web Services tools (#510, #1007).
+
+(Although sysadmins may actually like the "try to connect to multiple
+IP/DNS addresses at once" feature, if it is sufficiently
+understandable and controllable to them. It would ease some headaches
+provided by the Amazon Web Services EC2 TCP/DNS infrastructure, for
+example.)
+
+b" How to handle NAT/firewall/inconveniently-behaving-router? If you
+can't establish a TCP connection to your prescribed target, then
+obviously you should not talk to it. Either some wise sysadmin doesn't
+want you to (firewall) or some stupid sysadmin has screwed up the
+network config and needs to fix it. In either case you should log
+failure and give up immediately.
+
+b" Reverse connections? Clients connect to servers. Servers do not
+connect to clients, clients do not connect to other clients, and
+servers do not connect to other servers (#344). To violate this
+principle means you will receive a visit from your keen-eyed sysadmin
+who will want to know what the hell you are doing B9.
+
+Don't get me wrong -- I think the p2p style, which foolscap already
+implements part of -- is sweet. I'd like to improve it, in the
+interests of making Tahoe-LAFS deployment more automatic for
+end-users. However, we should probably pay attention to the fact that
+many of our current users do not use those features, and some of them
+are actively requesting the ability to turn off those features.
+
+Maybe some kind of friendly fork or more targeted packaging would help
+us manage these diverging deployment scenarios?
+
+Regards,
+
+Zooko
+
+B9 https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1010#comment:18
+
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/49# UPnP
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/50# STUNT/ICE
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/169# tcp hole-punching!
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/344# more
+client-vs-server refactoring: servers-only shouldn't subscribe to
+storage announcements
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/445# implement relay:
+allow storage servers behind NAT
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/510# use plain HTTP for
+storage server protocol
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/517# make tahoe Tor- and
+I2P-friendly
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/754# merge manually
+specified tub location with autodetected tub location
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1007# HTTP proxy support
+for node to node communication
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1086# servers should
+attempt to open connections to clients
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1179# use N<TP
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1694# package client and
+server separately
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

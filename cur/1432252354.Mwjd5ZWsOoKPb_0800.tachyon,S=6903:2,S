@@ -1,0 +1,140 @@
+From owner-cypherpunks@al-qaeda.net  Mon Feb 14 22:57:34 2005
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.3/8.13.3/Debian-6) with ESMTP id j1F4vUo2015044
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Mon, 14 Feb 2005 22:57:30 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.3/8.13.3/Submit) id j1F4vUBA015043
+	for cypherpunks-outgoing; Mon, 14 Feb 2005 22:57:30 -0600
+X-POP-User: hettinga.covad.net
+Mime-Version: 1.0
+X-Sender: rah@localhost
+Message-Id: <p06110400be372befcf56@[68.167.57.91]>
+In-Reply-To: <p0602041cbe36ebd2c88b@[192.168.111.3]>
+References: <p0602041cbe36ebd2c88b@[192.168.111.3]>
+Date: Mon, 14 Feb 2005 23:33:19 -0500
+To: cryptography@metzdowd.com, cypherpunks@al-qaeda.net
+From: "R.A. Hettinga" <rah@shipwright.com>
+Subject: Don't Trust Your Eyes or URLs (was Re: TidBITS#766/14-Feb-05)
+Content-Type: text/plain; charset="us-ascii"
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5740
+Lines: 112
+
+At 6:21 PM -0800 2/14/05, TidBITS Editors wrote:
+>Don't Trust Your Eyes or URLs
+>-----------------------------
+>  by Glenn Fleishman <glenn@tidbits.com>
+>
+>  The clever folks at the Shmoo Group, a bunch of interesting
+>  security folks who punch holes in assumptions about what's
+>  secure on the Internet, have discovered a simple way to fool
+>  most browsers into believing that they've connected to a secure
+>  Web site when they've been spoofed into connecting to a rogue
+>  location with a different name. It's ironic, but Internet Explorer
+>  is entirely exempt from this spoof. Opera, Safari and KHTML-based
+>  browsers, and all Mozilla and Firefox browsers suffer from this
+>  weakness on all platforms.
+>
+><http://www.shmoo.com/>
+><http://www.shmoo.com/idn/homograph.txt>
+>
+>  In brief, the Shmoos found that a poorly implemented method
+>  of allowing international language encoding within domain names,
+>  called International Domain Name (IDN) support, allows a malicious
+>  party to display what appears to be one domain name in the
+>  Location field of a browser while connecting you to another.
+>  Phishing scams have just become more difficult to identify.
+>
+>  This exploit is made possible by a system called "punycode,"
+>  which has been widely adopted according to the Shmoo Group.
+>  Domain names that use characters outside of unaccented Western
+>  alphabet letters via Unicode/UTF-8 are converted into a string
+>  of Roman letters (see Matt Neuburg's "Two Bytes of the Cherry:
+>  Unicode and Mac OS X" for more information on Unicode). This
+>  conversion isn't a problem, per se: it means that domain names
+>  outside of the English character set can be used freely without
+>  confusing browsers and can be registered using simple English
+>  characters for backwards compatibility within the domain naming
+>  infrastructure.
+>
+><http://db.tidbits.com/getbits.acgi?tbser=1217>
+>
+>  The flaw is twofold: first, affected browsers display whatever the
+>  encoded version of the character is, which might look identical to
+>  another language's character. For instance, the Shmoos use the
+>  Russian lower-case letter A, which is encoded as "&1072;" in UTF-8
+>  using decimal (base 10) notation, and displays in browsers that
+>  support IDN as a lower-case A indistinguishable from a Roman
+>  lowercase A.
+>
+><http://www.fileformat.info/info/unicode/char/0430/>
+>
+>  The second problem leads from the first: it's possible
+>  to have a legitimate SSL (Secure Sockets Layer) digital
+>  certificate for the punycode-based domain name. Thus, in
+>  an example that the Schmoos posted for a while (now replaced),
+>  you see "https://www.paypal.com/" in your browser URL field,
+>  and the SSL signals are all there - you get no warnings, the
+>  lock icon is present, and Firefox's Security tab in the Page
+>  Info window says the Web site's identity is verified.
+>
+>  Click View in that same tab in Firefox, and you'll see
+>  the full punycode name of the Web site, however, which is
+>  "www.xn--pypal-4ve.com". Copy the URL from the Location
+>  field and paste it into Terminal, and you'll see the encoded
+>  version in standard UTF-8 format, too, which looks like
+>  "www.p&1072;ypal.com".
+>
+>  I don't know that there's an easy solution to this problem.
+>  It's the result of choice by the developers of the various
+>  browsers to display precisely what a Unicode character looks
+>  like, which is reasonable enough. But at the same time they
+>  use a kludgy, opaque hack in the background to map that Unicode
+>  character to an English character to provide full backwards
+>  compatibility with what was once a U.S.-centric domain naming
+>  system, one that retains substantial vestiges of that history.
+>
+>  If you're a Firefox user, I recommend obtaining and installing
+>  a utility called SpoofStick, which alerts you to what is being
+>  called "homograph" spoofing; that is, the character or glyph looks
+>  like another, unrelated glyph. If you visit the Shmoo site with
+>  SpoofStick installed, you get a big lovely warning.
+>
+><http://www.corestreet.com/spoofstick/>
+>
+>  Trust has gone out the window when you follow links in email or
+>  on Web sites. There's no longer a way to be sure that the domain
+>  name you're visiting is the one you think you are unless you check
+>  the URL out in Terminal or have SpoofStick installed.
+>
+>  Realistically, the upshot of this situation is that you must be
+>  even more careful about following links you receive in email to
+>  sites that ask for sensitive information. A message that purports
+>  to be from PayPal customer service, for instance, may look right
+>  and even use URLs that appear to connect to PayPal's site, but
+>  could in fact be taking you to another site designed to capture
+>  your username and password. The likelihood of falling victim to
+>  a spoofed URL on the Web itself is less likely, assuming you start
+>  from a site that's a relatively trusted source. When in doubt,
+>  fall back on common sense and check the URL by pasting suspect
+>  URLs into Terminal to see if they're concealing any unusual
+>  Unicode characters. Hopefully we'll see browser fixes soon:
+>  simply displaying the full punycode-based domain name alongside
+>  its actual representation would at least highlight what's
+>  happening behind the scenes without interfering with navigation
+>  or Web pages.
+
+-- 
+-----------------
+R. A. Hettinga <mailto: rah@ibuc.com>
+The Internet Bearer Underwriting Corporation <http://www.ibuc.com/>
+44 Farquhar Street, Boston, MA 02131 USA
+"... however it may deserve respect for its usefulness and antiquity,
+[predicting the end of the world] has not been found agreeable to
+experience." -- Edward Gibbon, 'Decline and Fall of the Roman Empire'
+

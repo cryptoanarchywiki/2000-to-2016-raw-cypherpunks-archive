@@ -1,0 +1,165 @@
+From cypherpunks-bounces@cpunks.org  Thu Aug 29 07:08:51 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r7TB80Cw018231;
+	Thu, 29 Aug 2013 07:08:07 -0400
+Authentication-Results: antiproton.jfet.org; dkim=fail
+	reason="verification failed; insecure key"
+	header.d=gmail.com header.i=@gmail.com header.b=WHlkLS1n;
+	dkim-adsp=none (insecure policy); dkim-atps=neutral
+Received: from mail-oa0-f41.google.com (mail-oa0-f41.google.com
+ [209.85.219.41])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r7TB7vE1018226
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 29 Aug 2013 07:07:58 -0400
+Received: by mail-oa0-f41.google.com with SMTP id j17so263367oag.0
+ for <cypherpunks@cpunks.org>; Thu, 29 Aug 2013 04:07:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :cc:content-type:content-transfer-encoding;
+ bh=wAFxJpF2u/W6CzzKPZhPEZ8hyGzW2Brbif5/ASFf600=;
+ b=WHlkLS1n/NkI5bxG29AJ6cwX1GR7zVNsl6Rs/xAxiHeNoYQqF8SJw+r/TGh44iSYfD
+ xfEqhVgV5OntdQkVpDOgd7U30FQ4TnesnqrQxXVQLmXlGfe1pHZuYMYMmPN43duedHXW
+ nPLyADUTn8KIOBOnOmdvf7tGFILPNreK/Euo2UPpnVSjq+1mghYcfEvFdrq/IONrrwPP
+ OuxvMpblZd8o3kcjQBkp4Uojt6ft1wN5Wbyij6c5R40P/xYZyN+tzKHrTmqqng74DCFp
+ E446HBi88U54YXhFueS8slrjeR4p7L5UeZ7WOwm/2ExYCUPxwlKRz2nltKjScB63Iadu
+ XA9w==
+MIME-Version: 1.0
+X-Received: by 10.60.134.196 with SMTP id pm4mr942313oeb.60.1377774471573;
+ Thu, 29 Aug 2013 04:07:51 -0700 (PDT)
+Received: by 10.182.148.73 with HTTP; Thu, 29 Aug 2013 04:07:51 -0700 (PDT)
+In-Reply-To: <CAD2Ti2-C5qbR2cfffr+WN2aJFcpcnX2r5KYgh=sOmh7LgoZCaQ@mail.gmail.com>
+References: <CAD2Ti2-C5qbR2cfffr+WN2aJFcpcnX2r5KYgh=sOmh7LgoZCaQ@mail.gmail.com>
+Date: Thu, 29 Aug 2013 04:07:51 -0700
+Message-ID: <CAJVRA1QjYk1KUz+FSTpeKfL6UaK9jC3OEBaC91Q3mFa3OBL8Sg@mail.gmail.com>
+Subject: Re: UDP/datagram/cell based networks [was: Why_can't_email_be_secure]
+From: coderman <coderman@gmail.com>
+To: grarpamp <grarpamp@gmail.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by antiproton.jfet.org id
+ r7TB7vE1018226
+Cc: cpunks <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 4661
+Lines: 105
+
+On Thu, Aug 29, 2013 at 1:39 AM, grarpamp <grarpamp@gmail.com> wrote:
+> ...
+> Are we necessarily even speaking strictly of UDP 'datagrams'
+> or applications? For example, I presume there might be something
+> to be said for software switched packet/cell network stacks.
+
+
+i should clarify:
+
+the mode of operation for this presumed design and implementation is
+to have SOCKS, HTTP, HTTPS, transparent UDP, transparent TCP,
+transparent DNS (this is indeed different than just UDP :), and some
+subset of transparent ICMP proxy support on the client / node.  you
+could configure proxy settings, direct traffic to the trans ports, or
+perform queries directly against the DNS port of the running real time
+datagram mixer instance.
+
+at the exits for public traffic or at the private ORCHID based
+"hidden/overlay" endpoints, you transit these same protocols, per
+advertised support in exit policy or overlay service capability
+respectively.
+
+on the wire, you would be sending UDP datagrams that encapsulate the
+NAT busting IPsec telescope containing path data, multi-path SCTP in
+userspace for reliable TCP stream transport over the datagram overlay.
+
+for all intents and purposes these packets would look like AH/ESP or
+CryptoBox wrapped opaque cipher texts in some standard UDP
+encapsulation.
+
+
+
+as for ATM, SONET, satellite data terminals, metro wireless, and all
+other unusual or exotic transports: these are likely not useful for
+the core network unless directly public UDP IPv4 reachable.
+
+censorship bypass, non-node capable devices like phones, or very poor
+network connectivity situations, would require other transports and
+protocols for this initial tunnel into the overall real-time datagram
+mix-like network.  in this context, the varied physical layers and
+logical paths in a given metro region operating beneath IP routing can
+play a role in passing traffic from suppressed/blocked users out to
+the broader mesh or internet at large.
+
+
+
+devices and users communicating via obfuscated links into the dgm
+network do not have traffic analysis protections like full
+participants.  despite this lack of stronger anonymity, the actors
+observing at the edge can only note that you are tunneling into the
+public network, and utilizing some stochastic gradient of bandwidth in
+aggregate for some period of time.
+
+this is still not much information, especially compared to the current
+state of affairs!
+
+there are many complications and constraints around how this would
+work - i make it sound so easy ;)
+  however, you could provide such services, including wireless metro
+area mesh or p-to-mp distribution networks, constrained by propinquity
+and referral by reputation, in combination with broadband internet
+uplink of a more traditional sort where available.
+
+and in fact, using multiple paths / transports concurrently provides
+advantage for data continuity and throughput despite volatile and
+changing upstream link availability on an individual basis to
+particular gateway or router or access point devices.
+
+
+
+metro area mesh benefits nicely from some backhaul ad-hoc or fixed
+plant high capacity point-to-point links over distance with short IP
+routes; there is a good paper from early 2000's about using atheros
+802.11a devices with a custom tertiary firmware and host driver to
+bond eight devices into a single point-to-point link with an aggregate
+throughput over three or four hundred megabit a second in transport
+rate... or so i recall.  IPoATM on a OC12 or bigger to an internet
+provider would absolutely be useful as an upstream sink within such a
+mesh.
+
+i would love to see high degree mesh optimizer p-to-mp nodes applying
+the latest high bit rate software defines radios for  backhaul and
+security.  isolate each radio like a Pervices Noctar[0] or USRP B210
+[1] into its own guest and isolate devices with VT-d enforced memory
+access boundaries.  you may even put more than one device in a single
+SDR Backhaul Guest VM if doing large-QAM or other complex MIMO
+front-ends and signal processing.
+
+
+
+i could go on, but alas, i've got code to write...  *grin*
+
+
+
+0. "Noctar: 8Gbps, low latency, PCIe x4 bus, 250MHz bandwidth, full
+duplex, RF frontend 100kHz – 4GHz, Two, 12 bit, 125 MSPS ADCs, Dual
+channel, 16 bit, 250 MSPS DAC, 20MHz, 0.28ppm, reference TCXO, Altera
+Cyclone IV EP4CGX22C FPGA"
+  http://www.pervices.com/support/
+
+1. "USRP B210 Kit: USB 3.0 (bus max 3.2Gb/s) for xfer ~60 MSym/sec, 56
+MHz bandwidth 1x1 / 32 MHz 2x2 MIMO bandwidth, 70 MHz to 6 GHz
+frequency range, flexible rate 12bit ADC/DAC, 2 TX and 2 RX full or
+half duplex channels (4 total), Xilinx Spartan 6 XC6SLX150 FPGA"
+  https://www.ettus.com/product/details/UB210-KIT
+

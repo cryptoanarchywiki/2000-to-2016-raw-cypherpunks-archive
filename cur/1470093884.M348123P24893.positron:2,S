@@ -1,0 +1,140 @@
+Return-path: <cypherpunks-bounces@cpunks.org>
+Envelope-to: rsw@positron.jfet.org
+Delivery-date: Mon, 01 Aug 2016 16:24:42 -0700
+Received: from antiproton.jfet.org ([209.141.47.85])
+	by positron.jfet.org with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.87)
+	(envelope-from <cypherpunks-bounces@cpunks.org>)
+	id 1bUMZd-0006TE-Q0
+	for rsw@positron.jfet.org; Mon, 01 Aug 2016 16:24:42 -0700
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u71NDODG013044;
+	Mon, 1 Aug 2016 19:13:26 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=z0VK+aCg;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-ua0-f176.google.com (mail-ua0-f176.google.com
+ [209.85.217.176])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u71NDL5N013037
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Mon, 1 Aug 2016 19:13:23 -0400
+Received: by mail-ua0-f176.google.com with SMTP id l32so117213378ual.2
+ for <cypherpunks@cpunks.org>; Mon, 01 Aug 2016 16:13:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
+ bh=oq6MXcggXk59viaIGJzS78PuUnbMUj+sy6FQyb4JMAI=;
+ b=z0VK+aCghY6LICUquoAT9MahD2/j6FOa+LA6CHs9l6w3AupRkItZmdzRxdAUkufKuT
+ Tnrme4bqk0d/KLN6YDMmbmGa+rLs2TrLpbLSaMirL27Rnv3/sY6oSEApTq6Dn0ZgtGcM
+ 6UF2GC3+7Nt+K9N1iLaafZpbozK1mV2IJJRwqk6HGtiZ8EMjBLxDu6QougL/B4s+spwt
+ uE8+wGfa9Kt0c2sc4jhkajeWnkK5XfDTxUB/qBzYZlzi22DbrCzvGosC6dC+rnolAhAV
+ ONBu/zf+Jsk5GHr9Plx02H7bq9YauO63l44sWSTJjypvvsbnCVTIBjRxYhXDQovgCJi/
+ fpFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+ :message-id:subject:to;
+ bh=oq6MXcggXk59viaIGJzS78PuUnbMUj+sy6FQyb4JMAI=;
+ b=XSES7Qokzf3yKFyXqCQnsf2Os0lzlFCcHImbR4Yi2KdkiIxhuSN0OvJz7mJWxZzXLV
+ wW6UbWws0PdXdzVUQf3EqmvzcGC6Jbr3PkD3h4EHhpa7/dJ3NN7zc4lJzXT3K9uUm8xK
+ t7TIIG/Fgw7TwOAhmOMvlJETD3ZOauYvWW6YZkbgJsj1GIBeKlEJ2QAD5yfz0WUEXrTN
+ PHvkXPKI3HfuoATN+F/qvWovO5uvHKSms5Gz6KK8RjANgNg4PIS7IfXFv688/Ttl2Vzg
+ M3YYGyflQAb0qtkeduccTqeG+fn9Tn6ju5DZnLmeRrzrRB4Tza0PbyUt8L1ZNkz9JHRc
+ 4imQ==
+X-Gm-Message-State: AEkoouuBTD/fVAFt2S9MiIwi3GueaIurbPDf2uKOeiTzsK8bC/svVr2jmBT0vCsbFARIqrz1caUwUAfcBvO3bQ==
+X-Received: by 10.176.64.72 with SMTP id h66mr26780892uad.97.1470093195561;
+ Mon, 01 Aug 2016 16:13:15 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.176.2.138 with HTTP; Mon, 1 Aug 2016 16:13:12 -0700 (PDT)
+Received: by 10.176.2.138 with HTTP; Mon, 1 Aug 2016 16:13:12 -0700 (PDT)
+In-Reply-To: <579e87bd.c124c80a.0b33.2d53@mx.google.com>
+References: <4579aed2-1c44-553d-d37a-df440042166d@riseup.net>
+ <CAG2tMp6M0iteb=5ADDMxy1Ex8cAYZNNr_AbYMLQMKTt_t3L5bA@mail.gmail.com>
+ <579a62f6.ef24ed0a.805c6.9090@mx.google.com>
+ <CAG2tMp4H8KSZVS75DqSaYw0omZ32_396J5AevqLqMbNpduP2ig@mail.gmail.com>
+ <579a74a9.57a5370a.44210.a0e0@mx.google.com>
+ <CAG2tMp6VMy4zWpmutTswZL5_iMkCa2jBsTpS=uFK4hWx-AnpTw@mail.gmail.com>
+ <579bf47b.8d2a370a.c27ce.d1da@mx.google.com>
+ <0a5bbe20-a784-7be5-7367-3318558289dd@riseup.net>
+ <CAG2tMp6jgVKyWtT2fdTBfbt436O1Ms4adB=K5NnQ1uDup1hU6A@mail.gmail.com>
+ <579e87bd.c124c80a.0b33.2d53@mx.google.com>
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+Date: Mon, 1 Aug 2016 20:13:12 -0300
+Message-ID: <CAG2tMp7TzXx3xfnw-BhFNKkBOs2jz-RtbbEQ-nPVCyU7UL9Kbg@mail.gmail.com>
+Subject: Re: Deconstructing an Institutional Slander operation: @ioerror et
+ al...
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=94eb2c048576b5539505390abe86
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 59
+
+--94eb2c048576b5539505390abe86
+Content-Type: text/plain; charset=UTF-8
+
+On Jul 31, 2016 8:28 PM, "juan" <juan.g71@gmail.com> wrote:
+>
+>         So, for people who don't speak spanish : "mal cogida/o" roughly
+means "not well fucked", and the idea is that a person who doesn't have
+enough sex is whinny and grumpy. Is there an equivalent english
+word/expression?
+
+I would like to learn it in English too, please.  "Mal cogida/o" is a very
+funny expression and we have two versions of this in Portuguese, one more
+'romantical'  ("not well loved")  and other exactly like the 'rough'
+version  ("not well f...ed").  There are versions in Italian, including
+some dialets, too!  :)
+
+>         (ps: Cecilia, I would never dare to call you mal cogida =P )
+
+Nah, I swear I don't care, Juan.  You can call me 'mal cogida' all the
+times you want, because I probably will call you 'mal cogido' a lot of
+times in the future yet, hahaha!!  ;D
+
+We know it isn't true, dear.  Our governments fuck us _very well_ all the
+days, with no lube, no tenderness and no orgasms, uh!  :((
+
+I am late with a lot of private and public answers.  Uff...  A bit more of
+time, please.  :(
+
+--94eb2c048576b5539505390abe86
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p>On Jul 31, 2016 8:28 PM, &quot;juan&quot; &lt;<a href=3D"mailto:juan.g71=
+@gmail.com">juan.g71@gmail.com</a>&gt; wrote:<br>
+&gt;<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 So, for people who don&#39;t speak spanish=
+ : &quot;mal cogida/o&quot; roughly means &quot;not well fucked&quot;, and =
+the idea is that a person who doesn&#39;t have enough sex is whinny and gru=
+mpy. Is there an equivalent english word/expression?</p>
+<p>I would like to learn it in English too, please.=C2=A0 &quot;Mal cogida/=
+o&quot; is a very funny expression and we have two versions of this in Port=
+uguese, one more &#39;romantical&#39;=C2=A0 (&quot;not well loved&quot;)=C2=
+=A0 and other exactly like the &#39;rough&#39; version=C2=A0 (&quot;not wel=
+l f...ed&quot;).=C2=A0 There are versions in Italian, including some dialet=
+s, too!=C2=A0 :)</p>
+<p>&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 (ps: Cecilia, I would never dare to cal=
+l you mal cogida =3DP )</p>
+<p>Nah, I swear I don&#39;t care, Juan.=C2=A0 You can call me &#39;mal cogi=
+da&#39; all the times you want, because I probably will call you &#39;mal c=
+ogido&#39; a lot of times in the future yet, hahaha!!=C2=A0 ;D</p>
+<p>We know it isn&#39;t true, dear.=C2=A0 Our governments fuck us _very wel=
+l_ all the days, with no lube, no tenderness and no orgasms, uh!=C2=A0 :((<=
+/p>
+<p>I am late with a lot of private and public answers.=C2=A0 Uff...=C2=A0 A=
+ bit more of time, please.=C2=A0 :(</p>
+
+--94eb2c048576b5539505390abe86--
+

@@ -1,0 +1,81 @@
+From owner-cypherpunks@al-qaeda.net  Wed Oct 10 03:01:56 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q9A6xDFA000515
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 10 Oct 2012 02:59:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1349852353;
+	bh=ep3ZlI5LJLqrxkiTaX/MJ2Qia4GJ0ALbyjTpqqh3MmI=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=gEo7R/S75QnjpGgT3oTHfwxxRmupGPA4qEYxmwwffNW5TcYMiZ4f1L8zlG4xKlymR
+	 e3raW81ULQE0WY9W/IDK7ZXTXSDMScA4jxsgufDpCUnzkDqvJOAjbpDqK3wqvaZFSR
+	 NecNGhWx3WiOlp0bbbPNjRxSAjT5LrCD5xpSoCfw=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q9A6xDu7000514
+	for cypherpunks-outgoing; Wed, 10 Oct 2012 02:59:13 -0400
+Date: Wed, 10 Oct 2012 08:59:10 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, mixter@gmail.com
+Subject: Re: [liberationtech] best practices - roundup
+Message-ID: <20121010065910.GR9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2228
+Lines: 47
+
+----- Forwarded message from Maxim Kammerer <mk@dee.su> -----
+
+From: Maxim Kammerer <mk@dee.su>
+Date: Wed, 10 Oct 2012 00:55:06 +0200
+To: liberationtech <liberationtech@lists.stanford.edu>
+Subject: Re: [liberationtech] best practices - roundup
+Reply-To: liberationtech <liberationtech@lists.stanford.edu>
+
+On Wed, Oct 10, 2012 at 12:16 AM, Jacob Appelbaum <jacob@appelbaum.net> wrote:
+> Exciting and congratulations.
+
+Thanks, getting it to work was a real pain. PAX / grsecurity kernel
+patches had UEFI-related bugs, and the most suitable UEFI signing tool
+(sbsigntool) lacked support for 32-bit EFI binaries. All of this is
+now fixed / integrated upstream (sbsigntool is used in Ubuntu, by the
+way).
+
+> What is your plan for Secure Boot related signatures? It seems like a
+> real pain for a lot of distros and a real pain for users to setup,
+> especially those without an understanding of cryptography at a high level.
+
+LibertC) ships its own Secure Boot certificate, which signs the GRUB
+bootloader, and the trusted chain continues from there. After
+experimenting with Secure Boot in OVMF builds, I think that enrolling
+such a certificate is not difficult b it is not more difficult than
+changing the order of boot devices in BIOS, for instance (back then
+before a menu could be invoked by pressing a key). Most controversy
+about Secure Boot support in Linux one finds online is about making
+the process completely transparent for users, which requires either
+using Microsoft-signed binaries (Fedora) / intermediate certificate,
+or embedding one's keys in firmware (Ubuntu). If you forgo the
+requirement of complete boot transparency, which I think is reasonable
+for a special-purpose live distribution, using an own certificate is
+an obvious choice.
+
+-- 
+Maxim Kammerer
+LibertC) Linux: http://dee.su/liberte
+--
+Unsubscribe, change to digest, or change password at: https://mailman.stanford.edu/mailman/listinfo/liberationtech
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

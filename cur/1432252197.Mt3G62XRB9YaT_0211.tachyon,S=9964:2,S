@@ -1,0 +1,296 @@
+From owner-cypherpunks@jfet.org  Thu Apr 12 23:36:36 2007
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.8/8.13.8/Debian-2) with ESMTP id l3D3Zx39026863
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 12 Apr 2007 23:35:59 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.8/8.13.8/Submit) id l3D3ZxxW026862
+	for cypherpunks-outgoing; Thu, 12 Apr 2007 23:35:59 -0400
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 	s=N1-0105;
+  d=Safe-mail.net; 
+  b=z/j43ElcamaT8LhI5NmnZ8MALM6jQD+tHOUgvuU3pTzfjjyL2S8bfAtgqwK2WE6t 
+  ij7W42feCR73QtgpOL3uBzzMA/sB3IsAh2nRCYxB0veqcqpHNNjh6jEhf6MWKnJi 
+  IeyYaM3mqKoUT6ytJz2vUf0n7onsyDWjfl9ntVaLsl8=;
+Subject: High-traffic Colluding Tor Routers in Washington, D.C.
+  Confirmed
+Date: Thu, 12 Apr 2007 23:35:52 -0400
+From: Nostra2004@Safe-mail.net
+To: cypherpunks@jfet.org
+X-SMType: Regular
+X-SMRef: N1-gbGhSSg0zZ
+Message-Id: <N1-gbGhSSg0zZ@Safe-mail.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-SMSignature: jBO2AQuTMOKAEljXwCRk/s5gzGBDs5UtkOPsifzgw6FChNjKn1vW64Doch2zsAA/
+  	dvMKMZSa8+5pNyisnH555D63wbF9hAqaMVklZBRgH0MRiQTcy3possOecvGgJvEN 
+  GIPS/7gV9Xtblcy64AEEPQboqEQ6rvnAp2eaZJNus8A=
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 8506
+Lines: 260
+
+A group of 9 Tor routers also functioning overtly or indirectly as Tor exit
+nodes have been observed colluding on the public Tor network.
+
+The colluding routers map to two /16 IP subnets administered by Cogent (formerly
+by PSINet) [1]. Traceroute reveals all routes to these routers pass through
+Rethem.demarc.cogentco.com (38.112.12.190) at the final hop.
+
+Analysis of a local snapshot of the Tor cached-routers file from 2006-05-27
+first suggested the presence of colluding routers. The analysis yielded the
+following information:
+
+  - 9 Tor routers self-identified as aala, donk3ypunch, TheGreatSantini, mauger,
+    paxprivoso, soprano1, hubbahubbahubba, m00kie, and joiseytor together
+    reported carrying what amounted to 11% of the traffic on the Tor network at
+    the time of the snapshot, while the remaining 89% of Tor traffic was carried
+    by the other 551 (approximated) routers.
+
+  - All 9 of these routers appear to be located in the Washington, D.C. area.
+
+  - 5 of these routers are on the same 149.9.0.0/16 IP subnet.
+
+  - 4 of these routers are on the same 154.35.0.0/16 IP subnet.
+
+  - All 9 routers reported running Tor 0.1.0.16 on FreeBSD i386 machines.
+
+  - All 9 routers reported nearly identical uptimes.
+
+  - 3 of the 5 routers on the 149.9.0.0/16 IP subnet reported providing outproxy
+    service for DNS, HTTP, POP3, IMAP, HTTPS, AIM and IRC traffic on Tor.
+
+  - The other 2 routers on the 149.9.0.0/16 IP subnet reported rejecting all
+    outproxy traffic.
+
+  - The 4 routers on the 154.35.0.0/16 IP subnet reported providing outproxy
+    service for the above traffic plus SSH and NNTP.
+
+
+Collusion was definitively established by the following method:
+
+1. The following lines were added to the local torrc:
+
+   ExitNodes donk3ypunch,mauger,paxprivoso,soprano1,hubbahubbahubba,m00kie,joiseytor
+   StrictExitNodes 1
+
+2. The local Tor client was restarted so the new configuration would take effect
+
+3. Using Tor as an HTTP proxy, the websites of the IP address mirror services
+   whatismyip.com and whatsmyipaddy.com were visited repeatedly over the
+   course of one hour
+
+The results: An IP address of 149.9.0.25 was always reported by the IP address
+mirror services. This is not the IP address of any of the exit nodes forced by
+the new torrc configuration, but rather the address of aala, one of the 2 other
+colluding Tor routers which report themselves as rejecting direct Tor HTTP
+outproxy traffic.
+
+Although further testing is needed, it appears that all 8 of the other Tor
+routers identified may be forwarding their HTTP outproxy traffic to the router
+known as aala, and that aala may be performing the exit node duties on their
+behalf. aala may perform exit node duties for all protocols supported by this
+collusion network--not merely HTTP. This strategy would make aala a single
+point of transit (and possible data retention or traffic analysis) for up to 11%
+of the traffic leaving and entering the Tor network through exit nodes. 
+
+The function in this collusion network of the router identified as
+TheGreatSantini is still undetermined. Its published exit policy, like aala's,
+purported to reject all outproxy traffic, yet it hasn't been observed acting as
+an outproxy as aala has. It may simply serve as an intermediate router.
+
+Due to the sheer amount of traffic apparently passing through this collusion
+network, consolidation and analysis of exit node traffic is only one of several
+forms of anonymity attacks made more feasible. Hence these 9 routers appear to
+pose a significant anonymity threat to users of the public Tor network.
+
+
+-------------------------------------------
+
+Excerpted router descriptor data [2] of colluding routers taken from snapshot
+of local Tor cached-routers file on 2006-05-27
+
+
+1.	router aala 149.9.0.25 9001 0 9030
+	platform Tor 0.1.0.16 on FreeBSD i386
+	published 2006-05-27 16:39:07
+	opt fingerprint 3F8A 0FF0 39E0 E047 6EF9 24C2 7519 2A59 E6AE 58FB
+	uptime 2462963
+	bandwidth 2097152 5242880 695815
+	reject *:*
+
+	(Observed throughput for this router: 695.82 KB/s)
+
+2.	router donk3ypunch 149.9.25.222 9001 0 9030
+	platform Tor 0.1.0.16 on FreeBSD i386
+	published 2006-05-27 16:00:20
+	opt fingerprint AA40 19D8 5823 518F 0904 3F05 E61E AE5E 52CA 78B4
+	uptime 2460631
+	bandwidth 2097152 5242880 700879
+	accept *:53
+	accept *:80
+	accept *:110
+	accept *:143
+	accept *:443
+	accept *:5190
+	accept *:6660-6669
+	reject *:*
+
+	(Observed throughput for this router: 700.88 KB/s)
+
+3.	router TheGreatSantini 149.9.92.194 9001 0 9030
+	platform Tor 0.1.0.16 on FreeBSD i386
+	published 2006-05-27 17:39:30
+	opt fingerprint 2C75 CCA2 A663 5D80 B286 B2EC 88AC A449 333F 6018
+	uptime 2466570
+	bandwidth 2097152 5242880 683980
+	reject *:*
+
+	(Observed throughput for this router: 683.98 KB/s)
+
+4.	router mauger 149.9.137.153 9001 0 9030
+	platform Tor 0.1.0.16 on FreeBSD i386
+	published 2006-05-27 11:39:56
+	opt fingerprint 00E0 3AAF EE0A 45BF E617 7DD3 E45B 91B2 EC15 E554
+	uptime 2445004
+	bandwidth 2097152 5242880 728744
+	accept *:53
+	accept *:80
+	accept *:110
+	accept *:143
+	accept *:443
+	accept *:5190
+	accept *:6660-6669
+	reject *:*
+
+	(Observed throughput for this router: 728.74 KB/s)
+
+5.	router paxprivoso 149.9.205.73 9001 0 9030
+	platform Tor 0.1.0.16 on FreeBSD i386
+	published 2006-05-27 18:20:52
+	opt fingerprint 66E8 A96B 5AB3 702A 16F3 85CD A11F 569A 3302 7224
+	uptime 2469058
+	bandwidth 2097152 5242880 801391
+	accept *:53
+	accept *:80
+	accept *:110
+	accept *:143
+	accept *:443
+	accept *:5190
+	accept *:6660-6669
+	reject *:*
+
+	(Observed throughput for this router: 801.40 KB/s)
+
+6.	router m00kie 154.35.36.18 9001 0 9030
+	platform Tor 0.1.0.16 on FreeBSD i386
+	published 2006-05-27 09:39:34
+	opt fingerprint 72C7 F3BA AF5B 4AF6 878F 6970 5842 80B2 F97A 07D4
+	uptime 2437788
+	bandwidth 2097152 5242880 774745
+	accept *:22
+	accept *:53
+	accept *:80
+	accept *:110
+	accept *:119
+	accept *:143
+	accept *:443
+	accept *:5190
+	accept *:6660-6669
+	reject *:*
+
+	(Observed throughput for this router: 774.75 KB/s)
+
+7.	router hubbahubbahubba 154.35.47.59 9001 0 9030
+	platform Tor 0.1.0.16 on FreeBSD i386
+	published 2006-05-27 12:39:56
+	opt fingerprint 86C8 B35E D131 1782 490B 7E8F FD79 F23D 51D4 620F
+	uptime 2448609
+	bandwidth 2097152 5242880 696962
+	accept *:22
+	accept *:53
+	accept *:80
+	accept *:110
+	accept *:119
+	accept *:143
+	accept *:443
+	accept *:5190
+	accept *:6660-6669
+	reject *:*
+
+	(Observed throughput for this router: 696.96 KB/s)
+
+8.	router soprano1 154.35.72.223 9001 0 9030
+	platform Tor 0.1.0.16 on FreeBSD i386
+	published 2006-05-27 20:20:58
+	opt fingerprint F902 4CBC D340 93C4 D9E1 D1F7 FA82 F5D4 A57F 25B5
+	uptime 2476261
+	bandwidth 2097152 5242880 857343
+	accept *:22
+	accept *:53
+	accept *:80
+	accept *:110
+	accept *:119
+	accept *:143
+	accept *:443
+	accept *:5190
+	accept *:6660-6669
+	reject *:*
+
+	(Observed throughput for this router: 857.34 KB/s)
+
+9.	router joiseytor 154.35.85.17 9001 0 9030
+	platform Tor 0.1.0.16 on FreeBSD i386
+	published 2006-05-27 20:00:30
+	opt fingerprint 7BC2 DC0A 06CA C5B6 21BE D132 AD3A 7217 0BBF 5FDB
+	uptime 2475043
+	bandwidth 2097152 5242880 729315
+	accept *:22
+	accept *:53
+	accept *:80
+	accept *:110
+	accept *:119
+	accept *:143
+	accept *:443
+	accept *:5190
+	accept *:6660-6669
+	reject *:*
+
+	(Observed throughput for this router: 729.32 KB/s)
+
+-------------------------------------------
+
+Total Observed Throughput of Above Washington, D.C. Routers:    6.67 MB/s
+Total Observed Throughput of All Known Running Tor Routers *: ~60.00 MB/s
+
+  * Taken from aggregate stats of all known (~560) running Tor routers at [3]
+
+
+Notes on select router descriptor fields:
+
+  bandwidth <bandwidth-avg> <bandwidth-burst> <bandwidth-observed>
+
+    Estimated bandwidth for this router, in bytes per second. The "average"
+    bandwidth is the volume per second that the OR is willing to sustain over
+    long periods; the "burst" bandwidth is the volume that the OR is willing to
+    sustain in very short intervals. The "observed" value is an estimate of the
+    capacity this server can handle. The server remembers the max bandwidth
+    sustained output over any ten second period in the past day, and another
+    sustained input. The "observed" value is the lesser of these two numbers.
+
+  uptime
+
+    The number of seconds that this OR process has been running.
+
+
+References:
+
+  [1] http://serifos.eecs.harvard.edu/cgi-bin/exit.pl
+  [2] http://tor.eff.org/cvs/tor/doc/tor-spec.txt
+  [3] http://www.noreply.org/tor-running-routers/
+
+Found at: http://jadeserpent.i2p.tin0.de/tor-dc-nodes-2.txt
+

@@ -1,0 +1,112 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u08KhRlp031537;
+	Fri, 8 Jan 2016 15:43:30 -0500
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=BrrUd1a7;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-ig0-f180.google.com (mail-ig0-f180.google.com
+ [209.85.213.180])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u08KhOCa031533
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Fri, 8 Jan 2016 15:43:26 -0500
+Received: by mail-ig0-f180.google.com with SMTP id ik10so87173386igb.1
+ for <cypherpunks@cpunks.org>; Fri, 08 Jan 2016 12:43:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+ :cc:content-type;
+ bh=QRLz5TSHFCLF7OagsbgcI1CpOuDcPkdcku0QTHzG29c=;
+ b=BrrUd1a7ug29mDNGK6H/BDU/L9zQeXIPWutbxGxLpghS/WProC6QF9ERlJikdp16an
+ gPjbb7gTRlPfpYumeMMzhmiO1HvBqWvuxcBa5+/ADpy5q/3DH2k9Bu+sNwGgTXYmraoS
+ rSWto/n4enX+Yw5gKWXnjq1S/eIQPvWPk6588EYtwtxJWj6/GCiVRcMUAnZmrCAyelj+
+ 22d1ns4RMVa5dmLEBaIAfNFcgrp5hF6xc4/lspSNhE3X6yNLNJuL2a4xMUeRah24haxw
+ jbccx5yfvVtPU89iBcMDIEBrt7ShhMwBCq6iJ8TbIJ4FhF7cU6B2Np51v3sqQ6Lol6jg
+ cI0A==
+X-Received: by 10.50.43.133 with SMTP id w5mr870367igl.52.1452285799126; Fri,
+ 08 Jan 2016 12:43:19 -0800 (PST)
+MIME-Version: 1.0
+Received: by 10.36.137.197 with HTTP; Fri, 8 Jan 2016 12:42:39 -0800 (PST)
+In-Reply-To: <9A043F3CF02CD34C8E74AC1594475C73F4BC30B2@uxcn10-5.UoA.auckland.ac.nz>
+References: <9A043F3CF02CD34C8E74AC1594475C73F4BC30B2@uxcn10-5.UoA.auckland.ac.nz>
+From: grarpamp <grarpamp@gmail.com>
+Date: Fri, 8 Jan 2016 15:42:39 -0500
+Message-ID: <CAD2Ti28BgxCw+fd5dOJwQPFEWKGb-yO4bpd5vUHkTh0WfgOeyA@mail.gmail.com>
+Subject: Re: [Cryptography] Verisimilitrust
+To: "cryptography@metzdowd.com" <cryptography@metzdowd.com>
+Content-Type: text/plain; charset=UTF-8
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 60
+
+On Fri, Jan 8, 2016 at 4:09 AM, Peter Gutmann <pgut001@cs.auckland.ac.nz> wrote:
+> From the Mozilla policy list, in a discussion about what to do about
+> Kazakhstan requesting that their MITM certificate be added to the browser
+> trust lists:
+>
+>   It would appear from this information, that this CA (and probably others
+>   like it) is deliberately serving a dual role:
+>
+>   1. It is the legitimate trust anchor for some domains that browser
+>      users will need to access (in this case: Kazakh government sites
+>      under gov.kz).
+>
+>   2. It is the trust anchor for fake MITM certificates used to harm
+>      browser users, and which should thus be regarded as invalid.
+>
+> causing an immediate panicked response to try and find a reason to deny the
+> request, because the CA/Browser Forum policies don't actually say you can't
+> have an acknowledged MITM cert as a trusted root:
+>
+>   Kazakhstan has submitted the request for root inclusion:
+>   https://bugzilla.mozilla.org/show_bug.cgi?id=1232689
+>
+>   So, we really do need to have this discussion now.
+>
+> I think we need to formally give up on the use of the word "trust" in its
+> conventional sense in relation to PKI.  Browser PKI has done to the term
+> "trust" what the popular press has done to the word "hacker".
+>
+>   Thus it would be prudent to extend the trust list format (and the NSS code
+>   using it) to be able to specify additional restrictions beyond those
+>   specified in the CA root itself.
+>
+>   [...]
+>
+> In other words certificates are going to be turned inside-out, instead of the
+> cert encoding policy-related information as per X.509, we've got a third party
+> (browser vendors) imposing its policy on the certificate from the outside.
+> We've already got the same third party overriding CAs on revocation via
+> hardcoded cert blacklists, and as has been shown over and over again, CAs do
+> only the bare minimum of checking for anything but EV certs.  So if this
+> change is made we can summarise the purpose of a CA as follows:
+>
+>   Verify identity in certs - Not really (except to justify premium-priced EVs).
+>   Provide policy for certs - No, the browser vendor will.
+>   Provide revocation info for certs - No, the browser vendor will.
+>   Charge money to turn off the browser warnings - Yes.
+>
+> So that's pretty much pared browser PKI down to its essence, a license to
+> print money for a select group of companies.
+
+The entire planet ignored warnings preached by early wise men and
+bought into the CA "trust" hype and money printing game for decades.
+Shame it took rampant surveillance and attacks for people to
+begin pulling their head out of the sand, let alone search for different
+models.
+
+If your new model involves someone getting rich, or relies on
+centralization / trust that you have no part in endorsing... it's broken.
+

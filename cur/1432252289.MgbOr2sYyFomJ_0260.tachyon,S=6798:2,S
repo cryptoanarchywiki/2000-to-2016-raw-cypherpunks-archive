@@ -1,0 +1,149 @@
+From owner-cypherpunks@Algebra.COM  Mon Aug 12 15:06:59 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7CJ6xZ20295
+	for <rsw@opamp.org>; Mon, 12 Aug 2002 15:06:59 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id PAA20935
+	for <rsw@mit.edu>; Mon, 12 Aug 2002 15:06:57 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7CHtvD6025222
+	for <cypherpunks-outgoing@ak47.algebra.com>; Mon, 12 Aug 2002 12:55:57 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g7CHtvox025221
+	for cypherpunks-outgoing; Mon, 12 Aug 2002 12:55:57 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7CHtqD6025205
+	for <cypherpunks@ak47.algebra.com>; Mon, 12 Aug 2002 12:55:53 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7CHtoun029635
+	for cypherpunks@ak47.algebra.com; Mon, 12 Aug 2002 10:55:50 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7CHtfjv029628
+	for cypherpunks-goingout345; Mon, 12 Aug 2002 10:55:41 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Mon, 12 Aug 2002 10:55:19 -0700
+From: AARG! Anonymous <remailer@aarg.net>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@aarg.net>.
+To: cypherpunks@lne.com, cryptography@wasabisystems.com, adam@cypherspace.org
+Old-Subject: Re: Palladium: technical limits and implications
+Message-ID: <699bcf9a15f57cec8e85fb08c0c02652@aarg.net>
+X-Loop: cypherpunks@lne.com
+X-spam: 10 
+Subject:  Re: Palladium: technical limits and implications
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 4376
+Lines: 101
+
+
+Adam Back writes:
+> +---------------+------------+  
+> | trusted-agent | user mode  |  
+> |    space      | app space  |  
+> |    (code      +------------+  
+> | compartment)  | supervisor |  
+> |               | mode / OS  |  
+> +---------------+------------+
+> | ring -1 / TOR              |
+> +----------------------------+  
+> | hardware / SCP key manager |
+> +----------------------------+  
+
+I don't think this works.  According to Peter Biddle, the TOR can be
+launched even days after the OS boots.  It does not underly the ordinary
+user mode apps and the supervisor mode system call handlers and device
+drivers.
+
+        +---------------+------------+  
+        | trusted-agent | user mode  |  
+        |    space      | app space  |  
+        |    (code      +------------+  
+        | compartment)  | supervisor |  
+        |               | mode / OS  |  
++---+   +---------------+------------+
+|SCP|---| ring -1 / TOR |
++---+   +---------------+
+
+
+
+This is more how I would see it.  The SCP is more like a peripheral
+device, a crypto co-processor, that is managed by the TOR.  Earlier you
+quoted Seth's blog:
+
+| The nub is a kind of trusted memory manager, which runs with more
+| privilege than an operating system kernel. The nub also manages access
+| to the SCP.
+
+as justification for putting the nub (TOR) under the OS.  But I think in
+this context "more privilege" could just refer to the fact that it is in
+the secure memory, which is only accessed by this ring--1 or ring-0 or
+whatever you want to call it.  It doesn't follow that the nub has anything
+to do with the OS proper.  If the OS can run fine without it, as I think
+you agreed, then why would the entire architecture have to reorient itself
+once the TOR is launched? 
+
+In other words, isn't my version simpler, as it adjoins the column at
+the left to the pre-existing column at the right, when the TOR launches,
+days after boot?  Doesn't it require less instantaneous, on-the-fly,
+reconfiguration of the entire structure of the Windows OS at the moment
+of TOR launch?  And what, if anything, does my version fail to accomplish
+that we know that Palladium can do?
+
+
+> Integrity Metrics in a given level are computed by the level below.
+>
+> The TOR starts Trusted Agents, the Trusted Agents are outside the OS
+> control.  Therefore a remote application based on remote attestation
+> can know about the integrity of the trusted-agent, and TOR.
+>
+> ring -1/TOR is computed by SCP/hardware; Trusted Agent is computed by
+> TOR;
+
+I had thought the hardware might also produce the metrics for trusted
+agents, but you could be right that it is the TOR which does so.
+That would be consistent with the "incremental extension of trust"
+philosophy which many of these systems seem to follow.
+
+> The parallel stack to the right: OS is computed by TOR; Application is
+> computed OS.
+
+No, that doesn't make sense.  Why would the TOR need to compute a metric
+of the OS?  Peter has said that Palladium does not give information about
+other apps running on your machine:
+
+: Note that in Pd no one but the user can find out the totality of what SW is
+: running except for the nub (aka TOR, or trusted operating root) and any
+: required trusted services. So a service could say "I will only communicate
+: with this app" and it will know that the app is what it says it is and
+: hasn't been perverted. The service cannot say "I won't communicate with this
+: app if this other app is running" because it has no way of knowing for sure
+: if the other app isn't running.
+
+
+> So for general applications you still have to trust the OS, but the OS
+> could itself have it's integrity measured by the TOR.  Of course given
+> the rate of OS exploits especially in Microsoft products, it seems
+> likley that the aspect of the OS that checks integrity of loaded
+> applications could itself be tampered with using a remote exploit.
+
+Nothing Peter or anyone else has said indicates that this is a property of
+Palladium, as far as I can remember.
+
+> Probably the latter problem is the reason Microsoft introduced ring -1
+> in palladium (it seems to be missing in TCPA).
+
+No, I think it is there to prevent debuggers and supervisor-mode drivers
+from manipulating secure code.  TCPA is more of a whole-machine spec
+dealing with booting an OS, so it doesn't have to deal with the question
+of running secure code next to insecure code.
+

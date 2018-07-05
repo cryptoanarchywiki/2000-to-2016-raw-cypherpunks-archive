@@ -1,0 +1,248 @@
+From owner-cypherpunks@al-qaeda.net  Fri Sep  7 05:45:33 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q879gB92017958
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 7 Sep 2012 05:42:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1347010931;
+	bh=xTq20Hmb1bXxF7KgJEY4cBGj2nAXQBImEAP5fA1eRl4=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=ujyCDICzydym0n+eh/tAXrMJOCFqW/PzkawAvX7coOem4CDtHEqJ4Rm0ynO6DrGNk
+	 IpSoRnnmdP4AQLkh2eVELh/vrkpabJPsYMTJPZxTPJ9fgMHiXr33S/cu4ITIHKgMzt
+	 ufnedDufXzLEmKfEF6757VG0UrfqXHzVssXUWFXE=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q879gBti017957
+	for cypherpunks-outgoing; Fri, 7 Sep 2012 05:42:11 -0400
+Date: Fri, 7 Sep 2012 11:42:07 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: [tor-talk] Roger's status report, August 2012
+Message-ID: <20120907094207.GK12615@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 9066
+Lines: 216
+
+----- Forwarded message from Roger Dingledine <arma@mit.edu> -----
+
+From: Roger Dingledine <arma@mit.edu>
+Date: Fri, 7 Sep 2012 05:11:58 -0400
+To: tor-talk@lists.torproject.org
+Cc: tor-reports@lists.torproject.org
+Subject: [tor-talk] Roger's status report, August 2012
+User-Agent: Mutt/1.5.20 (2009-06-14)
+Reply-To: tor-talk@lists.torproject.org
+
+Here's what I said at the beginning of August that I hoped to do:
+
+> - Chair the FOCI workshop at Usenix Security, and also attend the rest
+> of Usenix Security.
+> https://www.usenix.org/conference/foci12/tech-schedule/workshop-program
+> https://www.usenix.org/conference/usenixsecurity12/tech-schedule/technical-sessions
+
+Done. FOCI went really well -- we had 30-40 people there, and I think
+most of the talks were interesting.
+
+I've attempted to pass the torch to Jed Crandall and Joss Wright
+for next year's FOCI. But it looks like there will be some early
+stumbling blocks around whether Usenix wants to keep FOCI attached
+to Usenix Security. We'll see how that plays out.
+
+I spent much of my Usenix Security talking to research groups about
+setting up fast exit relays. See more about that below.
+
+I also talked to George Kadianakis about Tor network diversity metrics,
+and got him talking to a wide variety of other researchers for further
+suggestions.
+
+> - Talk to Ralf-Philipp Weinmann about his TorScan paper (upcoming at
+> Esorics) and what we can do to address his attacks.
+
+I talked to him, but we didn't come to any conclusions. Most of the fixes
+are delicate and have poorly understood tradeoffs. I left him with the
+plan that he would write a Tor design proposal or two, so we can think
+through the implications.
+
+> - Look at Rob Jansen's performance graphs from his new Shadow simulations.
+> Try to move the performance tickets forward.
+
+Done. We did a bunch of huge simulations using Amazon EC2, and ended
+up finding that mysterious bugs were ruining our results. We decided
+to focus on the simplest simulation question, and try to sort out the
+bugs. You can read our saga here:
+https://trac.torproject.org/projects/tor/ticket/6341
+and as of early September, we've found and/or solved some good ones. Hard
+to say how many more remain before Shadow can solve all our problems, but
+I think we're getting closer.
+
+> - Expand on the set of metrics by which the SponsorF Red Team will judge
+> the project's success. Specifically, I should list the anonymity attacks
+> that they shouldn't evaluate since the PETS community is already doing
+> a good job at evaluating anonymity attacks.
+
+Continued. You can read some of my discussions at
+https://lists.torproject.org/pipermail/tor-dev/2012-September/003992.html
+George suggested that we try to turn them into a survey list of Tor
+attacks. Feel free to get that started if you like the idea.
+
+> - Launch the "run fast bridges for BBG" campaign, ideally by gathering
+> volunteers on tor-relays.
+
+Started:
+https://lists.torproject.org/pipermail/tor-relays/2012-August/001545.html
+https://lists.torproject.org/pipermail/tor-relays/2012-August/001549.html
+
+We have a few fast bridges running. The real challenge here will be the
+traditional bridge distribution strategy question: we need to give them
+out to people who need them without letting the bad guy find them. We're
+trying out some not-so-automated strategies first.  I think the handful
+of fast stable bridges we have should be enough for now, on the principle
+that for any strategy that doesn't tell so many people that the bad guy
+learns too, a stable 100mbit bridge can handle all the good users who
+learn about it. In parallel we should continue exploring tricks like
+Philipp Winter's brdgrd tool:
+https://gitweb.torproject.org/brdgrd.git/blob_plain/HEAD:/README.md
+and maybe later on we'll move on to alternate transports like Obfsproxy.
+
+> - Launch the "exit relays at universities" push, and send BBG a timetable
+> for how our exit relay rollout is looking.
+
+We've got immediate plans from CMU and Penn that I know of, and promises
+from Georgia Tech and Michigan:
+https://lists.torproject.org/pipermail/tor-relays/2012-August/001543.html
+
+Moritz and I wrote up
+https://trac.torproject.org/projects/tor/wiki/doc/TorExitGuidelines
+which has so far been useful.
+
+Steve Bellovin at Columbia suggested that we get EFF to write a letter
+that university professors can hand to their general counsel, explaining
+what Tor is. I'm still talking to EFF people about what exactly they
+could write.
+
+There's also now a tor-relays-universities list as a support group for
+people trying to run exit relays at universities:
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-relays-universities
+
+> - Get some money to some exit relay operators, since it turns out (ha)
+> that it's harder than I expected on our side to do it in a way we'll
+> pass our audits.
+
+Not done. I believe Andrew met with Tor's lawyers to discuss how to
+position it so that we continue to pass our audits, etc. (Making new
+organizational and bureaucratic ways to attack Tor doesn't sound great,
+at least not until we understand them better.) I'm hoping to team up
+with a couple of other organizations so that we can give them large bulk
+grants, and they can divide the money up further. If that should be you,
+please let us know!
+
+I'm hoping Moritz can take charge of this topic and make it happen.
+
+> - Get 0.2.3.20-alpha and 0.2.3.21-alpha out.
+
+I got 0.2.3.20-rc out:
+https://lists.torproject.org/pipermail/tor-talk/2012-August/025093.html
+
+Turns out 0.2.3.21-rc waited until September.
+
+> - Consider an 0.2.2.38 stable update.
+
+Done:
+https://lists.torproject.org/pipermail/tor-announce/2012-August/000086.html
+
+> - Consider an 0.2.4.1-alpha release.
+
+Not done, but done in September.
+
+> - Sort out my September travel to Germany
+
+Done. I'm going to Berlin next week:
+http://internethumanrights.org/ihrberlin2012/
+Dagstuhl after that:
+http://www.dagstuhl.de/no_cache/en/program/calendar/semhp/?semnr=12381
+and ETH Zurich after that to do a talk at Srdjan Capkun's group on
+Sept 25.
+
+> and my November travel to
+> Netherlands et al.
+
+Still unsorted.
+
+> - Schedule our NSF "censorship measurement" kickoff meeting, perhaps
+> the last week of September or first of October.
+
+Not yet scheduled. The other PIs are overloaded with other things,
+so I guess there's no rush, so long as we're doing useful research things.
+
+> - Encourage Andrew to put our "project coordinator" job description up
+> and announce it.
+
+He's written the web page, but hasn't announced it or linked it yet. I
+guess I'll leave that timing up to him
+
+> - Try to take a vacation Aug 11-19.
+
+Done. I even managed to be on vacation for some of it.
+
+------------------------------------------------------------------------
+
+Here are some other things I did in August:
+
+- Continued a mass of personal mail threads with exit relay
+operators. Reaching out to them and talking about how to help them makes
+them like us more:
+https://metrics.torproject.org/network.html?graph=bandwidth-flags&start=2012-08-01&end=2012-09-01#bandwidth-flags
+Exit relay capacity moved from 10Gbps to just over 12Gbps in August
+(growth of 20%), and actual reported load moved from around 6.4Gbps to
+8Gbps (growth of 25%).
+
+I don't think it's wise to aim to get to BBG's "125 100mbit+ exit relays"
+goal anytime soon (that would involve something like doubling or more
+the exit capacity), but we're seeing great effects so far from ramping up
+the campaign. And if George and Sathya's preliminary graphs are accurate,
+we have maintained or improved our network diversity during this time.
+
+- Tariq's paper on guard rotation got into WPES! I helped them revise it.
+http://freehaven.net/anonbib/#wpes12-cogs
+
+- Turned down a pair of journal review invites because the journals are
+harming my field (aka not open-access).
+
+- Agreed to be on the program committee for PETS 2013:
+http://petsymposium.org/2013/
+Though PETS is technically not open-access either (due to its publisher),
+I maintain the website so I can make sure that it is open-access in fact.
+I think that's good enough for now, but I'm pushing for more.
+
+- Jumped into the latest "omg Tor isn't perfect" thread:
+https://lists.torproject.org/pipermail/tor-talk/2012-August/025278.html
+
+- Lost a weekend to what was supposed to be a routine drive replacement
+and turned into an almost complete hardware replacement for moria1,
+one of the directory authorities. Thanks again to Andrew Lewman for
+spending his weekend messing with it.
+
+- Helped suggest useful historical documents to seed Karsten's Tech
+Reports page:
+http://research.torproject.org/techreports.html
+
+--Roger
+
+_______________________________________________
+tor-talk mailing list
+tor-talk@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-talk
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

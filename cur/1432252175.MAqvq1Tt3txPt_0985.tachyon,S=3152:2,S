@@ -1,0 +1,80 @@
+From owner-cypherpunks@al-qaeda.net  Wed Jan 19 09:43:21 2005
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (majordomo@localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.2/8.13.2/Debian-1) with ESMTP id j0JFfuZI020325
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Wed, 19 Jan 2005 09:41:56 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.2/8.13.2/Submit) id j0JFfu8d020322
+	for cypherpunks-outgoing; Wed, 19 Jan 2005 09:41:56 -0600
+X-POP-User: hettinga.covad.net
+Mime-Version: 1.0
+X-Sender: rah@localhost
+Message-Id: <p061104b9be142838dde6@[68.167.57.91]>
+X-Clips-URL: <http://www.schneier.com/blog/archives/2005/01/microsoft_rc4_f.html>
+Date: Wed, 19 Jan 2005 10:08:25 -0500
+To: cryptography@metzdowd.com, cypherpunks@al-qaeda.net
+From: "R.A. Hettinga" <rah@shipwright.com>
+Subject: Schneier on Security: Microsoft RC4 Flaw
+Content-Type: text/plain; charset="us-ascii"
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+X-Keywords:                  
+X-UID: 18881
+Status: O
+Content-Length: 1981
+Lines: 51
+
+<http://www.schneier.com/blog/archives/2005/01/microsoft_rc4_f.html>
+
+ 
+
+Bruce Schneier
+  
+
+Schneier on Security
+
+A weblog covering security and security technology.
+
+
+January 18, 2005
+
+Microsoft RC4 Flaw
+
+One of the most important rules of stream ciphers is to never use the same
+keystream to encrypt two different documents. If someone does, you can
+break the encryption by XORing the two ciphertext streams together. The
+keystream drops out, and you end up with plaintext XORed with plaintext --
+and you can easily recover the two plaintexts using letter frequency
+analysis and other basic techniques.
+
+It's an amateur crypto mistake. The easy way to prevent this attack is to
+use a unique initialization vector (IV) in addition to the key whenever you
+encrypt a document.
+
+Microsoft uses the RC4 stream cipher in both Word and Excel. And they make
+this mistake. Hongjun Wu has details (link is a PDF).
+In this report, we point out a serious security flaw in Microsoft Word and
+Excel. The stream cipher RC4 [9] with key length up to 128 bits is used in
+Microsoft Word and Excel to protect the documents. But when an encrypted
+document gets modified and saved, the initialization vector remains the
+same and thus the same keystream generated from RC4 is applied to encrypt
+the different versions of that document. The consequence is disastrous
+since a lot of information of the document could be recovered easily.
+
+This isn't new. Microsoft made the same mistake in 1999 with RC4 in WinNT
+Syskey. Five years later, Microsoft has the same flaw in other products.
+
+Posted on January 18, 2005 at 09:00 AM
+
+
+-- 
+-----------------
+R. A. Hettinga <mailto: rah@ibuc.com>
+The Internet Bearer Underwriting Corporation <http://www.ibuc.com/>
+44 Farquhar Street, Boston, MA 02131 USA
+"... however it may deserve respect for its usefulness and antiquity,
+[predicting the end of the world] has not been found agreeable to
+experience." -- Edward Gibbon, 'Decline and Fall of the Roman Empire'
+

@@ -1,0 +1,125 @@
+From owner-cypherpunks@lne.com  Sun Aug 10 02:56:27 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h7A6uOo01467
+	for <rsw@jfet.org>; Sun, 10 Aug 2003 02:56:24 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h7A6jqI8009341
+	for cypherpunks-goingout345; Sat, 9 Aug 2003 23:45:52 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+X-Authentication-Warning: waste.minder.net: majordom set sender to
+  owner-cypherpunks@minder.net using -f
+Date: Sun, 10 Aug 2003 08:41:30 +0200 (CEST)
+From: Thomas Shaddack <shaddack@ns.arachne.cz>
+X-X-Sender: <shad@Zeta>
+To: Tyler Durden <camera_lumina@hotmail.com>
+cc: <cypherpunks@minder.net>
+Old-Subject: Re: How can you tell if your alarm company's...
+In-Reply-To: <BAY7-F18QV6uPDVniSn00008d04@hotmail.com>
+Message-ID: <Pine.LNX.4.33.0308100751090.23560-100000@Zeta>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Subject: Re: How can you tell if your alarm company's...
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 5620
+Lines: 95
+
+> How can I tell if my alarm has been "down" for a period of time, assuming I
+> don't believe the records of the alarm company in such cases?
+
+There is a plethora of various devices suitable for an alarm system, both
+off-the-shelf and homemadeable.
+
+You can cheaply roll out a camera system with a cheap PC with Linux and a
+TV-input card with a 4051 analog-multiplexer-based
+parallel-port-controlled switch for selecting cameras for slow-motion
+video. Frame rate sucks as there is no means of syncing the cams, so you
+have to give the card couple frames to lock after every cam change, but
+you should be able to get about four switches per second (which gives you
+one frame every 2 seconds for all 8-cams cycle). You can also switch them
+irregularly, so you get better framerate on the cams whose signal
+indicates something's happening. The photos may be recorded to a suitably
+big hard drive in a circular buffer, with suspicious frames optimally
+flagged for more permanent storage. This, together with a Net connection
+(and a backup phone line and eventually a cellphone) gives you a
+relatively very cheap system. Don't forget the UPS. Don't have this system
+as the only one; the adversary can switch off the power to the house and
+starve the computer.
+
+A new standard for GSM phones is appearing here: MMS - multimedia SMS
+messages. With suitably equipped phone you can send/receive short sound
+and video clips, and - which is important for us now - pictures. The
+alarm system then can send you a picture of the neighbor's cat getting
+into the house and tripping the sensors instead of just a panic-inducing
+generic message about activated PIRs and IR gates.
+
+I'd advise against relying on 802.11 cameras; they are too easy to both
+detect and jam. They can add some finishing touch though, and an attempt
+to jam the cams can be a possible alarm (or at least suspicion) source on
+its own.
+
+A powerful and reliable device may be a door/window-opening logger. A
+small chip with a little switch (or a reed-relay magnetic switch, which
+allows it to get completely sealed in the doorframe, or an IR beam gate,
+or just about anything). A microcontroller running with slow clock in
+low-power mode, a serial EEPROM for storing the circular-buffer log of the
+times when the contact was opened/closed, a RTC chip with I2C bus, a small
+battery for making the device independent on the power. (It can even log
+the times of power blackouts; a sequence of blackout - door open - door
+close - power-up when nobody is home is VERY suspicious.) If you use a
+wireless interface there (eg, use AT24RF08 for the EEPROM), you may read
+the door open/close times without any direct contact with the device,
+which makes its concealmentability much easier. It can then reside in the
+doorframe, a little magnet in the door triggering its reed contact,
+read/write being done with a handheld reader held over a certain point of
+the doorframe. Scatter couple such devices in the object, and you have
+good idea about what was happening there. There is no authorization there;
+they will just log visits, including you - but you KNOW when you were
+there and can ignore these entries on your own. This is suitable as an
+audit device, just to make sure. Be aware that in the highest-threat
+situations the adversary may enter by unconventional means; there were
+cases of entry through the roof, the floor, even the wall.
+
+The cellphone-based uplink can be strengthened by a trick. There are
+cellular jammers that can be employed together with the plain ol' cutting
+of the lines. However, if you have good visibility to some cell base
+stations, you may employ a directional antenna pointing at it, which makes
+the setup much more resistant against localized jamming from directions
+other than the antenna's one. For high-budget people there are also
+satellite phones.
+
+The system can also report to you once every interval, telling you about
+status changes and if there was anything that could look suspicious but
+wasn't worth of an asynchronous alarm.
+
+Consider using an anonymous phone with a prepaid card, for both sending
+and receiving the alarms and status messages. The adversary could
+othervise visit the phone company and ask for cancelling your service for
+the given time, so you'd miss your alarm.
+
+If the neighbourhood situation is suitable, you can combine the efforts of
+several people in the area, and form a sort of Neighbourhood Watch - a
+decentralized P2P web of alarm systems talking with each other by any
+suitable means - from an over-the-street IrDA to 802.11b to Ronja-grade
+optical links for longer distances. (The network can also double as a
+community network for TCP/IP communication and Net connection.) This can
+make an eventual attack very unlikely to pass unnoticed.
+
+An interesting low-tech backup system could be a cheap one-time film
+camera triggered by eg. a fishing line tied to the door or lead over the
+floor. Even if everything electrical goes down, there is still a chance to
+get a picture of the intruder.
+
+Use different technologies in overlapping layers. Employ your fantasy. Be
+aware about what dependencies you have in the system (eg, camera system
+can run for no more than two hours of mains blackout, certain sensors
+depend on the computer, some alert modes depend on the telephone or
+cellphone), be prepared for different failure modes - both natural mishaps
+and intentional sabotage, compensate for them, design the system to fail
+gracefully and to keep at least some functions (at least the autonomous
+audit switch loggers) even in the reasonably worst case. This makes the
+adversary's job less pleasant.
+

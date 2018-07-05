@@ -1,0 +1,147 @@
+From cypherpunks-bounces@cpunks.org  Tue Jul 23 02:31:47 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r6N6VQHI022373;
+	Tue, 23 Jul 2013 02:31:29 -0400
+Authentication-Results: proton.jfet.org; dkim=fail
+	reason="verification failed; insecure key"
+	header.d=gmail.com header.i=@gmail.com header.b=m+KyhB1u;
+	dkim-adsp=none (insecure policy); dkim-atps=neutral
+Received: from mail-la0-f47.google.com (mail-la0-f47.google.com
+ [209.85.215.47])
+ by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r6N6VMNt022368
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Tue, 23 Jul 2013 02:31:24 -0400
+Received: by mail-la0-f47.google.com with SMTP id fe20so5901902lab.20
+ for <cypherpunks@cpunks.org>; Mon, 22 Jul 2013 23:31:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:sender:in-reply-to:references:date
+ :x-google-sender-auth:message-id:subject:from:to:cc:content-type;
+ bh=CKDUu/+4w+NtBsLL8zZNPK0Kfvs+Hrpn20MfHZZwEaw=;
+ b=m+KyhB1uy5DiSjFWlnd85kiaC3i9bYsGny1YIK1KXaf4A7OZRmNxcTQxPhsGW1d12h
+ 5trAaCZUM0aSpsurO/mTzAI4g+alNL3izelgj8j1N4p63BqCOLO83zuQhcL9R78pyP+J
+ oQ/iJjC42iGkIUoq6NS5LRJruRUJAs9e2HPJyqy/hbOYscbXYu/wtcP2q8l3oBpPw68F
+ R/SniHX0Xbtm0SPqqnYF1wKZKLW+O1JL7hnxNqDqrpfRHb1R2DBE5FgkNdkppQWW1Re/
+ bPsDAN3FlNVTEvvNz1maeccWzwYp52lysplQpD0zt2U4J0lOat/EyF6G5HGkefNbf6nm
+ d1Rg==
+MIME-Version: 1.0
+X-Received: by 10.112.63.2 with SMTP id c2mr13567284lbs.6.1374561076211; Mon,
+ 22 Jul 2013 23:31:16 -0700 (PDT)
+Received: by 10.112.171.200 with HTTP; Mon, 22 Jul 2013 23:31:16 -0700 (PDT)
+In-Reply-To: <20130722214614.GF25759@hexapodia.org>
+References: <alpine.DEB.2.00.1307221647450.28426@neptune.sinister.com>
+ <20130722214614.GF25759@hexapodia.org>
+Date: Tue, 23 Jul 2013 08:31:16 +0200
+X-Google-Sender-Auth: F6XRmiXz_TZfkToQ0u-MoYkJGIo
+Message-ID: <CAFDBa1VhiP13c-RgtpMycPs9tALxdBNT+6hQz+2zjXaCNKXfTw@mail.gmail.com>
+Subject: Re: Python Random Number Generator for OTP
+From: Yan Zhu <yan@mit.edu>
+To: Andy Isaacson <adi@hexapodia.org>
+Content-Type: multipart/alternative; boundary=001a11c3e880ab75dd04e227f070
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 3710
+Lines: 88
+
+--001a11c3e880ab75dd04e227f070
+Content-Type: text/plain; charset=ISO-8859-1
+
+On Mon, Jul 22, 2013 at 11:46 PM, Andy Isaacson <adi@hexapodia.org> wrote:
+
+> On Mon, Jul 22, 2013 at 04:50:55PM -0400, Tom wrote:
+> > Does anyone on the list have some Python source code for an
+> > OTP-focused random number generator they'd be willing to share? I'm
+> > interested in seeing how different people would approach it?
+>
+> Why not simply use /dev/urandom (after ensuring you have enough entropy,
+> etc, etc).  If you don't have systemic entropy collection, Python is not
+> going to be able to help.
+>
+> Of course any entropy pool measurement is merely computationally
+> feasible randomness; you'll need to measure a physically
+> nondeterministic process directly if you want true information theoretic
+> entropy.  Something like an entropykey should do the trick, if you trust
+> their design and that they haven't included backdoors.
+>
+
+Andy, maybe you or someone else has some insight into something I've
+wondered about:
+
+Is there a secure way to timeshare a single entropy source such as an
+entropy key? High-quality entropy sources are often fragile, expensive, or
+difficult to manufacture and maintain. If Alice has a friggin' amazing
+entropy source, and Bob wants to use it from afar, what would be the best
+way for Alice to let Bob retrieve data from the entropy source when she
+wasn't using it?
+
+-Yan
+
+>
+> -andy
+>
+
+
+
+-- 
+Yan Zhu
+http://web.mit.edu/zyan/www/
+
+--001a11c3e880ab75dd04e227f070
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+<br><br><div class=3D"gmail_quote">On Mon, Jul 22, 2013 at 11:46 PM, Andy I=
+saacson <span dir=3D"ltr">&lt;<a href=3D"mailto:adi@hexapodia.org" target=
+=3D"_blank">adi@hexapodia.org</a>&gt;</span> wrote:<br><blockquote class=3D=
+"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding=
+-left:1ex">
+<div class=3D"HOEnZb"><div class=3D"h5">On Mon, Jul 22, 2013 at 04:50:55PM =
+-0400, Tom wrote:<br>
+&gt; Does anyone on the list have some Python source code for an<br>
+&gt; OTP-focused random number generator they&#39;d be willing to share? I&=
+#39;m<br>
+&gt; interested in seeing how different people would approach it?<br>
+<br>
+</div></div>Why not simply use /dev/urandom (after ensuring you have enough=
+ entropy,<br>
+etc, etc). =A0If you don&#39;t have systemic entropy collection, Python is =
+not<br>
+going to be able to help.<br>
+<br>
+Of course any entropy pool measurement is merely computationally<br>
+feasible randomness; you&#39;ll need to measure a physically<br>
+nondeterministic process directly if you want true information theoretic<br=
+>
+entropy. =A0Something like an entropykey should do the trick, if you trust<=
+br>
+their design and that they haven&#39;t included backdoors.<br></blockquote>=
+<div><br>Andy, maybe you or someone else has some insight into something I&=
+#39;ve wondered about:<br><br>Is there a secure way to timeshare a single e=
+ntropy source such as an entropy key? High-quality entropy sources are ofte=
+n fragile, expensive, or difficult to manufacture and maintain. If Alice ha=
+s a friggin&#39; amazing entropy source, and Bob wants to use it from afar,=
+ what would be the best way for Alice to let Bob retrieve data from the ent=
+ropy source when she wasn&#39;t using it?<br>
+<br>-Yan<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .=
+8ex;border-left:1px #ccc solid;padding-left:1ex">
+<span class=3D"HOEnZb"><font color=3D"#888888"><br>
+-andy<br>
+</font></span></blockquote></div><br><br clear=3D"all"><br>-- <br>Yan Zhu<b=
+r><a href=3D"http://web.mit.edu/zyan/www/" target=3D"_blank">http://web.mit=
+.edu/zyan/www/</a>
+
+--001a11c3e880ab75dd04e227f070--
+

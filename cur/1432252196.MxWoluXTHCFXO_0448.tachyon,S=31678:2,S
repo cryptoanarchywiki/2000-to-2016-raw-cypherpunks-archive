@@ -1,0 +1,538 @@
+From owner-cypherpunks@jfet.org  Thu Dec 21 02:53:02 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.8/8.13.8/Debian-2) with ESMTP id kBL7qTHk006306
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 21 Dec 2006 02:52:29 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.8/8.13.8/Submit) id kBL7qTwA006304
+	for cypherpunks-outgoing; Thu, 21 Dec 2006 02:52:29 -0500
+From: pgut001@cs.auckland.ac.nz (Peter Gutmann)
+To: cypherpunks@jfet.org
+Subject: A Cost Analysis of Windows Vista Content Protection
+Message-Id: <E1GxIj3-0002JB-00@medusa01.cs.auckland.ac.nz>
+Date: Thu, 21 Dec 2006 20:52:25 +1300
+X-Virus-Scanned: by amavisd-new at mailhost.auckland.ac.nz
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 30738
+Lines: 515
+
+           A Cost Analysis of Windows Vista Content Protection
+           ===================================================
+
+                Peter Gutmann, pgut001@cs.auckland.ac.nz
+        http://www.cs.auckland.ac.nz/~pgut001/pubs/vista_cost.txt
+                      Last updated 21 December 2006
+
+Executive Summary
+-----------------
+
+Windows Vista includes an extensive reworking of core OS elements in order to
+provide content protection for so-called "premium content", typically HD data
+from Blu-Ray and HD-DVD sources.  Providing this protection incurs
+considerable costs in terms of system performance, system stability, technical
+support overhead, and hardware and software cost.  These issues affect not
+only users of Vista but the entire PC industry, since the effects of the
+protection measures extend to cover all hardware and software that will ever
+come into contact with Vista, even if it's not used directly with Vista (for
+example hardware in a Macintosh computer or on a Linux server).  This document
+analyses the cost involved in Vista's content protection, and the collateral
+damage that this incurs throughout the computer industry.
+
+Executive Executive Summary
+---------------------------
+
+The Vista Content Protection specification could very well constitute the
+longest suicide note in history.
+
+Introduction
+------------
+
+This document looks purely at the cost of the technical portions of Vista's
+content protection.  The political issues (under the heading of DRM) have been
+examined in exhaustive detail elsewhere and won't be commented on further,
+unless it's relevant to the cost analysis.  However, one important point that
+must be kept in mind when reading this document is that in order to work,
+Vista's content protection must be able to violate the laws of physics,
+something that's unlikely to happen no matter how much the content industry
+wishes it were possible.  This conundrum is displayed over and over again in
+the Windows content-protection specs, with manufacturers being given no hard-
+and-fast guidelines but instead being instructed that they need to display as
+much dedication as possible to the party line.  The documentation is peppered
+with sentences like:
+
+  "It is recommended that a graphics manufacturer go beyond the strict letter
+  of the specification and provide additional content-protection features,
+  because this demonstrates their strong intent to protect premium content".
+
+This is an exceedingly strange way to write technical specifications, but is
+dictated by the fact that what the spec is trying to achieve is fundamentally
+impossible.  Readers should keep this requirement to display appropriate
+levels of dedication in mind when reading the following analysis [Note A].
+
+Disabling of Functionality
+--------------------------
+
+Vista's content protection mechanism only allows protected content to be sent
+over interfaces that also have content-protection facilities built in.
+Currently the most common high-end audio output interface is S/PDIF
+(Sony/Philips Digital Interface Format).  Most newer audio cards, for example,
+feature TOSlink digital optical output for high-quality sound reproduction,
+and even the latest crop of motherboards with integrated audio provide at
+least coax (and often optical) digital output.  Since S/PDIF doesn't provide
+any content protection, Vista requires that it be disabled when playing
+protected content.  In other words if you've invested a pile of money into a
+high-end audio setup fed from a digital output, you won't be able to use it
+with protected content.  Similarly, component (YPbPr) video will be disabled
+by Vista's content protection, so the same applies to a high-end video setup
+fed from component video.
+
+Indirect Disabling of Functionality
+-----------------------------------
+
+As well as overt disabling of functionality, there's also covert disabling of
+functionality.  For example PC voice communications rely on automatic echo
+cancellation (AEC) in order to work.  AEC requires feeding back a sample of
+the audio mix into the echo cancellation subsystem, but with Vista's content
+protection this isn't permitted any more because this might allow access to
+premium content.  What is permitted is a highly-degraded form of feedback that
+might possibly still sort-of be enough for some sort of minimal echo
+cancellation purposes.
+
+The requirement to disable audio and video output plays havoc with standard
+system operations, because the security policy used is a so-called "system
+high" policy: The overall sensitivity level is that of the most sensitive data
+present in the system.  So the instant any audio derived from premium content
+appears on your system, signal degradation and disabling of outputs will
+occur.  What makes this particularly entertaining is the fact that the
+downgrading/disabling is dynamic, so if the premium-content signal is
+intermittent or varies (for example music that fades out), various outputs and
+output quality will fade in and out, or turn on and off, in sync.  Normally
+this behaviour would be a trigger for reinstalling device drivers or even a
+warranty return of the affected hardware, but in this case it's just a signal
+that everything is functioning as intended.
+
+Decreased Playback Quality
+--------------------------
+
+Alongside the all-or-nothing approach of disabling output, Vista requires that
+any interface that provides high-quality output degrade the signal quality
+that passes through it.  This is done through a "constrictor" that downgrades
+the signal to a much lower-quality one, then up-scales it again back to the
+original spec, but with a significant loss in quality.  So if you're using an
+expensive new LCD display fed from a high-quality DVI signal on your video
+card and there's protected content present, the picture you're going to see
+will be, as the spec puts it, "slightly fuzzy", a bit like a 10-year-old CRT
+monitor that you picked up for $2 at a yard sale.  In fact the spec
+specifically still allows for old VGA analog outputs, but even that's only
+because disallowing them would upset too many existing owners of analog
+monitors.  In the future even analog VGA output will probably have to be
+disabled.  The only thing that seems to be explicitly allowed is the extremely
+low-quality TV-out, provided that Macrovision is applied to it.
+
+The same deliberate degrading of playback quality applies to audio, with the
+audio being downgraded to sound (from the spec) "fuzzy with less detail".
+
+Amusingly, the Vista content protection docs say that it'll be left to
+graphics chip manufacturers to differentiate their product based on
+(deliberately degraded) video quality.  This seems a bit like breaking the
+legs of Olympic athletes and then rating them based on how fast they can
+hobble on crutches.
+
+Elimination of Open-source Hardware Support
+-------------------------------------------
+
+In order to prevent the creation of hardware emulators of protected output
+devices, Vista requires a Hardware Functionality Scan (HFS) that can be used
+to uniquely fingerprint a hardware device to ensure that it's (probably)
+genuine.  In order to do this, the driver on the host PC performs an operation
+in the hardware (for example rendering 3D content in a graphics card) that
+produces a result that's unique to that device type.
+
+In order for this to work, the spec requires that the operational details of
+the device be kept confidential.  Obviously anyone who knows enough about the
+workings of a device to operate it and to write a third-party driver for it
+(for example one for an open-source OS, or in general just any non-Windows OS)
+will also know enough to fake the HFS process.  The only way to protect the
+HFS process therefore is to not release any technical details on the device
+beyond a minimum required for web site reviews and comparison with other
+products.
+
+Elimination of Unified Drivers
+------------------------------
+
+The HFS process has another cost involved with it.  Most hardware vendors have
+(thankfully) moved to unified driver models instead of the plethora of
+individual drivers that abounded some years ago.  Since HFS requires unique
+identification and handling of not just each device type (for example each
+graphics chip) but each variant of each device type (for example each stepping
+of each graphics chip) to handle the situation where a problem is found with
+one variation of a device, it's no longer possible to create one-size-fits-all
+drivers for an entire range of devices like the current
+Catalyst/Detonator/ForceWare drivers.  Every little variation of every device
+type out there must now be individually accommodated in custom code in order
+for the HFS process to be fully effective.
+
+If a graphics chip is integrated directly into the motherboard and there's no
+easy access to the device bus then the need for bus encryption (see
+"Unnecessary CPU Resource Consumption" below) is removed.  Because the
+encryption requirement is so onerous, it's quite possible that this means of
+providing graphics capabilities will suddenly become more popular after the
+release of Vista.  However, this leads to a problem: It's no longer possible
+to tell if a graphics chip is situated on a plug-in card or attached to the
+motherboard, since as far as the system is concerned they're both just devices
+sitting on the AGP/PCIe bus.  The solution to this problem is to make the two
+deliberately incompatible, so that HFS can detect a chip on a plug-in card vs.
+one on the motherboard.  Again, this does nothing more than increase costs and
+driver complexity.
+
+Further problems occur with audio drivers.  To the system, HDMI audio looks
+like S/PDIF, a deliberate design decision to make handling of drivers easier.
+In order to provide the ability to disable output, it's necessary to make HDMI
+codecs deliberately incompatible with S/PDIF codecs, despite the fact that
+they were specifically designed to appear identical in order to ease driver
+support and reduce development costs.
+
+Denial-of-Service via Driver Revocation
+---------------------------------------
+
+Once a weakness is found in a particular driver or device, that driver will
+have its signature revoked by Microsoft, which means that it will cease to
+function (details on this are a bit vague here, presumably some minimum
+functionality like generic 640x480 VGA support will still be available in
+order for the system to boot).  This means that a report of a compromise of a
+particular driver or device will cause all support for that device worldwide
+to be turned off until a fix can be found.  Again, details are sketchy, but if
+it's a device problem then presumably the device turns into a paperweight once
+it's revoked.  If it's an older device for which the vendor isn't interested
+in rewriting their drivers (and in the fast-moving hardware market most
+devices enter "legacy" status within a year of two of their replacement models
+becoming available), all devices of that type worldwide become permanently
+unusable.
+
+The threat of driver revocation is the ultimate nuclear option, the crack of
+the commissars' pistols reminding the faithful of their duty [Note B].  The
+exact details of the hammer that vendors will be hit with is buried in
+confidential licensing agreements, but I've heard mention of multimillion
+dollar fines and embargoes on further shipment of devices alongside the driver
+revocation mentioned above.
+
+Decreased System Reliability
+----------------------------
+
+Vista's content protection requires that devices (hardware and software
+drivers) set so-called "tilt bits" if they detect anything unusual.  For
+example if there are unusual voltage fluctuations, maybe some jitter on bus
+signals, a slightly funny return code from a function call, a device register
+that doesn't contain quite the value that was expected, or anything similar, a
+tilt bit gets set.  Such occurrences aren't too uncommon in a typical computer
+(for example starting up or plugging in a bus-powered device may cause a small
+glitch in power supply voltages, or drivers may not quite manage device state
+as precisely as they think).  Previously this was no problem - the system was
+designed with a bit of resilience, and things will function as normal.  In
+other words small variances in performance are a normal part of system
+functioning. Furthermore, the degree of variance can differ widely across
+systems, with some handling large changes in system parameters and others only
+small ones.  One very obvious way to observe this is what happens when a bunch
+of PCs get hit by a momentary power outage.  Effects will vary from powering
+down, to various types of crash, to nothing at all, all triggered by exactly
+the same external event.
+
+With the introduction of tilt bits, all of this designed-in resilience is
+gone.  Every little (normally unnoticeable) glitch is suddenly surfaced
+because it could be a sign of a hack attack.  The effect that this will have
+on system reliability should require no further explanation.
+
+Content-protection "features" like tilt bits also have worrying denial-of-
+service implications.  It's probably a good thing that modern malware is
+created by programmers with the commercial interests of the phishing and spam
+industries in mind rather than just creating as much havoc as possible.  With
+the number of easily-accessible grenade pins that Vista's content protection
+provides, any piece of malware that decides to pull a few of them will cause
+considerable damage.  The homeland security implications of this seem quite
+serious, since a tiny, easily-hidden piece of malware would be enough to
+render a machine unusable, while the very nature of Vista's content protection
+would make it almost impossible to determine why the denial-of-service is
+occurring.  Furthermore, the malware authors, who are taking advantage of
+"content-protection" features, would be protected by the DMCA against any
+attempts to reverse-engineer or disable the content-protection "features" that
+they're abusing.
+
+Increased Hardware Costs
+------------------------
+
+Vista includes various requirements for "robustness" in which the content
+industry, through "hardware robustness rules", dictates design requirements to
+hardware manufacturers.  For example, only certain layouts of a board are
+allowed in order to make it harder for outsiders to access parts of the board.
+Possibly for the first time ever, computer design is being dictated not by
+electronic design rules, physical layout requirements, and thermal issues, but
+by the wishes of the content industry. Apart from the massive headache that
+this poses to device manufacturers, it also imposes additional increased costs
+beyond the ones incurred simply by having to lay out board designs in a
+suboptimal manner.  Video card manufacturers typically produce a one-size-
+fits-all design (often a minimally-altered copy of the chipset vendor's
+reference design), and then populate different classes and price levels of
+cards in different ways.  For example a low-end card will have low-cost,
+minimal or absent TV-out encoders, DVI circuitry, RAMDACs, and various other
+add-ons used to differentiate budget from premium video cards. You can see
+this on the cheaper cards by observing the unpopulated bond pads on circuit
+boards, and gamers and the like will be familiar with cut-a-trace/resolder-a-
+resistor sidegrades of video cards. Vista's content-protection requirements
+eliminate this one-size-fits-all design, banning the use of separate TV-out
+encoders, DVI circuitry, RAMDACs, and other discretionary add-ons.  Everything
+has to be custom-designed and laid out so that there are no unnecessary
+accessible signal links on the board.  This means that a low-cost card isn't
+just a high-cost card with components omitted, and conversely a high-cost card
+isn't just a low-cost card with additional discretionary components added,
+each one has to be a completely custom design created to ensure that no signal
+on the board is accessible.
+
+This extends beyond simple board design all the way down to chip design.
+Instead of adding an external DVI chip, it now has to be integrated into the
+graphics chip, along with any other functionality normally supplied by an
+external chip.  So instead of varying video card cost based on optional
+components, the chipset vendor now has to integrate everything into a one-
+size-fits-all premium-featured graphics chip, even if all the user wants is a
+budget card for their kids' PC.
+
+Increased Cost due to Requirement to License Unnecessary Third-party IP
+-----------------------------------------------------------------------
+
+Protecting all of this precious premium content requires a lot of additional
+technology.  Unfortunately much of this is owned by third parties and requires
+additional licensing.  For example HDCP for HDMI is owned by Intel, so in
+order to send a signal over HDMI you have to pay royalties to Intel, even
+though you could do exactly the same thing for free over DVI.  Similarly,
+since even AES-128 on a modern CPU isn't fast enough to encrypt high-bandwidth
+content, companies are required to license the Intel-owned Cascaded Cipher, an
+AES-128-based transform that's designed to offer a generally similar level of
+security but with less processing overhead.
+
+The need to obtain unnecessary technology licenses extends beyond basic
+hardware IP.  In order to demonstrate their commitment to the cause, Microsoft
+have recommended as part of their "robustness rules" that vendors license
+third-party code obfuscation tools to provide virus-like stealth capabilities
+for their device drivers in order to make it difficult to interfere with their
+operations or reverse-engineer them.  Vendors like Cloakware and Arxan have
+actually added "robustness solutions" web pages to their sites in anticipation
+of this lucrative market.  This must be a nightmare for device vendors, for
+whom it's already enough of a task getting fully functional drivers deployed
+without having to deal with adding stealth-virus-like technology on top of the
+basic driver functionality.
+
+Unnecessary CPU Resource Consumption
+------------------------------------
+
+In order to prevent tampering with in-system communications, all communication
+flows have to be encrypted and/or authenticated.  For example content to video
+cards has to be encrypted with AES-128.  This requirement for cryptography
+extends beyond basic content encryption to encompass not just data flowing
+over various buses but also command and control data flowing between software
+components.  For example communications between user-mode and kernel-mode
+components are authenticated with OMAC message authentication-code tags, at
+considerable cost to both ends of the connection.
+
+In order to prevent active attacks, device drivers are required to poll the
+underlying hardware ever 30ms to ensure that everything appears kosher.  This
+means that even with nothing else happening in the system, a mass of assorted
+drivers has to wake up thirty times a second just to ensure that... nothing
+continues to happen.  In addition to this polling, further device-specific
+polling is also done, for example Vista polls video devices on each video
+frame displayed in order to check that all of the grenade pins (tilt bits) are
+still as they should be.
+
+On-board graphics create an additional problem in that blocks of precious
+content will end up stored in system memory, from where they could be paged to
+disk.  In order to avoid this, Vista tags such pages with a special protection
+bit indicating that they need to be encrypted before being paged out and
+decrypted again after being paged in.  Vista doesn't provide any other
+pagefile encryption, and will quite happily page banking PINs, credit card
+details, private, personal data, and other sensitive information, in
+plaintext.  The content-protection requirements make it fairly clear that in
+Microsoft's eyes a frame of premium content is worth more than (say) a user's
+medical records or their banking PIN.
+
+In addition to the CPU costs, the desire to render data inaccessible at any
+level means that video decompression can't be done in the CPU any more, since
+there isn't sufficient CPU power available to both decompress the video and
+encrypt the resulting uncompressed data stream to the video card.  As a
+result, much of the decompression has to be integrated into the graphics chip.
+At a minimum this includes IDCT, MPEG motion compensation, and the Windows
+Media VC-1 codec.  As a corollary to the "Increased Hardware Costs" problem
+above, this means that you can't ship a low-end graphics chip without video
+codec support any more.
+
+The inability to perform decoding in software also means that any premium-
+content compression scheme not supported by the graphics hardware can't be
+implemented.  If things like the Ogg video codec ever eventuate and get used
+for premium content, they had better be done using something like Windows
+Media VC-1 or they'll be a non-starter under Vista or Vista-approved hardware.
+This is particularly troubling for the high-quality digital cinema (D-Cinema)
+specification, which uses Motion JPEG2000 (MJ2K) because standard MPEG and
+equivalents don't provide sufficient image quality.  Since JPEG2000 uses
+wavelet-based compression rather than MPEG's DCT-based compression, and
+wavelet-based compression isn't on the hardware codec list, it's not possible
+to play back D-Cinema premium content.  Because *all* D-Cinema content will
+(presumably) be premium content, the result is no playback at all until the
+hardware support appears in PCs at some indeterminate point in the future.
+Compare this to the situation with MPEG video, where early software codecs
+like the XingMPEG en/decoder practically created the market for PC video.
+Today, thanks to Vista's content protection, the opening up of new markets in
+this manner would be impossible.
+
+The high-end graphics and audio market are dominated entirely by gamers, who
+will do anything to gain the tiniest bit of extra performance, like buying
+Bigfoot Networks' $250 "Killer NIC" ethernet card in the hope that it'll help
+reduce their network latency by a few milliseconds.  These are people buying
+$500-$1000 graphics and sound cards for which one single sale brings the
+device vendors more than the few cents they get from the video/audio portion
+of an entire roomful of integrated-graphics-and-sound PCs.  I wonder how this
+market segment will react to knowing that their top-of-the-line hardware is
+being hamstrung by all of the content-protection "features" that Vista hogties
+it with?
+
+Unnecessary Device Resource Consumption
+---------------------------------------
+
+As part of the bus-protection scheme, devices are required to implement
+AES-128 encryption in order to receive content from Vista.  This has to be
+done via a hardware decryption engine on the graphics chip, which would
+typically be implemented by throwing away a rendering pipeline or two to make
+room for the AES engine.
+
+Establishing the AES key with the device hardware requires further
+cryptographic overhead, in this case a 2048-bit Diffie-Hellman key exchange.
+In programmable devices this can be done (with considerable effort) in the
+device (for example in programmable shader hardware), or more simply by
+throwing out a few more rendering pipelines and implementing a public-key-
+cryptography engine in the freed-up space.
+
+Needless to say, the need to develop, test, and integrate encryption engines
+into audio/video devices will only add to their cost, as covered in "Increased
+Hardware Costs" above, and the fact that their losing precious performance in
+order to accommodate Vista's content protection will make gamers less than
+happy.
+
+Final Thoughts
+--------------
+
+"No amount of coordination will be successful unless it's designed with the
+needs of the customer in mind.  Microsoft believes that a good user experience
+is a requirement for adoption" -- Microsoft.
+
+At the end of all this, the question remains: Why is Microsoft going to this
+much trouble?  Ask most people what they picture when you use the term
+"premium media player" and they'll respond with "A PVR" or "A DVD player" and
+not "A Windows PC".  So why go to this much effort to try and turn the PC into
+something that it's not?
+
+In July 2006, Cory Doctorow published an analysis of the anti-competitive
+nature of Apple's iTunes copy-restriction system ("Apple's Copy Protection
+Isn't Just Bad For Consumers, It's Bad For Business", Cory Doctorow,
+Information Week, 31 July 2006).  The only reason I can imagine why Microsoft
+would put its programmers, device vendors, third-party developers, and
+ultimately its customers, through this much pain is because once this copy
+protection is entrenched, Microsoft will completely own the distribution
+channel.  In the same way that Apple has managed to acquire a monopolistic
+lock-in on their music distribution channel (an example being the Motorola
+ROKR fiasco, which was so crippled by Apple-imposed restrictions that it was
+dead the moment it appeared), so Microsoft will totally control the premium-
+content distribution channel.  Not only will they be able to lock out any
+competitors, but because they will then represent the only available
+distribution channel they'll be able to dictate terms back to the content
+providers whose needs they are nominally serving in the same way that Apple
+has already dictated terms back to the music industry: Play by Apple's rules,
+or we won't carry your content. The result will be a technologically enforced
+monopoly that makes their current de-facto Windows monopoly seem like a velvet
+glove in comparison.
+
+The worst thing about all of this is that there's no escape.  Hardware
+manufacturers will have to drink the kool-aid (and the reference to mass
+suicide here is deliberate [Note C]) in order to work with Vista: "There is no
+requirement to sign the [content-protection] license; but without a
+certificate, no premium content will be passed to the driver".  Of course as a
+device manufacturer you can choose to opt out, if you don't mind your device
+only ever being able to display low-quality, fuzzy, blurry video and audio
+when premium content is present, while your competitors don't have this
+(artificially-created) problem.
+
+As a user, there is simply no escape.  Whether you use Windows Vista, Windows
+XP, Windows 95, Linux, FreeBSD, OS X, Solaris (on x86), or almost any other
+OS, Windows content protection will make your hardware more expensive, less
+reliable, more difficult to program for, more difficult to support, more
+vulnerable to hostile code, and with more compatibility problems.
+
+Here's an offer to Microsoft: If we, the consumers, promise to never, ever,
+ever buy a single HD-DVD or Blu-Ray disc containing any precious premium
+content [Note D], will you in exchange withhold this poison from the computer
+industry?  Please?
+
+Acknowledgements
+----------------
+
+This document was put together with input from various sources, including a
+number that requested that I keep their contributions anonymous (in some cases
+I've simplified or rewritten some details to ensure that the original,
+potentially traceable wording of non-public requirements docs isn't used).
+Because it wasn't always possible to go back to the sources and verify exact
+details, it's possible that there may be some inaccuracies present, which I'm
+sure I'll hear about fairly quickly.  No doubt Microsoft (who won't want a
+view of Vista as being broken by design to take root) will also provide their
+spin on the details.
+
+In addition to the material present here, I'd be interested in getting further
+input both from people at Microsoft involved in implementing the content
+protection measures and from device vendors who are required to implement the
+hardware and driver software measures.  I know from the Microsoft sources that
+contributed that many of them care deeply about providing the best possible
+audio/video user experience for Vista users and are quite distressed about
+having to spend time implementing large amounts of anti-functionality when
+it's already hard enough to get things running smoothly without the
+intentional crippling.  I'm always open to further input, and will keep all
+contributions confidential unless you give me permission to repeat something.
+If you want to encrypt things, my PGP key is linked from my home page,
+http://www.cs.auckland.ac.nz/~pgut001.
+
+Footnotes
+---------
+
+Note A: I'll make a prediction at this point that, given that it's trying to
+do the impossible, the Vista content protection will take less than a day to
+bypass if the bypass mechanism is something like a driver bug or a simple
+security hole that applies only to one piece of code (and can therefore be
+quickly patched), and less than a week to comprehensively bypass in a
+driver/hardware-independent manner.  This doesn't mean it'll be broken the day
+or week that it appears, but simply that once a sufficiently skilled attacker
+is motivated to bypass the protection, it'll take them less than a day or a
+week to do so.
+
+Note B: I see some impressive class-action suits to follow if this revocation
+mechanism is ever applied.  Perhaps Microsoft or the content providers will
+buy everyone who owns a device that inadvertently leaks content and is then
+disabled by the revocation process replacement hardware for their system.
+Some contributors have commented that they can't see the revocation system
+ever being used because the consumer backlash would be too enormous, but then
+the legal backlash from not going ahead could be equally extreme.  For anyone
+who's read "Guns of August", the situation seems a bit like pre-WWI Europe
+with people sitting on step 1 of enormously complex battle plans that can't be
+backed out of once triggered, no matter how obvious it is that going ahead
+with them is a bad idea.  Driver revocation is a lose/lose situation for
+Microsoft, they're in for some serious pain whether they do or they don't.
+Their lawyers must have been asleep when they let themselves get painted into
+this particular corner.
+
+Note C: The "kool-aid" reference may be slightly unfamiliar to non-US readers,
+it's a reference to the 1978 Jonestown mass-suicide in which Jim Jones'
+followers drank Flavor Aid laced with poison in order to demonstrate their
+dedication to the cause.  In popular usage the term "kool-aid" is substituted
+for Flavor Aid because it has more brand recognition.
+
+Note D: If I do ever want to play back premium content, I'll wait a few years
+and then buy a $50 Chinese-made set-top player to do it, not a $1000 Windows
+PC.  It's somewhat bizarre that I have to go to Communist China in order to
+find vendors who actually understand the consumer's needs.
+

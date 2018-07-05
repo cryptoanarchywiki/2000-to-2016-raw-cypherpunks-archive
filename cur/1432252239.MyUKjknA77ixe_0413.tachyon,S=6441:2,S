@@ -1,0 +1,111 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Tue Aug 13 13:20:57 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7DHKuO23948
+	for <rsw@opamp.org>; Tue, 13 Aug 2002 13:20:57 -0400
+Received: from lion.ninthwonder.com (lion.ninthwonder.com [151.199.66.147])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id NAA00791
+	for <rsw@mit.edu>; Tue, 13 Aug 2002 13:20:55 -0400 (EDT)
+Received: by lion.ninthwonder.com (Postfix, from userid 96)
+	id 32D8B30715; Tue, 13 Aug 2002 13:19:28 -0400 (EDT)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by lion.ninthwonder.com (Postfix) with ESMTP id C7C613070A
+	for <cryptography@wasabisystems.com>; Tue, 13 Aug 2002 13:19:26 -0400 (EDT)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 4E1C5D97C9; Tue, 13 Aug 2002 13:19:26 -0400 (EDT)
+Received: from www.aarg.net (www.aarg.net [206.101.74.70])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 34AF43070A
+	for <cryptography@wasabisystems.com>; Tue, 13 Aug 2002 13:10:45 -0400 (EDT)
+Received: from www.aarg.net (IDENT:mix@localhost.localdomain [127.0.0.1])
+	by www.aarg.net (8.12.3/8.12.3) with ESMTP id g7DHAOrm008674
+	(version=TLSv1/SSLv3 cipher=EDH-RSA-DES-CBC3-SHA bits=168 verify=NO);
+	Tue, 13 Aug 2002 10:10:24 -0700
+Received: (from mix@localhost)
+	by www.aarg.net (8.12.3/8.12.1/Submit) id g7DHA80h008663;
+	Tue, 13 Aug 2002 10:10:08 -0700
+Date: Tue, 13 Aug 2002 10:10:08 -0700
+From: AARG!Anonymous <remailer@aarg.net>
+Comments: This message did not originate from the Sender address above.
+	It was remailed automatically by anonymizing remailer software.
+	Please report problems or inappropriate use to the
+	remailer administrator at <abuse@aarg.net>.
+To: bal@farcaster.com, cypherpunks@lne.com, cryptography@wasabisystems.com
+Subject: Re: Challenge to David Wagner on TCPA
+Message-ID: <3518ea1e50508a00d3663f8a6d880b8a@aarg.net>
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 4248
+Lines: 69
+
+Brian LaMacchia writes:
+
+> So the complexity isn't in how the keys get initialized on the SCP (hey, it
+> could be some crazy little hobbit named Mel who runs around to every machine
+> and puts them in with a magic wand).  The complexity is in the keying
+> infrastructure and the set of signed statements (certificates, for lack of a
+> better word) that convey information about how the keys were generated &
+> stored.  Those statements need to be able to represent to other applications
+> what protocols were followed and precautions taken to protect the private
+> key.  Assuming that there's something like a cert chain here, the root of
+> this chain chould be an OEM, an IHV, a user, a federal agency, your company,
+> etc. Whatever that root is, the application that's going to divulge secrets
+> to the SCP needs to be convinced that the key can be trusted (in the
+> security sense) not to divulge data encrypted to it to third parties.
+> Palladium needs to look at the hardware certificates and reliably tell
+> (under user control) what they are. Anyone can decide if they trust the
+> system based on the information given; Palladium simply guarantees that it
+> won't tell anyone your secrets without your explicit request..
+
+This makes a lot of sense, especially for "closed" systems like business
+LANs and WANs where there is a reasonable centralized authority who can
+validate the security of the SCP keys.  I suggested some time back that
+since most large businesses receive and configure their computers in
+the IT department before making them available to employees, that would
+be a time that they could issue private certs on the embedded SCP keys.
+The employees' computers could then be configured to use these private
+certs for their business computing.
+
+However the larger vision of trusted computing leverages the global
+internet and turns it into what is potentially a giant distributed
+computer.  For this to work, for total strangers on the net to have
+trust in the integrity of applications on each others' machines, will
+require some kind of centralized trust infrastructure.  It may possibly
+be multi-rooted but you will probably not be able to get away from
+this requirement.
+
+The main problem, it seems to me, is that validating the integrity of
+the SCP keys cannot be done remotely.  You really need physical access
+to the SCP to be able to know what key is inside it.  And even that
+is not enough, if it is possible that the private key may also exist
+outside, perhaps because the SCP was initialized by loading an externally
+generated public/private key pair.  You not only need physical access,
+you have to be there when the SCP is initialized.
+
+In practice it seems that only the SCP manufacturer, or at best the OEM
+who (re) initializes the SCP before installing it on the motherboard,
+will be in a position to issue certificates.  No other central authorities
+will have physical access to the chips on a near-universal scale at the
+time of their creation and installation, which is necessary to allow
+them to issue meaningful certs.  At least with the PGP "web of trust"
+people could in principle validate their keys over the phone, and even
+then most PGP users never got anyone to sign their keys.  An effective
+web of trust seems much more difficult to achieve with Palladium, except
+possibly in small groups that already trust each other anyway.
+
+If we do end up with only a few trusted root keys, most internet-scale
+trusted computing software is going to have those roots built in.
+Those keys will be extremely valuable, potentially even more so than
+Verisign's root keys, because trusted computing is actually a far more
+powerful technology than the trivial things done today with PKI.  I hope
+the Palladium designers give serious thought to the issue of how those
+trusted root keys can be protected appropriately.  It's not going to be
+enough to say "it's not our problem".  For trusted computing to reach
+its potential, security has to be engineered into the system from the
+beginning - and that security must start at the root!
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

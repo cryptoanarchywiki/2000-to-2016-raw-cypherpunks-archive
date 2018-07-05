@@ -1,0 +1,103 @@
+From cypherpunks-bounces@cpunks.org  Wed Jan 15 12:30:59 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0FHUDMH002876;
+	Wed, 15 Jan 2014 12:30:18 -0500
+Received: from x1.ctrlc.hu (x1.ctrlc.hu [195.14.20.232])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0FHU95c002872
+ for <cypherpunks@cpunks.org>; Wed, 15 Jan 2014 12:30:11 -0500
+Received: from i.ctrlc.hu (unknown
+ [IPv6:fc8c:1767:11aa:2214:2767:6acb:77ab:a45d])
+ by x1.ctrlc.hu (Postfix) with ESMTP id 4D97B35D3E;
+ Wed, 15 Jan 2014 18:30:04 +0100 (CET)
+Received: by i.ctrlc.hu (Postfix, from userid 1000)
+ id 5240C15C91; Wed, 15 Jan 2014 18:30:01 +0100 (CET)
+Date: Wed, 15 Jan 2014 18:30:00 +0100
+From: stef <s@ctrlc.hu>
+To: Thomas von Dein <tom@vondein.org>
+Subject: Re: consistent pcp/pbp formats (was: Curve p25519 Replacements for
+ GnuPG?(x2 now) ..)
+Message-ID: <20140115173000.GU7008@ctrlc.hu>
+References: <20140114111653.GD3900@r4>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20140114111653.GD3900@r4>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+howdy,
+
+On Tue, Jan 14, 2014 at 12:16:53PM +0100, Thomas von Dein wrote:
+> > - coordinate representation x, x&y, x and sign ...
+> > or bits to show which of these ... perhaps borrow ANSI method
+> 
+> Could you please explain this further?
+
+i believe this is not really necessary for this type of curve. especially if
+we manage to switch to elligator curves soonish.
+
+> > - hint / indication of cipher suite / curve 
+> 
+> In pcp there's already such a hint included in exported keys, however
+> I'm not using it, since there's no choice of different curves in
+> libsodium so far. But it's on the list.
+
+unfortunately pbp has such a distinguisher, it decides between asym/sym
+encryption. i should somehow get rid of that.
+
+> > - text encoding of binary format (ascii)
+> 
+> As already stated in the other subthread, I use Z85, while stef is using
+> base85. Since Z85 is a subset of base85, I'm pretty sure we can agree on
+> something.
+
+absolutely. i like small keys, that's why we do ecc, not RSA. as it allows to
+use crypto e.g. also in tweets, signed tweets leave you with  ~55 chars for
+messages, or as we recently found out also in the comment field of bank
+wiretransfers. i wasn't really joking doing a numberstation style output
+format. the https://en.wikipedia.org/wiki/PGP_word_list might be quite good
+for easy human voice transmission, like in key parties. takes a bit of time
+reciting 32 words, but might be easier than reciting a pgp keyid.
+
+> I'm not sure, how stef solved the ed25519 issue (you can't use a
+> curve25519 secret key to create an ed25519 signature directly). After
+> some discussion on the libsodium mailinglist we came up with this:
+> 
+> When the user generates a new key, the ed25519 secret key will be
+> generated first. The curve25519 secret will be derived from that, since
+> the ed25519 already contains a usable curve25519 key. In pcp I store
+> both of them for easier access, so the ed25519 and curve25519 secret and
+> public keys are stored, the secret keys are encrypted and I store the
+> nonce as well (see include/pcp/key.h).
+
+pbp uses separate and unrelated keys for confidentiality and others for signing.
+
+> Speaking of key encryption: @stef: according to your docs you're already
+> using scrypt() for key derivation. I'd like to use that as well, but
+> it's not part of libsodium (afaik), so I use my own method for this til
+> scrypt() is implemented in libsodium. That's because I want to avoid
+> writing crypto code myself.
+
+http://ftp.de.debian.org/debian/pool/main/s/scrypt/scrypt_1.1.6.orig.tar.gz
+
+seems like a good start for reusing code.
+
+-- 
+pgp: https://www.ctrlc.hu/~stef/stef.gpg
+pgp fp: FD52 DABD 5224 7F9C 63C6  3C12 FC97 D29F CA05 57EF
+otr fp: https://www.ctrlc.hu/~stef/otr.txt
+

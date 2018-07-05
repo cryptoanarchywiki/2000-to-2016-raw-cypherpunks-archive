@@ -1,0 +1,161 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t5C4Td4f029730;
+	Fri, 12 Jun 2015 00:29:43 -0400
+Received: from relay00.pair.com (relay00.pair.com [209.68.5.9])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with SMTP id t5C4TZTL029726
+ for <cypherpunks@cpunks.org>; Fri, 12 Jun 2015 00:29:36 -0400
+Received: (qmail 72040 invoked from network); 12 Jun 2015 04:29:28 -0000
+Received: from 173.78.35.222 (HELO ?192.168.1.7?) (173.78.35.222)
+ by relay00.pair.com with SMTP; 12 Jun 2015 04:29:28 -0000
+X-pair-Authenticated: 173.78.35.222
+Message-ID: <557A6028.9030404@pilobilus.net>
+Date: Fri, 12 Jun 2015 00:29:28 -0400
+From: Steve Kinney <admin@pilobilus.net>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64;
+ rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+MIME-Version: 1.0
+To: cypherpunks@cpunks.org
+Subject: Re: [tor-talk] Additional hop before connecting to Tor
+References: <20150611140832.GJ10743@leitl.org>
+In-Reply-To: <20150611140832.GJ10743@leitl.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 124
+
+On 06/11/2015 10:08 AM, Eugen Leitl wrote:> ----- Forwarded message
+from dtm168@openmailbox.org -----
+>
+> Date: Thu, 11 Jun 2015 13:52:40 +0200
+> From: dtm168@openmailbox.org
+> To: tor-talk@lists.torproject.org
+> Subject: [tor-talk] Additional hop before connecting to Tor
+> Message-ID: <2a8f8c25121cbad6b4575ce5ddcd3d57@openmailbox.org>
+> User-Agent: Roundcube Webmail/1.0.5
+> Reply-To: tor-talk@lists.torproject.org
+>
+> Hi,
+>
+> You often read that the fact you are using Tor is being monitored by
+> the various intelligence services.
+>
+> I guess this works by recording which IP addresses connect to known
+> entry relays and/or directory authorities.
+
+Other tracking vectors available to State level actors include:
+
+* Owning and operating a large fraction of the routers in the
+network.  This can be concealed very effectively by using a cloud
+server to host all the routers in one place, with exits all over the
+world via transparent proxies.  "All in one place" means, monitored
+and manipulated in realtime to shape traffic and identify users.
+
+* Monitoring exit node traffic to record browser fingerprints,
+cleartext of any data transmitted between the TOR user and any
+server on the Internet, and associating these with behavior patterns
+indicating a personal interests profile, likely time zones, etc.
+
+* Diverting exit node traffic through a hostile router equipped with
+"real" Certificate Authority signing keys negates SSL completely -
+connecting to a server via SSH over TOR is the same as connecting to
+the server without SSH, if your adversary is NSA.
+
+* Injecting exploits and implants into the TOR user's inbound
+traffic from sites on the "normal" Internet, custom tailored to
+"climb out of" the TOR browser and take over the user's system.
+
+All of the above are within known capabilities at NSA and, most
+likely, Israeli, Chinese and Russian security services.  It is
+possible that their biggest problem is tripping over each other's
+feet while interfering with TOR users.
+
+> Since you usually also connect to facebook or gmail your identity can
+> be easily linked to Tor usage.
+> This is especially true if you have a static IP address.
+
+Any contact with NSA owned (Facebook) or NSA partner (Google)
+services creates big, greasy fingerprints that make tracking anyone
+anywhere much easier.
+
+> Currently I use a virtual server in a foreign country which I pay with
+> Bitcoin. I use an ssh tunnel which I use to make connections to Tor,
+> i.e. intelligence service see the IP of my server which connects to
+> known Tor IP addresses.
+
+A VPN does not even attempt to conceal the identities of users from
+any actor who can watch both ends of the connection.  A VPN will
+stop low tech adversaries like MPAA/RIAA goons who go after people
+sharing files; NSA and its peers, not so much.  Not to mention that
+the VPN provider's logs know all and, if handed over or stolen, tell
+all.
+
+> 1. How likely is it that they look at connecting IP addresses to my
+> server (and identify me)?  Probably very likely. Would it help to have
+> an additional anon server as an additional hop to Tor?
+
+Generally speaking, TOR and similar systems may delay but will not
+prevent the identification of frequent users, paired with their exit
+node traffic and its content.  Repeatedly using /any/ anonymizing
+protocol from one location more or less guarantees your correct ID
+lands in a database with a summary of what your anonymous traffic
+contains.
+
+One-off use of TOR via the TAILS operating system on a "clean"
+laptop at an open WiFi router might be enough to prevent you and
+your traffic from being logged.
+
+> 2. Tor traffic has these characteristic traffic signatures (packet
+> size, timings of packets when idle). Would these also "shine through"
+> the ssh tunnel?
+
+SSH in general and VPN providers in particular are transparent to
+outfits like NSA.  Using them with TOR only becomes part of a
+profile that eventually narrows down to one user - you.
+
+> 3. I guess making that server a private bridge will be worse than
+> using ssh because of these typical Tor traffic patterns.
+
+Maybe not.  Needle vs. haystack and all that.  But again, if you use
+the same physical Internet connection to repeatedly do "anonymous"
+things, it would be very good if these things were of no real
+interest to our Security Services.
+
+> 4. I am also afraid of running a Tor relay on my home internet
+> connections because all members of my family who share that IP will be
+> flagged as Tor users...
+
+I have run TOR relays from time to time.  As long as you are not
+running an exit node, nothing bad will happen.  And at least you
+know you are adding one "honest" router to the network - unless your
+box has been rooted and you don't know who really controls it.
+
+> I am interested to hear your opinions.
+
+There's mine, for what it's worth.  Te anonymity provided by TOR
+(and i2p, Mixmaster, Freenet, etc.) is very limited even in best
+case scenarios.  These tools simply can't work when a hostile actor
+effectively sees all, knows all, and can fuck with any connection on
+demand.  On the brighter side most private, corporate and criminal
+attackers would be completely unable to penetrate the security
+provided by TOR (or etc.), unless they are in a position to ask the
+NSA or a comparable Security Service to do it for them.
+
+:o)
+
+Steve
+
+
+

@@ -1,0 +1,167 @@
+From owner-cypherpunks@Algebra.COM  Thu Feb  8 05:58:38 2001
+Received: from MIT.EDU (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.69.0.28])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id FAA03116
+	for <kwantam@positron.mit.edu>; Thu, 8 Feb 2001 05:58:38 -0500
+Received: from ak47.algebra.com by MIT.EDU with SMTP
+	id AA12961; Thu, 8 Feb 01 06:00:44 EST
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f189GqV27526
+	for cypherpunks-outgoing; Thu, 8 Feb 2001 03:16:52 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from sirius.infonex.com (sirius.infonex.com [216.34.245.2])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f189Goq27495
+	for <cypherpunks@algebra.com>; Thu, 8 Feb 2001 03:16:50 -0600
+Received: (from cpunks@localhost) by sirius.infonex.com (8.8.8/8.8.8) id BAA26726; Thu, 8 Feb 2001 01:16:43 -0800 (PST)
+Received: from cyberpass.net (cyberpass.net [216.34.245.3]) by sirius.infonex.com (8.8.8/8.8.8) with ESMTP id BAA26722 for <cpunks@sirius.infonex.com>; Thu, 8 Feb 2001 01:16:37 -0800 (PST)
+Received: from smile.idiom.com ([209.209.13.26]) by cyberpass.net (8.8.8/8.7.3) with ESMTP id BAA29332 for <cypherpunks@cyberpass.net>; Thu, 8 Feb 2001 01:19:22 -0800 (PST)
+Received: from billstewart (sji-ca3-159.ix.netcom.com [209.109.233.159])
+	by smile.idiom.com (8.9.1/8.8.5) with SMTP id BAA59496;
+	Thu, 8 Feb 2001 01:16:26 -0800 (PST)
+Message-Id: <3.0.5.32.20010207213202.00a41c00@idiom.com>
+X-Sender: wcs@idiom.com (Unverified)
+X-Mailer: QUALCOMM Windows Eudora Light Version 3.0.5 (32)
+Date: Wed, 07 Feb 2001 21:32:02 -0800
+To: Tom <tom@lemuria.org>, cypherpunks@cyberpass.net
+From: Bill Stewart <bill.stewart@pobox.com>
+Old-Subject: Re: published secret - similiar to AP prot
+In-Reply-To: <20010206112409.B28982@lemuria.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Subject:  Re: published secret - similiar to AP prot
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 5741
+Lines: 126
+
+
+At 11:24 AM 2/6/01 +0100, Tom wrote:
+>so far, simple. the new twist is that I want bob to know when alice (or
+>someone else) makes use of the information. at the lowest level, bob
+>may want to simply know when his mirror is being used. or the
+>information may be highly illegal and bob must know that he is now in
+>the line of fire. or maybe he doesn't even actually provide the
+>information until he gets the message that it is now required (think
+>moving target).
+
+One simple approach - have Bob use a CGI script for publishing the material,
+e.g. http://bob.com/cgi-bin/backups?alice-file-123
+that notifies Bob when the URL is accessed, and either returns
+the desired file or another URL that points to the real file.
+More complex - have Bob require a signature from Alice on the request.
+
+Another approach - have the CGI script tell Alice the URLs 
+for files that belong to her, or tell the recipient the URLS
+for files that match a given keyword.
+
+You have to think about threat models.  If Alice is under attack,
+do the attackers have Alice's mailbox that would contain the URL?
+Do they have Alice's private key?  Do you care?
+Does Bob have a site like Cryptome where anybody can read everything?
+Does Bob have a samizdat site where only people who have the
+password for a file can access that file (and maybe the password
+is the hash of the file)?   
+
+If Bob doesn't want legal problems because of Alice,
+it's safer if he doesn't tell Alice, or at least doesn't
+do anything different for Alice than he would for any other customer.
+He can also be much safer if he doesn't store the file 
+in a form he can decrypt.   A few years ago, I developed a couple
+of protocols for variations of this problem.
+All of these methods were designed so that Bob wouldn't
+have to return a key to Alice - that lets it work over remailers.
+
+The simplest version works like this
+	key      = hash(file)
+	filename = hash(key, salt)		# One salt for entire site
+	Store Encrypt(file, key) as "filename".
+The author creates the file, calculates the key,
+and sends the file to Bob, preferably over a secure channel.
+Bob calculates the key, calculates the filename, 
+encrypts and stores the file, then forgets the key.  
+If Alice (or somebody she gave the key to) wants to retrieve it,
+she gives Bob the key, Bob calculates the filename
+and returns the encrypted file.  That still leaves Bob with
+some risk, because if he someone gives him the key,
+he can find and decrypt the file, but the only way for
+somebody (or Bob) to know if he has the file is to know the key.
+Note that if you try to store multiple copies of the same file,
+it's detected when Bob calculates the filename,
+so Bob doesn't need multiple copies of the same Metallica track,
+unless different people have compressed them creating
+non-identical files.
+
+Because the key is based on the file contents, not just keywords,
+the attacker needs to know the whole file contents to
+verify that it's there - the attacker can't just try
+searching Bob's file system for "Osama" "cocaine" "narcoterrorism".
+If Alice wants to make it easy for people to find 
+her writing based on keywords, she can store the index
+in a different file (somewhere else on the web,
+or perhaps in a different file on Bob's samizdat site.)
+
+
+
+Some versions that are more paranoid give Bob more protection
+or the author more control:
+	key =      hash(file)
+	handle =   hash(key)
+	filename = hash(key, salt)
+and the retrieval uses "handle" instead of "key",
+so Bob or an eavesdropper can't decrypt the file at retrieval-time
+if he didn't save the keys, which is safer for Bob,
+because he can't tell if the material he's storing is ThoughtCrime.
+	control =  hash(file)
+	key =      hash(control)
+	handle =   hash(key)
+	filename = hash(key, salt)
+lets Alice give people her friends the key and handle,
+but gives her a token she can give Bob demonstrating that she's
+authorized to do things like delete the file.
+(Also, you could use the control and not the handle, or whatever.)
+
+None of these prevent Bob from reading the file he's storing.
+If Alice cares about this, she should use separate encryption.
+
+
+>my solution is as follows:
+>
+>when bob copies the info, he sends a message to alice. the "outer
+>shell" is encrypted to alice private key, to ensure that only alice can
+>make use of it. it contains a URL, a public key and a second, encrypted
+part. 
+>the URL is under bob's control and provides the key to the second part. it is
+>not linked from anywhere and reasonably complicated to make any
+>"accidental" hit to it extremely unlikely.
+>come day X where bob's mirror is needed. alice decrypts her mail and
+>visits bob's URL to get the 2nd key. bob now knows (or at least can
+>know, if he cares) that alice is in posession of the whole message
+>(e.g. containing the URL of his mirror site) and can react accordingly.
+>the 2nd key is also encrypted to alice, so eve can not learn about the
+>whole message until and if alice decides to publish it (e.g. link to
+>the new mirror site).
+>the 2nd key is also signed with the key contained in the 1st message in
+>order to assure alice that the information she now retrieves (possibly
+>months or years later) is from the same source as the original message.
+>
+>
+>
+>problems I know about:
+>
+>legally, this surely puts bob and alice "in cooperation", so a legal
+>injunction against alice will bind bob as well. any ideas on how to
+>solve that would be great.
+>it sure sounds a little heavy for a simple goal. I'm fairly sure there is 
+>a more general solution to the problem. it's just so common. "bob sends 
+>alice a message. bob needs to know when alice reads it."
+
+
+				Thanks! 
+					Bill
+Bill Stewart, bill.stewart@pobox.com
+PGP Fingerprint D454 E202 CBC8 40BF  3C85 B884 0ABE 4639
+

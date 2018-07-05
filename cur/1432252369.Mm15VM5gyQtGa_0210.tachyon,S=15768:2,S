@@ -1,0 +1,263 @@
+From cypherpunks-bounces@cpunks.org  Thu Jul 25 18:12:44 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r6PMCCZc025809;
+	Thu, 25 Jul 2013 18:12:17 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r6PMC7T1025805
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Thu, 25 Jul 2013 18:12:09 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id EE8DF541DD2; Fri, 26 Jul 2013 00:12:04 +0200 (CEST)
+Date: Fri, 26 Jul 2013 00:12:04 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: Re: [liberationtech] CJDNS hype
+Message-ID: <20130725221204.GS29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 14045
+Lines: 225
+
+----- Forwarded message from Caleb James DeLisle <calebdelisle@lavabit.com> -----
+
+Date: Thu, 25 Jul 2013 23:58:34 +0300
+From: Caleb James DeLisle <calebdelisle@lavabit.com>
+To: liberationtech <liberationtech@lists.stanford.edu>
+Subject: Re: [liberationtech] CJDNS hype
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130623 Thunderbird/17.0.7
+Reply-To: liberationtech <liberationtech@lists.stanford.edu>
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Hi Michael,
+
+Sorry for the wait on my part as well, I was very busy last week.
+
+On 07/24/2013 05:27 AM, Michael Rogers wrote:
+> Hi Caleb,
+> 
+> Thanks for the detailed answers - I'm sorry it's taken me so long to reply.
+> 
+> - From your answers and the whitepaper I think I'm starting to understand how the switching and routing layers fit together. Would I be right in thinking that each node populates its DHT routing table with nodes that are one or more hops away at the switching layer, and that each hop at the switching layer is a link between two people who know each other? So two nodes that are neighbours at the DHT layer are't necessarily neighbours at the switching/social layer?
+
+Exactly. There is no real concept of "neighbors" at the DHT layer but
+there is address space distance so some nodes are "close".
+
+> 
+> And if there's more than one candidate for a slot in the DHT routing table, am I right in thinking that some weighted combination of DHT ping time and label length is used to pick the best candidate, where label length is a combination of path length (at the switching layer) and the degree of the nodes along the path (with short paths and low-degree nodes resulting in shorter labels)?
+
+Yup.
+
+> 
+>>> More generally, could you explain how CJDNS detects and routes around faults?
+> 
+>> The simple version is that it pings at random nodes in it's table. When a node is unresponsive, it and anyone who is behind it is dropped from the table.
+> 
+> A few questions about pings:
+> 
+> Is it possible for a node that's being pinged to distinguish a ping from a data packet? (What would happen if a node responded correctly to pings but dropped data packets?)
+
+Yes, the destination of the ping does know that it's a ping since it
+needs to respond to it. If it dropped non-pings it would be unreachable
+and if it dropped layer3 "forward me" messages then it would break the
+network.
+
+> 
+> Can a node on the switching path between the pinger and the pingee distinguish a ping from a data packet?
+
+Only by guessing based on size and timing.
+
+> 
+> Can a node on the switching path between the pinger and the pingee respond to a ping on the pingee's behalf?
+
+Never ever. That's critical to the model that when you are told about
+a node that you don't trust that it's real until you're sure that
+you've talked to it.
+
+> 
+>>> Could you explain what a route prefix is and how you can be sure that a set of Sybil identities will share a route prefix? How is the route prefix used in detecting and routing around faults?
+> 
+>> This requires understanding the base method by which cjdns works. When I start up my router, I connect to my specified peers which I have manually configured, these are people whom I know well enough to be assured that they are honest peers.
+> 
+>> Then my node's switch core assigns each one an interface index. My node then compresses the interface indexes of it's neighbors into a label and inserts the entries with key and label into it's routing table.
+> 
+>> My node randomly asks nodes in it's routing table for pieces of their table, the question could be simplified as "who do you know, how do you reach them", the response from them is entries taken directly from their routing table.
+> 
+>> When Alice tells me that she knows Bob and his label is 12345, I take Alice's label which might be abcd and splice them together to have a label which routes from me to Alice to Bob, then after Bob has been pinged along this path, I begin to trust it.
+> 
+>> This is all an oversimplification, for the actual way it works please consult the whitepaper.
+> 
+> Thanks, that's a really helpful explanation. So it seems to me that you're using the same observation as SybilGuard and similar systems: although the number of Sybils is unlimited, the number of social edges between Sybils and non-Sybils is limited, so those edges can be used to limit the impact of Sybils.
+> 
+> It's a cool observation, but the devil's in the details - how do you actually apply that observation in practice? Is there some algorithm in cjdns that detects anomalous routing table entries by examining the prefixes of their switching labels?
+
+Other than short paths (labels) being preferred, there are only a few
+tricks aimed specifically at accidental problems. If I discover route
+a->b->c->d->w->x->y->z->d
+then I discover
+a->b->c->d
+I will replace the first with the second since I can prove that the
+first is an indirect representation of the second.
+
+There are no specific defenses against sybil attacks but I don't think
+any are needed given the fact that it's inherently different from a
+traditional overlay network.
+
+> 
+>>> Could you explain why a set of Sybil identities will produce an absurdly long path, and how you can be sure that the routing table has already been populated with fast non-Sybil nodes?
+> 
+>> Re the absurd length of paths, since more nodes mean more interface indexes, it stands to reason that the more interface indexes will make a longer label. Long labels are avoided by cjdns.
+> 
+> Bear in mind that Sybils don't have to exist simultaneously. For example, Alice could tell me that she has one neighbour other than me, Bob. I add Bob to my routing table, but later I detect that he's not routing packets correctly, so I drop him. Then Alice tells me that Bob's no longer her neighbour but she has a new neighbour, Carol. I add Carol to my routing table, but later I detect that she's not routing packets correctly, so I drop her. Then Alice tells me that Carol's no longer her
+> neighbour but she has a new neighbour, Dave...
+> 
+> At any given time, Alice only has two interfaces, so my labels for Bob, Carol, Dave, etc will be short.
+> 
+> Obviously this is just a toy example, but it shows that in the general case a Sybil attack doesn't necessarily produce long labels.
+
+
+That's a valid point. We tried to avoid trapping bad behavior and
+dropping a node because in my opinion it is too brittle and is more
+likely to introduce a vulnerability.
+
+Rather than trust early and detect known bad behavior, cjdns is slow to
+trust. If you tell me about a new node I will generally not use it until
+the node I'm currently using fails. This hurts performance but helps
+stability once the network is functional.
+
+> 
+>>> It sounds like you're saying that a Sybil attack won't work because the victims have already populated their routing tables prior to the attack - but what about a new node joining the network after the attack has started?
+> 
+>> Unless your direct peers (with whom you have a relationship) are sybil nodes, they will keep their tables clean and when you ask them for nodes, they will give you honest nodes whom also have clean tables. You will see a few sybil nodes in your table but they will also come with many valid nodes which will cause the router to slow down it's search for nodes, curtailing their effort to pollute the routing table
+> 
+> I think I need more detail to understand how this works. I receive routing information from my peers, who receive it from their own peers, etc. Each node is supposed to keep its table clean in order to share clean information with its peers - how does it do that? What operations are performed to clean the information before sharing it with peers? When I receive information from my peers, how do I know whether it's clean?
+
+I'm on very unstable ground here, possibly bullshitting...
+None of this has been simulated so I have to tread carefully.
+
+Basically each route has a "value", when a node is inserted, the route
+to that node has a value of 0, valid ping responses increment the number
+and timeouts halve it. High numbers and short paths are favored but even
+a long path is favored over a "0 value route".
+
+When you ask a node for routes, it will give you routes which are either:
+
+1. A perfect match to the ip address you queries (even if 0 reach)
+2. The highest reach node which is closet to the query target than them.
+(them == the node to whom you sent the query)
+
+Since cjdns populates it's table by periodically querying randomly generated
+ip addresses, nodes share their best paths causing a sort of "wisdom of the
+crowd" effect and making it difficult for a sybil attack to gain traction.
+
+> 
+>>> Nevertheless, a node could selectively drop traffic bound for certain recursive routing hops, while forwarding other traffic, right?
+> 
+>> Yes but each node is a recursive router and you're allowed to forward to any router whose address is numerically closer to the destination than your own so if someone is blocking a router, there are many others to choose from.
+> 
+>> Granted we don't have any tools for detecting that a recursive router is misbehaving and blacklist it but this is an implementation cat-and-mouse game which the protocol will support.
+> 
+> What mechanism in the protocol would make it possible for future implementations to detect misbehaving nodes?
+
+We would have to make some small protocol changes to make this work
+but what immediately comes to mind is A sending a forward request to
+B to forward to C then sending a switch level packet to C asking if
+he got the message.
+
+Only A and C need to have the protocol patch and there is already a
+protocol versioning system in place so this would be trivial to
+integrate.
+
+You have to trust C not to lie to you though. This kind of complexity
+is why I have tried to avoid explicit detection and why I say "cat and
+mouse game".
+
+> 
+>>> The point I was trying to make in my previous email is that whatever information the packets carry to distinguish one packet from another, the adversary can use that information to target certain packets while maintaining the appearance of high overall reliability.
+> 
+>> All of the distinguishing information (IPv6 header) is encrypted so the only thing is the routing label (unless you're at the recursive routing layer)
+> 
+> Sorry, I'm confused about layers again. An IPv6 packet's journey across the network consists of one or more DHT hops, each of which consists of one or more switching hops, is that right? And the IPv6 header is encrypted at each DHT hop, so nodes along the switching path of each DHT hop can only read the switching label (and maybe the DHT address of the next DHT node), but not the IPv6 header?
+
+Basically correct, the switch can read the label and likely use it's
+routing table to determine the address of the next hop but cannot determine
+the destination.
+
+For performance and scalability this feature may be removed.
+
+> 
+> How does a node learn the keys of its DHT neighbours in order to encrypt packets that only they can decrypt? (Obviously when its DHT neighbours are also its social neighbours this is easy, but what happens when they're not?)
+
+When you do a DHT query, you get the keys (and protocol version numbers)
+along with the paths.
+
+> 
+>>>> Can't spoof a packet because the IPv6 address is the public key hash.
+> 
+>>> Is every packet signed with the corresponding private key? Seems like that would be expensive.
+> 
+>> Not signed, encrypted with an authenticator, this is very fast. If you don't know the symmetrical key, you can't modify any packet without me knowing and you obviously can't read my packets. The symmetrical key only needs to be derived once.
+> 
+> I can see how that would prove to the IPv6 destination that the claimed IPv6 source was the real source of the packet - but I can't see how it would prove to any other node that the claimed source was the real source (presumably the symmetric key is only known to the source and destination). So it seems to me that it's still possible to make /some/ nodes believe that a packet originated from a different source than its true source, which might be a building block for other attacks (eg
+> manipulating the fault detection mechanism).
+
+Your technical analysis is spot on.
+There is no code which relies on the packets originating from someone
+else so your attack building block this is not much of an issue for me.
+Anyway signing packets for all the world to see not only performs poorly
+but is problematic in other ways. I'm not sure people would want their
+packets to be linked to their identity forever, they can be decrypted
+after all, by the destination if no one else.
+
+Thanks,
+Caleb
+
+> 
+> Cheers, Michael
+> 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJR8ZF6AAoJECYAmptlsgnW+Y0P/3ts2lZ7LCAJBujU0SZKFHBn
+EnFdhNfXSqIGKi2wo+8zO8RIvnCC60IcMqljVbkQiqE8jTZBVwsSuIuob9P4pukm
+E2vwLd7PJ1s4JR/t/vxoKep84s+S5xbfJT/bNDNwBMWZSTVYUeC1a7wmou1d/uIj
+oBn9ELWk9iRuc5OTkNdXuCNr/tT57QjYuhIuE9KIySZ+a+Jn4TPC6cMaQ90lwbKS
+UFlcuDU9EvDWp4ATGSqTLhkoPp5cVqj+Kz9iGIBml3xKW50h+6Ol0C10iYo7e/qP
+1AcUHa/kU6r2uCSHyQndzoL6PzWmJ4gRz1PCZe+xPPFcBojeBNdApPylmsqfvB5r
+YBIESmsr4mexEqrwFJqJRlvk0s1iJya47uAH3JH/23xFvYGTV4X05Eh/nrwGxo5z
+5swfE2GKHIDA5SoszkGLMLu6SgpFBCQjy6lSlI6VNjh0ElL76lu2uLxxrS6XQQLw
+YetGH2PTgzZoaSwydG6OnZkTX9Ae5FdMNlIn68RijP26xMAY84W0M6uEEBNZvC+W
+Vau16LFTk6MmHi7PHtQLkjlEVLuoFX0EsPWHti8l+9my7sRCCVO4n6vD11+FSMg6
+uAelkHGJ0TZEC36DiU67wnZpSo7KBBw0re2GOaewATm0NNnwm44a0ie58z7IunCM
+0wu9uJ6jNuVmLM9I8C4E
+=2PzJ
+-----END PGP SIGNATURE-----
+
+--
+Too many emails? Unsubscribe, change to digest, or change password by emailing moderator at companys@stanford.edu or changing your settings at https://mailman.stanford.edu/mailman/listinfo/liberationtech
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

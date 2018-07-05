@@ -1,0 +1,95 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Mon Aug 12 13:08:40 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7CH8eF19989
+	for <rsw@opamp.org>; Mon, 12 Aug 2002 13:08:40 -0400
+Received: from lion.ninthwonder.com (lion.ninthwonder.com [151.199.66.147])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id NAA28746
+	for <rsw@mit.edu>; Mon, 12 Aug 2002 13:08:39 -0400 (EDT)
+Received: by lion.ninthwonder.com (Postfix, from userid 96)
+	id 9A60730737; Mon, 12 Aug 2002 13:05:51 -0400 (EDT)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 02A9D30733
+	for <cryptography@wasabisystems.com>; Mon, 12 Aug 2002 13:05:50 -0400 (EDT)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 08979D97CB; Mon, 12 Aug 2002 13:05:47 -0400 (EDT)
+Received: from mercury.ex.ac.uk (mercury.ex.ac.uk [144.173.6.26])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 1450C30706
+	for <cryptography@wasabisystems.com>; Mon, 12 Aug 2002 12:15:12 -0400 (EDT)
+Received: from cronus ([144.173.6.20] helo=cronus.ex.ac.uk)
+	by mercury.ex.ac.uk with esmtp (Exim 3.33 #1)
+	id 17eHqC-0028yl-00; Mon, 12 Aug 2002 17:14:48 +0100
+Date: Mon, 12 Aug 2002 17:14:42 +0100
+From: Adam Back <adam@cypherspace.org>
+To: Ben Laurie <ben@algroup.co.uk>
+Cc: cryptography@wasabisystems.com, cypherpunks@lne.com,
+   Adam Back <adam@cypherspace.org>
+Subject: Re: Palladium: technical limits and implications
+Message-ID: <20020812171442.A829213@exeter.ac.uk>
+References: <51678c581368e18c35beca5d8665c528@aarg.net> <3D57AF97.2090501@algroup.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <3D57AF97.2090501@algroup.co.uk>; from ben@algroup.co.uk on Mon, Aug 12, 2002 at 01:52:39PM +0100
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 2010
+Lines: 53
+
+On Mon, Aug 12, 2002 at 01:52:39PM +0100, Ben Laurie wrote:
+> AARG!Anonymous wrote:
+> > [...]
+> > What Palladium can do, though, is arrange that the app can't get at
+> > previously sealed data if the OS has meddled with it.  The sealing
+> > is done by hardware based on the app's hash.  So if the OS has changed
+> > the app per the above, it won't be able to get at old sealed data.
+> 
+> I don't buy this: how does Palladium know what an app is without the OS' 
+> help?
+
+Here's a slightly updated version of the diagram I posted earlier:
+
++---------------+------------+  
+| trusted-agent | user mode  |  
+|    space      | app space  |  
+|    (code      +------------+  
+| compartment)  | supervisor |  
+|               | mode / OS  |  
++---------------+------------+
+| ring -1 / TOR              |
++----------------------------+  
+| hardware / SCP key manager |
++----------------------------+  
+
+Integrity Metrics in a given level are computed by the level below.
+
+The TOR starts Trusted Agents, the Trusted Agents are outside the OS
+control.  Therefore a remote application based on remote attestation
+can know about the integrity of the trusted-agent, and TOR.
+
+ring -1/TOR is computed by SCP/hardware; Trusted Agent is computed by
+TOR;
+
+The parallel stack to the right: OS is computed by TOR; Application is
+computed OS.
+
+So for general applications you still have to trust the OS, but the OS
+could itself have it's integrity measured by the TOR.  Of course given
+the rate of OS exploits especially in Microsoft products, it seems
+likley that the aspect of the OS that checks integrity of loaded
+applications could itself be tampered with using a remote exploit.
+
+Probably the latter problem is the reason Microsoft introduced ring -1
+in palladium (it seems to be missing in TCPA).
+
+Adam
+--
+http://www.cypherspace.org/adam/
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

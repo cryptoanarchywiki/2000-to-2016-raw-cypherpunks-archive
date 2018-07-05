@@ -1,0 +1,95 @@
+From cypherpunks-bounces@cpunks.org  Tue Jul 23 06:49:44 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r6NAnXf2025302;
+	Tue, 23 Jul 2013 06:49:35 -0400
+Authentication-Results: proton.jfet.org; dkim=fail
+	reason="verification failed; insecure key"
+	header.d=gmail.com header.i=@gmail.com header.b=ekDRaddi;
+	dkim-adsp=none (insecure policy); dkim-atps=neutral
+Received: from mail-ea0-f180.google.com (mail-ea0-f180.google.com
+ [209.85.215.180])
+ by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r6NAnTDx025298
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Tue, 23 Jul 2013 06:49:31 -0400
+Received: by mail-ea0-f180.google.com with SMTP id r16so192064ead.25
+ for <cypherpunks@cpunks.org>; Tue, 23 Jul 2013 03:49:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :cc:content-type;
+ bh=vbyAZp8X0r5HBGES6s9F6Wuy2ZVILQEzvNbruFgI654=;
+ b=ekDRaddiK1oHxT07E+9hypmYBoV3HYqcI3FBzR7Vss83IZxtEopl2ISQC8gl+gm6Oi
+ JDWDtVjfnDum6uoAOj1VK3pSvKvQLFq6Zx+8slXBjbIkMcAK9ur+xdXUSJvt9hkyYyY4
+ wWcpiJqyA9eXEhaDBElml/acNQE9kdU7sUUhNQSmQEf5Xufa4U9BQKyxrLIfpNCUi4zE
+ vIKUGKFd9VGOqGU6hPmt7lSri+8hY8mNb1e7iDNTpGjs4wTpfMQgpYFtOVT28RSqbhYN
+ jiUgwthnWKJnbG7/FWu3iT1Hy/oL7Pm30JLDXAUxnfFKikvm493RErzDj/PpiQ5IRB7w
+ dq3A==
+MIME-Version: 1.0
+X-Received: by 10.15.33.13 with SMTP id b13mr32310664eev.0.1374576564017; Tue,
+ 23 Jul 2013 03:49:24 -0700 (PDT)
+Received: by 10.15.41.74 with HTTP; Tue, 23 Jul 2013 03:49:23 -0700 (PDT)
+In-Reply-To: <51EE318C.9070309@mehnert.org>
+References: <alpine.DEB.2.00.1307221647450.28426@neptune.sinister.com>
+ <20130722214614.GF25759@hexapodia.org>
+ <51EE318C.9070309@mehnert.org>
+Date: Tue, 23 Jul 2013 12:49:23 +0200
+Message-ID: <CAK9dnSzFnchEDs-rs7rCvgrdq5TFDWAA98keTobS3OdzAX7bbA@mail.gmail.com>
+Subject: Re: Python Random Number Generator for OTP
+From: CodesInChaos <codesinchaos@gmail.com>
+To: Hannes Mehnert <hannes@mehnert.org>
+Content-Type: multipart/alternative; boundary=089e016818d8d0c80b04e22b8b52
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 1784
+Lines: 36
+
+--089e016818d8d0c80b04e22b8b52
+Content-Type: text/plain; charset=UTF-8
+
+>  Why not use /dev/random, instead of "ensuring you have entropy"
+
+/dev/random limits the output size to the estimated entropy. So it has
+abysmal performance unless there are high performance entropy sources
+available. After the initial seeding this gains very little security in
+practice.
+/dev/urandom unblocks before it has sufficient entropy on some systems. So
+it's not guaranteed to be secure and sometimes fails in practice.
+
+What you normally want is a source that blocks after boot until it has
+accumulated enough initial entropy (say 256 bits), and then never blocks
+again.
+It's not like a good PRNG gets weaker as more data is read from it when
+your adversaries are computationally bounded.
+
+--089e016818d8d0c80b04e22b8b52
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div>&gt;=C2=A0 Why not use /dev/random, instead of &quot;=
+ensuring you have entropy&quot;=C2=A0</div><div><br></div><div>/dev/random =
+limits the output size to the estimated entropy. So it has abysmal performa=
+nce unless there are high performance entropy sources available. After the =
+initial seeding this gains very little security in practice.</div>
+<div>/dev/urandom unblocks before it has sufficient entropy on some systems=
+. So it&#39;s not guaranteed to be secure and sometimes fails in practice.<=
+br></div><div><br></div><div>What you normally want is a source that blocks=
+ after boot until it has accumulated enough initial entropy (say 256 bits),=
+ and then never blocks again.</div>
+<div>It&#39;s not like a good PRNG gets weaker as more data is read from it=
+ when your adversaries are computationally bounded.</div></div>
+
+--089e016818d8d0c80b04e22b8b52--
+

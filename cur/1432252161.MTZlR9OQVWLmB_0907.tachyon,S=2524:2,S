@@ -1,0 +1,60 @@
+From owner-cypherpunks@lne.com  Sun May 18 13:13:10 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h4IHD8t22238
+	for <rsw@jfet.org>; Sun, 18 May 2003 13:13:08 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h4IH0Gka004422
+	for cypherpunks-goingout345; Sun, 18 May 2003 10:00:16 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Sun, 18 May 2003 17:59:48 +0100
+From: Adam Back <adam@cypherspace.org>
+To: Bill Stewart <bill.stewart@pobox.com>
+Cc: ken <bbrow07@students.bbk.ac.uk>, cypherpunks@lne.com
+Subject: Re: what fields to hash with hashcash (Re: A Trial Balloon to
+  Ban Email?)
+Message-ID: <20030518175948.A9673495@exeter.ac.uk>
+References: <Pine.LNX.4.40.0305121022230.16578-100000@bolt.sonic.net>
+  <018801c31807$1f991670$0b01a8c0@whitestar>
+  <017f01c318e4$b0ff7e50$6701a8c0@JOSEPHAS>
+  <20030513045258.6B70910F75@rant-central.com>
+  <20030514062743.A9342491@exeter.ac.uk>
+  <20030514144934.GE16362@dreams.soze.net>
+  <3EC3B7FE.6010109@students.bbk.ac.uk>
+  <5.1.1.6.2.20030516171221.02d531f0@idiom.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <5.1.1.6.2.20030516171221.02d531f0@idiom.com>; from
+  bill.stewart@pobox.com on Fri, May 16, 2003 at 05:20:44PM -0700
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 939
+Lines: 22
+
+That particular approach is vulnerable to precomputation and
+amortization fo computation against different target strings.
+
+ie Attacker can pre compute and store 2**N inputs and have fair chance
+of being able to solve by lookup.  Similarly he can for the same cost
+find collisions on SHA1(T) and SHA1(T') simultaneously.
+
+What the original hashcash function did was look for Bit(i,SHA1(T||X))
+== B(i,SHA1(T)) for i = 1..n that way the candidate solutions are
+useless against other targets.
+
+A more recent simplifcation is to just use the all 0 bit string as the
+target.  So you're looking for Bit(i,SHA1(T||X)) = 0 for i = 1..n.
+
+Adam
+
+On Fri, May 16, 2003 at 05:20:44PM -0700, Bill Stewart wrote:
+> The hash is easy to do - Given a target "T",
+> provide a string "X" for Bit(i,SHA1(X)) == Bit(i,SHA1(T)) for i=1...n,
+> and Substring(SHA1(X),N+1,160) != Substring(SHA1(T),N+1,160).
+> 
+> You'll need to try roughly 2**N inputs to find one.
+

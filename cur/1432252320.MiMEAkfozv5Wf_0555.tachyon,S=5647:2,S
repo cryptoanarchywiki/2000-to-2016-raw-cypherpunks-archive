@@ -1,0 +1,110 @@
+From owner-cypherpunks@Algebra.COM  Thu Aug 15 19:57:13 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7FNvCT12415
+	for <rsw@opamp.org>; Thu, 15 Aug 2002 19:57:12 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id TAA28099
+	for <rsw@mit.edu>; Thu, 15 Aug 2002 19:57:11 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7FHwSkV031797
+	for <cypherpunks-outgoing@ak47.algebra.com>; Thu, 15 Aug 2002 12:58:28 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g7FHwSOp031796
+	for cypherpunks-outgoing; Thu, 15 Aug 2002 12:58:28 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7FHwNkV031777
+	for <cypherpunks@ak47.algebra.com>; Thu, 15 Aug 2002 12:58:25 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7FHwKoe019993
+	for cypherpunks@ak47.algebra.com; Thu, 15 Aug 2002 10:58:20 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7FHObu8019377
+	for cypherpunks-goingout345; Thu, 15 Aug 2002 10:24:37 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Wed, 14 Aug 2002 20:45:25 -0700
+From: AARG! Anonymous <remailer@aarg.net>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@aarg.net>.
+To: cypherpunks@lne.com, cryptography@wasabisystems.com
+Old-Subject: Re: Overcoming the potential downside of TCPA
+Message-ID: <32a4cf8ffa586294aea3adf85bab2040@aarg.net>
+X-DCC-meer-Metrics: inbound0.mv.meer.net 1011; Body=1 Fuz1=1 Fuz2=1
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Re: Overcoming the potential downside of TCPA
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 3177
+Lines: 61
+
+
+Joe Ashwood writes:
+
+> Actually that does nothing to stop it. Because of the construction of TCPA,
+> the private keys are registered _after_ the owner receives the computer,
+> this is the window of opportunity against that as well.
+
+Actually, this is not true for the endoresement key, PUBEK/PRIVEK, which
+is the "main" TPM key, the one which gets certified by the "TPM Entity".
+That key is generated only once on a TPM, before ownership, and must
+exist before anyone can take ownership.  For reference, see section 9.2,
+"The first call to TPM_CreateEndorsementKeyPair generates the endorsement
+key pair. After a successful completion of TPM_CreateEndorsementKeyPair
+all subsequent calls return TCPA_FAIL."  Also section 9.2.1 shows that
+no ownership proof is necessary for this step, which is because there is
+no owner at that time.  Then look at section 5.11.1, on taking ownership:
+"user must encrypt the values using the PUBEK."  So the PUBEK must exist
+before anyone can take ownership.
+
+> The worst case for
+> cost of this is to purchase an additional motherboard (IIRC Fry's has them
+> as low as $50), giving the ability to present a purchase. The
+> virtual-private key is then created, and registered using the credentials
+> borrowed from the second motherboard. Since TCPA doesn't allow for direct
+> remote queries against the hardware, the virtual system will actually have
+> first shot at the incoming data. That's the worst case.
+
+I don't quite follow what you are proposing here, but by the time you
+purchase a board with a TPM chip on it, it will have already generated
+its PUBEK and had it certified.  So you should not be able to transfer
+a credential of this type from one board to another one.
+
+> The expected case;
+> you pay a small registration fee claiming that you "accidentally" wiped your
+> TCPA. The best case, you claim you "accidentally" wiped your TCPA, they
+> charge you nothing to remove the record of your old TCPA, and replace it
+> with your new (virtualized) TCPA. So at worst this will cost $50. Once
+> you've got a virtual setup, that virtual setup (with all its associated
+> purchased rights) can be replicated across an unlimited number of computers.
+> 
+> The important part for this, is that TCPA has no key until it has an owner,
+> and the owner can wipe the TCPA at any time. From what I can tell this was
+> designed for resale of components, but is perfectly suitable as a point of
+> attack.
+
+Actually I don't see a function that will let the owner wipe the PUBEK.
+He can wipe the rest of the TPM but that field appears to be set once,
+retained forever.
+
+For example, section 8.10: "Clear is the process of returning the TPM to
+factory defaults."  But a couple of paragraphs later: "All TPM volatile
+and non-volatile data is set to default value except the endorsement
+key pair."
+
+So I don't think your fraud will work.  Users will not wipe their
+endorsement keys, accidentally or otherwise.  If a chip is badly enough
+damaged that the PUBEK is lost, you will need a hardware replacement,
+as I read the spec.
+
+Keep in mind that I only started learning this stuff a few weeks ago,
+so I am not an expert, but this is how it looks to me.
+

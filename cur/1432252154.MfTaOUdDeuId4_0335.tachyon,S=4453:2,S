@@ -1,0 +1,105 @@
+From owner-cypherpunks@lne.com  Tue May 20 14:41:41 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h4KIfct01713
+	for <rsw@jfet.org>; Tue, 20 May 2003 14:41:39 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h4KIHDjl018891
+	for cypherpunks-goingout345; Tue, 20 May 2003 11:17:13 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+X-Authentication-Warning: www.kozubik.com: john owned process doing -bs
+Date: Tue, 20 May 2003 11:05:23 -0700 (PDT)
+From: John Kozubik <john@kozubik.com>
+To: "Kevin S. Van Horn" <kvanhorn@ksvanhorn.com>
+cc: barabbus@hushmail.com, <cypherpunks@lne.com>
+Subject: Re: Extent of UK snooping revealed
+In-Reply-To: <3ECA475D.50103@ksvanhorn.com>
+Message-ID: <20030520104350.N96524-100000@www.kozubik.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 3342
+Lines: 78
+
+On Tue, 20 May 2003, Kevin S. Van Horn wrote:
+
+> barabbus@hushmail.com wrote:
+>
+> >[If you're not making a serious attempt at limiting access to information about your on-line activities you're pissing into the wind.]
+> >
+>
+> Do you know of any  effective means of concealing one's web-surfing
+> habits?  I know there are things like Anonymizer.com, but with all of
+> these you have to trust the service providers.  I've looked into JAP,
+> but they don't have a real network -- just one path between two links,
+> both controlled by the same people.
+
+
+I am writing a HOWTO on this subject now, and will (perhaps) be speaking
+on the topic at DefCon.  Long story short:
+
+a) collocate your own server (not just a webhost) somewhere.
+
+b) install a web server with proxy capability, and configure your own
+web clients on your personal computers to only hit that webserver, and to
+only hit it with SSL for _all_ web requests.  So, all your web browsing
+occurs over SSL and has a single destination - your server.  The actual
+fetching of web pages occurs in plain text (or SSL if the site really is
+SSL) from your server to the world.
+
+c) pick a small group (whose size relates to how much bandwidth at your
+collocation facility you can afford) and give them access as well, so as
+to diminish traffic pattens when comparing your ISP logs to the collocated
+servers' ISP logs
+
+d) set up an automated script on the server that _constantly_ fetches
+random web pages, thus creating a constant stream of http traffic in and
+out of the server, again diminishing traffic patterns.  Log the actual
+proxy requests in some temporary fashion and randomly hit those web sites
+in an automated fashion throughout the day, regardless of whether someone
+is requesting them through the proxy or not...and then, script a constant
+stream of requests to the proxy as well ... either from a home firewall,
+other home users, or from other users' collocated servers.  The point is
+you want constant traffic in both directions.
+
+
+Establishing Plausible Deniability:
+
+
+a) set up some lame web site on your collocated server offering some sort
+of "web archive", thus establishing PD for crawling/visiting any site
+
+b) open up your wireless AP, at least a little bit, so that random persons
+walking by have the ability to browse from the IP your ISP has given you
+as well ... this may be complicated as they have to configure the proxy.
+
+
+Extra points for:
+
+
+a) randomizing the HTTP-USER-AGENT strings coming out of the proxy to
+fetch the requested data, again removing traffic patterns and reducing
+your own risk if you use an odd web browser.
+
+b) setting up a personal firewall on your own internet link that _only_
+allows HTTP and SSH traffic, and only allows it to your collocated server.
+This will allow you to use modern OS software that you may not trust
+(windows XP ?) while showinng you what kind of extra-curricular
+connections it is making.
+
+c) running your SSL connections to the proxy over port 25 or port 20 ...
+or 110 ... or 6667 - all good candidates.
+
+d) equalizing the constant inbound and outbound traffic that is generated
+to obscure traffic patterns ... so, if the constant, scripted inbound SSL
+requests fall, then the random scripted browsing outbound falls with it.
+
+
+Comments appreciated.
+
+-----
+John Kozubik - john@kozubik.com - http://www.kozubik.com
+

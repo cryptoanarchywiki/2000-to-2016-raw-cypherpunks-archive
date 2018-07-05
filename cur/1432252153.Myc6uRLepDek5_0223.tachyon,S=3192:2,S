@@ -1,0 +1,73 @@
+From owner-cypherpunks@lne.com  Sat May 10 10:29:24 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h4AETMt24626
+	for <rsw@jfet.org>; Sat, 10 May 2003 10:29:23 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h4AEJ5M6000868
+	for cypherpunks-goingout345; Sat, 10 May 2003 07:19:05 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Sat, 10 May 2003 09:12:57 -0500 (CDT)
+From: Jim Choate <ravage@einstein.ssz.com>
+To: <cypherpunks@einstein.ssz.com>
+cc: <hangar18-general@open-forge.org>, <hell@einstein.ssz.com>,
+   <austin-cpunks@einstein.ssz.com>
+Subject: Re: Q: A question of security vulnerability
+In-Reply-To: <Pine.LNX.4.33.0305101111420.29248-100000@Zeta>
+Message-ID: <Pine.LNX.4.33.0305100909320.7974-100000@einstein.ssz.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2022
+Lines: 45
+
+On Sat, 10 May 2003, Thomas Shaddack wrote:
+
+> For a limited set of specific tasks, there is a workaround. Have a
+> directory to which the user has write access, have a script run every
+> minute or every 5 minutes or so from crontab that checks if there is a
+> file with specified name there, and if so, do an action and erase the
+> file.
+>
+> I solved the problem when one of our programmers needed to occassionally
+> restart Apache to which he did not have the rights. Instead of messing
+> with sudo and taking the risk, he now just has to do "touch
+> /var/cmd/apacherestart" and in next couple minutes it gets done.
+>
+> This trick can be used even for passing commands, which then can be put
+> into the file (echo "commands" > /var/cmd/whatevercommandfile) and the
+> script then reads them from there (and checks the syntactical validity
+> of the arguments to prevent eventual attack through this route).
+
+I've used that sort of approach as well.
+
+With regard to the sh wrapper I mentioned earlier, I like chroot for that
+sort of stuff. One approach is that when the user executes the sh -c the
+sh wrapper creates a well know chroot sequence and perhaps copies
+information from the live file system into the chroot jail. Let's the
+user makes modes, and when the "foo" command quits the script can then
+evaluate the results (for example greping for changes to itself in all
+files in the chroot jail. Assuming it looks ok it can cp the changes back
+to the live filesystem and away you go.
+
+> Should be bulletproof.
+
+I -never- make that claim ;)
+
+
+ --
+    ____________________________________________________________________
+
+      We are all interested in the future for that is where you and I
+      are going to spend the rest of our lives.
+
+                              Criswell, "Plan 9 from Outer Space"
+
+      ravage@ssz.com                            jchoate@open-forge.org
+      www.ssz.com                               www.open-forge.org
+    --------------------------------------------------------------------
+

@@ -1,0 +1,67 @@
+From owner-cypherpunks@lne.com  Fri Oct 31 18:42:01 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p3/8.11.6-03-31-03) with ESMTP id h9VNg0R26539
+	for <rsw@jfet.org>; Fri, 31 Oct 2003 18:42:00 -0500
+Received: from slack.lne.com (slack.lne.com [127.0.0.1])
+	by slack.lne.com (8.12.10/8.12.10) with ESMTP id h9VNReaI004005
+	(version=TLSv1/SSLv3 cipher=EDH-DSS-DES-CBC3-SHA bits=168 verify=NO)
+	for <cypherpunks-goingout345@slack.lne.com>; Fri, 31 Oct 2003 15:27:40 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.10/8.12.10/Submit) id h9VNReoA004004
+	for cypherpunks-goingout345; Fri, 31 Oct 2003 15:27:40 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Fri, 31 Oct 2003 15:26:05 -0800
+From: Adam Back <adam@cypherspace.org>
+To: "James A. Donald" <jamesd@echeque.com>
+Cc: cypherpunks@lne.com, Adam Back <adam@cypherspace.org>
+Subject: Re: ECC and blinding.
+Message-ID: <20031031232605.GA31764@dual.cypherspace.org>
+References: <200310271741.11741.njohnsn@njohnsn.com>
+  <3FA0D482.1221.F53862C@localhost>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3FA0D482.1221.F53862C@localhost>
+User-Agent: Mutt/1.4.1i
+X-Authentication-Info: Submitted using SMTP AUTH at out006.verizon.net
+  from [4.62.18.226] at Fri, 31 Oct 2003 17:27:10 -0600
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 953
+Lines: 31
+
+On Thu, Oct 30, 2003 at 09:06:10AM -0800, James A. Donald wrote:
+> On 28 Oct 2003 at 13:49, Adam Back wrote:
+> > So for that reason I think Chaum's scheme practically would
+> > not be viable over EC.  (Or you could do it but you'd be
+> > better off performance, security and key/messag size doing
+> > Chaum over normal RSA).
+> 
+> Simple Chaumian blinding works fine on EC.  
+
+So Chaumian blinding with public exponent e, private exponent d, and
+modulus n is this and blinding factor b chosen by the client:
+
+blind:
+b^e.m mod n	 ->
+			sign:
+		 <- 	(b^e.m)^d mod n
+ 			= b.m^d mod n  (simplifying)
+
+and divide by b to unblind:
+m^d mod n
+
+how are you going to do this over EC?  You need an RSA like e and d to
+cancel.
+
+> Some more complex schemes, such as some of Brand's, do not.
+
+Brands DH based blinding scheme works in EC.  ECDH is directly
+analogous, the usual conversion from discrete log (g^x mod p) to the
+EC analog (x.G over curve E) works.
+
+Adam
+

@@ -1,0 +1,106 @@
+From cypherpunks-bounces@cpunks.org  Wed Aug  7 04:52:23 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r778q5YH030752;
+	Wed, 7 Aug 2013 04:52:07 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r778q2UN030748
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Wed, 7 Aug 2013 04:52:04 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id C3EFE543E2C; Wed,  7 Aug 2013 10:52:01 +0200 (CEST)
+Date: Wed, 7 Aug 2013 10:52:01 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: Re: [liberationtech] Tormail in trouble. Experts at Black Hat
+ recommend Elliptic Curves: this is what PassLok 1.3 is based on.
+Message-ID: <20130807085201.GY29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+----- Forwarded message from Gregory Maxwell <gmaxwell@gmail.com> -----
+
+Date: Tue, 6 Aug 2013 15:39:29 -0700
+From: Gregory Maxwell <gmaxwell@gmail.com>
+To: liberationtech <liberationtech@lists.stanford.edu>
+Subject: Re: [liberationtech] Tormail in trouble. Experts at Black Hat recommend Elliptic Curves: this is what PassLok 1.3 is based on.
+Reply-To: liberationtech <liberationtech@lists.stanford.edu>
+
+On Tue, Aug 6, 2013 at 3:20 PM, Francisco Ruiz <ruiz@iit.edu> wrote:
+> Hi folks,
+>
+> Thank you very much for your great feedback on the previous version. The
+> next version is now up at http://passlok.com, which redirects to
+> https://passlok.site44.com
+> This may come in handy now that there are problems with Tor, since PassLok
+> allows you to go to any computer to do encrypted mail, because there is
+> nothing to install. This is what PassLok was designed to do.
+>
+> The other unforeseen endorsement came from the recent Black Hat conference.
+> Researchers Alex Stamos, Tom Ritter, Thomas Ptacek, and Javed Samuel
+> encouraged everyone to base their public key cryptosystems on elliptic
+> curves rather than RSA. Here's a link on this:
+> http://arstechnica.com/security/2013/08/crytpo-experts-issue-a-call-to-arms-to-avert-the-cryptopocalypse/
+
+Wait. You are using vague popular press FUD about RSA to promote a
+website hosted JS encryption tool? Really?
+
+Your code generates random values like this:
+
+	sjcl.random.addEntropy([a.x || a.clientX || a.offsetX || 0, a.y ||
+a.clientY || a.offsetY || 0], 2, "mouse")
+	sjcl.random.addEntropy((new Date).valueOf(), 2, "loadtime")
+try {
+    var s = new Uint32Array(32);
+    crypto.getRandomValues(s);
+    sjcl.random.addEntropy(s, 1024, "crypto['getRandomValues']")
+} catch (t) {}
+
+Meaning that if it's used someplace where crypto.getRandomValues()
+doesn't exist, it has only pure snake-oil-extract randomness.
+
+Really????
+
+If the randomness is poor, the nonce used in ECDSA will be predictable
+and the private key will be recoverable.
+
+This isn't to say I've audited any of it, I just grepped for a couple
+likely mistakes. Part of the JS code has been whitespace compressed, I
+consider it unauditable.
+
+> up to a whopping
+> 200,000 iterations for lousy keys. Since keys made in version 1.2 are no
+> longer compatible, this prompts upping the version to 1.3.
+
+So, not implemented in slow-as-dirt JS 200,000 iterations should take
+a random desktop cpu about 100ms or so. This is hardly wopping. It's
+not far from the minimum I'd start with, for all keys not just weak
+ones.  Generally user provided keys are a security disaster and should
+be avoided wherever it's possible, strengthening or no. Humans are
+horrific entropy sources and really can't self assess how bad they
+are.
+--
+Liberationtech list is public and archives are searchable on Google. Too many emails? Unsubscribe, change to digest, or change password by emailing moderator at companys@stanford.edu or changing your settings at https://mailman.stanford.edu/mailman/listinfo/liberationtech
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

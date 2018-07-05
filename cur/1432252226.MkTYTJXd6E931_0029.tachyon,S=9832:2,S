@@ -1,0 +1,184 @@
+From owner-cypherpunks@jfet.org  Wed Jan 11 05:07:21 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.5/8.13.5/Debian-3) with ESMTP id k0BA5nmg005361
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 11 Jan 2006 05:05:49 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.5/8.13.5/Submit) id k0BA5n8P005360
+	for cypherpunks-outgoing; Wed, 11 Jan 2006 05:05:49 -0500
+Date: Wed, 11 Jan 2006 11:05:37 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@jfet.org
+Subject: [arma@mit.edu: Tor 0.1.1.11-alpha is out]
+Message-ID: <20060111100537.GL2247@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.5.9i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 8768
+Lines: 157
+
+----- Forwarded message from Roger Dingledine <arma@mit.edu> -----
+
+From: Roger Dingledine <arma@mit.edu>
+Date: Wed, 11 Jan 2006 00:12:55 -0500
+To: or-talk@freehaven.net
+Subject: Tor 0.1.1.11-alpha is out
+User-Agent: Mutt/1.5.9i
+Reply-To: or-talk@freehaven.net
+
+This is the eleventh development snapshot for the 0.1.1.x series.
+
+This release implements entry guard nodes: it automatically chooses a
+handful of entry nodes and sticks with them for all circuits. The logs
+about entry guards are still pretty chatty, but hopefully that will help
+us track down any problems. Please let us know whether it works for you.
+
+The release also reduces directory bandwidth overhead substantially,
+makes Tor servers with dynamic IP addresses useful again, and makes IRC
+and IM connections over Tor more reliable.
+
+Everybody who runs a hidden service should upgrade.
+
+http://tor.eff.org/download.html
+
+Changes in version 0.1.1.11-alpha - 2006-01-10
+  o Crashes in 0.1.1.x:
+    - Include all the assert/crash fixes from 0.1.0.16.
+    - If you start Tor and then quit very quickly, there were some
+      races that tried to free things that weren't allocated yet.
+    - Fix a rare memory stomp if you're running hidden services.
+    - Fix segfault when specifying DirServer in config without nickname.
+    - Fix a seg fault when you finish connecting to a server but at
+      that moment you dump his server descriptor.
+    - Extendcircuit and Attachstream controller commands would
+      assert/crash if you don't give them enough arguments.
+    - Fix an assert error when we're out of space in the connection_list
+      and we try to post a hidden service descriptor (reported by weasel).
+    - If you specify a relative torrc path and you set RunAsDaemon in
+      your torrc, then it chdir()'s to the new directory. If you HUP,
+      it tries to load the new torrc location, fails, and exits.
+      The fix: no longer allow a relative path to torrc using -f.
+
+  o Major features:
+    - Implement "entry guards": automatically choose a handful of entry
+      nodes and stick with them for all circuits. Only pick new guards
+      when the ones you have are unsuitable, and if the old guards
+      become suitable again, switch back. This will increase security
+      dramatically against certain end-point attacks. The EntryNodes
+      config option now provides some hints about which entry guards you
+      want to use most; and StrictEntryNodes means to only use those.
+    - New directory logic: download by descriptor digest, not by
+      fingerprint. Caches try to download all listed digests from
+      authorities; clients try to download "best" digests from caches.
+      This avoids partitioning and isolating attacks better.
+    - Make the "stable" router flag in network-status be the median of
+      the uptimes of running valid servers, and make clients pay
+      attention to the network-status flags. Thus the cutoff adapts
+      to the stability of the network as a whole, making IRC, IM, etc
+      connections more reliable.
+
+  o Major fixes:
+    - Tor servers with dynamic IP addresses were needing to wait 18
+      hours before they could start doing reachability testing using
+      the new IP address and ports. This is because they were using
+      the internal descriptor to learn what to test, yet they were only
+      rebuilding the descriptor once they decided they were reachable.
+    - Tor 0.1.1.9 and 0.1.1.10 had a serious bug that caused clients
+      to download certain server descriptors, throw them away, and then
+      fetch them again after 30 minutes. Now mirrors throw away these
+      server descriptors so clients can't get them.
+    - We were leaving duplicate connections to other ORs open for a week,
+      rather than closing them once we detect a duplicate. This only
+      really affected authdirservers, but it affected them a lot.
+    - Spread the authdirservers' reachability testing over the entire
+      testing interval, so we don't try to do 500 TLS's at once every
+      20 minutes.
+
+  o Minor fixes:
+    - If the network is down, and we try to connect to a conn because
+      we have a circuit in mind, and we timeout (30 seconds) because the
+      network never answers, we were expiring the circuit, but we weren't
+      obsoleting the connection or telling the entry_guards functions.
+    - Some Tor servers process billions of cells per day. These statistics
+      need to be uint64_t's.
+    - Check for integer overflows in more places, when adding elements
+      to smartlists. This could possibly prevent a buffer overflow
+      on malicious huge inputs. I don't see any, but I haven't looked
+      carefully.
+    - ReachableAddresses kept growing new "reject *:*" lines on every
+      setconf/reload.
+    - When you "setconf log" via the controller, it should remove all
+      logs. We were automatically adding back in a "log notice stdout".
+    - Newly bootstrapped Tor networks couldn't establish hidden service
+      circuits until they had nodes with high uptime. Be more tolerant.
+    - We were marking servers down when they could not answer every piece
+      of the directory request we sent them. This was far too harsh.
+    - Fix the torify (tsocks) config file to not use Tor for localhost
+      connections.
+    - Directory authorities now go to the proper authority when asking for
+      a networkstatus, even when they want a compressed one.
+    - Fix a harmless bug that was causing Tor servers to log
+      "Got an end because of misc error, but we're not an AP. Closing."
+    - Authorities were treating their own descriptor changes as cosmetic,
+      meaning the descriptor available in the network-status and the
+      descriptor that clients downloaded were different.
+    - The OS X installer was adding a symlink for tor_resolve but
+      the binary was called tor-resolve (reported by Thomas Hardly).
+    - Workaround a problem with some http proxies where they refuse GET
+      requests that specify "Content-Length: 0" (reported by Adrian).
+    - Fix wrong log message when you add a "HiddenServiceNodes" config
+      line without any HiddenServiceDir line (reported by Chris Thomas).
+
+  o Minor features:
+    - Write the TorVersion into the state file so we have a prayer of
+      keeping forward and backward compatibility.
+    - Revive the FascistFirewall config option rather than eliminating it:
+      now it's a synonym for ReachableAddresses *:80,*:443.
+    - Clients choose directory servers from the network status lists,
+      not from their internal list of router descriptors. Now they can
+      go to caches directly rather than needing to go to authorities
+      to bootstrap.
+    - Directory authorities ignore router descriptors that have only
+      cosmetic differences: do this for 0.1.0.x servers now too.
+    - Add a new flag to network-status indicating whether the server
+      can answer v2 directory requests too.
+    - Authdirs now stop whining so loudly about bad descriptors that
+      they fetch from other dirservers. So when there's a log complaint,
+      it's for sure from a freshly uploaded descriptor.
+    - Reduce memory requirements in our structs by changing the order
+      of fields.
+    - There used to be two ways to specify your listening ports in a
+      server descriptor: on the "router" line and with a separate "ports"
+      line. Remove support for the "ports" line.
+    - New config option "AuthDirRejectUnlisted" for auth dirservers as
+      a panic button: if we get flooded with unusable servers we can
+      revert to only listing servers in the approved-routers file.
+    - Auth dir servers can now mark a fingerprint as "!reject" or
+      "!invalid" in the approved-routers file (as its nickname), to
+      refuse descriptors outright or include them but marked as invalid.
+    - Servers store bandwidth history across restarts/crashes.
+    - Add reasons to DESTROY and RELAY_TRUNCATED cells, so clients can
+      get a better idea of why their circuits failed. Not used yet.
+    - Directory mirrors now cache up to 16 unrecognized network-status
+      docs. Now we can add new authdirservers and they'll be cached too.
+    - When picking a random directory, prefer non-authorities if any
+      are known.
+    - New controller option "getinfo desc/all-recent" to fetch the
+      latest server descriptor for every router that Tor knows about.
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820            http://www.ativel.com
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+
+[demime 1.01d removed an attachment of type application/pgp-signature which had a name of signature.asc]
+

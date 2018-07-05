@@ -1,0 +1,147 @@
+From cypherpunks-bounces@cpunks.org  Mon Jan 20 08:42:45 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0KDghgf031988;
+	Mon, 20 Jan 2014 08:42:43 -0500
+Received: from order.stressinduktion.org (order.stressinduktion.org
+ [87.106.68.36])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0KDgdYG031984
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Mon, 20 Jan 2014 08:42:41 -0500
+Received: by order.stressinduktion.org (Postfix, from userid 500)
+ id C21BD1A0C27C; Mon, 20 Jan 2014 14:42:34 +0100 (CET)
+Date: Mon, 20 Jan 2014 14:42:34 +0100
+From: Hannes Frederic Sowa <hannes@stressinduktion.org>
+To: Hannes Mehnert <hannes@mehnert.org>
+Subject: Re: Programming languages for a safe and secure future
+Message-ID: <20140120134234.GB27626@order.stressinduktion.org>
+References: <1389950750.79148.YahooMailNeo@web141202.mail.bf1.yahoo.com>
+ <52DAE12D.9080406@cypherpunks.to>
+ <CAJVRA1QtQySXCmBHK5hey36UL6E8afDMrctcGTnmbka+mfiqRQ@mail.gmail.com>
+ <52DC1500.3020805@mehnert.org>
+ <20140119184343.GF6302@order.stressinduktion.org>
+ <52DD0E22.6000307@mehnert.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <52DD0E22.6000307@mehnert.org>
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+Hi!
+
+On Mon, Jan 20, 2014 at 11:53:06AM +0000, Hannes Mehnert wrote:
+>
+> [...]
+> 
+> On 01/19/2014 18:43, Hannes Frederic Sowa wrote:
+> > MPX was already committed to gcc trunk, so I hope this situation
+> > could improve in future (it is reverted for 4.9 but I think it will
+> > come back after the release in March).
+> 
+> 
+> The difference, as far as I can tell is in-band vs out-of-band
+> signalling... (correct me if I'm wrong) with the former you put some
+> magic values before and after the array, and an attacker has to guess
+> these. The latter puts the meta-information out of band, hard to
+> predict for an attacker.. that's at least the difference between the
+> llvm bounds checks plugin (BoundsChecking.cpp / MemorySanitizer.cpp in
+> LLVM 3.3) and the softboundCETS approach..
+
+MPX uses CPU managed out-of-band (but in application memory)
+page-table-alike structures to store the bound table entries. They get
+updated via specific cpu instructions, which result in nops on todays
+cpus (so you can execute mpx code on non-mpx cpus and just won't have the
+bounds checking). They also made sure that non-MPX code that is linked
+against MPX code can propagate unbounded pointers, so you don't need to
+switch your whole operating system to MPX enabled code at once (I guess
+that would aslo be a problem memory-wise, but Intel entered the DRAM
+business again, too :) ). The x64 linux ABI has also been updated.
+
+While passing parameters and returning, MPX will introduce new registers
+to pass those bounds checks automatically between function calls. I
+guess this enables faster function calls because the cpu does not need
+to store those pointer bounds in the permanent pointer bound tables thus
+eliminating the stress on the cpu caches.
+
+You can find details here:
+<http://download-software.intel.com/sites/default/files/319433-015.pdf>
+
+What would be interesting, especially for the linux kernel, is to restrict
+jmp and callq addresses so it is impossible for an attacker to get control
+over them and e.g. dispatch own code on network packet dismantling without
+needing whole pointer checking infrastructure e.g.
+
+> >> I can recommend several languages: - coq (http://coq.inria.fr)
+> >> [the tutorial software foundations 
+> >> http://www.cis.upenn.edu/~bcpierce/sf/ ] - agda
+> >> (http://wiki.portal.chalmers.se/agda/pmwiki.php) - idris
+> >> (http://www.idris-lang.org/)
+> > 
+> > Maybe you can comment a bit on the code extraction process into
+> > compilable languages.
+>
+> [...]
+> 
+> The softbound plugin [http://acg.cis.upenn.edu/softbound/], although
+> they developed a semantics for the LLVM intermediate representation,
+> have the real implementation in C++ and no formalized proof (at least
+> I couldn't find any) of its correspondence to the Coq development. I
+> actually think there are some overflows in the C++ runtime (size +
+> start < bound might fail
+
+IIRC this was already addressed in the talk.
+
+> The verified L4 microkernel redeveloped a bunch of C++ and assembly
+> into Haskell in order to be able to prove it.
+> 
+> The main difference between Coq and Agda/Idris is that the dependent
+> types are used in Coq to proof stuff, while in Agda/Idris you use them
+> for programming. (Obviously, all is the same, and Adam wrote a great
+> book about programming with dependent types in Coq
+> http://adam.chlipala.net/cpdt/).
+
+I would also like to point to Software Foundations from Benjamin Pierce here,
+as it also has some great material to learn Coq:
+
+	<http://www.cis.upenn.edu/~bcpierce/sf/>
+
+> Agda has a story about people not interested in executing programs,
+> but rather type check and prove them.
+
+:)
+
+> Obviously the runtime needs to be looked into. In the end it is part
+> of your trusted code base.
+
+Code generation without heavy runtime would also be nice.
+
+> Unfortunately I have not used ATS, but if I'm not entirely wrong, it
+> is a dependently typed programming language with mutable state and a C
+> foreign function interface which treats variables as resources (and
+> uses linear logic/linear types to do so). A very interesting system;
+> Chris Double wrote several blog posts when he used it
+> http://bluishcoder.co.nz/tags/ats/ .
+
+ATS uses plain C as an intermediate language and the whole language feels
+pretty low-level, too. So it seems it is easily possible to compile these
+programs freestanding and also link those to other programs, which is
+quite a nice feature, especially if one wants to make incrementally use
+of more checked languages.
+
+Thanks for your additional remarks,
+
+  Hannes
+

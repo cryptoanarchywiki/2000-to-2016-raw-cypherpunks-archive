@@ -1,0 +1,129 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u0BHMhUW007806;
+	Mon, 11 Jan 2016 12:22:46 -0500
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=sFR2v0br;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-lb0-f178.google.com (mail-lb0-f178.google.com
+ [209.85.217.178])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u0BHMe50007802
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Mon, 11 Jan 2016 12:22:42 -0500
+Received: by mail-lb0-f178.google.com with SMTP id x4so1096253lbm.0
+ for <cypherpunks@cpunks.org>; Mon, 11 Jan 2016 09:22:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :cc:content-type;
+ bh=kmEhtWmnW22lgAyboRj4m6A849fRDfaRt+bUhDQKGB8=;
+ b=sFR2v0brYC6UTt7jcBGmJX4y7PtCPp7C5I5+8b7eJNo5PdEipiUpdnAxeR+ZbGqpUk
+ xm0rOaMSlm+w2SKj+FD3Z5EHnhWmyLvRqm1UTfUtisUDUJyeQKwRf+9fq45FbyZ3tS1X
+ +ZC4BJv6l0wD4wE0khSuhDL9cmOft2Q4A50UOoV5hC3cR/TgyDBxGMhxG7TLDHfdEeKz
+ P31oDEjzG9CQzef+XIEPMaz4y114/i2GB0V5vvHXbPlPW/2fxEjXYRHTMGFNDAKvHRRO
+ 3a2xTiCUKvEhChgoNyjrSqNCznhSRbOpN4vd+j6xQ+ZklNQqxIiWENGeQPB1nxL5iDTL
+ BFEA==
+MIME-Version: 1.0
+X-Received: by 10.112.147.4 with SMTP id tg4mr43556617lbb.121.1452532954423;
+ Mon, 11 Jan 2016 09:22:34 -0800 (PST)
+Received: by 10.25.87.207 with HTTP; Mon, 11 Jan 2016 09:22:34 -0800 (PST)
+In-Reply-To: <5693D5C6.8090905@gmail.com>
+References: <20160111125511.GC2503@sivokote.iziade.m$>
+ <5693D5C6.8090905@gmail.com>
+Date: Mon, 11 Jan 2016 09:22:34 -0800
+Message-ID: <CAJVRA1SGb7KM1pUc1zG69HjLJ9JEjcDeNenA-LeqMAr=RmqPtw@mail.gmail.com>
+Subject: Re: libreboot not supporting post-2008 Intel hardware?
+From: coderman <coderman@gmail.com>
+To: Blibbet <blibbet@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 76
+
+On 1/11/16, Blibbet <blibbet@gmail.com> wrote:
+>...
+> Yes, I *really* wish there were more AMD64/ARM32/ARM64 experts, most
+> seem to focus on x86/x64. Even at AMD and ARM.
+
+have you played with USB Armory yet?  it's my new favorite ARM platform.
+ https://github.com/inversepath/usbarmory
+
+
+
+> If Linaro finishes porting LUV-live (including BITS, CHIPSEC, FWTS) from
+> Intel to AArch64, CHIPSEC will run on ARM, and the UEFI tests will work,
+> but there won't be any new ARM64-centric security tests, as the few
+> dozen Intel-centric ones won't apply to ARM boxes. We need some
+> arch-centric security experts to create a list of security tests, like
+> Intel ATR team does with chipsec_main security modules.
+
+the joy of ARM is avoiding all the usual platform UEFI, CHIPSEC, etc!
+
+the parts of ARM which i enjoy more are the secure boot with signed
+boot images. of course, if you're not a developer this is less
+compelling.
+
+this all uses TrustZone and fuse memory, under the hood:
+  http://genode.org/documentation/articles/usb_armory
+ https://github.com/inversepath/usbarmory/tree/master/software/secure_boot
+
+
+
+> One interesting thing about AMD64 is -- *I think* -- that some boards
+> have blob-free options in the coreboot tree, not relying on AGESA
+> binaries.
+
+if you find any, let me know!  i don't believe they exist.
+also, BIOS security on AMD may be even worse than Intel.
+use an external SPI flash programmer, not a built in one, in that case.
+
+
+
+> That is something, for the blob-concerned community. Fewer
+> blobs than Intel FSP. Unclear which models, and which branches of the
+> coreboot tree to look at, and if any of those models have modern
+> supplies of hardware, or are ancient.
+
+those blob concerned are going to be increasingly disappointed into
+the future. on the other hand, for those with heirloom device funds,
+check out Librem:
+ https://www.crowdsupply.com/purism/librem-13
+
+
+> There *are* blob-free ports of Libreboot to modern ARM boxes, some
+> Chromebooks. And Olimex is apparently working on an ARM64 open source
+> chip, and laptop, that might be interesting.
+
+you're aware of Novena, too? :)
+ https://www.crowdsupply.com/sutajio-kosagi/novena
+
+
+> Also, the SeaBIOS project is adding TPM and other security features in
+> recently, it'll be interesting to see that BIOS added to some Libreboot
+> and other systems, for security + configurability, not just the latter.
+
+indeed!
+
+
+> Hopefully 2016 will get some OEM to bring us a Stateless x86 Laptop, and
+> a RISC-V-based laptop. And more Novenas.
+
+i'm playing with stateless lenovo via USB Armory as OS fill via USB.
+not quite what you're asking, but might be a nice stop-gap for those
+seeking better boot authenticity...
+
+
+best regards,
+

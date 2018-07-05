@@ -1,0 +1,102 @@
+From owner-cypherpunks@jfet.org  Mon Mar 20 02:56:55 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.5/8.13.5/Debian-3) with ESMTP id k2K7uNr9006972
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 20 Mar 2006 02:56:23 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.5/8.13.5/Submit) id k2K7uNch006971
+	for cypherpunks-outgoing; Mon, 20 Mar 2006 02:56:23 -0500
+Date: Mon, 20 Mar 2006 08:56:05 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@jfet.org
+Subject: [arma@mit.edu: Tor 0.1.1.16-rc is out]
+Message-ID: <20060320075605.GF25017@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.5.11+cvs20060126
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3698
+Lines: 75
+
+----- Forwarded message from Roger Dingledine <arma@mit.edu> -----
+
+From: Roger Dingledine <arma@mit.edu>
+Date: Mon, 20 Mar 2006 01:16:10 -0500
+To: or-talk@freehaven.net
+Subject: Tor 0.1.1.16-rc is out
+User-Agent: Mutt/1.5.9i
+Reply-To: or-talk@freehaven.net
+
+This is the second release candidate for the 0.1.1.x series.
+
+It fixes a variety of odds and ends, including getting started
+on making it easier to add new authoritative dirservers.
+
+http://tor.eff.org/download.html
+
+Changes in version 0.1.1.16-rc - 2006-03-18
+  o Bugfixes on 0.1.1.15-rc:
+    - Fix assert when the controller asks to attachstream a connect-wait
+      or resolve-wait stream.
+    - Now do address rewriting when the controller asks us to attach
+      to a particular circuit too. This will let Blossom specify
+      "moria2.exit" without having to learn what moria2's IP address is.
+    - Make the "tor --verify-config" command-line work again, so people
+      can automatically check if their torrc will parse.
+    - Authoritative dirservers no longer require an open connection from
+      a server to consider him "reachable". We need this change because
+      when we add new auth dirservers, old servers won't know not to
+      hang up on them.
+    - Let Tor build on Sun CC again.
+    - Fix an off-by-one buffer size in dirserv.c that magically never
+      hit our three authorities but broke sjmurdoch's own tor network.
+    - If we as a directory mirror don't know of any v1 directory
+      authorities, then don't try to cache any v1 directories.
+    - Stop warning about unknown servers in our family when they are
+      given as hex digests.
+    - Stop complaining as quickly to the server operator that he
+      hasn't registered his nickname/key binding.
+    - Various cleanups so we can add new V2 Auth Dirservers.
+    - Change "AllowUnverifiedNodes" to "AllowInvalidNodes", to
+      reflect the updated flags in our v2 dir protocol.
+    - Resume allowing non-printable characters for exit streams (both
+      for connecting and for resolving). Now we tolerate applications
+      that don't follow the RFCs. But continue to block malformed names
+      at the socks side.
+
+  o Bugfixes on 0.1.0.x:
+    - Fix assert bug in close_logs(): when we close and delete logs,
+      remove them all from the global "logfiles" list.
+    - Fix minor integer overflow in calculating when we expect to use up
+      our bandwidth allocation before hibernating.
+    - Fix a couple of bugs in OpenSSL detection. Also, deal better when
+      there are multiple SSLs installed with different versions.
+    - When we try to be a server and Address is not explicitly set and
+      our hostname resolves to a private IP address, try to use an
+      interface address if it has a public address. Now Windows machines
+      that think of themselves as localhost can work by default.
+
+  o New features:
+    - Let the controller ask for GETINFO dir/server/foo so it can ask
+      directly rather than connecting to the dir port.
+    - Let the controller tell us about certain router descriptors
+      that it doesn't want Tor to use in circuits. Implement
+      SETROUTERPURPOSE and modify +POSTDESCRIPTOR to do this.
+    - New config option SafeSocks to reject all application connections
+      using unsafe socks protocols. Defaults to off.
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820            http://www.ativel.com
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+
+[demime 1.01d removed an attachment of type application/pgp-signature which had a name of signature.asc]
+

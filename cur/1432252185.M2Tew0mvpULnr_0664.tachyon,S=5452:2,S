@@ -1,0 +1,122 @@
+From owner-cypherpunks@al-qaeda.net  Mon May 10 05:50:04 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.mit.edu (localhost [127.0.0.1])
+	by positron.mit.edu (8.12.11/8.12.11/Debian-3) with ESMTP id i4A9l5cV000715
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.mit.edu>; Mon, 10 May 2004 05:47:05 -0400
+Received: (from majordomo@localhost)
+	by positron.mit.edu (8.12.11/8.12.11/Debian-3) id i4A9l5bD000714
+	for cypherpunks-outgoing; Mon, 10 May 2004 05:47:05 -0400
+Date: Mon, 10 May 2004 05:35:28 -0400
+From: Adam Back <adam@cypherspace.org>
+To: Jason Holt <jason@lunkwill.org>
+Cc: cryptography@metzdowd.com, Cypherpunks <cypherpunks@minder.net>,
+        Adam Back <adam@cypherspace.org>
+Old-Subject: Re: Brands' private credentials
+Message-ID: <20040510093528.GB13170@bitchcake.off.net>
+References: <20040509100431.GA24611@bitchcake.off.net>
+  <Pine.LNX.4.44.0405100141220.6916-100000@potato.zayda.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <Pine.LNX.4.44.0405100141220.6916-100000@potato.zayda.com>
+User-Agent: Mutt/1.4.1i
+X-Hashcash: 0:040510:jason@lunkwill.org:0320364ec23920df5643d560
+X-Hashcash: 0:040510:cryptography@metzdowd.com:6c3aa42fdf2d41527d1876a0
+X-Hashcash: 0:040510:cypherpunks@minder.net:deed621ddf4355978f1209a2
+X-Hashcash: 0:040510:adam@cypherspace.org:3206633e1760127f17690507
+Subject: Re: Brands' private credentials
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3872
+Lines: 87
+
+On Mon, May 10, 2004 at 02:42:04AM +0000, Jason Holt wrote:
+> > However can't one achieve the same thing with encryption: eg an SSL
+> > connection and conventional authentication?  
+> 
+> How would you use SSL to prove fulfillment without revealing how?
+> You could get the CA to issue you a "patient or doctor" SSL cert,
+
+Well SSL was just to convince you that you were talking to the right
+server ("you have reached the AIDs db server").
+
+After that I was presuming you use a signature to convince the server
+that you are authorised.  Your comment however was that this would
+necessarily leak to the server whether you were a doctor or an AIDs
+patient.
+
+However from what I understood from your paper so does your scheme,
+from section 5.1:
+
+P = (P1 or P2) is encoded HC_E(R,p) = {HC_E(R,P1),HC_E(R,P2)} 
+
+With Hidden Credentials, the messages are in the other direction: the
+server would send something encrypted for your pseudonym with P1 =
+AIDs patient, and P2 = Doctor attributes.  However the server could
+mark the encrypted values by encoding different challenge response
+values in each of them, right?
+
+(Think you would need something like Bert Jaap-Koops Binding
+cryptography where you can verify externally to encryption that the
+contained encrypted value is the same to prevent that; or some other
+proof that they are the same.)
+
+
+Another approach to hiding membership is one of the techniques
+proposed for non-transferable signatures, where you use construct:
+
+RSA-sig_A(x),RSA-sig_B(y) and verification is x xor y = hash(message).
+
+Where the sender is proving he is one of A and B without revealing
+which one.  (One of the values is an existential forgery, where you
+choose a z value first, raise it to the power e, and claim z is a
+signature on x= z^e mod n; then you use private key for B (or A) to
+compute the real signature on the xor of that and the hash of the
+message).  You can extend it to moer than two potential signers if
+desired.
+
+> > Outside of this, the usual approach to this is to authenticate the
+> > server first, then authenticate the client so the client's privacy is
+> > preserved.
+> 
+> If you can trust the server to do so.  Firstly, hidden credentials limit what
+> the server learns, so you don't *have* to trust the server as much.  But
+> secondly, they also solve the problem which shifts to the server when it goes
+> first: 
+
+OK so the fact that the server is the AIDs db server is itself secret.
+Probably better example is dissident's server or something where there
+is some incentive to keep the identity of the server secret.  So you
+want bi-directional anonymity.  It's true that the usual protocols can
+not provide both at once; SSL provides neither, the anonymous IP v2
+protocol I designed at ZKS had client anonymity (don't reveal
+pseudonym until authenticate server, and yet want to authenticate
+channel with pseudonym).  This type of bi-directional anonymity pretty
+much is going to need something like the attribute based encryption
+model you're using.
+
+However it would be nice/interesting if one could do that end-2-end
+secure without needing to trust a CA server.
+
+> My system lets folks:
+> 
+> * access resources without the server even knowing whether they fulfill the
+> policy
+
+this one is a feature auth based systems aren't likely to be able to
+fullfil, you can say this because the server doesn't know if you're
+able to decrypt or not
+
+> So it's definitely in the realm of other privacy systems.  We could
+> define a new term just to exclude my system from the others, but at
+> this point I don't think naming confusion is any worse for my
+> system; they all have lots of different nonorthogonal features.  
+
+I think it would be fair to call it anonymity system, just that the
+trust model includes a trusted server.  There are lots of things
+possible with a trusted server, even with symmetric crypto (KDCs).
+
+Adam
+

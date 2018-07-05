@@ -1,0 +1,217 @@
+From owner-cypherpunks@al-qaeda.net  Sat Jul 11 16:16:02 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id n6BKG1TW013556
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sat, 11 Jul 2009 16:16:01 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id n6BKG1pL013555
+	for cypherpunks-outgoing; Sat, 11 Jul 2009 16:16:01 -0400
+Message-Id: <D2A392AF-1FD6-4808-8A89-A47F4AEB8781@shipwright.com>
+From: "R.A. Hettinga" <rah@shipwright.com>
+To: cypherpunks@al-qaeda.net
+Content-Type: text/plain; charset=US-ASCII; format=flowed; delsp=yes
+Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Apple Message framework v935.3)
+Subject: Fwd: [gsc] Public Key Transaction Processor
+Date: Sat, 11 Jul 2009 16:15:57 -0400
+References: <4A58BB8A.6030600@rayservers.net>
+X-Mailer: Apple Mail (2.935.3)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 7105
+Lines: 190
+
+Begin forwarded message:
+
+> From: Patrick Chkoreff <patrick@rayservers.net>
+> Date: July 11, 2009 12:19:22 PM GMT-04:00
+> To: gold-silver-crypto@rayservers.com
+> Subject: Re: [gsc] Public Key Transaction Processor
+>
+> Andrew McMeikan wrote, On 07/11/2009 10:44 AM:
+>> About seven years ago, I started coding on a program for digital
+>> payments using pgp keys as accounts.
+> ...
+>
+> I hear ya Andrew.  A long time ago I messed with a system for doing
+> transactions via EMAIL, using PGP-signed messages.
+>
+> I even set up an auto-responder with an address like  
+> "title@server.com",
+> where "title" represented a "Title Server".
+>
+> I was able to email it a signed message saying in effect:
+>
+>  Transfer 40 units from key A to key B.
+>    -- signed, key A
+>
+> I'd email that to title@server.com.  I had some Perl code which  
+> received
+> that message automatically, verified the signature with key A, and
+> returned a response signed with key T, where T represented the Title
+> Server itself.
+>
+> Of course, to prevent replay attacks, you need to include a nonce
+> (one-time random number) in the message to make it unique.  And then  
+> the
+> Title Server needs to keep a database of those nonces to make sure a  
+> new
+> message is not a replay.  And then the question arises, when can you
+> delete anything from that database, if ever.
+>
+> Trubanc addresses that problem by having users effectively "sign  
+> off" on
+> balances at every stage, enabling old history to be deleted.
+>
+> I also played with a split/merge scheme, which is what eCache uses.   
+> But
+> again, when can you ever delete a spent ID from the database, if ever?
+>
+> The larger question is:  even if the Title Server does all that, you  
+> end
+> up with a fundamentally account-based system, and do we really want  
+> that?
+>
+> One answer to that is to use *new key pairs* for different  
+> transactions.
+> But the Title Server could still link those keys to IP addresses if an
+> aggressor forced a programmer to include it in the code.
+>
+> Even with eCache, an aggressor could force a programmer to include  
+> code
+> that links the cash ID with an IP address and keeps a log of it.
+>
+> eCache gets around that problem by *insisting* that you access their
+> server through Tor.  That way there's no feasible way for the eCache
+> server to track a user's "real" IP address.
+>
+> eCache also provides a "mixer" function to help obscure the trail.
+>
+> Speaking of mixers, an email-based Title Server could rely on  
+> Mixmaster
+> remailer technology to obscure real IPs.  But as long as transfers are
+> specified as FROM one key TO another key, there is still a danger if a
+> particular key is ever linked to a human individual somehow, even if  
+> not
+> by IP address.
+>
+> Loom does not overcome this problem in any ultimate sense.  An  
+> aggressor
+> could force a programmer to insert logging code, which would associate
+> Loom locations with IP addresses.
+>
+> My thought was, to hell with it, if a user wants more anonymity, let  
+> him
+> use an ANONYMOUS CHANNEL, such as Tor.
+>
+> That's like the SSL mentality:  if the user wants to communicate  
+> with a
+> server securely, then the user should use a SECURE CHANNEL, i.e. SSL.
+> That way the server itself doesn't have to do any cryptography, since
+> the SSL layer handles that automatically.
+>
+> Similarly, the TOR layer should provide an ANONYMOUS CHANNEL --  
+> ideally.
+> In practice, it would probably never be as anonymous as BLINDED
+> SIGNATURES, but it's a start.
+>
+> Even with Loom over Tor, an aggressor could still force a programmer  
+> to
+> insert logging code.  In that case the logs would associate locations
+> with fairly meaningless IP addresses, so you might think privacy is
+> preserved.  However, if *somehow* a location was ever associated  
+> with a
+> human individual (not by IP but by some other means), then a pattern  
+> of
+> spends would begin to emerge to the aggressor's eyes.
+>
+>
+> If you wanted to play with a signature-based system which does NOT
+> re-use keys, you might try something like Dan Bernstein's  
+> implementation
+> of Elliptic Curve Cryptography, specifically a thing called  
+> "Curve25519":
+>
+> http://cr.yp.to/ecdh.html
+>
+> That uses very compact 256-bit numbers for both private and public  
+> keys,
+> unlike the giant keys used in RSA.
+>
+>
+> Now that I'm on that topic, I'm thinking of incorporating that
+> technology into Loom for the purpose of key exchange (i.e. conveying a
+> secret location securely).
+>
+> The nice thing about Curve25519 is that every user can have a 256-bit
+> private key and a 256-bit public key.  If two users Alice and Bob wish
+> to exchange information securely, they can easily compute a shared
+> secret location using only their own private key and the OTHER user's
+> public key.  (That's Diffie-Hellman key exchange.)
+>
+>
+> I have done a little research into blinded signatures, which could
+> implement truly unlinkable payments, and it would be nice to use
+> Curve25519 for that.  However, the literature on the use of elliptic
+> curve cryptography for blinded signatures is a bit scarce, and the
+> papers which exist go very deep into some math which I am *capable* of
+> understanding and implementing, should I care to spend an enormous
+> number of hours of my life trying it.
+>
+>
+> I have not yet found any nice libraries for blinded signatures which I
+> can simply *use* in my code.  I'm really surprised that GnuPG has  
+> never
+> included any blinded signature functions in their program.  They have
+> all the necessary discrete-log and strong-prime field code in their
+> codebase, but as far as I know they've never implemented blinding  
+> functions.
+>
+>
+>
+> So to summarize, yes I think you can implement a PGP-email based  
+> system,
+> but it would fundamentally be account-based unless you re-used keys at
+> every stage, which would be difficult for users.
+>
+>
+> You realize however that for VERY LARGE chunks of value, like let's  
+> say
+> a whole 400 oz gold brick, one can use PGP-signatures manually to
+> transfer "ownership".
+>
+> The Title Server could simply sign a message saying in effect:
+>
+>   The gold bar belongs to key A.
+>   -- signed, T
+>
+> A would then send a message to T, saying:
+>
+>   Please give the gold bar to key B.
+>   -- signed, A
+>
+> Then the Title Server would say:
+>
+>   The gold bar belongs to key B.
+>   -- signed, T
+>
+> Of course, the Title server would need to keep a record of all these
+> messages so that it could justify the very latest owner.  And the
+> messages would have to be linked in a chain probably using a nonce, to
+> avoid re-ordering them to justify a different owner.  Then there's the
+> problem of what happens if the Title server "forgets" a later part of
+> the chain somehow, concluding that A is still the owner.  But the new
+> owner B would still have a copy of his signed message saying that he
+> owns the bar.  A lot of details to consider here, but in a manual  
+> system
+> it might be workable, and for large asset values it could be cost- 
+> effective.
+>
+>
+> END stream-of-consciousness-with-no-proofreading
+>
+> -- Patrick
+

@@ -1,0 +1,81 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t836453d001567;
+	Thu, 3 Sep 2015 02:04:06 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=dJnt2ha1;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-la0-f45.google.com (mail-la0-f45.google.com
+ [209.85.215.45])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t83642GQ001563
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 3 Sep 2015 02:04:04 -0400
+Received: by lagj9 with SMTP id j9so21776014lag.2
+ for <cypherpunks@cpunks.org>; Wed, 02 Sep 2015 23:03:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :cc:content-type;
+ bh=jCxQzamXYSPdx95qWin5zQbK+4nD3rqQD40BjyALEL0=;
+ b=dJnt2ha1svoSN+5IWf2kSHr/L3qB6KmEB6hyNof6kP8zFD770VWCwdUACIzv6YQcEJ
+ dZ2YMPyh+vCzbmH4YPX+24ujRolmi0Sjm+Fq7i4nCwbv6vlpvOVZLuyAGis3PZ+T1vGf
+ W1XeYE+69s/zi7Zrh7+NSFIOmx/0NA5BtsgCUSTIWkr2ji+xY4FeKfsTJWyyPiy6sln+
+ qWdOWnFM2xrwx1jcL6Qm/xrJGUactyc1P0MKiAAbDhJBhMhUdzzifPAvz6rdp95Ebsp5
+ Z+RW+Iw8MJfewu5XhskG5H77kxbz3KCnw1Zt4nvgJ6S/sBId2IXQ4dKf2jTHjgxOPa41
+ sTEQ==
+MIME-Version: 1.0
+X-Received: by 10.112.51.133 with SMTP id k5mr19015549lbo.107.1441260236378;
+ Wed, 02 Sep 2015 23:03:56 -0700 (PDT)
+Received: by 10.25.209.81 with HTTP; Wed, 2 Sep 2015 23:03:55 -0700 (PDT)
+In-Reply-To: <55E76428.7070109@teamsammut.com>
+References: <55C59BBA.2020700@openmailbox.org>
+ <CAD2Ti2963Oiin8ZWdR5Pc4RrmEfteN2X0MtBAUMdQ6uQuPm1jA@mail.gmail.com>
+ <CAAd2PDJSmAR8UBLa62yzQTd4tF9S46q2cZgH0ErxtOyYH531Ww@mail.gmail.com>
+ <1439101342-sup-8277@metis.syd1.tesser.org>
+ <20150812234512.GE2384@torproject.org>
+ <CAD2Ti28+=dSmwqe_ZtJSDMZ1N-AJ5Lp=5OA6HpNHakhfwe1uMg@mail.gmail.com>
+ <20150813074017.GF2384@torproject.org>
+ <CAD2Ti2_0JFRw7NBhXUL2J6P7vpmjPE-sxN_Jb6=Z6YGpiB=qPA@mail.gmail.com>
+ <20150821043032.GB5822@torproject.org>
+ <55E76428.7070109@teamsammut.com>
+Date: Wed, 2 Sep 2015 23:03:55 -0700
+Message-ID: <CAJVRA1QSFJXb0vkMAf7AdAEGuH9K0QPnREC4oWyrzYqPyAKV3g@mail.gmail.com>
+Subject: Re: [tor-relays] clarification on what Utah State University exit
+ relays store ("360 gigs of log files")
+From: coderman <coderman@gmail.com>
+To: tor-relays@lists.torproject.org, tim@teamsammut.com
+Content-Type: text/plain; charset=UTF-8
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 19
+
+On 9/2/15, Tim Sammut <tim@teamsammut.com> wrote:
+> ...
+>  - Cisco IOS (and likely other platforms) will immediately export flows
+>    if the cache fills to capacity. This will result in flows being
+>    exported in less than inactive timeout,..
+
+there is a second limit here, which is the netflow channel capacity /
+storage limit, if you introduce simulated flows at a rate beyond this
+capacity, you may become unobservable (via loss) resulting in failure
+to correlate.
+
+this is why i asked about logical injection via userspace of billions
+of flows per minute as a resistance measure. (e.g. scapy or other raw
+inject across a border with cooperating peer, if needed.)
+
+
+best regards,
+

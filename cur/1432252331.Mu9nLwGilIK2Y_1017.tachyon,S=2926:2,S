@@ -1,0 +1,80 @@
+From owner-cypherpunks@lne.com  Sat Nov 22 09:09:18 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p3/8.11.6-03-31-03) with ESMTP id hAME9Gq19698
+	for <rsw@jfet.org>; Sat, 22 Nov 2003 09:09:17 -0500
+Received: from slack.lne.com (slack.lne.com [127.0.0.1])
+	by slack.lne.com (8.12.10/8.12.10) with ESMTP id hAMDsrBS001278
+	(version=TLSv1/SSLv3 cipher=EDH-DSS-DES-CBC3-SHA bits=168 verify=NO)
+	for <cypherpunks-goingout345@slack.lne.com>; Sat, 22 Nov 2003 05:54:53 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.10/8.12.10/Submit) id hAMDsral001277
+	for cypherpunks-goingout345; Sat, 22 Nov 2003 05:54:53 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Sat, 22 Nov 2003 14:54:39 +0100 (CET)
+From: Thomas Shaddack <shaddack@ns.arachne.cz>
+To: cypherpunks <cypherpunks@lne.com>
+Subject: Idea: GPG signatures within HTML
+Message-ID: <0311221436180.-1216855884@somehost.domainz.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 1697
+Lines: 52
+
+Sometimes a problem appears with publishing information on the Web, when
+the authenticity of document, especially a widely-distributed one, has to
+be checked. I am not aware about any mechanism available presently.
+
+A trick with HTML (or SGML in general) tag and a comment, a browser plugin
+(or manual operation over saved source), and a GPG signature over part of
+the HTML file should do the job, with maintaining full backward
+compatibility and no problems for the users not using this scheme.
+
+It should be possible to make this HTML construction:
+
+
+<HTML>
+<BODY>
+blah blah blah blah blah unsigned irrelevant part of the document, eg.
+headers and sidebars which change with the site design
+<SIGNED SCHEME="GPG"><!--
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+--!>
+This is the PGP-signed part
+of the HTML document.
+<!--
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.1.91 (MingW32) - GPGrelay v0.893
+
+ihas7Ds9fXLR9ksWRdwNZXNA8SdshwAJ9zwXFDgvdg5G2mqXp5BD4Sx2ZmjwCfSs70
+Kj8sQor6i+MUZBmp5pdM1vU=
+=hIsR
+-----END PGP SIGNATURE-----
+--!></SIGNED>
+the unsigned rest of the HTML document
+</BODY></HTML>
+
+
+The <SIGNED>...</SIGNED> tags are ignored by browsers that don't know
+them, and provide leads for eventual browser plugins.
+
+The <!-- --> comments are used to hide the signature from the user in
+standard browsers.
+
+The scheme is designed to allow signing only parts of documents, so they
+could be published in fast-changing environments like blogs or on
+dynamically generated pages, and to have many different signed parts on
+one page. It should also allow manual checking of the signature, eg. by
+curl http://url | gpg --verify
+
+Feel free to use the idea if it is good.
+
+Opinions, comments?
+

@@ -1,0 +1,143 @@
+From owner-cypherpunks@al-qaeda.net  Wed Dec 22 16:23:31 2010
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-5+lenny1) with ESMTP id oBMLKepe005557
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 22 Dec 2010 16:20:40 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id oBMLKeYC005556
+	for cypherpunks-outgoing; Wed, 22 Dec 2010 16:20:40 -0500
+Date: Wed, 22 Dec 2010 22:20:36 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: tt@postbiota.org, info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: [p2p-hackers] Whistle-blower site platform design
+Message-ID: <20101222212036.GA16518@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 6114
+Lines: 118
+
+----- Forwarded message from Len Sassaman <Len.Sassaman@esat.kuleuven.be> -----
+
+From: Len Sassaman <Len.Sassaman@esat.kuleuven.be>
+Date: Wed, 22 Dec 2010 19:44:22 +0100 (CET)
+To: p2p-hackers@lists.zooko.com
+Subject: [p2p-hackers] Whistle-blower site platform design
+Reply-To: theory and practice of decentralized computer networks <p2p-hackers@lists.zooko.com>
+
+Greetings, p2p-hacker folks,
+
+This list seems to be the most direct spiritual successor to the 
+cypherpunks list, which is where I'd want to raise this issue if it still 
+existed.
+
+As most of you are undoubtedly aware, the sudden surge in attention 
+Wikileaks has gained in the last months have resulted in at least half a 
+dozen imitation "leaks" sites -- from OpenLeaks, founded by former 
+Wikileaks staff who have different ideas on how such a site should 
+operate, to regional whistle-blower and transparency sites such as 
+Brusselsleaks, Balkanleaks, Pirateleaks.cz, etc.
+
+Let me first state I think that this is absolutely a good thing -- in 
+principle. Relying on a single initiative such as Wikileaks both gives way 
+too much power to the organization in question, and makes it a 
+high-profile target. The rise of independant leak publishers decentralizes 
+the fundamental service these sites provide, and brings attention back to 
+the content of their publications rather than the personalities of the 
+individuals involved.
+
+It's also problematic for a number of reasons: firstly, reputation. Who is 
+BrusselsLeaks? Why should a whistleblower trust that the operators of that 
+site have his/her interests in mind? What's to say they're not an 
+initiative of an intelligence agency? I'm not sure there's anything to be 
+done about that, except wait and let these other players earn their own 
+reputation capital.
+
+However, it's painfully clear to me that a number of these sites don't 
+have the first clue when it comes to technological measures they should be 
+taking to protect their sources. E.g., BrusselsLeaks is running their 
+operation with Wordpress and Hushmail -- hardly a hardened solution.
+
+Wikileaks has had four years and the input of top network security 
+experts, cryptographers, p2p-hackers, and cypherpunks, to create a system 
+hardened against predictable threats. It's quite likely that had Bradley 
+Manning not made the mistake of "confessing" to a government snitch posing 
+as a journalist, he'd not be in jail today. Wikileaks, according to what I 
+can gather from press reports and comments from people involved, as well 
+as examining their site, relies on a Tor Hidden Service setup for 
+receiving submissions. That alone is hardly enough to protect the site 
+from attacks on the anonymity of its sources, the integrity and security 
+of its site, or its network presense, but already requires a level of 
+technical sophistication that is lacking in most of these "copy-cat" 
+sites.
+
+I'd like to see us come up with an easy-to-deploy solution for launching a 
+leaks site with the security considerations addressed, perhaps in the form 
+of a "soft appliance" distribution, but first we need a basic requirements 
+document. What are the technical security requirements of such a service?
+
+Off the top of my head, I think we can divide this into three parts:
+
+1. General site security. The website/servers need to be resistant to 
+compromise, and also need to be prepared for the same. The credibility of 
+Wikileaks would be severely damaged if an attacker were able to, for 
+example, introduce fake diplomatic cables to the cache of documents 
+waiting to be released, so that the Wikileaks staff inadvertantly 
+published false information. So in addition to protecting against 
+breakins, the system needs to be designed to maintain data integrity in 
+the face of compromise.
+
+2. Source protection. The site needs to provide a means for whistleblowers 
+to contact the site operators, discuss issues, and submit documents in an 
+anonymous manner. Wikileaks solves this with Tor, though there might be 
+other ways. We need a clearly defined threat model to build against, and 
+must keep in mind that usability is a security concern -- we have to 
+assume that the whistleblowers are not geeks, and the site operators may 
+not be, either.
+
+3. Censorship resistance. If 2. brings to mind Tor, 3. brings to mind the 
+Eternity Service. In this model, the publisher does not need to be 
+anonymous, but the data needs to be authenticated and the service 
+distributed. The CouchDB-based mirrors of the Afghanistan War Diaries 
+provide a promising first-attempt; to be successful, these sites need to 
+be able to leverage jurisdictional arbitrage and distributed hosting to 
+resist network denial of service attacks and legal attacks aimed at 
+taking their sites offline, as well as data corruption attacks aimed at 
+invalidating the material by attacking its credibility with the 
+introduction of false documents, etc.
+
+3.a. would be a way for third-parties to obtain the material provided by 
+these services in an anonymous fashion; I see this as lower priority than 
+the other issues, but still something to think about.
+
+My goal here is to develop a formal, realistic model for the operation of 
+a legitimate journalistic whistle-blower material clearinghouse. I'm 
+basically proposing we replicate in public, with peer-review, the process 
+I assume Wikileaks itself has undergone for the design of their system. 
+Let's identify the likely attacks and attack vectors for given 
+adversaries, compose a solution based on available technology, and 
+assemble it in as easily deployable a manner as possible.
+
+Who else is interested? Let's get this discussion rolling.
+
+
+Best,
+
+Len
+_______________________________________________
+p2p-hackers mailing list
+p2p-hackers@lists.zooko.com
+http://lists.zooko.com/mailman/listinfo/p2p-hackers
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

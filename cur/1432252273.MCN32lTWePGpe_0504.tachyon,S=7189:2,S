@@ -1,0 +1,175 @@
+From cypherpunks-bounces@cpunks.org  Tue Oct 15 15:13:28 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9FJDLVN028254;
+	Tue, 15 Oct 2013 15:13:22 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9FJDGfC028248
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Tue, 15 Oct 2013 15:13:18 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id E93F6543E19; Tue, 15 Oct 2013 21:13:15 +0200 (CEST)
+Date: Tue, 15 Oct 2013 21:13:15 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: [Cryptography] my comment to NIST about reducing capacity in SHA-3
+Message-ID: <20131015191315.GV10405@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 5391
+Lines: 136
+
+----- Forwarded message from Zooko Wilcox-OHearn <zooko@leastauthority.com> -----
+
+Date: Tue, 15 Oct 2013 18:42:51 +0000
+From: Zooko Wilcox-OHearn <zooko@leastauthority.com>
+To: cryptography@metzdowd.com
+Subject: [Cryptography] my comment to NIST about reducing capacity in SHA-3
+Message-ID: <CAM_a8JzazjxXq5Y8GiFbjK6nNHQf1fHFfJ+A6r1O6tF2yfHwCg@mail.gmail.com>
+
+Date: Tue, 1 Oct 2013 15:45:27 -0400
+From: zooko <zooko@zooko.com>
+To: Multiple recipients of list <hash-forum@nist.gov>
+Subject: Re: On 128-bit security
+
+Folks:
+
+Here are my personal opinions about these issues. I'm not expert at
+cryptanalysis. Disclosure: I'm one of the authors of BLAKE2 (but not
+one of the authors of BLAKE).
+
+I personally do not believe that there is any secret agenda behind
+this proposal, even though I believe that there was a secret agenda
+behind Dual EC DRBG.
+
+One reason that I believe that the motivation behind this proposal is
+the stated motivation of improving performance, is that Joan Daemen
+told me in person in January of 2013 that the Keccak team had
+considered defining a reduced Keccak to compete with BLAKE2, but had
+decided against it because they didn't want to disrupt the SHA-3
+standardization process.
+
+Apparently they changed their minds, and apparently their fears of
+disruption turned out to be prescient!
+
+I also do not think that a "security level" of 2^256 is necessarily
+better than a "security level" of 2^128. *Maybe* it is better, but I'm
+not aware of any examples where that sort of distinction has turned
+out to matter in practice, and I can't really judge if it is likely to
+matter in the future (except, of course, if you forget to take into
+account multi-target issues…). I suspect nobody else can, either.
+
+However, even though I *personally* would have confidence that a
+Keccak with a 256-bit capacity would be safe and would be free of
+maliciously induced weakness, I want a standard to be widely accepted
+in addition to being safe.
+
+This is the "Caesar's wife must be above suspicion" argument. It isn't
+enough to make a secure standard, but also we need other people to
+have confidence in it.
+
+And, I don't know if we can persuade people that "no it isn't actually
+backdoored/weakened". It may be the kind of thing where if that's the
+conversation we're having then we've already lost.
+
+Would it make sense to go ahead and standardize
+SHA3-as-a-replacement-for-SHA2 by standardizing the form of Keccak
+which is most widely accepted by cryptographers and which is closest
+to what was studied during the contest, and then separately offer
+SHAKE and reduced-for-speed-Keccak as additional new things?
+
+A lot of uses of secure hash functions don't need to be particularly
+efficient. In my slides about BLAKE2
+(https://blake2.net/acns/slides.html) I argue that there are use-cases
+where efficiency is critical, but it is equally true that there are
+common and important use cases where a 576-bit capacity Keccak would
+be fine, e.g. public key certificates.
+
+-------
+
+Joan Daemen, one of inventors of AES and one of the inventors of
+Keccak (SHA-3), replied to my mailing list post as follows:
+
+Date: Fri, 4 Oct 2013 05:08:07 -0400
+From: Joan DAEMEN <joan.daemen@st.com>
+To: Multiple recipients of list <hash-forum@nist.gov>
+Subject: RE: On 128-bit security
+
+Hello all,
+
+Zooko wrote:
+
+> I personally do not believe that there is any secret
+> agenda behind this proposal, even though I believe that
+> there was a secret agenda behind Dual EC DRBG.
+>
+> One reason that I believe that the motivation behind
+> this proposal is the stated motivation of improving
+> performance, is that Joan Daemen told me in person in
+> January of 2013 that the Keccak team had considered
+> defining a reduced Keccak to compete with BLAKE2, but
+> had decided against it because they didn't want to
+> disrupt the SHA-3 standardization process.
+>
+> Apparently they changed their minds, and apparently
+> their fears of disruption turned out to be prescient!
+
+Yes, Zooko and I met at the end-of-Ecrypt II event on Tenerife early
+2013 (24° C in January!).
+I don't remember our conversation in detail, but I I'm sure Zooko is
+citing me correctly because that is what we were thinking about at the
+time.
+
+Actually, what we had in mind was to propose something like "Keccak2"
+to compete with BLAKE2 by drastically cutting the number of rounds,
+e.g., down to 12 rounds for Keccak-f[1600], but otherwise keeping the
+algorithm as it is. That might have sent the wrong message indeed, but
+we just didn't do it.
+
+In contrast, the capacity is an integral parameter of the Keccak
+family that we even proposed as user-tunable in our SHA-3 submission.
+Matching the capacity to the security strength levels of [NIST SP
+800-57] is simply exploiting that flexibility.
+
+Kind regards,
+
+Joan, also on behalf of my Keccak companions﻿
+
+-------
+
+Regards,
+
+Zooko Wilcox-O'Hearn
+
+Founder, CEO, and Customer Support Rep
+https://LeastAuthority.com
+Freedom matters.
+_______________________________________________
+The cryptography mailing list
+cryptography@metzdowd.com
+http://www.metzdowd.com/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

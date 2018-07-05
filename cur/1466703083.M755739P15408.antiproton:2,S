@@ -1,0 +1,134 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u5NHVJqF015391;
+	Thu, 23 Jun 2016 13:31:19 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=eufQWIth;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-vk0-f52.google.com (mail-vk0-f52.google.com
+ [209.85.213.52])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u5NHVAUs015385
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 23 Jun 2016 13:31:12 -0400
+Received: by mail-vk0-f52.google.com with SMTP id j2so116388043vkg.2
+ for <cypherpunks@cpunks.org>; Thu, 23 Jun 2016 10:31:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to;
+ bh=OCsbgCTHlHCdRjliebv286LegpkvyP5qnKIYMIkm7J8=;
+ b=eufQWIthO6K+7IxO4oevl/CsE/gBtqLouPXkcwinwSSWXV+LosB7kUZy6B8stcxZ3d
+ L8bMdf5p1QOGicGxEg1SsTriM/1V/XvmuTy19gXKjubdSpOMufBh9D+JoYz8QUQfPKPi
+ gzOYhYuv27qwYnWyaq+BehqC6NM+7jJZvLinJug/shJr3LAgv7jGEkMf5H644TlIEB94
+ UhsY9fB7M4gChyeLv8xQLLmOgds3vw2F1BTadRJ22SFqkWDsSob+TTPUBAYthhrkNLqv
+ FoJKeV5Z3gH4Nvev6gygGY1dHKK51CZF1li8lsJyHkLqpCJklR1gXtMYe6N3TfhPXjeT
+ bMIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to;
+ bh=OCsbgCTHlHCdRjliebv286LegpkvyP5qnKIYMIkm7J8=;
+ b=PtI1YGOw7PQ5O5cQ/RPj5+uUTQ8LWfim1aJskDnv5x0Yos9hHVFGEArajc+VZGN6+Y
+ EhhrHWLWy3MKJ/vF43LFS3hhpArsDrtXFRgFJOrTzbfqwvyj6Yu8DeMB9NFd1bGCGoTE
+ /TRFaY3GOeAZhL6h+8QQMp6bs/d9LOFMdZw2ETKKf0plwReOSbqBeoF+kt85DGk9eIm7
+ nZiKuElvXYXw0E+bINRYdEE34Cf4V2G/bqaCzwA7S+2Xls/lEFuCUsLlIWgsv3Hf5D6S
+ 84I4wEzCtvPrzR//a+sxsO0cisQ0jQrRwvzxhWrO3Rr8YpTGbGfLePrvT4SO6HqY0LxX
+ UfMw==
+X-Gm-Message-State: ALyK8tJq5ehOcuyVBut7hzvh0Mr0GhCJczwG0nuLtjytSBxHhCOdHq3O4dygNhdfc8s8rDqc+dGyhHYhttRqTw==
+MIME-Version: 1.0
+X-Received: by 10.31.161.81 with SMTP id k78mr2171543vke.122.1466703065156;
+ Thu, 23 Jun 2016 10:31:05 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Thu, 23 Jun 2016 10:31:03 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Thu, 23 Jun 2016 10:31:03 -0700 (PDT)
+In-Reply-To: <CAG2tMp7L3ZrH6XYwtyzkOEcitrZsWafebZyGn6VWm+J7=r-oVA@mail.gmail.com>
+References: <CAG2tMp7EY3UtEE+eZZQJ_rvHFnM77dcjR-kAgQOK0KSV8LfhbA@mail.gmail.com>
+ <CAG2tMp5pyWsG_6doHL8i4yO+NN2X2fkENAJ0Qkz5=yidE-R2nQ@mail.gmail.com>
+ <576b0d29.c8249f0a.fdc44.32aa@mx.google.com>
+ <CAG2tMp5Yw4k2WQ05FEcQfQYtdvMqEve85XxinNmZ7bus6jqavg@mail.gmail.com>
+ <576b20a2.e701b00a.1d4b5.415d@mx.google.com>
+ <CAG2tMp4s1HTNOHw5Or7OKwcox1u9FPp9oUKJjcanb8Hb2rHi2w@mail.gmail.com>
+ <CAG2tMp4Pzg=4h9pXOZqX1cek8tpWNZbCJbN5XPtjAUu7zetahg@mail.gmail.com>
+ <CAEm6KbLxHJBPt1yYvf1ny=bgJMDKF514zhu=9nP9j=92ApWroQ@mail.gmail.com>
+ <20160623123854.GC6268@x220-a02>
+ <1466688813.3365.13.camel@moonpatrol>
+ <20160623140817.GE6268@x220-a02>
+ <1466693732.5723.9.camel@moonpatrol>
+ <CAG2tMp7L3ZrH6XYwtyzkOEcitrZsWafebZyGn6VWm+J7=r-oVA@mail.gmail.com>
+Date: Thu, 23 Jun 2016 14:31:03 -0300
+Message-ID: <CAG2tMp7bzo4Ew71=y3z_Sm4SJM8A_0knFxOt1m0Re9DnJX5nZQ@mail.gmail.com>
+Subject: Re: Hi, Boyce! (was Fwd: tor-talk subscription update)
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=001a1143fa9c3096d40535f56bf9
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 59
+
+--001a1143fa9c3096d40535f56bf9
+Content-Type: text/plain; charset=UTF-8
+
+PS:  -  Quinn contacted me in private and he was not talking about me.
+Sorry again, Quinn!  :P
+
+I asked him to apologize me and I was sincere, but I still think that using
+a Federal Court to judge a person trying to read a list and not using the
+same courts to judge persons who created that site is really bizarre.
+
+Here, the ja.group would be judged for three different crimes against  (a
+person's)  honor, at least.  They and the Tor Project would spend a
+considerable amount of money paying civil and criminal indenizations.
+
+Being sincere, I really don't know who tried to re-subscribe using another
+account or if it was just another lie.  You all know, everybody in the Tor
+Project loves "alleged victims" that never show proofs, hihi...  ;)
+
+In private, some people said they didn't try subscribe again.  I swear I
+did not, so I don't know if someone really tried to subscribe using threats
+or not.
+
+Juan and I had some private conversation yesterday night about moderation
+and I think he understands me better now.  He doesn't agree, but now
+understands my points and my jokes about being a veggie girl, hihi...  ;)
+
+The world is becoming pretty boring in some moments, uff...  :-/
+
+--001a1143fa9c3096d40535f56bf9
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p>PS:=C2=A0 -=C2=A0 Quinn contacted me in private and he was not talking a=
+bout me.=C2=A0 Sorry again, Quinn!=C2=A0 :P</p>
+<p>I asked him to apologize me and I was sincere, but I still think that us=
+ing a Federal Court to judge a person trying to read a list and not using t=
+he same courts to judge persons who created that site is really bizarre.=C2=
+=A0 </p>
+<p>Here, the ja.group would be judged for three different crimes against=C2=
+=A0 (a person&#39;s)=C2=A0 honor, at least.=C2=A0 They and the Tor Project =
+would spend a considerable amount of money paying civil and criminal indeni=
+zations.</p>
+<p>Being sincere, I really don&#39;t know who tried to re-subscribe using a=
+nother account or if it was just another lie.=C2=A0 You all know, everybody=
+ in the Tor Project loves &quot;alleged victims&quot; that never show proof=
+s, hihi...=C2=A0 ;)</p>
+<p>In private, some people said they didn&#39;t try subscribe again.=C2=A0 =
+I swear I did not, so I don&#39;t know if someone really tried to subscribe=
+ using threats or not.</p>
+<p>Juan and I had some private conversation yesterday night about moderatio=
+n and I think he understands me better now.=C2=A0 He doesn&#39;t agree, but=
+ now understands my points and my jokes about being a veggie girl, hihi...=
+=C2=A0 ;)</p>
+<p>The world is becoming pretty boring in some moments, uff...=C2=A0 :-/</p=
+>
+
+--001a1143fa9c3096d40535f56bf9--
+

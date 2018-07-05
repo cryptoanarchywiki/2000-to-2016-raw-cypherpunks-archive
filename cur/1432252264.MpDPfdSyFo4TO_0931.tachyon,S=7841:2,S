@@ -1,0 +1,162 @@
+From owner-cypherpunks@al-qaeda.net  Thu Oct 18 16:05:23 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q9IK1lK8008553
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 18 Oct 2012 16:01:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1350590507;
+	bh=Y/mA316ZWjL6uzGShu1IhZHPKos+EnWbM+MIduMMl6A=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=Lot8aLOVEuBVPm6GTQdeD1g3eN19Kz3j5YmU2338/Y0FeQpiR1VJTc/AwegmN9Kqk
+	 ZYhzz1T6G2m3pnlSDHtO+wGT5PVJRmoMAw4uXshbToWOMTM9oYII0Cn7TnUDJCpOdT
+	 Fz98ho2p2DDk+A6PuCRATL/ybT0On2aJpBUwgZYs=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q9IK1l56008552
+	for cypherpunks-outgoing; Thu, 18 Oct 2012 16:01:47 -0400
+Date: Thu, 18 Oct 2012 22:01:41 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: zs-p2p@googlegroups.com, cypherpunks@al-qaeda.net
+Subject: [HacDC:Byzantium] October development sprint.
+Message-ID: <20121018200141.GX9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 6443
+Lines: 130
+
+----- Forwarded message from The Doctor <drwho@virtadpt.net> -----
+
+From: The Doctor <drwho@virtadpt.net>
+Date: Thu, 18 Oct 2012 15:47:49 -0400
+To: Byzantium@hacdc.org
+Subject: [HacDC:Byzantium] October development sprint.
+Reply-To: byzantium@hacdc.org
+Organization: Virtual Adept Networks, Unlimited
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:14.0) Gecko/20120717 Thunderbird/14.0
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+I know this list has been quiet since we got back from IS4CWM.  We're
+still alive but swamped in our day jobs.
+
+The question is, will there be a Byzantium development sprint in
+October.  The answer is, I don't know.
+
+Speaking only for myself, I'm exhausted, physically and emotionally.
+My day job has been running me flat out since I got back to the States
+and if I don't get some downtime I'm going to fall over.  Everyone
+else is likely in a different position right now.
+
+One of the things we're looking at is UCI
+(http://wiki.openwrt.org/doc/techref/uci), a framework for system
+configuration that is meant to be used under the hood of other things
+(for example, the control panel application LuCI).  Haxwithaxe, as I
+recall, is working on a Python API for it that would make it easier to
+work with.  We might be able to leverage it to do the actual work of
+configuring stuff for us (like starting and stopping services and
+configuring the network interfaces) so we won't have to write code to
+do that ourselves.  We got it to compile outside of a <mumble>
+firmware environment on our laptops, so we know it's doable.
+
+One of the things that we were debating while in Spain was the
+direction the UI should go in.  There is a rewrite of the 'panel in
+the works but it isn't done yet.  There is also a matter of the
+sustainability of the control panel as a whole, which was brought to
+light after talking shop with the Freifunk, Guifi, and Commotion
+Wireless folks.  They're not having any trouble using LuCI to do what
+they need to do, and I'm all for having one less piece of code to
+maintain so energy can be spent on other aspects of Byzantium Linux.
+
+We also discussed the possibility of migraing to LuCI
+(https://luci.subsignal.org/trac) so we don't have to maintain a
+control panel, it's done for us.  We know that we can get it to
+compile on non-<mumble> firmware, we've done it.  The question is, is
+it worth migrating to it?  Can we migrate to it without having to
+rewrite a lot of it?  Can we write the modules we need easily?  Could
+LuCI do the job of automagically configuring a node when it starts up?
+
+Another possibility is a Python module called sh
+(https://github.com/amoffat/sh), which exposes any and all shell
+commands to Python code.  that stands to make things a lot easier.  So
+does the Python module Wifi (http://pythonwifi.wikispot.org/) for that
+matter, though in more specialized fashion.  The Python sh module is
+already in the Git repo and the wifi module can be added, so building
+packages and making use of them shouldn't be hard.
+
+Something else we're kicking around is splitting some code off into a
+daemon that runs in the background and configures everything on
+bootup.  When the node first comes online it detects network
+interfaces and configures them appropriately to set up a Byzantium
+mesh node, and then when the control panel is actually accesses, it
+will have a configuration all ready to display and possibly alter, but
+by and large it'll be online and routing traffic.
+
+We've also been doing some experimenting with different applications
+for the messaging framework.  During the last sprint we set up
+ejabberd nodes on our laptops and they worked as expected, but one of
+the things we're uncertain of is whether or not a MUC (multi-user
+chat) XMPP channel can be automatically distributed across all nodes
+without their being clustered ahead of time (which is fairly tricky
+with ejabberd, but might not be with, say, python-xmpp-server
+(https://github.com/thisismedium/python-xmpp-server)).  If anyone
+knows for sure, please reply to this, we'd love to know if we should
+persue this avenue or not.
+
+We also did some experimenting with Litter
+(https://github.com/ptony82/litter), which is a truly distributed
+workalike for Twitter designed for non-NATted networks that is
+stupidly, brilliantly simple and good at what it does.  Every Litter
+instance is a single instance, and IP multicast is used to broadcast
+JSON messages to every other instance on the same multicast group that
+it can reach (IP multicast address 239.192.1.100).  It listens on port
+8080 so it's accessed with a web browser (the UI is entirely in
+JQuery).  It uses SQLite for a back end, and all it does is listen for
+new posts, see if they're in the local database, and if not drop them
+into the right place in the timeline with a gap filling algorithm.  We
+could use it (or more likely, something working along the same lines)
+for the microblog/realtime chat application for the Byzantium mesh.
+
+We also did some playing with Tahoe-LAFS but got mixed results.  I
+couldn't get it going on any of my machines, but Haxwithaxe and Sitwon
+did.  I'd like to give it another try to see what happens.
+
+Anyone else?  Status reports?  New ideas?  Suggestions?  We really
+need to have a sprint this month?
+
+- -- 
+The Doctor [412/724/301/703] [ZS]
+Developer, Project Byzantium: http://project-byzantium.org/
+
+PGP: 0x807B17C1 / 7960 1CDC 85C9 0B63 8D9F  DD89 3BD8 FF2B 807B 17C1
+WWW: https://drwho.virtadpt.net/
+
+"What does it do?  How well does it do it?" --Sean Kennedy
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
+
+iEYEARECAAYFAlCAXOUACgkQO9j/K4B7F8FYQQCeNPRr6wnydIAFsPIlEvE9rliN
+D9EAn3xoelfBjUR6e/O/Zj5EUgGSeiyl
+=VZm4
+-----END PGP SIGNATURE-----
+
+-- 
+You received this message because you are subscribed to the Google Groups "Project Byzantium (Emergency Mesh Networking)" group.
+To post to this group, send email to Byzantium@hacdc.org.
+To unsubscribe from this group, send email to Byzantium+unsubscribe@hacdc.org.
+For more options, visit this group at http://groups.google.com/a/hacdc.org/group/Byzantium/?hl=en.
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

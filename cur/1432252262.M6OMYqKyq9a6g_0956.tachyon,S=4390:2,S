@@ -1,0 +1,97 @@
+From owner-cypherpunks@al-qaeda.net  Mon Mar  4 10:59:58 2013
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id r24Fs50e027622
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 4 Mar 2013 10:54:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1362412445;
+	bh=xme9Wbm9ftOj8+C/aUkzexjcKo9jCzdVaYDfVDachoc=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=gZZWLnI5ozYnRZNjyKj2zExWMYJ6RtEerrtKShH6l9q6JdbUacby1qw09+6x/ygs7
+	 7VrV7ljVUljzf1rcoJMlAncrURMocEDB8RLy1mVX4Wso92YAgP9C1ZqT+8YUFV62DG
+	 JYKJmEKH74sjUSxqB2rOP1Y80ttMslyD36JRtDM0=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id r24Fs5rF027621
+	for cypherpunks-outgoing; Mon, 4 Mar 2013 10:54:05 -0500
+Date: Mon, 4 Mar 2013 16:54:02 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: [liberationtech] Efficient digital one-way communication
+Message-ID: <20130304155402.GP6172@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Michael Rogers <michael@briarproject.org> -----
+
+From: Michael Rogers <michael@briarproject.org>
+Date: Mon, 04 Mar 2013 15:40:22 +0000
+To: liberationtech <liberationtech@lists.stanford.edu>
+Subject: Re: [liberationtech] Efficient digital one-way communication
+User-Agent: Mozilla/5.0 (X11; Linux i686;
+	rv:17.0) Gecko/20130215 Thunderbird/17.0.3
+Reply-To: liberationtech <liberationtech@lists.stanford.edu>
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+On 03/03/13 14:25, Jens Christian Hillerup wrote:
+> I basically just wanted to throw it out here. Does anybody have 
+> experience in modulating data? Has this kind of digital one-way 
+> communication been done in an activist setting before? Does it
+> make sense to kick off a project aimed at creating a easily usable
+> system capable of modulating and demodulating data at modest
+> bitrates (>15KB/s)?
+
+Hi Jens,
+
+Last year I spent some time playing with audio encoding of data for
+transmission over handheld radios. The state of the art here is dialup
+modems - on a good day they can get 56,000 bits per second over a
+channel designed for voice, but that requires advanced modulation and
+error correction techniques. The radio hams have packet radio (AX.25
+and APRS) running at 1,200-9,600 bps over long distances using simple
+modulation and no error correction. Some early home computers used
+audio cassettes for storage (300-1,200 bps, CUTS or Kansas City Standard).
+
+If you want to support purely one-way communication (no acks), you'll
+need to forward error correct the data. Hamming codes and parity
+checks are simple to implement but they'll eat a lot of your
+bandwidth; Reed-Solomon codes are more bandwidth-efficient but also
+more complex.
+
+Some Java code for modulation, framing and error correction is here if
+you're interested:
+
+http://briar.git.sf.net/git/gitweb.cgi?p=briar/sandpit;a=tree;f=src/net/sf/briar/sandpit/modem
+
+http://briar.git.sf.net/git/gitweb.cgi?p=briar/sandpit;a=tree;f=src/net/sf/briar/sandpit/fec
+
+Cheers,
+Michael
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJRNMBmAAoJEBEET9GfxSfMytEIAK2Y+r+22fKXbXCTFC2ALigw
+NoeHiHu0wfz4phyPZ5Dqk21dvvOFtP2RJaf+XY70cHKaYw2NW3dWnKNRmshJKtfH
+oCuZhjRAHhyy8xP+xJFNonEJgQrPkGHe7oFZ6FiqcpmOKL3RPU9G7oyrYYxr1Yas
+IX5Oxn7N3dG5BmkrN25VLrEieRumLMzakmywkFb2wQE1aQ2RnnQ9/SUPMnTQiPnV
+tK39FvSCJwbNVzmwZemVGMuiH/xiI3zJeIwtIK86HUEcKX9dS5Nk//b2al4RgXD/
+mjwDD2ctBqu1JT7hMgOsETU37cU2BE14KpRfpR0mTzk6Nc8ZtA6KgW88lVku1u0=
+=Cpee
+-----END PGP SIGNATURE-----
+--
+Too many emails? Unsubscribe, change to digest, or change password by emailing moderator at companys@stanford.edu or changing your settings at https://mailman.stanford.edu/mailman/listinfo/liberationtech
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

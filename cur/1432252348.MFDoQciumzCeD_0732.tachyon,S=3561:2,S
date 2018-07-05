@@ -1,0 +1,83 @@
+From owner-cypherpunks@al-qaeda.net  Fri Jun 26 04:15:59 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id n5Q8FKf7000647
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 26 Jun 2009 04:15:20 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id n5Q8FKrS000646
+	for cypherpunks-outgoing; Fri, 26 Jun 2009 04:15:20 -0400
+Date: Fri, 26 Jun 2009 10:15:15 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Tor 0.2.0.35 is released
+Message-ID: <20090626081515.GG23524@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2609
+Lines: 58
+
+----- Forwarded message from Roger Dingledine <arma@mit.edu> -----
+
+From: Roger Dingledine <arma@mit.edu>
+Date: Thu, 25 Jun 2009 20:24:02 -0400
+To: or-announce@torproject.org
+Subject: Tor 0.2.0.35 is released
+User-Agent: Mutt/1.5.13 (2006-08-11)
+
+Tor 0.2.0.35 fixes a big bug that was causing Tor relays with dynamic
+IP addresses to disappear from the network. It also fixes a rare crash
+bug on fast exit relays.
+
+https://www.torproject.org/easy-download.html
+
+Changes in version 0.2.0.35 - 2009-06-24
+  o Security fix:
+    - Avoid crashing in the presence of certain malformed descriptors.
+      Found by lark, and by automated fuzzing.
+    - Fix an edge case where a malicious exit relay could convince a
+      controller that the client's DNS question resolves to an internal IP
+      address. Bug found and fixed by "optimist"; bugfix on 0.1.2.8-beta.
+
+  o Major bugfixes:
+    - Finally fix the bug where dynamic-IP relays disappear when their
+      IP address changes: directory mirrors were mistakenly telling
+      them their old address if they asked via begin_dir, so they
+      never got an accurate answer about their new address, so they
+      just vanished after a day. For belt-and-suspenders, relays that
+      don't set Address in their config now avoid using begin_dir for
+      all direct connections. Should fix bugs 827, 883, and 900.
+    - Fix a timing-dependent, allocator-dependent, DNS-related crash bug
+      that would occur on some exit nodes when DNS failures and timeouts
+      occurred in certain patterns. Fix for bug 957.
+
+  o Minor bugfixes:
+    - When starting with a cache over a few days old, do not leak
+      memory for the obsolete router descriptors in it. Bugfix on
+      0.2.0.33; fixes bug 672.
+    - Hidden service clients didn't use a cached service descriptor that
+      was older than 15 minutes, but wouldn't fetch a new one either,
+      because there was already one in the cache. Now, fetch a v2
+      descriptor unless the same descriptor was added to the cache within
+      the last 15 minutes. Fixes bug 997; reported by Marcus Griep.
+
+------------------------------------------------------------------------
+
+This is the Tor announcements list. If you want to unsubscribe, send
+mail to majordomo@seul.org with "unsubscribe or-announce" as your message.
+
+
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

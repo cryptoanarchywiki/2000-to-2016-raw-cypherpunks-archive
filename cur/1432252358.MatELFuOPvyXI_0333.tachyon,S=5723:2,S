@@ -1,0 +1,129 @@
+From owner-cypherpunks@al-qaeda.net  Wed Aug 22 11:50:41 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q7MFjG3j006908
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 22 Aug 2012 11:45:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1345650317;
+	bh=JgpOok/QVerOzbd0nLNH3i1t36dWQokLT5mp/06Eg20=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=FagROPMWrlaFTuNQeta+x5POLA9F6bfGh4vlimVe4BGif/xNoJgWm4YChG3uDss2p
+	 2/VSq6EG67moemeiV696ieZNp8rv5XZ139ihFiw+2wBU1fS6zsF0JLErIJX+t42TjU
+	 ejnKuM1FrgfhXOl+8Csr2/xoJ3rVctKIQrsouLPw=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q7MFjGbN006907
+	for cypherpunks-outgoing; Wed, 22 Aug 2012 11:45:16 -0400
+Date: Wed, 22 Aug 2012 17:45:14 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: Re: [tor-talk] End-to-end correlation for fun and profit
+Message-ID: <20120822154513.GO12615@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4294
+Lines: 97
+
+----- Forwarded message from Roger Dingledine <arma@mit.edu> -----
+
+From: Roger Dingledine <arma@mit.edu>
+Date: Tue, 21 Aug 2012 19:11:07 -0400
+To: tor-talk@lists.torproject.org
+Subject: Re: [tor-talk] End-to-end correlation for fun and profit
+User-Agent: Mutt/1.5.20 (2009-06-14)
+Reply-To: tor-talk@lists.torproject.org
+
+On Mon, Aug 20, 2012 at 10:33:29AM +0300, Maxim Kammerer wrote:
+> As you can see, sniffing just 25 Class-C networks (or 42 individual
+> nodes) lets an adversary correlate ~25% of (non-.onion) circuits.
+
+I think your numbers may not be right (there are a lot of other subtleties
+to the calculation), but your point is still generally correct. The Tor
+network doesn't have enough diversity relative to an ideal Tor network we
+could imagine. Worse, the Internet itself doesn't have as much diversity
+as we'd like either.
+
+http://freehaven.net/anonbib/#feamster:wpes2004
+http://freehaven.net/anonbib/#DBLP:conf:ccs:EdmanS09
+http://freehaven.net/anonbib/#oakland2012-lastor
+all examine AS-level path diversity.
+
+See also http://freehaven.net/anonbib/#murdoch-pet2007
+for another worrying concern about bottlenecks besides ASes. I also
+worry about the bottleneck created by trans-ocean cables.
+
+For more details calculating diversity, see
+https://blog.torproject.org/blog/research-problem-measuring-safety-tor-network
+https://trac.torproject.org/projects/tor/ticket/6232
+https://trac.torproject.org/projects/tor/ticket/6443
+https://trac.torproject.org/projects/tor/attachment/ticket/6443/exit-probability-cdf-a.png
+https://trac.torproject.org/projects/tor/ticket/6460
+
+Help appreciated on those tickets!
+
+> All of these servers are in US/CA or EU jurisdiction, so even an
+> unsophisticated LE operation can issue ~20 wiretapping orders at ISP
+> level
+
+Really? Across jurisdictions? And for 'all traffic of those relays'?
+I don't want to downplay the risk too far, but I think you overestimate
+"unsophisticated law enforcement operations".
+
+> (many of these networks are operated by same hosting providers),
+> and immediately deanonymize ~25% of Tor traffic. So far for anonymity!
+
+Well, do you have an alternative design that scales adequately to 6 or
+7 figures of users, provides roughly-real-time browsing and other TCP
+connections, works on the Internet that we have, and has better traffic
+confirmation resistance?
+
+Or said another way, how well do other usable low-latency anonymity
+systems hold up to ongoing wiretaps at 25 arbitrary network locations? I
+believe the answer is 'mostly less well than Tor'.
+
+tagnaq pointed to my response to a similar question on the tor-relays
+list:
+https://lists.torproject.org/pipermail/tor-relays/2012-July/001436.html
+talking about the tradeoff between "make it faster but more concentrated"
+vs "make it less fast but less concentrated".
+https://metrics.torproject.org/performance.html?graph=torperf&start=2009-06-01&end=2012-08-21&filesize=1mb#torperf
+
+It would be interesting to see your stats on as AS level rather than
+a /24 netblock level. But the challenge really is that we need to know
+what networks the traffic flows traverse upstream -- e.g. how pervasive
+a surveiller of Tor traffic could Deutsch Telekom be? This topic goes
+back to my earlier blog post:
+https://blog.torproject.org/blog/research-problem-measuring-safety-tor-network
+
+I think we still do a pretty good job explaining the risks and limitations
+of using a system like Tor, e.g. in each Tor talk.
+
+Tor used to print a warning message on start, to explain that it isn't
+perfect. But a) no Windows users saw it, and b) it backfired in surprising
+ways, like having journalists write "Tor recommends that you use something
+else for now, since they're not ready yet":
+https://trac.torproject.org/projects/tor/ticket/2474
+
+> [1] http://pastebin.com/hgtXMSyx
+
+Thanks for presenting the code too!
+
+--Roger
+
+_______________________________________________
+tor-talk mailing list
+tor-talk@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-talk
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

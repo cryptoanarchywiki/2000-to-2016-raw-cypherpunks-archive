@@ -1,0 +1,121 @@
+From cypherpunks-bounces@cpunks.org  Sun Sep  8 10:08:50 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r88E8nuS029564;
+	Sun, 8 Sep 2013 10:08:49 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r88E8jmo029560
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Sun, 8 Sep 2013 10:08:47 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 3B890543E42; Sun,  8 Sep 2013 16:08:45 +0200 (CEST)
+Date: Sun, 8 Sep 2013 16:08:45 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is,
+        cryptography@randombit.net,
+        Cryptography List <cryptography@metzdowd.com>
+Subject: Re: [tor-talk] NIST approved crypto in Tor?
+Message-ID: <20130908140845.GV29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 3811
+Lines: 80
+
+----- Forwarded message from Gregory Maxwell <gmaxwell@gmail.com> -----
+
+Date: Sun, 8 Sep 2013 06:44:57 -0700
+From: Gregory Maxwell <gmaxwell@gmail.com>
+To: "This mailing list is for all discussion about theory, design, and development of Onion Routing."
+	<tor-talk@lists.torproject.org>
+Subject: Re: [tor-talk] NIST approved crypto in Tor?
+Reply-To: tor-talk@lists.torproject.org
+
+On Sat, Sep 7, 2013 at 8:09 PM, Gregory Maxwell <gmaxwell@gmail.com> wrote:
+> On Sat, Sep 7, 2013 at 4:08 PM, anonymous coward
+> <anonymous.coward@posteo.de> wrote:
+>> Bruce Schneier recommends *not* to use ECC. It is safe to assume he
+>> knows what he says.
+>
+> I believe Schneier was being careless there.  The ECC parameter sets
+> commonly used on the internet (the NIST P-xxxr ones) were chosen using
+> a published deterministically randomized procedure.  I think the
+> notion that these parameters could have been maliciously selected is a
+> remarkable claim which demands remarkable evidence.
+
+Okay, I need to eat my words here.
+
+I went to review the deterministic procedure because I wanted to see
+if I could repoduce the SECP256k1 curve we use in Bitcoin. They don't
+give a procedure for the Koblitz curves, but they have far less design
+freedom than the non-koblitz so I thought perhaps I'd stumble into it
+with the "most obvious" procedure.
+
+The deterministic procedure basically computes SHA1 on some seed and
+uses it to assign the parameters then checks the curve order, etc..
+wash rinse repeat.
+
+Then I looked at the random seed values for the P-xxxr curves. For
+example, P-256r's seed is c49d360886e704936a6678e1139d26b7819f7e90.
+
+_No_ justification is given for that value. The stated purpose of the
+"veritably random" procedure "ensures that the parameters cannot be
+predetermined. The parameters are therefore extremely unlikely to be
+susceptible to future special-purpose attacks, and no trapdoors can
+have been placed in the parameters during their generation".
+
+Considering the stated purpose I would have expected the seed to be
+some small value like ... "6F" and for all smaller values to fail the
+test. Anything else would have suggested that they tested a large
+number of values, and thus the parameters could embody any undisclosed
+mathematical characteristic whos rareness is only bounded by how many
+times they could run sha1 and test.
+
+I now personally consider this to be smoking evidence that the
+parameters are cooked. Maybe they were only cooked in ways that make
+them stronger? Maybe????
+
+SECG also makes a somewhat curious remark:
+
+"The elliptic curve domain parameters over (primes) supplied at each
+security level typically consist of examples of two different types of
+parameters — one type being parameters associated with a Koblitz curve
+and the other type being parameters chosen verifiably at random —
+although only verifiably random parameters are supplied at export
+strength and at extremely high strength."
+
+The fact that only "verifiably random" are given for export strength
+would seem to make more sense if you cynically read "verifiably
+random" as backdoored to all heck. (though it could be more innocently
+explained that the performance improvements of Koblitz wasn't so
+important there, and/or they considered those curves weak enough to
+not bother with the extra effort required to produce the Koblitz
+curves).
+-- 
+tor-talk mailing list - tor-talk@lists.torproject.org
+To unsusbscribe or change other settings go to
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-talk
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

@@ -1,0 +1,118 @@
+From owner-cypherpunks@al-qaeda.net  Sun Feb 19 07:56:45 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q1JCrufh005858
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sun, 19 Feb 2012 07:53:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1329656036;
+	bh=l1GW/9KpKfHLImKL8Pt3BV/rrD3QcRCRqzTlZ1ayInI=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=bTOSz/xuHeWNMIzCu3MZgJcPGT5CttjaaEEDTZj9CGcEeN5cGuyn7wd3yFTt5wHhp
+	 2eEUjanW40dbxwlUdWvA5j/y9HHQgRWqBE9f/lQ3gFKCylIIDRugsovUbrn/Ecgoe9
+	 4o9RzrMLNdN9DpuBKECgdsugPnvrUn1SI1xFuoqE=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q1JCruZK005857
+	for cypherpunks-outgoing; Sun, 19 Feb 2012 07:53:56 -0500
+Date: Sun, 19 Feb 2012 13:53:53 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: [tor-talk] Installer for obfsproxy as a Windows service
+  available
+Message-ID: <20120219125353.GF7343@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3118
+Lines: 85
+
+----- Forwarded message from awgh <awgh@awgh.org> -----
+
+From: awgh <awgh@awgh.org>
+Date: Fri, 17 Feb 2012 17:48:26 -0800
+To: tor-talk@lists.torproject.org
+Subject: [tor-talk] Installer for obfsproxy as a Windows service available
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64;
+	rv:10.0.1) Gecko/20120208 Thunderbird/10.0.1
+Reply-To: tor-talk@lists.torproject.org
+
+
+<cross-post from openvpn-devel>
+
+Hello,
+
+  I have spent the last couple of days preparing a bundled installer
+for the Tor Obfuscation Proxy combined with OpenVPN.  The installer
+currently works on 32-bit and 64-bit Windows.
+
+  It simply installs obfsproxy in SOCKS proxy mode and sets it up as a
+Windows service, so it starts at boot.  The goal is to make this an
+automatic install for both clients and servers.
+
+  To convert an existing OpenVPN profile to use the obfsproxy, you
+simply change the destination port of your remote line to point at the
+obfuscated server port instead of the regular OpenVPN server port:
+BEFORE:  remote my.server.com 443
+AFTER:   remote my.server.com 80  (assuming obfsproxy server is
+listening on 80)
+
+  Then, you just set OpenVPN to use a socks proxy by adding these lines
+to you config file:
+socks-proxy-retry
+socks-proxy 127.0.0.1 1050
+
+  After this, when you initiate the OpenVPN connection, it will use
+obfsproxy as a SOCKS proxy.  Just remember to connect to the obfsproxy
+port on the server, not the OpenVPN port, in your client config and it
+works great!
+
+  A couple of important notes:
+   1)  I have only tested this with TCP mode.  I don't expect UDP to
+work through Socks proxy, but haven't yet tried it.
+   2)  Once, obfsproxy died on me and I had to go to Control
+Panel->Administrative Tools->Services and restart the obfsproxy service.
+ This seems to be a one-time crash, though.
+
+  The Windows Installer is available here:
+	http://awgh.org/files/obfsvpn-installer-0_0_1.exe
+
+  You can build it yourself by checking out the project on bitbucket here:
+	https://bitbucket.org/awgh/obfsproxy-windows-installer
+
+  I am also working on init scripts and packages for Linux distros,
+which can be used for both the client side and server side of an
+obfsproxy connection.  So far, I just have CentOS RPMs and init scripts,
+which are available in this project:
+	https://bitbucket.org/awgh/obfsproxy-rpm-build
+
+  I am planning on adding some additional features to the installer
+bundle, to allow the configuration of shared secrets and the importation
+of existing config files.
+
+  Please feel free to either email me with bugs/feature requests or to
+use the issue tracking on bitbucket!  Hope this will be useful to some
+of you.
+
+
+Best Regards,
+
+- Ben
+
+
+
+_______________________________________________
+tor-talk mailing list
+tor-talk@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-talk
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

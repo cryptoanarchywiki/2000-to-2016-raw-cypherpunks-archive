@@ -1,0 +1,136 @@
+From owner-cypherpunks@al-qaeda.net  Tue Nov  6 08:05:07 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id qA6D1dGC005395
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 6 Nov 2012 08:01:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1352206899;
+	bh=x59XBufxQ0lV9vJtgpC84sMsyIMyRwKcpaqd7FwNufE=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=tqV2kMKjBRGpqZtAa7Qu9rWXLnbDo4VBgPx6ehUHS/6TNGpINljaCmRvNktAlqHTj
+	 p6q2RhQ+RHm3zNE+LCPxMBsTCPxGTQBBN84+SxdCvIsanI3hmV0LsUvr6JGxqIbDps
+	 JvYDM/rQzVQ3VgVUKx+t7Wj3aqMsxt1cm+in5XBc=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id qA6D1do3005394
+	for cypherpunks-outgoing; Tue, 6 Nov 2012 08:01:39 -0500
+Date: Tue, 6 Nov 2012 14:01:35 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, tor-talk@lists.torproject.org,
+        info@postbiota.org
+Subject: Side-Channel Attack Steals Crypto Key from Co-Located Virtual 
+  Machines
+Message-ID: <20121106130135.GQ9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5531
+Lines: 100
+
+http://threatpost.com/en_us/blogs/side-channel-attack-steals-crypto-key-co-located-virtual-machines-110512
+
+November 5, 2012, 9:25AM
+
+Side-Channel Attack Steals Crypto Key from Co-Located Virtual Machines
+
+by Michael Mimoso
+
+Side-channel attacks against cryptography keys have, until now, been limited
+to physical machines. Researchers have long made accurate determinations
+about crypto keys by studying anything from variations in power consumption
+to measuring how long it takes for a computation to complete.
+
+A team of researchers from the University of North Carolina, University of
+Wisconsin, and RSA Security has ramped up the stakes, having proved in
+controlled conditions that itbs possible to steal a crypto key from a virtual
+machine.
+
+The implications for sensitive transactions carried out on public cloud
+infrastructures could be severe should an attacker land his malicious virtual
+machine on the same physical host as the victim. Research has already been
+conducted on how to map a cloud infrastructure and identify where a target
+virtual machine is likely to be.
+
+The UNC and RSA researchers did not demonstrate their attack on a live public
+cloud, but said their research shows that isolation of certain processes
+doesnbt necessarily provide the protection once thought.
+
+bThis should serve as a warning that if youbve got a highly sensitive
+workload, you donbt want to run it near a dangerous bedfellow in the cloud,b
+said Ari Juels, chief scientist at RSA Security. bAlso, if youbre concerned
+about nation states, donbt run that relevant workload in a public cloud.b
+
+The team, made of Juels, Yinqian Zhang and Michael K. Reiter of UNC, and
+Thomas Ristenpart of the University of Wisconsin, carried out their attack in
+an Amazon EC2-like environment with the Xen VMM in place. In any such virtual
+environment, the hypervisor is what provides isolation and management for
+virtual machines. In theory, the VMs are not aware of each other, but they do
+share hardware resources on the physical host. The researchers were able to
+extract enough information by observing shared resources, in this case the L1
+instruction cache, to reconstruct the cryptographic key in post-processing.
+
+They used an access-driven side-channel attack where in a matter of
+milliseconds over the course of a particular processing operation, the
+attacker and victim alternate process execution. The attacker would then
+observe changes in the cache to extract the data theybre looking for.
+
+What makes this attack unique is that the researchers here were able to
+overcome succinct challenges presented by any VMM, namely 1) coarse
+scheduling granularity which prevents two virtual machines from running
+simultaneously, 2) data bnoiseb introduced by the hypervisor on both the
+hardware and software level that would make it difficult for an attacker to
+filter and obtain what theybre after.
+
+bWhen an attacker sees information in the cache, they may not be aware or
+know whether the cache configuration reflects execution by the victim at
+all,b said UNCbs Reiter. bIt might reflect dom0 or the hypervisor. If thatbs
+the case, therebs no information about the victimbs key to extract.b
+
+In this attack, the researchers were able to extract a private ElGamal
+decryption key from the target VMbs libgcrypt library; the target was running
+Gnu Privacy Guard. Over the course of a few hours of observations, they were
+able to reconstruct a 457-bit exponent accompanying a 4096-bit modulus with
+high accuracy, the teambs paper said. bSo high that the attacker was then
+left to search fewer than 10,000 possible exponents to find the right one,b
+the paper said.
+
+The team was able to execute its attack by filling the cache set with data, a
+technique called Priming, and then measure the time it takes to fill the
+cache set, called Probing.
+
+bThe attacker primes the cache, or fills it with his own data, the probes it
+to see what parts of the cache have been evicted,b Reiter said. The attacker
+then observes the behavior of what ran in the interim. bWhatever ran,
+utilized data that mapped to that caches set,b Reiter said. bFrom that, an
+attacker can build a profile of what the other side is doing.
+
+bThe real trick is to get useful information. The attacker has to overcome
+scheduling granularity the hypervisor imposes,b Reiter said. bXen has 30
+milliseconds. You have to give up the core, come back 30 milliseconds later
+and see the accumulated sum of activity and its effect on the core.b
+
+The researchers were able to get much more granular scheduling and figured
+out how to strip out the irrelevant noise in order to pull off the attack.
+Again, this was in a controlled environment, Reiter and Juels said. For
+example, the target virtual machine was repeatedly performing cryptographic
+operations, a scenario that would be unlikely in most real-world public
+clouds.
+
+bThe victim will not always be running a cryptographic operation; you could
+be observing something unrelated and that operation becomes noise,b Juels
+said. bProcessing takes place afterwards; the harvesting is done in real
+time. To mount this attack successfully, it would be helpful to make frequent
+observations of the victim.
+
+bAt present, this is a fairly elaborate attack and we would expect it to be
+mounted only by a sophisticated attack organization such as a nation-state,b
+Juels said. bThis research shows this type of attack is feasible.b
+
+Commenting on this Article will be automatically closed on February 5, 2013.
+

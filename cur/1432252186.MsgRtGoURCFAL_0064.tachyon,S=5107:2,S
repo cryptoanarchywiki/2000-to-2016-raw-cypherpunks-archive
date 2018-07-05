@@ -1,0 +1,94 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Tue Oct  1 22:04:21 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g9224K710537
+	for <rsw@opamp.org>; Tue, 1 Oct 2002 22:04:21 -0400
+Received: from lion.ninthwonder.com (lion.ninthwonder.com [151.199.66.147])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id WAA13930
+	for <rsw@mit.edu>; Tue, 1 Oct 2002 22:04:19 -0400 (EDT)
+Received: by lion.ninthwonder.com (Postfix, from userid 96)
+	id 1197830714; Tue,  1 Oct 2002 22:02:37 -0400 (EDT)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by lion.ninthwonder.com (Postfix) with ESMTP id BC6DC30706
+	for <cryptography@wasabisystems.com>; Tue,  1 Oct 2002 22:02:35 -0400 (EDT)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 3C23FD97FA; Tue,  1 Oct 2002 22:02:35 -0400 (EDT)
+Received: from almso2.proxy.att.com (almso2.att.com [192.128.166.71])
+	by lion.ninthwonder.com (Postfix) with ESMTP id BBD3C30706
+	for <cryptography@wasabisystems.com>; Tue,  1 Oct 2002 19:37:58 -0400 (EDT)
+Received: from attrh1.attrh.att.com ([135.71.27.39])
+	by almso2.proxy.att.com (AT&T IPNS/MSO-4.0) with ESMTP id g91NbmIQ016168;
+	Tue, 1 Oct 2002 19:37:48 -0400 (EDT)
+Received: from billstewart.pobox.com by attrh1.attrh.att.com (8.8.8+Sun/ATTEMS-1.4.1 sol2)
+	id TAA11304 for ; Tue, 1 Oct 2002 19:36:48 -0400 (EDT)
+Message-Id: <5.1.1.6.2.20021001153827.04b06eb0@idiom.com>
+X-Sender: wcs@idiom.com
+X-Mailer: QUALCOMM Windows Eudora Version 5.1.1
+Date: Tue, 01 Oct 2002 16:36:51 -0700
+To: cryptography@wasabisystems.com, cypherpunks@lne.com
+From: Bill Stewart <bill.stewart@pobox.com>
+Subject: Re: Real-world steganography
+In-Reply-To: <Pine.LNX.4.21.0209302136560.7997-100000@ultra.gawth.com>
+References: <200210010154.NAA93137@ruru.cs.auckland.ac.nz>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 2932
+Lines: 52
+
+At 09:38 PM 09/30/2002 -0700, Bram Cohen wrote:
+>Peter Gutmann wrote:
+> > I recently came across a real-world use of steganography which hides extra
+> > data in the LSB of CD audio tracks to allow (according to the vendor) the
+> > equivalent of 20-bit samples instead of 16-bit and assorted other features.
+>
+>I don't think that's really 'steganography' per se, since no attempt is
+>made to hide the fact that the information is in there. The quasi-stego
+>used is just to prevent bad audio artifacts from happening.
+
+Traditional digital telephone signalling uses a "robbed-bit" method that
+steals the low-order bit from every sixth voice sample to carry information
+like whether the line is busy or idle or wants to set up a connection.
+(That's why you only get 56kbps and not 64kbps in some US formats,
+since it doesn't want to keep track of which low bits got robbed.)
+
+In a sense both of these are steganography, because they're trying to
+hide the data channel from the audio listener by being low level noise
+in ways that equipment that isn't looking for it won't notice.
+
+That's not really much different from encoding Secret Data in the LSB
+of uncompressed graphics or audio - it's about the second-crudest
+form of the stuff, and if you think there are Attackers trying to
+decide if you're using stego, you need more sophisticated stego -
+at minimum, encoding the stegotext so it looks like random noise,
+or encoding the stegotext with statistics resembling the
+real noise patterns, or whatever.  The definition of "hidden writing"
+doesn't specify how hard you tried to hide it or how hard the
+Attacker is looking - you need to Bring Your Own Threat Model.
+
+
+Since I don't speak Audiophile Engineering / Human perceptual modelspeak,
+which the paper was written in, I wasn't able to figure out where the
+HDCD stuff hides the extra bits.  Are they really there (in the CDROM's
+error-correction bits or something)?  It sounded like they were either
+saying that they make part-time use of the one LSB bit to somehow encode
+the LSB and 4 more bits, which sounded really unlikely given that there
+weren't any equations there about the compression models, or else that they
+had some perceptual model and were using that to make a better choice of LSB
+than a simple 50% cut-off of the A-to-D converter (more absolute distortion,
+but better-sounding distortion.)  Or did I miss the implications of the
+reference to oversampling and the real difference is that HDCD disks
+really have more pixels on the disk with only the LSB different,
+so a conventional reader reads it fine but needs the ECC to get the LSB?
+
+A separate question is - "so is there some internet-accessible list of
+disks using HDCD, or do I just have to look at the labels for a logo?"
+
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

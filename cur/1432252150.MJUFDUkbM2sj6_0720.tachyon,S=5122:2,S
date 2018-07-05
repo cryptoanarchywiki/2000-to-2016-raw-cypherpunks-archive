@@ -1,0 +1,106 @@
+From owner-cypherpunks@lne.com  Fri Aug 15 21:05:53 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h7G15mg25397
+	for <rsw@jfet.org>; Fri, 15 Aug 2003 21:05:48 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h7G0mACW026989
+	for cypherpunks-goingout345; Fri, 15 Aug 2003 17:48:10 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Message-Id: <5.1.1.6.2.20030815170442.02f878e8@idiom.com>
+X-Sender: wcs@idiom.com
+X-Mailer: QUALCOMM Windows Eudora Version 5.1.1
+Date: Fri, 15 Aug 2003 17:46:58 -0700
+To: "Major Variola (ret.)" <mv@cdc.gov>
+From: Bill Stewart <bill.stewart@pobox.com>
+Subject: Re: Viral DNS Attack, DDos Idea
+Cc: cypherpunks@lne.com
+In-Reply-To: <3F3D404F.DB3976FC@cdc.gov>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 4050
+Lines: 78
+
+At 01:19 PM 08/15/2003 -0700, Major Variola (ret.) wrote:
+>Suppose malware appends a bogus entry to an infected machine's
+>/etc/hosts (or more likely, MSwindows' \windows\blahblah\hosts file).
+>(This constitutes a DNS attack on the appended domain name, exploiting
+>the local hosts' name-resolution prioritization.)
+>If the appended IP address points to the
+>same victim (66.66.66.66) on all the virus-infected machines, 
+>and the appended (redirected) domain name is popular ("google.com" 
+
+Cute, but sounds like a lot of work compared to other obvious attacks
+you could do if you're spreading a virus anyway.
+The more popular version of this attack is to try to hack DNS servers,
+or poison DNS requests, so that DNS requests for google report the wrong thing.
+One problem with hacking the hosts files is that
+different versions of Windows tend to put them in different places,
+though perhaps if you target XP and 2000 and ME and 98 
+it's consistent enough to work.
+
+The real question is whether the bad guys would redirect to a victim,
+or to a fake web server run by them, so they could hand out
+bogus responses, such as redirects to various places around the web,
+potentially along with some advertising banners.
+
+Besides making google.com harder to reach,
+another effect is that lots of people send TCP SYN requests
+to 66.66.66.66 port 80 instead of google.com port 80,
+and if there's a web server on that port,
+they send it HTTP requests for URLs on google.com,
+which it presumably will reject.
+
+If 66.66.66.66 is an arbitrary victim computer with no web server,
+the main impact is a bunch of extra SYN requests,
+so the obvious defense is to filter them out from the router.
+If it's got a single web server, moving the server to a new IP address
+and using DNS to update it can help, at the cost of disrupting
+clients until its DNS update propagates, and getting its router
+to drop requests for port 80 (passing other ports is fine.)
+
+If it's a virtual server machine, though, you can't do that
+without disrupting all the clients on it, which is too bad;
+either hope you've got enough horsepower to handle rejecting the
+google.com requests, or front-end it with a squid proxy and
+kill it off there, which cuts down the CPU impact,
+though it doesn't cut down the bandwidth much.
+You could get fancy and have the squid redirect all the real requests
+to another IP or DNS name, e.g. example1.net/stuff to example2.net/stuff,
+where the new address is on a different machine and 
+if necessary on a different access line.
+
+If it's a router, that's a more interesting problem,
+because many routers have wimpy CPUs and do the routine work in ASICs -
+so if the router has an HTTP interface for admin use,
+and it's not protected by ACLs for some reason,
+you might blow it away with the work required to reject google hits.
+But if you don't need the web interface, it's much easier to protect.
+Also, if the router is in an ISP, rather than at the customer premises,
+access to it may be blocked anyway, as a general security mechanism,
+and even if it's not, it's usually easy to add that kind of blocking,
+by null-routing the traffic rather than by ACLs.
+
+>If the victim IP address were a router just upstream
+>of the victim domain name, its extra fun for the victim domain 
+>--not only are they unavailable on infected machines, 
+>but clients pound their upstream when they try to connect.
+
+That's actually much less of a risk, except for CPU consumption,
+because if the router has enough capacity to handle google.com's traffic,
+it can handle the bunch of unsuccessful SYN packets that it gets instead.
+
+>Thoughts?  Has this ever been suggested or implemented?
+
+Never seen it.  Another variation on this attack is to use
+random redirect addresses instead of a single target victim -
+that loses the focus for detection and correction that
+having a single victim can provide.
+If you scatter it around, people will still have trouble reaching Google,
+but almost no web servers will get enough rejected hits
+to swamp them, so admins are less likely to notice.
+

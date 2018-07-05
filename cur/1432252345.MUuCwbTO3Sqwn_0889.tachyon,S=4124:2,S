@@ -1,0 +1,91 @@
+From owner-cypherpunks@jfet.org  Thu Mar 30 07:08:22 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.5/8.13.5/Debian-3) with ESMTP id k2UC8KBt015226
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 30 Mar 2006 07:08:20 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.5/8.13.5/Submit) id k2UC8K0V015225
+	for cypherpunks-outgoing; Thu, 30 Mar 2006 07:08:20 -0500
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;         s=beta;
+  d=gmail.com;        
+  h=received:message-id:date:from:to:subject:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+  b=FAnpfKvloE/2NcYHoMu0yzUXRalerSSn4xprc6VlE0jxZg+IVTwVQBo9FXqmYMcFj2zTF3husdTSRP/L0P2x1Mt3k2wyIHv8jt0XomKAuFBqR3qLmxKMeOJYeMVKYOyJDmU2nHNmEjN9Qi+dudfk6ruxl0Vig/04tHUcik3j9Js=
+Message-ID: <4ef5fec60603300408o198b047blb41c46a5be62eebf@mail.gmail.com>
+Date: Thu, 30 Mar 2006 04:08:16 -0800
+From: coderman <coderman@gmail.com>
+To: "=?GB2312?B?1cW9+A==?=" <jinz@mail.ustc.edu.cn>,
+        "Peer-to-peer development." <p2p-hackers@zgp.org>,
+        cypherpunks@jfet.org
+Subject: Re: [p2p-hackers] lockstep synchronization protocol problem
+In-Reply-To: <343538103.05175@ustc.edu.cn>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=GB2312
+References: <343538103.05175@ustc.edu.cn>
+Content-Transfer-Encoding: 7bit
+X-MIME-Autoconverted: from base64 to 8bit by proton.jfet.org id
+  k2UC8I7c015196
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2455
+Lines: 56
+
+hi jinz,
+
+i don't have time for a detailed reply but i thought a little more
+info would be useful
+
+
+On 3/28/06, UE=x <jinz@mail.ustc.edu.cn> wrote:
+> I'm doing research about synchronization problem in P2P system,and the basic
+> synchronization protocol is the lockstep protocol,and it use rounds to synchronize
+> all the peer's movements,the problem is lockstep only synchronize peer's
+> movements?what about the event created by all the peers?can it use rounds to
+> synchronize them?and how to ?
+
+i mentioned quorum systems and group key distribution to achieve a
+shared and authenticated state among a group of peers that can be kept
+in sync / coherent via frequent attestation (group re keying with
+quorum consensus to distribute new keys).
+
+there are many ways to implement this so i'll stick to conceptual
+features / attributes and how this relates to a private group network
+system we are implementing.
+
+quorum authorities are those who sign all the other authorities keys
+as part of the group key distribution.  quorum  or group members are
+those who receive keys from one or more quorum authorities.
+
+the quorum authorities maintain an index of all known / trusted group
+members and the trust metrics assigned to the roles / services they
+can perform.
+
+and peer may solicit, provide and consume the services of another once
+they verify they are trusted to do so.  they can contact any of the
+quorum authorities (who have a full index and trust metric state /
+graph) to certify the remote peer before doing so.
+
+a group authorities may issue a revocation signed by his current group
+identity key to disband the quorum / group.
+
+if consensus cannot be reached within the next group re-key interval
+(due to failure, lack of consensus at the meatspace / user level, or
+malicious attack / DoS) the group must be re-keyed from the face to
+face ground up and all reputation rebuilt.
+
+the identifiers signed by the quorum during each iteration consist of:
+- the key digests for each authority for the next group key exchange
+- the sha-256 digest of the current base share file state image
+(includes base OS and private group files/keys)
+- the sha-256 digests of all delta based overlay filesystem images. 
+these are optional among group members but mandatory for all quorum
+authorities.
+
+upon this base you can build / tie to various group synchronization
+mechanisms that are strongly authenticated and yet still fully
+decentralized.
+
+i hope that helps.
+

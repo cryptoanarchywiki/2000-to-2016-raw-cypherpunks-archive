@@ -1,0 +1,85 @@
+From cypherpunks-bounces@cpunks.org  Wed Feb  5 08:28:33 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id s15DPqjx020715;
+	Wed, 5 Feb 2014 08:26:12 -0500
+Received: from mx.daemon.de (mx.daemon.de [78.47.130.37])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id s15DPmWG020711
+ (version=TLSv1/SSLv3 cipher=CAMELLIA256-SHA bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Wed, 5 Feb 2014 08:25:50 -0500
+Received: from r4.daemon.de (mx.daemon.de [78.47.130.37])
+ by mx.daemon.de (Postfix) with SMTP id 37C1698D1C;
+ Wed,  5 Feb 2014 13:51:10 +0100 (CET)
+Received: by r4.daemon.de (sSMTP sendmail emulation);
+ Wed, 05 Feb 2014 13:51:10 +0100
+Date: Wed, 5 Feb 2014 13:51:10 +0100
+From: Thomas von Dein <tom@vondein.org>
+To: Yuriy Kaminskiy <yumkam@gmail.com>
+Subject: Re: consistent pcp/pbp formats
+Message-ID: <20140205125110.GE62910@r4>
+References: <20140114111653.GD3900@r4> <lb4en4$hdt$1@ger.gmane.org>
+ <20140115093443.GE3900@r4> <lb5uvc$lfe$1@ger.gmane.org>
+ <20140115134145.GF3900@r4> <lbj0cq$l0b$1@ger.gmane.org>
+ <20140120133104.GL3900@r4> <lbleqq$i7a$1@ger.gmane.org>
+ <20140204150729.GB62910@r4> <lcrkhn$6nk$1@ger.gmane.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <lcrkhn$6nk$1@ger.gmane.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-mx-MailScanner-Information: Please contact Tom for more information
+X-mx-MailScanner-ID: 37C1698D1C.A2B16
+X-mx-MailScanner: Found to be clean
+X-mx-MailScanner-From: tom@vondein.org
+X-Spam-Status: No
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.16
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 1318
+Lines: 32
+
+On Wed, Feb 05, 2014 at 01:03:00AM +0400, Yuriy Kaminskiy wrote:
+> And, same with pgp & co, it is vulnerable to "Surreptitious Forwarding" [1]:
+> Alice sends to Bob "I love you", Bob decrypt message, re-encrypt it to Charlie,
+> keeping Alice signature intact. To avoid this problem, you can include
+> "len(recipients list)|recipients list" in signed material (thus, any attempt to
+> alter recipient list will automagically invalidate signature) [XXX: not exactly
+> usual, requires review].
+
+Good, I changed the scheme then. However, instead of adding the
+recipient list to the signature, I add it to the hash, since I
+sign the hash only anyway; and because it is a) easier to code and b)
+results in a signature with a static size.
+
+So, now the signature looks like this:
+
+nonce|crypto_secret_box( crypto_sign( crypto_generichash(cleartext + encrypted-recipientlist) ), nonce, symkey)
+
+Everything else is unchanged. So, an encrypted+signed file contains the
+number of recipients, the recipient-list (which consists of the
+pk-encrypted ephemeral key per user), the 32k-blockwise sym-encrypted
+message, followed by the encrypted signature. As usual the nonce used to
+encrypt the sig is prepended.
+
+
+
+
+- Tom
+
+-- 
+This message has been scanned for viruses and
+dangerous content by MailScanner, and is
+believed to be clean.
+

@@ -1,0 +1,119 @@
+From cypherpunks-bounces@cpunks.org  Fri Feb 14 04:53:16 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id s1E9qYqv003839;
+	Fri, 14 Feb 2014 04:52:37 -0500
+Received: from x1.ctrlc.hu (x1.ctrlc.hu [195.14.20.232])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id s1E9qCpQ003833
+ for <cypherpunks@cpunks.org>; Fri, 14 Feb 2014 04:52:13 -0500
+Received: from i.ctrlc.hu (unknown
+ [IPv6:fc8c:1767:11aa:2214:2767:6acb:77ab:a45d])
+ by x1.ctrlc.hu (Postfix) with ESMTP id 9391335F7E;
+ Fri, 14 Feb 2014 10:52:07 +0100 (CET)
+Received: by i.ctrlc.hu (Postfix, from userid 1000)
+ id 91B3315CD0; Fri, 14 Feb 2014 10:52:03 +0100 (CET)
+Date: Fri, 14 Feb 2014 10:52:03 +0100
+From: stef <s@ctrlc.hu>
+To: Thomas von Dein <tom@vondein.org>
+Subject: Re: Re: consistent pcp/pbp formats
+Message-ID: <20140214095203.GB7128@ctrlc.hu>
+References: <20140115093443.GE3900@r4> <lb5uvc$lfe$1@ger.gmane.org>
+ <20140115134145.GF3900@r4> <lbj0cq$l0b$1@ger.gmane.org>
+ <20140120133104.GL3900@r4> <lbleqq$i7a$1@ger.gmane.org>
+ <20140204150729.GB62910@r4> <lcrkhn$6nk$1@ger.gmane.org>
+ <20140205125110.GE62910@r4> <20140206192412.GC20154@r4>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20140206192412.GC20154@r4>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.16
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 2206
+Lines: 71
+
+On Thu, Feb 06, 2014 at 08:24:12PM +0100, Thomas von Dein wrote:
+> So, here we go:
+> 
+> # bob exports his pk
+> bobby@io: % pbp -x -S Bob > bob.pbp
+> Passphrase for decrypting master key for Bob: 
+> 
+> # alice exports her pk
+> alicia@io: % pcp -p -b -O alice.pbp
+> Enter passphrase to decrypt your secret key for signing the export: 
+> public key exported in PBP format.
+> 
+> # bob imports alice' pk
+> bobby@io: % pbp -X -i alice.pbp 
+> Success: imported public keys for Alicia
+> 
+> bobby@io: % pbp -l
+> valid b888 026a 38e2 cdf7 f0a6 6486 63a5 0fea Bob
+> invalid ed32 1935 0310 fe6f 35c6 b44d be6b 3ca8 Alicia   [1]
+> 
+> 
+> # alice imports bobs pk
+> alicia@io: % pcp -P -I bob.pbp -b
+> key 0x87358A0988953A67 added to ~/.pcpvault.
+> 
+> alicia@io: % pcp -l
+> Key ID               Type      Creation Time        Owner
+> 0xB497AFF45654CD98   primary   2014-02-06T19:58:09  Alicia <>
+> 0x87358A0988953A67    public   2014-02-06T18:58:02  bob <>
+> 
+> # bob encrypts to alice
+> bobby@io: % echo "HALLO ALICE, KNUTSCHI" > msg
+> bobby@io: % pbp -c -i msg -o encrypted -r Alicia -S Bob
+> Passphrase for decrypting encryption subkey for Bob:
+> 
+> # alice decrypts it
+> alicia@io: % pcp -d -I encrypted 
+> Enter passphrase to decrypt your secret key: 
+> HALLO ALICE, KNUTSCHI
+> Decrypted 22 bytes successfully
+> 
+> # other way around, alice encrypts to bob
+> alicia@io: % echo "ACH, SCHNUCKI" | pcp -e -O encrypted -r Bob
+> Enter passphrase to decrypt your secret key: 
+> Encrypted 164 bytes for:
+> bob <>
+> 
+> # and bob decrypts it
+> bobby@io: % pbp -d -i encrypted -S Bob
+> Passphrase for decrypting encryption subkey for Bob: 
+> ACH, SCHNUCKI
+> good message from Alicia
+
+fuck yeah! ;)
+
+> [1]: currently pbp shows pcp keys as "invalid", I'm not sure why,
+> but it's on the todo list.
+
+ooh, thx, will check that!
+
+> Also, I didn't test if signatures are compatible yet, and there are many
+> more things left to solve/agree, like keyformats, sign+crypt support in
+> pbp, among others.
+
+sign+crypt? why? crypt also does mac automatically. no need for sign+crypt at
+all.
+
+-- 
+pgp: https://www.ctrlc.hu/~stef/stef.gpg
+pgp fp: FD52 DABD 5224 7F9C 63C6  3C12 FC97 D29F CA05 57EF
+otr fp: https://www.ctrlc.hu/~stef/otr.txt
+

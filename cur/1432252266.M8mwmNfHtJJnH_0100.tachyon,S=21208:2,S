@@ -1,0 +1,403 @@
+From owner-cypherpunks@al-qaeda.net  Thu Aug 12 20:48:58 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i7D1mTFO015712
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Thu, 12 Aug 2004 20:48:29 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i7D1mTTw015711
+	for cypherpunks-outgoing; Thu, 12 Aug 2004 20:48:29 -0500
+Mime-Version: 1.0
+X-Sender: rah@bullae.ibuc.com
+Message-Id: <p06110499bd41cd6e915f@[66.149.49.5]>
+X-Clips-URL: <http://www.onlamp.com/lpt/a/5015>
+Date: Thu, 12 Aug 2004 21:44:55 -0400
+To: cryptography@metzdowd.com, cypherpunks@al-qaeda.net
+From: "R. A. Hettinga" <rah@shipwright.com>
+Subject: ONLamp.com: Anonymous, Open Source P2P with MUTE
+Content-Type: text/plain; charset="us-ascii"
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 20145
+Lines: 377
+
+<http://www.onlamp.com/lpt/a/5015>
+    
+  Published on ONLamp.com (http://www.onlamp.com/)
+  http://www.onlamp.com/pub/a/onlamp/2004/08/12/mute.html
+  See this if you're having trouble printing code examples
+
+
+
+ Anonymous, Open Source P2P with MUTE
+ by Howard Wen
+ 08/12/2004
+
+ The ongoing battle between users of file-sharing programs and media
+copyright-enforcement organizations (most notably the RIAA) has seemingly
+become a daily ping-pong match of lawsuits, threats of lawsuits,
+countersuits, office raids of commercial P2P services, and soda pop
+promotional gimmicks encouraging people to download music from legal music
+downloading services.
+
+Regardless of all the threats, intimidation, and spoofed music files
+clogging networks, P2P services in which users engage in "copyright
+infringement" (or "file sharing," if you prefer) continue to thrive.
+Activity on them still far surpasses the traffic of the legal music
+download sites, such as iTunes Music Store and the now legit Napster.
+
+One weakness of the P2P networks, including the infamous KaZaA, is the fact
+that it's so easy to identify a user's IP address. The Recording Industry
+Association of America (RIAA) has managed to use such extracted information
+to subpoena ISPs for the identities of potential defendants.
+
+Jason Rohrer has devised what could be the next technological headache for
+organizations like the RIAA: a P2P system that can mask the identity (or,
+at least, the IP address) of each user connected to it. Figuratively, he's
+done it by letting out the ants to ruin the RIAA's picnic.
+
+Rohrer, a 26-year-old programmer from Potsdam, New York, found inspiration
+in the way ants stream toward a food source. From observing the creatures'
+behavior, he mapped out a networking method that functions similarly -
+essentially, a shared file is the food source, and clients on the network
+are the ants seeking the food. He then wrote his own P2P program putting
+this theory to practice and christened it MUTE. Developed entirely in C++
+and released as open source, the program runs on Linux, Win32, and Mac OS X.
+
+Figure 1. The MUTE file-sharing program running on Linux.
+
+Rohrer spoke with me for the O'Reilly Network, explaining how the ways of
+the ant could hold the key to anonymity for P2P users.
+
+Howard Wen: Give us a basic technical summary: What's the big difference
+between how the MUTE network works versus the traditional P2P method, such
+as KaZaA?
+Jason Rohrer:Traditional P2P networks can best be described as "direct
+download" systems. Nodes are linked together in a "mesh network," with each
+node connecting to a small number of neighbors. Certain pieces of
+information are broadcast and routed through the mesh, such as search
+requests and results. Downloads are not passed through the mesh - the
+downloader establishes a new, direct connection to the file source to start
+the transfer.
+
+Of course, a direct transmission means that the downloader needs to know
+the IP address of the file source. If you use TCP sockets - or UDP packets
+- properly, a direct transmission also means that the file source can find
+out the downloader's IP address.
+
+The RIAA has demonstrated that, with a subpoena or lawsuit, an IP address
+can easily be translated into a human name and postal address. In other
+words, any system that relies on direct downloads is not anonymous, due to
+intrinsic properties of Internet routing.
+
+A MUTE network is very similar in form to a traditional P2P network: MUTE
+nodes connect to each other in a mesh network, with each node maintaining a
+small number of direct links to neighbor nodes. In addition to routing
+search requests and results through the mesh, MUTE routes everything else,
+including file transfers. Thus, a downloader does not need to know the IP
+address of a file source, since the downloader never needs to make a direct
+connection, and a download is routed through the chain of nodes that
+separate the downloader from the file source. Routed downloads are what
+separates MUTE from other search-and-download P2P networks.
+
+Of course, routed downloads alone do not provide anonymity. Even more
+crucial is the way that MUTE routes messages anonymously. Each MUTE node
+generates a random virtual address for itself at startup. Messages are
+tagged as being "from" one virtual address and "to" another virtual
+address, though only the sending node knows that it owns the "from"
+address, and only the receiving node knows that it owns the "to" address.
+None of the other nodes in the network know which node owns either of these
+addresses.
+
+As messages travel through the network, they leave behind local "scent" -
+or routing - information for their "from" address at each node that they
+pass through.
+
+For example, if a message from Alice passes through a node, the node
+records that it has received messages from Alice from one of its neighbors.
+In the future, if that node receives a message to Alice, it can use this
+scent to direct the message onward through that neighbor. Each node
+essentially maintains directional hints about which direction Alice is in,
+though no one knows for sure which node is actually Alice.
+
+HW: What are the inherent difficulties in designing a P2P, or shared
+network, system, overall?
+
+JR: I have developed several P2P applications in the past, including
+applications that rely heavily on cryptography, so those aspects weren't
+really a challenge this time around. However, MUTE was the first
+platform-independent C++ application for which I wanted to develop a true,
+natively compiled GUI, and this was a major challenge.
+
+I evaluated several toolkits, and several factors weighed into my decision.
+First, I had three target platforms in mind: GNU/Linux, Mac OS X, and
+Win32. So, I needed a toolkit that supported all of them. Second, I
+couldn't afford to pay for a toolkit, so I needed a toolkit with an
+unrestrictive license. Third, I wanted a toolkit that would make use of
+C++, since object-oriented abstractions seem particularly well-suited for
+GUIs. These factors essentially ruled out every toolkit except for
+wxWindows [Editor's note: now known as wxWidgets.]
+
+The real challenge came in learning a new toolkit. wxWindows is powerful
+and feature-rich, but the API is a little quirky. In addition, there were
+wxWindows build hurdles for the various platforms. For example, my
+customary Win32 compiler - I sheepishly admit that it was an outdated
+version of CodeWarrior - couldn't compile the wxWindows library, so I had
+to switch to a completely different, and unfamiliar, build environment:
+MinGW.
+
+I also had to grudgingly accept that my chosen GUI library was between 2
+and 4 times larger than the rest of my application. I detest code bloat,
+but I really had no choice.
+
+The upshot is that MUTE can be downloaded and run natively on both Mac OS X
+and Win32, even though my development platform was GNU/LinuxPPC. The code
+that generates and runs the GUI is identical on all three platforms.
+
+HW: Have you theorized other aspects of ant behavior that could be applied
+to effective networking, besides masking a user's identity?
+
+JR: In nature, ants tend to find the shortest path between their nest and a
+food source. Many different paths are traversed at first, but since ants
+can complete roundtrips more frequently on the shorter paths, the shorter
+paths receive more traffic and thus more pheromone scent, which in turn
+leads to more traffic - ants move toward the strongest scents. Eventually,
+the scent on the shortest path is so strong that all of the ants travel
+along this path.
+
+MUTE's ant-routing also discovers "short" paths between a sender and
+receiver. However, the fast roundtrip time is what makes a path attractive
+to MUTE messages. In low-traffic situations, the fastest path will often be
+the shortest one with the fewest hops. As traffic increases, however, a
+short path may become slower if it is overloaded, and a longer path with
+less traffic may be faster. Thus, using only local routing clues, MUTE can
+automatically balance load throughout the network and avoid congested
+routes.
+
+Of course, you only need this kind of load-balancing if you are routing,
+and routing only makes sense if you are trying to protect anonymity. While
+load-balancing is a nice feature and will help MUTE's scalability, it is by
+no means a standalone selling point for MUTE.
+
+In other settings, such as ad-hoc wireless networks, ant-based routing is
+very attractive and heavily researched. Because MUTE is built as an overlay
+network on top of the TCP socket abstraction, its ant-routing cannot be
+used out-of-the box to improve performance in an ad-hoc network. However,
+MUTE can be seen as a good research platform for exploring the properties
+of ant-routing, since it is one of the first widely deployed networks to
+use it.
+
+
+HW: What are the limitations of MUTE? Does it scale up well in performance
+compared to the other P2P methods? I've read theories suggesting that MUTE
+might not be able to handle the load if the number of users on it is too
+large. How many people would you hazard to guess MUTE can effectively
+serve, in its current version?
+
+JR: If you want uploader/downloader anonymity, you simply cannot use direct
+downloads. Indirect downloads always involve a substantial performance and
+scalability hit. Even if you ignore the effect on overall transfer speed,
+you still have at least one additional node involved in each download,
+which in turn increases the load induced by each download.
+
+For example, suppose you have a direct download network of 100 nodes that
+can support 50 simultaneous transfers - half the nodes are uploaders and
+half are downloaders. If you now force each transfer to involve an
+additional intermediary node, while keeping similar bandwidth constraints,
+you can only support 33 simultaneous transfers: one-third uploading, one
+third-downloading, and the other third relaying.
+
+I will claim that using a single relay or proxy for each transfer doesn't
+provide enough anonymity. How can you trust your chosen proxy? What if the
+adversary happens to be operating the proxy that you choose? The same holds
+true for any system that uses fixed number of proxies for each transfer. If
+all transfers use two proxies, and you happen to pick two "adversary" nodes
+to proxy your transfer, your anonymity is compromised.
+
+MUTE uses a variable number of intermediary nodes for each transfer, with
+the network topology dictating how long each transfer chain is. No matter
+how many nodes in a transfer chain are controlled by the adversary, the
+adversary can never be sure that it controls all of the nodes in the chain.
+Thus, the adversary can never obtain the identity of the uploader or
+downloader with any degree of certainty.
+
+Since there is no fixed limit to how many nodes a MUTE transfer can pass
+through, there is also no limit on how much load is induced by a transfer
+or how slow that transfer will be, and this is where the scalability
+concerns arise.
+
+Each additional user in the network is likely to initiate additional
+downloads, which will each increase the load on the network. Of course, if
+you want decent anonymity, you must make this kind of tradeoff.
+
+To answer questions about how well MUTE will scale, we need to answer other
+questions first: How slow must a transfer become before it is considered
+useless? How much bandwidth will the average user dedicate to the MUTE
+network? How many downloads will each user be requesting? As an extreme
+example, consider the case in which no one is downloading anything: MUTE
+can scale limitlessly. At the other extreme, if everyone expects fast
+transfers and wants to be downloading 100 files simultaneously, MUTE won't
+scale beyond a handful of users.
+
+Also, I think it depends on how much users value anonymity. A slow
+anonymous download may be more valuable than a fast download that could
+land you in court. The same tradeoff operates for quantity: one anonymous
+download a day may be more valuable than 100 non-anonymous downloads.
+
+As an example, we can assume that a transfer is worthwhile as long as it is
+coming in at over 5KB/second. If we assume that everyone has a cable modem
+with a tight upstream bottleneck, then each node can handle relaying or
+uploading about three files simultaneously. Next, we can assume that each
+download passes through four intermediary nodes on average. If we have a
+network of 1,000 nodes, then we can support at most 600 simultaneously
+downloads at decent rates - each download taxes the upstream bandwidth of
+five nodes, and each node can handle being taxed by three simultaneous
+transfers.
+
+Of course, these calculations change as the assumptions change, but we have
+just laid out assumptions that would suggest that MUTE could support 60% of
+its users downloading one file each at worthwhile rates. As the percentage
+of downloaders increase in this network, the download rates would decrease
+throughout the network.
+
+With the above assumptions, each additional node contributes three
+transfers worth of bandwidth, but would consume five such units of
+bandwidth if it were to download. If we reduce the worthwhile transfer rate
+to 3KB/second, then we achieve a balance: Each additional node can request
+a download, since it contributes the same amount of bandwidth that its
+download consumes, so MUTE could support 100% of its users downloading one
+file each.
+
+If users curb how many simultaneous downloads they request and are content
+with the resulting transfer rates, then MUTE can scale limitlessly.
+
+However, if everyone else is "playing nice," you can increase your personal
+gain by initiating additional downloads for yourself and abusing the
+network. Keeping this kind of greed in check is difficult, especially in an
+anonymous network.
+
+HW: Could the MUTE technology be used for other things, besides file-sharing?
+
+JR: Before I even thought about applying MUTE to file-sharing, I wrote
+modules that performed anonymous chat and web-serving over MUTE. Given the
+current legal landscape, the file-sharing problem was much more pressing,
+so I have completely switched gears to focus on that. However, MUTE can
+certainly be used for other anonymous communication applications.
+
+HW: What features do you plan to add to future versions of MUTE?
+
+JR: I have always intended to keep MUTE simple: It provides anonymous
+file-sharing, and to my knowledge it is the first application to do so. I
+want to avoid having MUTE be a catchall for the latest, snazziest
+file-sharing and user-interface features.
+
+I have been improving the robustness of download retries to ensure that
+downloads can weather traffic spikes and routing problems without failing
+unnecessarily - several user-submitted patches have been very helpful here.
+I am also adding a few simple user-interface elements that make MUTE nicer
+to use, such as a user-submitted patch for better upload statistics.
+
+Once MUTE is a solid, usable, and comfortable file-sharing application, my
+work will be done. Those who want all of the fancy, trendy features can
+start their own project, add the features, and release their own version of
+MUTE. My contribution is anonymous file-sharing.
+
+HW: Do you need volunteers? What skills and contributions do you need the most?
+
+JR: I have been looking for people who have an idea for a feature that can
+be added to MUTE in a modular fashion, with a clean API separating it from
+the rest of the MUTE code.
+
+HW: What advice do you have for those who might want to modify the MUTE source?
+
+JR: MUTE is a layered architecture. The bottom layer is a secure socket
+implementation that is used to encrypt the contents of neighbor
+connections. Above that is the MUTE routing layer, which features a very
+clean API for controlling a MUTE node and sending or receiving messages
+through it. The file-sharing layer is built on top of the routing API, and
+it has a clean API of its own, which supports various file-sharing
+operations, like searching and downloading. The user interfaces are built
+on top of the file-sharing API, and two are included in the source: a
+text-based interface and a wxWindows GUI.
+
+If you want to build your own communication service on top of MUTE routing,
+I would suggest taking a look at the routing API. If you want to build a
+new client for file sharing - for example, a platform-specific GUI, then
+the file-sharing API will be useful. Understanding these layer APIs will
+also help you to modify the existing MUTE client.
+
+HW: As a programmer, what are some of the things you've been learning as
+you've been working on MUTE?
+
+JR: I have been programming for years, but my coding techniques improve
+every day. I'm always looking for more elegant ways to do things, and
+looking back at last year's code can be frustrating. I find the same to be
+true for any creative process, including writing, visual arts, and music:
+Since you constantly improve, your past work feels particularly shoddy in
+retrospect. My coding has improved in many subtle ways that I cannot
+necessarily put my finger on.
+
+In terms of more dramatic changes, the use of a layered architecture has
+made the MUTE project very easy to manage and understand. I have never used
+a layered architecture before, but I plan to use it in the future.
+
+HW: Have you considered the legal ramifications of what you're doing and
+prepared for any possible legal action? As everybody knows, the RIAA and
+its international counterparts have been going after both users and
+developers of P2P software quite aggressively.
+
+JR: So far, these organizations have confined their attacks to corporations
+that are peddling P2P and making money off of it. There is no precedent for
+a suit against an individual P2P developer who is releasing non-commercial,
+open-source software. Selling a product that helps people break the law is
+very different from giving it away. Furthermore, there is no explicit law
+against software like MUTE.
+
+That said, I could always be the precedent, and I am ready for anything. I
+believe that coding is part of my right to free speech, and I also believe
+that I have the right to encourage people to break an unjust law as a form
+of social protest. Many people look at the MUTE web site, which refers
+directly to how MUTE circumvents the RIAA's spy tactics, and say, "Whoa,
+friend, I would be careful if I were you."
+
+Sure, many other P2P developers and companies blatantly lie about what
+their software is for, but I refuse to lie. You can write a book that
+encourages people to break the law - for example, The Anarchist Cookbook.
+Why can't I write a web site that does the same thing?
+
+To be honest, I think it is highly unlikely I will be sued, but only time
+will tell.
+
+HW: It's inevitable that a third-generation P2P service is probably on the
+horizon. Will you be so bold to say that yours, MUTE, is it?
+
+JR: Whatever the third-generation P2P system will be, it will certainly be
+anonymous. All past P2P innovations have been spurred by the legal tactics
+of the day. I don't see why the next leap will be any different.
+
+MUTE is probably more of a vanguard than the be-all, end-all
+third-generation P2P system, much like Gnutella was the vanguard for the
+second generation. Other P2P developers may be inspired by MUTE and start
+thinking about how to make P2P anonymous. Unfortunately, if history repeats
+itself, the most popular third-generation network may be owned by a
+corporation that was ultimately inspired by my work on MUTE.
+
+It would be nice to see an open-source and open-protocol network win this
+round, if only to ensure that at least one open-source application was on
+the majority of people's desktops.
+
+Howard Wen is a freelance writer who has contributed frequently to O'Reilly
+Network and written for Salon.com, Playboy.com, and Wired, among others.
+
+
+-- 
+-----------------
+R. A. Hettinga <mailto: rah@ibuc.com>
+The Internet Bearer Underwriting Corporation <http://www.ibuc.com/>
+44 Farquhar Street, Boston, MA 02131 USA
+"... however it may deserve respect for its usefulness and antiquity,
+[predicting the end of the world] has not been found agreeable to
+experience." -- Edward Gibbon, 'Decline and Fall of the Roman Empire'
+

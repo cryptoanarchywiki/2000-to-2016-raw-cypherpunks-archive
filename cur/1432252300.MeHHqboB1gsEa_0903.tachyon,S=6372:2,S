@@ -1,0 +1,120 @@
+From owner-cypherpunks@jfet.org  Thu Sep 14 05:20:48 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.7/8.13.7/Debian-1) with ESMTP id k8E9KBs1021352
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 14 Sep 2006 05:20:11 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.7/8.13.7/Submit) id k8E9KBBs021351
+	for cypherpunks-outgoing; Thu, 14 Sep 2006 05:20:11 -0400
+Date: 14 Sep 2006 09:20:03 -0000
+Message-ID: <20060914092003.10238.qmail@nym.alias.net>
+To: cypherpunks@jfet.org
+From: lcs Mixmaster Remailer <mix@anon.lcs.mit.edu>
+X-Comment1: This message did not originate from the
+X-Comment2: above address. It was automatically remailed
+X-Comment3: by an anonymous mail service. Please report
+X-Comment4: problems or inappropriate use to
+X-Comment5: <postmaster@anon.lcs.mit.edu>
+Subject: TPM chip as secure key store
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5269
+Lines: 93
+
+With its release of Vista, Microsoft is taking a step forward in
+exploiting the controversial Trusted Computing technology.  For the
+first time outside of a research setting, the "sealed storage" feature
+of Trusted Computing will be used in a way that can potentially restrict
+user access to data.
+
+Trusted Computing relies on the TPM chip to take a "fingerprint" of
+the system configuration as it boots. During the PC boot process,
+which consists of several stages, each stage hashes the next one,
+storing the results into the TPM. At the end of this process the TPM's
+Platform Configuration Registers (PCRs) contain hashes of the data that
+was involved in booting.
+
+Sealed storage is data encrypted to a TPM key, and locked to the
+values in one or more PCRs.  The TPM will only decrypt the data if the
+current PCR values match what was specified when the data was encrypted.
+This insures that sealed data can only be decrypted if the system is
+booted into a specified configuration.  Changes to the boot configuration,
+either by altering the BIOS, changing the Master Boot Record, booting to
+an external device like a floppy, CDROM or external disk, and similar
+alterations, will result in different PCR values and prevent the TPM
+from unsealing data.
+
+Vista's new disk encryption software, called BitLocker, optionally uses
+this feature of the TPM to strengthen its encryption.  For example,
+consider various attack models for disk encryption.  A laptop is stolen
+and the attacker now seeks to decrypt the disk and recover the data.
+
+The first step often applied in this situation is to take an image of
+the disk and run the attacks on that image, from a computer controlled by
+the attacker.  This prevents the laptop OS from performing self-destruct
+operations or otherwise keeping the attacker from being able to reset
+the disk to a pristine state.  But with BitLocker, the disk decryption
+key is sealed to a TPM key (a 2048 bit RSA key).  No amount of brute
+force password guessing will work to recover a key from a disk image;
+the TPM chip itself has to be involved.
+
+An alternative for an attacker, then, might be to use the laptop itself
+but to boot into another OS, such as via a Linux "Live CD" or external
+device.  It can then mount the partitions with the encrypted data and
+apply similar attacks.  This will give access to the TPM hardware while
+still preventing the BitLocker software from having control.
+
+Again, the BitLocker design will thwart this attack, because the
+sealed storage locks the encrypted disk key to the boot configuration.
+Changing that configuration by booting into another OS will change PCR
+values and prevent the TPM from unlocking the key, even if the correct
+password is used.
+
+The attacker is then forced to build a robot that can type on the
+keyboard, or a special electronic circuit that can tap into the cable
+connecting the keyboard to the computer and can mimic key presses.
+Even then, TPM chips have features to limit the feasibility of password
+guessing, and will shut down or slow down when too many wrong guesses
+are entered.
+
+Overall, the BitLocker design appears to be a good application for TPM
+based sealed storage, exploiting this technology to greatly improve
+resistance to typical attacks against disk encryption.  However there is
+a side effect of this design which may have implications for Microsoft's
+competitive strategy in the future.
+
+Because BitLocker locks the disk key to the boot sequence, any dual-boot
+system that uses this capability will not be able to decrypt the encrypted
+data when the alternate OS is booted.  Users who want to share their
+PC data between Vista and Linux will not be able to use this advanced
+BitLocker capability.
+
+For years, compatibility between Windows and Linux has been limited,
+ever since Microsoft migrated to the undocumented NTFS file system.
+Gradually this situation has improved as Linux developers have reverse
+engineered NTFS, and now many Linux distributions ship with at least
+read-only support for NTFS file systems.  This is a benefit for Linux
+and improves its usability and compatibility.
+
+BitLocker changes this game once again and throws up an enormous
+roadblock against allowing Linux and Vista operating systems to coexist
+and cooperate on the same computer.  Looking forward, we could imagine
+a time when BitLocker encryption via the TPM is the default for new
+systems shipped with Vista installed.  This would provide the kind of
+"security by default" often demanded by independent experts and would
+indeed arguably be a boon for typical users.  The problem would be that
+any such user who wanted to experiment with Linux would find that his
+Vista data was off limits unless he decrypts his disk.
+
+BitLocker, especially if it becomes more widely fielded and used, could
+play a significant part in slowing the deployment of Linux and similar
+alternative operating systems.  It is a small step towards the widely
+discussed Trusted Computing tradeoff of users accepting limitations on
+how their data can be accessed, in exchange for improved security and
+protection of that data.  Given the magnitude and importance of these
+issues, it will be especially interesting to see how this element of
+Vista technology is received as the new OS is rolled out.
+

@@ -1,0 +1,109 @@
+From cypherpunks-bounces@cpunks.org  Thu Oct 24 02:46:37 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9O6kTFc009819;
+	Thu, 24 Oct 2013 02:46:30 -0400
+Received: from straum.hexapodia.org (straum.hexapodia.org [66.109.99.53])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9O6kQjR009815
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 24 Oct 2013 02:46:27 -0400
+Received: by straum.hexapodia.org (Postfix, from userid 22448)
+ id 6545E4396; Wed, 23 Oct 2013 23:46:26 -0700 (PDT)
+Date: Wed, 23 Oct 2013 23:46:26 -0700
+From: Andy Isaacson <adi@hexapodia.org>
+To: Sandy Harris <sandyinchina@gmail.com>
+Subject: Re: Curious RNG stalemate [was: use of cpunks]
+Message-ID: <20131024064626.GJ18544@hexapodia.org>
+References: <CAD2Ti2_Y4V+d_kLEmoyUmUXLXvA8CCg8Hi50GW2ZGAZZ+eb0Rg@mail.gmail.com>
+ <CACXcFmkd0agP7z=OAAj6Fdx55xc67pgXPZsBN9qYW==vhD5ktw@mail.gmail.com>
+ <20131022070715.GW15525@hexapodia.org>
+ <CACXcFmkHPP3qV3mgyKmnKfWiDdxTmwQpbN1cwsf8xF7nUJTBgA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACXcFmkHPP3qV3mgyKmnKfWiDdxTmwQpbN1cwsf8xF7nUJTBgA@mail.gmail.com>
+X-Old-GPG-Fingerprint: 1914 0645 FD53 C18E EEEF C402 4A69 B1F3 68D2 A63F
+X-GPG-Fingerprint: A5FC 6141 F76D B6B1 C81F  0FB7 AFA0 A45F ED3D 116D
+X-GPG-Key-URL: http://web.hexapodia.org/~adi/gpg.txt
+X-Domestic-Surveillance: money launder bomb tax evasion
+User-Agent: Mutt/1.5.20 (2009-06-14)
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 2756
+Lines: 61
+
+On Wed, Oct 23, 2013 at 09:01:18AM -0400, Sandy Harris wrote:
+> > It's super frustrating that Turbid assumes you are going to
+> > reverse-engineer the amplifier stage of your sound card in order to set
+> > some difficult-to-understand parameters which apparently can completely
+> > break it's ability to extract entropy if set incorrectly.  (See the
+> > installation instructions in section 12 of the paper linked above.)
+> >
+> > It would be much better for it to have a default set of parameters ...
+> 
+> There is configuration info for some common sound devices.
+
+Six discrete (ISA and PCI) sound cards manufactured before 2008, plus
+generic "intel-hda" and "usbaudio" profiles.
+
+That might cover as much as 20% of systems shipped in 2013.
+
+Also, AFAICS the .ctl files do not contain the Q, R, B, and K values
+computed in sections 12.1 - 12.8.  There are sample values for a few
+(circa 2005) devices in table 4.
+
+> > I mean, seriously.  The Turbid authors appear to assume that every
+> > person who installs Turbid is going to build a custom Y-audio cable and
+> > put a voltmeter (set to the correct mode of course!) on the outputs of
+> > their sound card.  WTF?
+> 
+> Only people with a device for which a configuration file does
+> not already exist. If you have to do this, you can send your
+> file to the Turbid maintainer so others can use it without
+> having to do the measurements themselves.
+
+The turbid.tgz download is unversioned and unsigned.  Something between
+60% and 90% of PCs sold today are not covered, since only one device
+that's included is still on the market (intel-hda).
+
+> Of course, then there is a trust issue. The maintainer may
+> not have the device in question, so he cannot verify. If
+> you want to verify, you are back to building a cable.
+> Without verification, it looks as though someone could
+> subvert Turbid for a device by submitting a suitably
+> bogus parameter file.
+> 
+> > It's fine if conservative, default settings result in Turbid getting
+> > only 100 bits of entropy per second rather than 100 Kbit/sec.  Mix
+> > it into /dev/urandom and call it a day.
+> 
+> I'd also like to see a default parameter file, guaranteed to give some
+> entropy on a lowest common denominator device. I'm not sure if that is
+> possible.
+
+The Turbid paper seems focused on generating a few KiB/sec of
+physical randomness, continuously.  The actual problem facing users
+today is getting 100 bits of randomness, *ever*, to seed urandom.
+
+This seems like a classic example of engineering building a system
+that's far beyond spec for the problem it's actually supposed to solve,
+and incapable of adressing the actual problem due to overengineered
+complexity.
+
+Turbid fails the first rule:  build systems for people to actually use.
+
+-andy
+

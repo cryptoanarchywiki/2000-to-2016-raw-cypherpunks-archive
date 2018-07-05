@@ -1,0 +1,144 @@
+From owner-cypherpunks@lne.com  Fri Jul  4 11:39:52 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h64Fdn605855
+	for <rsw@jfet.org>; Fri, 4 Jul 2003 11:39:50 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h64FNgLR023691
+	for cypherpunks-goingout345; Fri, 4 Jul 2003 08:23:42 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+X-Authentication-Warning: waste.minder.net: majordom set sender to
+  owner-cypherpunks@minder.net using -f
+Date: Fri, 4 Jul 2003 10:53:16 -0400 (edt)
+From: Sunder <sunder@sunder.net>
+X-Sender: sunder@anon7.arachelian.com
+To: Sarad AV <jtrjtrjtr2001@yahoo.com>
+cc: cypherpunks@minder.net
+Old-Subject: Re: A firewall problem?
+In-Reply-To: <20030704085543.42463.qmail@web21203.mail.yahoo.com>
+Message-ID: <Pine.BSO.4.21.0307041032410.19553-100000@anon7.arachelian.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Subject: Re: A firewall problem?
+Approved: LISTMEMBER CPUNK
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 4633
+Lines: 113
+
+I'm not 100% sure what you're talking about, but from what I got, it
+depends on the firewall type, and the location of the man in the middle.  
+
+Various firewall types:
+
+Simple packet filters.
+
+Slightly smarter packet filters that also do NAT and keep track of
+connections - (this is needed for the NAT to work because it needs to
+change the src/dest ports to differentiate between hosts behind the
+NAT's.  i.e. ipf, iptables, etc...)
+
+Application layer proxies (i.e. socks, etc.) but those that validate the
+traffic is what's its supposed to be. (stateful inspection.)
+
+
+
+Generally your attacker needs to own a router upstream from you to be
+sucessful in replay attacks.  But if you use a secure encrypted transport,
+it gets much, much harder.  (i.e. encrypt the payload, not just the
+headers.)
+
+If the attacker is just somewhere else on the wild internet, he can send
+you packets with forged src addresses, but he won't be able see the
+replies, so at most it's a denial of service on your machine.
+
+So your attacker needs to either use his real ip address (or one of a
+machine he already cracked) or he needs to own the router directly
+upstream from you (i.e. your ISP) so your packets don't have any path to
+go through but through him.
+
+If he's on your network, or directly upstream, he can do something called
+tcp-hijacking.  There is some interesting related stuff here for you to
+research to get you answers regarding this:
+
+http://cs.baylor.edu/~donahoo/NIUNet/hijack.html
+
+
+There are possible ways around this issue, but would likely require an
+encrypted sessions (ipsec, ssl/tls, or ssh for example.)
+
+If you just have a simple packet filter, it's possible to use such things.  
+If you have a hardened application layer proxy server that inspects
+packets, you can be a bit more secure.
+
+An important thing to implement is secure tcp sequence numbers.  They make
+the sequence # predictions harder, so it's not so easy hijack the
+connections.
+
+But this depends on your OS and tcp/ip implementation:
+
+The best paper on this I've seen so far:
+http://razor.bindview.com/publish/papers/tcpseq.html
+
+And here's some security alerts regarding weak sequence #'s for example:
+
+http://www.linuxsecurity.com/articles/security_sources_article-2968.html
+http://www.cert.org/advisories/CA-2001-09.html
+
+Again, if your attacker owns the router directly upstream from you, that
+won't help very much because you can assume that they'd be able to
+intercept and alter packets in real time.  This of course isn't trivial,
+but it is doable with fast enough hardware if located directly upstream
+from you.  
+
+But it won't allow the attacker to hijack encrypted connections to known
+hosts, or hosts using properly signed (by a well known CA) SSL
+certificates.  It will allow the attacker to do plenty of monkeying with
+your email (both inbound and outbound), DNS, and unencrypted web traffic,
+and possibly ssh sessions to machines you haven't logged into before
+(where you have to say "Yes, this is the machine I want to login to.")
+
+
+(He won't be able to do much against encrypted emails, but he can always
+frustrate you by deleting them or slightly altering them so they fail to
+decrypt, so if you're clueless, you'll go to plaintext believing that
+this encryption stuff is too much of a headache and it's unreliable, and
+he'll be able to monkey with the plaintext ones.)
+
+
+----------------------Kaos-Keraunos-Kybernetos---------------------------
+ + ^ + :25Kliters anthrax, 38K liters botulinum toxin, 500 tons of   /|\
+  \|/  :sarin, mustard and VX gas, mobile bio-weapons labs, nukular /\|/\
+<--*-->:weapons.. Reasons for war on Iraq - GWB 2003-01-28 speech.  \/|\/
+  /|\  :Found to date: 0.  Cost of war: $800,000,000,000 USD.        \|/
+ + v + :           The look on Sadam's face - priceless!       
+--------_sunder_@_sunder_._net_------- http://www.sunder.net ------------
+
+On Fri, 4 Jul 2003, Sarad AV wrote:
+
+> hi,
+> 
+> 
+> Wont the following cause a firewall breach-
+> 
+> 
+> First we capture   inbound packets to a firewall
+> assuming we have a man in the middle(M).
+> 
+> If (M) use block replay on packets he can inject bits
+> and pieces of his own information to an inbound
+> firewall and can go undetected?
+> 
+> M doesn't alter the source and destination ip's and is
+> perfectly acceptable to the firewall.Even a timestamp
+> won't work since a packet is expected at any time.
+> 
+> We can still re-calculate the CRC of Checksum field by
+> the same attack and replace the old crc/checksum after
+> changing various required bit positions.
+> 
+> Do firewall programs use initialisation vectors and a
+> chaning mode to prevent this attack?
+

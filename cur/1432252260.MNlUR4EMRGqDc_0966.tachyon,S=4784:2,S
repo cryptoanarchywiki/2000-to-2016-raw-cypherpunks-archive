@@ -1,0 +1,104 @@
+From owner-cypherpunks@Algebra.COM  Tue Aug 20 21:39:01 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7L1d1c09245
+	for <rsw@opamp.org>; Tue, 20 Aug 2002 21:39:01 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id VAA16790
+	for <rsw@mit.edu>; Tue, 20 Aug 2002 21:38:59 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7KN0ZAM026533
+	for <cypherpunks-outgoing@ak47.algebra.com>; Tue, 20 Aug 2002 18:00:35 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g7KN0Zte026532
+	for cypherpunks-outgoing; Tue, 20 Aug 2002 18:00:35 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7KN0SAM026514
+	for <cypherpunks@ak47.algebra.com>; Tue, 20 Aug 2002 18:00:29 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7KN0QQ0024018
+	for cypherpunks@ak47.algebra.com; Tue, 20 Aug 2002 16:00:26 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7KN0HR8024011
+	for cypherpunks-goingout345; Tue, 20 Aug 2002 16:00:17 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+From: Nomen Nescio <nobody@dizum.com>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@dizum.com>.
+To: cypherpunks@lne.com, cryptography@wasabisystems.com,
+   mail2news@anon.lcs.mit.edu
+Newsgroups: sci.crypt
+Old-Subject: Chaum's unpatented ecash scheme
+Message-ID: <75eb021ec209a14179773bc419fd9129@dizum.com>
+Date: Wed, 21 Aug 2002 01:00:06 +0200 (CEST)
+X-Loop: cypherpunks@lne.com
+X-spam: 15 
+Subject:  Chaum's unpatented ecash scheme
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 2351
+Lines: 54
+
+
+David Chaum gave a talk at the Crypto 2002 conference recently in which
+he briefly presented a number of interesting ideas, including an approach
+to digital cash which he himself said would "avoid the ecash patents".
+
+The diagram he showed was as follows:
+
+
+        Optimistic Authenticator
+
+                                     z = x^s
+
+Payer         f(m)^a z^b             Bank
+      ----------------------------->
+
+            [f(m)^a z^b]^s
+      <-----------------------------
+
+               m, f(m)^s
+      ----------------------------->
+
+
+It's hard to figure out what this means, but it bears resemblance to a
+scheme discussed on the Coderpunks list in 1999, a variant on a blinding
+method developed by David Wagner.  See
+http://www.mail-archive.com/coderpunks@toad.com/msg02323.html for a
+description, with a sketch of a proof of blindness at
+http://www.mail-archive.com/coderpunks@toad.com/msg02387.html and
+http://www.mail-archive.com/coderpunks@toad.com/msg02388.html.
+
+In Chaum's diagram it is not clear which parts of the key are private and
+which public, although z is presumably public.  Since the bank's action
+is apparently to raise to the s power, s must be secret.  That suggests
+that x is public.  However Chaum's system seems to require dividing by
+(z^b)^s in order to unblind the value, and if s is secret, that doesn't
+seem possible.
+
+In Wagner's scheme everything was like this except that the bank's key
+would be expressed as x = z^s, again with x and z public and s secret.
+f(m) would be a one-way function, which gets doubly-blinded by being
+raised to the a power and multiplied by z^b, where a and b are randomly
+chosen blinding factors.  The bank raises this to its secret power s,
+and the user unblinds to form f(m)^s.  To later deposit the coin he does
+as in the third step, sending m and f(m)^s to the bank.
+
+For the unblinding, the user can divide by (z^b)^s, which equals z^(b*s),
+which equals (z^s)^b, which equals x^b.  Since x is public and the user
+chose b, he can unblind the value.  Maybe the transcription above of the
+Chaum scheme had a typo and it was actually similar to the Wagner method.
+
+Chaum commented that the payer does not receive a signature in this
+system, and that he doesn't need one because he is protected against
+misbehavior by the bank.  This is apparently where the scheme gets
+its name.
+

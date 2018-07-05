@@ -1,0 +1,181 @@
+From owner-cypherpunks-outgoing@ssz.com  Fri Nov 10 17:53:24 2000
+Received: from MIT.EDU (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.69.0.28])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id RAA03164
+	for <kwantam@positron.mit.edu>; Fri, 10 Nov 2000 17:53:24 -0500
+Received: from einstein.ssz.com by MIT.EDU with SMTP
+	id AA00472; Fri, 10 Nov 00 17:54:21 EST
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id QAA02525
+	for cypherpunks-outgoing; Fri, 10 Nov 2000 16:52:07 -0600
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id QAA02516
+	for cypherpunks@ssz.com; Fri, 10 Nov 2000 16:52:05 -0600
+Received: from mail.virtual-estates.net (cpunks@video-collage.com [160.79.196.177])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id QAA02494
+	for <cpunks@ssz.com>; Fri, 10 Nov 2000 16:52:00 -0600
+Received: (from cpunks@localhost)
+	by mail.virtual-estates.net (8.9.3+3.2W/8.9.1) id RAA05130;
+	Fri, 10 Nov 2000 17:46:33 -0500 (EST)
+X-Authentication-Warning: video-collage.com: Processed from queue /var/spool/mqueue-majordomo
+X-Authentication-Warning: video-collage.com: Processed by cpunks with -C /usr/local/majordomo/sendmail.cf
+Received: from marine.sonic.net (marine.sonic.net [208.201.224.37])
+	by mail.virtual-estates.net (8.9.3+3.2W/8.9.3) with SMTP id RAA05120
+	for <cypherpunks@algebra.com>; Fri, 10 Nov 2000 17:46:30 -0500 (EST)
+X-Relay-Ip: 208.201.224.37
+Received: (qmail 9898 invoked from network); 10 Nov 2000 22:46:28 -0000
+Received: from prop.sonic.net (208.201.224.193)
+  by marine.sonic.net with SMTP; 10 Nov 2000 22:46:28 -0000
+Received: from sonic.net (bolt [208.201.224.36])
+	by prop.sonic.net (8.11.0/8.8.5) with ESMTP id eAAMkR529367;
+	Fri, 10 Nov 2000 14:46:27 -0800
+X-Envelope-Info: <bear@bolt.sonic.net>
+Received: from localhost (bear@localhost) by sonic.net (8.11.0/8.7.3) with ESMTP id eAAMkKt23903; Fri, 10 Nov 2000 14:46:20 -0800
+Date: Fri, 10 Nov 2000 14:46:20 -0800 (PST)
+From: Ray Dillinger <bear@sonic.net>
+To: cypherpunks@algebra.com
+Old-Subject: A secure voting protocol
+Message-Id: <Pine.LNX.4.21.0011101436090.23034-100000@bolt.sonic.net>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Subject: CDR: A secure voting protocol
+Sender: owner-cypherpunks@ssz.com
+Precedence: bulk
+Reply-To: cypherpunks@ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Language: English, Russian, German
+Status: O
+Content-Length: 5871
+Lines: 129
+
+
+
+Okay, this information is old hat to most folk here - but 
+it seems relevant just now, and if the infrastructure had 
+been in place for this election, it could have saved us a 
+heck of a lot of trouble.
+
+			Bear
+
+
+
+
+An Election Protocol: Or, a way for people in voting societies to 
+exercise their franchise without stirring themselves to get down to 
+the polls or, for that matter, leaving their computer. 
+
+1) Alice the voter creates twenty sets of ballots.  Each set of 
+   ballots contains one ballot each for all the different things 
+   Alice could vote for. ie, if it's a presidential election,  
+   each set would contain:
+   a ballot voting for the American Reform Party candidate,
+   a ballot voting for the Constitutional Party candidate
+   a ballot voting for the Democratic Party candidate,
+   a ballot voting for the Green Party candidate, 
+   a ballot voting for the Libertarian Party candidate, 
+   a ballot voting for the Nazi Party candidate, 
+   a ballot voting for the Republican Party candidate, 
+   a ballot voting for the Socialist Party candidate, 
+   a ballot voting for the Whig Party candidate,
+   et cetera.
+
+   Each set of ballots also has an identification number, chosen 
+   at random from a number field big enough to make collisions 
+   unlikely.  The identification number is on each ballot, and 
+   is common to all ballots in that set.  For 3 * 10^8 voters, 
+   a 25-digit decimal number should make collisions acceptably 
+   unlikely. 
+
+2) Alice now blinds all the ballot sets with different blinding 
+   factors and transmits them to Bob the vote tabulator.  She Also 
+   sends Bob a digitally signed message that says "I'm voting -- 
+   Alice". 
+
+3) Bob checks the digital signature, checks to make sure he hasn't 
+   already signed a ballot for Alice, picks one of the twenty sets, 
+   and communicates his choice to Alice. 
+
+4) Alice responds by sending Bob the blinding factors for the 
+   other nineteen sets of ballots. 
+
+5) Bob unblinds the nineteen sets of ballots, making sure that 
+   they all have exactly one ballot per candidate and that each 
+   set uses its own identification number. Satisfied that Alice 
+   is not trying to "pull a fast one", Bob then signs each 
+   ballot in the chosen set of ballots and returns them all to 
+   Alice.  
+
+6) Alice unblinds the ballot set while preserving Bob's signature. 
+   She now has a set of ballots signed by Bob. She encrypts the ballot 
+   reflecting her choice with Bob's public key and sends it to Bob
+   anonymously. 
+
+7) Bob decrypts the ballot, checks his own signature to make sure 
+   it's valid, checks the identification number to make sure no 
+   other ballots from this set have been submitted already, writes 
+   down the identification number to check future ballots against, 
+   and increments his tally for the candidate Alice selected.
+
+8) When the election is over, Bob publishes the ballots and the 
+   signed "I'm voting" messages.  Alice can scan the published 
+   information to make sure that her vote is present and that 
+   the numbers all add up correctly.  Alice can also check to 
+   make sure that there are NOT more ballots than there were 
+   "I'm voting" messages, preventing Bob from stuffing the ballot 
+   box.
+
+
+
+The protocol enforces the one vote per voter rule. If Alice tries 
+to obtain more than one set of ballots, Bob will detect it in step 3.
+If Alice tries to submit more than one ballot from the same set, Bob 
+will detect it in step 7.
+
+No one other than the voter can tell whom a particular voter voted 
+for. Bob signs the ballots from the selected set under a blinding 
+factor in step 5.  When he later gets the unblinded ballot in step 
+6, he can check his signature, but cannot correlate it to any 
+particular ballot he's signed. 
+
+The only person who can prove who Alice voted for is Alice.  She 
+can communicate her  submitted ballot to a third party before Bob 
+publishes the results, and when Bob publishes the ballots the third 
+party can make sure there's a ballot that matches.  
+
+Bob is able to generate fake ballots, but he cannot generate signed 
+"I'm voting" messages from eligible voters.  Therefore if he uses 
+fake ballots to try to stuff the ballot box, he will be detected 
+in step 8. One exception to this is if people obtain ballots (giving 
+him "I voted" messages) but do not then complete the protocol by 
+submitting a vote. Bob can then enter a fake ballot without being 
+detected. 
+
+One fact about this protocol is that even though you cannot prove 
+who anyone voted *for*, you can prove that they did or did not 
+*vote*.  This may or may not be a problem depending on the application. 
+
+A vulnerability about this protocol is that Alice can transfer her vote 
+if she wants to.  To do this, Alice would unblind her ballots in step 
+6, and send the whole set to Carol.  Carol could pretend to be Alice 
+in step 7, and check in step 8 to make sure Alice didn't submit one 
+of her own votes (invalidating Carol's purchased vote).  
+
+So California Democratic supporters could swap ballots with Nevada 
+Green supporters, enabling the Nevadans to vote Green in California 
+(where it's "safe" to vote for a third party because there isn't a 
+close race between the major parties one of whom they regard as 
+EVIL) while the Californians voted Democratic in Nevada, where they'd 
+stand a better chance of having their vote make a difference in the 
+determination of electoral votes and keeping the EVIL guy out of 
+office. 
+
+Again, this may or may not be a problem depending on the application - 
+in most voting situations, where there is no electoral college, there 
+would be no motive to exchange ballots.  But selling of ballots is also 
+usually bad for the process, and the US seems to dislike transfer of 
+ballots in general as regards its own elections - so I'm listing this 
+as a vulnerability.
+
+			
+

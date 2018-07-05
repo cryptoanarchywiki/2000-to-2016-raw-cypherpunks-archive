@@ -1,0 +1,127 @@
+From owner-cypherpunks@al-qaeda.net  Fri Jan 11 06:39:07 2013
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id r0BBZdQ9018380
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 11 Jan 2013 06:35:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1357904139;
+	bh=g5BxdythKngL4jvRt40GzACglYD0W/rxjOhy0AZs1Uw=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=MBF0Qzi7gmZLPI/ILCV13gtBSt/Z7NCJ1PMcsznQJmx24hUiwcwU2tAXAFyDXv3el
+	 RKGNMGHevikqc1rvNf7fYY+IWJi4hegcHjlHjF2xROS5EK9pqAHE7BA6j7Xlr6t4vB
+	 etpmGQl+ngqfaWYy+dTtNrAWa7tK8mCswVDUTv2A=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id r0BBZdXC018379
+	for cypherpunks-outgoing; Fri, 11 Jan 2013 06:35:39 -0500
+Date: Fri, 11 Jan 2013 12:35:36 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: Re: [p2p-hackers] Distributed identity, chat, publishing, and 
+  sharing
+Message-ID: <20130111113536.GT30918@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3954
+Lines: 94
+
+----- Forwarded message from Tony Arcieri <tony.arcieri@gmail.com> -----
+
+From: Tony Arcieri <tony.arcieri@gmail.com>
+Date: Thu, 10 Jan 2013 19:14:34 -0800
+To: theory and practice of decentralized computer networks <p2p-hackers@lists.zooko.com>
+Subject: Re: [p2p-hackers] Distributed identity, chat, publishing,
+	and sharing
+Reply-To: theory and practice of decentralized computer networks <p2p-hackers@lists.zooko.com>
+
+On Thu, Jan 10, 2013 at 6:49 PM, Sean Lynch <seanl@literati.org> wrote:
+
+> Hi, folks. I'm sure similar ideas to this have been discussed on this
+> list before, but I wanted to talk about an application that's been
+> living in my head for years and that I keep working on in fits and
+> starts, in the hopes that either someone will "steal" the idea or decide
+> to work on it with me to keep me motivated even when the goal seems so
+> far away.
+>
+
+For what it's worth, this sounds an awfully lot like what I have envisioned
+for the Cryptosphere:
+
+https://github.com/tarcieri/cryptosphere
+
+Contacts would be identified by their (Ed25519) public key. When you add
+> someone, you just paste their public key and type a "pet name" for them,
+> which is what would be shown in your contact list.
+
+
+Really close to what I had in mind, and I plan on using Ed25519. This is
+actually an approach that forces you to do more than take a fleeing glance
+at a given user's public key thumbprint/ID and I feel that's missing from
+many similar systems (e.g. OTR)
+
+
+> People could also associate various metadata with their public key in a
+> very similar way
+> to how they do with PGP keys: with metadata packets signed by themselves
+> and other people, thus establishing a web of trust that would enable
+> search, the same way we can reliably search for PGP keys but with an
+> easier-to-use interface that will always show someone's relationship to
+> your current trusted contacts.
+>
+
+My goal was to collect metadata about content transfers in the system by
+having all participants in file transfers sign a client-specific long chain
+which serves as a record of who has transferred what.
+
+Through the course of normal system operation any given peer will collect a
+number of these long chains, which can be run through a collaborative
+filtering algorithm (e.g. singular value decomposition) in order to make an
+educated guess about the properties of peers you've never interacted with
+based on their collective similarity to peers you have interacted with
+directly.
+
+Here are some possible implementation strategies. The only one I've made
+> any progress on so far is uTP:
+>
+> 1. uTP with our own DHT implementation for bootstrapping, lookup, and
+> storage of published stuff
+>
+
+My plan was to use CurveCP with the Ed25519 private scalar as the CurveCP
+private key. This allows you to set up secure channels which are based on
+the same identities as the other signatures in the system.
+
+CurveCP presently has some issues with embedding and congestion control but
+I hope if people actually start using it these problems will get resolved.
+
+I guess you could call this a p2p, pseudonymous version of Facebook,
+> with all the same functionality and none of the privacy problems because
+> privacy would always be defined by encryption. If you want something
+> public, you post it in the clear. If you want something seen by only
+> your friends, you encrypt the encryption key with each of their
+> curve25519 keys.
+>
+
+A crypto capability-based access control scheme comes to mind here.
+
+-- 
+Tony Arcieri
+
+_______________________________________________
+p2p-hackers mailing list
+p2p-hackers@lists.zooko.com
+http://lists.zooko.com/mailman/listinfo/p2p-hackers
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

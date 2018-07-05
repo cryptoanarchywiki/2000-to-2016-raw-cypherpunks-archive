@@ -1,0 +1,64 @@
+From owner-cypherpunks@al-qaeda.net  Mon Apr 11 12:24:45 2005
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.4/8.13.4/Debian-1) with ESMTP id j3BHOh5B005257
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Mon, 11 Apr 2005 12:24:43 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.4/8.13.4/Submit) id j3BHOhbq005256
+	for cypherpunks-outgoing; Mon, 11 Apr 2005 12:24:43 -0500
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;         s=beta;
+  d=gmail.com;        
+  h=received:message-id:date:from:reply-to:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:references;
+  b=XLNEm38jpz+fKKO19M7QYCh6321ul8R89Wg+asG9PGxFK+fK1rBEYwDRMHhz8gwwCPG8c98UtW3fZv7fSm12xd64ql2oMdliVOb5ffgnBAJw97Ui98ftZ7hRjV0B+1aMVgn9TKG4vG3V/g3F417Rb9qMwTKZeYuHw7n5CW/bIrY=
+Message-ID: <792ce43705041110234ac975d2@mail.gmail.com>
+Date: Mon, 11 Apr 2005 10:23:46 -0700
+From: cypherpunk <cyphrpunk@gmail.com>
+To: Sarad AV <jtrjtrjtr2001@yahoo.com>
+Subject: Re: Rebalanced-RSA-CRT
+Cc: cypherpunks@al-qaeda.net
+In-Reply-To: <20050407171331.13786.qmail@web21208.mail.yahoo.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+References: <20050406010757.GZ701@afflictions.org> 	
+  <20050407171331.13786.qmail@web21208.mail.yahoo.com>
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 1441
+Lines: 31
+
+On Apr 7, 2005 10:13 AM, Sarad AV <jtrjtrjtr2001@yahoo.com> wrote:
+> hi,
+> 
+> I am a little confused after reading this:
+> 
+> http://www.rsasecurity.com/rsalabs/cryptobytes/CryptoBytes_January_2002_final.pdf
+> 
+> RSA-CRT decryption is nearly four times faster than
+> using only modular exponentiation for decryption. Is
+> Rebalanced-RSA-CRT three times faster in decryption
+> than RSA decryption only using modular exponentiation
+> or is it three times faster than RSA-CRT in
+> decryption?
+
+It has to be the second one. If it were only 3 times faster than
+vanilla RSA, while RSA-CRT was 4 times faster than vanilla, then
+rebalanced would not be a speedup over the usual way of doing things. 
+Rebalanced RSA is 3 times faster than RSA-CRT.
+
+What "rebalanced RSA" means is that you choose the private exponent d
+so that exponentiation with it is fast. This speeds up decryption at
+the expense of encryption. You can't just choose a small d; this is
+known to be insecure. Instead they propose to choose a d such that the
+two exponents in the CRT, d mod p-1 and d mod q-1, are relatively
+small, about 160 bits. This gives a factor of 3 speedup vs the usual
+512 bit exponent in 1024 bit RSA-CRT.
+
+Is this safe? Who knows? I wouldn't recommend using it until Don
+Coppersmith chewed on it for a while. He's the guy who pushes the
+state of the art on small-d attacks. I'd wait for his opinion on
+whether this variant on small-d escapes his attacks.
+

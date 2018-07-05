@@ -1,0 +1,138 @@
+From owner-cryptography+rsw=mit.edu@metzdowd.com  Sun Dec 28 12:32:27 2003
+Return-Path: <owner-cryptography+rsw=mit.edu@metzdowd.com>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6p3/8.11.6-03-31-03) with ESMTP id hBSHWRK19082
+	for <rsw@opamp.org>; Sun, 28 Dec 2003 12:32:27 -0500
+Received: from red.metdow.com (209-166-243-235.dsl.cust.walrus.com [209.166.243.235])
+	by fort-point-station.mit.edu (8.12.4/8.9.2) with ESMTP id hBSHWNZn000710
+	for <rsw@mit.edu>; Sun, 28 Dec 2003 12:32:23 -0500 (EST)
+Received: by red.metdow.com (Postfix, from userid 1002)
+	id 29F8B182FB6; Sun, 28 Dec 2003 12:02:46 -0500 (EST)
+X-Original-To: cryptography@metzdowd.com
+Delivered-To: cryptography@metzdowd.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by red.metdow.com (Postfix) with ESMTP id 0CB49182F52
+	for <cryptography@metzdowd.com>; Sun, 28 Dec 2003 12:02:44 -0500 (EST)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id CC072D97DD; Sun, 28 Dec 2003 12:03:10 -0500 (EST)
+X-Original-To: cryptography@metzdowd.com
+Received: from mail.off.net (off.net [66.246.133.2])
+	by red.metdow.com (Postfix) with ESMTP id D1261182FB6
+	for <cryptography@metzdowd.com>; Fri, 26 Dec 2003 21:36:57 -0500 (EST)
+Received: by mail.off.net (Postfix, from userid 948)
+	id 665C5314384; Fri, 26 Dec 2003 21:37:18 -0500 (EST)
+Date: Fri, 26 Dec 2003 21:37:18 -0500
+From: Adam Back <adam@cypherspace.org>
+To: Steve Schear <s.schear@comcast.net>
+Cc: cryptography@metzdowd.com, cypherpunks@lne.com,
+   CAMRAM <camram-spam@camram.org>,
+   Anti-Spam Research Group <asrg-admin@ietf.org>,
+   Adam Back <adam@cypherspace.org>
+Subject: Re: Microsoft publicly announces Penny Black PoW postage project
+Message-ID: <20031226213718.A32627@bitchcake.off.net>
+References: <6.0.1.1.0.20031226091014.05a89888@mail.comcast.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.5.1i
+In-Reply-To: <6.0.1.1.0.20031226091014.05a89888@mail.comcast.net>; from s.schear@comcast.net on Fri, Dec 26, 2003 at 09:13:23AM -0800
+Sender: owner-cryptography@metzdowd.com
+Precedence: bulk
+Status: O
+Content-Length: 4307
+Lines: 93
+
+I did work at Microsoft for about a year after leaving ZKS, but I quit
+a month or so ago (working for another startup again).
+
+But for accuracy while I was at Microsoft I was not part of the
+microsoft research/academic team that worked on penny black, though I
+did exchange a few emails related to that project and hashcash etc
+with the researchers.
+
+I thought the memory-bound approaches discussed on CAMRAM before were
+along the lines of hash functions which chewed off artificially large
+code foot-print as a way to impose the need for memory.  
+
+Arnold Reinhold's HEKS [1] (Hash Extended Key Stretcher) key stretching
+algorithm is related also.  HEKS aims to make hardware attacks on key
+stretching more costly: both by increasing the memory footprint
+required to efficiently compute it, and by requiring operations that
+are more expensive in silicon (32 bit multiplies, floating point is
+another suggestion he makes).
+
+The relationship to hashcash is you could simply use HEKS in place of
+SHA1 to get the desired complexity and hence silicon cost increase.
+
+"The main design goal of this algorithm is to make massively parallel
+key search machines it as expensive as possible by requiring many
+32-bit multiplies and large amounts of memory."
+
+I think I also recall discussing with Peter Gutmann the idea of using
+more complex hash functions (composed of existing hash functions for
+security) to increase the cost of hardware attacks.
+
+
+The innovation in the papers referred to by the Penny Black project
+was the notion of building a cost function that was limited by memory
+bandwidth rather CPU speed.  In otherwords unlike hashcash (which is
+CPU bound and has minimal working memory or code footprint) or a
+notional hashcash built on HEKS or other similar system (which is
+supposed to take memory and generaly expensive operations to build in
+silicon), the two candidate memory-bound functions are designed to be
+computationally cheap but require a lot of random access memroy
+utilization in a way which frustrates time-space trade-offs (to reduce
+space consumption by using a faster CPU).  They then argue that this
+is desirable because there is less discrepency in memory latency
+between high end systems and low end systems than there is discrepency
+in CPU power.
+
+The 2nd memory [3] bound paper (by Dwork, Goldber and Naor) finds a
+flaw in in the first memory-bound function paper (by Adabi, Burrows,
+Manasse, and Wobber) which admits a time-space trade-off, proposes an
+improved memory-bound function and also in the conclusion suggests
+that memory bound functions may be more vulnerable to hardware attack
+than computationally bound functions.  Their argument on that latter
+point is that the hardware attack is an economic attack and it may be
+that memory-bound functions are more vulnerable to hardware attack
+because you could in their view build cheaper hardware more
+effectively as the most basic 8-bit CPU with slow clock rate could
+marshall enough fast memory to under-cut the cost of general purpose
+CPUs by a larger margin than a custom hardware optimized
+hashcash/computationally bound function.
+
+I'm not sure if their conclusion is right, but I'm not really
+qualified -- it's a complex silicon optimization / hardware
+acceleration type question.
+
+Adam
+
+[1] http://world.std.com/~reinhold/HEKSproposal.html
+
+[2] Abadi, Burrows, Manasse and Wobber "Moderately Hard, Memory-bound
+Functions", Proceedings of the 10th Annual Network and Distributed
+System Security Symposium, February 2003
+
+http://research.microsoft.com/research/sv/PennyBlack/demo/memory-final-ndss.pdf
+
+[3] Dwork, Goldberg, and Naor, "On Memory-Bound Functions for Fighting
+Spam", Proceedings of the 23rd Annual International Cryptology
+Conference (CRYPTO 2003), August 2003.
+
+http://research.microsoft.com/research/sv/PennyBlack/demo/lbdgn.pdf
+
+
+On Fri, Dec 26, 2003 at 09:13:23AM -0800, Steve Schear wrote:
+> http://news.bbc.co.uk/2/hi/technology/3324883.stm
+> 
+> Adam Back is part of this team, I think.
+> 
+> Similar approach to Camram/hahscash.  Memory-based approaches have been 
+> discussed.  Why hasn't Camram explored them?
+> 
+> steve
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+

@@ -1,0 +1,221 @@
+From cypherpunks-bounces@cpunks.org  Mon Sep 30 09:08:28 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r8UD7xRI022975;
+	Mon, 30 Sep 2013 09:08:03 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r8UD7qEK022971
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Mon, 30 Sep 2013 09:07:55 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id F1B33543E62; Mon, 30 Sep 2013 15:07:49 +0200 (CEST)
+Date: Mon, 30 Sep 2013 15:07:49 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: [tor-talk] Why the Web of Trust Sucks
+Message-ID: <20130930130749.GV10405@leitl.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature"; boundary="emh7zit8KzwzJ0cm"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 7151
+Lines: 182
+
+
+--emh7zit8KzwzJ0cm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+----- Forwarded message from Mike Perry <mikeperry@torproject.org> -----
+
+Date: Sat, 28 Sep 2013 23:43:27 -0700
+=46rom: Mike Perry <mikeperry@torproject.org>
+To: tor-talk@lists.torproject.org
+Subject: [tor-talk] Why the Web of Trust Sucks
+Reply-To: tor-talk@lists.torproject.org
+
+Joel R. Voss:
+> Hi Mike,
+>=20
+> I'm writing a blog post about web of trust. I'm looking for any weaknesse=
+s I=20
+> can find in it because I'm writing a piece of software that would be desi=
+gned=20
+> to help grow it. I'd appreciate if you could give me a few points that I =
+can=20
+> research. I'd be happy to send you my findings so far if you want to read=
+ them.=20
+> This is a fairly important subject because many people rely upon it for=
+=20
+> software signing, encrypted e-mail, and soon we could use it much more wi=
+dely.
+
+The web of trust has three main problems:
+
+1. It leaks information.
+
+This includes social graph metadata, time and place of interaction, and
+in some cases government/slave-name identity. This issue has been
+discussed at length, of course.
+
+
+2. It has many single points of failure.
+
+Because by default GPG uses shortest-weighted paths to establish trust
+in a key, and moreover because nothing authenticates the *entire* Web of
+Trust graph, each and every member of the "Strong Set" essentially
+functions as a CA, especially for keys only weakly connected to the
+Strong Set. If you compromise just one of those keys, you get to use
+that key to certify arbitrary keys for any name you like.
+
+To understand how and why this is a problem, let's walk through a
+typical Web of Trust workflow.=20
+
+Let's say we have a GPG user named Edward who wants to send an encrypted
+email about the extreme level of corruption at his workplace to a
+journalist that he has never met. Let's call that journalist Glenn. For
+the sake of argument, let's say that both individuals are active
+participants in the Web of Trust.
+
+Edward also knows that the network systems administrators at his
+workplace are very sophisticated, and intercept all encrypted
+communications for purposes of active MITM attacks to obtain the
+communications content. So Edward decides to download Glenn's key from
+subkeys.pgp.net, and requests that his gpg client provide him with a
+trust value for Glenn's key.
+
+Now, the network systems administrators at Edward's workplace have
+anticipated this. They have a compromised HTTPS CA cert, as well as have
+compromised a couple of highly trusted keys from the Web of Trust. Let's
+call one of these GPG keys Roger.
+
+When Edward goes to download a key to use for Glenn, the network systems
+administrator gives him a new fake key that they generate on the spot.
+The network systems administrator also attaches a fully trusted
+signature using Roger's compromised key. They also block the actual key
+for Glenn from reaching Edward.
+
+Edward's GPG client has trust in a couple keys. It turns out that one of
+his trusted keys, Bruce, has full trust in Roger's key (the compromised
+key).
+
+Edward's GPG client then computes a fully trusted path from Bruce to
+Roger to the fake Glenn, and Edward then sends an encrypted email to
+fake Glenn that is then subsequently read by the network systems
+administrator.
+
+Game over for Edward :/.
+
+This scenario is possible against arbitrary keys using any of the high
+degree keys in the Strong Set. They effectively function as single point
+of failure CAs for the Web of Trust, which destroy its utility as an
+independent key authentication mechanism.
+
+
+3. It doesn't scale very well to the global population.
+
+The amount of storage to maintain the Web of Trust for the whole world
+would be immense. For the level of authentication it provides, it just
+doesn't make sense to have this much storage involved.
+
+
+
+So what should we do instead?
+
+Well, I think it is important to take a step back and think about what
+the Web of Trust is trying to accomplish. Aside from being a global
+popularity contest and some kind of weird quasi-religious hacker ritual,
+it is an authentication mechanism for the keys that you retrieve.
+
+It turns out there are lots of ways to authenticate keys using multipath
+authentication that do not suffer from the Web of Trust's downsides**.
+
+Here's a few examples:
+
+1. Every time GPG downloads a new key, re-download it several times via
+multiple Tor circuits to ensure you always get the same key.
+
+2. Every time I verify a signature from a key sent to an email address
+that is not mine (like a mailinglist), my mail client adds a tiny amount
+of trust to that key (since each new public email+signature downloaded
+represents an observation of the key via a potentially distinct network
+path that should also be observed by multiple people, including the
+sender).
+
+3. Every time I am about to encrypt mail to a key, check the key servers
+for that email address, download the key, and make sure it is still the
+same (SSH/TOFU-style).
+
+4. When downloading a key, GPG could verify that the same email to key
+mapping exists on multiple key servers, with each key server
+authenticated by an independent TLS key that is stored in the GPG source
+code or packaging itself. (Perspectives/notary-style cryptographic
+multipath authentication).
+
+
+
+** The Web of Trust is technically capable of multipath authentication
+by itself, but only if you are aware of all of the multiple paths that
+*should* exist. Unfortunately, nothing authenticates the whole Web of
+Trust in its entirety, so it is impossible to use it to reliably verify
+that multiple paths to a key do actually exist and are valid.
+
+
+--=20
+Mike Perry
+
+
+
+--=20
+tor-talk mailing list - tor-talk@lists.torproject.org
+To unsusbscribe or change other settings go to
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-talk
+
+
+----- End forwarded message -----
+--=20
+Eugen* Leitl <a href=3D"http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+
+--emh7zit8KzwzJ0cm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSSXelAAoJEPRuNImsiU7FcUsP/0MHo0JWs16DmSwwCTo2/HMa
+Lb0isGfcxN0LPJ3QC4JLLmE7M1mqaVjUQXMW3v+3BSWxlGQCuOsxKeKuoLhm+v0V
+TbPHMIlU0gIWSjfa2BbrtZhSsPLqHIOiiMxUbPGQhm7aT3UaTLi+mnLOyKpG+PrG
+0ap7+wbDM0nFH2VH5khyIb4b21C4Np+HG3cAeDHw5E+jC7LuLJ6SIxo0M5/tjt+t
+8nvIrfjQf401tZ5iN96LzIee+3tXaj3gJ3FVbGQStu77m7k0ihqNVFHugt8ahEtp
+s3EiOoZdAheM/+30KJ1BJ+FHxpCKkLTjD+QTtZ+7xCQyvtyDdjwr5EGYfUoCgW6H
+ZdvIiGEfy2bJEq8XGTH/LykvBagBNGzv+L9QUSAQgPZ4ywLrzfwutT9GLn1yQ/tB
+IsOaVI1aO5uPZ2hyw4u9IKh87RXYSrrBmJislxd29zACNvSl13Z+hB3hA6CxraKV
+Nv+9AiRhcce2sGG0k3/qXCaDMTOiMCNyrIgYJvEM9+Qo805o2HFM7GkzXz6q8gfF
+GwL9hDNmF0coQeK4FWDBujYev3msaGH1qHTAa+YoDAa3U+XqJPAxo7BI5Jojii4L
+57zlUPWHKSjoyoTACiuPxOluMUhuUJPHngaLyOZOaccbgVrIp1fcKfYrf097JCYs
+Rg4gIhjky3s9wpnC4jwg
+=ZtdY
+-----END PGP SIGNATURE-----
+
+--emh7zit8KzwzJ0cm--
+

@@ -1,0 +1,262 @@
+From cypherpunks-bounces@cpunks.org  Thu Oct 17 05:47:03 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9H9kod3023244;
+	Thu, 17 Oct 2013 05:46:53 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9H9kkSw023240
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Thu, 17 Oct 2013 05:46:48 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 05D53543E75; Thu, 17 Oct 2013 11:46:45 +0200 (CEST)
+Date: Thu, 17 Oct 2013 11:46:45 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: Re: [tor-dev] Attentive Otter: Usability issues with existing OTR
+ clients
+Message-ID: <20131017094645.GZ10405@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 8630
+Lines: 223
+
+----- Forwarded message from Aaron <aagbsn@torproject.org> -----
+
+Date: Thu, 17 Oct 2013 09:35:14 +0000
+From: Aaron <aagbsn@torproject.org>
+To: tor-dev@lists.torproject.org
+Subject: Re: [tor-dev] Attentive Otter: Usability issues with existing OTR clients
+Message-ID: <CAJLvQyHCMjuYDWcbcv_6VZemKy9qRPOOgMO3aGXDErvk6Jvb7Q@mail.gmail.com>
+Reply-To: tor-dev@lists.torproject.org
+
+On Thu, Oct 17, 2013 at 1:03 AM, Mike Perry <mikeperry@torproject.org>wrote:
+
+> Here's the major usability pain points I've run in to with various OTR
+> clients over the years. Feel free to chime in with any additional issues
+> you've noticed.
+>
+>
+> 1. The multiple client problem: If you have two devices online
+> simultaneously under the same account, they will fight and endlessly
+> renegotiate.
+>
+> This issue may be specific to OTRv2 only. Arlo pointed out that this
+> change in OTRv3 may solve a lot of these problems:
+>
+> "Both fragmented and unfragmented messages contain sender and recipient
+> instance tags. This avoids an issue on IM networks that always relay all
+> messages to all sessions of a client who is logged in multiple times. In
+> this situation, OTR clients can attempt to establish an OTR session
+> indefinitely if there are interleaving messages from each of the
+> sessions."
+>  -- https://otr.cypherpunks.ca/Protocol-v3-4.0.0.html
+>
+> We should be sure we use these features properly, and make sure the
+> js-ctypes wrappers are updated to support the new libotr v3 APIs with
+> these instance tags. The current js-ctypes wrapper may still be v2 only.
+>
+> If for some reason these tags in v3 can only be used if both parties
+> support v3, perhaps we can add some additional code to track OTR state
+> using XMPP resource/device info and tell the OTR lib underneath that
+> different
+> XMPP resources are actually different users, so that at least XMPP
+> accounts won't have this problem.
+>
+>
+> 2. Better TOFU support: We should track only one OTR key for a given
+> XMPP resource/device ID.
+>
+> Some people I communicate with are constantly rotating OTR keys for
+> security and other reasons. However, this doesn't help me any: I have
+> accumulated about 50 keys of unknown age and usage pattern in my OTR
+> fingerprint list for them, and I have no idea which ones have been
+> changed due to compromise, device loss, or simply due to reinstall.
+> Worse, I have no idea which keys should correspond to which XMPP
+> resources/devices.
+>
+
++10. This is huge.
+
+As you point out, you get a "Unverified/Verified" when using OTR. Verifying
+fingerprints of anonymous chat is practically impossible -- every side
+channel I can think of (telephone, meeting in person, email - ha) either
+leaks the act of contacting, isn't practical or convenient, or requires
+some kind of Internet reputation. I'd bet that most OTR users don't verify
+fingerprints.
+
+TOFU is a must, along with a dialogue that explains in simple terms what is
+going on, with a way to dismiss the dialogue (e.g. by correctly answering a
+security question).
+
+Perhaps replacing "Unverified" with "In use for: x days" ?
+
+>
+> If a user changes the key for a given XMPP resource ID, we should expire
+> the previous key and loudly alert the user of the fact that the
+> resource's key has changed, and ask them if they want to replace the old
+> key with the new key. We should not simply accumulate more keys by
+> default, especially for the same XMPP resource/device, and especially
+> not for unverified keys.
+>
+
+I think you mean that the existing key is expired after the user has OK'd
+using the new key. The UI should not be something you can just click away
+or ignore; it should be slightly inconvenient, and perhaps bidirectional
+(the user whose key changed gets prompted as well).
+
+At the same time, we should allow a different OTR key for each unique
+> XMPP resource ID, and perhaps allow non-XMPP keys to accumulate at user
+> option.
+>
+
+I'd like the opposite -- I would like to be able to bind the nickname *to*
+the OTR key, but change the XMPP or IRC id, or to put it another way, be
+able to keep a persistent cryptographic identity but use whatever
+underlying transport or throwaway account is convenient.
+
+Admittedly it's not as good as doing away with centralized resources
+completely, and I think a Hidden Service transport would be very
+interesting. (And it looks like the Tor network load testing results are
+looking good ;-) )
+
+
+>
+>
+> 3. "Unreadable encrypted message" errors should be visible only to
+> advanced users/in the error console, and the client should transparently
+> renegotiate and resend.
+>
+> It looks like OTR has an ERROR_START_AKE flag for this, but for some
+> reason, some states of OTR in Pidgin still cause me to get and send
+> these errors and miss messages though, usually if one client has crashed
+> or restarted without properly ending the conversation. We should try
+> extra hard to force key re-negotiation in these cases.
+>
+> We probably also want an auto-responder after the renegotiation that
+> informs the other party that N messages were missed (for clients that
+> don't support OTR's built-in notifications).
+>
+>
+> 4. OTR shouldn't get stuck in the "Finished" state when you end a
+> conversation.
+>
+
+Yeah, I've seen this one too.
+
+
+>
+> I've noticed in the past that OTR seemed to refuse to automatically
+> negotiate/re-negotiate if it is still "Finished" regardless of your
+> "Require/Force OTR" setting. This is just bad, and often causes
+> plaintext to leak.
+>
+>
+> 5. It should be impossible for our client to send a message in plaintext
+> by default, and the client should discourage counterparties from sending
+> more than one plaintext message.
+>
+
+> Perhaps related to issue 3, I've not had very good results with the
+> "Require OTR"/"Force OTR" options on many clients.
+>
+> It also seems like many people's clients will still send the first
+> message unencrypted (to get the handshake hint), and on all clients OTR
+> doesn't seem to try very hard to negotiate if an unencrypted message is
+> received.
+>
+> On our side, we should hold those messages and send only the handshake
+> initiation (ie our default OTR mode should be REQUIRE_ENCRYPTION).
+>
+
+I think it might be simpler to block input until the OTR handshake has
+completed. That is, the text input area is simply unavailable (in Force OTR
+mode).
+
+
+> We may also want to consider a plaintext auto-reply for when we receive
+> unencrypted messages. Something like "Please install and enable OTR
+> before sending further messages" as a separate message in *addition* to
+> attempting an OTR handshake.
+>
+>
+It might be better to not fingerprint the client that you are using. OTOH
+the pidgin-otr plugin does behave this way.
+
+
+> 6. The UI should have per-message encryption indicators (send and receive)
+>
+> For many clients, the UI is not clear which messages were sent
+> encrypted, especially if the OTR state has changed due to
+> autonegotiation or "Finishing". We should have per-message icons for
+> both sent and received messages that indicate encryption status for that
+> message in the chat scrollback window.
+>
+
+That could be a little cluttered; I'd suggest background tinting or only
+flagging the unencrypted messages with skulls and crossbones.
+
+
+>
+>
+> 7. Logging should be off by default when OTR is on.
+>
+
+I guess people like logging for some reason, and I'll admit that pidgins
+"History" mode really enables asynchronous chat. Rather than require you
+*turn off* OTR to get this feature, an alternative would be to require a
+passphrase and automatically expunge encrypted logs after a configurable
+period of time. And, unlike other clients, perhaps telling the conversation
+counterparty that logging is enabled  (e.g. the opposite of  gchat "OTR"
+notifications ) at the start of the session would provide informed consent.
+
+And:
+
+8. Require (or at least allow) a passphrase to decrypt the OTR private key.
+Or, store the key on a hardware token.
+
+The number of arbitrary file read bugs in pidgin makes me cry...
+
+
+>
+>
+>
+>
+> --
+> Mike Perry
+>
+> _______________________________________________
+> tor-dev mailing list
+> tor-dev@lists.torproject.org
+> https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-dev
+>
+>
+
+_______________________________________________
+tor-dev mailing list
+tor-dev@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-dev
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

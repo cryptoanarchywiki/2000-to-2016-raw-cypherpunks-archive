@@ -1,0 +1,93 @@
+From cypherpunks-bounces@cpunks.org  Tue Sep 10 11:02:31 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r8AF2Sdo001398;
+	Tue, 10 Sep 2013 11:02:29 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r8AF2Nbl001390
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Tue, 10 Sep 2013 11:02:25 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 0E8A2543E4F; Tue, 10 Sep 2013 17:02:23 +0200 (CEST)
+Date: Tue, 10 Sep 2013 17:02:22 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is,
+        cryptography@randombit.net
+Subject: Re: [Cryptography] The One True Cipher Suite
+Message-ID: <20130910150222.GW10405@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 5023
+Lines: 54
+
+----- Forwarded message from Jerry Leichter <leichter@lrw.com> -----
+
+Date: Tue, 10 Sep 2013 07:42:55 -0400
+From: Jerry Leichter <leichter@lrw.com>
+To: Phillip Hallam-Baker <hallam@gmail.com>
+Cc: "cryptography@metzdowd.com" <cryptography@metzdowd.com>, ianG <iang@iang.org>
+Subject: Re: [Cryptography] The One True Cipher Suite
+X-Mailer: Apple Mail (2.1283)
+
+On Sep 9, 2013, at 12:00 PM, Phillip Hallam-Baker wrote:
+> Steve Bellovin has made the same argument and I agree with it. Proliferation of cipher suites is not helpful. 
+> 
+> The point I make is that adding a strong cipher does not make you more secure. Only removing the option of using weak ciphers makes you more secure.
+I'm not so sure I agree.  You have to consider the monoculture problem, combined with the threat you are defending against.
+
+The large burst of discussion on this list was set off by Perry's request for ways to protect against the kinds of broad-scale, gather-everything attacks that Snowden has told us the NSA is doing.  So consider things from the side of someone attempting to mount this kind of attack:
+
+1.  If everyone uses the same cipher, the attacker need only attack that one cipher.
+2.  If there are thousands of ciphers in use, the attacker needs to attack some large fraction of them.
+
+As a defender, if I go route 1, I'd better be really, really, really sure that my cipher won't fall to any attacks over its operational lifetime - which, if it's really universal, will extend many years *even beyond a point where a weakness is found*.
+
+On the other hand, even if most of the ciphers in my suite are only moderately strong, the chance of any particular one of them having been compromised is lower.
+
+This is an *ensemble* argument, not an *individual* argument.  If I'm facing an attacker who is concentrating on my messages in particular, then I want the strongest cipher I can find.
+
+Another way of looking at this is that Many Ciphers trades higher partial failure probabilities for lower total/catastrophic failure probabilities.
+
+Two things are definitely true, however:
+
+1.  If you don't remove ciphers that are found to be bad, you will eventually pollute your ensemble to the point of uselessness.  If you want to go the "many different ciphers" approach, you *must* have an effective way to do this.
+
+2.  There must be a large set of potentially good ciphers out there to choose from.  I contend that we're actually in a position to create reasonably good block ciphers fairly easily.  Look at the AES process.  Of the 15 round 1 candidates, a full third made it to the final round - which means that no significant attacks against them were known.  Some of the rejected ones failed due to minor "certificational" weaknesses - weaknesses that should certainly lead you not to want to choose them as "the One True Cipher", but which would in and of themselves not render breaking them trivial.  And, frankly, for most purposes, any of the five finalists would have been fine - much of the final choice was made for performance reasons.  (And, considering Dan Bernstein's work on timing attacks based on table lookups, the performance choices made bad assumptions about actual hardware!)
+
+I see no reason not to double-encrypt, using different keys and any two algorithms from the ensemble.  Yes, meet-in-the-middle attacks mean this isn't nearly as strong as you might naively think, but it ups the resource demands on the attacker much more than on the defender.
+
+Now, you can argue that AES - the only cipher really in the running for the One True Symmetric Cipher position at the moment - is so strong that worrying about attacks on it is pointless - the weaknesses are elsewhere.  I'm on the fence about that; it's hard to know.  But if you're going to argue for One True Cipher, you must be explicit about this (inherently unprovable) assumption; without it your argument fails.
+
+The situation is much more worse for the asymmetric case:  We only have a few alternatives available and there are many correlations among their potential weaknesses, so the Many Ciphers approach isn't currently practical, so there's really nothing to debate at this point.
+
+Finally, I'll point out that what we know publicly about NSA practices says that (a) they believe in multiple ciphers for different purposes; (b) they believe in the strength of AES, but only up to a certain point.  At this point, I'd be very leery of taking anything NSA says or reveals about it practices at face value, but there it is.
+                                                        -- Jerry
+
+_______________________________________________
+The cryptography mailing list
+cryptography@metzdowd.com
+http://www.metzdowd.com/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

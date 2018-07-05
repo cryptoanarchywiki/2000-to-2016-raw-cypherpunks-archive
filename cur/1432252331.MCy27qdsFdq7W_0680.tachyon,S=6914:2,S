@@ -1,0 +1,172 @@
+From owner-cypherpunks@Algebra.COM  Fri Jun 22 18:03:34 2001
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.72.0.53])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id SAA31601
+	for <kwantam@positron.mit.edu>; Fri, 22 Jun 2001 18:03:29 -0400
+Received: from ak47.algebra.com (root@ak47.algebra.com [208.233.99.160])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id SAA08536
+	for <rsw@mit.edu>; Fri, 22 Jun 2001 18:03:01 -0400 (EDT)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f5MLXE419981
+	for cypherpunks-outgoing; Fri, 22 Jun 2001 16:33:14 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from einstein.ssz.com (cpunks@einstein.ssz.com [204.96.2.99])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f5MLXCx19967
+	for <cypherpunks@algebra.com>; Fri, 22 Jun 2001 16:33:12 -0500
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id QAA16573
+	for cypherpunks@algebra.com; Fri, 22 Jun 2001 16:40:22 -0500
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id QAA16553
+	for cypherpunks-outgoing; Fri, 22 Jun 2001 16:38:56 -0500
+Received: from localhost (ravage@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) with SMTP id QAA16549;
+	Fri, 22 Jun 2001 16:38:46 -0500
+Date: Fri, 22 Jun 2001 16:38:46 -0500 (CDT)
+From: Jim Choate <ravage@EINSTEIN.ssz.com>
+To: cypherpunks@EINSTEIN.ssz.com
+cc: The Club Inferno <hell@EINSTEIN.ssz.com>, sci-tech@EINSTEIN.ssz.com,
+        austin-cpunks@EINSTEIN.ssz.com, alg@austinlug.org,
+        hangar18@EINSTEIN.ssz.com
+Old-Subject: CDR: OPT: crypto flaw in secure mail standards (fwd)
+Message-ID: <Pine.LNX.3.96.1010622163810.24279e-100000@einstein.ssz.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from QUOTED-PRINTABLE to 8bit by einstein.ssz.com id QAE16550
+Reply-To: cypherpunks@EINSTEIN.ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Acceptable-Languages: English, Russian, German, French, Spanish
+Subject:  OPT: crypto flaw in secure mail standards (fwd)
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 4423
+Lines: 119
+
+
+
+---------- Forwarded message ----------
+Date: Fri, 22 Jun 2001 10:15:57 -0500
+From: Don Davis <dtd@world.std.com>
+To: cryptography@wasabisystems.com
+Subject: crypto flaw in secure mail standards
+
+All current secure-mail standards specify, as their "high-
+security" option, a weak use of the public-key sign and encrypt
+operations.  On Thursday the 28th of this month, I'll present
+my findings and my proposed repairs of the protocols, at the
+Usenix Technical Conference here in Boston:
+  http://www.usenix.org/events/usenix01/usenix01.pdf
+
+Citation:
+Don Davis, "Defective Sign & Encrypt in S/MIME, PKCS#7, MOSS,
+PEM, PGP, and XML."  To appear in Proc. Usenix Tech. Conf. 2001,
+Boston.  June 25-30, 2001.
+
+A short summary:  All current secure-mail standards have a
+significant cryptographic flaw.  There are several standard
+ways to send and read secure e-mail.  The most well-known
+secure mail systems are PGP and S/MIME.  All current public-
+key-based secure-mail standards have this flaw.  Here are some
+examples of the flaw in action:
+
+Suppose Alice and Bob are business partners, and are setting
+up a deal together.  Suppose Alice decides to call off the
+deal, so she sends Bob a secure-mail message: "The deal is off."
+Then Bob can get even with Alice:
+
+  * Bob waits until Alice has a new deal in the works
+    with Charlle;
+  * Bob can abuse the secure e-mail protocol to re-encrypt
+    and resend Alice's message to Charlie;
+  * When Charlie receives Alice's message, he'll believe
+    that the mail-security features guarantee that Alice
+    sent the message to Charlie.
+  * Charlie abandons his deal with Alice.
+
+Suppose instead that Alice & Bob are coworkers.  Alice uses
+secure e-mail to send Bob her sensitive company-internal
+sales plan.  Bob decides to get his rival Alice fired:
+
+  * Bob abuses the secure e-mail protocol to re-encrypt and
+    resend Alice's sales-plan, with her digital signature,
+    to a rival company's salesman Charlie.
+  * Charlie brags openly about getting the sales plan from
+    Alice.  When he's accused in court of stealing the plan,
+    Charlie presents Alice's secure e-mail as evidence of
+    his innocence.
+
+Surprisingly, standards-compliant secure-mail clients will
+not detect these attacks.
+
+----------------------------------------------------------
+Abstract
+   Simple Sign & Encrypt, by itself, is not very secure.
+Cryptographers know this well, but application programmers
+and standards authors still tend to put too much trust
+in simple Sign-and-Encrypt.  In fact, every secure e-mail
+protocol, old and new, has codified naïve Sign & Encrypt
+as acceptable security practice.  S/MIME, PKCS#7, PGP,
+OpenPGP, PEM, and MOSS all suffer from this flaw.
+Similarly, the secure document protocols PKCS#7, XML-
+Signature, and XML-Encryption suffer from the same flaw.
+Naïve Sign & Encrypt appears only in file-security and
+mail-security applications, but this narrow scope is
+becoming more important to the rapidly-growing class
+of commercial users. With file- and mail-encryption
+seeing widespread use, and with flawed encryption in
+play,  we can expect widespread exposures.
+
+In this paper, we analyze the naïve Sign & Encrypt flaw,
+we review the defective sign/encrypt standards, and we
+describe a comprehensive set of simple repairs.  The
+various repairs all have a common feature:  when signing
+and encryption are combined, the inner crypto layer must
+somehow depend on the outer layer, so as to reveal any
+tampering with the outer layer.
+
+----------------------------
+
+Once I've presented the paper, I'll make this link live:
+http://world.std.com/~dtd/sign_encrypt/sign_encrypt7.ps
+
+				- don davis, boston
+				  http://world.std.com/~dtd
+
+
+
+
+
+-
+
+
+
+
+
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+
+
+
+ --
+    ____________________________________________________________________
+
+            Whereof one cannot speak, thereof one must be silent.
+
+                                      Ludwig Wittgenstein
+
+       The Armadillo Group       ,::////;::-.          James Choate
+       Austin, Tx               /:'///// ``::>/|/      ravage@ssz.com
+       www.ssz.com            .',  ||||    `/( e\      512-451-7087
+                           -====~~mm-'`-```-mm --'-
+    --------------------------------------------------------------------
+

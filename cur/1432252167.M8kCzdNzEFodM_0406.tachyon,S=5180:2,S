@@ -1,0 +1,123 @@
+From owner-cypherpunks@al-qaeda.net  Tue Oct 16 15:52:29 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q9GJn4Xm025770
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 16 Oct 2012 15:49:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1350416944;
+	bh=JKa8HY02GeMQRGXhiqmjApdF0xADkVEawHu5soR9K5c=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=dZS5D9DzIkmFzFPwNxwu9Et/+/0WuSKm5hdVFZn9/uxDZlnXOBhPdHazr/Lyq37Hi
+	 7lEuejORhNuxdk/SHeHqwaLoOzCtnYh7JuZUTTkVFxrHNe1qkM5vBBMUfgQXBoTRQN
+	 ZW0DvcMPAOB/mRiluWlkVm4emvFkfHqHyb3b7brA=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q9GJn4Ud025769
+	for cypherpunks-outgoing; Tue, 16 Oct 2012 15:49:04 -0400
+Date: Tue, 16 Oct 2012 21:48:59 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, zs-p2p@googlegroups.com, info@postbiota.org
+Subject: [p2p-hackers] "generic & secure" DHT table implementation?
+Message-ID: <20121016194859.GY9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3692
+Lines: 89
+
+----- Forwarded message from Ivan Shmakov <oneingray@gmail.com> -----
+
+From: Ivan Shmakov <oneingray@gmail.com>
+Date: Tue, 16 Oct 2012 12:25:08 +0700
+To: p2p-hackers@lists.zooko.com
+Subject: [p2p-hackers] "generic & secure" DHT table implementation?
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.2 (gnu/linux)
+Reply-To: theory and practice of decentralized computer networks <p2p-hackers@lists.zooko.com>
+
+    Abstract
+
+	There're (several?) BitTorrent-specific DHT's, and the P2P
+	anonymity protocols (such as GNUnet) seem to (effectively)
+	implement their own DHT's.  But is there any kind of a
+	buniversalb (i. e., transport protocol-independent) DHT?  And if
+	not, why?
+
+
+    Searching by content-derived identifiers
+
+	There're currently a number of P2P-friendly content-derived
+	resource identifiers, such as the BitTorrent binfohashb values
+	(which can be embedded within magnet: schema URI's, like [1]),
+	as well as the URI's used in GNUnet and Freenet frameworks (like
+	[2]), both non-standard (and the GNUnet ones are, as it seems,
+	interpreting the base URI specification in somewhat an odd way.)
+
+	What seems to be missing, however, is a bgenericb DHT network
+	that could be used to search both the relevant metadata (such as
+	.torrent or Metalink files), and the peers participating in a
+	particular data exchange (and the respective protocols they
+	support), using one or more of an extensible set of identifiers
+	(including BitTorrent infohashes, GNUnet URI's, and the plain
+	SHA-1, SHA-2, or SHA-3 values.)
+
+
+    How's it useful?
+
+	With such a DHT, Alice, having only a bandwidth-limited Internet
+	connection, could compute a SHA-256 of a large file on her host,
+	and send the former to Bob, which, in turn, would use any
+	downloading software (implementing the support for the
+	aforementioned bgenericb DHT) to discover the possible sources
+	for the file in question and retrieve it.
+
+
+    Security issues
+
+	As for the security, the brecordsb in such a table could be
+	digitally signed, with the set of the btrustedb public keys
+	being comprised of those keys explicitly approved by the user,
+	the public keys of the peers with which a successful data
+	exchange has occurred before, and the public keys trusted by the
+	peers already trusted, up to a certain depth.  (There could then
+	be different levels of trust, just like, e. g., in GnuPG, and
+	perhaps other OpenPGP software.)
+
+	The purpose of such a facility is exactly to allow for the use
+	of (non-piecewise) digest to metadata records, which otherwise
+	could easily be spoofed, and used to force the downloader to
+	spend its resources to download an otherwise irrelevant data.
+
+
+    The question
+
+	The question is: are there any designs, either implemented, or
+	described in detail, allowing for operation as described above,
+	or are there specific reasons for which the outline above is not
+	feasible to implement?
+
+	TIA.
+
+[1] magnet:?xt=urn:btih:fb5c0d7946469ba48121607458e360cb31336e55
+[2] gnunet://ecrs/chk/9E4MDN4VULE8KJG6U1C8FKH5HA8C5CHSJTILRTTPGK8MJ6VHORERHE68JU8Q0FDTOH1DGLUJ3NLE99N0ML0N9PIBAGKG7MNPBTT6UKG.1I823C58O3LKS24LLI9KB384LH82LGF9GUQRJHACCUINSCQH36SI4NF88CMAET3T3BHI93D4S0M5CC6MVDL1K8GFKVBN69Q6T307U6O.17992
+
+-- 
+FSF associate member #7257
+
+_______________________________________________
+p2p-hackers mailing list
+p2p-hackers@lists.zooko.com
+http://lists.zooko.com/mailman/listinfo/p2p-hackers
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

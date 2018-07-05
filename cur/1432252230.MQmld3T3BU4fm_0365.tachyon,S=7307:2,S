@@ -1,0 +1,155 @@
+From owner-cypherpunks@jfet.org  Sun Oct  2 11:08:38 2005
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.4/8.13.4/Debian-3) with ESMTP id j92F88lj010734
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sun, 2 Oct 2005 11:08:08 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.4/8.13.4/Submit) id j92F88uD010733
+	for cypherpunks-outgoing; Sun, 2 Oct 2005 11:08:08 -0400
+Date: Sun, 2 Oct 2005 17:08:01 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@jfet.org
+Subject: [jason@lunkwill.org: Re: nym-0.2 released (fwd)]
+Message-ID: <20051002150801.GE2249@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.5.9i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 6239
+Lines: 128
+
+----- Forwarded message from Jason Holt <jason@lunkwill.org> -----
+
+From: Jason Holt <jason@lunkwill.org>
+Date: Sun, 2 Oct 2005 00:13:02 +0000 (UTC)
+To: cyphrpunk@gmail.com, or-talk@freehaven.net
+Cc: cryptography@metzdowd.com
+Subject: Re: nym-0.2 released (fwd)
+Reply-To: or-talk@freehaven.net
+
+
+On Sat, 1 Oct 2005, cyphrpunk wrote:
+>All these degrees of indirection look good on paper but are
+>problematic in practice.
+
+As the great Ulysses said,
+
+  Pete, the personal rancor reflected in that remark I don't intend to
+  dignify
+  with comment. However, I would like to address your attitude of hopeless
+  negativism.  Consider the lilies of the g*dd*mn field...or h*ll, look at
+  Delmar here as your paradigm of hope!
+
+  [Pause] Delmar: Yeah, look at me.
+
+Okay, so maybe there's no personal rancor, but I do detect some hopeless
+negativism.  Or perhaps it's unwarranted optimism that crypto-utopia will be
+here any moment now, flowing with milk and honey, ecash, infrastructure and
+multi show zero knowledge proofs.  Maybe I just need a disclaimer: "Warning:
+this product favors simplicity over crypto-idealism; not for use in Utopia."
+Did I mention that my code is Free and (AFAIK) unencumbered?
+
+The reason I have separate token and cert servers is that I want to end up
+with a client cert that can be used in unmodified browsers and servers.  The
+certs don't have to have personal information in them, but with indirection
+we cheaply get the ability to enfore some sort of structure on the certs.
+Plus, I spent as much time as it took me to write *both releases of nym*
+just trying to get ahold of the actual digest in an X.509 cert that needs to
+be signed by the CA (in order to have the token server sign that instead of
+a random token).  That would have eliminated the separate token/cert steps,
+but required a really hideous issuing process and produced signatures whose
+form the CA could have no control over.  (Clients could get signatures on
+IOUs, delegated CA certs, whatever.)
+
+(Side note to Steve Bellovin: having once again abandoned mortal combat with
+X.509, I retract my comment about the system not being broken...)
+
+
+>the security properties of the system. Hence it makes sense for all of them
+>to be run by a single entity. There can of course be multiple independent
+>such pseudonym services, each with its own policies.
+
+Sure, there's no reason for one entity not to run all three services; we're
+only talking about 2 CGI scripts and a web proxy anyway.  Or, run a CA which
+serves multiple token servers, and issues certs with extensions specifying
+what kinds of tokens were "spent" to obtain the cert.  Then web servers get
+articulated limiting from a single CA's certs.
+
+
+>In particular it is not clear that the use of a CA and a client
+>certificate buys you anything. Why not skip that step and allow the
+>gateway proxy simply to use tokens as user identifiers? Misbehaving
+>users get their tokens blacklisted.
+
+It buys not having to strap hacked-up code onto your web browser or server.
+Run the perl scripts once to get the cert, then use it with any browser and
+any server that knows about the CA.
+
+
+>There are two problems with providing client identifiers to Wikipedia.
+>The first is as discussed elsewhere, that making persistent pseudonyms
+>such as client identifiers (rather than pure certifications of
+>complaint-freeness) available to end services like Wikipedia hurts
+>privacy and is vulnerable to future exposure due to the lack of
+>forward secrecy.
+
+Great, you guys work up an RFC, then an IETF draft, then some Idemix code
+with all the ZK proofs.  In the meantime, I'll be setting up my 349 lines of
+perl/shell code for whoever wants to use it.  Whoops, I forgot the
+IP-rationing code; 373 lines.
+
+Actually, if all you want is complaint-free certifications, that's easy to
+put in the proxy; just make it serve up different identifiers each time and
+keep a table of which IDs map to which client certs.  Makes it harder for
+the wikipedia admins to see patterns of abuse, though.  They'd have to
+report each incident and let the proxy admin decide when the threshold is
+reached.
+
+
+>The second is that the necessary changes to the Wikipedia software are
+>probably more extensive than they might sound. Wikipedia tags each
+>("anonymous") edit with the IP address from which it came. This information
+>is displayed on the history page and is used widely throughout the site.
+>Changing Wikipedia to use some other kind of identifier is likely to have
+>far-reaching ramifications. Unless you can provide this "client idenfier"
+>as a sort of virtual IP (fits in 32 bits) which you don't mind being
+>displayed everywhere on the site (see objection 1), it is going to be
+>expensive to implement on the wiki side.
+
+There's that hopeless negativism again.  Do you want a real solution or not?
+Because I can think of at least 2 ways to solve that problem in a practical
+setting, and that's assuming that your assumption about MediaWiki being
+limited to 4-byte identifiers is even correct.
+
+
+>The simpler solution is to have the gateway proxy not be a hidden
+>service but to be a public service on the net which has its own exit
+>IP addresses. It would be a sort of "virtual ISP" which helps
+>anonymous users to gain the rights and privileges of the identified,
+>including putting their reputations at risk if they misbehave. This
+>solution works out of the box for Wikipedia and other wikis, for blog
+>comments, and for any other HTTP service which is subject to abuse by
+>anonymous users. I suggest that you adapt your software to this usage
+>model, which is more general and probably easier to implement.
+
+Sure.  I always meant for the gateway to exit on a public IP address.  The
+reason to make it a hidden service is to keep n00bs from forgetting to turn
+on tor when they talk to the proxy.  Thanks for clarifying, though.
+
+							-J
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a>
+______________________________________________________________
+ICBM: 48.07100, 11.36820            http://www.leitl.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+
+[demime 1.01d removed an attachment of type application/pgp-signature which had a name of signature.asc]
+

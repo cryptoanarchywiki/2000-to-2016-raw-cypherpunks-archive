@@ -1,0 +1,163 @@
+From owner-cypherpunks@al-qaeda.net  Wed Dec 19 05:10:19 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id qBJA7GLv031842
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 19 Dec 2012 05:07:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1355911636;
+	bh=xEblN+L4R4jjkMFJHQoP3snv0wDq5IKgNngW93Vpx6w=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=SYfCPI0NlLEvHz7tn+oRytHnxsqRuBN6Kykxf+SpCR+CiFNUfoyBh1UCEvYHAnGcI
+	 pRwWxTVb/vbhnwMWMSvRZNmJvDulFzypcry0bc9db99EzdNgQPclTB5dqTbb3kGzi0
+	 FKl5+A/9IpoeYMwMF2ywDw1ox9p02i2e6aqjYBN0=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id qBJA7GAd031841
+	for cypherpunks-outgoing; Wed, 19 Dec 2012 05:07:16 -0500
+Date: Wed, 19 Dec 2012 11:07:13 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: [liberationtech] Forbes recommends tools for journalists
+Message-ID: <20121219100713.GV9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5569
+Lines: 131
+
+----- Forwarded message from Julian Oliver <julian@julianoliver.com> -----
+
+From: Julian Oliver <julian@julianoliver.com>
+Date: Tue, 18 Dec 2012 11:13:52 +0100
+To: liberationtech <liberationtech@lists.stanford.edu>
+Subject: Re: [liberationtech] Forbes recommends tools for journalists
+User-Agent: Mutt/1.5.20 (2009-06-14)
+Reply-To: liberationtech <liberationtech@lists.stanford.edu>
+
+..on Mon, Dec 17, 2012 at 03:28:31PM -0800, Brian Conley wrote:
+> Its SSD so its still not a secure wipe, no?
+
+Indeed. From 'Securely Destroying Data' chapter in The CryptoParty Handbook
+v1.1:
+
+//----------------------------------------------------------------------------->
+
+An important note on Solid State Hard Drives
+
+The instructions below explain how to use file deletion tools to securely delete
+files from your hard drives. These tools rely on the Operating System you are
+using being able to directly address every byte on the hard drive in order to
+tell the drive "set byte number X to 0". Unfortunately, due to a number of
+advanced technologies used by Solid State Drives (SSDs) such as TRIM, it is not
+always possible to ensure with 100% certainty that every part of a file on an
+SSD has been erased using the tools below.
+
+//<-----------------------------------------------------------------------------
+
+Us Linux users with our lovely journaled file systems need to take care:
+
+//----------------------------------------------------------------------------->
+
+An important note on Journaled File Systems
+
+Data Journaling is a feature of several modern file systems and presents a risk
+to secure data deletion. File-systems of this type include Ext3 and Ext4
+(Linux), compressed file systems and RAID-based file systems.
+
+The manual page for the deletion program Wipe says:
+
+No secure deletion program that does filesystem-level calls can sanitize
+files on such filesystems, because sensitive data and metadata can be written to
+the journal, which cannot be readily accessed. Per-file secure deletion is
+better implemented in the operating system.
+
+The manual page for the deletion program Shred says:
+
+CAUTION: Note that shred relies on a very important assumption: that the
+file system overwrites data in place. This is the traditional way to do things,
+but many modern file system designs do not satisfy this assumption.
+
+The following are examples of file systems on which shred is not effective,
+or is not guaranteed to be effective in all file system modes:
+
+        log-structured or journaled file systems, such as those supplied with
+        AIX and Solaris (and JFS, ReiserFS, XFS, Ext3, etc.)
+
+        file systems that write redundant data and carry on even if some writes
+        fail, such as RAID-based file systems * file systems that make snapshots, such
+        as Network Appliance's NFS server
+
+        file systems that cache in temporary locations, such as NFS version 3
+        clients
+        
+        compressed file systems 
+
+In the case of ext3 file systems, the above disclaimer applies (and shred is
+thus of limited effectiveness) only in data=journal mode, which journals file
+data in addition to just metadata. In both the data=ordered (default) and
+data=writeback modes, shred works as usual.  Ext3 journaling modes can be
+changed by adding the data=something option to the mount options for a
+particular file system in the /etc/fstab file, as documented in the mount man
+page (man mount).
+
+If you wish to delete data from a journaled file-system on Linux (mounted in
+data=journal mode) you should remount it in another mode. To be sure, remount
+your disk in Linux in data=ordered mode. See the manual page for the program
+mount on your system. Solaris users or those with RAID systems are outside of
+the scope of this manual. Please see the relevant documentation and/or research
+your special case in order to be sure you are securely deleting your data.
+
+//<-----------------------------------------------------------------------------
+
+    https://cryptoparty.org/wiki/CryptoPartyHandbook#Version_1.1
+
+Cheers,
+
+Julian
+
+> On Dec 18, 2012 12:26 AM, "Eric S Johnson" <crates@oneotaslopes.org> wrote:
+> 
+> > > Secure deletion is a problem we could solve in software, by encrypting
+> > > the data and then destroying the key to render the data unrecoverable,
+> > > *if* we had a few bytes of persistent, erasable storage in which to
+> > > store the key. (Storing the key on the SSD itself doesn't work,
+> > > because then we can't securely delete the key.)
+> > >
+> > > I'm not aware of any suitable storage on current smartphones or
+> > > personal computers
+> >
+> > Isn't this exactly how the iOS (v4+) can be remotely "wiped" in a couple
+> > seconds? Everything's encrypted, so deleting the key ...
+> >
+> > Or are we saying the iOS's storage of the key is insecure?
+> >
+> > Best,
+> > Eric
+> >
+> > --
+> > Unsubscribe, change to digest, or change password at:
+> > https://mailman.stanford.edu/mailman/listinfo/liberationtech
+> >
+
+> --
+> Unsubscribe, change to digest, or change password at: https://mailman.stanford.edu/mailman/listinfo/liberationtech
+
+
+-- 
+Julian Oliver
+http://julianoliver.com
+http://criticalengineering.org
+--
+Unsubscribe, change to digest, or change password at: https://mailman.stanford.edu/mailman/listinfo/liberationtech
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

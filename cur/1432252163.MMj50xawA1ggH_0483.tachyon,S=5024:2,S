@@ -1,0 +1,112 @@
+From owner-cypherpunks@al-qaeda.net  Mon May 10 16:11:59 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.mit.edu (localhost [127.0.0.1])
+	by positron.mit.edu (8.12.11/8.12.11/Debian-3) with ESMTP id i4AK9I9F008112
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.mit.edu>; Mon, 10 May 2004 16:09:18 -0400
+Received: (from majordomo@localhost)
+	by positron.mit.edu (8.12.11/8.12.11/Debian-3) id i4AK9I00008111
+	for cypherpunks-outgoing; Mon, 10 May 2004 16:09:18 -0400
+Date: Mon, 10 May 2004 20:02:12 +0000 (UTC)
+From: Jason Holt <jason@lunkwill.org>
+X-X-Sender: jason@potato.zayda.com
+To: Adam Back <adam@cypherspace.org>
+Cc: cryptography@metzdowd.com, Cypherpunks <cypherpunks@minder.net>
+Old-Subject: Re: Brands' private credentials
+In-Reply-To: <20040510093528.GB13170@bitchcake.off.net>
+Message-ID: <Pine.LNX.4.44.0405101846170.17720-100000@potato.zayda.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Subject: Re: Brands' private credentials
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3857
+Lines: 84
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+
+On Mon, 10 May 2004, Adam Back wrote:
+> After that I was presuming you use a signature to convince the server
+> that you are authorised.  Your comment however was that this would
+> necessarily leak to the server whether you were a doctor or an AIDs
+> patient.
+> 
+> However from what I understood from your paper so does your scheme,
+> from section 5.1:
+> 
+> P = (P1 or P2) is encoded HC_E(R,p) = {HC_E(R,P1),HC_E(R,P2)} 
+> 
+> With Hidden Credentials, the messages are in the other direction: the
+> server would send something encrypted for your pseudonym with P1 =
+> AIDs patient, and P2 = Doctor attributes.  However the server could
+> mark the encrypted values by encoding different challenge response
+> values in each of them, right?
+
+Yep, that'd be a problem in that case.  In the most recent (unpublished)  
+paper, I addressed that by using R as the key for a ciphertext+MAC on the
+actual message.  So the server would have to find two R's that both satisfy
+the MAC but produce different ciphertexts in order to learn anything from the
+response.
+
+In either case, though, you can't just trust that the server encrypted against
+"patient OR doctor" unless you have both creds and can verify that they each
+recover the secret.  They might be lying about the "doctor" part, and really
+sending against "patient OR nonexistant", in which case your response reveals
+that you're a patient.  That's why we recommend that your response (if any)
+include the policy for the creds you used in decryption.  So if Alice is
+responding to a message she decrypted with her "patient" cred, which she only
+(implicitly) discloses to Medicare, and the response itself is only for AIDS
+clinics, she should encrypt against "Medicare AND AIDS_clinic".
+
+(And you're right, the AIDS example is not very compelling.  The slides give a
+better one about FBI agents, but I'm still looking for other examples of
+super-sensitive transactions where HCs would fit)
+
+
+> Another approach to hiding membership is one of the techniques
+> proposed for non-transferable signatures, where you use construct:
+> 
+> RSA-sig_A(x),RSA-sig_B(y) and verification is x xor y = hash(message).
+> 
+> Where the sender is proving he is one of A and B without revealing
+> which one.  (One of the values is an existential forgery, where you
+
+That's very slick.  I'll check it out.
+
+> OK so the fact that the server is the AIDs db server is itself secret.
+> Probably better example is dissident's server or something where there
+> is some incentive to keep the identity of the server secret.  So you
+> want bi-directional anonymity.  It's true that the usual protocols can
+> not provide both at once; SSL provides neither, the anonymous IP v2
+> protocol I designed at ZKS had client anonymity (don't reveal
+> pseudonym until authenticate server, and yet want to authenticate
+> channel with pseudonym).  This type of bi-directional anonymity pretty
+> much is going to need something like the attribute based encryption
+> model you're using.
+
+Hugo Krawczyk gave a great talk at Crypto about the going-first problem in
+IPSec, which is where I got the phrase.  He has a nice compromise in letting
+the user pick who goes first, but for some situations I think hidden
+credentials really would hit the spot.
+
+
+> I think it would be fair to call it anonymity system, just that the
+> trust model includes a trusted server.  There are lots of things
+> possible with a trusted server, even with symmetric crypto (KDCs).
+
+Yeah, although I think most of them would require an on-line trusted server.  
+But that just makes all sorts of things way too easy to be interesting. :)
+
+						-J
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.3 (GNU/Linux)
+
+iD8DBQFAn9/HnwLgjivV2NERAkBUAJwLhH7lZBtd/boI6Edn3JWA+eStDQCdEFZi
+GI4rzGoiscp0Ze/+iKweu08=
+=eX/X
+-----END PGP SIGNATURE-----
+

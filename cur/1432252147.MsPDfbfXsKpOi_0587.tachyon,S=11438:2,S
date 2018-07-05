@@ -1,0 +1,219 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Thu Aug  1 19:57:32 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g71NvWe29156
+	for <rsw@opamp.org>; Thu, 1 Aug 2002 19:57:32 -0400
+Received: from lion.ninthwonder.com (lion.ninthwonder.com [151.199.66.147])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id TAA04684
+	for <rsw@mit.edu>; Thu, 1 Aug 2002 19:57:31 -0400 (EDT)
+Received: by lion.ninthwonder.com (Postfix, from userid 96)
+	id E401C3071E; Thu,  1 Aug 2002 19:52:50 -0400 (EDT)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 21E363071D
+	for <cryptography@wasabisystems.com>; Thu,  1 Aug 2002 19:52:49 -0400 (EDT)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 9EE11D97CB; Thu,  1 Aug 2002 19:52:48 -0400 (EDT)
+Received: from www.aarg.net (www.aarg.net [206.101.74.70])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 440283070A
+	for <cryptography@wasabisystems.com>; Thu,  1 Aug 2002 19:45:31 -0400 (EDT)
+Received: from www.aarg.net (IDENT:mix@localhost.localdomain [127.0.0.1])
+	by www.aarg.net (8.12.3/8.12.3) with ESMTP id g71NjGIG012607
+	(version=TLSv1/SSLv3 cipher=EDH-RSA-DES-CBC3-SHA bits=168 verify=NO);
+	Thu, 1 Aug 2002 16:45:16 -0700
+Received: (from mix@localhost)
+	by www.aarg.net (8.12.3/8.12.1/Submit) id g71NjFSZ012596;
+	Thu, 1 Aug 2002 16:45:15 -0700
+Date: Thu, 1 Aug 2002 16:45:15 -0700
+From: AARG!Anonymous <remailer@aarg.net>
+Comments: This message did not originate from the Sender address above.
+	It was remailed automatically by anonymizing remailer software.
+	Please report problems or inappropriate use to the
+	remailer administrator at <abuse@aarg.net>.
+To: ericm@lne.com, cypherpunks@lne.com, cryptography@wasabisystems.com
+Subject: Re: Challenge to David Wagner on TCPA
+Message-ID: <43b43ffa9f7461355370e3d638940a21@aarg.net>
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 9253
+Lines: 177
+
+Eric Murray writes:
+> TCPA (when it isn't turned off) WILL restrict the software that you
+> can run.  Software that has an invalid or missing signature won't be
+> able to access "sensitive data"[1].   Meaning that unapproved software
+> won't work.
+>
+> [1] TCPAmain_20v1_1a.pdf, section 2.2
+
+We need to look at the text of this in more detail.  This is from
+version 1.1b of the spec:
+
+: This section introduces the architectural aspects of a Trusted Platform
+: that enable the collection and reporting of integrity metrics.
+:
+: Among other things, a Trusted Platform enables an entity to determine
+: the state of the software environment in that platform and to SEAL data
+: to a particular software environment in that platform.
+:
+: The entity deduces whether the state of the computing environment in
+: that platform is acceptable and performs some transaction with that
+: platform. If that transaction involves sensitive data that must be
+: stored on the platform, the entity can ensure that that data is held in
+: a confidential format unless the state of the computing environment in
+: that platform is acceptable to the entity.
+:
+: To enable this, a Trusted Platform provides information to enable the
+: entity to deduce the software environment in a Trusted Platform. That
+: information is reliably measured and reported to the entity. At the same
+: time, a Trusted Platform provides a means to encrypt cryptographic keys
+: and to state the software environment that must be in place before the
+: keys can be decrypted.
+
+What this means is that a remote system can query the local TPM and
+find out what software has been loaded, in order to decide whether to
+send it some data.  It's not that unapproved software "won't work",
+it's that the remote guy can decide whether to trust it.
+
+Also, as stated earlier, data can be sealed such that it can only be
+unsealed when the same environment is booted.  This is the part above
+about encrypting cryptographic keys and making sure the right software
+environment is in place when they are decrypted.
+
+> Ok, technically it will run but can't access the data,
+> but that it a very fine hair to split, and depending on the nature of
+> the data that it can't access, it may not be able to run in truth.
+>
+> If TCPA allows all software to run, it defeats its purpose.
+> Therefore Wagner's statement is logically correct.
+
+But no, the TCPA does allow all software to run.  Just because a remote
+system can decide whether to send it some data doesn't mean that software
+can't run.  And just because some data may be inaccessible because it
+was sealed when another OS was booted, also doesnt mean that software
+can't run.
+
+I think we agree on the facts, here.  All software can run, but the TCPA
+allows software to prove its hash to remote parties, and to encrypt data
+such that it can't be decrypted by other software.  Would you agree that
+this is an accurate summary of the functionality, and not misleading?
+
+If so, I don't see how you can get from this to saying that some software
+won't run.  You might as well say that encryption means that software
+can't run, because if I encrypt my files then some other programs may
+not be able to read them.
+
+Most people, as you may have seen, interpret this part about "software
+can't run" much more literally.  They think it means that software needs
+a signature in order to be loaded and run.  I have been going over and
+over this on sci.crypt.  IMO the facts as stated two paragraphs up are
+completely different from such a model.
+
+> Yes, the spec says that it can be turned off.  At that point you
+> can run anything that doesn't need any of the protected data or
+> other TCPA services.   But, why would a software vendor that wants
+> the protection that TCPA provides allow his software to run
+> without TCPA as well, abandoning those protections?
+
+That's true; in fact if you ran it earlier under TCPA and sealed some
+data, you will have to run under TCPA to unseal it later.  The question
+is whether the advantages of running under TCPA (potentially greater
+security) outweigh the disadvantages (greater potential for loss of
+data, less flexibility, etc.).
+
+> I doubt many would do so, the majority of TCPA-enabled
+> software will be TCPA-only.  Perhaps not at first, but eventually
+> when there are enough TCPA machines out there.  More likely, spiffy
+> new content and features will be enabled if one has TCPA and is
+> properly authenticated, disabled otherwise.  But as we have seen
+> time after time, today's spiffy new content is tomorrows
+> virtual standard.
+
+Right, the strongest case will probably be for DRM.  You might be able
+to download all kinds of content if you are running an OS and application
+that the server (content provider) trusts.  People will have a choice of
+using TCPA and getting this data legally, or avoiding TCPA and trying to
+find pirated copies as they do today.
+
+> This will require the majority of people to run with TCPA turned on
+> if they want the content.  TCPA doesn't need to be required by law,
+> the market will require it.  At some point, running without TCPA
+> will be as difficult as avoiding MS software in an otherwise all-MS
+> office.... theoretically possible, but difficult in practice.
+
+I am inclined to agree; in fact I have made many postings (anonymously
+of course) in recent weeks arguing that these systems will be entirely
+voluntary.  If the functionality is useful, people will use it.
+Software vendors who use TCPA will compete with those who don't.
+The market will decide.  I am not as certain as you that TCPA will win,
+but if it does, it will mean that TCPA is a good technology that solves
+real problems for people.
+
+> "TCPA could be required" by the government or MS or <insert evil
+> company here> is, I agree, a red herring.  It is not outside
+> the realm of possibility, in fact I'd bet that someone at MS has
+> seriously thought through the implications.  But to my mind
+> the "requirement by defacto standard" scenerio I outline above
+> is much more likely, in fact it is certain to happen if TCPA
+> gets in more than say 50% of computers.
+
+The points I made earlier were that TCPA is unlikely to be mandated,
+because it doesn't need to be; that TCPA should compete in the free
+market with other solutions; and that this approach actually expands the
+set of choices available to the participants.  More choice is always good.
+
+
+> I worked for a short while on a very early version of TCPA with Geoff
+> Strongin from AMD.  We were both concerned that TCPA not be able to
+> be used to restrict user's freedom, and at the time I thought that
+> "you can always turn it off" was good enough.  Now I'm not so sure.
+> If someday all the stuff that you do with your computer touches data that can
+> only be operated on by TCPA-enabled software, what are you going to do?
+
+Well, you would use TCPA.  But you have to look at how you got into that
+situation.  The way it would have happened was by people voluntarily
+adopting TCPA before it became a de facto standard, simply because it
+was useful.
+
+
+> BTW, what's your credentials?  You seem familiar with the TCPA spec, which
+> is no mean feat considering that it seems to have been written to
+> make it as difficult to understand as possible (or perhaps someone
+> hired an out-of-work ISO standards writer).  I think that Peter's
+> guess is spot on.  Of course having you participate as a nym
+> is much preferable to not having you participate at all, so don't
+> feel as though you have to out yourself or stop posting.
+
+I have no credentials in this area other than a general knowledge of
+crypto; I am just someone who was willing to devote some hours of his
+free time to educating himself on this technology.  I agree that the
+spec is written very poorly.
+
+But let me put you on the spot: as someone who has a good
+understanding of TCPA, what do you think of Ross Anderson's TCPA FAQ
+at http://www.cl.cam.ac.uk/users/rja14/tcpa-faq.html?  For example,
+how about his claim in answer 2, "Pirate software can be detected and
+deleted remotely."  I must have missed that page of the TCPA spec.
+And then he builds on this a couple of paragraphs later: "There will
+be remote censorship: the mechanisms designed to delete pirated music
+under remote control may be used to delete documents that a court (or
+a software company) has decided are offensive...."  He further builds
+on this later to claim (answer 11) that with TCPA, programs can be made
+to ignore documents created by pirated versions of Word, etc.  All this
+has so little to do with anything related to TCPA that it boggles my mind.
+
+And then in answer 12 we're back to the claim that TCPA can stop computers
+from booting.  Saddam better not buy a TCPA computer or the U.S. will
+render it inoperative, using a "serial number revocation list", according
+to the FAQ.  Are you aware of any such capability in TCPA?  I didn't see
+any such data structure.
+
+Ross Anderson means well, and so does David Wagner.  But in the long
+run it hurts the credibility of critics when they make exaggerated and
+unfounded claims.
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

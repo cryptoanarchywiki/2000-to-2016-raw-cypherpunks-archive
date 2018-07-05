@@ -1,0 +1,101 @@
+From owner-cypherpunks@Algebra.COM  Tue Jan  1 00:03:43 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.mit.edu (8.11.6/8.9.3) with ESMTP id g0153Zj19818
+	for <kwantam@positron.mit.edu>; Tue, 1 Jan 2002 00:03:40 -0500
+Received: from ak47.algebra.com (ak47.algebra.com [208.233.99.160])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id AAA09946
+	for <rsw@mit.edu>; Tue, 1 Jan 2002 00:01:25 -0500 (EST)
+Received: from ak47.algebra.com (localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g014v83R026907
+	for <cypherpunks-outgoing@ak47.algebra.com>; Mon, 31 Dec 2001 22:57:08 -0600
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g014v8Fq026906
+	for cypherpunks-outgoing; Mon, 31 Dec 2001 22:57:08 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (dns.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g014v23R026887
+	for <cypherpunks@ak47.algebra.com>; Mon, 31 Dec 2001 22:57:02 -0600
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id g014v1F01242
+	for cypherpunks@ak47.algebra.com; Mon, 31 Dec 2001 20:57:01 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id g014ulb01235
+	for cypherpunks-goingout; Mon, 31 Dec 2001 20:56:47 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Message-Id: <5.0.2.1.1.20011231202622.033273f0@idiom.com>
+X-Sender: wcs@idiom.com
+X-Mailer: QUALCOMM Windows Eudora Version 5.0.2
+Date: Mon, 31 Dec 2001 20:56:30 -0800
+To: Ryan Lackey <ryan@havenco.com>
+From: Bill Stewart <bill.stewart@pobox.com>
+Old-Subject: Re: End-to-end encrypting US GSM phones?
+Cc: cypherpunks@lne.com, coderpunks@toad.com, shamrock@cypherpunks.to
+In-Reply-To: <20011231170730.GA2005@atreides.havenco.com>
+References: <F504A8CEE925D411AF4A00508B8BE90A01E90B41@exna07.securitydy
+  namics.com>
+  <F504A8CEE925D411AF4A00508B8BE90A01E90B41@exna07.securitydyn
+  amics.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Re: End-to-end encrypting US GSM phones?
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+X-spam: 0 
+Status: O
+Content-Length: 2454
+Lines: 46
+
+
+At 05:07 PM 12/31/2001 +0000, Ryan Lackey wrote:
+>...
+> > A 206 MHz Ipaq would, I think have sufficient HP to do the crypto.
+>
+>I didn't mean the imply the Ipaq CPU (200MHz StrongARM) would be
+>insufficient, merely that from usability standpoint.
+>
+>The "holy grail" would be working on 16-33MHz *dragonball* (== 68000)
+>processors.  *That* would be impressive.  Doing this on a strongarm is easy.
+
+First of all, the sound system on a Palm Pilot can't handle the job -
+there's no microphone, and the speaker system mainly knows how to beep
+(you can play different tones, but it's not made for voice.)
+Somebody said here that the iPaQ audio is half-duplex - too bad,
+because push-to-talk is annoying.
+
+Second, crypto is hardly ever the CPU bottleneck - voice compression is.
+Public-key operations take some time, but only at startup;
+RC4 at 9600 bps won't keep your CPU warm, and even AES at 32kbps isn't much.
+But voice compression, if you want anything fancier than ADPCM,
+does take a lot of horsepower, either from a CPU or a DSP or ASIC.
+(ADPCM's dirt-simple, and works fine for 32kbps, but is pretty ratty at
+16kbps or below.  Almost anything else starts burning lots of CPU
+if you want to go 16kbps or tighter (some of the delta-modulation stuff
+isn't very CPU-intensive, but it's also not good for low bit rates.)
+I'd be surprised if anybody could get a dragonball to do the voice
+compression tightly enough even if there were audio hardware support.
+
+In the current cell-phone world, you typically need 9600 or below,
+and 4800 would be better.  Cell phones do have voice compression built in;
+unfortunately, the software isn't designed to let you get at the compressed
+data stream and do other things with it, and if you're using modems,
+you need one or two more sets of similar hardware to transmit it after that.
+(The easy data channel in the US, CDPD, doesn't work for voice -
+it fits the data into gaps between voice packets, so the latency
+is generally way too long and way too variable to handle voice.)
+
+Does GSM support handset-to-handset data connections?
+Or does you have to use modems?   How fast are they?
+Almost all of the newer cellphone data formats are fast enough,
+usually 64kbps or more, if anybody bothers deploying them.
+(I'm not counting the Japanese i-mode stuff.)
+32kbps (plus async overhead, if any),
+lets you use dirt-simple compression algorithms,
+or you could burn some of your 206MHz horsepower on better compression.
+

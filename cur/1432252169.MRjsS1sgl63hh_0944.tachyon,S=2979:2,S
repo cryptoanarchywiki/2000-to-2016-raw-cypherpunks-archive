@@ -1,0 +1,58 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Fri Nov  8 00:47:34 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id gA85lXq10127
+	for <rsw@opamp.org>; Fri, 8 Nov 2002 00:47:33 -0500
+Received: from mononoke.wasabisystems.com (mononoke.wasabisystems.com [166.84.0.13])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id AAA01525
+	for <rsw@mit.edu>; Fri, 8 Nov 2002 00:47:33 -0500 (EST)
+Received: by mononoke.wasabisystems.com (Postfix, from userid 96)
+	id 3F5D85E6BB; Fri,  8 Nov 2002 00:40:19 -0500 (EST)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by mononoke.wasabisystems.com (Postfix) with ESMTP id DEAE75E646
+	for <cryptography@wasabisystems.com>; Fri,  8 Nov 2002 00:40:18 -0500 (EST)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id A8E97D97FB; Fri,  8 Nov 2002 00:40:18 -0500 (EST)
+Received: from hermes.cs.auckland.ac.nz (hermes.cs.auckland.ac.nz [130.216.35.151])
+	by mononoke.wasabisystems.com (Postfix) with ESMTP id 36EDC5E65C
+	for <cryptography@wasabisystems.com>; Thu,  7 Nov 2002 23:43:36 -0500 (EST)
+Received: from ruru.cs.auckland.ac.nz (ruru-nfs.cs.auckland.ac.nz [130.216.35.12])
+	by hermes.cs.auckland.ac.nz (8.12.4/8.12.4) with ESMTP id gA84e4wA032424;
+	Fri, 8 Nov 2002 17:40:05 +1300
+Received: (from pgut001@localhost) by ruru.cs.auckland.ac.nz (8.9.3/8.8.6/cs-slave) id RAA102091; Fri, 8 Nov 2002 17:40:02 +1300 (NZDT) (sender pgut001@cs.auckland.ac.nz)
+Date: Fri, 8 Nov 2002 17:40:02 +1300 (NZDT)
+Message-ID: <200211080440.RAA102091@ruru.cs.auckland.ac.nz>
+From: pgut001@cs.auckland.ac.nz (Peter Gutmann)
+To: dahonig@cox.net, pgut001@cs.auckland.ac.nz, smb@research.att.com
+Subject: Re: Did you *really* zeroize that key?
+Cc: cryptography@wasabisystems.com, cypherpunks@lne.com, ptrei@rsasecurity.com
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 882
+Lines: 22
+
+David Honig <dahonig@cox.net> writes:
+
+>Wouldn't a crypto coder be using paranoid-programming skills, like 
+>*checking* that the memory is actually zeroed? (Ie, read it back..)
+>I suppose that caching could still deceive you though?
+
+You can't, in general, assume the compiler won't optimise this away
+(it's just been zeroised, there's no need to check for zero).  You 
+could make it volatile *and* do the check, which should be safe from 
+being optimised.
+
+It's worth reading the full thread on vuln-dev, which starts at
+http://online.securityfocus.com/archive/82/297827/2002-10-29/2002-11-04/0.
+This discusses lots of fool-the-compiler tricks, along with rebuttals
+on why they could fail.
+
+Peter.
+
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

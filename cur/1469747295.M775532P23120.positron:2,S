@@ -1,0 +1,157 @@
+Return-path: <cypherpunks-bounces@cpunks.org>
+Envelope-to: rsw@positron.jfet.org
+Delivery-date: Thu, 28 Jul 2016 16:08:14 -0700
+Received: from antiproton.jfet.org ([209.141.47.85])
+	by positron.jfet.org with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.87)
+	(envelope-from <cypherpunks-bounces@cpunks.org>)
+	id 1bSuPW-00060d-0N
+	for rsw@positron.jfet.org; Thu, 28 Jul 2016 16:08:14 -0700
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u6SMqcko017501;
+	Thu, 28 Jul 2016 18:52:40 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=KAEt4REz;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-ua0-f181.google.com (mail-ua0-f181.google.com
+ [209.85.217.181])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u6SMqYYs017497
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 28 Jul 2016 18:52:35 -0400
+Received: by mail-ua0-f181.google.com with SMTP id j59so50254004uaj.3
+ for <cypherpunks@cpunks.org>; Thu, 28 Jul 2016 15:52:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to;
+ bh=gQqTtr/TXZkj+AnzpIrHhLIj5uJXYzItjjAJst1W36Q=;
+ b=KAEt4REzb2QiNNVc54Ij8Mzmr43WV/RDpBM8Pi6/o0xJyvDJG970YI52gAqii7wDTY
+ /GkC6nV6jG1K+9H+b0bqg3CXhCOTq2mRK7gQEcmBSZaRfiaO/x9wrQTlv/0RCHTt29uN
+ bp9wqCf9NKJqZ9C438/kkNPFuk2fgTVZZb90h27J+9rPNCSUl1ElaYK4WpbswVlerVD6
+ zv1HGLHqIHNaxTkNqPhZybbZD8wcH/8NTA/nTA84Kkl36JDn3JN8cPqRNlUupjZI1mxY
+ lLu+X7pGXL6vlZs4zZqzQtTVpU7JXFYUjTv1nDiR6KBR4yd5ZZh7KLF0x0aQ3DgPrKrC
+ 792w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to;
+ bh=gQqTtr/TXZkj+AnzpIrHhLIj5uJXYzItjjAJst1W36Q=;
+ b=hTm5bPyyL3i+Aw9yyPWalw+yxIQLzdLXD/hz9XM7h+tRVrXBCIKe+x5UxJG50QBxWq
+ eKlZkVqK2JADYtDYbm3kBUuubsLPDO4CbRYVOV1Icn47ArQ5A8Bbi9kd7gelFa6ticCe
+ XJxFgqbifEUcs/rND5UiXRpAokg+wXv9rgqpoLWVIumYJurYbi1QxCcsaDEIx3bM0vSf
+ FMOkUImgVl49IPMfHwW12JKteQXYKs/9UZbRQD7yMaEaz+nOVDkf+V7LrkCMPEJLu68d
+ e0VC/6lnx1vVg4We/HA+f+oMUKgn2hR8xrJz4BRgXpzHn4A8xvppIOO6knTZtWOfc7rc
+ eVvg==
+X-Gm-Message-State: AEkooutCQ3pVKaWnINVuGr6v2mIIghaGuPgsCiaYnjs7YlzXQ7u8qjPthNgA8nE9mTkUsxMBvv/5+ax1ylfNkA==
+MIME-Version: 1.0
+X-Received: by 10.176.1.106 with SMTP id 97mr14488472uak.154.1469746348250;
+ Thu, 28 Jul 2016 15:52:28 -0700 (PDT)
+Received: by 10.176.2.138 with HTTP; Thu, 28 Jul 2016 15:52:26 -0700 (PDT)
+Received: by 10.176.2.138 with HTTP; Thu, 28 Jul 2016 15:52:26 -0700 (PDT)
+In-Reply-To: <D7494517-8B17-4878-8375-1F21AC4738DD@synfin.org>
+References: <03d7f422-414b-99d7-5c6e-5e585056a748@automatingosint.com>
+ <CAG2tMp5CmaaytY3aRNhPmHT3ygAq3GRLqh+2jjNTazY9v=fNVQ@mail.gmail.com>
+ <CAG2tMp5MTpL=SYMUH4cUGvEMXWgPY1Yo54uPaFxt+5ARxZNrVA@mail.gmail.com>
+ <20E91EDE-138D-4CE1-8EA9-F506A749CDD6@synfin.org>
+ <CAG2tMp6LrOEb3yKJG3tFUaD8uc2Hq6TaQH2h6_ftQQmSXgiHQA@mail.gmail.com>
+ <D7494517-8B17-4878-8375-1F21AC4738DD@synfin.org>
+Date: Thu, 28 Jul 2016 19:52:26 -0300
+Message-ID: <CAG2tMp5SKbdvKT5Eb138_vVnLk7pXvdoSJQHyxwJNp-R1OJQkw@mail.gmail.com>
+Subject: Re: [OT] Fwd: [ddj] Scanning the Dark Web with Python
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=001a113df520ff5de40538b9fc0d
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 81
+
+--001a113df520ff5de40538b9fc0d
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+On Jul 28, 2016 4:50 PM, "John" <jnn@synfin.org> wrote:
+>
+> Agree!  I do code all the time at work but it's mostly script fu, shell
+scripts, or, increasingly porting perl to Python or expanding old perl code=
+.
+>
+> I haven't written more than a few lines of C for like 10 years. Keep
+meaning to look into using Android Studio or XCode... But always end up
+back in vim, hacking on little unixy stuff ;)
+
+No false modesty, John, I am the worst programmer of my country!  And you
+know, I live in a huge country, hahaha!!  ;D
+
+My coding style is very famous here and everybody can learn it easily.
+
+"I hate programming.  I hate programming.  Oh, God, it works!!!  I f*cking
+love programming!!!  I want to do it forever, yay!!!  Sh=C2=A1t, what happe=
+ned
+now?!  I hate programming again!  Code, code..."  :P
+
+Hahaha!!!  I flirt with a lot of languages for curiosity, but my heart
+belongs to Python.  Well, at least all my pythonist friends are kicking me
+hardly because of ipython 5.0. etc, etc...  I need to see it yet, whoops!
+:(
+
+They are the cutest programmers here and I love them, but...  meh, I am
+feeling very very lazy and my real hobby in the last days is purring in the
+bed, with books, cute fluffy toys, blankets and smooth jazz...
+#meowfeelings  (=3D^=E2=80=A5^=3D)
+
+Puuuuurrr...  Rom rom rom...  ~(=3D^=E2=80=A5^)
+
+Take care, meow!  I will be kittening here! =EF=BC=88=EF=BC=BE=CF=89=EF=BC=
+=BE=EF=BC=89
+
+(Yup, still doing voluntary works and trying to bake the perfect crunchy
+Italian bread, but I need a brief vacation.)
+
+--001a113df520ff5de40538b9fc0d
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p>On Jul 28, 2016 4:50 PM, &quot;John&quot; &lt;<a href=3D"mailto:jnn@synf=
+in.org">jnn@synfin.org</a>&gt; wrote:<br>
+&gt;<br>
+&gt; Agree!=C2=A0 I do code all the time at work but it&#39;s mostly script=
+ fu, shell scripts, or, increasingly porting perl to Python or expanding ol=
+d perl code.<br>
+&gt;<br>
+&gt; I haven&#39;t written more than a few lines of C for like 10 years. Ke=
+ep meaning to look into using Android Studio or XCode... But always end up =
+back in vim, hacking on little unixy stuff ;)</p>
+<p>No false modesty, John, I am the worst programmer of my country!=C2=A0 A=
+nd you know, I live in a huge country, hahaha!!=C2=A0 ;D</p>
+<p>My coding style is very famous here and everybody can learn it easily. <=
+/p>
+<p>&quot;I hate programming.=C2=A0 I hate programming.=C2=A0 Oh, God, it wo=
+rks!!!=C2=A0 I f*cking love programming!!!=C2=A0 I want to do it forever, y=
+ay!!!=C2=A0 Sh=C2=A1t, what happened now?!=C2=A0 I hate programming again!=
+=C2=A0 Code, code...&quot;=C2=A0 :P</p>
+<p>Hahaha!!!=C2=A0 I flirt with a lot of languages for curiosity, but my he=
+art belongs to Python.=C2=A0 Well, at least all my pythonist friends are ki=
+cking me hardly because of ipython 5.0. etc, etc...=C2=A0 I need to see it =
+yet, whoops!=C2=A0 :(</p>
+<p>They are the cutest programmers here and I love them, but...=C2=A0 meh, =
+I am feeling very very lazy and my real hobby in the last days is purring i=
+n the bed, with books, cute fluffy toys, blankets and smooth jazz...=C2=A0 =
+#meowfeelings=C2=A0 (=3D^=E2=80=A5^=3D)</p>
+<p>Puuuuurrr...=C2=A0 Rom rom rom...=C2=A0 ~(=3D^=E2=80=A5^)</p>
+<p>Take care, meow!=C2=A0 I will be kittening here! =EF=BC=88=EF=BC=BE=CF=
+=89=EF=BC=BE=EF=BC=89 </p>
+<p>(Yup, still doing voluntary works and trying to bake the perfect crunchy=
+ Italian bread, but I need a brief vacation.)</p>
+
+--001a113df520ff5de40538b9fc0d--
+

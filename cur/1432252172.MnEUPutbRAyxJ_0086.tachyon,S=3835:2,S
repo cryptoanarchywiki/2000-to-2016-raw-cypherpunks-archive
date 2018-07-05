@@ -1,0 +1,87 @@
+From owner-cypherpunks@al-qaeda.net  Wed Dec 29 17:00:54 2010
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-5+lenny1) with ESMTP id oBTLvi44011172
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 29 Dec 2010 16:57:44 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id oBTLviV4011171
+	for cypherpunks-outgoing; Wed, 29 Dec 2010 16:57:44 -0500
+Date: Wed, 29 Dec 2010 22:57:40 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: Cryptography List <cryptography@metzdowd.com>, cypherpunks@al-qaeda.net
+Subject: Re: [p2p-hackers] TCP library - Was: p2p-hackers Digest, Vol
+  51, 	Issue 8
+Message-ID: <20101229215740.GF16518@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Sebastien Martini <seb@dbzteam.org> -----
+
+From: Sebastien Martini <seb@dbzteam.org>
+Date: Wed, 29 Dec 2010 22:19:33 +0100
+To: theory and practice of decentralized computer networks <p2p-hackers@lists.zooko.com>
+Subject: Re: [p2p-hackers] TCP library - Was: p2p-hackers Digest, Vol 51,
+	Issue 8
+Reply-To: theory and practice of decentralized computer networks <p2p-hackers@lists.zooko.com>
+
+Hi guys,
+
+Seems to be a new development in this area: CryptoCP by Daniel
+Bernstein, see the relevant portions at 41''30 and 59''45 of his
+recent talk http://27c3.iphoneblog.de/recordings/4295.html (don't know
+how to watch the video from there though, I downloaded the talk this
+morning from another site but the link is down right now).
+
+While he didn't discuss much CryptoCP per se, if I had to make a
+_guess_ from what he said it would be a mix of TCP in userspace with
+authenticated encryption provided by his software NaCl
+http://nacl.cace-project.eu/box.html . NaCl actually implements
+cryptographic primitives mainly based on his own crypto primitives
+such as Salsa family and Poly1305 but he has also hinted what could be
+some sort of equivalent with "standard" primitives (see previous link,
+bottom of the page). So a common use case, on the client side
+applications would proxify their network requests through CryptoCP
+which would encrypt them, simulate TCP and send UDP packets to the
+destination server. Notice that in this case it would be quite similar
+to what libjingle is currently implementing: OpenSSL can be used to
+SSL_write and SSL_read to/from a userspace TCP stream.
+
+On Thu, Dec 23, 2010 at 23:28, coderman <coderman@gmail.com> wrote:
+> On Sun, Nov 28, 2010 at 2:26 PM, Alex Pankratov <ap@poneyhot.org> wrote:
+>> Just need a drop in replacement for TCP sockets, i.e. if I have
+>> two nodes talking over UDP, I want a simple way for them to do
+>> TCP as well.
+>
+>
+> current favorite:
+>
+> NetBSD RUMP stacks in userspace:
+>  http://www.netbsd.org/docs/rump/index.html
+>
+> the paper on TCP/IP in userspace:
+>  http://2009.asiabsdcon.org/papers/abc2009-P5A-paper.pdf
+> presentation:
+>  http://www.youtube.com/watch?v=RxFctq8A0WI
+> _______________________________________________
+> p2p-hackers mailing list
+> p2p-hackers@lists.zooko.com
+> http://lists.zooko.com/mailman/listinfo/p2p-hackers
+>
+_______________________________________________
+p2p-hackers mailing list
+p2p-hackers@lists.zooko.com
+http://lists.zooko.com/mailman/listinfo/p2p-hackers
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

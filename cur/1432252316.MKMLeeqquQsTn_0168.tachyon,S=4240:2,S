@@ -1,0 +1,85 @@
+From owner-cypherpunks@Algebra.COM  Fri Feb  9 10:48:53 2001
+Received: from MIT.EDU (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.69.0.28])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id KAA01619
+	for <kwantam@positron.mit.edu>; Fri, 9 Feb 2001 10:48:53 -0500
+Received: from [208.233.99.160] by MIT.EDU with SMTP
+	id AA06921; Fri, 9 Feb 01 10:50:59 EST
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f19F8u425659
+	for cypherpunks-outgoing; Fri, 9 Feb 2001 09:08:56 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from sirius.infonex.com (sirius.infonex.com [216.34.245.2])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f19F8qq25644
+	for <cypherpunks@algebra.com>; Fri, 9 Feb 2001 09:08:52 -0600
+Received: (from cpunks@localhost) by sirius.infonex.com (8.8.8/8.8.8) id HAA29541; Fri, 9 Feb 2001 07:08:50 -0800 (PST)
+Received: from cyberpass.net (cyberpass.net [216.34.245.3]) by sirius.infonex.com (8.8.8/8.8.8) with ESMTP id HAA29537 for <cpunks@sirius.infonex.com>; Fri, 9 Feb 2001 07:08:39 -0800 (PST)
+Received: from Mailserver-4.ricardo.de (root@henry.ricardo.de [62.197.4.171]) by cyberpass.net (8.8.8/8.7.3) with ESMTP id HAA03404 for <cypherpunks@cyberpass.net>; Fri, 9 Feb 2001 07:11:09 -0800 (PST)
+Received: from exchange.office.ricardo.de (stargate.ricardo.de [62.197.4.1]) 
+          by Mailserver-4.ricardo.de (8.8.8/HENRY-frank-1.4) with ESMTP 
+          id QAA11407; Fri, 9 Feb 2001 16:08:09 +0100
+Received: from ricardo.de (www.lemuria.org [62.197.4.112]) by exchange.office.ricardo.de with SMTP (Microsoft Exchange Internet Mail Service Version 5.5.2653.13)
+	id 1LHK9MTX; Fri, 9 Feb 2001 16:08:09 +0100
+Message-Id: <3A8406AF.6D02195F@ricardo.de>
+Date: Fri, 09 Feb 2001 16:03:11 +0100
+From: Tom <tom@ricardo.de>
+X-Mailer: Mozilla 4.61 [en] (X11; I; Linux 2.2.16 i686)
+X-Accept-Language: en
+Mime-Version: 1.0
+To: Bill Stewart <bill.stewart@pobox.com>
+Cc: Tom <tom@lemuria.org>, cypherpunks@cyberpass.net
+Old-Subject: Re: published secret - similiar to AP prot
+References: <3.0.5.32.20010207213202.00a41c00@idiom.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Subject:  Re: published secret - similiar to AP prot
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 1726
+Lines: 40
+
+
+Bill Stewart wrote:
+> One simple approach - have Bob use a CGI script for publishing the material,
+> e.g. http://bob.com/cgi-bin/backups?alice-file-123
+> that notifies Bob when the URL is accessed, and either returns
+> the desired file or another URL that points to the real file.
+> More complex - have Bob require a signature from Alice on the request.
+
+that part is actually the least of my worries. 
+
+
+> You have to think about threat models.  If Alice is under attack,
+> do the attackers have Alice's mailbox that would contain the URL?
+> Do they have Alice's private key?  Do you care?
+> Does Bob have a site like Cryptome where anybody can read everything?
+> Does Bob have a samizdat site where only people who have the
+> password for a file can access that file (and maybe the password
+> is the hash of the file)?
+
+the threat model is that alice's system has possibly been compromised or
+shut down, but alice herself (and thus the private key or at least the
+passphrase) is still secure. the story would continue with alice digging
+out the mirrors and redirecting her web traffic there, so if alice goes
+down, things are lost anyways.
+
+
+> If Bob doesn't want legal problems because of Alice,
+> it's safer if he doesn't tell Alice, or at least doesn't
+> do anything different for Alice than he would for any other customer.
+
+that's the problem. so how does alice know if bob doesn't tell?
+
+
+> The simplest version works like this
+>         key      = hash(file)
+>         filename = hash(key, salt)              # One salt for entire site
+>         Store Encrypt(file, key) as "filename".
+
+that's a good start. using a hash of the content as the filename is a
+really important idea that will surely help me along here.
+

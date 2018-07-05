@@ -1,0 +1,101 @@
+From owner-cypherpunks@al-qaeda.net  Thu Mar 18 04:49:06 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: (from majordomo@localhost)
+	by POSITRON.MIT.EDU (8.11.6p3/8.11.6-03-31-03) id i2I9mCh13042
+	for cypherpunks-outgoing; Thu, 18 Mar 2004 04:48:12 -0500
+X-Authentication-Warning: positron.mit.edu: majordomo set sender to owner-cypherpunks@al-qaeda.net using -f
+Message-Id: <6.0.3.0.0.20040318005729.03785878@pop.idiom.com>
+X-Sender: wcs@pop.idiom.com
+X-Mailer: QUALCOMM Windows Eudora Version 6.0.3.0
+Date: Thu, 18 Mar 2004 01:46:44 -0800
+To: Cypherpunks <cypherpunks@al-qaeda.net>
+From: Bill Stewart <bill.stewart@pobox.com>
+Subject: Re: Saving Opportunistic Encryption
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4549
+Lines: 78
+
+The simplest way to get half-safe opportunistic encryption is the "Open 
+Secret" shared secret,
+or equivalently, draft-ietf-ipsec-internet-key-00.txt's shared 
+secret.  Everybody who wants to use it just adds it to their ipsec's list 
+of known shared secrets, and uses it unless something better is 
+available.  It doesn't pretend to be MITM-proof, but it's a start.  Doing 
+the whole job correctly is much harder, which is why Gilmore's 
+do-the-job-correctly-or-bust project didn't achieve the "encrypting X% of 
+the net by Christmas", where X>1 and Christmas < 2010.  (This doesn't count 
+the VPN market, which is what got the commercial support, even if many of 
+the vendors used FreeS/WAN code, and it's a much easier problem even if 
+ISAKMP/Oakley is a hard way to do something easy.)
+
+Forward DNS support is widely available, because anybody out there who 
+doesn't want to run their own DNS can find a friendly DNS provider who'll 
+sell them a subdomain they can use, e.g. 
+joecypherpunk.FriendlyDnsProvider.net, and they can even do DNSSEC support 
+(though obviously you can't walk the whole tree unless the roots are 
+signed.)  No ISP support needed.
+
+Reverse DNS support was pretty much a non-starter, because most ISPs don't 
+give the user control over their reverse DNS space even if they bother to 
+implement it at all.   They're getting better, but you're still usually 
+port123.box456.sfo.example.net, and forget getting DNSSEC support.  You 
+*could* make it work by building a separate Reverse DNS tree, like 
+D.B.C.A.opportunistic-encryption.org, instead of hanging it off 
+D.B.C.A.in-addr.arpa.  You'd still have to get people to populate it, and 
+make it scalable and DDOS-proof, but perhaps you could do it.
+
+Reverse DNS also has the problem that it's _not_ a 1:1 matching - a given 
+IP address may have many virtual hosts on it, and therefore many domain 
+names, and the domain names can be different for email vs. web vs. other 
+protocols.  So it can only work on a subset of the application space, even 
+if you've got the control you need.
+
+Of course, forward DNS isn't really what you want, and reverse DNS mostly 
+is, because there isn't a user interface to your IPSEC interface or routing 
+tables, especially if the IPSEC box is some security gateway that the end 
+user doesn't even have access to, so unless you want to invent some other 
+protocol (not ISAKMP/Oakley/etc.) to seed the IPSEC Security Associations, 
+all you've got to work with   is the IP address of a destination, not a name.
+
+It's possible to play hackish workarounds that have the DNS server 
+opportunistically fetch DNSSEC information, with the assumption that most 
+people only talk to IP addresses that they got from DNS lookups, and it 
+even has the performance advantage that you can do the fetch before you 
+send out any TCP or UDP packets to the destination instead of stalling and 
+risking timeouts.  They're not hugely reliable, but they're a start, 
+especially if you're going to fall back to "Open Secret".  They're mainly 
+useful for machines that are doing their own IPSEC encryption, rather than 
+using some IPSEC gateway/firewall box - otherwise you need to build dodgy 
+configurations like running the DNS server on  the IPSEC gateway and making 
+sure DNS caching and IPSEC SA caching times are compatible.   Also, working 
+at this level means you're not just hacking the kernel, or the kernel plus 
+some helper daemons - you're hacking BIND and its competitors, and suddenly 
+you become responsible for maintaining them :-)
+
+Another approach is to invent a whole new protocol, separate from 
+ISAKMP/Oakley/SKIP/etc., which does a handshake to fetch keys.  It either 
+has to hit a server at the destination's IP address, implying a need for 
+firewall transparency and compatible address spaces (probably works better 
+for transport mode than tunnel mode?), or else have some mechanism for 
+finding a key+config server.  Hugh Daniel suggested rehabilitating Finger 
+as the end-system protocol (after all, we've long since patched the 
+security bugs that the Morris worm used back in 1988).  If you're building 
+a non-end-to-end mechanism that uses IP addresses as its lookup, you're 
+getting awfully close to reinventing Reverse DNS, or else building some 
+other vast coordinated effort with half-vast goals.  On the other hand, if 
+you're patching half of ISAKMP/Oakley anyway, might as well patch Photuris, 
+which is much smaller, lighter, and more correct.
+
+
+                 Bill Stewart
+
+
+
+----
+Bill Stewart  bill.stewart@pobox.com  
+

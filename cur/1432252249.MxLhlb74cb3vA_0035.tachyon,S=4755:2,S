@@ -1,0 +1,107 @@
+From owner-cypherpunks@al-qaeda.net  Wed Apr 22 03:12:19 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id n3M7Be7j003626
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 22 Apr 2009 03:11:40 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id n3M7BehC003625
+	for cypherpunks-outgoing; Wed, 22 Apr 2009 03:11:40 -0400
+Date: Wed, 22 Apr 2009 09:11:33 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: PurpleOnion: HS Address Generator (+ Managed Router Impl?)
+Message-ID: <20090422071133.GM10925@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3720
+Lines: 81
+
+----- Forwarded message from Marcus Griep <tormaster@xpdm.us> -----
+
+From: Marcus Griep <tormaster@xpdm.us>
+Date: Tue, 21 Apr 2009 23:50:34 -0400
+To: or-talk <or-talk@freehaven.net>
+Subject: PurpleOnion: HS Address Generator (+ Managed Router Impl?)
+Reply-To: or-talk@freehaven.net
+
+Hello all,
+
+I wanted to let the Tor community know about a little side project of
+mine, a .onion address generator.
+
+Basically, all that it does is generate RSA key-pairs, determine the
+associated onion address (as for a hidden service) and attempts to
+match it to a provided regular expression. If there is a match, the
+program exports the key to a directory in a ready-made format for use
+as a hidden service directory. If there is not a match, the entropy
+doesn't have to be wasted; the generated keys can be logged to a file
+(933 bytes per onion). This file can then be read back in by the
+program to test against other regular expressions.
+
+The program is also setup to take advantage of multi-core machines for
+the creation of RSA keys, though a there is a synchronous bottleneck
+that I'm looking at removing in the near future to get a much better
+speedup. Also, as I'll note later, this implementation is on top of
+Mono. Thus, implementations with managed crypto stacks are slower than
+those with native crypto stacks (.NET on Windows).
+
+There are no shortcuts taken here in the address generation; if there
+were any, then the security of hidden services in general would be
+suspect. Only pure brute-force is used. Hence its utility is limited,
+but if you wanted a hidden service that had, say "wiki" in the onion
+address, this would help you get there (eventually). It does have
+another application; if your entropy sink is just too darn random, the
+onion generator will help you burn that excess digital entropy into
+heat energy.
+
+The onion generator is one part (and currently the only part) of a
+greater project I'm calling PurpleOnion, short for Purple Onion
+Router, mainly as I'm partial to the color. I started off by writing
+the onion generator and found that I'd written a couple of reusable
+components that, with some work, could be used in a greater exercise
+to write another implementation of the Tor Onion Router.
+
+PurpleOnion is written on the Mono framework in C# using MonoDevelop,
+requires Mono 2.0 to compile, and is licensed under the MIT/X11
+license. I've also tested the compiled binary copied into a Windows
+environment (with Mono.Security available).  The program runs great on
+Windows, and I added some exception handling to allow the compiled
+binary to JIT properly even without OS Posix support.
+
+The project is being hosted on github at:
+http://github.com/neoeinstein/purpleonion
+
+The repository is still a little bit dirty as I work on figuring out
+namespacing, so the Makefile is out of service. You can compile using
+MonoDevelop, but if you have gmcs, the following command in the
+repository root should get you a properly built generator:
+# gmcs -t:exe -o:build/Por.OnionGenerator.exe \
+ -r:System -r:System.Core -r:Mono.Security \
+ -r:Mono.Posix src/Por.OnionGenerator/*.cs
+# mono Por.OnionGenerator.exe --help
+
+I'd love to hear comments, both on the .onion address generator in
+specific and the possibility of a compliant onion router on a managed
+runtime,
+--
+Marcus Griep
+bb
+NN:N1N:N9N1 WW*.ON?B4, 3B0
+
+(Excuse the double post if it occurred; I first sent this from an
+un-subscribed address)
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

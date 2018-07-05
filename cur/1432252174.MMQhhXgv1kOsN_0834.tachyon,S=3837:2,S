@@ -1,0 +1,87 @@
+From owner-cypherpunks@jfet.org  Fri May 19 16:42:53 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.6/8.13.6/Debian-1) with ESMTP id k4JKgkC7013308
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 19 May 2006 16:42:46 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.6/8.13.6/Submit) id k4JKgkja013307
+	for cypherpunks-outgoing; Fri, 19 May 2006 16:42:46 -0400
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;         s=beta;
+  d=gmail.com;        
+  h=received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+  b=KpzDscIk5kz4XPCaYhaDxNuYtKL3hDRKRxrk9SxO0nraSVLEzfZM2f3GMyhbIUeReq1acxKgSSa6ls8RxguVOCLVrmfyCUm3ENlMDRd3vDl3lWgwkYsSYaOIDBoNFy9vlgpcWCuKc8eXnkTnGmf7mCzrGUnfUBCyBdYst0LeSgU=
+Message-ID: <4ef5fec60605191342r71693f2ocfa5f3563d1eb31c@mail.gmail.com>
+Date: Fri, 19 May 2006 13:42:43 -0700
+From: coderman <coderman@gmail.com>
+To: "Bill Stewart" <bill.stewart@pobox.com>
+Subject: Re: Diffie-Hellman Re: UK Government to force handover of
+  encryption keys
+Cc: cypherpunks@jfet.org
+In-Reply-To: <6.2.1.2.0.20060519130538.03bbe930@pop.idiom.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+References: <20060519050317.15522.qmail@web33301.mail.mud.yahoo.com> 	
+  <BAY116-F32C347A1D12202E5486CC69BA70@phx.gbl> 	
+  <6.2.1.2.0.20060519130538.03bbe930@pop.idiom.com>
+Content-Transfer-Encoding: 7bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by proton.jfet.org
+  id k4JKgjwr013262
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2042
+Lines: 50
+
+On 5/19/06, Bill Stewart <bill.stewart@pobox.com> wrote:
+> ...
+> Too many online applications currently use
+> RSA encryption to transfer an encrypted key,
+> which is vulnerable to later disclosure,
+> instead of using Diffie-Hellman key exchange
+> and some signature algorithm (RSA, EG, whatever),
+
+cipher TLSv1/SSLv3 DHE-RSA-AES256-SHA, 2048 bit RSA++
+
+
+> Email messages are an appropriate use of RSA-encrypted keys,
+> but any online two-way communications,
+> including VOIP, IPSEC, web forms, and transmission of email,
+> really ought to be using Diffie-Hellman instead.
+
+i like the speed of pre-shared keys assuming key mgmt is secure and
+rekeying frequent (e.g. scheduled PSK's or one time pad based
+ephemeral key exchange).
+
+but anything using ephemeral keys needs to destroy them properly and
+this is more robust  with DH (each end responsible for their
+respective key destruction) than shared secrets (both ends must
+destroy secrets) in addition to the fact that shared secrets are
+usually much longer lived as well.
+
+
+> How many of the popular tools support it or could be configured to do so?
+
+i do it all the time with openvpn, https, etc.  in theory anything
+that supports SSLv3/TLSv1 should support a strong ephemeral DH cipher
+suite.  as for particular sites and servers, i'd be interested to know
+just what the usual distribution of utilized cipher suites is.  RSA
+without DHE probably is the most common.
+
+
+> In most cases, it's probably not hard - you mainly need to choose the
+> right options from standard packages, and make the DH versions the
+> preferred method instead of a fallback.
+
+yup.
+in most cases generating dh parameters and explicitly requiring a DHE
+suite is the hardest part of any custom configuration needed.  the
+session setup costs are a little higher but anyone doing SSL/TLS in
+bulk probably has the necessary hardware acceleration in place
+already.
+
+as a side note, i'd really like SHA2-256/512 to be added to SSL/TLS
+and widely implemented.  AES256 with SHA1 digest is just a little
+funny these days...
+

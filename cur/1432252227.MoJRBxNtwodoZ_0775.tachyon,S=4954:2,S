@@ -1,0 +1,108 @@
+From owner-cypherpunks@Algebra.COM  Mon Dec 24 13:27:00 2001
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.mit.edu (8.11.6/8.9.3) with ESMTP id fBOIQxx03286
+	for <kwantam@positron.mit.edu>; Mon, 24 Dec 2001 13:26:59 -0500
+Received: from ak47.algebra.com (ak47.algebra.com [208.233.99.160])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id NAA22608
+	for <rsw@mit.edu>; Mon, 24 Dec 2001 13:26:10 -0500 (EST)
+Received: from ak47.algebra.com (localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id fBOILAeu023334
+	for <cypherpunks-outgoing@ak47.algebra.com>; Mon, 24 Dec 2001 12:21:10 -0600
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id fBOILAvD023333
+	for cypherpunks-outgoing; Mon, 24 Dec 2001 12:21:10 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (dns.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id fBOIL6eu023317
+	for <cypherpunks@ak47.algebra.com>; Mon, 24 Dec 2001 12:21:08 -0600
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id fBOIL4721863
+	for cypherpunks@ak47.algebra.com; Mon, 24 Dec 2001 10:21:04 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id fBOIKw921856
+	for cypherpunks-goingout; Mon, 24 Dec 2001 10:20:58 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+From: Nomen Nescio <nobody@dizum.com>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@dizum.com>.
+To: cypherpunks@lne.com
+Old-Subject: Re: simplest possible ecash mint
+Message-ID: <615e6c170547d65e5d2e911880648119@dizum.com>
+Date: Mon, 24 Dec 2001 19:20:51 +0100 (CET)
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Re: simplest possible ecash mint
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+X-spam: 0 
+Status: O
+Content-Length: 2583
+Lines: 59
+
+
+Ryan Lackey writes:
+> * Some protocol for external communication (direct sockets is easiest,
+>   but message-based protocols are far better, and allow a front end
+>   processor to handle communications details)
+
+A message is simply a packet of data.  Using a message-based protocol
+says nothing about the underlying transport, sockets or carrier pigeons.
+If you did this as a computational box with a communications front end
+then a simple socket-based RPC protocol would probably be best between
+the mint box and the comm box.
+
+> * Reissue operation (powers of two coins; so you can pay with 1 x 2 coin
+>   and get 2 x 1 coins back)
+
+Sure.  You give a collection of coins worth $X, along with the blinding
+factors appropriate to a different set of coins worth the same amount.
+This fits well into the simple exchange mint concept.
+
+> * A clock (decent rate RNG or PRNG is useful too, obviously)
+> * A double spending database maintained internally
+
+Right, and you better make sure it's not going to grow too big.  It
+may be necessary to expire coins at fixed time intervals (every two
+years or so).
+
+> * Two account counters maintained internally: treasury and float
+> * "Signed float": tell anyone who asks exactly how much has been
+>    issued, signed as the mint.
+> * A means of increasing or decreasing the treasury value, after
+>   authentication, and ideally an internal log of these changes (which
+>   could be published as well, signed)
+
+Does this have per-user accounts in it?  If not, how does the float
+amount ever change?  Do some people donate ecash to the bank's treasury
+voluntarily, reducing the float?  No one would do that.  Are some people
+entitled to receive ecash from the treasury?  Who and why?  Is this the
+transfer-in mechanism, or simply a way for the banker to use the treasury
+account as his personal slush fund?
+
+What you really have are three kinds of transactions: those within the
+system (pure ecash transfers), those out of the system (cashing in ecash
+for dollars), and those into the system (purchasing ecash with dollars).
+Maybe you could explain how you see these kinds of transactions working
+in terms of your float and treasury account counters.
+
+> * Key management functionality (signing keys generated onboard; some
+>   kind of hierarchy so non-coins can be linked to coins)
+
+What is this linkage for?
+
+> * Ability to publish a description of some sort of the coins
+
+Yes, and whatever public keys are appropriate for the protocol.
+
+> * Power switch
+
+Don't forget the light that tells you its on.  Really, this level of
+detail is redundant.
+

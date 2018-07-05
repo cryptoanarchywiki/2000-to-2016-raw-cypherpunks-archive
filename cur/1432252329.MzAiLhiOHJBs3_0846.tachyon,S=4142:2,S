@@ -1,0 +1,90 @@
+From owner-cypherpunks@al-qaeda.net  Tue May 15 08:25:36 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q4FCMlvY013266
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 15 May 2012 08:22:47 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q4FCMlYw013265
+	for cypherpunks-outgoing; Tue, 15 May 2012 08:22:47 -0400
+Date: Tue, 15 May 2012 14:22:45 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: [p2p-hackers] Pirate Pay
+Message-ID: <20120515122245.GS17120@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Tom Ritter <tom@ritter.vg> -----
+
+From: Tom Ritter <tom@ritter.vg>
+Date: Mon, 14 May 2012 23:16:28 -0400
+To: theory and practice of decentralized computer networks <p2p-hackers@lists.zooko.com>
+Subject: Re: [p2p-hackers] Pirate Pay
+Reply-To: theory and practice of decentralized computer networks <p2p-hackers@lists.zooko.com>
+
+On 14 May 2012 18:48, James A. Donald <jamesd@echeque.com> wrote:
+> Some design characteristics:
+>
+> *.  Peers are identified by a durable public key.
+>
+> *.  Peers interact with keys they do not trust, but expect protocol
+> conformance and prosocial behavior only from keys they trust. Peers limit
+> their exposure to non trusted keys so that they can suffer only limited
+> damage from non trusted keys deviating from protocol or otherwise
+> misbehaving.
+>
+> *.  Peers may not only trust Bob, but transitively everyone Bob trusts, and
+> everyone that those peers trust ...  If this works, they increase their
+> transitive trust in Bob, if it fails they decrease their transitive trust.
+>
+> *.  Prosocial behavior consists of conforming to protocol, storage
+> availability, with valuable, or at least demanded, stuff in storage and
+> accessible on demand,  and paying ones bandwidth and storage debts. Since
+> networks are unreliable, perfect protocol conformity is never expected or
+> demanded, but the burden that one's deviations from protocol place on other
+> peers counts against one's karma.
+
+Hm.  I'm not sure how to bootstrap when you only want to interact with
+people you trust - but it seems like this could be a model for a Web
+of Trust that grows over time if you have a way to validate what
+people are supposed to be sending.
+
+I am Alice and I interact with 1000 other people, Bobs1-1000, who send
+me pieces of a file. They're valid, so I sign their public keys saying
+they were good for some number of bytes, send them the signature, but
+also keep it locally. I send data to 50 other people, Carols1-50 who
+in turn give me signatures.  Over time, I interact with Bob50 again,
+and trust him based on my previous signature. I find a Dave, who I
+trust a little because he has a signature from Bob600, and Bob600 was
+good to me.
+
+The key pieces (and why this couldn't work for distributed DNS) are
+that I know that Bob[x] sent me is valid because I have the
+information to build a merkle tree and validate his piece.  The more I
+download, the more people I 'trust' because they were honest actors
+last time. The more I upload, the more people 'trust' me because I
+acted honestly in the past.
+
+But I may have reinvented something simple or missed an obvious flaw,
+because I'm not well-versed in how DHT works, or anything published in
+this area.
+
+-tom
+_______________________________________________
+p2p-hackers mailing list
+p2p-hackers@lists.zooko.com
+http://lists.zooko.com/mailman/listinfo/p2p-hackers
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

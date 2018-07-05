@@ -1,0 +1,140 @@
+From owner-cypherpunks@al-qaeda.net  Tue Nov  2 15:39:33 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (majordomo@localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.1/8.13.1/Debian-16) with ESMTP id iA2LcvHJ008435
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Tue, 2 Nov 2004 15:38:57 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.1/8.13.1/Submit) id iA2LcvwE008434
+	for cypherpunks-outgoing; Tue, 2 Nov 2004 15:38:57 -0600
+Date: Tue, 2 Nov 2004 22:38:44 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: [i2p] weekly status notes [nov 2] (fwd from jrandom@i2p.net)
+Message-ID: <20041102213844.GC1457@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.4i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Content-Length: 3739
+Lines: 110
+Status: O
+X-Status: 
+X-Keywords:                  
+X-UID: 10264
+
+----- Forwarded message from jrandom <jrandom@i2p.net> -----
+
+From: jrandom <jrandom@i2p.net>
+Date: Tue, 2 Nov 2004 13:35:10 -0800
+To: i2p@i2p.net
+Subject: [i2p] weekly status notes [nov 2]
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Hi y'all, time for the weekly update
+
+* Index:
+1) Net status
+2) Core updates
+3) Streaming lib
+4) mail.i2p progress
+5) BT progress
+6) ???
+
+* 1) Net status
+
+Pretty much as before - a steady number of peers, eepsites fairly
+reachable, and irc for hours on end.  You can get a peek at the
+reachability of various eepsites through a few different pages:
+ - http://gott.i2p/sites.html
+ - http://www.baffled.i2p/links.html
+ - http://thetower.i2p/pings.txt
+
+* 2) Core updates
+
+For those hanging out in the channel (or reading the CVS logs),
+you've seen a lot of things going on, even though its been a while
+since the last release.  A full list of changes since the 0.4.1.3
+release can be found online [1], but there are two major
+modifications, one good and one bad:
+
+The good one is that we've dramatically cut down on the memory churn
+caused by all sorts of insane temporary object creation.  I finally
+got fed up with watching the GC go mad while debugging the new
+streaming lib, so after a few days of profiling, tweaking, and
+tuning, the ugliest parts are cleaned up.
+
+The bad one is a bugfix for how some tunnel routed messages are
+handled - there were some situations where a message was sent
+directly to the targeted router rather than tunnel routed prior to
+delivery, which could be exploited by an adversary who can do a
+little coding.  We now properly tunnel route when in doubt.
+
+That may sound good, but the 'bad' part is that it means that there's
+going to be some increased latency due to the additional hops, though
+these are hops that needed to be used anyway.
+
+There are other debugging activities going on in the core as well, so
+there hasn't been an official release yet - CVS HEAD is 0.4.1.3-8.
+In the next few days we'll probably have a 0.4.1.4 release, just to
+get all that stuff cleared up.  It won't contain the new streaming
+lib, of course.
+
+[1] http://dev.i2p.net/cgi-bin/cvsweb.cgi/i2p/history.txt?rev=HEAD
+
+* 3) Streaming lib
+
+Speaking of the streaming lib, there has been a lot of progress here,
+and the side by side comparison of the old and new libs are looking
+good.  However, there is still work to be done, and as I said last
+time, we're not going to rush it out the door.  That does mean that
+the roadmap has slipped, likely in the range of 2-3 weeks.  More
+details when they're available.
+
+* 4) mail.i2p progress
+
+Lots of new stuff this week - working in and out proxies!  See
+www.postman.i2p for more information.
+
+* 5) BT progress
+
+There has been a flurry of activity regarding porting a BitTorrent
+client as of late, as well as updating some tracker settings.
+Perhaps we can get some updates from those involved during the
+meeting.
+
+* 6) ???
+
+Thats it for me.  Sorry for the delay, I forgot about that whole
+daylight savings thingamabob.  Anyway, see y'all in a few.
+
+=jr
+
+-----BEGIN PGP SIGNATURE-----
+Version: PGP 8.1
+
+iQA/AwUBQYf9PBpxS9rYd+OGEQIoGQCgvDKydGRT42tO9bwWutAwnoolpj0AoNyX
+Z1ThyrjEZjAttC/wChPN43aD
+=SJDa
+-----END PGP SIGNATURE-----
+_______________________________________________
+i2p mailing list
+i2p@i2p.net
+http://i2p.dnsalias.net/mailman/listinfo/i2p
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a>
+______________________________________________________________
+ICBM: 48.07078, 11.61144            http://www.leitl.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+http://moleculardevices.org         http://nanomachines.net
+
+[demime 1.01d removed an attachment of type application/pgp-signature]
+

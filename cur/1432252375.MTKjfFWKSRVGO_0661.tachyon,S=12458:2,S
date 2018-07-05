@@ -1,0 +1,217 @@
+From rswatjfet.org+caf_=rsw=jfet.org@gmail.com  Mon Jul 21 10:34:16 2014
+Return-Path: <rswatjfet.org+caf_=rsw=jfet.org@gmail.com>
+Received: from mail-pd0-f176.google.com (mail-pd0-f176.google.com [209.85.192.176])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id s6LEYEgc027576
+	(version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+	for <rsw@jfet.org>; Mon, 21 Jul 2014 10:34:16 -0400
+Received: by mail-pd0-f176.google.com with SMTP id y10so9185481pdj.35
+        for <rsw@jfet.org>; Mon, 21 Jul 2014 07:34:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20130820;
+        h=x-original-authentication-results:delivered-to:date:to:subject
+         :message-id:mime-version:content-type:content-disposition:user-agent
+         :precedence:list-id:list-unsubscribe:list-archive:list-post
+         :list-help:list-subscribe:errors-to:sender:from;
+        bh=2626Y9kGIEi8z0KH8F5Sbxb8e5foK/d3BGWst4EDbiE=;
+        b=ecBOpfhUeKPcnSdbte+JLG8Hn5gkZ/O8rnni7JIyw8L/9CDjUUDBqc0tV1tW7ZCJcf
+         XqE5HJhT6VNJOw5TYwl3cvwzu1kkG4RRNrqz08kADz6Wz20iQmB6RvL5EDhXU066Dk+j
+         RjH0cZuyGOSp4zInRC6BAzH19gUQ3vAC22h2YZdmMn8kIChdSaN46evN2FNP0wLixp/C
+         Mu5FIq7/NzaiikckJQEJsInPxBl6gOgtFTZgrXnSzW6jhKtvaMzih6Br6VPaEX3Bpm24
+         vWem8JP4v0xFjJxKgam6y+VEnuJIixJGzoqUy5JWntutJ9trrUg5BMXbHwDhq+mK9dr+
+         0N3Q==
+X-Original-Authentication-Results: mx.google.com;       spf=neutral (google.com: 209.141.47.85 is neither permitted nor denied by domain of rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net) smtp.mail=rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net
+X-Received: by 10.70.15.225 with SMTP id a1mr26032995pdd.13.1405953242889;
+        Mon, 21 Jul 2014 07:34:02 -0700 (PDT)
+X-Forwarded-To: rsw@jfet.org
+X-Forwarded-For: rswatjfet.org@gmail.com rsw@jfet.org
+Delivered-To: rswatjfet.org@gmail.com
+Received: by 10.70.25.164 with SMTP id d4csp145461pdg;
+        Mon, 21 Jul 2014 07:34:02 -0700 (PDT)
+X-Received: by 10.66.246.229 with SMTP id xz5mr4322636pac.119.1405953241979;
+        Mon, 21 Jul 2014 07:34:01 -0700 (PDT)
+Received: from localhost (antiproton.jfet.org. [209.141.47.85])
+        by mx.google.com with ESMTPS id ay10si7219359pdb.433.2014.07.21.07.34.00
+        for <rswATjfet.org@gmail.com>
+        (version=TLSv1.2 cipher=RC4-SHA bits=128/128);
+        Mon, 21 Jul 2014 07:34:00 -0700 (PDT)
+Received-SPF: neutral (google.com: 209.141.47.85 is neither permitted nor denied by domain of rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net) client-ip=209.141.47.85;
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 209.141.47.85 is neither permitted nor denied by domain of rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net) smtp.mail=rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id s6LEVfkZ027544;
+	Mon, 21 Jul 2014 10:31:58 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id s6LEVbAD027535
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Mon, 21 Jul 2014 10:31:39 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 78CB3540F7F; Mon, 21 Jul 2014 16:31:35 +0200 (CEST)
+Date: Mon, 21 Jul 2014 16:31:35 +0200
+To: tor-talk@lists.torproject.org, cypherpunks@cpunks.org
+Subject: potential leak on Torpedo
+Message-ID: <20140721143135.GU26986@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.16
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+From: Eugen Leitl <eugen@leitl.org>
+X-Gspam-Loop: antiproton.jfet.org
+Status: O
+Content-Length: 8015
+Lines: 141
+
+
+https://pay.reddit.com/r/TOR/comments/2b8oq3/please_read_if_you_usedepend_on_tor_never_before/
+
+Please read if you use/depend on Tor. Never before seen FH information.
+(self.TOR)
+
+submitted 16 hours ago * by Deepthroat2 [+1]
+
+Hello everyone, I have some information that I have been dying to share for
+months, but due to the circumstances, and to avoid detection, I had to wait
+for some time before I was able to safely make this post. My goal here is to
+provide information that I know is credible and for the Tor community to use
+it as they see fit, due to the nature of my work, and the severe penalties
+associated with breaking the rules and giving out information you aren't
+supposed too, I have no way of verifying or proving anything to you that I
+say here, I understand if find me less than credible, however, this is
+essentially a PSA, and you can take it for what it's worth to you.
+
+Just about one year ago, the Tor community was shaken by a Firefox exploit
+which utilized a javascript exploit and an old vulnerbility in the Tor
+Browser Bundle to unmask some users of Freedom Hosting. There has been
+rampant misinformation, and speculation to the point that I felt like pulling
+my hair out, or just simply bursting out into laughter when reading some of
+the outlandish claims made by people who have little to no idea what they are
+talking about. Today, I will set the record straight.
+
+The FH exploit was a government engineered, and deployed exploit that was
+designed in response to former Director Mueller's fustration at an earlier
+child pornography case in which the FBI was ridiculed for being unable to
+ascertain the source of child pornography, for those who aren't familiar with
+this case, it involved a man who had accessed child pornography by accident
+on a Tor hidden service, and then brought his desktop computer to the office,
+explaining what had happened and that he subsequently preformed a "Full wipe"
+on the disk.
+
+The agent who took the report had limited knowledge about Tor, however, at
+the time he knew that any directed effort to identify a specific Tor user was
+hopeless, and in the report he indicated that "There is currently no known
+way to ascertain the location of a Tor user, thus, no investigative leads
+exsist." This got leaked to the press, and they had a field day, hinting at
+the incompetency of the Bureau. Needless to say, the FBI had it's ego hurt
+quite badly by this public display of incompetency.
+
+Then Director Mueller directed the CEOS (Child exploitation and obscenity
+section) to find a way to penetrate the layers of protection provided by Tor,
+and to come up with a fesible way to conduct a sting operation in order to
+bring these people to justice. The FBI had previously conducted a sting on
+viewers of child pornography in a case out of Nebraska, that resulted in the
+arrest of about 25 people. This was the first successful take down of CP
+consumers that were utilizing a Tor hidden service.
+
+One of the errors that I see alot on these forums and others was that the
+Nebraska take down was done in a similar fashion to the FH exploit, with the
+code being deployed onto the pages of the boards, however, this is not the
+case. From my understanding, the Nebraska field office was able to find the
+actual server, take it over covertly, then upload a series of files that
+purported to be child pornography, but actually contained nothing but
+encrypted gibberish. They were video files that were embedded with code that
+called back to a computer that recorded the IP address of the requestor, date
+and time similar to the way windows media player attempts to recall album
+information and cover art for music cds and such. These were files that the
+user actually had to download and attempt to open. This is why the service
+was run for weeks, and only 25 people were identified as users. This method
+was described by the techs who deployed it as a "NIT" or "Network
+Investigational Tool".
+
+Now for Freedom Hosting....
+
+The javascript exploit could not be deployed directly on the servers which
+Mr. Marques was using due to either technical reasons, or legal requirements
+by the AUSA in Maryland. So the decision was made to clone the services
+exactly, and transport then to the home of the FBI CEOS in the Greenbelt
+division of Maryland. This location was picked specifically because
+sentencing in this district for Child Pornography crimes is more severe. It
+was July 31st of 2013 when the exploit actually went live, and tried to
+identify criminals. It was installed previously, however, there were
+technical problems early on and the code had to be revised 3 times before it
+was running as intended, it ran for about 11 days before being shut down.
+
+The amount of people identified by this exploit is still a closely gaurded
+secret, with only agents having a direct "Need to know" being privy to this
+information. Howver, the victory dance was short lived as news started
+flowing around that the evidence may not be admissible in court, due to the
+manner in which it was collected, among other reasons. Although proper
+warrants were issued, it would take atleast 4-7 years to comb through the
+list of suspects, and question, arrest each one. The major problem is that
+after about 12 months, the courts start to presume your evidence is
+prejudicial to the defendant because you're supposed to have an indictment
+and serve it on the defendant within 30 days, and that just wasn't possible.
+You can request an extension of this time, however you must present a new,
+fresh reason for doing so..."We still aren't ready" doesn't cut it. There is
+no statue of limitations for the crime of "Accessing with intent to view
+child pornography" so barring any other limitations, the FBI can come after
+someone 10-15 years later.
+
+The AUSA became uncomfortable with the prospects of his legal case against
+the exploitees of FH and went to the US Attorney. There was disagreement as
+to whether or not the evidence would be viable, however, the operation went
+on anyways. One of the victims of the FH exploit was a man by the name of
+Grant Klein from Vermont. The Bureau had made arrangements with the local
+police for assistance with the raid (This is pretty much standard operation
+procedure, and is done for the saftey of the agents, as well as to maintain
+professional courtesy. Local cops get butt hurt when you arrest people on
+their turf without them knowing).
+
+The FBI had provided the local police with court documents and the affidavit
+of arrest regarding the cirsumstances of Mr. Klein's warrant, which they
+promptly posted onto their press release against the wishes of the FBI. This
+resulted in the termination of atleast one employee from local PD.
+
+He was raided and before even being asked a question ,he began spewing a
+confession. His home was searched, and a desktop computer with no hard disk
+was found, as well a laptop computer belonging to his wife Susan. There was
+no illegal materials found on these, however, he had a smartphone in the
+drawer of a nightstand which contained illegal images of minors. He was
+arrested and charged with 3 seperate crimes.
+
+To make a long story short, the FH related charges were dropped because the
+FBI had crossed a legal line by offering up child pornography de novo, by
+shutting down the server, then bringing it back online hosting real CP. They
+were uncomfortable with the prospects of this case, and were able to use a
+leon good faith exception to admit the evidence they found on his phone to
+make a single possession charge stick, however, he agreed to plead guilty.
+The rest of the leads which lead to foreign nationals were then distributed
+accordingly to the various LEA's.
+
+Also, earlier this wekk, the UK police arrested 660 people as part of
+Operation Notarise.
+
+The operation name of the FBI takedown in Nebraska was "Operation Torpedo"
+
+This was a cute poke at both the method they used, and the users they
+targeted
+
+Torpedo - Navy missile
+
+Tor Pedo - Tor Pedophile.
+
+-DT
+
+moar comments on Reddit
+

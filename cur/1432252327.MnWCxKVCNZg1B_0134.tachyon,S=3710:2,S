@@ -1,0 +1,74 @@
+From coderpunks-errors@toad.com  Wed Jan 10 13:10:09 2001
+Received: from MIT.EDU (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.69.0.28])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id NAA06391
+	for <kwantam@positron.mit.edu>; Wed, 10 Jan 2001 13:10:09 -0500
+Received: from toad.com by MIT.EDU with SMTP
+	id AA09102; Wed, 10 Jan 01 13:11:55 EST
+Received: (from majordom@localhost) by toad.com (8.7.5/8.7.3) id JAA17255 for coderpunks-outgoing; Wed, 10 Jan 2001 09:56:29 -0800 (PST)
+Received: from slack.lne.com ([209.157.136.81]) by toad.com (8.7.5/8.7.3) with ESMTP id JAA17248; Wed, 10 Jan 2001 09:56:25 -0800 (PST)
+Received: (from ericm@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id f0AHtCh31502;
+	Wed, 10 Jan 2001 09:55:12 -0800
+Date: Wed, 10 Jan 2001 09:55:12 -0800
+From: Eric Murray <ericm@lne.com>
+To: =?iso-8859-1?Q?G=E9_Weijers?= <ge@cobalt.com>
+Cc: "Xiao, Peter" <pxiao@Liberate.com>,
+        "'coderpunks@toad.com'" <coderpunks@toad.com>, cypherpunks@toad.com
+Subject: Re: crypto implementation for small footprint devices
+Message-Id: <20010110095512.Q19819@slack.lne.com>
+References: <953A023D1ACA2F45A31A6F9B7B2A992502E8A1F1@usscmail1.liberate.com> <20010110075913.A16618@progressive-systems.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <20010110075913.A16618@progressive-systems.com>; from ge@cobalt.com on Wed, Jan 10, 2001 at 07:59:13AM -0700
+Sender: owner-coderpunks@toad.com
+Precedence: bulk
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by positron.mit.edu id NAA06391
+Status: O
+Content-Length: 2062
+Lines: 41
+
+On Wed, Jan 10, 2001 at 07:59:13AM -0700, Gé Weijers wrote:
+> On Tue, Jan 09, 2001 at 03:42:45PM -0800, Xiao, Peter wrote:
+> > Hi,
+> > 
+> > I am currently looking for crypto implementation that can fit into small
+> > footprint (in the order of 50K or less) devices. Ideally, an SSL type of
+> > protocol meets my requirements but it is almost impossible to implement it
+> > within 50K even with selected cipher suites. So, I am looking for
+> > alternatives (either symmetric key or public key based). I was thinking
+> > about WTLS but looks like its implementation can not be significantly
+> > smaller than that of TLS since it is also based on Public Key cryptography
+> > (I am wondering how it fits into a cellphone). Can any one tell me what is
+> > the approximate size of the client implementation of WTLS. Also, would
+> > anyone send some pointers to me regarding what I am looking for.
+> > 
+> > Thanks in advance!!
+> > 
+> > Peter
+> 
+> It's not the public-key operations themselves that use the space. I've
+> managed to squeeze OAEP-formatted RSA encryption into less than
+> 20K. The public key was hard-wired, though. You probably want to stay
+> away from ASN.1 formatted data if space is a concern.
+
+
+Unfortunately anything that uses X.509 (like SSL) will require it.
+It's possible to write small X.509/ASN.1 decoding packages.  One that I
+wrote for a small-device SSL package takes about 11k code (gcc on Intel
+PIII) and it's not very optimized- there's lots of room to squeeze it
+down farther than the original application required.
+
+Encoding ASN.1 really eats space though, because of the nested nature
+of complex ASN.1... unless you do some tricks like I did in US patent
+6,111,660.   Using this trick, we were able to encode SET messages
+(really ugly ASN.1) using only 4 bytes more than the size of the final
+message.  So we could comfortably run client-side SET in less than 24k
+of RAM.
+
+-- 
+  Eric Murray           Consulting Security Architect         SecureDesign LLC
+  http://www.securedesignllc.com                            PGP keyid:E03F65E5
+

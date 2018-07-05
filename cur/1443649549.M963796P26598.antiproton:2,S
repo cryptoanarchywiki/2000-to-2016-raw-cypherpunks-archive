@@ -1,0 +1,245 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t8ULjXw4026581;
+	Wed, 30 Sep 2015 17:45:34 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=cdqGjSaX;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-ob0-f174.google.com (mail-ob0-f174.google.com
+ [209.85.214.174])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t8ULjUvd026577
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Wed, 30 Sep 2015 17:45:32 -0400
+Received: by obbda8 with SMTP id da8so42989280obb.1
+ for <cypherpunks@cpunks.org>; Wed, 30 Sep 2015 14:45:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+ :cc:content-type;
+ bh=wzzbrEOq5G5hNegMZ1E3bYwEe3eQ7P52xMckmMnJtfM=;
+ b=cdqGjSaXdKYqVcNFjpnrP1UfwyPPf5lEcaB2NyF2dkCyEzoU//fVUYSvrpRoJ26HZ7
+ pJ+IrmzKxMi3yHY0FSRicGG7h68Lvm/ByLym14PA6ZHItlNR1iPzP7DqC0qZv97KiS3D
+ l2GE4TEJU+kPc32wQGqI4L4WJsNUgbAcdKm+tm4JL2voYpBZ9rqOKrpfpQw4TvgOm94O
+ yFrAeoS01fh1y3/gULONiO1SDB3rSc1lSywri76WU2flcF+VE70fQs0dmFAn4kAUo1O5
+ Fz31Spf9DoBwr3zAzOV7PWPlmuCezDGZjzVX8XqtCuuyh1Guu/AX9pzenTjiLBAEvD47
+ g02g==
+X-Received: by 10.182.24.228 with SMTP id x4mr4062658obf.6.1443649525419; Wed,
+ 30 Sep 2015 14:45:25 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.202.228.200 with HTTP; Wed, 30 Sep 2015 14:45:06 -0700 (PDT)
+In-Reply-To: <1443646338.695158.397968585.3B6987FA@webmail.messagingengine.com>
+References: <CAKtE3zdQCroEFu6G5e4M9RqpvaEHNSvoRp75iurxzqeXVfDQ8Q@mail.gmail.com>
+ <1443646338.695158.397968585.3B6987FA@webmail.messagingengine.com>
+From: Travis Biehn <tbiehn@gmail.com>
+Date: Wed, 30 Sep 2015 17:45:06 -0400
+Message-ID: <CAKtE3zda+o65oJum2-9EYsFVv5npnSesfCO3Zz0F7mT6xnjXgA@mail.gmail.com>
+Subject: Re: CloudFlare Keyless SSL WAS Re: Snowden on the Twitters
+To: alfiej@fastmail.fm
+Content-Type: multipart/alternative; boundary=001a11c2d09824960e0520fdd9ce
+Cc: "cypherpunks@cpunks.org" <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 192
+
+--001a11c2d09824960e0520fdd9ce
+Content-Type: text/plain; charset=UTF-8
+
+So, one of the difficulties w/ web-apps is that the 'code' is dynamic. You
+cannot implement a secure system if your attacker can change the code at
+any point in time. As is the threat model with backends, which attest to
+their 'trust me' security (a la lavabit, hushmail and so on) - so is the
+problem with client side code. If you build a web-app which does in-browser
+encryption and never sends the encryption key to the backend your attacker
+can simply modify the static JS source, DOM inject and XSS their way to
+your sweet sweet encrypted keys. Even if you audit your code at one point
+in time, you aren't certain it doesn't change with every request to the
+server.
+
+SO
+
+The first hurdle here is allowing users to reason about 'versions of
+web-app client assets' - if any part of the 'web-app client' relies on
+dynamic / non static JS, the application cannot effectively be 'versioned'
+(unless those sub-components are similarly versionable). A subset of HTML
+and JS is defined (safe javascript language subsets are a fail) AND the JS
+VM is modified to 'lock in' its object defns after loading.
+
+So, then you can take the set of client side assets (html, js, images so
+on) hash each, add some version metadata and sign it. Version 1.
+
+Now, users with the browser mod / plugin can then see version 1 of the
+site. I can go out and post to CPunks statements like, Version 1 of
+el8notes never sends your plaintext password to the server and all of your
+communiques are encrypted before being sent to the server, and have them
+hold true both now and in the future.
+
+If you trust version 1 of el8notes, or you trust my assessments of
+el8mailer you can then tell your sweet plugin: Version 1 of el8notes,
+signature whatever is a-ok in my book.
+
+Of course, this might not even require the participation of content
+producers. Such a plugin could, in theory, create its own versioning for
+web assets & distribute those observations to a P2P network.
+
+-Travis
+
+On Wed, Sep 30, 2015 at 4:52 PM, Alfie John <alfiej@fastmail.fm> wrote:
+
+> On Thu, Oct 1, 2015, at 01:50 AM, Travis Biehn wrote:
+> > What would be solid is if there were a browser module that did several
+> > things: Eliminated JavaScript dynamic calls (eval, new function(),
+> > setTimeout, setInterval, so on.) Eliminate 3rd party assets. Allowed
+> > web assets to be signed. Allowed sets of web assets to be versioned
+> > (and attested to by 3rd parties.)
+> >
+> > The combination of signing, versioning and lack of dynamic features
+> > paves the way for uninjectable, client-side in browser
+> > encryption/decryption. Something AFAIK we cannot do today. Is anyone
+> > working on it?
+>
+> So Nginx has a built-in module "ngx_http_gzip_module" which does the
+> following (if "Accept-Encoding: gzip" was part of the request headers) :
+>
+>   - Sees request for "foo.html"
+>   - Checks if "foo.html.gz" exists
+>   - If so, serves that in place of the "foo.html"
+>   - If not, gzips "foo.html" on the fly
+>
+> What would be nice is an Nginx module which did the same type of thing,
+> but for hashing the body:
+>
+>   - Sees request for "foo.html"
+>   - Checks if "foo.html.sha256" exists
+>   - If so, serves "foo.html" along with "Content-Hash: <sha256>" header,
+>     taken from contents of "foo.html.sha256"
+>   - If not, serves "foo.html" along with "Content-Hash: <sha256>"
+>     header, but calculated on the fly
+>
+> This would be a cheap and easy way to get some form of content hashing.
+>
+> Thoughts?
+>
+> Alfie
+>
+> --
+>   Alfie John
+>   alfiej@fastmail.fm
+>
+
+
+
+-- 
+Twitter <https://twitter.com/tbiehn> | LinkedIn
+<http://www.linkedin.com/in/travisbiehn> | GitHub <http://github.com/tbiehn>
+| TravisBiehn.com <http://www.travisbiehn.com> | Google Plus
+<https://plus.google.com/+TravisBiehn>
+
+--001a11c2d09824960e0520fdd9ce
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">So, one of the difficulties w/ web-apps is that the &#39;c=
+ode&#39; is dynamic. You cannot implement a secure system if your attacker =
+can change the code at any point in time. As is the threat model with backe=
+nds, which attest to their &#39;trust me&#39; security (a la lavabit, hushm=
+ail and so on) - so is the problem with client side code. If you build a we=
+b-app which does in-browser encryption and never sends the encryption key t=
+o the backend your attacker can simply modify the static JS source, DOM inj=
+ect and XSS their way to your sweet sweet encrypted keys. Even if you audit=
+ your code at one point in time, you aren&#39;t certain it doesn&#39;t chan=
+ge with every request to the server.<div><br></div><div>SO<br><div><br></di=
+v><div>The first hurdle here is allowing users to reason about &#39;version=
+s of web-app client assets&#39; - if any part of the &#39;web-app client&#3=
+9; relies on dynamic / non static JS, the application cannot effectively be=
+ &#39;versioned&#39; (unless those sub-components are similarly versionable=
+). A subset of HTML and JS is defined (safe javascript language subsets are=
+ a fail) AND the JS VM is modified to &#39;lock in&#39; its object defns af=
+ter loading.</div><div><br></div><div>So, then you can take the set of clie=
+nt side assets (html, js, images so on) hash each, add some version metadat=
+a and sign it. Version 1.</div><div><br></div><div>Now, users with the brow=
+ser mod / plugin can then see version 1 of the site. I can go out and post =
+to CPunks statements like, Version 1 of el8notes never sends your plaintext=
+ password to the server and all of your communiques are encrypted before be=
+ing sent to the server, and have them hold true both now and in the future.=
+</div><div><br></div><div>If you trust version 1 of el8notes, or you trust =
+my assessments of el8mailer you can then tell your sweet plugin: Version 1 =
+of el8notes, signature whatever is a-ok in my book.</div><div><br></div><di=
+v>Of course, this might not even require the participation of content produ=
+cers. Such a plugin could, in theory, create its own versioning for web ass=
+ets &amp; distribute those observations to a P2P network.</div><div><br></d=
+iv><div>-Travis</div></div></div><div class=3D"gmail_extra"><br><div class=
+=3D"gmail_quote">On Wed, Sep 30, 2015 at 4:52 PM, Alfie John <span dir=3D"l=
+tr">&lt;<a href=3D"mailto:alfiej@fastmail.fm" target=3D"_blank">alfiej@fast=
+mail.fm</a>&gt;</span> wrote:<br><blockquote class=3D"gmail_quote" style=3D=
+"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"><span class=
+=3D"">On Thu, Oct 1, 2015, at 01:50 AM, Travis Biehn wrote:<br>
+&gt; What would be solid is if there were a browser module that did several=
+<br>
+&gt; things: Eliminated JavaScript dynamic calls (eval, new function(),<br>
+&gt; setTimeout, setInterval, so on.) Eliminate 3rd party assets. Allowed<b=
+r>
+&gt; web assets to be signed. Allowed sets of web assets to be versioned<br=
+>
+&gt; (and attested to by 3rd parties.)<br>
+&gt;<br>
+</span><span class=3D"">&gt; The combination of signing, versioning and lac=
+k of dynamic features<br>
+&gt; paves the way for uninjectable, client-side in browser<br>
+&gt; encryption/decryption. Something AFAIK we cannot do today. Is anyone<b=
+r>
+&gt; working on it?<br>
+<br>
+</span>So Nginx has a built-in module &quot;ngx_http_gzip_module&quot; whic=
+h does the<br>
+following (if &quot;Accept-Encoding: gzip&quot; was part of the request hea=
+ders) :<br>
+<br>
+=C2=A0 - Sees request for &quot;foo.html&quot;<br>
+=C2=A0 - Checks if &quot;foo.html.gz&quot; exists<br>
+=C2=A0 - If so, serves that in place of the &quot;foo.html&quot;<br>
+=C2=A0 - If not, gzips &quot;foo.html&quot; on the fly<br>
+<br>
+What would be nice is an Nginx module which did the same type of thing,<br>
+but for hashing the body:<br>
+<br>
+=C2=A0 - Sees request for &quot;foo.html&quot;<br>
+=C2=A0 - Checks if &quot;foo.html.sha256&quot; exists<br>
+=C2=A0 - If so, serves &quot;foo.html&quot; along with &quot;Content-Hash: =
+&lt;sha256&gt;&quot; header,<br>
+=C2=A0 =C2=A0 taken from contents of &quot;foo.html.sha256&quot;<br>
+=C2=A0 - If not, serves &quot;foo.html&quot; along with &quot;Content-Hash:=
+ &lt;sha256&gt;&quot;<br>
+=C2=A0 =C2=A0 header, but calculated on the fly<br>
+<br>
+This would be a cheap and easy way to get some form of content hashing.<br>
+<br>
+Thoughts?<br>
+<span class=3D"HOEnZb"><font color=3D"#888888"><br>
+Alfie<br>
+<br>
+--<br>
+=C2=A0 Alfie John<br>
+=C2=A0 <a href=3D"mailto:alfiej@fastmail.fm">alfiej@fastmail.fm</a><br>
+</font></span></blockquote></div><br><br clear=3D"all"><div><br></div>-- <b=
+r><div class=3D"gmail_signature"><div dir=3D"ltr"> <a href=3D"https://twitt=
+er.com/tbiehn" target=3D"_blank">Twitter</a> | <a href=3D"http://www.linked=
+in.com/in/travisbiehn" target=3D"_blank">LinkedIn</a> | <a href=3D"http://g=
+ithub.com/tbiehn" target=3D"_blank">GitHub</a> | <a href=3D"http://www.trav=
+isbiehn.com" target=3D"_blank">TravisBiehn.com</a>=C2=A0| <a href=3D"https:=
+//plus.google.com/+TravisBiehn" target=3D"_blank">Google Plus</a><br></div>=
+</div>
+</div>
+
+--001a11c2d09824960e0520fdd9ce--
+

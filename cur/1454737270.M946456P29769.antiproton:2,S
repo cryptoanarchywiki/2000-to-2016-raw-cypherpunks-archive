@@ -1,0 +1,90 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u165eBpF029748;
+	Sat, 6 Feb 2016 00:40:16 -0500
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=ujVG+7H2;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-lf0-f48.google.com (mail-lf0-f48.google.com
+ [209.85.215.48])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u165e7CS029724
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Sat, 6 Feb 2016 00:40:09 -0500
+Received: by mail-lf0-f48.google.com with SMTP id m1so70298048lfg.0
+ for <cypherpunks@cpunks.org>; Fri, 05 Feb 2016 21:40:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :cc:content-type;
+ bh=ud0XWjTb/ZClJEG+Hbld0kxl0+20Afp+HgQxv3dvL88=;
+ b=ujVG+7H265ALcjL48I68KeCLcbRmQx6tc5hy2Qwty94967TwlZPm3XMRn6Nxj9z/rm
+ +uQnJfud5BCEUPK6HngkCkm3ENTGb/IFiBvNjAvZhb3Cei0aCxdrj6nNXZVYYI2Dzkhe
+ rgo0UNWHruH45q55L8fE8kkRI12Yp+QFSfv+bFxTsnzOZP/k5mV/GLoNLErPsraNiucG
+ t4D+UsVfmy+EPigSrd6fL7e1PngJ9CQ7GgKgSfYR4Gahhntc+cRXRFOHZX8s7pIm6M4J
+ miHjTXxeoKrdQ34PsrWiKCanLc4EgVWNMa8oUi7AdS3StHKw1rsupEMEy2JiFiJAeiiM
+ N0Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to:cc:content-type;
+ bh=ud0XWjTb/ZClJEG+Hbld0kxl0+20Afp+HgQxv3dvL88=;
+ b=LvHikhegCF8GDuDuhCalzmojwb/QbvRmR/Vnnp+0TVXboYJuvsZ2mURYy4+yFx9WgX
+ WE5QvYogk3LEcBadaJbhUYzemMbU9s+Nzh4eE52N7/JL/QOiWVH0392E3wCXyDJCZ96f
+ 8m9QPOQDMIBD8YFDoGVb63hZo/PKtvMqlAQ/7M3HvvYM/Oi3tGULKSnzC/f4WW5rB984
+ s/hrdGh4+osV9Uig2boJDZAzCBTHng6fEC8Hhgn3Bprue81eVjxKJ20F4jSta4c6EqIg
+ aJcQoRUmVUyyn3Lz5jdue3kW232dn36kWChz7O04ZcnExWjY17H4MVHTtjv6bE+D4wDI
+ Wg4w==
+X-Gm-Message-State: AG10YOS7hRglD+X9qz5u8xwwPr3qeY5yDUCQulLcRu+0f0CEdbFQWAV+y8DLdLBkW4P7w1BGTKPr4etWhs9BXw==
+MIME-Version: 1.0
+X-Received: by 10.25.155.81 with SMTP id d78mr6410484lfe.77.1454737200531;
+ Fri, 05 Feb 2016 21:40:00 -0800 (PST)
+Received: by 10.25.87.12 with HTTP; Fri, 5 Feb 2016 21:40:00 -0800 (PST)
+In-Reply-To: <56b5636d.6d148c0a.ed84d.2adf@mx.google.com>
+References: <CANFTA0-poVPP2nHwFmZOUc8VKq=P4oup5jGED_AfsE7tA-f4Lg@mail.gmail.com>
+ <CAGRDzQWgxiLZHRKTZkVjv99moFaLaQBa4U0ZzPfGyrE-L8nbnQ@mail.gmail.com>
+ <CAHKdp-kG+4Pkr9CL952akYVLig4z2dbfZFSecV00YM_7OmvwJg@mail.gmail.com>
+ <CAGRDzQUM1OUx239JCv=Ho8GqXo2AzV93yuObLCBLkkxAaZTxig@mail.gmail.com>
+ <CAGRDzQWM8aX-HvBJJ9oXLjn6tjWHKAu2VcyhoB2HdgWu0Zs3bg@mail.gmail.com>
+ <CAHKdp-m7G5RFTUhxOfUjYL5MqPdpt84gwUuYDb0tQSX_=Nx0ZA@mail.gmail.com>
+ <56b4f3ba.d4f28c0a.1c75a.fffff056@mx.google.com>
+ <CAGRDzQWAgK+wsTafWkGcqbfHNcc1g8RZ-ACkDxjDcDG-xi8DnQ@mail.gmail.com>
+ <CAHKdp-m7fZVHzvDu_Q8=wODpkAMtAJkSBnniuco0Yybm2E9hGQ@mail.gmail.com>
+ <CAGRDzQW5FA_AK8WRBag4Zi3XHoMkz-MVG6yD+tt769df2uS6gw@mail.gmail.com>
+ <CAGRDzQVOeb_B+WVc2TmX-oMBazDiFw1ykvW=nP=O9M2kQ=8okw@mail.gmail.com>
+ <56b53670.4ac98c0a.7672b.1586@mx.google.com>
+ <CAGRDzQVMv=p5yQak6Rsq0UXEyVcgzXSd=WffWVC=AFzW84priw@mail.gmail.com>
+ <56b5636d.6d148c0a.ed84d.2adf@mx.google.com>
+Date: Sat, 6 Feb 2016 06:40:00 +0100
+Message-ID: <CAJVRA1QHYFmGH0txZYKfEL3hM_1S-06sObKdhmnrMoveCGeRdw@mail.gmail.com>
+Subject: Re: The Intercept steps up after catching a reporter faking data and
+ sources
+From: coderman <coderman@gmail.com>
+To: juan <juan.g71@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 12
+
+On 2/6/16, juan <juan.g71@gmail.com> wrote:
+> ...
+> 	well, if you ever have trouble sleeping then you can read "no
+> 	treason" ^-^
+
+
+trolls goading each other into reading and educating themselves? ...
+maybe they're just grossly inappropriate in sincerity, hmm
+
+*grin*
+

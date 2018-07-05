@@ -1,0 +1,97 @@
+From owner-cypherpunks@jfet.org  Mon Mar 20 20:19:28 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.5/8.13.5/Debian-3) with ESMTP id k2L1IxvZ000395
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 20 Mar 2006 20:18:59 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.5/8.13.5/Submit) id k2L1IxDb000394
+	for cypherpunks-outgoing; Mon, 20 Mar 2006 20:18:59 -0500
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;         s=beta;
+  d=gmail.com;        
+  h=received:message-id:date:from:to:subject:cc:mime-version:content-type:content-transfer-encoding:content-disposition;
+  b=Qo8PBZrHNuwbQG/AgKu0UTBMLDgW/Ers4r65qnzoeiDf6jt0l/G43Z6yslIyzPlrJXvLylxVqOg4Z3RsgV1t7Tjz+RjXAsbsKnvEh7GzunM725ls3RfbR0Z9ovd+b+pxCUOS2aSTG91vviuTdi/zxgblCgErd93R5JJiPd9qWZE=
+Message-ID: <4ef5fec60603201718g53bddaa1i4ff64e93726068@mail.gmail.com>
+Date: Mon, 20 Mar 2006 17:18:54 -0800
+From: coderman <coderman@gmail.com>
+To: rah@philodox.com
+Subject: Re: [Clips] Port knocking: A security idea whose time has come
+  (or not?)
+Cc: cypherpunks@jfet.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by proton.jfet.org
+  id k2L1ItUL000338
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3280
+Lines: 64
+
+my comments below,
+
+
+On 3/20/06, R. A. Hettinga <rah@shipwright.com> wrote:
+> <http://ww6.infoworld.com/products/print_friendly.jsp?link=/article/06/03/17/76466_12OPsecadvise_1.html>
+> ...
+> Many, many innovations come from the Linux and Unix world. Few are more
+> intriguing to me than port knocking. As a global security plug-in to
+> protect services, it has a lot going for it and few downsides. However, for
+> one reason or another, it suffers from lack of use and understanding. A lot
+> of administrators may have heard of it, but few know how to implement it.
+> Even fewer have used it.
+>
+> Port knocking works on the concept that users wishing to attach to a
+> network service must initiate a predetermined sequence of port connections
+> or send a unique string of bytes before the remote client can connect to
+> the eventual service. In its most basic form, the remote user's client
+> software must first connect to one or more ports before connecting to the
+> final destination port.
+
+limit even attempted utilization of services to authenticated users -
+that's a good idea.  port knocking is a poor implementation though.
+
+you can do strong single packet authentication without the additive
+latency of port knocking, and it is a cleaner design. (see
+www.blackhat.com/presentations/bh-usa-05/bh-us-05-madhat.pdf for
+example)
+
+i've talked about IPsec stacks keyed out of band which give you a
+robust "authenticated peers only" configuration without esoteric port
+knocking / SPA methods.  unfortunately right now the options available
+are static pre shared key (setkey) which is insecure without some
+scripting/munging around single use keys. (this should change soon,
+for some lax definition of 'soon')
+
+it'd be nice to expand the keying options for those who wish to avoid
+exposing any services above the IP stack without proper
+authentication. (that means no IKE ports either).  i'm a huge fan of
+OpenVPN and IPsec private networking, though IPsec is better suited
+for this "no services for the unauthenticated" mode of operation.
+
+
+> The biggest advantage of all is that port knocking is platform-, service-,
+> and application-independent: Any OS with the correct client and server
+> software can take advantage of its protection. Although port knocking is
+> mainly a Linux/Unix implementation, there are Windows tools that can do the
+> same thing. And similar to IPSec and other protective mechanisms, none of
+> the involved services or applications has to be port-knocking-aware.
+
+this is the only thing port knocking it has going for it; SPA or VPN's
+are a much stronger solution.
+
+
+> Critics often point to the fact that eavesdropping hackers might be able to
+> capture and replay the successful port-knocking sequence or series of
+> bytes. Although this might be true with the basic implementations, attacks
+> such as these would be squashed by using more sophisticated authentication
+> methods or minimized by using secondary hard-coded allowed IP addresses
+> such as TCP wrappers.
+
+this is a particularly significant concern over wireless networks, and
+when you add sophisticated authentication you might as well jump ship
+to SPA or VPN instead (since you're going to be spending additional
+effort managing credentials anyway - do it right and be done with it!)
+

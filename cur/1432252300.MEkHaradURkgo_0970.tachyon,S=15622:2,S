@@ -1,0 +1,394 @@
+From owner-cypherpunks@al-qaeda.net  Thu Jan 20 11:00:41 2011
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-5+lenny1) with ESMTP id p0KFw3jh020667
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 20 Jan 2011 10:58:03 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id p0KFw3YA020666
+	for cypherpunks-outgoing; Thu, 20 Jan 2011 10:58:03 -0500
+Date: Thu, 20 Jan 2011 16:58:00 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: [p2p-hackers] what would you like to see most in a p2p
+  social 	network?
+Message-ID: <20110120155800.GE23560@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 14557
+Lines: 367
+
+----- Forwarded message from Renato Figueiredo <renato@acis.ufl.edu> -----
+
+From: Renato Figueiredo <renato@acis.ufl.edu>
+Date: Tue, 18 Jan 2011 08:08:59 -0500
+To: theory and practice of decentralized computer networks <p2p-hackers@lists.zooko.com>
+Subject: Re: [p2p-hackers] what would you like to see most in a p2p social
+	network?
+Reply-To: renato@acis.ufl.edu,
+	theory and practice of decentralized computer networks <p2p-hackers@lists.zooko.com>
+
+David,
+
+In addition to STUN, we also have a decentralized mechanism to select 1-hop
+relays in the overlay when NAT traversal fails. We have done
+simulation-based studies and our empirical evidence from the deployed
+SocialVPN/Brunet systems is that these approaches work pretty well, but we
+don't have a study of the system "in the wild" with large numbers of real
+users behind NATs. We are planning to reach to a reasonably large number of
+users to use the software to collect this among other kinds of data; any
+suggestions/ideas on how to reach out to potential users for an experiment
+would be welcome.
+
+Thanks!
+--rf
+
+On Tue, Jan 18, 2011 at 2:58 AM, David Barrett <dbarrett@quinthar.com>wrote:
+
+> Oh, is it possible to connect to the SocialVPN overlay on PlanetLab via
+> the Internet?  Neat!  As for the STUN approach, that sounds about right
+> -- have you measured the actual success rate of peers attempting to
+> connect with it?  I know a few people on the list (including me) have
+> spent *A LOT* of energy on this topic, and it's really freakin' hard,
+> but super awesome.
+>
+> -david
+>
+> On 01/17/2011 11:49 PM, Pierre St Juste wrote:
+> > Here's some explanation about distributed NAT traversal.
+> >
+> > We currently run a structured P2P overlay on Planetlab, when you run
+> > SocialVPN you join that structured overlay, we usually have about 500 -
+> > 600 nodes running. If node A wants to connect to node B, the following
+> > happens:
+> >
+> > 1 - node A sends a ConnectToMe (CTM) message to node B by using node B's
+> > P2P address (160-bit randomly chosen address).
+> >
+> > 2 - The CTM message contains node A's public IP and UDP port.
+> >
+> > 3 - Node B replies through the overlay with his public IP and UDP port
+> > and simultaneous sends a UDP packet to node A's public IP and port.
+> >
+> > 4. When node A receives the reply with node B's IP and UDP port, node A
+> > sends a UDP packet to node B's public IP and UDP port.
+> >
+> > 5. If you have a friendly NAT (not symmetric), then node A's packet will
+> > make it to node B's machine since node B has already sent a packet to
+> > that IP and port.
+> >
+> > We call it a distributed STUN server because the Brunet P2P library
+> > allows for discovery of one's public IP address and port and it also
+> > provides an all-to-all messaging layer needed to signal the start of UDP
+> > hole punching.
+> >
+> > As we all know, direct P2P communication is not always possible, in this
+> > case, a node that is reachable by both parties is chosen as the relay
+> > nodes and peers communicate through that.
+> >
+> > Finally our NAT traversal is a bit slower than regular STUN because the
+> > initial message is routed through a structured overlay that takes log(N)
+> > hops on average, but you may have dropped UDP packets and retries, so it
+> > may take milliseconds or a few seconds to set up direct P2P connection.
+> >
+> > These papers explain in more detail
+> >
+> > http://byron.acis.ufl.edu/papers/ipdps06ipop.pdf
+> >
+> > http://byron.acis.ufl.edu/papers/hpdc145-ganguly.pdf
+> >
+> > http://byron.acis.ufl.edu/papers/cops08.pdf
+> >
+> > Hope this helps. I encourage anyone interesting to download SocialVPN
+> > and try it out, there is windows installer and debian package. It
+> > currently works with GoogleChat or by emailing each other your P2P
+> address.
+> >
+> > On Tue, Jan 18, 2011 at 12:49 AM, David Barrett <dbarrett@quinthar.com
+> > <mailto:dbarrett@quinthar.com>> wrote:
+> >
+> >     Wow, this looks really fantastic.  I hadn't followed its progress but
+> it
+> >     sounds like it's come a long way really fast.  I'd love to hear more
+> >     about its distributed STUN service and NAT traversal.  Do you have
+> any
+> >     data on its effectiveness, perhaps expressed as the likelihood that
+> two
+> >     arbitrary nodes will be able to connect directly via the internet?
+>  Is
+> >     there a TURN or other relay service available as a fallback?  Thanks!
+> >
+> >     -david
+> >
+> >     On 01/17/2011 08:13 PM, Pierre St Juste wrote:
+> >      > I would like to point out the SocialVPN project
+> >      >
+> >      > http://socialvpn.org
+> >      >
+> >      > It is basically a P2P VPN which creates direct encrypted tunnels
+> to
+> >      > friends. It currently uses the XMPP protocol for friend discovery
+> and
+> >      > public key exchange. This VPN thus creates a social graph where
+> edges
+> >      > are IP links. This infrastructure can be used as an enabler for
+> many
+> >      > other social services. Here are a few examples
+> >      >
+> >      > 1 - Instead of using Skype, you can use Ekiga with Avahi, Avahi
+> >      > extension for Ekiga will discover online friends through
+> >     multicast over
+> >      > the social virtual private network, you can then place SIP call
+> >     directly
+> >      > over IP link.
+> >      >
+> >      > 2. For instant messaging, you can use Empathy or Pidgin with
+> >      > Bonjour/Avahi support, as concept as above.
+> >      >
+> >      > 3. For video stream, you can stream a video over HTTP or RTP
+> >     using VLC
+> >      > and your friends can connect directly.
+> >      >
+> >      > 4. For social networking, you can run a wordpress blog locally
+> >     and have
+> >      > your friends connect to that, or you can write an social
+> networking
+> >      > application that communicates with friends over SocialVPN using
+> >     Berkeley
+> >      > sockets API instead of having to deal with building P2P library
+> that
+> >      > deals with NAT traversal, peer search and so on.
+> >      >
+> >      > 5. All data sent between peers is encrypted and authenticated,
+> >     basically
+> >      > the same idea behind IPSec if you support PKI certificate
+> exchanges.
+> >      >
+> >      > One of the hardest thing about building social P2P systems is
+> having
+> >      > with a user-friendly way to bootstrap these social links (or
+> >     Darknets).
+> >      > SocialVPN makes that step trivial so that developers can focus
+> >     more on
+> >      > making cool apps versus figuring out how to traverse NATs.
+> >      >
+> >      > I hope this helps.
+> >      >
+> >      > On Mon, 2011-01-17 at 18:57 -0800, David Barrett wrote:
+> >      >> I'd suggest first figuring out why someone would pick a P2P
+> social
+> >      >> network over Facebook, from a perspective of legitimate
+> >     functionality
+> >      >> rather than just privacy (which as Facebook has demonstrated,
+> >     isn't a
+> >      >> killer feature).  I'd suggest really emphasizing the fact that
+> with
+> >      >> P2P-Book, there is no "uploading" photos or videos: you can
+> >     share entire
+> >      >> folders of files, videos, documents, or whatever and their
+> instantly
+> >      >> available to your friends -- without first uploading them
+> >     somewhere else.
+> >      >>
+> >      >> Furthermore, emphasize that you're not sharing *copies* of the
+> >     videos,
+> >      >> songs, and photos -- you're sharing the originals: change the
+> >     original
+> >      >> (crop, reorient, touch up, tag with metadata, etc) and its
+> >     automatically
+> >      >> updated.
+> >      >>
+> >      >> -david
+> >      >>
+> >      >> On 01/17/2011 12:51 PM, Jan DomaEski wrote:
+> >      >>> Hey Michael,
+> >      >>>
+> >      >>> Thanks for the comments, they're helpful.
+> >      >>>
+> >      >>> A lot of this boils down to having two (or more) 'sides' of
+> >     self. One
+> >      >>> for general public, others for the rest; this is doable.
+> >      >>>
+> >      >>> Grudge-friendly and jackboot resistant, in ideal world, comes
+> >     with the
+> >      >>> 'distributed' and 'secure+encrypted'. But sure, seems to have
+> >     been lost
+> >      >>> in the implementation of at least one social network i can
+> >     think of.
+> >      >>>
+> >      >>> As to the grandmother compatibility, at least to me, this is not
+> >      >>> absolutely essential at first.
+> >      >>>
+> >      >>> Cherio, Jan
+> >      >>>
+> >      >>> 2011/1/16 Michael Rogers<m--@gmx.com
+> >     <mailto:m--@gmx.com><mailto:m--@gmx.com <mailto:m--@gmx.com>>>
+> >      >>>
+> >      >>>      Hi Jan,
+> >      >>>
+> >      >>>      Here's a quick list of features I'd like to see in any
+> >     social network
+> >      >>>      (not just P2P ones):
+> >      >>>
+> >      >>>      * Grandmother-compatible. It should be possible to be
+> >     friends with my
+> >      >>>      grandmother without her seeing the photo of the time I did
+> >     that thing
+> >      >>>      with the grapes.
+> >      >>>
+> >      >>>      * Alcohol-compatible. There should be something as easy to
+> >     remember as
+> >      >>>      an email address that I can give to random people I
+> >     befriend while
+> >      >>>      drunk. And if they look me up the next day, there should
+> >     be a polite way
+> >      >>>      of not responding.
+> >      >>>
+> >      >>>      * Schoolproof. People should not be able to find my
+> >     profile just because
+> >      >>>      we went to school together 20 years ago. Similarly, people
+> >     should not be
+> >      >>>      able to find my profile just because I applied for a job
+> >     at their
+> >      >>>      company (or at least, they shouldn't be able to see the
+> >     photo of the
+> >      >>>      thing with the grapes).
+> >      >>>
+> >      >>>      * Grudge-friendly. It should be possible to move my data
+> >     from one
+> >      >>>      provider to another when the current provider accuses me
+> >     of lacking
+> >      >>>      integrity because I don't want my grandmother to see the
+> >     photo etc etc.
+> >      >>>
+> >      >>>      * Jackboot-resistant. The Tunisian government should not
+> >     be able to
+> >      >>>      steal my password by setting up a fake login page.
+> >      >>>
+> >      >>>      Cheers,
+> >      >>>      Michael
+> >      >>>
+> >      >>>      On 15/01/11 20:35, Jan DomaEski wrote:
+> >      >>> >  Hello everybody out there interested in p2p social
+> networking,
+> >      >>> >
+> >      >>> >  I'm doing a (free) p2p social network (just a hobby, wonbt
+> >     be big and
+> >      >>> >  professional like diaspora). It has been in the works since
+> >      >>>      summer,  and
+> >      >>> >  begins to get some shape. I'd like any feedback on things
+> people
+> >      >>> >  like/dislike in the idea of a p2p social network and how this
+> is
+> >      >>>      solved
+> >      >>> >  by the little toy.
+> >      >>> >
+> >      >>> >  I've currently written it in java, netty handles the
+> networking,
+> >      >>>      Qt is
+> >      >>> >  used for GUI. Some yml for configs and db4o for storage.
+> >     Non-blocking
+> >      >>> >  xml (XMPP) parser is a missing puzzle. The app has been run
+> >     only on a
+> >      >>> >  single machine, but it's already practical and I'd like to
+> >     know what
+> >      >>> >  features most people would want. Any suggestions are
+> >     welcome, but I
+> >      >>> >  wonbt promise Ibll implement them :]
+> >      >>> >
+> >      >>> >  Two demos (the top one is new) below, gitorious and blog
+> >     links inside
+> >      >>> > http://www.youtube.com/watch?v=0rAwCsYt16w
+> >      >>> > http://www.youtube.com/watch?v=K1dujrhGvBQ
+> >      >>> >
+> >      >>> >  Jan (jan.domanski@new.ox.ac.uk
+> >     <mailto:jan.domanski@new.ox.ac.uk><mailto:jan.domanski@new.ox.ac.uk
+> >     <mailto:jan.domanski@new.ox.ac.uk>>
+> >      >>> <mailto:jan.domanski@new.ox.ac.uk
+> >     <mailto:jan.domanski@new.ox.ac.uk><mailto:jan.domanski@new.ox.ac.uk
+> >     <mailto:jan.domanski@new.ox.ac.uk>>>)
+> >      >>> >
+> >      >>> >  PS. Yes - it's all my own work and done as a scientist not a
+> >      >>>      programmer,
+> >      >>> >  which has terrible implications for code ;)
+> >      >>> >
+> >      >>> >
+> >      >>> >
+> >      >>> >  _______________________________________________
+> >      >>> >  p2p-hackers mailing list
+> >      >>> > p2p-hackers@lists.zooko.com
+> >     <mailto:p2p-hackers@lists.zooko.com><mailto:
+> p2p-hackers@lists.zooko.com
+> >     <mailto:p2p-hackers@lists.zooko.com>>
+> >      >>> > http://lists.zooko.com/mailman/listinfo/p2p-hackers
+> >      >>>
+> >      >>>
+> >      >>>
+> >      >>>
+> >      >>> _______________________________________________
+> >      >>> p2p-hackers mailing list
+> >      >>> p2p-hackers@lists.zooko.com <mailto:p2p-hackers@lists.zooko.com
+> >
+> >      >>> http://lists.zooko.com/mailman/listinfo/p2p-hackers
+> >      >> _______________________________________________
+> >      >> p2p-hackers mailing list
+> >      >> p2p-hackers@lists.zooko.com <mailto:p2p-hackers@lists.zooko.com>
+> >      >> http://lists.zooko.com/mailman/listinfo/p2p-hackers
+> >      >
+> >      >
+> >      > _______________________________________________
+> >      > p2p-hackers mailing list
+> >      > p2p-hackers@lists.zooko.com <mailto:p2p-hackers@lists.zooko.com>
+> >      > http://lists.zooko.com/mailman/listinfo/p2p-hackers
+> >     _______________________________________________
+> >     p2p-hackers mailing list
+> >     p2p-hackers@lists.zooko.com <mailto:p2p-hackers@lists.zooko.com>
+> >     http://lists.zooko.com/mailman/listinfo/p2p-hackers
+> >
+> >
+> >
+> >
+> > --
+> > Pierre St Juste
+> >
+> >
+> >
+> > _______________________________________________
+> > p2p-hackers mailing list
+> > p2p-hackers@lists.zooko.com
+> > http://lists.zooko.com/mailman/listinfo/p2p-hackers
+> _______________________________________________
+> p2p-hackers mailing list
+> p2p-hackers@lists.zooko.com
+> http://lists.zooko.com/mailman/listinfo/p2p-hackers
+>
+
+
+
+-- 
+Dr. Renato J. Figueiredo
+Associate Professor
+ACIS Lab - ECE - University of Florida
+UF Site Director, Center for Autonomic Computing
+http://byron.acis.ufl.edu
+ph: 352-392-6430
+
+_______________________________________________
+p2p-hackers mailing list
+p2p-hackers@lists.zooko.com
+http://lists.zooko.com/mailman/listinfo/p2p-hackers
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

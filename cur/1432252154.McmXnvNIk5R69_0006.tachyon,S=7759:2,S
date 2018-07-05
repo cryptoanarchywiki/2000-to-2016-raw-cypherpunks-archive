@@ -1,0 +1,154 @@
+From owner-cypherpunks@al-qaeda.net  Thu Jun 14 02:25:54 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q5E6Lvi3002863
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 14 Jun 2012 02:21:57 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q5E6LvEA002862
+	for cypherpunks-outgoing; Thu, 14 Jun 2012 02:21:57 -0400
+Date: Thu, 14 Jun 2012 08:21:51 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: Re: [tahoe-dev] Resurrecting Mojo Nation
+Message-ID: <20120614062151.GE17120@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Brian Warner <warner@lothar.com> -----
+
+From: Brian Warner <warner@lothar.com>
+Date: Wed, 13 Jun 2012 13:00:02 -0700
+To: tahoe-dev@tahoe-lafs.org
+Subject: Re: [tahoe-dev] Resurrecting Mojo Nation
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6;
+	rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+On 6/9/12 9:07 PM, Jack Byer wrote:
+
+> Is it practical to go back to the original goal of MN instead of a
+> limited subset if the reasons for the project's failure are addressed?
+
+Great question!
+
+So, I wasn't at Mojo Nation (I was fascinated by the concept in 97 or 99
+or whenever it made a splash, but never worked there, and only joined
+its descendant AllMyData in 2005, many years after MN ran aground). But
+my understanding was that many of the following contributed to its
+failure:
+
+* overly ambitious scope, would have required an impossibly good
+  engineering and management team to implement everything
+* too much science needed inventing to make it work
+* real markets require diverse motivated players. MN users didn't bother
+  tweaking agent behaviors, so you didn't get diversity. Users were
+  accidentally encouraged to hoard Mojo (the client displayed your
+  balance like a game score, users sought to maximize that number more
+  than actually using it), so motivations were broken.
+* nodes were transient, so reliability was unpredictable
+
+For Tahoe, we reduced the scope, threw out the economic games, and
+narrowed the use-case to commercial grids and friendnets (where uptime
+is more predictable). Bittorrent did the same, reducing the scope to
+short-term transfers instead of long-term storage. Both have achieved
+their own smaller goals.
+
+> Now, ten years later, automated trading algorithms are common so
+> perhaps it would be possible for a network to use dynamic pricing to
+> allocate hard drive space, bandwidth, and CPU power.
+
+> Are there any fundamental reason why a system like Mojo Nation
+> couldn't work now that certain capabilities are available that weren't
+> a decade ago?
+
+I think Mojo Nation is still a promising idea, and I think it's got a
+better chance of working today than 15 years ago. Many of the challenges
+are still there, but yeah, some of them are easier to address:
+
+* overambition is still a big problem. Personally I'm trying to build
+  Tahoe up to the point where we can re-introduce MN ideas, but it'll be
+  a long road. Strive to break it into smaller pieces, make sure you can
+  tolerate missing parts (if you fail to make progress on component A,
+  are components B and C still usable?), develop some plausible
+  use-cases first, start with the simplest thing that could possibly
+  work, let the UI and user feedback drive the design
+
+* Bitcoin makes automated payment easier, for the tiny fraction of the
+  world that is willing to use it, but it's probably the right way to
+  go, and removes a big centralized engineering hassle (the MN bank). We
+  need some better/safer wallet-control protocols (you want your storage
+  node to have control over some small stash of BTC, and most of the
+  bitcoin clients I've seen are aimed at human-scale transactions), like
+  Purses in the Waterken/E/SES examples, but that's just engineering. I
+  think MN's extend-pairwise-credit amortization is still important,
+  since even with BTC's reduced friction (transaction fees) you don't
+  want to be shuffling pennies every few minutes.
+
+* measuring/predicting reliability of storage nodes is still an unsolved
+  (and possibly unsolveable) problem. You need servers to stick around
+  for a long period of time, otherwise repair costs will swamp your
+  bandwidth and leave you no room for real traffic. Needing long-term
+  servers interacts badly with adoption (you want to encourage
+  experimentation, folks who want to install it just to play around with
+  it should be able to do that quickly, but you can't afford to use them
+  as servers, since many of them will get bored and delete it or let it
+  break the next day, so they don't really get the full experience, so
+  they may not really be motivated to stick around). As a client you
+  need to distinguish between good servers and transient ones, so you
+  really want everyone to monitor and publish uptime data on each other,
+  but they could be lying, which gets you back into the reputation graph
+  thing. There's been a lot of work on reputation graphs (starting with
+  Raph Levien's Advogato, and motivated by EBay and Amazon), but I don't
+  know how much of it is buried in proprietary/closed codebases (since
+  it's easier to game a system when you have the source) vs being
+  available as an off-the-shelf library.
+
+* disk capacity and broadband speeds are faster. Unfortunately people
+  are creating more data than ever, and disk speeds (seek times) are
+  pretty flat. One metric is how long it takes to read out the full
+  contents of a disk, or how long it takes to copy a disk over your
+  internet connection: both numbers are kind of sobering (usually
+  measured in days or months). Home internet connections remain very
+  asymmetric, upload speeds are lousy. Disk prices are dropping, so
+  distributed storage has to compete with cheaper local storage, which
+  can be a hard sell.
+
+* do people really want remote storage? Why? One reason is to get access
+  from their data from elsewhere (sharing with friends, using it from
+  someone else's computer, publishing to the world). Another reason is
+  for backup. Both are handled pretty well by centralized solutions,
+  especially when that solution (e.g. Facebook, Flickr) comes with some
+  nice integrated display/edit/discovery/search tools for the data. A
+  distributed storage solution has to compete with the incumbents, and
+  many of the benefits of Tahoe/MojoNation-style storage aren't
+  compelling ("no SPOF" isn't exciting when Facebook never goes down,
+  "private" is not something a lot of those folks want or care about,
+  "cheap" is competing with free-as-in-eyeballs).
+
+* backup is a question of inspiring confidence. Random servers run by
+  strangers does not inspire confidence.
+
+
+Anyways, I think it's still a fun idea, but still big and difficult. I'd
+love to see someone charge ahead on it, but as a business I'd still
+consider it pretty risky.
+
+cheers,
+ -Brian
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

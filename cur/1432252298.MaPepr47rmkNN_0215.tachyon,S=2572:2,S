@@ -1,0 +1,64 @@
+From owner-cypherpunks@al-qaeda.net  Tue Oct 11 18:33:24 2011
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id p9BMROlB026171
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 11 Oct 2011 18:27:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1318372044;
+	bh=wKMyCLamNLO4JX07a+hDTmPkeB9U1TZJXDbyRSFYiN0=;
+	h=Message-ID:Date:From:MIME-Version:To:Subject:References:
+	 In-Reply-To:Content-Type:Content-Transfer-Encoding:Sender;
+	b=1kvusBesiRsiCBmcMthUOEzznTbSt8WAEppL6zvpMCViTpqRYgKP7CFT9bntyLnpD
+	 qnjAKaHkRncqJB96HRnHPrfQ/fcpPExuZMZltESUlts/f5PrRPXiiQx8N1gA9+4FHB
+	 JlUn4dtDubnnLRo+hF/WTYhgo1V21YVHD26Vgl9I=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id p9BMROEm026170
+	for cypherpunks-outgoing; Tue, 11 Oct 2011 18:27:24 -0400
+Message-ID: <4E94C2C9.6080009@littledystopia.net>
+Date: Tue, 11 Oct 2011 18:27:21 -0400
+From: Benjamin <bbrewer@littledystopia.net>
+User-Agent: Mozilla/5.0 (Windows NT 6.0; WOW64; rv:7.0.1) Gecko/20110929
+  Thunderbird/7.0.1
+MIME-Version: 1.0
+To: cypherpunks@al-qaeda.net
+Subject: Fwd: Re: Timer randomness
+References: <CACXcFmkRZoty80O_3hYiXDvKot-yziV_gt-LE9NORgshOLkaCA@mail.gmail.com>
+In-Reply-To: <CACXcFmkRZoty80O_3hYiXDvKot-yziV_gt-LE9NORgshOLkaCA@mail.gmail.com>
+X-Forwarded-Message-Id: <CACXcFmkRZoty80O_3hYiXDvKot-yziV_gt-LE9NORgshOLkaCA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+For those of you who read my prior forward:
+
+-------- Original Message --------
+Subject: 	Re: Timer randomness
+Date: 	Tue, 11 Oct 2011 14:36:55 +0800
+From: 	Sandy Harris <sandyinchina@gmail.com>
+To: 	Speculators <dc-stuff@dc-stuff.org>
+
+
+
+On Sun, Oct 2, 2011 at 11:24 AM, Sandy Harris<sandyinchina@gmail.com>  wrote:
+>  I have written a demon for Linux that gathers entropy from timer
+>  jitter and pushes it into random(4). There is working code and a
+>  PDF rationale document.
+>
+>  Comment and criticism solicited.
+>
+>  It is at: ftp://ftp.cs.sjtu.edu.cn:990/sandy/maxwell/
+
+Do not use any version earlier than today's. I just found and fixed
+and simple but nasty bug.
+
+Dumb, much? To combine two 16-bit items into one 32-bit word,
+I used:
+
+    x = (a<<16)&  b ;
+
+because of the AND, that always gives zero. Of course it has
+to be an OR.
+

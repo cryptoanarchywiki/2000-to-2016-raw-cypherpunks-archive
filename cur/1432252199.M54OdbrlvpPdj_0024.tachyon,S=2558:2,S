@@ -1,0 +1,56 @@
+From owner-cypherpunks@al-qaeda.net  Thu Dec 16 12:03:48 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (majordomo@localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.1/8.13.1/Debian-19) with ESMTP id iBGI3IP1002678
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Thu, 16 Dec 2004 12:03:18 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.1/8.13.1/Submit) id iBGI3I6O002677
+	for cypherpunks-outgoing; Thu, 16 Dec 2004 12:03:18 -0600
+To: cypherpunks@al-qaeda.net
+Subject: Re: Off-the-Record Messaging (IM plugin)
+Message-Id: <20041216181627.897F657E2C@finney.org>
+Date: Thu, 16 Dec 2004 10:16:27 -0800 (PST)
+From: hal@finney.org ("Hal Finney")
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+X-Keywords:                  
+X-UID: 15856
+Status: O
+Content-Length: 1614
+Lines: 32
+
+> Nikita Borisov and Ian Goldberg have released
+> Off-the-Record Messaging (http://www.xelerance.com/mirror/otr/),
+
+It looks like Ian Goldberg's site might be a more authoritative source,
+http://www.cypherpunks.ca/otr/ .
+
+One interesting feature is authentication + deniability.  You know who
+you are talking to, but afterwards anyone who captured a transcript can't
+prove who said it.  Usually we do authentication with digital signatures,
+but the problem is that binds you to what you say and it can be used
+against you afterwards.
+
+OTR does it by signing the key exchange which creates a MAC key for each
+direction.  (A MAC is a keyed hash which is then applied to each message.)
+Each message gets MAC'd and this way you know that the messages are
+authentic and untampered.
+
+This already protects you against your conversant; both of you know the
+MAC keys in each direction (one knows them in order to MAC new messages;
+the other knows them in order to verify the MAC), so each guy can
+forge messages created by the other guy and create a bogus transcript.
+That means that neither person can publish a transcript and credibly
+claim that it authentically represents what was said.
+
+Then, there's another trick: when you are through with them you publish
+your MAC keys, in the clear.  This does not compromise secrecy; all of
+the data is encrypted with a different key.  But it means that now, anyone
+could in retrospect forge a transcript showing you saying anything at all.
+And that of course means that no such transcript has any credibility in
+terms of providing cryptographic evidence of what you said.
+
+Hal
+

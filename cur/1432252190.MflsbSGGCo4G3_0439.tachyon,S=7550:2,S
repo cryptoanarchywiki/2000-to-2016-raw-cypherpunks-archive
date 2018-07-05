@@ -1,0 +1,185 @@
+From cypherpunks-bounces@cpunks.org  Mon Sep  9 02:14:15 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r896CkMR009108;
+	Mon, 9 Sep 2013 02:12:46 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r896C0L8009088
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Mon, 9 Sep 2013 02:12:02 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id B7F5A541F9C; Mon,  9 Sep 2013 08:11:59 +0200 (CEST)
+Date: Mon, 9 Sep 2013 08:11:59 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: [Cryptography] A Likely Story!
+Message-ID: <20130909061159.GW29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 5820
+Lines: 147
+
+----- Forwarded message from Peter Fairbrother <zenadsl6186@zen.co.uk> -----
+
+Date: Sun, 08 Sep 2013 16:20:40 +0100
+From: Peter Fairbrother <zenadsl6186@zen.co.uk>
+To: Cryptography Mailing List <cryptography@metzdowd.com>
+Subject: [Cryptography] A Likely Story!
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130704 Icedove/17.0.7
+
+This is just a wild story, It isn't true. If we cryptographers found
+it was true we would all be totally gobsmacked.
+
+The Beginning:
+
+Sometime in 2008 the NSA - the United States National Security Agency,
+who employ many times more mathematicians than anyone else does -
+discovered a new mathematical way to factorise big numbers better.
+
+It wasn't a huge advance, but it would be good enough for them to
+factorise several hundred 1024-bit-long numbers per month using some
+big computers they wanted to build.
+
+In the form of RSA public keys, these 1024-bit numbers were (and
+sometimes still are) used to generate the session keys which encrypt
+and protect internet traffic.
+
+A session key is the key which is used to encrypt the traffic between
+you and a website, using a normal cipher - it is a shared secret
+between you and the website.
+
+Setting up a shared secret session key, when the communications used
+to set it up may also be intercepted, is quite difficult and involves
+considerable tricky math. That's where RSA and factorising comes in.
+
+In 2008, when you saw a little padlock in your browser, the connection
+was almost always encrypted using a session key whose secrecy depends
+on the inability of anybody to factorise those 1024-bit RSA numbers.
+
+They change every few years, but usually each big website only uses
+one RSA key per country  - so when the NSA factorised just one of
+those RSA keys it could easily find the session keys for all the
+internet sessions that website had made in that country for a couple
+of years.
+
+Now the NSA had been collecting internet traffic for years, and when
+the big computers were built they would be able to see your past and
+present online banking, your secret medical history, the furlined
+handcuffs you bought online ..
+
+
+The Dilemma:
+
+So, did the NSA then go "Hooray, full steam ahead?" Not quite. The NSA
+has two somewhat conflicting missions: to be able to spy on people's
+communications, and to keep government communications secure.
+
+On the one hand, if they continued to recommend that government people
+use 1024-bit RSA they could be accused of failing their mission to
+protect government communications.
+
+On the other hand, if they told ordinary people not to use 1024-bit
+RSA, they could be accused of failing their mission to spy on people.
+
+What to do?
+
+
+
+Some Background:
+
+Instead of using 1024-bit RSA to set up session keys, people could use
+a different way, called ECDHE. That stands for elliptic curve Diffie
+Hellman (ephemeral), the relevant bit here being "elliptic curve".
+
+You can use any one of trillions of different elliptic curves,which
+should be chosen partly at random and partly so they are the right
+size and so on; but you can also start with some randomly-chosen
+numbers then work out a curve from those numbers. and you can use
+those random numbers to break the session key setup.
+
+The other parts are: starting from the curve, you can't in practice
+find the numbers, it's beyond the capabilities of the computers we
+have. So those if you keep those random numbers you started with
+secret, only you can break the ECDHE mechanism. Nobody else can.
+
+And the last part - it is convenient for everybody to use the same
+elliptic curve, or perhaps one or two curves for different purposes.
+So if you know the secret numbers for the curve, you can break
+everybody's key setup and get the secret session keys for all the
+traffic which uses those curves.
+
+
+The Solution:
+
+Make government people use ECDHE instead of RSA, but with the NSA's
+special backdoored elliptic curves. Ordinary people will follow suit.
+
+This solves both problems - when people change to the new system the
+NSA can still break their internet sessions, and government
+communications are safe from other people (although the NSA can break
+US government communications easily - but hey, that's the price of
+doing business, and we're the NSA, right?).
+
+Someone else might find the factoring improvement, but it is thought
+infeasible that someone else would be able to find the secret
+backdoor.
+
+
+"Hooray, full steam ahead!"
+
+
+That's the story.
+
+The rest is just details - maybe the NSA somehow got NIST to put their
+special backdoored curves into NIST FIPS 186-3 recommendations in
+2009, so people would use them rather than make up curves of their own
+- it is usual and convenient, but not strictly necessary, for ECDHE
+software to only be able too use a small selection of curves.
+
+Maybe they asked the US Congress for several billion in extra funding
+in the 2010 budget to run the RSA-breakers.
+
+Maybe they are building a new "data center" in Utah to use the session
+keys to decrypt the communications they have intercepted over the
+years.
+
+Maybe they put those special backdoored curves into Suite B, their
+official requirements for US Government secret and top secret
+communications.
+
+
+Or maybe they didn't. It's just a story, after all. The cryptography,
+while incomplete, is correct, and it may all seem plausible - but of
+course it isn't true.
+
+
+
+-- Peter Fairbrother
+_______________________________________________
+The cryptography mailing list
+cryptography@metzdowd.com
+http://www.metzdowd.com/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

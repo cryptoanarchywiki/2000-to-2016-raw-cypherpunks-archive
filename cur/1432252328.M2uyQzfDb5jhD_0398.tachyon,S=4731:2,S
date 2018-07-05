@@ -1,0 +1,110 @@
+From owner-cypherpunks@lne.com  Wed May 14 11:57:11 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h4EFv8t25619
+	for <rsw@jfet.org>; Wed, 14 May 2003 11:57:09 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h4EFbJno004908
+	for cypherpunks-goingout345; Wed, 14 May 2003 08:37:19 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Wed, 14 May 2003 16:34:23 +0100
+From: Adam Back <adam@cypherspace.org>
+To: cypherpunks@einstein.ssz.com
+Cc: Adam Back <adam@cypherspace.org>
+Subject: Re: what fields to hash with hashcash (Re: A Trial Balloon to
+  Ban Email?)
+Message-ID: <20030514163423.A9446287@exeter.ac.uk>
+References: <Pine.LNX.4.40.0305121022230.16578-100000@bolt.sonic.net>
+  <018801c31807$1f991670$0b01a8c0@whitestar>
+  <017f01c318e4$b0ff7e50$6701a8c0@JOSEPHAS>
+  <20030513045258.6B70910F75@rant-central.com>
+  <20030514062743.A9342491@exeter.ac.uk>
+  <20030514144934.GE16362@dreams.soze.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <20030514144934.GE16362@dreams.soze.net>; from
+  justin@soze.net on Wed, May 14, 2003 at 02:49:34PM +0000
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 3224
+Lines: 73
+
+On Wed, May 14, 2003 at 02:49:34PM +0000, Justin wrote:
+> Adam Back (2003-05-14 05:27Z) wrote:
+> > Well there are different things you could hash.  This simplest is just
+> > to hash the recipient address and the current time (to a day
+> > resolution).
+> > 
+> > The recipient looks at the token and knows it is addressed to him
+> > because it's his address.  He stores it in his double spend database
+> > and won't accept the same token twice.
+> 
+> This is just broken.
+> 
+> How do you know what address the sender was sending to?  You have no
+> reliable access to envelope to: addresses.
+
+Well the address the token was minted for is contined in the hashcash
+header, and the recipient knows what email addresses he accepts mail
+for.  To take your example:
+
+> Joe bcc's james@nowhere.net, politely generating a hashcash token over
+> james@nowhere.net and the mesID.  Nowhere.net expands that alias to
+> james.t.doe@treas.gov.  
+
+The sender as he Bcc'd james@nowhere.net thinks this the recipient's
+address, so it delivers to envelope address james@nowhere.net and for
+that delivery adds header:
+
+X-Hashcash: 0:030514:james@nowhere.net:b384c3cc66319383
+
+Then the .forward file forwards to james.t.doe@treas.gov, who reads
+his mail; his MUA sees that the message is to james@nowhere.net an
+address he reads mail for, checks the collision:
+
+% echo -n 0:030514:james@nowhere.net:b384c3cc66319383 | sha1
+000002e07c7aac5697396f41dbb277aee02f6517
+
+sees there are enough bits of collision, and if he hasn't seen this
+token before he accepts the mail.
+
+The message will also contain one hashcash header per to or cc
+recipient.  (Bcc recipients must be delivered separately because
+otherwise bcc semantics are lost -- other recipients should not learn
+from the hashcash headers that the bcc recipient received the mail).
+
+> Worse, even if there were a reliable mechanism, all it takes is one
+> loose cannon with an open mass-mail list and as long as it doesn't
+> delete whatever header (maybe delivered-to:, maybe something else) that
+> indicates the list was an envelope to: address, one hashcash token works
+> for one email to the entire list.
+
+I take it this comment is about mailing lists?  Mailing lists have to
+be treated separately.  The sender probably can't afford to create a
+token for each recipient.  (Also he doesn't know the recipient's
+addresses).  Mailing lists deal with spam with filtered versions of
+lists.
+
+> > After the validity period of a token has expired he can remove it from
+> > his double-psend database to avoid the database growing indefinately.
+> > (He can reject out-of-date mail based purely on it's date).
+> 
+> Isn't it simpler to use message IDs for replay detection?  No need to
+> look for replays using another mechanism when there's already one that
+> works fine, and that many people use for dup detection today.
+
+You have to cope with multiple hashcash headers when a mail has
+multiple recipients, Message-ID only suports one header.
+
+For USENET postings putting the hashcash token in the Message-ID can
+work because USENET uses the Message-ID to supress duplicates in it's
+flooding algorithm, and you could argue that there is just one
+recipient: USENET (or the cross-posted group list).
+
+Adam
+

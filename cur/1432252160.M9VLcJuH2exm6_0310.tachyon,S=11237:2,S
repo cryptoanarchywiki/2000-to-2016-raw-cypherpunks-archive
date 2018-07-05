@@ -1,0 +1,209 @@
+From cypherpunks-bounces@cpunks.org  Tue Aug  6 14:14:43 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r76IEen1018876;
+	Tue, 6 Aug 2013 14:14:41 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r76IDDLl018833
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Tue, 6 Aug 2013 14:13:15 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 7A795543E1C; Tue,  6 Aug 2013 20:13:13 +0200 (CEST)
+Date: Tue, 6 Aug 2013 20:13:13 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: Re: [liberationtech] CJDNS hype
+Message-ID: <20130806181313.GF29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+----- Forwarded message from Caleb James DeLisle <calebdelisle@lavabit.com> -----
+
+Date: Mon, 05 Aug 2013 14:55:22 -0400
+From: Caleb James DeLisle <calebdelisle@lavabit.com>
+To: Michael Rogers <michael@briarproject.org>
+Cc: liberationtech <liberationtech@lists.stanford.edu>
+Subject: Re: [liberationtech] CJDNS hype
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130623 Thunderbird/17.0.7
+Reply-To: liberationtech <liberationtech@lists.stanford.edu>
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Hello,
+
+On 08/05/2013 01:26 PM, Michael Rogers wrote:
+> Hi Caleb,
+> 
+> On 03/08/13 01:33, Caleb James DeLisle wrote:
+>> We could spend a long time discussing locally effective attacks on social networks and not be any closer to agreement.
+> 
+>> Instead I think it's worth asking who your attacker is... I find that when people don't stop to ask who the attacker is, what he wants and what resources he can apply on the attack, they end up with a default assumption that the attacker is everywhere and has infinite resources.....
+> 
+>> If you can give me a clear picture of the person who would use this attack, what they want from the attack and what resources they can bring to bear on the problem, I might be able to speak more to the issue.
+> 
+> Excellent point! The adversary I have in mind looks something like this:
+> 
+> * Can create adversarial nodes * Can persuade a limited proportion of users to make direct connections to adversarial nodes
+
+
+Infecting existing nodes is cheaper than knocking on doors asking people
+to connect to your evil nodes because your reputation doesn't suffer when
+the trick is discovered.
+
+
+> * Can co-ordinate the behaviour of all adversarial nodes * Can create low-latency, high-bandwidth connections between adversarial nodes
+
+It doesn't cover whether adversarial nodes are geographically
+dispersed or not. If they are then the the attack is significantly
+more expensive.
+
+> * Can't monitor or tamper with direct connections between non-adversarial nodes * Can't break standard crypto primitives * Aims to degrade the performance of cjdns for some or all users
+
+
+This is good from a capabilities standpoint but it doesn't cover
+motive which is hugely important to threat modeling. If someone has
+significant resources and their motive is "to cause mayhem", securing
+infrastructure against them is not really possible which is why
+traditional antiterrorism efforts seem incoherent.
+
+Causing localized network disruption is trivial in any ethernet,
+you simply answer ARP or DHCP packets. This is done by some malware
+but the motive is to carry out a MiTM attack and trick the victim
+into installing the malware binary which is disguised as an update.
+
+With cjdns you would not have the ability to MiTM so the same style
+attack would just cause a localized network outage.
+
+Another motive for localized DoS is to force users to an unencrypted
+channel. If every time the police use encrypted radio you jam it,
+they may be tricked into using unencrypted channels. The main defense
+against this is not to have an insecure backup.
+
+Also note that localized network outages can be caused by wire cutters
+and/or wifi jammers so a protocol attack may never be the most effective
+approach.
+
+
+> 
+>>> What heuristics do you have in mind?
+> 
+> 
+>> Given a set of known evil nodes, find the longest common route prefix(es) which contain all of the evil nodes. The last node along each common prefix is probably an edge.
+> 
+> How would you find a set of known evil nodes?
+
+cat-and-mouse games which is why I don't like this approach.
+You could send forwarded packets to nodes to whom you know a direct
+path and then send them a direct packet asking if they got the
+forwarded packet. You have to try it a few times to be sure the
+endpoint is not fooling you and there are still more ways to detect
+and work around it.
+
+It's not something I'm interested in ever implementing so it's not
+really worth further discussion.
+
+> 
+>>> People have put years of research effort into designing automatic Sybil defenses. The solutions they've come up with (SybilGuard, SybilLimit, Gatekeeper, SybilInfer) are complex and heavyweight, and they depend on assumptions about the structure of the social network - in other words they're not off-the-shelf solutions that you could just drop into cjdns later if the need arises.
+> 
+> 
+>> They operate under different constraints.
+> 
+> Could you elaborate on the differences? The systems I mentioned are designed for use in P2P networks where the edges are based on real-world social relationships and there's no central authority. Isn't that similar to the cjdns setting?
+
+
+I suppose it is because the same information can be derived, albeit
+with some complexity. In cjdns the path through the social network
+which is represented by any given node is expressed in the label so
+you get it for free.
+
+
+> 
+>> Everybody knows paths to those who are the numerically closest to themselves no matter the physical distance. Since addresses are spread randomly throughout the network, it means that anyone given node is directly reachable from a few nodes in each physical locality of the network.
+> 
+> Let's consider what happens as the network grows. On average, each node is pointed to by t routing table entries, where t is the size of a node's routing table. As the network grows, the t entries pointing to a given node will be spread more thinly across the network, unless we increase t in direct proportion to the number of nodes. Increasing t like that won't scale indefinitely, but for the sake of argument let's assume it will scale well enough for whatever size cjdns grows to.
+> 
+> So wherever we start from, there's some nearby node that knows a switching path to the destination. However, the length of that switching path will increase (on average) as the network grows. Even if we had a magic oracle that told us the shortest path to any destination, that path would still be longer on average in a large network than a small network.
+> 
+> Therefore if some proportion of the nodes are adversarial, the probability of hitting an adversarial node on the way from a randomly chosen source to a randomly chosen destination will increase as the network grows.
+
+
+It's all true but it's worth noting that in order to maintain the same
+proportion of evil nodes in a growing network, the evil net must grow
+as well  which brings us back to motive. If somebody is willing and able
+to invest a significant amount of money into setting up evil nodes then
+he must want something.
+
+It seems more realistic that the evil nodes would be compromised good
+nodes, an attack which which scales better.
+
+
+> 
+>>> If the attacker creates a Sybil region of social space that's larger than the non-Sybil region, and you try to ensure that your routing table contains a diverse sampling of the whole social space, then your routing table will tend to contain more Sybils than non-Sybils.
+> 
+> 
+>> The number of nodes and the way they're organized doesn't help. They're all behind a common label prefix (the path to the sybil edge) and that label prefix would cause them to be seen as a cluster.
+> 
+> Unfortunately it's not that simple. You're assuming that from the point of view of a given node, all the Sybils are behind a single edge (an attack edge, in SybilGuard terminology). But a given Sybil may be reachable via multiple attack edges. That's why SybilGuard and its descendents are so complex: before sampling the network to look for clusters, they have to ensure that there's only a single way for samples to reach each node.
+
+With cjdns there are multiple ways to reach a node but only one best
+way so that's mostly a solved problem.
+
+A non-adversarial way to look at this proposal is it attempts to avoid
+over-reliance on a single network link. Each edge would just appear as
+a link with a disproportionate number of nodes relying on it.
+
+
+You should check out the network, I think you'd find some interesting
+discussions in the dark irc network (irc.hypeirc.net) #hyperboria and
+#cjdns you might also find some people interested in helping with briar ;)
+
+Thanks,
+Caleb
+
+> 
+> Cheers, Michael
+> 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJR//UaAAoJECYAmptlsgnWHtMP/07m2NN2A+vk9isBn9eOzkyN
+GcjgJFL0VbcRQXU/sSQnzowcfoGT2bDy2IkscrjrIZYULbzJMGTurkfQK8+t/ZDH
+MVCouz6T/p8XVhPjQ8s/sq/JEIS3roV4sE/Qrt+P7vZp7Dv6vL69gAmf+OSTmgLY
+K8R1NY9BQD1wv16pwSUfyaccsoftxE3GytKCxMkW4jqa8ENUIDWEJ5qrsbesSTdy
+Tl0zaypC2Z1teud8G1plxV7sQvTQjjeV7+RXG39icTdkteyZQr8wcqo/69FUI6yb
+MXc2fBYLjnQjr6yJFSZPvhCnD8AR5TLwZC6Oi2x3TbYsBNXqjGxr73y/gRsX/SEv
+mHXWCzIa3MIWStVQZTDuM4edLi6ab2ZViMueospfs/sfptMiJkDpPjom8HvHgNZh
+9tjScCPZKiOqYU44DYNkCeNKKbuABukkEGh5S0KafSg0YiV4qrogLsfata2+AXjy
+joa3YydwcCkjZ2wa5A3LIZV8qwLFVdQ9Y+6dIMOe1xqBF7Cd/5KOtFMpglXU0pdF
+tIFxnILYc3B5w71wADDGnC69+iOde3Wv8NVgqmSplu94nq1UKQO4MzQB2hiiMgE9
+XG+xBNpqJH0MpTgoH0zSwcdaw5z2E94MQ+stSDi2Ll19pmoTQHIDKcSdnT6Q/UPP
+XUOK2ZWn3eP24w9F4Ao9
+=Pohw
+-----END PGP SIGNATURE-----
+
+--
+Liberationtech list is public and archives are searchable on Google. Too many emails? Unsubscribe, change to digest, or change password by emailing moderator at companys@stanford.edu or changing your settings at https://mailman.stanford.edu/mailman/listinfo/liberationtech
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

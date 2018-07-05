@@ -1,0 +1,160 @@
+From owner-cypherpunks@al-qaeda.net  Fri Dec  2 05:31:07 2011
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id pB2APkcS007596
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 2 Dec 2011 05:25:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1322821546;
+	bh=upmqi24EBsB3cd1Nhtu0D1/6iOm1DPr5cGru/zgUFdQ=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=gnWEGEDoFuWwvFB/olRBbZxN8Ru2OXvaku/NLMiWNlQtgwVuZAcyxn8GvkxE7BZQu
+	 rECuQ5l0cAtJuMX46wnTPS32oEGUo5w13LH/viBC0kFl+3MLnzQEFwQDD18WS9aScI
+	 37QknO/fgITr0FRFLkGcnx4bbNHt/Wo/udzjgLHM=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id pB2APkVj007595
+	for cypherpunks-outgoing; Fri, 2 Dec 2011 05:25:46 -0500
+Date: Fri, 2 Dec 2011 11:25:43 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Re: [cryptography] Digest comparison algorithm
+Message-ID: <20111202102543.GB31847@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4809
+Lines: 128
+
+----- Forwarded message from Solar Designer <solar@openwall.com> -----
+
+From: Solar Designer <solar@openwall.com>
+Date: Fri, 2 Dec 2011 10:25:48 +0400
+To: Marsh Ray <marsh@extendedsubset.com>
+Cc: cryptography@randombit.net
+Subject: Re: [cryptography] Digest comparison algorithm
+User-Agent: Mutt/1.4.2.3i
+
+On Thu, Dec 01, 2011 at 11:16:14PM -0600, Marsh Ray wrote:
+> On 12/01/2011 10:15 PM, Solar Designer wrote:
+> >http://whitepixel.zorinaq.com is probably the fastest single MD5 hash
+> >cracker.  This one tests 33.1 billion of passwords per second against a
+> >raw MD5 hash on 4 x AMD Radeon HD 5970 (8 GPUs).  Of course, the
+> >passwords being tested are not arbitrary (e.g., you can't just feed a
+> >wordlist to such a cracker), although the character set is configurable.
+> 
+> Where would you find a wordlist to keep it busy for more than a 
+> millisecond anyway?
+
+Not a plain wordlist, but wordlist + thousands or millions of rules.
+In fact, another tool implements that and achieves just slightly slower
+speeds: http://hashcat.net/oclhashcat-plus/
+
+> >1. Already discussed: implement constant-time comparisons by using XORs
+> >and ORs.
+> 
+> Talking with people who work closely with code generation convinced me 
+> that it's essential to examine the generated code. A compiler might 
+> recognize and exploit the opportunity for early loop termination.
+
+That's correct.
+
+> >2. Pass both strings to compare through an HMAC with a secret.  If one
+> >of the strings is a secret, then that secret may be reused for this HMAC
+> >as well.
+> 
+> http://www.isecpartners.com/blog/2011/2/18/double-hmac-verification.html
+
+Yes, Nate had pointed me at this one too.
+
+> >It'd be curious to explore how much entropy in the salt is needed for
+> >this.  Are 12-bit salts of traditional DES-based crypt(3) sufficient
+> >against remote timing attacks or not?
+> 
+> Let's assume crypt(3) returns a string which is compared against the 
+> expected value using strcmp(), and the salted hash is formed of hex 
+> digits like:
+> 
+>         %crypt(3)%SSS%HHHHHHHHHHHHHHHH%
+> 
+> SSS - 12 bit salt
+> HHH - 64 bit value from DES-like function
+
+OK, let's assume this.
+
+> (I know it uses $ and some form of base-64 in practice,
+
+For traditional DES-based crypt(3), it is 13 characters:
+
+sshhhhhhhhhhh
+
+There's no fixed part, just two characters of salt and 11 of hash (using
+a base-64 character set).
+
+But let's continue to assume your format for the string for now:
+
+> The attacker generates, say, 4096 random passwords and accurately times 
+> their evaluation. If there isn't too much jitter on the network (or the 
+> local machine), and his timing measurements are accurate enough, he will 
+> observe the timings grouping into two clusters:
+> 
+> 1. The largest cluster will represent the case where H[0] fails the 
+> comparison in strcmp().
+> 
+> 2. The second cluster will be on the order of a few machine cycles 
+> longer,  representing times that H[0] compared successfully.
+
+Yes.
+
+> This cluster will be approximately 256 times smaller than the first.
+
+Why not 16 times, if we use hex digits and assume a char-by-char strcmp()?
+
+> With 
+> 4096 trials the expectation is that this cluster will contain about 16 
+> members.
+
+256 with the above correction.
+
+> Now that he has a fuzzy idea of which passwords succeed in matching 
+> H[0], he evaluates this set for all 4096 possible salt values. There 
+> will be only one salt value that produces the same H[0] for all of these 
+> passwords.
+
+Did you mean there will _likely_ (but not necessarily) be only one such
+salt value?
+
+> So if his timing data is any good, he has learned the salt
+
+Yes, well done.
+
+> Conclusion: Salts placed at the beginning of the password string must 
+> contain sufficient entropy to resist offline brute-force in order to 
+> provide mitigation against timing attacks. It may be better to place 
+> them at the end of the password hash string.
+
+I don't see how placement of the salt in the encoded salt+hash string
+matters.  With either placement, the salt characters in the string will
+always match because crypt(3) is called with that stored salt.  The fact
+that with salt placement at the beginning strcmp() actually does compare
+those characters before it gets to comparing H[0] doesn't affect
+anything, as far as I can see, assuming a char-by-char strcmp().
+
+Am I missing something?
+
+Alexander
+_______________________________________________
+cryptography mailing list
+cryptography@randombit.net
+http://lists.randombit.net/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

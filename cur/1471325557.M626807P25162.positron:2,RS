@@ -1,0 +1,135 @@
+Return-path: <cypherpunks-bounces@cpunks.org>
+Envelope-to: rsw@positron.jfet.org
+Delivery-date: Mon, 15 Aug 2016 22:32:36 -0700
+Received: from antiproton.jfet.org ([209.141.47.85])
+	by positron.jfet.org with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.87)
+	(envelope-from <cypherpunks-bounces@cpunks.org>)
+	id 1bZWzL-0006XZ-U5
+	for rsw@positron.jfet.org; Mon, 15 Aug 2016 22:32:36 -0700
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u7G5NSdT025212;
+	Tue, 16 Aug 2016 01:23:29 -0400
+Received: from nskntmtas06p.mx.bigpond.com (nskntmtas06p.mx.bigpond.com
+ [61.9.168.152])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u7G5NOL7025208
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Tue, 16 Aug 2016 01:23:26 -0400
+Received: from nskntcmgw06p ([61.9.169.166]) by nskntmtas06p.mx.bigpond.com
+ with ESMTP
+ id <20160816052318.USBE2114.nskntmtas06p.mx.bigpond.com@nskntcmgw06p>
+ for <cypherpunks@cpunks.org>; Tue, 16 Aug 2016 05:23:18 +0000
+Received: from x220a02 ([121.219.120.214])
+ by nskntcmgw06p with BigPond Outbound
+ id XhPG1t00a4deYRV01hPHix; Tue, 16 Aug 2016 05:23:18 +0000
+X-Authority-Analysis: v=2.1 cv=H/EmuLsi c=1 sm=1 tr=0
+ a=qeHcsA3sFn9TgcaTR9u9eQ==:117 a=qeHcsA3sFn9TgcaTR9u9eQ==:17
+ a=L9H7d07YOLsA:10 a=9cW_t1CCXrUA:10 a=s5jvgZ67dGcA:10 a=IkcTkHD0fZMA:10
+ a=7z1cN_iqozsA:10 a=G2o-z9uMkzb6fcMpIIwA:9 a=QEXdDO2ut3YA:10
+Received: by x220a02 (Postfix, from userid 1000)
+ id 6DFC3260040; Tue, 16 Aug 2016 15:20:39 +1000 (AEST)
+Date: Tue, 16 Aug 2016 15:20:39 +1000
+From: Zenaan Harkness <zen@freedbms.net>
+To: CypherPunks <cypherpunks@cpunks.org>
+Subject: software - multiple version installs (any distro developers here?)
+Message-ID: <20160816052039.GF27807@x220-a02>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 82
+
+Any distro developers here? I just want to float an idea with a couple
+folks before throwing it out publicly - I'm sure this has been thunked
+before, but I'd like to see the libre unix software ecosystem move
+forward on this.
+
+Firstly, witness the glory of /opt :
+
+$ tree /opt -L 3
+/opt
+├── bin
+│   ├── eclipse -> ../e/eclipse/eclipse
+│   ├── libreoffice -> ../l/libreoffice/program/soffice
+│   ├── lo -> libreoffice
+│   ├── pg -> ../p/pg/pg  # hypothetical
+│   ├── soffice -> libreoffice
+│   └── vuze -> ../v/vuze/latest/vuze/vuze
+├── e
+│   ├── eclipse -> eclipse-4.6
+│   ├── eclipse-4.6
+│   │   ├── artifacts.xml
+│   │   ├── configuration
+│   │   ├── eclipse
+│   │   ├── icon.xpm
+│   │   ├── plugins
+│   │   └── readme
+│   └── eclipse-themes
+├── l
+│   ├── libreoffice -> libreoffice5.2
+│   ├── libreoffice4.8
+│   │   ├── CREDITS.fodt
+│   │   ├── help
+│   │   └── program
+│   └── libreoffice5.2
+│       ├── CREDITS.fodt
+│       ├── help
+│       ├── LICENSE
+│       ├── LICENSE.html
+│       ├── presets
+│       ├── program
+│       └── share
+├── p
+│   └── pg -> postgresql
+└── v
+    └── vuze
+        ├── 5600
+        └── latest -> 5600
+
+
+So we see this particular /opt/bin is a (admittedly small in my personal
+example) symlink farm, pointing out to various versions of various
+installed software.
+
+Also, it is structured like a Debian style package pool, with
+directories {a..z} to contain the various (manually in this case)
+installed software.
+
+With just a smattering of /etc/.. based meta files, .deb meta files and
+tool awareness, a distro could install all software in this form - say
+into /usr/a/.. /usr/b/.. etc., and /usr/lib, /usr/bin and /usr/share
+become symlink farms.
+
+The primary benefits I see are:
+ - simple multiple versions install of same software/ library/ etc
+ - different software can easily depend on different versions of
+   other software/ library/ etc, since everything can easily be parallel
+   installed
+ - existing Unixy standards can be more easily maintained (/bin /usr
+   /lib) with symlink farms
+ - end user can much more easily maintain their own custom /opt/bin to
+   override version preferences rather than learning arcane per distro
+   package incantations
+
+Main problems:
+ - it's a partially new install/ FHS system (though a multi-year
+   transition shouldn't be particularly painful afaict)
+ - really needs to become part of FHS, and therefore cross-distro
+ - therefore needs buy-in from >1 distro, or at least a non-intrusive
+   transition plan/ capability
+
+Does anyone foresee any other particular problems with this concept?
+

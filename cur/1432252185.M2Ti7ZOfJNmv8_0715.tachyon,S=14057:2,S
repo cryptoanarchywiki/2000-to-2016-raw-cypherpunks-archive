@@ -1,0 +1,396 @@
+From owner-cypherpunks-outgoing@ssz.com  Wed Sep 27 21:12:29 2000
+Received: from MIT.EDU (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.69.0.28])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id VAA06053
+	for <kwantam@positron.mit.edu>; Wed, 27 Sep 2000 21:12:29 -0400
+Received: from einstein.ssz.com by MIT.EDU with SMTP
+	id AA25520; Wed, 27 Sep 00 21:13:07 EDT
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id UAA19384
+	for cypherpunks-outgoing; Wed, 27 Sep 2000 20:08:41 -0500
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id UAA19371
+	for cypherpunks@ssz.com; Wed, 27 Sep 2000 20:08:38 -0500
+Received: from sirius.infonex.com (sirius.infonex.com [216.34.245.2])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id UAA19344
+	for <cpunks@ssz.com>; Wed, 27 Sep 2000 20:08:30 -0500
+Received: (from cpunks@localhost) by sirius.infonex.com (8.8.8/8.8.8) id RAA29017; Wed, 27 Sep 2000 17:46:11 -0700 (PDT)
+Received: from cyberpass.net (cyberpass.net [216.34.245.3]) by sirius.infonex.com (8.8.8/8.8.8) with ESMTP id RAA29012 for <cpunks@sirius.infonex.com>; Wed, 27 Sep 2000 17:46:07 -0700 (PDT)
+Received: from marine.sonic.net (marine.sonic.net [208.201.224.37]) by cyberpass.net (8.8.8/8.7.3) with SMTP id QAA27370 for <cypherpunks@cyberpass.net>; Wed, 27 Sep 2000 16:32:14 -0700 (PDT)
+Received: (qmail 14652 invoked from network); 27 Sep 2000 23:29:56 -0000
+Received: from buzz.sonic.net (208.201.224.78)
+  by marine.sonic.net with SMTP; 27 Sep 2000 23:29:56 -0000
+Received: from sonic.net (bolt [208.201.224.36])
+	by buzz.sonic.net (8.8.8/8.8.5) with ESMTP id QAA01520;
+	Wed, 27 Sep 2000 16:29:57 -0700
+X-Envelope-Info: <bear@bolt.sonic.net>
+Received: from localhost (bear@localhost) by sonic.net (8.8.8/8.7.3) with ESMTP id QAA30950; Wed, 27 Sep 2000 16:35:50 -0700
+Date: Wed, 27 Sep 2000 16:35:50 -0700 (PDT)
+From: Ray Dillinger <bear@sonic.net>
+To: cypherpunks@cyberpass.net
+Subject: CDR: PACKRAT development plan: Comments?
+Message-Id: <Pine.LNX.4.21.0009271628200.29979-100000@bolt.sonic.net>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-cypherpunks@ssz.com
+Precedence: bulk
+Reply-To: cypherpunks@ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Language: English, Russian, German
+Status: O
+Content-Length: 11727
+Lines: 351
+
+
+Okay, it's a long message.  I've been thinking 
+about/working on this, in my spare moments, and 
+I think I have a viable project here.  
+
+I'd like to ask people to look this over and 
+help me fill in the important bits I've doubtless 
+missed.  
+
+Also, general feedback would be appreciated -- 
+Is it useful?  Is it needed?  can any of these 
+functions be safely "offloaded" to other 
+software?
+
+		Ray
+
+
+
+
+         PACKRAT Development Plan 
+
+ (Protocol Advisor and Cryptographic Key Retention
+  and Administration Tool - 'Cause I'll go a mile 
+  for a good acronym. :-P )
+
+When completed, PACKRAT should provide a
+framework within which "Drop-in" modules will be
+able to work together to perform various tasks
+security. 
+
+The first kind of Drop-ins are Crypto Modules,
+which provide encryption and decryption services,
+(or hash functions or signatures), key generation,
+and a huge wealth of information about the
+characteristics of the keys and ciphertexts and the
+efficacy of various cryptanalytic attacks on the
+ciphers. 
+
+A second kind of Drop-In is a pseudorandom
+number generator or random number generator.
+Aside from supplying random or pseudo-random
+bits, These modules are expected to supply a wealth
+of information about the characteristics of the
+streams they generate and the efficacy of the best
+known cryptanalytic attacks. 
+
+Another kind of Drop-In is a Cryptanalytic Module,
+which automates as far as possible a cryptanalytic
+attack against ciphers produced by particular
+Programs (including Crypto Modules, RNG's, and
+PRNG's). This is needed to keep the designers of
+Crypto Modules honest, but strictly speaking, these
+are optional to the operation of PACKRAT. 
+
+A fourth kind of Drop-In is a Protocol Script. A
+Protocol Script specifies the steps involved in
+carrying out some protocol -- it will call for ciphers
+and/or (P)RNG's having particular characteristics,
+which PACKRAT will then select from among the
+crypto modules on the basis of information
+provided by the crypto modules and also on the
+basis of information about the other participants in
+the protocol. 
+
+PACKRAT sits on all these drop-ins, keeping a
+database of the ciphers, RNG's, PRNG's, keys,
+messages, identities, nyms, and cryptanalytic
+capabilities available to it. Each drop-in must be
+digitally signed, and PACKRAT will check these
+signatures. It will also keep addendums to its list of
+keys, correlated with notes about what each key has
+been used for. The user ought to be able to see a list
+of what information would be compromised by the
+loss of any particular key. 
+
+This necessitates a Logging function and assures that
+the application must allow logfiles to be kept. These
+logfiles must of course be encrypted if they exist,
+and people must be able to erase them, select what
+level of logging (and therefore correlation/ 
+introspection/ compromise reporting services) they 
+want. Also, PACKRAT must support a "log management"
+function that ages logged records, deleting old
+information according to the user's policy. 
+
+The author of any PACKRAT Plug-In may issue a
+decertification/insecurity notice, digitally signed.
+PACKRAT, on recieving such a notice, will check
+the signature and if it matches, warn the user about
+the changed security estimates on past protocols
+(producing logs of possible compromises with
+appropriate references to old logfiles and drawing
+the user's attention to them). It will also check the
+security of protocols now in progress, halting such
+protocols if the revised security level is unacceptable
+to the user. 
+
+Decertification notices against particular plugins
+may also be issued by other parties, but then it
+becomes a trust issue. Since it would be easy to
+mount a denial-of-service by issuing decertification
+notices against secure modules, such decertification
+notices must be backed up by cryptanalytic
+Drop-Ins. PACKRAT will initially respond
+according to its trust models for the issuer of the
+Decertification and the issuer of the affected module
+-- but if such test is feasible, it will test the
+cryptanalysis module to see if the Decertification
+should be believed. If the allegations in the
+Decertification turn out to be true, then the trust
+model of both the Decertification issuer and the
+Module issuer will be modified accordingly. 
+
+PACKRAT will operate, to the extent that its user
+allows it, operate partly on its own recognizance. It
+will for example cooperate with other PACKRATs
+to set up cryptanalytic tests against various ciphers
+based on its trust models, or to achieve secure and
+anonymous distribution of keys, decertifications,
+etc. It will send dummy messages as fodder for
+cryptanalytic tests, make choices of ciphers for
+protocols based on their advertised and tested
+characteristics, and proof itself against traffic
+analysis by selecting its communications partners
+and times of transmission randomly, while
+opportunistically sending or forwarding messages
+whenever the randomly chosen connections permit. 
+
+
+ Version 
+        Features 
+ 0.01 
+        Key Retention, Listing, and Expiry
+        functions 
+ 0.02 
+        Key decertification by user 
+ 0.03 
+        Ability to Attach Notes to keys. 
+ 0.04 
+        Transaction Logging (with selectable
+        logging levels) 
+ 0.05 
+        Identity and Pseudonym Database
+        integrated into key database. 
+ 0.06 
+        Explicit Trust and untrust levels set by
+        user may be applied to ID, Nym, & Key
+        data 
+ 0.07 
+        Configurable trust model integrated into
+        Identity/Nym/Key database. (entails
+        degree of trust in keys, identities, nyms
+        being reduced/enhanced by trust model) 
+ 0.08 
+        Crypto Modules recognized and queried. 
+ 0.09 
+        Crypto Capabilities database built and
+        referred to. 
+ 0.10 
+        Whatever outstanding need seems most
+        sorely lacking at this time. 
+ 0.11 
+        Crypto Module
+        certification/decertification by user. 
+ 0.12 
+        Crypto Modules made subject to trust
+        model established by user for their
+        authors. 
+ 0.13 
+        Encrypt/Decrypt primitives available for
+        protocols. (includes signatures & hashes)
+        "Encrypted filesystem" built into
+        PACKRAT database. 
+ 0.14 
+        PACKRATD constructed, a server that
+        handles communications on a particular
+        port. 
+ 0.15 
+        PACKRAT learns how to register itself
+        with PACKRATD, so that PACKRATD
+        can tell other PACKRATs where to find
+        it. 
+ 0.16 
+        PACKRATD learns how to respond
+        (encrypted) with the appropriate
+        address/port number when given an
+        (encrypted) query as to what port a
+        particular PACKRAT is running on. 
+ 0.17 
+        PACKRAT learns how to use
+        PACKRATD to find what address/port a
+        particular PACKRAT is running on
+        (hence where communications can be
+        directed). 
+ 0.18 
+        Basic Commo infrastructure completed.
+        (Transmit/Recieve primitives available to
+        Protocols via direct port-to-port after a
+        PACKRATD lookup) 
+ 0.19 
+        Protocol Modules recognized and
+        queried. 
+ 0.20 
+        Whatever outstanding needs seem most
+        sorely lacking at this time. 
+ 0.21 
+        Protocol Capabilities database built and
+        referred to. 
+ 0.22 
+        Protocol certification and decertification
+        by user. 
+ 0.23 
+        Protocols made subject to trust model. 
+ 0.24 
+        UI for selecting and using Protocols. (at
+        this point protocols will have to name the
+        exact crypto modules they need) 
+ 0.25 
+        UI for selecting Encrypt/Decrypt modules
+        for use with protocols that do not specify
+        them. 
+ 0.26 
+        Protocol Scripts enabled to select Crypto
+        Modules on the basis of advertised
+        characteristics. 
+ 0.27 
+        Logfiles, and Databases of keys, identies
+        and nyms, encrypted if a suitable crypto
+        module exists. THIS IS THE FIRST
+        USEFUL VERSION. 
+ 0.28 
+        Secure Erasure primitive available to
+        protocols. 
+ 0.29 
+        Logfiles, and Databases of keys, identies
+        and nyms, are secure-erased and
+        re-encrypted automatically if key or
+        encryption module is decertified. 
+ 0.30 
+        Fix whatever seems to need it worst,
+        release first publicly available version. 
+ 0.31 
+        PACKRATD learns to store and forward
+        and take messages, making a new commo
+        protocol available for PACKRATs;
+        Asynchronous Transmit. 
+ 0.32 
+        Protocols able to specify in Transmit
+        actions whether Asynchronous Transmit
+        is good enough for their purposes.
+        Answer may change depending on time
+        constraints. 
+ 0.33 
+        Introduce User-Defined Primitives (by
+        "subprotocols" that indicate which
+        primitive they perform). 
+ 0.34 
+        Protocols able to select subprotocols to
+        perfom on the basis of advertised
+        characteristics of those subprotocols. 
+ 0.35 
+        Decertification/Expiry of all plugins and
+        keys issuable and honored on signature
+        verification. 
+ 0.36 
+        Cryptanalytic Modules recognized and
+        queried 
+ 0.37 
+        Database of Cryptanalytic capabilities
+        built 
+ 0.38 
+        UI for selecting cryptanalyses to test
+        against logged messages. 
+ 0.39 
+        Decertifications based on cryptanalytic
+        modules issuable and honored. 
+ 0.40 
+        Fix whatever seems most broken at this
+        time and package the second publicly
+        available release. 
+ 0.41 
+        Automatic testing of cryptanalyses based
+        on trust model, stakes, and feasibility. 
+ 0.42 
+        Plug-Ins with "Designated Decertifiers"
+        issuable. Trust model updated. 
+ 0.43 
+        Decertifications issued by "Designated
+        Decertifiers" selected by author issuable
+        and honored. 
+ 0.44 
+        PACKRATD learns to ask PACKRAT for
+        decertifications. 
+ 0.45 
+        PACKRAT learns to answer PACKRATD
+        about decertifications. 
+ 0.46 
+        PACKRATD learns to maintain a
+        decertification database. 
+ 0.47 
+        PACKRATD learns to propagate
+        decertifications like news articles. 
+ 0.48 
+        PACKRAT Learns how to ask
+        PACKRATD for decertifications 
+ 0.49 
+        PACKRATD Learns how to respond to
+        PACKRATD about decertifications. 
+ 0.50 
+        PACKRAT Learns how to update
+        decertification database (subject to trust
+        model) from PACKRATD. 
+ 0.51 
+        Fix whatever seems to be most pressing
+        need at this time - make publicly available
+        version. 
+ 0.52 
+        PACKRATD learns how to cooperate in
+        cryptanalyses to make distributed tests of
+        crypto modules 
+ 0.53 
+        PACKRAT learns to exchange keys
+        against need 
+ 0.54 
+        PACKRATD learns to exchange keys
+        against need 
+ 0.55 
+        PACKRAT and PACKRATD are
+        configurably hardened against traffic
+        analysis. There is a tradeoff in efficiency
+        and wasted bandwidth. 
+ 0.56 
+        Trust model and Key/Nym DB updated to
+        allow PACKRAT to identify nodes which
+        help or hinder hardening against traffic
+        analysis. 
+ 0.57 
+        PACKRAT introduced to SENDMAIL.
+        "send email" primitive available to
+        protocols. 
+ 0.58 
+        PROCMAIL introduced to PACKRAT.
+        "Receive email" primitive available to
+        protocols with proper .procmailrc. 
+ 0.59 
+        Trust database updated to include mail
+        servers. 
+ 0.60 
+        fix whatever outstanding needs seem
+        worst at this time. Make another publicly
+        available version.
+

@@ -1,0 +1,199 @@
+From owner-cypherpunks@jfet.org  Fri Jan 27 02:47:29 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.5/8.13.5/Debian-3) with ESMTP id k0R7lLjC027461
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 27 Jan 2006 02:47:21 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.5/8.13.5/Submit) id k0R7lLGF027460
+	for cypherpunks-outgoing; Fri, 27 Jan 2006 02:47:21 -0500
+Date: Fri, 27 Jan 2006 08:47:19 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@jfet.org
+Subject: [bear@sonic.net: Re: thoughts on one time pads]
+Message-ID: <20060127074719.GU2301@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.5.9i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 7591
+Lines: 172
+
+----- Forwarded message from bear <bear@sonic.net> -----
+
+From: bear <bear@sonic.net>
+Date: Thu, 26 Jan 2006 18:09:52 -0800 (PST)
+To: "Travis H." <solinym@gmail.com>
+Cc: cryptography@metzdowd.com
+Subject: Re: thoughts on one time pads
+
+
+
+On Thu, 26 Jan 2006, Travis H. wrote:
+
+> For example, you may have occasional physical meetings with a good
+> friend, colleague, family member, or former co-worker.  Let's say
+> you see them once every few years, maybe at a conference or a
+> wedding or a funeral or some other occasion.  At such times, you
+> could easily hand them a CD-ROM or USB flash drive full of key
+> material.  Then, you could use that pad to encrypt messages to them
+> until the next time you meet.  Let's say you send them ten 1kB
+> messages per year.  Then a $1 CD-ROM would hold enough data for
+> 70000 years of communication!  Heck, I could put the software on the
+> image and make a dozen to keep with me, handing them out to new
+> acquaintances as a sort of preemptive secure channel.
+
+It's far easier and less error-prone to hand them a CD-ROM
+full of symmetric keys indexed by date.
+
+The problem is that most people will not take the care needed
+to properly use a one-time pad.  For text communications like
+this forum, they're great, and a (relatively) small amount of
+keying material, as you suggest, will last for many years.
+
+But modern applications are concerned with communicating *DATA*,
+not original text; someone on the system is going to want to
+send their buddy a 30-minute video of the professor explaining
+a sticky point to the class, and where is your keying material
+going then?  He wants to be ignorant of the details of the
+cryptosystem; he just hits "secure send" and waits for magic
+to happen.  Or if not a 30-minute video, then the last six
+months of account records for the west coast division of the
+company, or a nicely formatted document in a word processor
+format that uses up a megabyte or two per page, or ...
+whatever.  The OTP is nice for just plain text, but the more
+bits a format consumes, the less useful it becomes.  And
+fewer and fewer people even understand how much or how
+little bandwidth something is; they think in terms of "human
+bandwidth", the number of seconds or minutes of attention
+required to read or listen to or watch something.
+
+An OTP, as far as I'm concerned, makes a really good system,
+but you have to respect its limits.  One of those limits is
+a low-bandwidth medium like text-only messages, and in the
+modern world that qualifies as "specialized."
+
+Given a low-bandwidth medium, and indexing keying material
+into daily chunks to prevent a system failure from resulting
+in pad reuse, you get 600 MB on a CD-ROM.  Say you want a
+century of secure communications, so you divide it into 8-
+kilobyte chunks -- each day you can send 8 kilobytes and
+he can send 8 kilobytes.  (Note that DVD-ROMs are better).
+
+That gives you a little over 100 years (read, "all you're likely
+to need, barring catastrophic medical advances,") of a very
+secure low-bandwidth channel.
+
+Of course, the obvious application for this OTP material,
+other than text messaging itself, is to use it for key
+distribution.
+
+				Bear
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+>Bruce acknowleges this by saying "[t]he exceptions to this are
+>generally in specialized situations where simple key management is a
+>solvable problem and the security requirement is timeshifting."  He
+>then dismisses it by saying "[o]ne-time pads are useless for all but
+>very specialized applications, primarily historical and non-computer."
+>
+>Excuse me?  This would in fact be a _perfect_ way to distribute key
+>material for _other_ cryptosystems, such as PGP, SSH, IPSec, openvpn,
+>gaim-encryption etc. etc.  You see, he's right in that the key
+>distribution problem is the hardest problem for most computer
+>cryptosystems.  So the OTP system I described here is the perfect
+>complement for those systems; it gives them a huge tug on their
+>bootstraps, gets them running on their own power.
+>
+>I'm not sure it is even limited to this use case.  For example, before
+>a ship sets out to sea, you could load it up with enough key material
+>to last a few millenia.  How much key material could a courier carry?
+>I bet it's a lot.  As they say, "never underestimate the bandwidth of
+>a station wagon full of tapes".  And don't embassies have diplomatic
+>pouches that get taken to them and such?
+>
+>So my questions to you are:
+>
+>1) Do you agree with my assessment?  If so, why has every crypto
+>expert I've seen poo-pooed the idea?
+>
+>2) Assuming my use case, what kind of attacks should I worry about?
+>For example, he might leave the CD sitting around somewhere before
+>putting it in his computer.  If it sits around on CD, physical access
+>to it would compromise past and future communications.  If he copies
+>it to flash or magnetic media, then destroys the CD, we can
+>incrementally destroy the pad as it is used, but we have to worry
+>about data remanence.
+>
+>3) How should one combine OTP with another conventional encryption
+>method, so that if the pad is copied, we still have conventional
+>cipher protection?  In this manner, one could use the same system for
+>different use cases; one could, for example, mail the pad, or leave it
+>with a third party for the recipient to pick up, and you
+>opportunistically theoretical security if the opponent doesn't get it,
+>and you get empirical (conventional) security if they do.
+>
+>4) For authentication, it is simple to get excellent results from an
+>OTP.  You simply send n bytes of the OTP, which an attacker has a
+>2^-8n chance in guessing.  How do we ensure message integrity?  Is it
+>enough to include a checksum that is encrypted with the pad?  Does it
+>depend on our method of encipherment?  Assuming the encipherment is
+>XOR, is a CRC sufficient, or can one flip bits in the message and CRC
+>field so as to cancel each other?  If so, how should we compute a MIC?
+> Just SHA-1, and include that right after the plaintext (that is, we
+>encrypt the MIC so as to not reveal a preimage if SHA-1 is found to be
+>invertible)?
+>
+>5) How should one decouple message lengths from plaintext lengths?
+>
+>6) How should one detect and recover from lost, reordered, or partial
+messages?
+>
+>All I've got to say is, I'm on this like stink on doo-doo.  Being the
+>thorough, methodical, paranoid person I am, I will be grateful for any
+>pointers to prior work and thinking in this area.  I recall Jim Choate
+>from the Austin cypherpunks saying he was working on a OTP system, but
+>never heard any more about it (let's not discuss him though please,
+>this thread is about one time pads).
+>--
+>"The generation of random numbers is too important to be left to chance."
+>  -- Robert R. Coveyou -><- http://www.lightconsulting.com/~travis/
+>GPG fingerprint: 50A1 15C5 A9DE 23B9 ED98 C93E 38E9 204A 94C2 641B
+>
+>---------------------------------------------------------------------
+>The Cryptography Mailing List
+>Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+>
+>
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820            http://www.ativel.com
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+
+[demime 1.01d removed an attachment of type application/pgp-signature which had a name of signature.asc]
+

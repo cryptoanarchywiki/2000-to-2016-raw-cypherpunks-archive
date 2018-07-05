@@ -1,0 +1,76 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Thu Aug 15 21:56:00 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7G1u0l12713
+	for <rsw@opamp.org>; Thu, 15 Aug 2002 21:56:00 -0400
+Received: from lion.ninthwonder.com (lion.ninthwonder.com [151.199.66.147])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id VAA19829
+	for <rsw@mit.edu>; Thu, 15 Aug 2002 21:55:59 -0400 (EDT)
+Received: by lion.ninthwonder.com (Postfix, from userid 96)
+	id 829CD3071D; Thu, 15 Aug 2002 21:52:02 -0400 (EDT)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 7269230712
+	for <cryptography@wasabisystems.com>; Thu, 15 Aug 2002 21:52:01 -0400 (EDT)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 1EFDDD97CA; Thu, 15 Aug 2002 21:52:01 -0400 (EDT)
+Received: from www.aarg.net (www.aarg.net [206.101.74.70])
+	by lion.ninthwonder.com (Postfix) with ESMTP id D41F930706
+	for <cryptography@wasabisystems.com>; Thu, 15 Aug 2002 18:26:25 -0400 (EDT)
+Received: from www.aarg.net (IDENT:mix@localhost.localdomain [127.0.0.1])
+	by www.aarg.net (8.12.3/8.12.3) with ESMTP id g7FMQKrm001141
+	(version=TLSv1/SSLv3 cipher=EDH-RSA-DES-CBC3-SHA bits=168 verify=NO);
+	Thu, 15 Aug 2002 15:26:20 -0700
+Received: (from mix@localhost)
+	by www.aarg.net (8.12.3/8.12.1/Submit) id g7FMQKeb001138;
+	Thu, 15 Aug 2002 15:26:20 -0700
+Date: Thu, 15 Aug 2002 15:26:20 -0700
+From: AARG!Anonymous <remailer@aarg.net>
+Comments: This message did not originate from the Sender address above.
+	It was remailed automatically by anonymizing remailer software.
+	Please report problems or inappropriate use to the
+	remailer administrator at <abuse@aarg.net>.
+To: cypherpunks@lne.com, cryptography@wasabisystems.com
+Subject: Re: TCPA not virtualizable during ownership change
+Message-ID: <1e00f837f981a7b306e92744e165af93@aarg.net>
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 2072
+Lines: 34
+
+Basically I agree with Adam's analysis.  At this point I think he
+understands the spec equally as well as I do.  He has a good point
+about the Privacy CA key being another security weakness that could
+break the whole system.  It would be good to consider how exactly that
+problem could be eliminated using more sophisticated crypto.  Keep in
+mind that there is a need to be able to revoke Endorsement Certificates
+if it is somehow discovered that a TPM has been cracked or is bogus.
+I'm not sure that would be possible with straight Chaum blinding or
+Brands credentials.  I would perhaps look at Group Signature schemes;
+there is one with efficient revocation being presented at Crypto 02.
+These involve a TTP but he can't forge credentials, just link identity
+keys to endorsement keys (in TCPA terms).  Any system which allows for
+revocation must have such linkability, right?
+
+As for Joe Ashwood's analysis, I think he is getting confused between the
+endorsement key, endorsement certificate, and endorsement credentials.
+The first is the key pair created on the TPM.  The terms PUBEK and PRIVEK
+are used to refer to the public and private parts of the endorsement
+key.  The endorsement certificate is an X.509 certificate issued on the
+endorsement key by the manufacturer.  The manufacturer is also called
+the TPM Entity or TPME.  The endorsement credential is the same as the
+endorsement certificate, but considered as an abstract data structure
+rather than as a specific embodiment.
+
+The PRIVEK never leaves the chip.  The PUBEK does, but it is considered
+sensitive because it is a de facto unique identifier for the system,
+like the Intel processor serial number which caused such controversy
+a few years ago.  The endorsement certificate holds the PUBEK value
+(in the SubjectPublicKeyInfo field) and so is equally a de facto unique
+identifier, hence it is also not too widely shown.
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

@@ -1,0 +1,133 @@
+From cypherpunks-bounces@cpunks.org  Sat Aug 31 11:35:25 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r7VFYO7J021385;
+	Sat, 31 Aug 2013 11:34:29 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r7VFYF1I021373
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Sat, 31 Aug 2013 11:34:18 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id B8778543E31; Sat, 31 Aug 2013 17:34:14 +0200 (CEST)
+Date: Sat, 31 Aug 2013 17:34:14 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is,
+        Liberation Technologies <liberationtech@mailman.stanford.edu>
+Subject: [tahoe-dev] reproducible builds for Tahoe-LAFS: where do we start?
+Message-ID: <20130831153414.GE29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by antiproton.jfet.org id
+ r7VFYF1I021373
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 3853
+Lines: 91
+
+----- Forwarded message from Zooko O'Whielacronx <zookog@gmail.com> -----
+
+Date: Sat, 31 Aug 2013 14:12:07 +0000
+From: Zooko O'Whielacronx <zookog@gmail.com>
+To: tahoe-dev <tahoe-dev@tahoe-lafs.org>
+Subject: [tahoe-dev] reproducible builds for Tahoe-LAFS: where do we start?
+
+Folks:
+
+Here's some recent news:
+
+http://m.washingtonpost.com/world/national-security/us-spy-agencies-mounted-231-offensive-cyber-operations-in-2011-documents-show/2013/08/30/d090a6ae-119e-11e3-b4cb-fd7ce041d814_story.html
+
+That article says that the U.S. espionage agencies have
+surreptitiously installed sophisticated malware on tens of thousands
+of remote machines, and have plans to increase that number into the
+millions.
+
+It is important to remember that while the U.S. espionage
+establishment is the one that is currently having its activities and
+plans exposed, it is not the only one of its kind. It is safe to
+assume that there are many other organizations with similar
+capabilities engaged in similar activities. It is also likely that
+some of those groups are engaged not in warfare but in industrial
+espionage or other kinds of theft or sabotage.
+
+In this modern world, it would be very useful if you could check
+whether the binaries that you are running are the same as the binaries
+that other people are running that were ostensibly built from the same
+source code.
+
+That way, implanted malware would be more likely to be exposed. This
+is the idea of "reproducible builds", as championed by Tor ¹, Bitcoin
+², and Debian ³. LWN.net recently had a nice overview article about
+this: ⁴.
+
+Now: how do we start? We have a trac ticket:
+
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/2057# reproducible builds
+
+But I don't understand what the next step on the path to really
+protecting users. The situation we're considering here is that a user
+is installing Tahoe-LAFS, for example by running "sudo apt-get install
+tahoe-lafs" on Debian, and the computer that was used to build the
+tahoe-lafs Debian package had malware running on it, that inserted a
+backdoor into the tahoe-lafs Debian package. How can we help users to
+defend against that?
+
+There are lots of other packagers which provide installable versions
+of Tahoe-LAFS to their users. For example, the "pkgsrc/NetBSD" system
+⁵, whose Tahoe-LAFS package is maintained by Greg Troxel, who reads
+this mailing list.
+
+If you click on the big friendly blue "Download Tahoe-LAFS" button on
+the front page of https://Tahoe-LAFS.org, it takes you to a menu of
+packages provided by different free-and-open-source operating systems.
+
+One thing that worries me about this issue is that it is one of those
+things were different open source projects can reasonably assume that
+it is Someone Else's Problem to fix this. I've often seen this: when
+there is an issue that spans multiple open source projects, that it is
+hard to make progress on that issue, since every open source project
+has a theory of how it ought to be fixed by some other open source
+project taking responsibility for it.
+
+So what can we do to push on this issue now?
+
+Regards,
+
+Zooko
+
+¹ https://blog.torproject.org/blog/deterministic-builds-part-one-cyberwar-and-global-compromise
+
+² https://en.bitcoin.it/wiki/Release_process
+
+³ https://wiki.debian.org/ReproducibleBuilds
+
+⁴ http://lwn.net/Articles/564263/
+
+⁵ ftp://ftp.netbsd.org/pub/pkgsrc/current/pkgsrc/filesystems/tahoe-lafs/README.html
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

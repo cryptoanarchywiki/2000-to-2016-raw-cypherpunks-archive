@@ -1,0 +1,156 @@
+From owner-cypherpunks@Algebra.COM  Wed Oct 24 10:42:59 2001
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.72.0.53])
+	by positron.mit.edu (8.11.6/8.9.3) with ESMTP id f9OEgwj23667
+	for <kwantam@positron.mit.edu>; Wed, 24 Oct 2001 10:42:58 -0400
+Received: from ak47.algebra.com (ak47.algebra.com [208.233.99.160])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id KAA11990
+	for <rsw@mit.edu>; Wed, 24 Oct 2001 10:42:49 -0400 (EDT)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f9OEVGH15728
+	for cypherpunks-outgoing; Wed, 24 Oct 2001 09:31:16 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (dns.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f9OEV4015705
+	for <cypherpunks@algebra.com>; Wed, 24 Oct 2001 09:31:05 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id f9OEUvh22008
+	for cypherpunks@algebra.com; Wed, 24 Oct 2001 07:30:57 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id f9OESO021653
+	for cypherpunks-goingout; Wed, 24 Oct 2001 07:28:24 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: 24 Oct 2001 03:07:35 -0000
+Message-ID: <20011024030735.733.qmail@sidereal.kz>
+From: "Dr. Evil" <drevil@sidereal.kz>
+To: cypherpunks@lne.com
+In-reply-to: <5.0.2.1.1.20011023085022.03235620@idiom.com> (message from
+  Bill Stewart on Tue, 23 Oct 2001 09:07:47 -0700)
+Old-Subject: Re: openbsd encrypted fs
+References: <20011023014507.4141.qmail@sidereal.kz>
+  <5.0.2.1.1.20011023085022.03235620@idiom.com>
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Re: openbsd encrypted fs
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+X-spam: 0 
+Status: O
+Content-Length: 5847
+Lines: 110
+
+
+> > > > vnconfig -ck svnd0 diskimage
+> 
+> I don't have a BSD system around to check -
+> what does this approach do?
+
+It creates an loop encrypted loopback FS.
+
+> > > Anyway, for an OS which prides itself on built-in crypto,
+> > > why do we have to mess around with loopback?  ...
+> >Can you describe a scenario under which an encrypted fs is valuable enough
+> >to justify typing one command, but not two?  OpenBSD's target audience is
+> >not exactly clueless newbies.
+> >Or is speed so important that you'd sacrifice security?  Any encrypted fs
+> >will take a performance hit; I think you'll find loopback overhead is
+> >insignificant next to the crypto.
+
+I tested it out and it was about 200% slower than normal, which is not
+a problem, in my opinion.  It's hard to believe that the latency came
+from the encryption, because the encryption operation is probably not
+much more computational than the checksum operation, whereas having to
+write to two FSes at the same time involves all kinds of OS layers and
+lots of latency.
+
+> Is Dr. Evil's concern with loopback just the speed?
+> (Plus the ugly minimal user interface, which is a job for a script.)
+> Machines are enough faster these days that I'd think the
+> only places that's a big hit, other than database apps,
+> are swap space, and you can mostly fix that by buying enough RAM.
+
+No, it has nothing to do with speed.  Machines are plenty fast.  This
+is just a kludgy way to do this, and the last time I tried it, I got
+kernel panics within a day or so of uptime.  Not acceptable,
+obviously.  Anyway, the problem is that vnconfig creates a raw disk
+partition, and then you have to put an FS on top of that, so vnconfig
+has no way of knowing if you entered the password correctly or not,
+and basically this method just sucks.  My file system already has
+features such as file ownership, directories, file names, and
+checksums.  I don't need to use some hacked feature to get those
+features to work.  How is encryption any different from those other
+features?  Answer: it isn't.  It should just be there.
+
+> >Is booting from an encrypted fs ever useful?  Use read-only media if
+> >tampering is a concern.  Configure and mount other encrypted filesystems
+> >from /etc/rc.  If you can install and maintain OpenBSD, you can manage
+
+Look, how can you not understand this?  Isn't this the cypherpunks
+list we're on here?  You might as well ask, "is encrypting my
+phonecall to grannie ever useful?"  If I have a choice between
+encrypting and not encrypting, why would I not choose encrypting?
+Surely you can appreciate that a software-only solution to
+tamper-resistance might have some usefulness?  Surely you can
+understand that, given a choice between booting from a CD and booting
+from hard disk, it might be an enormous pain to boot from CD all the
+time, and CDs are far less tamper-resistant than encrypted disk?
+Surely you can understand that there might be some config files in
+/etc that contain valuable information in some circumstances?  Or
+perhaps a user wants to make sure that it cannot be proved that a
+certain application or kernel mod is installed?  With the right kind
+of boot loader and encrypted FS, you could conceal which OS is even
+being run.
+
+Here's one of the biggest security tool design falacies of all time,
+which you have fallen into: "Off the top of my head, I can't think of
+a threat model for this configuration option, so no one needs it, so
+I'll hard-code this limitation into my tool.  Why would anyone want to
+conceal which OS he is running?"  There are more threat models than
+you or I can possibly imagine, so it is horrificly bad to design use
+contstraints into your security tools architecture.  But very few
+people understand this.
+
+> If you've got applications that insist on putting data in /etc or /var,
+> or for log files in general, you have to be careful about the order the
+> system starts in.  And if you're worried about people seeing your config files
+> that might show who you communicate with, you could go paranoid about this.
+> IPSEC secrets may be a concern, if stealing/cloning the disk lets someone
+> forge your identity.
+
+Right, thank you, someone understands this.  Imagine a laptop with VPN
+software and config on it, for instance.
+
+> >It's worth noting their primary goal is network security, not crypto.
+> >Rubber hoses don't factor significantly in their threat model.
+
+Network security is problem #1 for most servers, but there are a
+hundred other problems behind it, and physical security is somewhere
+high up there.  Let's put it this way: Let's say you have a DB which
+stores 100k credit card numbers.  This is not uncommon in e-commerce.
+Stolen credit card numbers have a value of about $5 each on the black
+market I am told.  Suddenly you have data on the machine which are
+worth $500k.  Hmm, do you have armed guards on duty 24 hours a day to
+protect this $500k asset?  Where does one find armed guards who can be
+trusted?  Do you want to spend the $200k/year to hire enough armed
+guards for 24hour coverage?  Where does one find armed guards in
+countries which don't allow arms?  In Singapore do you hire kung fu
+masters to protect your $500k machine?  The answer to all of this is
+basically "duh, why don't we encrypt the disk?"
+
+> Laptop theft belongs in *most* security models.
+
+Yeah, tell that to the MI5 or whichever British branch it is that has
+lost hundreds of laptops.  I used to work at a corporation, and one
+night, all the laptops in the executive offices were stolen, and
+people still say, "you don't need FS encryption."  I don't understand
+it.  It's an easy feature, and there's basically no performance
+penalty, so why not have it?  "Encryption everywhere" is a good idea,
+and OpenBSD should adopt it.
+
+I can't believe that some people on this list think that storing data
+in an encrypted format is pointless.
+

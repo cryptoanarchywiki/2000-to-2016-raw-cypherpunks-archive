@@ -1,0 +1,146 @@
+From owner-cypherpunks@al-qaeda.net  Fri Jun 11 13:24:11 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i5BIOBhg032333
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Fri, 11 Jun 2004 13:24:11 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i5BIOBSv032331
+	for cypherpunks-outgoing; Fri, 11 Jun 2004 13:24:11 -0500
+Date: Fri, 11 Jun 2004 14:23:18 -0400
+Message-ID: <65da6fbba574890b2ed3be43a6ec271b@anonymous>
+From: An Metet   <anmetet@freedom.gmsociety.org>
+Comments: This message did not originate from the Sender address above. 
+  It was remailed automatically by anonymizing remailer software. 
+  Please report problems or inappropriate use to the 	remailer
+  administrator at <abuse@freedom.gmsociety.org>.
+To: cypherpunks@al-qaeda.net
+Subject: Simplified base64 conversion
+Message-ID: <dd58e3b3ac770a31e6746782e7f1a018@freedom.gmsociety.org>
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4586
+Lines: 119
+
+I know there are readers here who are good at optimizing code.  Here are
+my attempts to make simple and short versions of base64 encode/decode
+in C.  I'd like to hear suggestions on how to simplify them even more.
+
+Base64 encoding is a way of turning arbitrary binary data into printable
+characters.  The idea is to take three consecutive 8-bit bytes, treat
+this as 24 bits, then cut it into four 6-bit pieces.  Each 6-bit value
+gets converted to a printable character from the strings A-Z, a-z, 0-9,
++, /, in that order.  That's 26 + 26 + 10 + 2 characters or 64.
+
+Every 3 input bytes produces 4 output characters.  If the number of input
+bytes is not a multiple of 3, for the last partial triplet we produce
+2 or 3 characters of output using the 6-bit splitting, then pad with 1
+or 2 equals signs (=) to make the output a multiple of 4 characters long.
+
+Typical base64 implementations look more like
+http://cool.haxx.se/cvs.cgi/*checkout*/curl/lib/base64.c?rev=1.30 which
+are more readable, maybe, or at least more obviously correct.  These pull
+out the basic 4-to-3 and 3-to-4 conversion functions, then have a driver
+that calls these and takes care of end-message padding and such.
+
+My approach was to use a read-and-write style.  For encoding, read 8
+bits, write 6, read 8, write 6, read 8, write 6, write 6.  For decoding,
+read 6, read 6, write 8, read 6, write 8, read 6, write 8.  I used a
+state variable that counted to 3 for encoding (to 4 for decoding) and
+a switch statement to show how to shift the bits around as needed for
+the output.  Then on further study I noted that there were patterns in
+the shifts that were very simply related to the state variable, so it
+was possible to collapse all the cases as far as the shifts, with an if
+statement for the extra output or input.
+
+Given the state variable, doing the end padding was pretty simple, but
+it would be nice if there were some way to fold that into the main loop.
+
+For decoding, I borrowed an idea from http://base64.sourceforge.net/b64.c
+for doing the ascii to binary conversion of the input characters,
+and improved it somewhat.  The decode function ignores non-base64
+characters so you can feed it input with line breaks and such in it.
+(The encode function doesn't put in line breaks, but this could be added.)
+
+One bizarre aspect of the decoder is that = signs are treated as non-b64
+data and ignored, yet it still works right for the last 1 or 2 characters,
+somewhat fortuitously.  For example, a 1-character input containing the
+ascii letter x (0x78) gets encoded as eA==, but you could feed just the
+string eA into the base64 decoder and get x out.
+
+Anyway, here are the two functions.  They are released for free use
+without restriction, although they are so short that they are hardly
+worth copyright.  In exchange I am soliciting suggestions on how to
+make them even simpler and more elegant.
+
+
+/* Base64 encoding and decoding, concise */
+
+
+static const char cb64[]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01
+23456789+/";
+
+int     /* outlen */
+enc64 (char *out, unsigned char *in, int inlen)
+{
+        unsigned char c;
+        unsigned char pc = 0;
+        int st = 0;     /* counts 0, 2, 4 */
+        char *iout = out;
+
+        while (inlen--)
+        {
+                c = *in++;
+                *out++ = cb64[pc | (c >> (2+st))];
+                pc = (c << (4-st)) & 0x3f;
+                if ((st+=2) == 6)
+                {
+                        *out++ = cb64[pc];
+                        pc = st = 0;
+                }
+        }
+        if (st > 0)
+        {
+                *out++ = cb64[pc];
+                *out++ = '=';
+                if (st == 2)
+                        *out++ = '=';
+        }
+        return out - iout;
+}
+
+
+static const char cd64[]="|$$$}rstuvwxyz{$$$$$$$>?@ABCDEFGHIJKLMNOPQRSTUVW$$$$$$
+XYZ[\\]^_`abcdefghijklmnopq";
+
+int     /* outlen */
+dec64 (unsigned char *out, char *in, int inlen)
+{
+        unsigned char c;
+        unsigned char pc = 0;
+        int st = 0;     /* Counts 0, 2, 4, 6 */
+        unsigned char *iout = out;
+
+        while (inlen--)
+        {
+                c = (unsigned char)*in++;
+                c = (c < '+' || c > 'z') ? '$' : cd64[c - '+'];
+                if( c == '$')
+                        continue;
+                c = c - 62;
+                if (st > 0)
+                        *out++ = pc | (c >> (6-st));
+                pc = c << (2+st);
+                if ((st+=2) == 8)
+                        pc = st = 0;
+        }
+        /* assert (pc == 0); */
+        return out - iout;
+}
+
+
+===
+568d4c4230ff851da8cea676a5c69e3e
+

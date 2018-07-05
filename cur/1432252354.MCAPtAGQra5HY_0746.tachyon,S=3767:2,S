@@ -1,0 +1,83 @@
+From owner-cypherpunks@al-qaeda.net  Tue Nov 25 14:00:30 2008
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id mAPIxxHX029857
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 25 Nov 2008 13:59:59 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id mAPIxxpt029856
+	for cypherpunks-outgoing; Tue, 25 Nov 2008 13:59:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;        
+  d=gmail.com; s=gamma;        
+  h=domainkey-signature:received:received:message-id:date:from:to       
+    :subject:cc:in-reply-to:mime-version:content-type         
+  :content-transfer-encoding:content-disposition:references;        
+  bh=j9ahqvENdC6ZNQr6/A504DjaqqWzCfZu/TRt8abGdII=;        
+  b=LBsUCisEO+hlDBNlTGI2s9js8b+pPJVCBniBi0lTm9xR/izIUQEVT16qHw0QXfCzxm  
+  7jk04z2cRuZej+fLoIIWhrYnRP1ZfIW/oFQjIhBSJQre5VtDHsfb5dTUnKh/6hC2kxAc  
+         ZFS73Use/m4PjfIyFzLUzlpjT21xIlLNnBkxo=
+DomainKey-Signature: a=rsa-sha1; c=nofws;         d=gmail.com; s=gamma; 
+         h=message-id:date:from:to:subject:cc:in-reply-to:mime-version  
+         :content-type:content-transfer-encoding:content-disposition    
+       :references;        
+  b=u+xdjEH/pgzodU1l0+o8NF3MAIM8hSbJJcpnkjr5zfzaR5Rbntkrh0AbaneTo6I6bY  
+  vvBkSkGJZmFohqdxpLZSWtLw/bF42nmnMC+fFkeEmnp1FF1u+puTK/tUNw+HRN3c3Uhi  
+         FIvWH+R56aEgoUrAfFTXhw8ZTRNjXOjmPn9eQ=
+Message-ID: <4ef5fec60811251059w4026ad2eg29fa9534b7e120fc@mail.gmail.com>
+Date: Tue, 25 Nov 2008 10:59:57 -0800
+From: coderman <coderman@gmail.com>
+To: "Eugen Leitl" <eugen@leitl.org>
+Subject: Re: 1.7 GBit/s RNG by laser feedback
+Cc: Europus <europus@gmail.com>, cypherpunks@al-qaeda.net
+In-Reply-To: <20081125171232.GD11544@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+References: <20081124131720.GF11544@leitl.org> 	
+  <265707.76497.qm@web33302.mail.mud.yahoo.com> 	
+  <20081124173630.GR11544@leitl.org> <492C272E.4090502@gmail.com> 	
+  <20081125171232.GD11544@leitl.org>
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 1469
+Lines: 36
+
+On Tue, Nov 25, 2008 at 9:12 AM, Eugen Leitl <eugen@leitl.org> wrote:
+> ... Of course you can
+> whiten a RNG with, say a block cipher like AES.
+
+it is useful to whiten and/or mask any potential bias of the entropy
+source with a run through a cipher or digest.  it's important to note
+that you should be verifying entropy before this step (FIPS sanity
+checks) otherwise your RNG could be highly biased and you'd not notice
+from the whitened, masked output.
+
+
+>> is raised, if it was truly an RNG then it wouldn't be necessary
+>> to mix the outputs from two laser assemblies.
+>
+> No idea about that. Analog whitening, possibly?
+
+there are two schools of hardware entropy harvesting thought:
+
+- use a von Neumann whitener to distill the raw entropy into a high
+quality, low (single bit) bias source. this will also cut throughput
+by an order of magnitude, perhaps.
+
+- use a block cipher or digest to mask any bias that may be present in
+an un-whitened, wide open source.
+
+the latter seems to be gaining popularity, and of course it doesn't
+hurt to do both.
+
+this is indeed not a huge leap over VIA padlock's dual on core sources
+(XSTORE) which also have AES on core for the masking above - these can
+hit 100Mbps with whitening disabled and both sources enabled.  if
+you're initializing FDE drives with good entropy this 1.7Gbps might be
+useful.  otherwise i have a hard time consuming even a fraction of the
+available entropy on a VIA system in normal use.
+
+best regards,
+

@@ -1,0 +1,116 @@
+From owner-cypherpunks@al-qaeda.net  Tue Sep 15 04:52:08 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id n8F8pYDC012635
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 15 Sep 2009 04:51:34 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id n8F8pYDw012634
+	for cypherpunks-outgoing; Tue, 15 Sep 2009 04:51:34 -0400
+Date: Tue, 15 Sep 2009 10:51:30 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: how to encrypt and integrity-check with only one key
+Message-ID: <20090915085130.GE9828@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Zooko Wilcox-O'Hearn <zooko@zooko.com> -----
+
+From: Zooko Wilcox-O'Hearn <zooko@zooko.com>
+Date: Mon, 14 Sep 2009 10:22:16 -0600
+To: Cryptography List <cryptography@metzdowd.com>
+Subject: how to encrypt and integrity-check with only one key
+X-Mailer: Apple Mail (2.753.1)
+
+Folks:
+
+I had an idea about how to use a single key to accomplish both  
+encryption and integrity checking on an immutable file.  I posted it  
+to the tahoe-dev list [1], and David-Sarah Hopwood followed up with  
+an interesting new crypto cap design [2].  Here is the basic crypto  
+trick, which may be useful in other contexts than Tahoe-LAFS.
+
+Suppose you have some data and you want to control who gets to see  
+it, and you also want anyone who sees it to be able to verify its  
+integrity.  So far, these requirements are familiar to  
+cryptographers.  The obvious answer is to encrypt the data and then  
+to MAC (Message Authentication Code) the ciphertext.  There would be  
+one key for the encryption and one key for the MAC.  However, this  
+has the wrong semantics for our purposes -- anyone who is given the  
+ability to check the integrity (by being given the MAC key) is also  
+given the ability to create new texts which would verify.  Likewise,  
+whoever creates the initial MAC tag can also create other MAC tags  
+which would cause others files to also verify.  Instead, we want a  
+single file that can pass the integrity check, and nobody -- not a  
+reader who is able to verify integrity nor even the writer who  
+initially created the file -- is able to make a different file which  
+would also pass the integrity check.
+
+Therefore, we want the integrity check value to be the secure hash of  
+the file itself.  That's what we currently have in Tahoe-LAFS.  The  
+immutable file read cap is a concatenation of two values: the  
+decryption key and the secure hash.  The latter is solely for  
+integrity-checking.  Actually in Tahoe-LAFS, the integrity check  
+value is not just a flat hash of the plaintext, but instead it is the  
+hash of the roots of a pair of Merkle Trees, one for verifying the  
+correctness of the shares and the other for verifying the correctness  
+of the ciphertext (see [3]).
+
+Now, convergent encryption could do both jobs with one value!  If you  
+let the symmetric key be the secure hash of the plaintext, then the  
+reader could use the symmetric key to decrypt, then verify that the  
+key was the hash of the plaintext.  However, you can't always use  
+convergent encryption.  Not only because of the security issues [4],  
+and not only because it requires two passes over the file which  
+prevents "on-line" processing, but also because you might need to  
+generate the symmetric key and/or the integrity check value in a  
+different way.  For example, the Tahoe-LAFS integrity-check value  
+isn't just a secure hash of the plaintext.  It would be inefficient  
+to generate the full Tahoe-LAFS integrity check value before  
+beginning to encrypt, and we want to be able to give someone the  
+integrity check value (in a verify cap) without thus giving them the  
+decryption key (i.e. the read cap).
+
+So here is my idea to use a single value to accomplish both  
+decryption and integrity checking even when you can't set the  
+symmetric key to be the secure hash of the plaintext.  You use the  
+encryption key K1 to encrypt the plaintext to produce the ciphertext,  
+and in the same pass you compute the integrity-check value V.  Then  
+you compute the secure hash of the combination of K1 and V, let's  
+call the result R = H(K1, V).  Then you encrypt K1 using R and store  
+the encrypted K1_enc with the ciphertext.  Now R is the real key --  
+the read cap.  If someone gives you R, the ciphertext, and the  
+encrypted K1_enc, then you first use R to decrypt K1, check that R = H 
+(K1, V), then perform the decryption and integrity-checking of the  
+ciphertext.
+
+Here is a diagram: [5] (also attached).
+
+David-Sarah Hopwood suggested the improvement that the integrity- 
+check value "V" could be computed as an integrity check (i.e. a  
+secure hash) on the K1_enc in addition to the file contents.
+
+Regards,
+
+Zooko
+
+[1] http://allmydata.org/pipermail/tahoe-dev/2009-September/002796.html
+[2] http://allmydata.org/pipermail/tahoe-dev/2009-September/002848.html
+[3] http://allmydata.org/~zooko/lafs.pdf
+[4] http://hacktahoe.org/drew_perttula.html
+[5] http://zooko.com/imm-short-readcap-simple-drawing.svg
+
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

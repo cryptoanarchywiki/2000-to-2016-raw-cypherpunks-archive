@@ -1,0 +1,158 @@
+From owner-cypherpunks@Algebra.COM  Sat Jan 20 02:04:53 2001
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.72.0.53])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id CAA08195
+	for <kwantam@positron.mit.edu>; Sat, 20 Jan 2001 02:04:52 -0500
+Received: from ak47.algebra.com (root@ak47.algebra.com [208.233.99.160])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id CAA14320
+	for <rsw@mit.edu>; Sat, 20 Jan 2001 02:04:52 -0500 (EST)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f0K6rMW01928
+	for cypherpunks-outgoing; Sat, 20 Jan 2001 00:53:22 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from toad.com (toad.com [140.174.2.1])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f0K6rLO01914
+	for <cypherpunks@algebra.com>; Sat, 20 Jan 2001 00:53:21 -0600
+Received: (from majordom@localhost) by toad.com (8.7.5/8.7.3) id WAA11156 for cypherpunks-unedited-outgoing; Fri, 19 Jan 2001 22:48:05 -0800 (PST)
+Received: from cliff.mfn.org (cliff.mfn.org [204.238.179.8]) by toad.com (8.7.5/8.7.3) with ESMTP id WAA11150 for <cypherpunks@toad.com>; Fri, 19 Jan 2001 22:48:01 -0800 (PST)
+Received: from greeves.mfn.org (greeves.mfn.org [204.238.179.3])
+	by cliff.mfn.org (8.9.3/8.9.3) with ESMTP id AAA01968
+	for <cypherpunks@toad.com>; Sat, 20 Jan 2001 00:47:59 -0600 (CST)
+	(envelope-from measl@mfn.org)
+Date: Sat, 20 Jan 2001 00:47:59 -0600 (CST)
+From: "J.A. Terranson" <measl@mfn.org>
+To: cypherpunks@toad.com
+Old-Subject: BugTraq: EFS Win 2000 flaw (fwd)
+Message-ID: <Pine.BSF.4.21.0101200047300.21622-100000@greeves.mfn.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Subject:  BugTraq: EFS Win 2000 flaw (fwd)
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 4280
+Lines: 120
+
+
+
+---------- Forwarded message ----------
+Date: Fri, 19 Jan 2001 12:29:50 +0100
+From: Rickard Berglind <Rickard.Berglind@EIKNES.SE>
+To: BUGTRAQ@SECURITYFOCUS.COM
+Subject: BugTraq: EFS Win 2000 flaw
+
+I have found a major problem with the encrypted filesystem
+( EFS ) in Windows 2000 which shows that encrypted files  
+are still very available for a thief or attacker.
+
+
+The problem comes from how EFS works when the encryption
+is done. When a user marks a file for encryption a
+backup-file, called efs0.tmp, will be created. When
+the copy is in place the orginal file will be deleted
+and then recreated, now encrypted, from the efs0.tmp-
+file.
+And finally, when the new encrypted file is succesfully
+created, the temporary-file ( which will never be shown
+in the user interface ) will be deleted as well.
+
+So far, so good. The only file remaining is the one
+which is encrypted.
+
+
+But the flaw is this: the temporary-file is deleted
+in the same way any other file is "deleted" - i.e.
+the entry in the $mft is marked as empty and the clusters
+where the file was stored will be marked in the $Bitmap
+as available, but the psysical file and the information it
+contains will NOT be deleted. The information in the
+file which the user have encrypted will be left in the backup
+file efs0.tmp in total plaintext on the surface of the disk.
+
+When new files are added to the partition will they
+gradually overwrite the secret information, but if
+the encrypted file was large - the information could
+be left for months.
+
+So how can this be exploited ?  If someone steals
+a laptop or have psysical access to the disk it will
+be easy to use any low level disk editor to search
+for the information. For example, the Microsoft
+Support Tool "dskprobe.exe" works fine for locating
+old efs0.tmp-files and read information, in plain-text,
+that the user thought was safe.	
+
+In my opinion there should be a function in the EFS
+which physically overwrites the efs0.tmp at least once
+to make it a lot harder for an attacker to gain control 
+over secret information.
+
+
+
+Here is a description how to test this :
+
+Use any version of Windows 2000.
+Install the Support Tools from the Win2000 CD.
+
+For demonstrating purposes - create a new partition with
+the size of 7 MB.
+Choose to format with NTFS.
+Create a new small file ( easier to find ) with Notepad
+and put some text in it. Save this file in the root of the
+new partition.
+
+Do not encrypt it yet.
+
+Let us look at the file through DiskProbe before encryption-
+start Diskprobe from Support Tools on the Start Menu.
+
+A. Choose the "Drives"-menu and "Physical Drive" 
+   Double click on "physical drive 0" ( or other drive you are using )
+   Click "Set active" and then "OK"
+
+B. Choose "Drives" again and this time "Logical Volume"
+   Double click the drive letter for your new partition
+   and then "Set active" and "OK"
+
+C. Choose the "Sectors"-menu and "Read". For starting number
+   type 80 and for the number - 35 perpaps.
+
+
+Maximize the window and click the arrow for "Next sector".
+
+At sector 86 you should see the name and contents of your
+file ( assuming you made a new partition )
+
+The file is obiously in plain text and easy to read for anyone
+with physical access to this disk, regardless of permissions
+in the ACL, which is ignored when using this kind of utiliy.
+Better encrypt this file .. !
+
+
+Now close the DiskProbe utility and open Explorer and locate
+your new file. Choose Properties - Advanced - Encrypted - OK.
+The file is now encrypted.
+
+Wait a few moments to be sure the new data has been written
+to the disk. 
+Open Diskprobe again and repeat steps A, B and C.
+
+When reaching sector 86 you should be able to see the name
+of your file, but not be able to read the information - it
+is now encrypted. 
+
+But.. continue to click the Next Sector-Arrow and look carefully
+at the information being displayed. A few sectors away from the
+orginal file there should be a file called efs0.tmp - which is
+the backup file EFS creats during encryption. You should ALSO
+be able to see the contents of this efs0.tmp file - which will
+be the data from the file you encrypted. The problem is just that
+the data is in clear and plain text.
+So again - anyone with physical access to this disk can read
+the data you thought was safe.
+
+
+/ Rickard Berglind
+

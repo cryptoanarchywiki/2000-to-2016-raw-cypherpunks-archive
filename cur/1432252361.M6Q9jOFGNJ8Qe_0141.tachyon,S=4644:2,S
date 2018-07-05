@@ -1,0 +1,105 @@
+From owner-cypherpunks@al-qaeda.net  Mon Jan 14 04:38:43 2013
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id r0E9a4M3010709
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 14 Jan 2013 04:36:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1358156165;
+	bh=zFj10QIyo7CnOs5oDcBcww8vxPt1fENfunEXFGu2NI0=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=cdcyoPJB95sQv1/obaxTo4V+50V4eygpwOYrm+DfqpbDC8r1O0gH/LXwro887hriw
+	 6OkB3Cnzik05JtLIyFmx3ddE2PfY4TwxnTlDgYfxH0MS28M1x6bdbb1OPoJo4cW92K
+	 pgO6wU47yOEOKmzTIahECOs3Oe0l3/hj7OOM+nc4=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id r0E9a40Y010708
+	for cypherpunks-outgoing; Mon, 14 Jan 2013 04:36:04 -0500
+Date: Mon, 14 Jan 2013 10:36:02 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: [tahoe-dev] revived: proposal to change the default to K=H=N=1
+Message-ID: <20130114093602.GM6172@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3210
+Lines: 73
+
+----- Forwarded message from Zooko O'Whielacronx <zookog@gmail.com> -----
+
+From: Zooko O'Whielacronx <zookog@gmail.com>
+Date: Mon, 14 Jan 2013 02:34:28 -0700
+To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+Subject: [tahoe-dev] revived: proposal to change the default to K=H=N=1
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+Folks:
+
+I remember getting angry about this topic the last time we discussed
+it. It's strange how I get all hot under the collar about minor
+technical details such as the default erasure coding parameters in a
+secure distributed storage system.
+
+Anyway, the topic has come up again. I just posted this note on the ticket:
+
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1082#comment:12
+
+Regards,
+
+Zooko
+
+-------
+
+This issue came up again. Omnifarious on IRC was explaining why he was
+giving up on his attempt to play with Tahoe-LAFS:
+
+<Omnifarious> Yeah, I have to create a bunch of storage nodes (I
+think) and I think an introducer and figure out what the introducers
+furl is or something.
+
+Also I was hanging out with Brian Warner a couple of nights ago and he
+tried to upload a file to a newly created test grid with only one
+server and was annoyed that it didn't work.
+
+For what it is worth, I have spent a lot of time over the years
+talking to people who deploy Tahoe-LAFS and paying attention to the
+process they go through and especially to what deters them or trips
+them up. I've probably learned about the experiences of more than 100
+different people who've deployed, or attempted to deploy, Tahoe-LAFS
+over the last five or so years. I doubt that even one of those people
+would have accidentally used K=H=N=1 in their production grid without
+realizing the reliability implications. I think every one of them
+would have chosen to change K, H, and N after testing it out and
+before starting to rely on it for long-term storage.
+
+Therefore, I would like to re-open this dormant ticket and *strongly*
+suggest that we change the default values of K, H, N from 3, 7, 10, to
+1, 1, 1, and we change the documentation to warn that if you want the
+erasure-coding features of Tahoe-LAFS then you have to choose your own
+K, H, and N based on your personal preferences and the shape of your
+grid.
+
+In addition to believing that this will not harm almost any users who
+are relying on Tahoe-LAFS for safe, long-term storage, and in addition
+to believing that this will greatly help newcomers who are trying to
+experiment with Tahoe-LAFS in a few spare minutes of their time, I
+also believe that it will help people understand the extremely
+important security properties of Tahoe-LAFS, most of which are
+actually independent of the erasure coding and are best understood
+without the complication of the erasure coding.
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

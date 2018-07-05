@@ -1,0 +1,105 @@
+From owner-cypherpunks@al-qaeda.net  Thu Feb 10 20:32:08 2005
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.3/8.13.3/Debian-5) with ESMTP id j1B2Vkna008464
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Thu, 10 Feb 2005 20:31:46 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.3/8.13.3/Submit) id j1B2Vkb5008463
+	for cypherpunks-outgoing; Thu, 10 Feb 2005 20:31:46 -0600
+X-POP-User: hettinga.covad.net
+Mime-Version: 1.0
+X-Sender: rah@localhost
+Message-Id: <p06110415be31c4b496d6@[68.167.57.91]>
+Date: Thu, 10 Feb 2005 21:11:38 -0500
+To: cryptography@metzdowd.com, cypherpunks@al-qaeda.net
+From: "R.A. Hettinga" <rah@shipwright.com>
+Subject: [Announce] Attack against OpenPGP encryption
+Content-Type: text/plain; charset="us-ascii"
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3066
+Lines: 79
+
+--- begin forwarded text
+
+
+Date: Thu, 10 Feb 2005 20:00:17 -0500
+From: David Shaw <dshaw@jabberwocky.com>
+To: announce@gnupg.org
+OpenPGP: id=99242560; url=http://www.jabberwocky.com/david/keys.asc
+User-Agent: Mutt/1.5.7i
+Cc:
+Subject: [Announce] Attack against OpenPGP encryption
+Sender: gnupg-announce-bounces@gnupg.org
+
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="IMjqdzrDRly81ofr"
+Content-Disposition: inline
+
+Last night, Serge Mister and Robert Zuccherato published a paper
+reporting on an attack against OpenPGP symmetric encryption.
+
+This attack, while very significant from a cryptographic point of
+view, is not generally effective in the real world.  To be specific,
+unless you have your OpenPGP program set up as part of an automated
+system to accept encrypted messages, decrypt them, and then provide a
+response to the submitter, then this does not affect you at all.
+
+There is a very good writeup on the attack that goes into more depth
+at http://www.pgp.com/library/ctocorner/openpgp.html
+
+There will undoubtedly be further discussion of this over the next
+several days, but I wanted to provide a few comments now, to try and
+answer some questions that may arise:
+
+1) This is not a bug in any particular OpenPGP implementation (GnuPG,
+   PGP, Hushmail, etc).  Rather, this is an attack against the OpenPGP
+   protocol itself.
+
+2) The attack requires an average of 32,768 probes to get two bytes of
+   plaintext.  This is why it is completely ineffective against
+   human beings, who will presumably wonder why a stranger wants them
+   to decrypt thousands and thousands of messages that won't decrypt,
+   and then tell them what errors were seen.
+
+3) It might be effective against an automated process that
+   incorporates OpenPGP decryption, if that process returns errors
+   back to the sender.
+
+4) The OpenPGP Working Group will be discussing this issue and coming
+   up with an effective and permanent fix.  In the meantime, I have
+   attached two patches to this mail.  These patches disable a
+   portion of the OpenPGP protocol that the attack is exploiting.
+   This change should not be user visible.  With the patch in place,
+   this attack will not work using a public-key encrypted message.  It
+   will still work using a passphrase-encrypted message.  These
+   patches will be part of the 1.2.8 and 1.4.1 releases of GnuPG.
+
+5) The full paper is available at http://eprint.iacr.org/2005/033
+   It's a great piece of work.
+
+David
+
+
+
+
+_______________________________________________
+Gnupg-announce mailing list
+Gnupg-announce@gnupg.org
+http://lists.gnupg.org/mailman/listinfo/gnupg-announce
+
+--- end forwarded text
+
+
+-- 
+-----------------
+R. A. Hettinga <mailto: rah@ibuc.com>
+The Internet Bearer Underwriting Corporation <http://www.ibuc.com/>
+44 Farquhar Street, Boston, MA 02131 USA
+"... however it may deserve respect for its usefulness and antiquity,
+[predicting the end of the world] has not been found agreeable to
+experience." -- Edward Gibbon, 'Decline and Fall of the Roman Empire'
+

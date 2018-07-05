@@ -1,0 +1,121 @@
+From owner-cypherpunks@lne.com  Thu Apr 24 18:34:41 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h3OMYdt05412
+	for <rsw@jfet.org>; Thu, 24 Apr 2003 18:34:39 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h3OMRPGd001729
+	for cypherpunks-goingout345; Thu, 24 Apr 2003 15:27:25 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Mime-Version: 1.0
+X-Sender: Message-Id: <p05210633bace0b62b05a@[66.149.49.6]>
+In-Reply-To: <77699552-7696-11D7-B4FF-000393D91E36@fexl.com>
+References: <77699552-7696-11D7-B4FF-000393D91E36@fexl.com>
+Date: Thu, 24 Apr 2003 18:24:33 -0400
+To: Patrick Chkoreff <patrick@fexl.com>
+From: "R. A. Hettinga" <rah@shipwright.com>
+Subject: Re: Double spending, i.e. X in S == not X not in S
+Cc: lucrative-l@lucrative.thirdhost.com, cypherpunks@lne.com,
+   Clippable
+  <rah@shipwright.com>
+Content-Type: text/plain; charset="us-ascii"
+Message-Id: <E198p9q-0002qw-00@granger.mail.mindspring.net>
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 3766
+Lines: 91
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+At 4:51 PM -0400 4/24/03, Patrick Chkoreff wrote:
+>No, which indicates there is one huge unshared premise at work here.
+
+Okay. I think I understand what's happened, here.
+
+It's a function of whether or not you're blinding, and the blinding
+protocol you're using.
+
+If you're doing Chaumian blinding, part of the double-spending
+prevention is bound up in the blinding protocol itself. Since
+Lucrative is done in Wagner blinding, maybe that's not the case, but
+I wouldn't think so, on a first approximation. Wagner's too smart.
+:-).
+
+
+For non-blinded notes, you still keep a copy of the ones that come
+in, (or a sample of them, for "streaming" coins where a large number
+of coins are statistically dependent, like between IP addresses in a
+P2P streaming network) but you *still* you don't care about the ones
+that haven't come back yet.
+
+Because, and note this, one more time: they're not *spent* yet.
+You're trying to *prove* double spending, remember? If someone comes
+back with a note you *don't* have, it may make for a smaller list,
+and, hey, if it's not on your list, you don't let it in. But you want
+to keep some kind of *proof* that the coin's already come in, besides
+simply saying, "nope. Not here". Instead, you want to say things like
+"nope. this one's double spent.", and provide whatever information
+you've agreed to as proof. (timestamp, or IP address, or whatever.
+Not pretty) 
+
+That's why Chaum did what he did. You munge the two hashes you now
+have in double-spent note and out pops the *signature* of the double
+spender, and so you only have to keep the notes that have come in.
+You can't even *decipher* the notes you've issued, because, hey,
+they're blinded. They're complete gibberish to the mint, and equally
+useless. The blinding happens on the client with a secret blinding
+factor, right?
+
+Now I have to go back and look at what Wagner said myself :-), and
+figure out if he did something like that as well. I expect that by
+"blinding", he meant the getting same kind of result that Chaum was
+after, or people wouldn't have been offering it as an alternative to
+Chaum all these years. Wagner did it with Diffie-Hellman, so the math
+operators are different than RSA, but I bet you get the same effect,
+or again, people wouldn't call it "blinding."
+
+
+There's certainly something to be said for learning by answering
+questions, and I thank you for giving me the opportunity for personal
+growth ;-), but, really, Patrick, go *read* these protocols to see
+how they work before proposing new ones.
+
+Most of the time, people haven't the bandwidth to repeat what's been
+said, on especially on cypherpunks in particular, and on the net in
+general, many times before.
+
+So, again I ask, Patrick, have you gone and looked at blind signature
+protocols in the CRC Handbook of Applied Crypto? or Applied
+Cryptography?
+
+The CRC book is more technical than Applied Crypto, which is the more
+readable of the two, but the CRC book is actually available in PDF on
+the net, for free, if you go look for it. 
+
+Google is Your Friend, Patrick, and Crypto is Hard. 
+
+Don't invent any if you really don't have to.
+
+Cheers,
+RAH
+
+-----BEGIN PGP SIGNATURE-----
+Version: PGP 8.0 - not licensed for commercial use: www.pgp.com
+
+iQA/AwUBPqhkEsPxH8jf3ohaEQKqjwCgmMF7t/K/Ljitmz8+MWPhYlrMkiwAoMZX
+oIstn0atLxrPvXzQZWTP2rkT
+=8voZ
+-----END PGP SIGNATURE-----
+
+-- 
+-----------------
+R. A. Hettinga <mailto: rah@ibuc.com>
+The Internet Bearer Underwriting Corporation <http://www.ibuc.com/>
+44 Farquhar Street, Boston, MA 02131 USA
+"... however it may deserve respect for its usefulness and antiquity,
+[predicting the end of the world] has not been found agreeable to
+experience." -- Edward Gibbon, 'Decline and Fall of the Roman Empire'
+

@@ -1,0 +1,88 @@
+From owner-cryptography+rsw=mit.edu@metzdowd.com  Fri May 30 15:43:10 2003
+Return-Path: <owner-cryptography+rsw=mit.edu@metzdowd.com>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h4UJhAq09792
+	for <rsw@opamp.org>; Fri, 30 May 2003 15:43:10 -0400
+Received: from red.metdow.com (72.muf123.nycm.n54ny05r18.dsl.att.net [12.103.123.72])
+	by fort-point-station.mit.edu (8.12.4/8.9.2) with ESMTP id h4UJhA7m027051
+	for <rsw@mit.edu>; Fri, 30 May 2003 15:43:10 -0400 (EDT)
+Received: by red.metdow.com (Postfix, from userid 1002)
+	id 622AE182FA2; Fri, 30 May 2003 19:39:29 +0000 (UTC)
+X-Original-To: cryptography@metzdowd.com
+Delivered-To: cryptography@metzdowd.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by red.metdow.com (Postfix) with ESMTP id A3464182F96
+	for <cryptography@metzdowd.com>; Fri, 30 May 2003 19:39:28 +0000 (UTC)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 3E972D97CE; Fri, 30 May 2003 15:39:28 -0400 (EDT)
+X-Original-To: cryptography@metzdowd.com
+Received: from romeo.rtfm.com (romeo.rtfm.com [198.144.203.242])
+	by red.metdow.com (Postfix) with ESMTP id 0B96C182F89
+	for <cryptography@metzdowd.com>; Fri, 30 May 2003 15:49:00 +0000 (UTC)
+Received: by romeo.rtfm.com (Postfix, from userid 556)
+	id C2F98ABA7; Fri, 30 May 2003 08:54:53 -0700 (PDT)
+To: Bill Stewart <bill.stewart@pobox.com>
+Cc: cypherpunks <cypherpunks@lne.com>, cryptography@metzdowd.com
+Subject: Re: Nullsoft's WASTE communication system
+References: <5.1.1.6.2.20030529012848.02d5cf48@idiom.com>
+Reply-To: EKR <ekr@rtfm.com>
+From: Eric Rescorla <ekr@rtfm.com>
+Date: 30 May 2003 08:54:52 -0700
+In-Reply-To: <5.1.1.6.2.20030529012848.02d5cf48@idiom.com>
+Message-ID: <kjhe7c1lbn.fsf@romeo.rtfm.com>
+User-Agent: Gnus/5.0808 (Gnus v5.8.8) XEmacs/21.1 (Cuyahoga Valley)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Sender: owner-cryptography@metzdowd.com
+Precedence: bulk
+Status: O
+Content-Length: 2064
+Lines: 42
+
+Bill Stewart <bill.stewart@pobox.com> writes:
+
+> http://www.nullsoft.com/free/waste/ - Overview
+> http://www.nullsoft.com/free/waste/security.html - Security section
+> http://www.nullsoft.com/free/waste/network.html - Network design
+> http://slashdot.org/article.pl?sid=03/05/29/0140241&mode=thread&tid=126&tid=93
+> - Slashdot discusssion
+> 
+> 
+> Nullsoft, who did Winamp and Gnutella, just released a package called W A S T E
+> which does encrypted communications within small groups of people.
+> It doesn't appear to have had outside analysis of its security yet,
+> but they do invite it, and they say it needs some work.
+It's utterly baffling to me why people like this choose to design
+their own thing rather than just using SSL. I've looked through their
+design documents and glanced at their code they don't provide any
+security features that SSL doesn't, and they appear to have made a
+number of questionable design decisions:
+
+(0) Their messages don't appear have any sequence numbers, making them
+    potentially open to a wide variety of integrity attacks. They have some sort
+    of guid but unless you intend to keep a record of all guids through
+    a session (horrible) this is only a partial fix for replay and 
+    not a fix at all for removal.
+(1) They use MD5 instead of HMAC for message authentication. Scary.
+(2) They use the same encryption keys in both directions. At least
+    they have the sense to run separate PCBC counters. However,
+    based on the code it doesn't look like they reset the PCBC
+    counters after a bad message is received so you may be able to
+    mount a reflection attack.
+(3) They use Blowfish (why not AES?) in PCBC mode (huh?)
+
+I don't think it's worth much time analyzing this... Just one
+more case of NIH.
+
+-Ekr
+
+-- 
+[Eric Rescorla                                   ekr@rtfm.com]
+           Web Log: http://www.rtfm.com/movabletype
+
+
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+

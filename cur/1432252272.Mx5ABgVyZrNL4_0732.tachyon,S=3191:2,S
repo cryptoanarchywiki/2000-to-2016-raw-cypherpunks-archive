@@ -1,0 +1,80 @@
+From owner-cypherpunks@Algebra.COM  Sat Sep 15 02:35:33 2001
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.72.0.53])
+	by positron.mit.edu (8.11.6/8.9.3) with ESMTP id f8F6ZXB08439
+	for <kwantam@positron.mit.edu>; Sat, 15 Sep 2001 02:35:33 -0400
+Received: from ak47.algebra.com (ak47.algebra.com [208.233.99.160])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id CAA14831
+	for <rsw@mit.edu>; Sat, 15 Sep 2001 02:29:59 -0400 (EDT)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f8F6QFM12698
+	for cypherpunks-outgoing; Sat, 15 Sep 2001 01:26:15 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (dns.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f8F6Q9c12683
+	for <cypherpunks@algebra.com>; Sat, 15 Sep 2001 01:26:12 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id f8F6Q5V30915
+	for cypherpunks@algebra.com; Fri, 14 Sep 2001 23:26:05 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id f8F6Pph30907
+	for cypherpunks-goingout; Fri, 14 Sep 2001 23:25:51 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Fri, 14 Sep 2001 23:23:47 -0700
+From: Scott Renfro <scott@renfro.org>
+To: Greg Broiles <gbroiles@well.com>
+Cc: remops@lexx.shinn.net, cypherpunks@lne.com, mix-l@yahoogroups.com
+Old-Subject: Re: Compiling Mixmaster 2.9 beta under FreeBSD
+Message-ID: <20010914232347.A86813@bonsai.home.renfro.org>
+References: <5.1.0.14.2.20010914150930.046a7110@pop3.norton.antivirus>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.5i
+In-Reply-To: <5.1.0.14.2.20010914150930.046a7110@pop3.norton.antivirus>;
+  from gbroiles@well.com on Fri, Sep 14, 2001 at 03:17:42PM -0700
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Re: Compiling Mixmaster 2.9 beta under FreeBSD
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+X-spam: 0 
+Status: O
+Content-Length: 859
+Lines: 30
+
+
+On Fri, Sep 14, 2001 at 03:17:42PM -0700, Greg Broiles wrote:
+>
+> change the line in /etc/defaults/make.conf so that it reads "MAKE_IDEA=YES".
+
+Actually, adding this line in /etc/make.conf is preferable.
+/etc/defaults/make.conf gets overwritten when you upgrade;
+/etc/make.conf is for local overrides.
+
+> There's got to be a better way to just rebuild the crypto parts, but I
+> didn't stumble across it yet.
+
+Assuming the system and crypto source is installed in /usr/src (which it
+must be to do a buildworld/installworld), the following works and is
+*much* faster:
+
+  cp /usr/src/crypto/openssl/crypto/idea/idea.h /usr/include/idea.h
+  cd /usr/src/secure/lib/libcrypto
+  make
+  make install
+  make clean
+
+Then mix-2.9b23.tar.gz builds just fine after toggling the #ifdef from 0
+to 1 at Src/crypto.h:33.
+
+cheers,
+--Scott
+
+-- 
+Scott Renfro <scott@renfro.org>
+

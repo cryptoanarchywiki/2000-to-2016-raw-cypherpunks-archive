@@ -1,0 +1,120 @@
+From owner-cypherpunks@al-qaeda.net  Fri Oct 12 05:14:50 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q9C9CKXw013448
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 12 Oct 2012 05:12:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1350033140;
+	bh=3rsaXxB1IBrbl69/9QcYRxDddunfXaaG3Swy7AarhsA=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=ZKoxCk1/pSdtpIZ32jqxXPJls942Lh7CORTVZ2aQDe40eQvA9ll0b7yjQcVWF71Ev
+	 zSTNJ/bN+ZDlJlcEfx4tmOdsyzcx+Vy9OuM7+AXXI5EAa7kjcrC/iDg1IyLIyV8FCq
+	 auaoJ3NgFzHj/logV+R/TTCfUXqJmfP9RP2RtdzE=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q9C9CKrl013447
+	for cypherpunks-outgoing; Fri, 12 Oct 2012 05:12:20 -0400
+Date: Fri, 12 Oct 2012 11:12:17 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cryptography@randombit.net, cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: [tor-dev] Even more notes on relay-crypto constructions
+Message-ID: <20121012091217.GM9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3439
+Lines: 86
+
+----- Forwarded message from unknown <unknown@pgpru.com> -----
+
+From: unknown <unknown@pgpru.com>
+Date: Thu, 11 Oct 2012 19:17:22 +0000
+To: tor-dev@lists.torproject.org
+Subject: Re: [tor-dev] Even more notes on relay-crypto constructions
+Organization: PGPru.com
+X-Mailer: unknown
+User-Agent: unknown
+Reply-To: tor-dev@lists.torproject.org
+
+On Tue, 9 Oct 2012 00:28:38 -0400
+Nick Mathewson <nickm@torproject.org> wrote:
+
+> So to be concrete, let me suggest a few modes of operation.  I believe
+> I'm competent to implement these:
+
+I think (IMHO) Keccak makes many (most?) symmetric encryption modes
+obsolete in the near future. 
+
+Now Keccak-Hash is SHA-3 winner. It is not only a hash.
+Keccak is universal and can be used to authenticated stream encryption
+with one pass with input any amount of pads and output any amount
+of additional MACs from one-pass operation (so called duplexing mode).
+
+http://sponge.noekeon.org/SpongeDuplex.pdf
+
+"Duplexing the sponge: single-pass authenticated encryption and
+other applications"
+Guido Bertoni, Joan Daemen, MichaC+l Peeters, and Gilles Van
+Assche.
+
+In this year Keccak will recieve only a hash status officialy. Later we
+can see many other modes of using Keccak as universal
+RO-indistinguishable PRF with good
+security proofs and tons of analysis published already. 
+Some parts of protocols can be done more simply with Keccak: new padding
+modes for RSA instead of OAEP is one example. 
+
+Cite:
+"
+In a sponge function, the input is like a white page: It does not
+impose any specio,c structure to it. Additional optional inputs (e.g.,
+key, nonce, personalization data) can be appended or prepended to the
+input message according to a well-deo,ned convention, possibly under the
+hood of diversio,cation as proposed in [6, Section bDomain separationb].
+K supports all the possible applications of sponge functions and duplex
+objects described in [6, Chapters bSponge applicationsb and bDuplex
+applicationsb]. These include hash function, randomized hash function,
+hash function instance dio,erentiation, slow one-way function, parallel
+and tree hashing, mask generating function, key derivation function,
+deterministic random bit generator, reseedable pseudo random bit
+sequence generator, message authentication code (MAC) function,
+stream cipher, random-access stream cipher and authenticated encryption.
+"
+
+http://keccak.noekeon.org/Keccak-submission-3.pdf
+
+"The Keccak SHA-3 submission"
+
+Guido Bertoni, Joan Daemen, Michael Peeters, Gilles Van Asshe
+
+
+Keccak is hardware fast and can be realased in GPU at first.
+
+"Keccak Tree hashing on GPU, using Nvidia Cuda API"
+https://sites.google.com/site/keccaktreegpu/
+
+If NIST adopt many uses Keccak as standards then
+the most of cryptoinfrastructure migrate to it. Keccak in the
+future is more then AES today and makes many uses of AES 
+(and any other blockciphers) unnecessary 
+(excluding PRP-modes for disk encryption, but
+PRF-PRP transformation modes is potentially possible too).
+
+_______________________________________________
+tor-dev mailing list
+tor-dev@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

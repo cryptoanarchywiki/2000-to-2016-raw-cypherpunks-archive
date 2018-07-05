@@ -1,0 +1,132 @@
+From owner-cypherpunks@al-qaeda.net  Tue Mar 29 21:56:45 2005
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.3/8.13.3/Debian-9) with ESMTP id j2U3uNbW018223
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Tue, 29 Mar 2005 21:56:23 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.3/8.13.3/Submit) id j2U3uN9L018222
+	for cypherpunks-outgoing; Tue, 29 Mar 2005 21:56:23 -0600
+Date: Tue, 29 Mar 2005 22:11:14 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: [i2p] weekly status notes [mar 29] (fwd from jrandom@i2p.net)
+Message-ID: <20050329201114.GR24702@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.4i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4065
+Lines: 105
+
+----- Forwarded message from jrandom <jrandom@i2p.net> -----
+
+From: jrandom <jrandom@i2p.net>
+Date: Tue, 29 Mar 2005 12:04:22 -0800
+To: i2p@i2p.net
+Subject: [i2p] weekly status notes [mar 29]
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Hi y'all, time for the weekly status notes
+
+* Index
+1) 0.5.0.5
+2) UDP (SSU)
+3) Q
+4) ???
+
+* 1) 0.5.0.5
+
+Since y'all did such a great job at upgrading to 0.5.0.4 so quickly,
+we're going to have the new 0.5.0.5 release come out after the
+meeting.  As discussed last week, the big change is the inclusion of
+the batching code, bundling multiple small messages together, rather
+than giving them each their own full 1KB tunnel message.  While this
+alone won't be revolutionary, it should substantially reduce the
+number of messages passed, as well as the bandwidth used, especially
+for services like IRC.
+
+There will be more info in the release announcement, but two other
+important things come up with the 0.5.0.5 rev.  First, we're
+dropping support for users before 0.5.0.4 - there are well over 100
+users on 0.5.0.4, and there are substantial problems with earlier
+releases.  Second, there's an important anonymity fix in the new
+build, that while it'd require some development effort to mount, its
+not implausible.  The bulk of the change is to how we manage the
+netDb - rather than play it fast and loose and cache entries all
+over the place, we will only respond to netDb requests for elements
+that have been explicitly given to us, regardless of whether or not
+we have the data in question.
+
+As always, there are bugfixes and some new features, but more info
+will be forthcoming in the release announcement.
+
+* 2) UDP (SSU)
+
+As discussed off and on for the last 6-12 months, we're going to be
+moving over to UDP for our interrouter communication once the 0.6
+release is out.  To get us further down that path, we've got a first
+draft of the transport protocol up in CVS @
+http://dev.i2p.net/cgi-bin/cvsweb.cgi/i2p/router/doc/udp.html?rev=HEAD
+
+Its a fairly simple protocol with the goals outlined in the doc, and
+exploits I2P's capabilities to both authenticate and secure data, as
+well as expose as little external information as possible.  Not even
+the first part of a connection handshake is identifiable to someone
+that isn't running I2P.  The behavior of the protocol is not fully
+defined in the spec yet, such as how the timers fire or how the three
+different semireliable status indicators are used, but it does cover
+the basics of the encryption, packetization, and NAT hole punching.
+None of it has been implemented yet, but will be soon, so feedback
+would be greatly appreciated!
+
+* 3) Q
+
+Aum has been churning away on Q(uartermaster), a distributed store,
+and the first pass of the docs are up [1].  One of the interesting
+ideas in there seems to be a move away from a straight DHT towards
+a memcached [2] style system, with each user doing any searches
+entirely *locally*, and requesting the actual data from the Q server
+"directly" (well, through I2P).  Anyway, some neat stuff, perhaps
+if Aum is awake [3] we can wressle an update out of him?
+
+[1] http://aum.i2p/q/
+[2] http://www.danga.com/memcached/
+[3] damn those timezones!
+
+* 4) ???
+
+Lots more going on, and if there were more than just a few minutes
+until the meeting I could go on, but c'est la vie.  Swing on by
+#i2p in a few to chat.
+
+=jr
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+
+iD8DBQFCSbNjWYfZ3rPnHH0RAi5qAKCNE+jorT/F1QPif4a1EPaTKg1DwwCggVy9
+Kk+3I6WgqDjqaNKSc5xnoQA=
+=iXNV
+-----END PGP SIGNATURE-----
+_______________________________________________
+i2p mailing list
+i2p@i2p.net
+http://i2p.dnsalias.net/mailman/listinfo/i2p
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a>
+______________________________________________________________
+ICBM: 48.07078, 11.61144            http://www.leitl.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+http://moleculardevices.org         http://nanomachines.net
+
+[demime 1.01d removed an attachment of type application/pgp-signature]
+

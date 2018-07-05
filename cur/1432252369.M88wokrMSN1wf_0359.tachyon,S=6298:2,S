@@ -1,0 +1,127 @@
+From cypherpunks-bounces@cpunks.org  Thu Oct 17 17:23:39 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9HLNMVY001014;
+	Thu, 17 Oct 2013 17:23:23 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9HLNIBp001010
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Thu, 17 Oct 2013 17:23:20 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 02321543E75; Thu, 17 Oct 2013 23:23:17 +0200 (CEST)
+Date: Thu, 17 Oct 2013 23:23:17 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: Re: [Cryptography] /dev/random is not robust
+Message-ID: <20131017212317.GH10405@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 4552
+Lines: 89
+
+----- Forwarded message from Theodore Ts'o <tytso@mit.edu> -----
+
+Date: Thu, 17 Oct 2013 09:08:00 -0400
+From: Theodore Ts'o <tytso@mit.edu>
+To: Adam Back <adam@cypherspace.org>
+Cc: Jerry Leichter <leichter@lrw.com>, Sandy Harris <sandyinchina@gmail.com>, Cryptography <cryptography@metzdowd.com>
+Subject: Re: [Cryptography] /dev/random is not robust
+Message-ID: <20131017130800.GE11932@thunk.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+
+On Thu, Oct 17, 2013 at 02:32:57PM +0200, Adam Back wrote:
+> 
+> Yarrow, and the replacement Fortuna try to address this problem by
+> accumulating entropy and adding it in bigger lumps..
+
+... and Linux's /dev/random driver does this.
+
+Post July 2012, most of the entropy is gathered via a per-CPU (to a
+avoid cache line bouncing effects and so it can be lockless) entropy
+pool, where we sample the high resolution cycle counter (or whatever
+the highest granularity clock / memory refresh control register /
+etc. we have access to on the archtecture) and the interrupted IP, and
+mix that into the per-CPU fast mix pool on every interrupt.  We do
+*not* use an entropy estimator for this interrupt fast mix pool.
+Instead, we sample Every 64 interrupts, we transfer entropy from the
+fast mix pool to the input pool, and we credit the input pool with a
+single bit of entropy.  (There is very likely much more than a single
+bit of entropy that has gotten accumulated during those 64 interrupts,
+but out of an abundance of caution, we're using a very conservative
+estimate for administrative concerns.)
+
+In both the pre and post July 2012 designs, using a Yarrow-like
+approach, we only transfer entropy from the input pool to the output
+pool when there is sufficient entropy estimated to be in the input
+pool so that we can do a "catastrophic ressed".  The "/dev/random is
+not robust paper" assumed that the attacker could control the
+interrupt timings such that estimate of entropy in the input pool was
+incorrect, and thus the catastrophic reseed aspect of the design could
+be bypassed.
+
+I've already discussed why I don't believe that the assumption that
+the attacker could control the interrupt timings to such an extent is
+not realistic, and analysis of the entropy estimator (as used in the
+pre-July 2012 design) showed that in fact, it was quite good.  But in
+the post July 2012 design, we no longer use an interrupt estimator for
+the interrupt fast mix pool.  We abandoned it for efficiency concerns,
+since we wanted to make the cpu count on the global interrupt fast
+path as low overhead as possible; instead, we traded this off by a
+brute force quantity argument --- if we can collect the timing for
+every single interrupt we're much better off than collecting it only
+for some interrupts, especially when in the old design (which involved
+CPU cache line bouncing and potential lock contention) device driver
+authors were disabling the entropy collection more often than not.
+
+So in the new design, we aren't using an dynamic entropy estimator ---
+instead, we're assuming that after collecting the timings for 64
+interrupts, we've collecting a single bit of entropy, which is really
+a static entropy measure.  Could this be spoofed if the attacker has
+control of the interrupt timings of the system?
+
+Sure, but if the attacker has that level of control on the system,
+then then pretty much all generators would be seriously compromised as
+well.  The only way the paper could show that their proposed generator
+was "robust" was based on the assumption that it would be possible for
+the attacker to control the entropy inputs in such a way that entropy
+estimator would be spoofed, but the attacker might still not know some
+of the bits of the entropy inputs.
+
+After all, if the attacker knows all of the bits, then by definition
+all generators would be screwed.  However, what has not been
+demonstrated in the paper is a real life scenario where the attacker
+would have that level of control over the entropy inputs --- enough
+that entrpoy estimators would be fooled, but not enough control that
+their constuction could be considered robust.
+
+Regards,
+
+						- Ted
+_______________________________________________
+The cryptography mailing list
+cryptography@metzdowd.com
+http://www.metzdowd.com/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

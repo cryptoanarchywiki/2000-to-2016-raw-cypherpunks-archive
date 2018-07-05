@@ -1,0 +1,93 @@
+From owner-cypherpunks@al-qaeda.net  Sat Nov  6 18:20:52 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (majordomo@localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.1/8.13.1/Debian-16) with ESMTP id iA70KcWM010668
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Sat, 6 Nov 2004 18:20:38 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.1/8.13.1/Submit) id iA70KcoE010667
+	for cypherpunks-outgoing; Sat, 6 Nov 2004 18:20:38 -0600
+Date: Sat, 6 Nov 2004 19:10:11 -0500 (est)
+From: Sunder <sunder@sunder.net>
+To: "R.A. Hettinga" <rah@shipwright.com>
+cc: cypherpunks@al-qaeda.net, cryptography@metzdowd.com
+Subject: Re: Broward machines count backward
+In-Reply-To: <p06110408bdb26f406f68@[66.149.49.5]>
+Message-ID: <Pine.BSO.4.58.0411061905550.28559@silkworth.sunder.net>
+References: <p06110408bdb26f406f68@[66.149.49.5]>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+X-Keywords:                  
+X-UID: 11141
+Status: O
+Content-Length: 1843
+Lines: 64
+
+It sounds suspiciously like an int16 issue.
+
+32K is close enough to 32767 after which a 16 bit integer goes negative 
+when incremented.  Which is odd because it should roll over, not count 
+backwards.
+
+perhaps they did something like this:
+
+note the use of abs on reporting.
+
+
+int16 votes[MAX_CANDIDATES];
+
+void add_a_vote(uint8 candidate)
+{
+ if (candidate>MAX_CANDIDATES) return;
+ votes[candidate]++;
+}
+
+void report(void)
+{
+ int i;
+
+ for (i=0; i<MAX_CANDIDATES; i++)
+ {
+  printf("Candidate %s got %d votes\n",candidates[i],abs(votes[i]));
+ }
+
+}
+
+----------------------Kaos-Keraunos-Kybernetos---------------------------
+ + ^ + :"Our enemies are innovative and resourceful, and so are we.  /|\
+  \|/  :They never stop thinking about new ways to harm our country /\|/\
+<--*-->:and our people, and neither do we." -G. W. Bush, 2004.08.05 \/|\/
+  /|\  :                                                             \|/
+ + v + :    War is Peace, freedom is slavery, Bush is President.
+-------------------------------------------------------------------------
+
+On Sat, 6 Nov 2004, R.A. Hettinga wrote:
+
+> <http://www.palmbeachpost.com/politics/content/news/epaper/2004/11/05/a29a_BROWVOTE_1105.html>
+> 
+> 
+> Palm Beach Post
+> 
+> Broward machines count backward
+> 
+>  By Eliot Kleinberg
+> 
+> Palm Beach Post Staff Writer
+> 
+> Friday, November 05, 2004
+> 
+> 
+> FORT LAUDERDALE - It had to happen. Things were just going too smoothly.
+> 
+> Early Thursday, as Broward County elections officials wrapped up after a
+> long day of canvassing votes, something unusual caught their eye. Tallies
+> should go up as more votes are counted. That's simple math. But in some
+> races, the numbers had gone . . . down.
+> 
+> 
+> Officials found the software used in Broward can handle only 32,000 votes
+> per precinct. After that, the system starts counting backward.
+

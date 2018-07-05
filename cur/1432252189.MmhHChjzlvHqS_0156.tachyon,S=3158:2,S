@@ -1,0 +1,67 @@
+From owner-cypherpunks@al-qaeda.net  Mon May 10 06:16:33 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.mit.edu (localhost [127.0.0.1])
+	by positron.mit.edu (8.12.11/8.12.11/Debian-3) with ESMTP id i4AADdRq000973
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.mit.edu>; Mon, 10 May 2004 06:13:39 -0400
+Received: (from majordomo@localhost)
+	by positron.mit.edu (8.12.11/8.12.11/Debian-3) id i4AADdTt000972
+	for cypherpunks-outgoing; Mon, 10 May 2004 06:13:39 -0400
+Date: Mon, 10 May 2004 06:02:51 -0400
+From: Adam Back <adam@cypherspace.org>
+To: Jason Holt <jason@lunkwill.org>
+Cc: cryptography@metzdowd.com, Adam Back <adam@cypherspace.org>,
+        Cypherpunks <cypherpunks@minder.net>
+Old-Subject: blinding & BF IBE CA assisted credential system (Re:
+  chaum's patent expiry?)
+Message-ID: <20040510100251.GA13618@bitchcake.off.net>
+References: <20040509091559.GA24140@bitchcake.off.net>
+  <Pine.LNX.4.44.0405100256280.6916-100000@potato.zayda.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <Pine.LNX.4.44.0405100256280.6916-100000@potato.zayda.com>
+User-Agent: Mutt/1.4.1i
+X-Hashcash: 0:040510:jason@lunkwill.org:930aad2753993f155c7cabe0
+X-Hashcash: 0:040510:cryptography@metzdowd.com:495125e6ac121fdadca452b4
+X-Hashcash: 0:040510:adam@cypherspace.org:2a43efc3262acfb5d85e600b
+X-Hashcash: 0:040510:cypherpunks@minder.net:8e2da7e7c7a412cc9106e8ec
+Subject: blinding & BF IBE CA assisted credential system (Re: chaum's
+  patent expiry?)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 1484
+Lines: 30
+
+On Mon, May 10, 2004 at 03:03:56AM +0000, Jason Holt wrote:
+> [...] Actually, now that you mention Chaum, I'll have to look into
+> blind signatures with the B&F IBE (issuing is just a scalar*point
+> multiply on a curve).  
+
+I think you mean so that the CA/IBE server even though he learns
+pseudonyms private key, does not learn the linkage between true name
+and pseudonym.  (At any time during a show protocol whether the
+private key issuing protocol is blinded or not the IBE server can
+compute the pseudonyms private key).
+
+Seems like an incremental improvement yes.
+
+> That could be a way to get CA anonymity for hidden credentials -
+> just do vanilla cut and choose on blinded pseudonymous credential
+> strings, then use a client/server protocol with perfect forward
+> secrecy so he can't listen in.  
+
+Note PFS does not make end-2-end secure against an adversary who can
+compute the correspondents private keys, as vulnerable to MITM.  Could
+say invulnerable to passive eavesdropper.  However you might have an
+opening here for a new security model combining features of Hidden
+Credentials with a kind of MITM resistance via anonymity.  What I mean
+is HC allows 2 parties to communicate, and they know who they are
+communicating with.  The CA colluding MITM however we'll say does not
+apriori, so he has to brute force try all psuedonym, attribute
+combinations until he gets the right one.  Well still not desirable
+security margin, but some extra difficulty for the MITM.
+
+Adam
+

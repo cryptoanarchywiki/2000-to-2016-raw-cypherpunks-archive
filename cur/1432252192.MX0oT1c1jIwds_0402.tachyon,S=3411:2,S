@@ -1,0 +1,78 @@
+From owner-cypherpunks@jfet.org  Fri Jun 22 12:23:19 2007
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.13.8/8.13.8/Debian-3) with ESMTP id l5MGMs1t022440
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 22 Jun 2007 12:22:54 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.8/8.13.8/Submit) id l5MGMs0J022439
+	for cypherpunks-outgoing; Fri, 22 Jun 2007 12:22:54 -0400
+Date: Fri, 22 Jun 2007 18:22:32 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: Sandy Harris <sandyinchina@gmail.com>
+Cc: cypherpunks@jfet.org
+Subject: Re: ad hoc IPsec or similiar
+Message-ID: <20070622162232.GJ17691@leitl.org>
+References: <20070621161910.GM17691@leitl.org>
+  <LN1hlyEA7qeGFAiM@highwayman.com> <20070621183342.GQ17691@leitl.org>
+  <c5528eee0706220852u776cc413h555ef7aaa904d7e7@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <c5528eee0706220852u776cc413h555ef7aaa904d7e7@mail.gmail.com>
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2172
+Lines: 48
+
+On Fri, Jun 22, 2007 at 11:52:13PM +0800, Sandy Harris wrote:
+> On 6/22/07, Eugen Leitl <eugen@leitl.org> wrote:
+> 
+> >So what's the state in ad hoc IPsec/VPN setup for any end points?
+> 
+> The Linux FreeS/WAN project was working on "opportunistic encryption".
+
+I know, but it wasn't really lightweight. Session setup between
+new hosts shouldn't take more than a few UDP packets; theirs
+took publishing DNS records. If ad hoc encryption needs to happen
+on a wide level, it need to be part of the usual suspect TCP/IP
+stack, and work out of the box, without adding too much to 
+the initial latency. It should also have key caching, and at
+least a rudimentary logging to be able to catch MITM.
+
+Once there's significant amounts of host key caches available,
+it would become worthwhile to P2P publish those, and build
+primitive trust by number of votes.
+ 
+> The general idea is that if you use keys in DNS to authenticate gateways
+
+Aye, that's the rub. Most hosts are in dynamic address space,
+and anything involving DNS will not fly.
+
+> and IPsec for secure tunnels then any two machines can communicate
+> securely without their administrators needing to talk to each other or to
+> set up specific pre-arranged tunnels.
+> 
+> http://www.freeswan.org/freeswan_trees/freeswan-2.00/doc/glossary.html#carpediem
+> http://www.freeswan.org/freeswan_trees/freeswan-2.00/doc/quickstart.html
+> 
+> There is an RFC based on that work:
+> ftp://ftp.rfc-editor.org/in-notes/rfc4322.txt
+> 
+> The FreeS/WAN project has ended. I do no know if the follow-on projects,
+> openswan.org and strongswan.org, support OE.
+
+Even if 1% of all hosts would be using it it would be extremely worthwhile.
+There are some quite nice FreeBSD-based firewalls (m0n0/pfsense) which 
+support IPsec quite well between themselves. It would be definitely very 
+nice to have any such firewalls set up IPsec VPNs ad hoc whenever they 
+talk to each other.
+
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

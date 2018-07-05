@@ -1,0 +1,135 @@
+From owner-cypherpunks@al-qaeda.net  Tue Mar  5 09:05:43 2013
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id r25DxYMY015845
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 5 Mar 2013 08:59:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1362491974;
+	bh=CqXzO1GQjbFVqvFRiojQblsYsMx5TQOtGQCstc2hs+o=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=XdL40/Azmbgx+tq8Yxa+yaNn1unhsy/JaJDSXVrTF/DdB+lZpnbop0i+95RD+Rx/4
+	 x5eu/o+f6uaHNqe1Xij1PesDou8WwuFxjPQy09H9R+VW5GRBveakEolnTdUbSuNbJK
+	 41yfINPtj223uluyaFzt3Jrj6NtS4yfkLsRVz53M=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id r25DxYH6015844
+	for cypherpunks-outgoing; Tue, 5 Mar 2013 08:59:34 -0500
+Date: Tue, 5 Mar 2013 14:59:30 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: Re: [cryptography] Client TLS Certificates - why not?
+Message-ID: <20130305135930.GS6172@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Joe St Sauver <joe@oregon.uoregon.edu> -----
+
+From: Joe St Sauver <joe@oregon.uoregon.edu>
+Date: Mon, 4 Mar 2013 16:26:40 -0800 (PST)
+To: strife@riseup.net
+Cc: cryptography@randombit.net
+Subject: Re: [cryptography] Client TLS Certificates - why not?
+
+Hi,
+
+strife asked:
+
+#Can anyone enlighten me why client TLS certificates are used so rarely? It
+#used to be a hassle in the past, but now at least the major browsers offer
+#quite decent client cert support, 
+
+Not quite seeing eye-to-eye with you on the "quite decent client cert 
+support" point, I'm afraid. Client cert user interaction still deserves
+poor marks for complexity and user opacity, I think.
+
+I did a preconference seminar for Educause Security Professionals 2012 on
+client certificates, and it's actually sort of surprising how deeply buried
+many bits of the current browser client cert implementation are. See
+http://pages.uoregon.edu/joe/secprof2012/sec-prof-2012-client-certs.pdf
+
+Or consider the level of native OS support for USB format PKI hard tokens
+or smart cards on some operating systems, just to mention another example
+of how client certificate support is still not really ready for prime time
+at this point.
+
+[In fact, if anyone's looking for a nice paper topic, I think a terrific
+topic might be "Why Johnny Can't Ecrypt Using Client Certs, Either"
+modeled on http://static.usenix.org/events/sec99/whitten.html ]
+
+#and seeing how most people struggle with passwords, I don't see why 
+#client certs could not be beneficial even to "ordinary users".
+
+Client certs *could* be hugely beneficial to even ordinary users -- 
+imagine their use for EAP-TLS authentication, for example. 
+
+The devil, as always, is in the details.
+
+Assume the average person has multiple devices these days -- maybe a 
+desktop at work, a laptop for travel, a tablet at home, a smartphone, etc.
+
+If I want to use client certs for encryption/decryption, I need the *same*
+cert on all of those devices, or on a portable device (such as a USB-format 
+PKI hard token, or a smart card) so I can take my credentials with me. 
+Sync'ing certs from one device to another isn't totally impossible, but 
+backing up, manually transfering and reinstalling certs on multiple devices
+really isn't simple enough for most mere mortals. [Attempts to deploy a 
+unique client cert to each device have issues of their own that we'll 
+skip for the purposes of this note]
+
+Smart cards or USB-format PKI hard tokens are a nice alternative, but 
+somewhat expensive, and you can't just run down to your favorite local
+office supply store or neighborhood compute supply store and buy one.
+
+Then there's the fact that not all devices easily accomodate USB-format
+PKI hard tokens or smart cards, but if you *are* able to use a USB format 
+PKI hard token or smart card, at least the credentials stored on those 
+devices can be stored in a non-exportable format, which is good given 
+the uptick in malware's that has reportedly been scraping client certs 
+of late.
+
+Smart cards or hard tokens are also required if you're shooting for the
+highest NIST LOAs, but there's so much more that's required to get there
+that in many ways the use of smart cards or hard tokens is a minor 
+matter relative to identity proofing requirements and all the rest of
+what's require -- and it's hard to find anyone who actually needs LOA-4,
+at least in higher ed.
+
+Speaking of identity proofing, many times client certs only map to email
+addresses, not to "real names," and not to guaranteed-unique and 
+never-to-be-reused arbitrary identifiers (like the EPPN). Some may find 
+that choice less than full satisfactory.
+
+Or let's talk about key servers/directory models. Let me wave my magic
+wand and magically create an Internet-wide directory for client certs,
+perhaps modeled on PGP public key servers. Unfortunately, I don't see 
+much interest in fielding an animal of that sort, and w/o it, you're
+either reduced to enterprise-level directories, or the painful process
+of requesting a signed message to bootstrap key exchange for encryption
+purposes (yuck)
+
+And the list goes on...
+
+Bottom line, I think that there's still a lot of work ahead if you want
+to do client certs at scale...
+
+Regards,
+
+Joe
+
+Disclaimer: all opinions strictly my own.
+_______________________________________________
+cryptography mailing list
+cryptography@randombit.net
+http://lists.randombit.net/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

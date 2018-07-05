@@ -1,0 +1,161 @@
+From owner-cypherpunks@al-qaeda.net  Mon Jan 21 16:34:02 2013
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id r0LLS9Au026918
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 21 Jan 2013 16:28:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1358803689;
+	bh=CunjUJ4iF4eBkH6dYUUopiIAmhtELNAQAVDwsQq+jMw=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=OH3ytFFTxqnlbOj4dSP25cAE3jfcHp8RasVqaF57Pdg+uses2wbe+o0sdZhtXMz7P
+	 LyGs7ZaL3kOqFYqproGI5V6BkUKgAKSRo3r0puiYPFn+1mB5IdorW0qHzvRnhm1x+F
+	 MPpj1OxFsJMjqqoI+QC5An+K63WPfMWmJnMKbPoI=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id r0LLS9uM026917
+	for cypherpunks-outgoing; Mon, 21 Jan 2013 16:28:09 -0500
+Date: Mon, 21 Jan 2013 22:28:06 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: zs-p2p@googlegroups.com, info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: Re: [serval-project-dev] Implementing a different routing
+  protocol
+Message-ID: <20130121212806.GW6172@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 6631
+Lines: 128
+
+----- Forwarded message from Fraser Cadger <cadge01@googlemail.com> -----
+
+From: Fraser Cadger <cadge01@googlemail.com>
+Date: Mon, 21 Jan 2013 20:29:57 +0000
+To: serval-project-developers@googlegroups.com
+Subject: Re: [serval-project-dev] Implementing a different routing protocol
+Reply-To: serval-project-developers@googlegroups.com
+
+Hi everyone,
+
+
+It's been a wee while since my last post, but I was quite busy over the
+last couple of weeks and am only just turning my attention back to working
+with Serval.
+
+
+ Ok, so I've had a think about how best to implement location update
+message (which I'll refer to as beacons), without modifying the existing
+message structures. My initial thought was to create a struct called beacon
+(or similar) which would contain all of the fields (initially our address,
+and the longitude and latitude coordinates + the timestamp of when the
+coordinates were recorded) and when we were sending a beacon we would
+create an instance of this struct. The downside I thought would be that the
+beacon struct would have to be embedded in another packet as a payload, and
+so this would mean modifying existing messages (not good) or creating a new
+message and adding the struct as a payload which seems wasteful. So at this
+point I can't see any advantages in using the struct (except possibly as a
+template).
+
+
+ Instead I thought an approach similar to the node announcements could be
+used. A function called overlay_add_beacon() (for instance) could be called
+from overlay_init_packet(). The purpose of this would be to create the
+beacon message, it would be similar in form to
+overlay_route_add_advertisement(). So it would call call
+overlay_frame_build_header() to create the frame and then it would need to
+place the coordinates in the packet. I think the best way to do this would
+be to use a similar method to add_advertisement() which uses
+ob_append_byte() to add the best link score and observations to the packet,
+and before that overlay_address_append to add the address of the node we
+are advertising. However, if we are sending beacons for ourself then we do
+not need to append a subscriber address as the packet is obviously about
+us. Similarly, add_advertisement() is accessed by calling the callback
+function enum_subscribers() which is used to find the next (unadvertised)
+subscriber in the tree and the use of enum_subscribers() is obviously not
+necessary for sending messages about ourselves.
+
+
+ Therefore, I was thinking that two types of beacons would be better; i.e.
+self_beacon and subscriber_beacon. self_beacon would be similar to a self
+announce message while subscriber_beacon would be similar to a node
+announcement. This would entail slight differences in how they were sent.
+self_beacon could have a method called overlay_add_self_beacon() which
+function similarly to overlay_add_selfannouncement() except instead of
+calling ob_append_ui32() to add timestamps it would call ob_append_byte()
+twice as described above, to add the two coordinates and timestamp (or
+would it make more sense to use ob_append_ui32 for this timestamp?) .
+However it would not call overlay_address_append. On the other hand,
+subscriber_beacon would have a method called (for instance)
+add_subscriber_beacon() that would function identically to
+overlay_route_add_advertisement(), and would call enum_subscribers() as a
+callback to a function called add_beacon() which would be similar to
+add_advertisement() except that it would call ob_append_byte to add
+coordinates (instead of score and observation), then append the timestamp
+but would still use overlay_append_byte() to add the address.
+
+
+ Both overlay_add_self_beacon() and add_subscriber_beacon() would be called
+from overlay_init_packet() inside overlay_queue.c; with
+overlay_add_self_beacon() being called after overlay_add_selfannouncement()
+and add_subscriber_beacon() being called after
+overlay_route_add_advertisements() is called. Hopefully I'm right in
+thinking that doing this will mean that the self_beacon messages will go
+along with the self_announcement messages and the subscriber_beacon
+messages will be along with the corresponding node_advertisement messages
+for the same subscriber in the one real packet. Even if they are
+'separated' (i.e. we receive a subscriber_beacon without a
+node_advertisement for the same subscriber) I could probably still handle
+it (i.e. search for that subscriber).
+
+
+ Other than the above, I think the only other step needed for using the
+self_beacon and subscriber_beacon messages would be to add them to
+constants.h. Actually, I'm wondering what numbers to use, I noticed 0x10 to
+0x70 are taken by existing messages. Should I just use the next numbers up
+(0x80 and 0x90), or are there any plans by the Serval team to use those?
+I'm assuming these numbers are hex numbers, and as type is an integer
+number constants.h maps the message type i.e. OF_TYPE_SELF_ANNOUNCE to its
+corresponding hex number?
+
+
+ There might have been a couple of things I've misunderstood in the above,
+but I think the general approach I described should allow for me to add the
+beacon messages without causing any conflicts with devices running
+different versions or their own routing. Hopefully doing it the way I
+described above would mean that such devices would just ignore my beacon
+messages as they wouldn't recognise the codes for them and there would be
+no complications.
+
+
+ I intend to start the coding soon, but I'm just thought I'd check to see
+if my assumptions are correct and if other people think the way of doing
+this makes sense before I jump in. I've not mentioned anything about
+dealing with the beacons once they've been received, as I've mainly been
+focussing on sending them first. However, I imagine this would involve
+updating either the subscriber or node entity for that device to change
+location. I'll look into this in more detail while I'm working on sending
+the beacons.
+
+
+ Thanks,
+
+
+ Fraser
+
+-- 
+You received this message because you are subscribed to the Google Groups "Serval Project Developers" group.
+To post to this group, send email to serval-project-developers@googlegroups.com.
+To unsubscribe from this group, send email to serval-project-developers+unsubscribe@googlegroups.com.
+For more options, visit this group at http://groups.google.com/group/serval-project-developers?hl=en.
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

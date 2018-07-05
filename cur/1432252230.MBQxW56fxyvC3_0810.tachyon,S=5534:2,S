@@ -1,0 +1,115 @@
+From owner-cypherpunks@al-qaeda.net  Sun Mar 10 12:13:10 2013
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id r2AG71SW014059
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sun, 10 Mar 2013 12:07:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1362931621;
+	bh=lHBmIRXjjXUiDqojkzJ4gIRL1K/2ThtSkB/4ShskHSQ=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=nsmq8Ob1f7e3GXJQB6TigadsuzNUykIXdYRuTw+j8bvtbicN22Xl3697E1AccMSb3
+	 mMKxIRFDRCxA1R/hlFNn517qKp4+fNdkq5dk6omFHyl6IQEbIPFPxtyAKYRkIyZqbw
+	 al+lBJAnst2jmjqSko9SuXasbIMbTuuhg2CrnwT8=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id r2AG71ce014058
+	for cypherpunks-outgoing; Sun, 10 Mar 2013 12:07:01 -0400
+Date: Sun, 10 Mar 2013 17:06:54 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: Re: [cryptography] Web Cryptography API (W3C Working Draft 8 
+  January 2013)
+Message-ID: <20130310160654.GT6172@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from "D. J. Bernstein" <djb@cr.yp.to> -----
+
+From: "D. J. Bernstein" <djb@cr.yp.to>
+Date: 10 Mar 2013 11:20:59 -0000
+To: cryptography@randombit.net
+Subject: Re: [cryptography] Web Cryptography API (W3C Working Draft 8
+	January 2013)
+
+Ryan Sleevi writes:
+> What use case makes the "NaCl" algorithms (whose specification is merely
+> 'use NaCl', which boils down to "Use Salsa+Curve25519") worthwhile?
+
+Here's the abstract of "The security impact of a new cryptographic
+library" (http://cr.yp.to/highspeed/coolnacl-20120725.pdf):
+
+   This paper introduces a new cryptographic library, NaCl, and explains
+   how the design and implementation of the library avoid various types
+   of cryptographic disasters suffered by previous cryptographic
+   libraries such as OpenSSL. Specifically, this paper analyzes the
+   security impact of the following NaCl features: no data flow from
+   secrets to load addresses; no data flow from secrets to branch
+   conditions; no padding oracles; centralizing randomness; avoiding
+   unnecessary randomness; extremely high speed; and cryptographic
+   primitives chosen conservatively in light of the cryptanalytic
+   literature.
+
+The paper cites and analyzes cryptographic failures in SSH, ECDSA in
+SSL, RSA in SSL, Linux disk encryption, the PlayStation 3, et al. What's
+particularly convincing is to look at _newer_ failures, such as the very
+recent "Lucky 13" attack recovering plaintext from SSL, and observe that
+those failures would have been prevented by precisely the NaCl features
+identified in this document. ("Lucky 13" relies on padding oracles and
+on these prohibited forms of data flow.)
+
+These NaCl features are at a quite different level from the "features"
+advertised by cryptographic APIs from the dark ages (e.g., "we support
+MD5 and RSA-512"), and in many cases are in direct conflict with those
+"features". This is one of the reasons that NaCl has a simple high-level
+API. Of course, simplicity has other benefits.
+
+As for specification, there's a state-of-the-art "Cryptography in NaCl"
+document (http://cr.yp.to/highspeed/naclcrypto-20090310.pdf) that has
+complete self-contained definitions of every aspect of key generation,
+encryption, and authentication involved in NaCl's crypto_box(); plus an
+end-to-end example expressed both as
+
+   * self-contained Python/Sage test scripts that compute every detail
+     of the crypto and
+   * simple test programs using NaCl,
+
+of course producing the same results; plus security notes. Someone who
+wants to write a new implementation that interoperates with crypto_box()
+doesn't need to read anything else. I'm not saying that this is the end
+of the story---implementors should also learn about crypto_sign(),
+constant-time code, and more---but it's way ahead of the documentation
+mess that one has to read to reimplement other existing protocols with
+similar functionality.
+
+> And how can we be sure that the problems that NaCl sets out to solve
+> are the same problems developers want or need to solve, especially
+> when all the evidence suggests otherwise?
+
+The main reason for a developer to use a cryptographic library is to
+protect data against espionage, sabotage, etc. There's ample evidence
+that most cryptographic libraries _don't_ actually manage to protect
+data---and imitating their decisions is simply going to produce more
+security disasters.
+
+Of course, this doesn't imply that NaCl is what developers want, but
+high-profile applications such as DNSCrypt are in fact using NaCl in
+ways that seem easily generalizable to other applications.
+
+---D. J. Bernstein
+   Research Professor, Computer Science, University of Illinois at Chicago
+_______________________________________________
+cryptography mailing list
+cryptography@randombit.net
+http://lists.randombit.net/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

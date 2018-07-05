@@ -1,0 +1,96 @@
+From owner-cypherpunks@al-qaeda.net  Tue May 18 19:22:34 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.mit.edu (localhost [127.0.0.1])
+	by positron.mit.edu (8.12.11/8.12.11/Debian-3) with ESMTP id i4INMVMb012671
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.mit.edu>; Tue, 18 May 2004 19:22:31 -0400
+Received: (from majordomo@localhost)
+	by positron.mit.edu (8.12.11/8.12.11/Debian-3) id i4INMVHT012670
+	for cypherpunks-outgoing; Tue, 18 May 2004 19:22:31 -0400
+User-Agent: Microsoft Outlook Express Macintosh Edition - 5.01 (1630)
+Date: Wed, 19 May 2004 00:22:14 +0100
+Subject: Re: Diffie-Hellman question
+From: Peter Fairbrother <zenadsl6186@zen.co.uk>
+To: Thomas Shaddack <shaddack@ns.arachne.cz>,
+        Cypherpunks
+  <cypherpunks@al-qaeda.net>
+Message-ID: <BCD05935.4EE32%zenadsl6186@zen.co.uk>
+In-Reply-To: <0405170225070.-1252017356@somehost.domainz.com>
+Mime-version: 1.0
+Content-type: text/plain; charset="US-ASCII"
+Content-transfer-encoding: 7bit
+X-Originating-Pythagoras-IP: [62.3.121.225]
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2437
+Lines: 66
+
+Thomas Shaddack wrote:
+
+> 
+> I have a standard implementation of OpenSSL, with Diffie-Hellman prime in
+> the SSL certificate. The DH cipher suite is enabled.
+> 
+> Is it safe to keep one prime there forever, or should I rather
+> periodically regenerate it? Why? If yes, what's some sane period to do so:
+> day, week, month?
+
+No need. 
+
+Kinda.
+
+The best known discreet logarithm attacks are such that if they succeed in
+the attack then they can easily apply their solution to anything encrypted
+with the same prime. A shared prime attracts attacks. Widely used primes can
+become a big target.
+
+These attacks are generally supposed to be beyond capability for the next X
+zillion years though. Or perhaps for ten years.
+
+This might seem garubonsendese in the naive ""it's safe' or 'it's not safe""
+crypto paradigm. However, that isn't how crypto works.
+
+Cryptanalysis (the revealing of plaintext against the wishes of the
+encryptor) is an economic activity. No-one will bother putting in enough
+resources to break your 2k-bit modexp-based crypto unless they think it
+worthwhile.
+
+But if your prime is shared with several other people who are sending
+nuclear secrets, then your prime might become subject to attack.
+
+> If the adversary has a log of a passively intercepted DHE-RSA-AES256-SHA
+> secured SSL communication, presuming the ephemeral key was correctly
+> generated and disposed of after the transaction, will the eventual
+> physical retrieval of the DH prime (and the rest of the certificate) allow
+> him to decode the captured log?
+
+The prime is public - anyone can know it  - so it's retrieval won't affect
+anything. 
+
+The question I think you are asking is "if the secret key is retrieved, will
+I lose forward security", to which the answer is "yes".
+
+For long-term forward secrecy you need to change the public key every every
+day or so. Use a long-term key to sign the daily keys. PGP does this.
+
+Once you have deleted the day's public key, you are OK (but see belaw!).
+
+The ephemeral keys cannot (or should not) be retrive(able)d.
+
+
+
+
+(below!) Or perhaps the question you were asking was "if finding DL's mod
+_this prime_ becomes possible, will I lose forward security?", in which case
+the answer is "yer fukked" - as are we all - if one prime gets broken, they
+all will, sooner or later.
+
+
+
+-- 
+Peter Fairbrother
+(Who is right now composing a talk about the uses of modexp in crypto, for
+those far more knowledgeable than I)
+

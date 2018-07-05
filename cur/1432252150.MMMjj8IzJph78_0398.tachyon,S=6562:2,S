@@ -1,0 +1,141 @@
+From owner-cypherpunks@al-qaeda.net  Wed Jun 13 05:13:32 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q5D9Ag6L019096
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 13 Jun 2012 05:10:42 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q5D9Agqv019095
+	for cypherpunks-outgoing; Wed, 13 Jun 2012 05:10:42 -0400
+Date: Wed, 13 Jun 2012 11:10:39 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: [tahoe-dev] verification of subset of file == proof of 
+  retrievability
+Message-ID: <20120613091039.GL17120@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Zooko Wilcox-O'Hearn <zooko@zooko.com> -----
+
+From: Zooko Wilcox-O'Hearn <zooko@zooko.com>
+Date: Wed, 13 Jun 2012 02:57:59 -0300
+To: tahoe-dev <tahoe-dev@tahoe-lafs.org>
+Subject: [tahoe-dev] verification of subset of file == proof of
+	retrievability
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+Folks:
+
+Over on the Bitcoin discussion forums (warning: wretched hive of scum
+and villainy), someone was asserting that they wanted a "proof of
+retrievability" protocol and saying that, while they hadn't looked,
+they were pretty sure Tahoe-LAFS didn't do it right:
+
+https://bitcointalk.org/index.php?topic=2236.msg847771#msg847771
+
+I was mildly annoyed by this, because actually we have some extremely
+strong features along those lines.
+
+However, when I wrote a reply explaining exactly what we do have, I
+was forced to admit that it isn't fully there yet. We already have
+verification of complete files (although see #568), but we don't have
+verification of a randomly-chosen subset of a file, which would be a
+"Proof of Retrievability". See below for the message I posted to the
+Bitcoin forum.
+
+See also an old rant of mine complaining that academic cryptographers
+have failed to study the papers and documentation of Tahoe-LAFS
+closely enough to realize that there is most of a
+proof-of-retrievability in there:
+
+https://lafsgateway.zooko.com/uri/URI:DIR2-RO:d73ap7mtjvv7y6qsmmwqwai4ii:tq5tqejzulg7yj4h7nxuurpiuuz5jsgvczmdamcalpk2rc6gmbsq/klog.html#[[HAIL%3A%20A%20High-Availability%20and%20Integrity%20Layer%20for%20Cloud%20Storage]]
+
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/568# make immutable
+check/verify/repair and mutable check/verify work given only a verify
+cap
+
+------- message I posted to the Bitcoin forum
+
+> Correct, to verify every bit of every share you need to download every bit of every share. It's expensive - hopefully future versions of Tahoe-LAFS will implement a probabilistic "proof of retrievability" protocol like the one you suggest.
+
+Downloading only a subset of a file is already implemented, but there
+isn't a command implemented that says "pick a random segment of this
+file, download it from that server, and let me know if it passed
+integrity checks". You can approximate it with the current Tahoe-LAFS
+client, like this (the following lines that begin with "$" is me
+typing in stuff as though I were using a bash prompt):
+
+1. Pick a random spot in the file. Let's say the file size is 10 MB:
+
+$ FILESIZE=29153345
+$ python -c "import random;print random.randrange(0, $FILESIZE)"
+2451799
+
+2. Fetch the segment that contains that point. Segments are (unless
+you've tweaked the configuration in a way that nobody does) 128 KiB in
+size, so this will download the 128 KiB of the file that contain byte
+number 2451799 and check the integrity of all 128 KiB:
+
+$ curl --range 2451799-2451799
+http://localhost/uri/URI:CHK:jwq3f6lkcioyxeuxlt3exlulqe:sccvpp27agfz32lqjghq2djaxetcuo7luko5dhrpdgs7bfidbasa:1:1:29153345
+| hexdump -C  % Total    % Received % Xferd  Average Speed   Time
+Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100     1    0     1    0     0      0      0 --:--:--  0:00:01 --:--:--     0
+00000000  a9                                                |.|
+00000001
+
+As you can see it took only a second to download and emitted only one
+byte to stdout, but it downloaded and verified the integrity of the
+128 KiB segment that contained that byte.
+
+If you are using multiple servers, using Tahoe-LAFS's awesome erasure
+coding feature to spread out the data among multiple servers, then
+this will download the data from the 3 fastest servers (unless you've
+changed the default setting from "3" to some other number). There is
+no good way to force it to download the data from specific servers in
+order to test them -- it always picks the fastest servers. You can see
+which server(s) it used by looking at the "Recent Uploads and
+Downloads" page on the web user interface, which will also tell you a
+bunch of performance statistics about this download.
+
+In short, this feature is *almost* there. We just need someone to
+write some code to do this automatically in the client (which is
+written in Python) instead of as a series of bash commands. Also this
+code should download one (randomly chosen) block from every server it
+can find instead of from just the three fastest servers, and it should
+print out a useful summary of what it tried and which servers had good
+shares.
+
+Oh, there is a different function which does print out a useful
+summary of results -- the "verify" feature. But, that downloads and
+tests every block instead of just one randomly chosen block. Another
+way to implement this is to add an option to that to indicate how many
+blocks it should try:
+
+$ time tahoe check --verify
+URI:CHK:jwq3f6lkcioyxeuxlt3exlulqe:sccvpp27agfz32lqjghq2djaxetcuo7luko5dhrpdgs7bfidbasa:1:1:29153345
+Summary: Healthy
+ storage index: 7qhuoagk4z4ugsjkjgjcre6sx4
+ good-shares: 1 (encoding is 1-of-1)
+ wrong-shares: 0
+real    1m2.705s
+user    0m0.570s
+sys     0m0.060s
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

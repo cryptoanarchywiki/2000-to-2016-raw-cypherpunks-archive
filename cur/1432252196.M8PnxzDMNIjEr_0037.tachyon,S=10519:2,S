@@ -1,0 +1,221 @@
+From owner-cypherpunks@al-qaeda.net  Tue Aug  7 04:40:13 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q778YOdw006539
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 7 Aug 2012 04:34:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1344328464;
+	bh=MaLDJsf6p50dUfsFwSuVy8v48iMUCSc1gHBW1Sx2YLY=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=1O1AtyXQK/cVHu+CoQimHCiKLzQZhQyiT0mpryLPQ5S6pDXgxdG2PNU9HwKbp2jy1
+	 hdXl2hjY5QbOoU0Kq9Axm7KkngL9TqRAbkms8LE+pEVBqPs2gQthDR2okIgupupvE/
+	 93+8mig+ayavh5NYwv/+0OW8PWXKkDGOfzCd/tBs=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q778YOlr006538
+	for cypherpunks-outgoing; Tue, 7 Aug 2012 04:34:24 -0400
+Date: Tue, 7 Aug 2012 10:34:20 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: [liberationtech] What I've learned from Cryptocat
+Message-ID: <20120807083420.GL12615@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Nadim Kobeissi <nadim@nadim.cc> -----
+
+From: Nadim Kobeissi <nadim@nadim.cc>
+Date: Mon, 6 Aug 2012 15:53:15 -0700
+To: Moxie Marlinspike <moxie@thoughtcrime.org>
+Cc: liberationtech@lists.stanford.edu
+Subject: Re: [liberationtech] What I've learned from Cryptocat
+
+Thanks, Moxie, for clarifying a lot already. I have some more things to add
+as Cryptocat's lead developer:
+This is a very misinformed blog post that's been going around concerning
+Cryptocat's development roadmap that I need to address, simply because not
+only is the post so fundamentally incorrect on its technical assumptions,
+but it goes around being written in a surprisingly authoritative tone:
+
+The blog post suggests that becoming a local browser app means that
+Cryptocat no longer uses JavaScript cryptography. This is nonsense:
+JavaScript is a *language*, and since browser apps/plugins are written in
+an HTML5 framework, we will still be using JavaScript to implement
+cryptographic functions. The only thing that has changed is *the method of
+code delivery.* Cryptocat research, even with this change in code delivery,
+remains within the purview of JavaScript cryptography research, not
+abandoning it but improving it by suggesting a different method of code
+delivery. The articles that the blog post links to attack JS crypto code
+delivery methods, and we are answering those concerns:
+ * We have NOT "Abandoned JS crypto" and "officially declared" that
+JavaScript crypto is "wrong."
+* We have NOT "declared that you cannot do serious crypto in pure
+JavaScript"
+ * We HAVE simply changed the method of JS code delivery into a local
+browser plugin, in order to further advance the security of JS
+cryptography.
+ I have absolutely no idea where the author pulled his conclusions from and
+I'm really surprised as to how certainly he posits them in his blog post.
+
+The author goes on to posit that a browser extension be used in order to
+provide a standard cryptographic API for browsers. This is redundant for
+two reasons:
+* The W3C is already working on a standard cryptographic API for browsers:
+http://www.w3.org/2012/webcrypto/ (Cryptocat is part of this working group.)
+ * There exists a variety of vetted, very well-designed standard libraries
+for client-side browser crypto, such as http://crypto.stanford.edu/sjcl/and
+http://code.google.com/p/crypto-js/.
+ When writing a blog posts that takes ideas as granted facts, please make
+sure you know what you're talking about.
+
+NK
+
+
+On Sat, Aug 4, 2012 at 12:58 PM, Moxie Marlinspike
+<moxie@thoughtcrime.org>wrote:
+
+>
+> I've noticed that this discussion has a tendency to be framed in terms
+> of the crypto primitives.  The core problems, as I see them, are
+> actually somewhat unrelated to whether it's possible to efficiently
+> perform cryptographic operations in JavaScript or not.  In my reading,
+> this blog post seems to imply that the recent decisions CryptoCat has
+> made are a result of that question, but my understanding is that they're
+> actually fairly unrelated.
+>
+> A W3C standardized Crypto API, or a browser extension that acts as a
+> generic crypto provider, are a little too myopic to fully address the
+> fundamental question of the interaction between dynamically loaded JS
+> and the user's interface to their browser.  The problem isn't so much
+> whether JS can perform a cryptographic operation, but whether the user
+> knows that it is, to what extent, to whom, and what *else* the JS is doing.
+>
+> The questions that CryptoCat has brought up for me are:
+>
+> 1) How does one create a webapp that provides client-based cryptography,
+> without the security of that app simply being reduced to the security of
+> SSL?  If every time I initiate a chat session, it's a JS app that I'm
+> loading over SSL, any attacker who could intercept that SSL connection
+> (a lot of people today) would be able to intercept the contents of that
+> chat session simply by modifying the JS in transit (so that it sends the
+> attacker a copy of the plaintext, etc).  Doesn't matter whether the
+> crypto primitives are good are not.
+>
+> 2) How does one create a webapp that provides client-based cryptography,
+> without the security of that app simply being reduced to the security of
+> server-based cryptography?  If every time I go to encrypt something
+> client-side, I have to ask the server for the JS to perform that
+> encryption, it's reducible to trusting the server with my plaintext.
+> The server could choose, at any time, to hand me JS that appears to be
+> performing encrypted operations, but is also transmitting a copy of the
+> plaintext as well.  Again, this doesn't depend on the existence of solid
+> crypto primitives.
+>
+> 3) Is there any value at all to "warnings" that are placed on tools for
+> providing secure communication or privacy, and is there something we can
+> do better or instead?  These types of warnings are beginning to suffer
+> from a "certificate warning" effect.  Users are so accustomed to seeing
+> them that they ignore them.  Even Tor, which has been around for years,
+> and is widely recommended for use in a number of dangerous situations,
+> still comes with a warning about its beta nature.  In some sense, it's
+> possible that a "warning" is now almost an incentive for someone to use
+> that tool in a hostile context: people who are serious about security
+> put warnings on their tools, while charlatans wouldn't be so inclined.
+>
+> 4) How do we experiment with security/privacy solutions?  If we don't
+> have all the answers, but want to attempt to start a discussion or an
+> effort in a specific direction, what do we do?  If we do it in public,
+> chance are that people might actually start using our solution (perhaps
+> proportionate to the number of warnings we include!), or reporters might
+> start writing articles with shamefully ridiculous headlines about it.
+>
+> - moxie
+>
+> --
+> http://www.thoughtcrime.org
+>
+> On 08/04/2012 12:06 PM, Uncle Zzzen wrote:
+> > https://crypto.cat will soon stop being a web-based service, and will
+> > only exist as a browser extension.
+> > The question is, what should future web-app developers do if they need
+> > crypto? Rewrite all crypto primitives from scratch [and hope there's
+> > enough interest in reviewing the code], then let users install yet
+> > another extension?
+> >
+> > I believe there's a better solution. I've posted something about it. I
+> > hope some of you would  find it interesting.
+> >
+> http://thedod.noblogs.org/post/2012/08/04/what-ive-learned-from-cryptocat/
+> >
+> > Cheers,
+> > The Dod
+> > _______________________________________________
+> > liberationtech mailing list
+> > liberationtech@lists.stanford.edu
+> >
+> > Should you need to change your subscription options, please go to:
+> >
+> > https://mailman.stanford.edu/mailman/listinfo/liberationtech
+> >
+> > If you would like to receive a daily digest, click "yes" (once you click
+> above) next to "would you like to receive list mail batched in a daily
+> digest?"
+> >
+> > You will need the user name and password you receive from the list
+> moderator in monthly reminders. You may ask for a reminder here:
+> https://mailman.stanford.edu/mailman/listinfo/liberationtech
+> >
+> > Should you need immediate assistance, please contact the list moderator.
+> >
+> > Please don't forget to follow us on http://twitter.com/#!/Liberationtech
+> >
+> >
+>
+> _______________________________________________
+> liberationtech mailing list
+> liberationtech@lists.stanford.edu
+>
+> Should you need to change your subscription options, please go to:
+>
+> https://mailman.stanford.edu/mailman/listinfo/liberationtech
+>
+> If you would like to receive a daily digest, click "yes" (once you click
+> above) next to "would you like to receive list mail batched in a daily
+> digest?"
+>
+> You will need the user name and password you receive from the list
+> moderator in monthly reminders. You may ask for a reminder here:
+> https://mailman.stanford.edu/mailman/listinfo/liberationtech
+>
+> Should you need immediate assistance, please contact the list moderator.
+>
+> Please don't forget to follow us on http://twitter.com/#!/Liberationtech
+>
+
+_______________________________________________
+liberationtech mailing list
+liberationtech@lists.stanford.edu
+
+Should you need to change your subscription options, please go to:
+
+https://mailman.stanford.edu/mailman/listinfo/liberationtech
+
+If you would like to receive a daily digest, click "yes" (once you click above) next to "would you like to receive list mail batched in a daily digest?"
+
+You will need the user name and password you receive from the list moderator in monthly reminders. You may ask for a reminder here: https://mailman.stanford.edu/mailman/listinfo/liberationtech
+
+Should you need immediate assistance, please contact the list moderator.
+
+Please don't forget to follow us on http://twitter.com/#!/Liberationtech
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

@@ -1,0 +1,176 @@
+From owner-cypherpunks@Algebra.COM  Tue Feb 13 19:27:27 2001
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.72.0.53])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id TAA07347
+	for <kwantam@positron.mit.edu>; Tue, 13 Feb 2001 19:27:27 -0500
+Received: from ak47.algebra.com (root@ak47.algebra.com [208.233.99.160])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id TAA20319
+	for <rsw@mit.edu>; Tue, 13 Feb 2001 19:27:26 -0500 (EST)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f1DNMkR25568
+	for cypherpunks-outgoing; Tue, 13 Feb 2001 17:22:46 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from einstein.ssz.com (cpunks@einstein.ssz.com [204.96.2.99])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f1DNMiq25554
+	for <cypherpunks@algebra.com>; Tue, 13 Feb 2001 17:22:44 -0600
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id RAA17126
+	for cypherpunks@algebra.com; Tue, 13 Feb 2001 17:30:57 -0600
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id RAA17114
+	for cypherpunks-outgoing; Tue, 13 Feb 2001 17:30:53 -0600
+Received: from localhost (ravage@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) with SMTP id RAA17110;
+	Tue, 13 Feb 2001 17:30:51 -0600
+Date: Tue, 13 Feb 2001 17:30:51 -0600 (CST)
+From: Jim Choate <ravage@EINSTEIN.ssz.com>
+To: cypherpunks@EINSTEIN.ssz.com
+cc: The Club Inferno <hell@EINSTEIN.ssz.com>, austin-cpunks@EINSTEIN.ssz.com,
+        sci-tech@EINSTEIN.ssz.com
+Old-Subject: CDR: PGP/MIME implementors: text mode vs. binary mode? (fwd)
+Message-ID: <Pine.LNX.3.96.1010213173043.356Q-100000@einstein.ssz.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Reply-To: cypherpunks@EINSTEIN.ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Acceptable-Languages: English, Russian, German, French, Spanish
+Subject:  PGP/MIME implementors: text mode vs. binary mode? (fwd)
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 5299
+Lines: 126
+
+
+
+
+    ____________________________________________________________________
+
+           Before a larger group can see the virtue of an idea, a
+           smaller group must first understand it.
+
+                                           "Stranger Suns"
+                                           George Zebrowski
+
+       The Armadillo Group       ,::////;::-.          James Choate
+       Austin, Tx               /:'///// ``::>/|/      ravage@ssz.com
+       www.ssz.com            .',  ||||    `/( e\      512-451-7087
+                           -====~~mm-'`-```-mm --'-
+    --------------------------------------------------------------------
+
+---------- Forwarded message ----------
+Date: Tue, 13 Feb 2001 13:54:27 +0100
+From: Thomas Roessler <roessler@does-not-exist.org>
+Reply-To: ietf-openpgp@imc.org
+To: mail-client-dev-list@lists.sourceforge.net, pgp-mime@lists.uchicago.edu,
+    coderpunks@toad.com
+Cc: ietf-openpgp@imc.org
+Subject: PGP/MIME implementors: text mode vs. binary mode?
+
+Please forward this message to any implementors of PGP/MIME you are
+aware of.
+
+
+
+To whom it may concern.
+
+In the ietf-openpgp working group, we are about to finish a revised
+version of RFC 2015.  While this looked like an easy task at first
+sight, it is not, since OpenPGP breaks traditional pgp's text-mode
+signatures.  This message is to solicit further input and comments
+from other implementors of PGP/MIME.  (We thought we were done, but
+then there were more arguments against the solution we believed to
+have found...)
+
+The current draft is draft-ietf-openpgp-mime-04.txt, and available
+from: <http://www.ietf.org/internet-drafts/draft-ietf-openpgp-mime-04.txt>.
+
+Please direct any answers to this message to the ietf-openpgp
+mailing list.  In order to subscribe to that list, send a message to
+<ietf-openpgp-request@imc.org> with the single word "subscribe" in
+the subject.
+
+
+
+The Problem.
+
+To pgp 2 and 5, a text-mode signature meant that line endings were
+transformed to a CR-LF sequence, and the result was then hashed.
+However, with OpenPGP, preparing a text-mode signature has another
+effect: Trailing blanks (and tabs?) are stripped - this is what used
+to be done as a clear-sign signature with traditional PGP.  Of
+course, this is a bug in the spec, but one which won't be easily
+fixed now that all the implementations are out there.
+
+
+Now, for PGP/MIME, this turns into a really ugly problem: RFC 2015
+does not specify which kind of signature to use. However, it does
+specify how the signed material should be canonicalized before
+hashing.  This method of canonicalization exactly matched what was
+done by traditional PGP versions for text mode signatures, which
+means that the very same hash value could be used to verify either a
+text-mode or a binary-mode signature.  That way, PGP/MIME according
+to RFC 2015 and with traditional PGP had the desired one-pass
+properties.
+
+With OpenPGP, this construction breaks badly as soon as trailing
+white space is involved.  Since it doesn't look right or elegant to
+ask implementors of one-pass parsers (if they exist) to calculate
+two hashes in parallel, some decision has to be made on the kind of
+signature which should be mandated for the future.
+
+I'm listing the choices and the pros and cons I'm seeing:
+
+* text-mode signatures
+
+  + easy to implement if you invoke a command-line tool to which you
+    can leave the details of canonicalization.
+  - Ian Bell of turnpike.com tells me that it's hard to persuade the
+    PGP SDK to produce detached text-mode signatures.
+  + the new-style text-mode signatures will nicely ignore any
+    whitespace changes which are irrelevant to the message's content
+    (When used the right way, MIME is invariant under modifications of
+    trailing whitespace.)
+  - there are incompatibilities between implementations which use
+    text-mode AND leave trailing white space in messages.
+  - thus, clients will need additional code in order to avoid
+    trailing whitespace (e.g., apply quoted-printable).
+  - this will make any clients non-compliant which are using binary
+    mode today.
+
+* binary-mode signatures
+
+  + easy to implement if you use the PGP SDK (I'm told).
+  + clients are interoperable regardless of the back-end version
+    used and regardless of the treatment of trailing whitespace.
+  - those people who rely on "pgp -t" will have to add some code to
+    pass canonicalized data to the back-end.  In some cases, this
+    may badly break things.
+  - signatures will break upon changes to trailing white space which
+    don't affect the message's content or MIME semantics
+  - thus, clients may need additional code in order to avoid
+    trailing whitespace (e.g., apply quoted-printable).
+  - this will make any clients non-compliant which are using text
+    mode today.
+
+Bottom line: The decision what to mandate boils down to the question
+what implementors prefer.  And, yes, both alternatives are bad
+solutions.
+
+Thus, if you are an implementor of PGP/MIME, please subscribe to the
+ietf-openpgp mailing list, and let us know what should be done in
+your opinion, and why.  Also, please tell us what mode you are using
+nowadays, so we get a more precise impression of what software we
+are going to break.
+
+
+Thanks, and kind regards,
+-- 
+Thomas Roessler			    <roessler@does-not-exist.org>
+

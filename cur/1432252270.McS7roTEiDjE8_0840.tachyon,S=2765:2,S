@@ -1,0 +1,59 @@
+From owner-cypherpunks@al-qaeda.net  Thu May 19 01:32:33 2011
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id p4J5TcT9031012
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 19 May 2011 01:29:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1305782978;
+	bh=C0jKrngnjbG63u0plJl+JvD4svTd795d+2YDwajEQd4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type:Sender;
+	b=SGolBG1IyXaygsLv+fxdrG+rsd99QcyblA3Lyf8nCGYTjeK1SwEAql1RXT0cIzDoY
+	 khqb1Y911p+m0q9pPQqmMkBOp+Kd3if2yXkwQZXqa0UQDeDpoBWpszkR0mM9anrjH4
+	 pan08fUAJfcsIt2QdCM/AApMwJzeHvER/yZMhIUs=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id p4J5TcUr031011
+	for cypherpunks-outgoing; Thu, 19 May 2011 01:29:38 -0400
+Authentication-Results: proton.jfet.org; dkim=pass (1024-bit key) 
+  header.i=@gmail.com; dkim-adsp=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;        
+  d=gmail.com; s=gamma;        
+  h=domainkey-signature:mime-version:date:message-id:subject:from:to    
+       :content-type;        
+  bh=C0jKrngnjbG63u0plJl+JvD4svTd795d+2YDwajEQd4=;        
+  b=BqiN4YdiAfqMzfdN6pDBa4Vyf9MYNQ2krKLHE6TltPW/X6xQHo6Vcn0DTgUmWlB/xN  
+  LfB/abjoBA1Eis+PeuUl0X+dAp0RsPJR1sIB6o/MJQ5yfdYJ2fAeTmz2FBv0pypuO2Z7  
+         M8NVEQtHilGWRg3rKiak7ycLg/MBfHneeAJsM=
+DomainKey-Signature: a=rsa-sha1; c=nofws;         d=gmail.com; s=gamma; 
+         h=mime-version:date:message-id:subject:from:to:content-type;   
+  b=TRb7tyCmADB8YuNvY2hzv7ahU40J92VHel3yf0cRXuPyqD+5TDjAdbgIaA2QfwmeVw  
+  rnKKmYTmyHasaiQ3xfFveey654I3ZSQDV1MRCEDYipPyvFeWPNynudiR6UMEfR6+4o3N  
+         /YvhOF0kS0sBvBkdUtQ857un3w78Y+VtYroU4=
+MIME-Version: 1.0
+Date: Wed, 18 May 2011 22:29:29 -0700
+Message-ID: <BANLkTinvFoArvNT_8SaXzzVYZEMWKfG9Hw@mail.gmail.com>
+Subject: AES-NI
+From: coderman <coderman@gmail.com>
+To: Cypherpunks list <cypherpunks@al-qaeda.net>
+Content-Type: text/plain; charset=ISO-8859-1
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 535
+Lines: 13
+
+anyone else playing with AES-NI?  i think i'm in love...
+
+
+speeds are in Bytes/sec for 16, 64, 256, 1024, 8192 byte blocks.
+
+> openssl speed -engine aesni -multi 12 -evp aes-256-cbc
+evp            4727934.14k  6546323.52k  7251165.61k  7622717.78k  7666193.75k
+
+> openssl speed -engine aesni -multi 12 -evp aes-128-cbc
+evp            5950427.83k  8590923.33k  9879158.95k 10254692.35k 10293641.22k
+
+> openssl speed -engine aesni -multi 12 -evp aes-128-ecb
+evp            6492679.75k 13352846.68k 15996760.83k 16935757.82k 17116293.80k
+

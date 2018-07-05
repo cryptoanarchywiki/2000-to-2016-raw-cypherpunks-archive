@@ -1,0 +1,84 @@
+From owner-cypherpunks@jfet.org  Mon Nov 14 07:17:21 2005
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.5/8.13.5/Debian-3) with ESMTP id jAECGvlm017428
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 14 Nov 2005 07:16:57 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.5/8.13.5/Submit) id jAECGvtV017427
+	for cypherpunks-outgoing; Mon, 14 Nov 2005 07:16:57 -0500
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;         s=beta;
+  d=gmail.com;        
+  h=received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+  b=Qk57g4jSI7wJhg0rGMhc0g5+6FB+seAK+EVR3Pa9O2EEtjwA79mrJc2CD36liq0u8WSmzJ8RxeoilSkIevG25eJvBserD9U6EfQNMoHsgJje80mmTGJI6RnLT2uyvaY8GYXtb7hhoaxd1A9tkX7Xsx+4XWv7CK8G13UvMrpqyJ8=
+Message-ID: <d4f1333a0511140416l419b9b2do703e5d5575530141@mail.gmail.com>
+Date: Mon, 14 Nov 2005 06:16:55 -0600
+From: "Travis H." <solinym@gmail.com>
+To: cyphrpunk <cyphrpunk@gmail.com>
+Subject: Re: On Digital Cash-like Payment Systems
+Cc: cryptography@metzdowd.com, cypherpunks@jfet.org
+In-Reply-To: <792ce4370511071247l1a687a5dk8dcfa02f7de61164@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+References: <19275506.1130592050616.JavaMail.root@elwamui-karabash.atl.sa.earthlink.net>
+  	 <d4f1333a0511041709j48703e7aqe2d694b0366ccccc@mail.gmail.com> 	
+  <792ce4370511071247l1a687a5dk8dcfa02f7de61164@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by proton.jfet.org
+  id jAECGu50017391
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2248
+Lines: 48
+
+> Don't ever encrypt the same message twice that way, or you're likely to
+> fall to a common modulus attack, I believe.
+
+Looks like it (common modulus attack involves same n, different (e,d) pairs).
+
+However, you're likely to be picking a random symmetric key as the
+"message", and Schneier even suggests picking a random r in Z_n and
+encrypting hash(r) as the symmetric key.
+
+More generally, I wonder about salting all operations to prevent using
+the same value more than once.  It seems like it's generally a bad
+idea to reuse values, as a heuristic, and applying some kind of
+uniquification operation to everything, just as it's a good idea to
+pad/frame values in such a way that the output of one stage cannot be
+used in another stage of the same protocol.
+
+> > Since I'm on the topic, does doing exponentiation in a finite field
+> > make taking discrete logarithms more difficult (I suspect so), and if
+> > so, by how much?
+>
+> This doesn't make sense. The discrete log operation is the inverse of
+> exponentiation. Doing exponentiation is a prerequisite for even
+> considering discrete log operations. Hence it cannot make them "more
+> difficult".
+
+What I really meant was, if it wasn't computed in a finite field, how
+difficult would it be to compute the logarithm?  I'm just curious
+about how much work factor is involved in reducing modulo n.
+
+I also wonder about some of the implications of choosing a message or
+exponent such that not enough reductions take place during
+exponentiation.
+
+> I'm not sure conventional covert-channel analysis is going to be that
+> useful here, because the bandwidths we are looking at in this attack
+> model are so much greater (kilobytes to megabytes per second).
+
+Well, it depends on how you define the attack, which wasn't defined. 
+If the attack is to smuggle out a key using a covert channel, it may
+apply.  If the attack is to download the key on a conventional
+network, it wouldn't make much difference.
+
+Unless, of course, you're auditing network flows over a certain size
+or lasting a certain amount of time.
+--
+http://www.lightconsulting.com/~travis/  -><-
+"We already have enough fast, insecure systems." -- Schneier & Ferguson
+GPG fingerprint: 50A1 15C5 A9DE 23B9 ED98 C93E 38E9 204A 94C2 641B
+

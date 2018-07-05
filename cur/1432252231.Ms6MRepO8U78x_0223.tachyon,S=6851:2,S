@@ -1,0 +1,81 @@
+From cypherpunks-bounces@cpunks.org  Thu Oct 17 05:18:33 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9H9ICQp022971;
+	Thu, 17 Oct 2013 05:18:15 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9H9I7ZB022967
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Thu, 17 Oct 2013 05:18:09 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 9C545543E75; Thu, 17 Oct 2013 11:18:06 +0200 (CEST)
+Date: Thu, 17 Oct 2013 11:18:06 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: Re: [Cryptography] /dev/random is not robust
+Message-ID: <20131017091806.GR10405@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by antiproton.jfet.org id
+ r9H9I7ZB022967
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 4979
+Lines: 40
+
+----- Forwarded message from Jerry Leichter <leichter@lrw.com> -----
+
+Date: Wed, 16 Oct 2013 17:10:00 -0400
+From: Jerry Leichter <leichter@lrw.com>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Sandy Harris <sandyinchina@gmail.com>, Cryptography <cryptography@metzdowd.com>
+Subject: Re: [Cryptography] /dev/random is not robust
+Message-Id: <2CE9C56B-774E-4152-8A21-237337F9954F@lrw.com>
+X-Mailer: Apple Mail (2.1510)
+
+Can we separate the issue of actual issues in the Linux RNG from the responses to this paper?
+
+It's been a long time since I worked on an RNG, for a product that ran on systems that provided nothing like /dev/random; our Linux version mixed in /dev/random, and our Windows system mixed in whatever Windows calls its random number provider.  I have no doubt that the Linux RNG is immensely better than the hack we were able to cobble together - not being in the kernel severely restricted our entropy sources.  From what I've seen of the Linux RNG, it does a pretty good job.  I'm not about to suggest any code changes, and frankly nothing in this paper suggests any either.  Following its guidelines would produce an entirely new RNG, which absolutely *no one should trust* until it's been kicked around in the community for a while.
+
+My problem is *entirely* with some of the intemperate responses I've seen out there, which basically say "Oh, that's just some academic nonsense, pay no heed".  I've seen nothing of that sort from you, Theodore Ts'o, personally; while you clearly have an emotional attachment to the work you've done - don't we all? - your responses are mainly technical in nature, pointing out places where the paper misunderstood what the current implementation does.  However, you do let a bit of an attitude come through in remarks about "not caring about publishing papers".  As I said, there is good and bad academic work, and not even all the good academic work is actually useful.  As an example of good and useful academic work, I usually point to Phil Rogoway's papers.  While the papers themselves are highly technical and get into a great deal of detail, what comes out at the end are simple designs that can be, and have been, implemented.  If you implement one of Rogoway's designs, you know t
+ here's a formal proof behind it.  You don't need to actually understand the proof - others have reviewed it and it's almost certainly solid.  Merge sort will run in O(n log n) for you whether you understand the theory or not.
+
+I see the paper as valuable for proposing strong security definitions for "PRNG's with input", showing that neither Barak and Halevi's algorithm nor the Linux RNG's algorithm attain those definitions, but suggesting an algorithm that does.  The answer "well, yes, the Linux generator fails if its entropy sources are bad in a particular way, but we have entropy sources that aren't" misses the point.  At one time, not so very long ago, no one knew how to build a cipher secure against a known-plaintext attack.  Today, that's assumed.  A defense of a modern cipher as "well, we won't let anyone see the plaintext" isn't good enough.  (Even worse is the claim that "you can only see the state of the PRNG from root, and then there are other attacks".  This isn't even true - a Linux system frozen into a VM can't prevent anyone from reading that state if they want it hard enough.)
+
+Just as they extended Barak and Halevi's definitions, others may well come along and "tune" theirs.  That doesn't make theirs, or Barak and Halevi's, work "wrong"; it just makes them incomplete.  Others will also eventually come along and produce better algorithms that attain the various definitions that the community comes to agree on.
+
+I'm not sure how the whole business of entropy estimation feeds into this.  There are others who've criticized it as just guesswork.  Frankly, they have a point.  John Denker's work on Turbid provides a much more principled approach to the problem.  Still, the Linux kernel has to work with what it has.
+
+Whether new, better, strong approaches will come along in the future is impossible to tell.  If they do, I would hope those engineering Linux and other systems will have the humility to admit that the direction they've been going was, as it turns out, incorrect, and that they should start again from scratch.  That's how science and engineering are supposed to work.
+
+Random numbers are way too important to allow the kinds of dismissive responses we've been seeing.
+
+                                                        -- Jerry
+
+_______________________________________________
+The cryptography mailing list
+cryptography@metzdowd.com
+http://www.metzdowd.com/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

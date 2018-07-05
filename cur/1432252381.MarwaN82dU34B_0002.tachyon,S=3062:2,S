@@ -1,0 +1,67 @@
+From owner-cypherpunks@lne.com  Tue May 13 02:28:33 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h4D6SVt16860
+	for <rsw@jfet.org>; Tue, 13 May 2003 02:28:31 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h4D6EtVO025722
+	for cypherpunks-goingout345; Mon, 12 May 2003 23:14:55 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+X-envelope-info: <bill.stewart@pobox.com>
+Message-Id: <5.1.1.6.2.20030512223358.02d50050@idiom.com>
+X-Sender: wcs@idiom.com
+X-Mailer: QUALCOMM Windows Eudora Version 5.1.1
+Date: Mon, 12 May 2003 22:48:42 -0700
+To: "Roy M.Silvernail" <roy@rant-central.com>
+From: Bill Stewart <bill.stewart@pobox.com>
+Subject: Re: A Trial Balloon to Ban Email?
+Cc: cypherpunks@lne.com
+In-Reply-To: <20030513045258.6B70910F75@rant-central.com>
+References: <017f01c318e4$b0ff7e50$6701a8c0@JOSEPHAS>
+  <Pine.LNX.4.40.0305121022230.16578-100000@bolt.sonic.net>
+  <018801c31807$1f991670$0b01a8c0@whitestar>
+  <017f01c318e4$b0ff7e50$6701a8c0@JOSEPHAS>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 1705
+Lines: 34
+
+At 11:52 PM 05/12/2003 -0500, Roy M.Silvernail wrote:
+>On Monday 12 May 2003 07:09 pm, Joseph Ashwood wrote:
+>
+> > That one's easy. Use a problem that is not in P but is in NP. To make it
+> > clearer to most people, use a problem that can be verified cheaply, but
+> > that can't be solved cheaply.
+>
+>Please permit me to join the dense crowd.  Now that I've proved my labor, how
+>do I attach the proof to the email?  Obviously, some parts of the message are
+>added to a hash, but which parts? If it's the body, is whitespace damage
+>still an issue?
+
+The obvious mechanisms for including it are a header line,
+         X-Hashcash-Version-1212: 0x20A13490B8219048243
+which is easy pretty easy for almost anybody to add.
+You could also do an ESMTP extension of some sort, which is much more 
+annoying to add,
+but lets you reject non-hashcashed messages before receiving them.
+(The ESMTP approach also has the problem that it's only useful for
+direct connections, as opposed to mail relayed through your ISP,
+so that probably isn't as interesting.)
+
+Some of the hashcash proposals have required near-real-time interaction
+between the sender's client and the recipient's server,
+to collect the string of the day or string of the moment,
+which has privacy/anonymity problems,
+while others either use a fixed or slowly changing parameter set,
+e.g. find a string that matches the first N bits of the SHA1 of
+         recipient@example.com-YYYYMMDDHH
+or      recipient@example.com-YYYYMMDDHH-KEYPHRASE
+
+So the recipient's mail server or client looks for the X-Hashcash string,
+makes sure it isn't recipient@example.com-YYYYMMDDHH-KEYPHRASE,
+hashes it and makes sure that the number matches, and you're good to go.
+

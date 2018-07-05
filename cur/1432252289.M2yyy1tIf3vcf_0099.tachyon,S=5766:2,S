@@ -1,0 +1,132 @@
+From owner-cypherpunks@Algebra.COM  Fri Feb  9 03:40:39 2001
+Received: from MIT.EDU (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.69.0.28])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id DAA01037
+	for <kwantam@positron.mit.edu>; Fri, 9 Feb 2001 03:40:39 -0500
+Received: from ak47.algebra.com by MIT.EDU with SMTP
+	id AA06167; Fri, 9 Feb 01 03:02:08 EST
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f1978xx26106
+	for cypherpunks-outgoing; Fri, 9 Feb 2001 01:08:59 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from einstein.ssz.com (cpunks@einstein.ssz.com [204.96.2.99])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f1978vq26091
+	for <cypherpunks@algebra.com>; Fri, 9 Feb 2001 01:08:57 -0600
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id BAA26428
+	for cypherpunks@algebra.com; Fri, 9 Feb 2001 01:16:00 -0600
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id BAA26419
+	for cypherpunks-outgoing; Fri, 9 Feb 2001 01:15:57 -0600
+Received: from security.za.net (security.za.net [196.2.146.22])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id BAA26415
+	for <cypherpunks@einstein.ssz.com>; Fri, 9 Feb 2001 01:15:52 -0600
+Received: from firewall.odyssey.co.za ([196.22.194.130] helo=vortexia)
+	by security.za.net with smtp (Exim 3.15 #1)
+	id 14R7eD-000BdF-00; Fri, 09 Feb 2001 09:07:13 +0200
+From: "Andrew Alston" <andrew@security.za.net>
+To: "Bill Stewart" <bill.stewart@pobox.com>, <cypherpunks@einstein.ssz.com>
+Old-Subject: RE: CDR: Re: IW: Tools Stunt DoS Attacks
+Date: Fri, 9 Feb 2001 09:08:54 +0200
+Message-Id: <LEEEJPKEDECPBBHJMPNPAENLCIAA.andrew@security.za.net>
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Priority: 3 (Normal)
+X-Msmail-Priority: Normal
+X-Mailer: Microsoft Outlook IMO, Build 9.0.2416 (9.0.2910.0)
+Importance: Normal
+X-Mimeole: Produced By Microsoft MimeOLE V5.00.3018.1300
+In-Reply-To: <3.0.5.32.20010208184534.00955640@idiom.com>
+Reply-To: cypherpunks@einstein.ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Acceptable-Languages: English, Russian, German, French, Spanish
+Subject:  RE: Re: IW: Tools Stunt DoS Attacks
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 3173
+Lines: 74
+
+
+If the attacker has a large number of slave machines, each machine is
+spoofing from 1000 addresses (I.E sending 1000 packets each one from a
+different address, and then cycling these addresses or generating another
+1000 different addresses), it becomes VERY VERY difficult to block.
+
+Look at it this way...
+
+1000 machines, each sending 1000 packets, from 1000 spoofed addresses, each
+packet is 8k big...
+
+7812meg is therefore sent in payload size (as with my example code), per
+cycle, from a total of 1 million addresses.
+
+Because each packet is a SYN packet, probably aimed for a legit opened port
+(like port 80) and it looks like a standard normal start of a connect, the
+firewall will never block these packets, if the firewall DOES attempt to
+auto shun these packets at the address level, the firewall will attempt to
+insert 1 million rules in the space on under 5 minutes, its almost sure to
+fall over.  If the firewall doesnt fall over and DOES succeed in these rule
+insertions, it will have effectively blocked a fairly major part of the
+internet from ever accessing your server that is being DoS'ed.
+
+With 1000 machines, each sending 10 8k packets per second (80k/sec), you are
+running at 80000k/sec, that is to say almost 80gigabit, enough to kill an
+OC-48 dead in the water.
+
+At this point, to stop and block and trace is almost impossible, and there
+are still PLENTY of places you can send spoofed packets from that arent
+blocking these things, besides, if you block them, unless you block them
+VERY high up, your ISP is gonna be dead in the water anyway and your
+blockage is gonna do nothing to stop it anyway
+
+If anyone has other opinions on what Ive said above, please let me know :)
+
+Thanks
+
+Andrew
+
+-----Original Message-----
+From: owner-cypherpunks@minder.net
+[mailto:owner-cypherpunks@minder.net]On Behalf Of Bill Stewart
+Sent: Friday, February 09, 2001 4:46 AM
+To: cypherpunks@cyberpass.net
+Subject: Re: CDR: Re: IW: Tools Stunt DoS Attacks
+
+
+At 05:16 PM 2/7/01 +0100, Lars Gaarden wrote:
+>Andrew Alston wrote:
+>> Basically, people who claim to be able to stop DDOS/trace DDOS/etc etc I
+>> believe are playing on the public, making money out of a situation that
+>> unfortunatly has no end in site, due to the fuckups made in the IP
+>> protocol by the department of defense when they released the RFC.
+>
+>Spoofed source-addresses can be (and often are) blocked at the
+>access ISP. RFC 2267, Ingress filtering.
+>
+>DDOS trojans on ISDN/xDSL/Cable home user boxes will have to use
+>their real (or at least same subnet) source addresses on datagrams,
+>or run the risk of having the traffic dropped silently at the first
+>router.
+
+Most DDOS attacks forge their source address, changing between
+large numbers of forged addresses, so the site under attack can't
+defend itself by blocking the addresses that attack it.
+If a Bad Guy has thousands of slave machines, they can still
+launch a big attack, but if they need to use their own addresses,
+the target can block the attackers (still not easy for large numbers,
+but at least it's possible.)
+				Thanks!
+					Bill
+Bill Stewart, bill.stewart@pobox.com
+PGP Fingerprint D454 E202 CBC8 40BF  3C85 B884 0ABE 4639
+
+

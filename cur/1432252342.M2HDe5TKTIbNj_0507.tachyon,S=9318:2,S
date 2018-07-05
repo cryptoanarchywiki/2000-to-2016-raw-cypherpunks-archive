@@ -1,0 +1,192 @@
+From owner-cypherpunks@al-qaeda.net  Fri Feb 15 08:46:29 2013
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id r1FDbYr0008514
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 15 Feb 2013 08:37:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1360935454;
+	bh=cytD3QOXIbDVHOmsizw8UExBOMwC3Ur59G0IEwXN/sA=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=1uxD2WLvhoh7I+A/fpxh8y+1zsESCTlSxdKd2TmRjUGdmNWfejHba5xkdLYK7DslS
+	 xIJnJoftAkPAw7N5CB8v08xbYaRbJ1aVv4mWnXA8axw1eh23FBX1cFnOPln/il6gES
+	 4B8+4NAoKzyNByMvX0BCceb8yMYAgvkrvBfNKAio=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id r1FDbYo5008513
+	for cypherpunks-outgoing; Fri, 15 Feb 2013 08:37:34 -0500
+Date: Fri, 15 Feb 2013 14:37:30 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: Re: [Freedombox-discuss] This white space spectrum chip might
+  be 	uninteresting
+Message-ID: <20130215133730.GR6172@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 7864
+Lines: 159
+
+----- Forwarded message from Paul Gardner-Stephen <paul@servalproject.org> -----
+
+From: Paul Gardner-Stephen <paul@servalproject.org>
+Date: Fri, 15 Feb 2013 12:29:38 +1030
+To: John Gilmore <gnu@toad.com>
+Cc: freedombox-discuss@lists.alioth.debian.org
+Subject: Re: [Freedombox-discuss] This white space spectrum chip might be
+	uninteresting
+
+Hello John, All,
+
+We have been thinking about related issues in the Serval Project.
+Being based in .AU, we don't (yet) have the luxury of white spaces.
+Also, as we are also targeting disaster use cases we have to be able
+to work in situations where geodatabases may not be available or
+accessible for whatever reason.
+
+So our initial efforts that are being sponsored by the NLnet
+Foundation are being focussed on the ISM band at 915MHz, that is
+available in a number of countries (.US and .AU are of particular
+interest).  This band has fairly generous rules, and is capable of
+fairly long distance communications.
+
+Our very early tests, using what we know is sub-optimal forward error
+correction, and with purposely poorly placed antennae (on a couch or a
+desk inside a house, similar to the kinds of places a freedombox would
+be expected to be plugged in) already show that it is possible to
+maintain links through O(10) houses.
+
+This is important, because WiFi does only O(1) house, PI*r^2 = O(1)
+houses covered (including your own), and so you need Almost Everyone
+to join to form a mesh.
+
+But assuming a range of O(10) houses, PI*r^2 = PI*10^10 = O(100)
+houses, and so you need only about 1% up-take to enable metropolitan
+networks to be feasible.  That seems much more likely than the ~100%
+up-take needed to make a WiFi mesh.
+
+The trade-off is the relatively low bandwidths that are feasible.  We
+are using 250kbit, and that is about as high as is feasible.  However,
+it isn't as bad as it sounds, because we can use some clever frequency
+hopping and related tricks to create a "multi-threaded" radio
+environment, where there can be 50 senders operating in the band for
+250k x 50 = 12.5mbit total throughput, with the nice property that no
+one node can consume all the bandwidth. I can provide some further
+explanation on this if it is of interest.
+
+We are using the RFD900 radios that run open-source firmware, and our
+GPL Serval Mesh software on top of that to give us a fully open stack,
+complete with our baked in crypto layer that the Serval Mesh is based
+on, and could be integrated into the FB stack if desired at some
+point.
+
+We are beginning to make a few Mesh Helper prototypes, that combine an
+RFD900 radio + OpenWRT 802.11n router and battery, and will be testing
+these in New Zealand over the next couple of weeks, and can feedback
+here if people would like to hear more about how it goes.  Or
+alternatively, I will blog about it.  There are already a couple of
+blog posts that show some of what we have been up to already, e.g.:
+
+http://servalpaul.blogspot.com.au/2013/02/breaking-wifi-barrier-serval-mesh.html
+http://servalpaul.blogspot.com.au/2013/02/building-serval-mesh-helper-device.html
+
+If anyone is interested in knowing more, or helping us out (there is a
+fair bit of radio firmware rewriting to be done to realise the full
+potential), just drop me a line.
+
+Paul.
+
+On Fri, Feb 15, 2013 at 9:38 AM, John Gilmore <gnu@toad.com> wrote:
+>> http://www.v3.co.uk/v3-uk/news/2243662/white-space-spectrum-chip-approved-for-m2m-use
+>> http://www.theregister.co.uk/2013/02/13/weightless_neul/
+>>
+>> If this could somehow be incorporated in the Novena freedom box that Bdale is trying to whip up...
+>
+> (0) White Space spectrum doesn't have to be used with the Weightless
+> chips or protocol.  The idea is that anybody can use it with any
+> modulation that stays within the bandplan.  Whitespace does not equal
+> Weightless, though they of course neglect to tell you that.
+>
+> (1) this is a proprietary standard, all tied up in patents.  You
+> aren't allowed to know how it actually works, and you can't use it
+> without paying one or many patent holders (some of whom may only
+> surface years from now and start demanding royalties).  It's a classic
+> proprietary radio hardware ploy in that regard.
+>
+> (2) this is low speed (14 megabits max -- but that's for two devices
+> sitting right next to each other in a faraday cage, I'm sure) yet it
+> uses large amounts of bandwidth, hundreds of megahertz).  It's
+> bleeding edge, and probably full of bugs and interoperability
+> problems.  It is the very first entrant in using "white space" and of
+> course later entrants are likely to be more efficient, more standard,
+> better debugged, cheaper, better integrated, and more open.
+>
+> (3) The FCC's white space stuff is a catch-22.  You can't use this
+> radio spectrum until you have found out, via some out-of-band
+> mechanism, both exactly where you are on earth (like with a GPS chip) and
+> accessed some global database of what frequencies are available at
+> your GPS locations.  This has multiple painful results:
+>
+>   *  You need a GPS.
+>   *  You need Internet access independent of this chip.
+>   *  You need to contact a centralized service, and tell it your GPS location.
+>   *  Your communication can easily be censored by either pressuring or
+>      spoofing that centralized service, or by cutting off your
+>      Internet access so you can't find out what frequencies to use.
+>      Not to mention spoofing your GPS.
+>   *  Your use of the spectrum can be remotely monitored by monitoring
+>      the centralized service (who checks in from what locations).  And
+>      since the centralized service is proprietary and/or government
+>      provided, it will probably also require some kind of "credential"
+>      that proves you have paid your "licensing fees" or some such,
+>      which can also be used to identify your device uniquely.  Even if
+>      they *don't* feed you bad results based on your identity, they
+>      will know where you are and that you are using device #
+>      123-456-789-1011 there, consistently over a period of years.  If
+>      you bought device 123-456-789-1011 with a credit card or had it
+>      delivered to an address, those records will be available to
+>      inquisitive totalitarian governments, tying the device to
+>      an individual person and their whole dossier.
+>
+> All of these suck for a FreedomBox.  What we would want is a
+> communications medium that anyone can use, anyone can build into
+> devices, with public specs, that uses scarce bandwith efficiently, and
+> that you can just turn on and start using immediately to talk between
+> two nodes (or among two hundred nodes) that wish to communicate.
+> Weightless ain't that.  WiFi is much closer, particularly as its
+> early patents expire.
+>
+> Oh, and:
+>
+>   *  White space communication is illegal everywhere except the United
+>      States.  While I think we certainly need protection from the US
+>      government, there are also lots of other governments that are
+>      egregious at suppressing basic human rights.  We should build stuff
+>      that works worldwide.
+>
+> For more details, see the documents here:
+>
+>   http://www.weightless.org/media/resources
+>
+>         John
+>
+> _______________________________________________
+> Freedombox-discuss mailing list
+> Freedombox-discuss@lists.alioth.debian.org
+> http://lists.alioth.debian.org/cgi-bin/mailman/listinfo/freedombox-discuss
+
+_______________________________________________
+Freedombox-discuss mailing list
+Freedombox-discuss@lists.alioth.debian.org
+http://lists.alioth.debian.org/cgi-bin/mailman/listinfo/freedombox-discuss
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

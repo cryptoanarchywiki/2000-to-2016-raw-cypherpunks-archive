@@ -1,0 +1,116 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u5O4kYJE027195;
+	Fri, 24 Jun 2016 00:46:34 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=uE+qp0S3;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-it0-f45.google.com (mail-it0-f45.google.com
+ [209.85.214.45])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u5O4kWva027191
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Fri, 24 Jun 2016 00:46:33 -0400
+Received: by mail-it0-f45.google.com with SMTP id g127so6643810ith.0
+ for <cypherpunks@cpunks.org>; Thu, 23 Jun 2016 21:46:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
+ bh=WUaDm+AX28TthmcjYR67fTya/34IGkYQzCz8VgvBYzc=;
+ b=uE+qp0S3JUYdFGxQ/hp/q7JMAUUvbEb8vS6TtQnwh2Bo3vm/i+hGNEG2Uiyrs7H1/J
+ F9qV8+KC6T1vOb9c9tCizG+X8Xe2o3c96f4WLgyvwEeenRwnY4Ho47K+fOnMMPOy+zk3
+ C7moUowDxygtH9t6yswXe1NoBNNIndwMuDB08f5ZgMzeaLiAghXO9MfFIxWKfCGminJF
+ 7io25gvMK0Je42MNd8Ghu0LRTDcoI+jxax7f5ARsT+HnJoL2XPuTLFRDdDztO+atAyiI
+ Y2gxhWOYo1tnNHKDxkGBzZrwebZZe0f030hvdQpzWds+5h/z6EpvDPFBe/UW3qivtiRt
+ UmIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+ :message-id:subject:to;
+ bh=WUaDm+AX28TthmcjYR67fTya/34IGkYQzCz8VgvBYzc=;
+ b=OInns++9HqQox3r2RPyqVTHLplqHvUIwmib6jfDgGyQTeqho7C/0Oon0juU0/+3NfT
+ u3tZhgpzdz5MzqOVfIlQeUnYRc9+ZB27tBVaqSl7v1SIV6xKoVSGbIcMJruiwX606lv5
+ X4NbUUhlagxSIhhmbbDgjJw4Fi9is4Kn8qfI46TkjkT1eOOUKWqUqD4NeyC1Y4x2UMKl
+ hXYNF55ghxCOKA9Ka29JumSAva3aX5KXimHOQXX/qIHL0dPZBS2d3OLynmM5tNiSmQLG
+ 2j6iviXPl2ycLJKlxroq2Tn8U0SSL7l5Nua2BcERaf8HbQfoaAr4D1h3whFxWCItB4c9
+ I3Sw==
+X-Gm-Message-State: ALyK8tIriRpnllHDy8d19GzxNZ35EFV++tFNWD+5olxcSCP8CeDtDmqqRU9LCWpT7GE+/vsVWjTFWNfRk83tdQ==
+X-Received: by 10.36.16.67 with SMTP id 64mr4253589ity.88.1466743586454; Thu,
+ 23 Jun 2016 21:46:26 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.50.184.165 with HTTP; Thu, 23 Jun 2016 21:45:57 -0700 (PDT)
+In-Reply-To: <CAEm6KbLWoJcJUA8wk0Bg7xN6tx8G-KK+a8TuRq3_QLrrbKn64Q@mail.gmail.com>
+References: <CAG2tMp6ifHKNoP6cfF7gMWp5eHVEwOJuBsGYVoGSvpPn72Vcbw@mail.gmail.com>
+ <d0e6db7279148f9eafdda74678adb972@cryptolab.net>
+ <CAG2tMp7EY3UtEE+eZZQJ_rvHFnM77dcjR-kAgQOK0KSV8LfhbA@mail.gmail.com>
+ <CAG2tMp5pyWsG_6doHL8i4yO+NN2X2fkENAJ0Qkz5=yidE-R2nQ@mail.gmail.com>
+ <576b0d29.c8249f0a.fdc44.32aa@mx.google.com>
+ <CAG2tMp5Yw4k2WQ05FEcQfQYtdvMqEve85XxinNmZ7bus6jqavg@mail.gmail.com>
+ <576b20a2.e701b00a.1d4b5.415d@mx.google.com>
+ <CAG2tMp4s1HTNOHw5Or7OKwcox1u9FPp9oUKJjcanb8Hb2rHi2w@mail.gmail.com>
+ <CAG2tMp4Pzg=4h9pXOZqX1cek8tpWNZbCJbN5XPtjAUu7zetahg@mail.gmail.com>
+ <CAEm6KbLxHJBPt1yYvf1ny=bgJMDKF514zhu=9nP9j=92ApWroQ@mail.gmail.com>
+ <31DCB384-6FBD-40A4-8E75-D11002BF8038@johnlgrubbs.net>
+ <CAEm6KbLWoJcJUA8wk0Bg7xN6tx8G-KK+a8TuRq3_QLrrbKn64Q@mail.gmail.com>
+From: =?UTF-8?B?0JDQu9C10LrRgdCw0L3QtNGA?= <afalex169@gmail.com>
+Date: Fri, 24 Jun 2016 07:45:57 +0300
+Message-ID: <CAEm6KbJh_ygFRB2VKLe7Yx1cnQ8W7LDV3=7y4ELM9thMQ1OgRw@mail.gmail.com>
+Subject: Re: Hi, Boyce! (was Fwd: tor-talk subscription update)
+To: CypherPunks <cypherpunks@cpunks.org>, Zenaan Harkness <zen@freedbms.net>,
+        juan <juan.g71@gmail.com>
+Content-Type: multipart/alternative; boundary=001a11445b187283ea0535feda9c
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 42
+
+--001a11445b187283ea0535feda9c
+Content-Type: text/plain; charset=UTF-8
+
+>
+> He is a bad actor and not much smart.  The lies about banned people using
+> threats to subscribe again were stranger than his disgusting offenses about
+> rape apology.  Sick guy, really disturbing, eeck!  :-/
+>
+
+Well, Cecilia, you said it all here.
+
+Zen writes:
+> Alexander,I didn't realize that you'd also been banned. So I didn't ask
+> Boyce. But likewise, I don't recall that you've made as many off-topic
+> posts as I have. So I'm suspicious.
+>
+> I'm suspicious too. But... they had to crucify few random victims to shut
+all the others/to teach a lesson all the rest of the people with good
+heart, mind and soul. that' a common tactic among scumbags.
+
+--001a11445b187283ea0535feda9c
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><blockquote style=3D"margin:0px 0px 0px 0.8ex;border-left:=
+1px solid rgb(204,204,204);padding-left:1ex" class=3D"gmail_quote">He is a =
+bad actor and not much smart.=C2=A0 The lies about banned people using thre=
+ats to subscribe again were stranger than his disgusting offenses about rap=
+e apology.=C2=A0 Sick guy, really disturbing, eeck!=C2=A0 :-/<br></blockquo=
+te><br>Well, Cecilia, you said it all here.<br><br><blockquote style=3D"mar=
+gin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1=
+ex" class=3D"gmail_quote">Zen writes:<br>Alexander,I didn&#39;t realize tha=
+t you&#39;d also been banned. So I didn&#39;t ask Boyce. But likewise, I do=
+n&#39;t recall that you&#39;ve made as many off-topic posts as I have. So I=
+&#39;m suspicious.<br><br></blockquote>I&#39;m suspicious too. But... they =
+had to crucify few random victims to shut all the others/to teach a lesson =
+all the rest of the people with good heart, mind and soul. that&#39; a comm=
+on tactic among scumbags.<br></div>
+
+--001a11445b187283ea0535feda9c--
+

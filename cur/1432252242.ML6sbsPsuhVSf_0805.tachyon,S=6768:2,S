@@ -1,0 +1,128 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Fri Aug  2 20:25:53 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g730PqS02730
+	for <rsw@opamp.org>; Fri, 2 Aug 2002 20:25:52 -0400
+Received: from lion.ninthwonder.com (lion.ninthwonder.com [151.199.66.147])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id UAA04146
+	for <rsw@mit.edu>; Fri, 2 Aug 2002 20:25:51 -0400 (EDT)
+Received: by lion.ninthwonder.com (Postfix, from userid 96)
+	id 93CE23072D; Fri,  2 Aug 2002 20:24:31 -0400 (EDT)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 4B7483070E
+	for <cryptography@wasabisystems.com>; Fri,  2 Aug 2002 20:24:30 -0400 (EDT)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id C6937D97C9; Fri,  2 Aug 2002 20:24:29 -0400 (EDT)
+Received: from www.aarg.net (www.aarg.net [206.101.74.70])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 357E73070E
+	for <cryptography@wasabisystems.com>; Fri,  2 Aug 2002 19:56:53 -0400 (EDT)
+Received: from www.aarg.net (IDENT:mix@localhost.localdomain [127.0.0.1])
+	by www.aarg.net (8.12.3/8.12.3) with ESMTP id g72NuhIG024896
+	(version=TLSv1/SSLv3 cipher=EDH-RSA-DES-CBC3-SHA bits=168 verify=NO);
+	Fri, 2 Aug 2002 16:56:43 -0700
+Received: (from mix@localhost)
+	by www.aarg.net (8.12.3/8.12.1/Submit) id g72NughX024894;
+	Fri, 2 Aug 2002 16:56:42 -0700
+Date: Fri, 2 Aug 2002 16:56:42 -0700
+From: AARG!Anonymous <remailer@aarg.net>
+Comments: This message did not originate from the Sender address above.
+	It was remailed automatically by anonymizing remailer software.
+	Please report problems or inappropriate use to the
+	remailer administrator at <abuse@aarg.net>.
+To: ptrei@rsasecurity.com, cypherpunks@lne.com, cryptography@wasabisystems.com
+Subject: RE: Challenge to David Wagner on TCPA
+Message-ID: <39eb7c2e6804b1854dffb31bfa307865@aarg.net>
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 4586
+Lines: 86
+
+Peter Trei envisions data recovery in a TCPA world:
+
+> HoM:  I want to recover my data.
+> Me:   OK: We'll pull the HD, and get the data off it.
+> HoM:  Good - mount it as a secondary HD in my new system.
+> Me:   That isn't going to work now we have TCPA and Palladium.
+> HoM:  Well, what do you have to do?
+> Me:   Oh, it's simple. We encrypt the data under Intel's TPME key,
+>  and send it off to Intel. Since Intel has all the keys, they can
+>  unseal all your data to plaintext, copy it, and then re-seal it for
+>  your new system. It only costs $1/Mb.
+> HoM:  Let me get this straight - the only way to recover this data is
+> to let
+>  Intel have a copy, AND pay them for it?
+> Me:   Um... Yes. I think MS might be involved as well, if your were
+> using
+>  Word.
+> HoM:  You are *so* dead.
+
+It's not quite as bad as all this, but it is still pretty bad.
+
+You don't have to send your data to Intel, just a master storage key.
+This key encrypts the other keys which encrypt your data.  Normally this
+master key never leaves your TPM, but there is this optional feature
+where it can be backed up, encrypted to the manufacturer's public key,
+for recovery purposes.  I think it is also in blinded form.
+
+Obviously you'd need to do this backup step before the TPM crashed;
+afterwards is too late.  So maybe when you first get your system it
+generates the on-chip storage key (called the SRK, storage root key),
+and then exports the recovery blob.  You'd put that on a floppy or some
+other removable medium and store it somewhere safe.  Then when your
+system dies you pull out the disk and get the recovery blob.
+
+You communicate with the manufacturer, give him this recovery blob, along
+with the old TPM key and the key to your new TPM in the new machine.
+The manufacturer decrypts the blob and re-encrypts it to the TPM in the
+new machine.  It also issues and distributes a CRL revoking the cert on
+the old TPM key so that the old machine can't be used to access remote
+TCPA data any more.  (Note, the CRL is not used by the TPM itself, it is
+just used by remote servers to decide whether to believe client requests.)
+
+The manufacturer sends the data back to you and you load it into the TPM
+in your new machine, which decrypts it and stores the master storage key.
+Now it can read your old data.
+
+Someone asked if you'd have to go through all this if you just upgraded
+your OS.  I'm not sure.  There are several secure registers on the
+TPM, called PCRs, which can hash different elements of the BIOS, OS,
+and other software.  You can lock a blob to any one of these registers.
+So in some circumstances it might be that upgrading the OS would keep the
+secure data still available.  In other cases you might have to go through
+some kind of recovery procedure.
+
+I think this recovery business is a real Achilles heel of the TCPA
+and Palladium proposals.  They are paranoid about leaking sealed data,
+because the whole point is to protect it.  So they can't let you freely
+copy it to new machines, or decrypt it from an insecure OS.  This anal
+protectiveness is inconsistent with the flexibility needed in an imperfect
+world where stuff breaks.
+
+My conclusion is that the sealed storage of TCPA will be used sparingly.
+Ross Anderson and others suggest that Microsoft Word will seal all of
+its documents so that people can't switch to StarOffice.  I think that
+approach would be far too costly and risky, given the realities I have
+explained above.  Instead, I would expect that only highly secure data
+would be sealed, and that there would often be some mechanism to recover
+it from elsewhere.  For example, in a DRM environment, maybe the central
+server has a record of all the songs you have downloaded.  Then if your
+system crashes, rather than go through a complicated crypto protocol to
+recover, you just buy a new machine, go to the server, and re-download
+all the songs you were entitled to.
+
+Or in a closed environment, like a business which seals sensitive
+documents, the data could be backed up redundantly to multiple central
+file servers, each of which seal it.  Then if one machine crashes,
+the data is available from others and there is no need to go through
+the recovery protocol.
+
+So there are solutions, but they will add complexity and cost.  At the
+same time they do add genuine security and value.  Each application and
+market will have to find its own balance of the costs and benefits.
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

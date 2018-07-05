@@ -1,0 +1,100 @@
+From cypherpunks-bounces@cpunks.org  Wed Oct 30 21:08:09 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9V17OQh016792;
+	Wed, 30 Oct 2013 21:07:30 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; insecure key"
+	header.d=gmail.com header.i=@gmail.com header.b=k2VV64gH;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-qa0-f54.google.com (mail-qa0-f54.google.com
+ [209.85.216.54])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9V17M11016786
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Wed, 30 Oct 2013 21:07:23 -0400
+Received: by mail-qa0-f54.google.com with SMTP id j15so1312005qaq.6
+ for <cypherpunks@cpunks.org>; Wed, 30 Oct 2013 18:07:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :content-type; bh=2aE7QzmgPvJphYJtU6ATUeBl5Fx1njHix/STHCO7cIU=;
+ b=k2VV64gHiFxObW/n2ndws9o9hAJDJURuZbTlBdx/EmQTPQZ3c6xviD2lkvo9igInUO
+ 35N0Pjnkweq30BvLesGLi2NZtsWkB7liKvlMoUOO0uKh7LhrOC1S9GNizMSXL8+uaVrS
+ 0NtJSOQIw3BNOOzz2faI+kE1ytA1Wco/s8fInZvpyi1FJDpy932ERwEjjcHV/MDXcoxc
+ XC3ifJTFmjHAR4dtRoSSnyMB8zdYaUWPzIWhRAgZpBgeEGTVh5uQ7rScO9Usrwlc3qYP
+ Pq9lgIyBVwXbmE9qqSqxw0Spba+GOxmGQcrv5sycWNjjxiuPD1ezIpk2Z8FE440Y0oEG
+ 6aPA==
+MIME-Version: 1.0
+X-Received: by 10.49.26.6 with SMTP id h6mr579197qeg.75.1383181636681; Wed, 30
+ Oct 2013 18:07:16 -0700 (PDT)
+Received: by 10.96.120.5 with HTTP; Wed, 30 Oct 2013 18:07:16 -0700 (PDT)
+In-Reply-To: <CAJVRA1RNz8z-MmHhLLU7Xb9MRB875e=whsNDAgCYS=PP3YT3sQ@mail.gmail.com>
+References: <CAJVRA1RNz8z-MmHhLLU7Xb9MRB875e=whsNDAgCYS=PP3YT3sQ@mail.gmail.com>
+Date: Wed, 30 Oct 2013 18:07:16 -0700
+Message-ID: <CAJVRA1Q2yQfjuV=O1jjparHN0d3d8_SykjVmFnAw3QJT15QsXw@mail.gmail.com>
+Subject: Re: design and implementation of "replay prevention windows"
+From: coderman <coderman@gmail.com>
+To: Discussion of cryptography and related <cryptography@randombit.net>,
+        cpunks <cypherpunks@cpunks.org>
+Content-Type: text/plain; charset=ISO-8859-1
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 1667
+Lines: 44
+
+On Thu, Sep 26, 2013 at 4:05 PM, coderman <coderman@gmail.com> wrote:
+> i'm looking for information on the design and implementation of replay
+> windows in various protocols.
+
+
+oddly enough, this is a surprisingly obtuse subject.  it is constrained by:
+- the encryption and authentication primitives in use
+- identity and session management concerns. (e.g. key agreement)
+- and of course, run time resource constraints (memory, CPU, bandwidth, etc.)
+
+Syverson's Replay Attack Taxonomy[0] (abridged):
+- Run external attacks (one run of protocol to attack subsequent runs)
+- Run internal attacks (using one part of protocol to attack itself in same run)
+- Classic replay (no contemporaneous or repeated runs needed)
+- Interleaving attacks (using concurrent runs of a protocol against
+other runs of the same protocol)
+
+provides a foundation for discussing replay attack prevention.
+
+
+so far i've only come across one good reference design and
+implementation of a replay window:
+"RFC 4302 - IP Authentication Header - Appendix B: Extended (64-bit)
+Sequence Numbers"
+http://tools.ietf.org/html/rfc4302#page-28
+
+
+and encountered a number of other options for replay prevention in the
+context of key agreement or transport privacy:
+- time stamping messages
+- sequence numbering messages
+- type tagging messages
+- identity tagging messages (reflection prevention)
+- ensuring full information priciple when using hash functions
+- generating session keys without mutual trust
+- triple passwords (kerberos)
+
+
+additional resources invited; the journey continues...
+
+
+
+0. "A taxonomy of replay attacks [cryptographic protocols]"
+ http://www.dtic.mil/cgi-bin/GetTRDoc?AD=ADA463948
+

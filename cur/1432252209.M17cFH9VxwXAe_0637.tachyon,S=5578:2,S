@@ -1,0 +1,108 @@
+From cypherpunks-bounces@cpunks.org  Thu Jan  2 15:00:24 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s02K0Jv1030776;
+	Thu, 2 Jan 2014 15:00:20 -0500
+Received: from mail-we0-f170.google.com (mail-we0-f170.google.com
+ [74.125.82.170])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s02K0Gg8030772
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 2 Jan 2014 15:00:18 -0500
+Received: by mail-we0-f170.google.com with SMTP id w61so12982975wes.1
+ for <cypherpunks@cpunks.org>; Thu, 02 Jan 2014 12:00:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to:cc:content-type;
+ bh=AR/KmoCX//Uw8ZyyF3LhXNqyykDtJ8YGLjg7WRcWeXo=;
+ b=aRBqWt3poxoOhJ7xAdDgTZ7M5hdiCx2eUyfE+AWGeCRDOPoCopE7tEoDJr8hENVqZE
+ T8vDZxblPbGy1bJiCfZmxVHscXQvHaP83XNOnmnQ972Ap91wQCviym+jTg3M9ZShQv8u
+ B2NShd19uFAYkgOi0BL7L2Pz6BIbBeHiXTAzydUwReDNIFC+LqtThtBCXT4QSZAggE9z
+ /ywv5kmjcKd+WBi0+QUM46sVKwnKODfzPskG946Neza34+yzPmpEWOcJ0spXV3KUB8Sl
+ OGYpxlDJBb0X+0K/JVyWmYS0jz+vGJ79d50tpwTC9/5uQRKroSPzstn7VaDpxssQxKGa
+ 8LoA==
+X-Gm-Message-State: ALoCoQm8cr3KhBvSOWxH9zwFfGDpHByVN2wCwHoLx06ka4eGgFQP3iP4FejIf/gPz5aOL8Kcp2SS
+MIME-Version: 1.0
+X-Received: by 10.194.63.228 with SMTP id j4mr58957719wjs.34.1388692808808;
+ Thu, 02 Jan 2014 12:00:08 -0800 (PST)
+Received: by 10.227.242.211 with HTTP; Thu, 2 Jan 2014 12:00:08 -0800 (PST)
+In-Reply-To: <CAJVRA1QxxiVt=S5hPte-_7Yqd=FJwobSJx0drEyu4tjEc8AUUA@mail.gmail.com>
+References: <CAJVRA1QxxiVt=S5hPte-_7Yqd=FJwobSJx0drEyu4tjEc8AUUA@mail.gmail.com>
+Date: Thu, 2 Jan 2014 12:00:08 -0800
+Message-ID: <CAHKdp-k9E9xjq5k-pcheJc6D=GKRm3e9mtHBfvjqHz_AnVi4KA@mail.gmail.com>
+Subject: Re: multi-party support for axolotl ratchet?
+From: Sean Lynch <seanl@literati.org>
+To: coderman <coderman@gmail.com>
+Content-Type: multipart/alternative; boundary=047d7ba97f3a924f3104ef023d4b
+Cc: cpunks <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+--047d7ba97f3a924f3104ef023d4b
+Content-Type: text/plain; charset=UTF-8
+
+On Wed, Jan 1, 2014 at 9:51 PM, coderman <coderman@gmail.com> wrote:
+
+> per https://github.com/trevp/axolotl/wiki
+>
+> is there a straightforward way to make this multi-party capable, and
+> what optimizations could be done to reduce keys/messages required?
+>
+> i have not looked at mpOTR in depth yet, to see what lessons might be
+> applicable to axolotl...
+>
+
+Worst case, can't you just compute pairwise keys for each pair of
+participants? It'll add (n-2)*keylen bytes to each of your messages, but
+it's easy to understand and implement, and most multi-party conversations
+don't end up with that many participants anyway.
+
+I think the biggest problem with trying to do anything clever here is that
+keeping everyone in sync while simultaneously preventing DoS by one
+participant would be pretty difficult. You'd need something like Paxos to
+ensure everybody got the messages in the same order, and you'd have to keep
+around old keys and messages until everyone acknowledged them, otherwise
+participants could easily get "lost."
+
+--047d7ba97f3a924f3104ef023d4b
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><br><div class=3D"gmail_extra">On Wed, Jan 1, 2014 at 9:51=
+ PM, coderman <span dir=3D"ltr">&lt;<a href=3D"mailto:coderman@gmail.com" t=
+arget=3D"_blank">coderman@gmail.com</a>&gt;</span> wrote:<br><div class=3D"=
+gmail_quote">
+<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
+x #ccc solid;padding-left:1ex">per <a href=3D"https://github.com/trevp/axol=
+otl/wiki" target=3D"_blank">https://github.com/trevp/axolotl/wiki</a><br>
+<br>
+is there a straightforward way to make this multi-party capable, and<br>
+what optimizations could be done to reduce keys/messages required?<br>
+<br>
+i have not looked at mpOTR in depth yet, to see what lessons might be<br>
+applicable to axolotl...<br></blockquote><div><br></div><div>Worst case, ca=
+n&#39;t you just compute pairwise keys for each pair of participants? It&#3=
+9;ll add (n-2)*keylen bytes to each of your messages, but it&#39;s easy to =
+understand and implement, and most multi-party conversations don&#39;t end =
+up with that many participants anyway.<br>
+<br></div><div>I think the biggest problem with trying to do anything cleve=
+r here is that keeping everyone in sync while simultaneously preventing DoS=
+ by one participant would be pretty difficult. You&#39;d need something lik=
+e Paxos to ensure everybody got the messages in the same order, and you&#39=
+;d have to keep around old keys and messages until everyone acknowledged th=
+em, otherwise participants could easily get &quot;lost.&quot;<br>
+</div></div></div></div>
+
+--047d7ba97f3a924f3104ef023d4b--
+

@@ -1,0 +1,118 @@
+From cypherpunks-bounces@cpunks.org  Tue Oct 22 11:27:18 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9MFRFah005151;
+	Tue, 22 Oct 2013 11:27:15 -0400
+Received: from mail-02.1984.is (mail-02.1984.is [93.95.224.7])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9MFRA2p005145
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Tue, 22 Oct 2013 11:27:13 -0400
+Received: from [109.106.100.197] (helo=[192.168.1.17])
+ by mail-02.1984.is with esmtpsa (TLSv1:DHE-RSA-CAMELLIA256-SHA:256)
+ (Exim 4.80) (envelope-from <cathalgarvey@cathalgarvey.me>)
+ id 1VYdrM-0002kq-5V
+ for cypherpunks@cpunks.org; Tue, 22 Oct 2013 15:27:04 +0000
+Message-ID: <52669945.5020206@cathalgarvey.me>
+Date: Tue, 22 Oct 2013 16:27:01 +0100
+From: Cathal Garvey <cathalgarvey@cathalgarvey.me>
+User-Agent: Mozilla/5.0 (X11; Linux i686;
+ rv:24.0) Gecko/20100101 Thunderbird/24.0
+MIME-Version: 1.0
+To: cypherpunks@cpunks.org
+Subject: Re: DIY RNGs [was: Re: Curious RNG stalemate [was: use of cpunks]]
+References: <CAD2Ti2_Y4V+d_kLEmoyUmUXLXvA8CCg8Hi50GW2ZGAZZ+eb0Rg@mail.gmail.com>
+ <CACXcFmkd0agP7z=OAAj6Fdx55xc67pgXPZsBN9qYW==vhD5ktw@mail.gmail.com>
+ <20131022070715.GW15525@hexapodia.org> <1382454909.16118.32.camel@anglachel>
+In-Reply-To: <1382454909.16118.32.camel@anglachel>
+X-Enigmail-Version: 1.5.2
+OpenPGP: id=3B3DE808
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 3227
+Lines: 70
+
+If the particle flux is high enough for it to be usefully rich in random
+data, you could just hash the image output and use the hash outputs as
+an entropy source.
+
+However, you'd want to be careful that you:
+A) Use a good hash, and perhaps double-hash to be paranoid
+B) Try to measure and correct/alarm for the flux of your radioisotope as
+it decays, though depending on the isotope perhaps this isn't important.
+
+Thinking all the thoughts on this channel through, I'm beginning to
+wonder if the easiest answer isn't just a vibrating surface covered in
+sand with a camera pointed at it, hashing the output. :)
+
+On 22/10/13 16:15, Ted Smith wrote:
+> On Tue, 2013-10-22 at 00:07 -0700, Andy Isaacson wrote:
+>> On Fri, Oct 18, 2013 at 11:42:21AM -0400, Sandy Harris wrote:
+>>> On Thu, Oct 17, 2013 at 12:56 PM, grarpamp <grarpamp@gmail.com> wrote:
+>>>> Problem is, apparently no one is solving it, so round and round
+>>>> it goes...
+>>>
+>>>> Now if someone would just sell a completely open discrete logic
+>>>> serial port hw entropy source for under $50... that would end
+>>>> a lot of the talk. Even with a more costly radiation source rather
+>>>> than other phenomena you'd still likely make good profit ...
+>>>
+>>> If you have an audio device free or can add one and are using
+>>> Linux, I'd say Turbid is the obvious solution:
+>>> http://www.av8n.com/turbid/paper/turbid.htm
+>>>
+>>> Open source, available for over a decade, well thought out
+>>> and well documented. It even has a proof, using only some
+>>> quite mild assumptions, that it gives almost perfect entropy
+>>> in the output. What's not to like?
+>>
+>> It's super frustrating that Turbid assumes you are going to
+>> reverse-engineer the amplifier stage of your sound card in order to set
+>> some difficult-to-understand parameters which apparently can completely
+>> break it's ability to extract entropy if set incorrectly.  (See the
+>> installation instructions in section 12 of the paper linked above.)
+>>
+>> It would be much better for it to have a default set of parameters (or
+>> an autotuned parameter engine) that have a very high likelihood of
+>> giving acceptable results upon "apt-get install turbid" on some
+>> arbitrary hardware.
+>>
+>> I mean, seriously.  The Turbid authors appear to assume that every
+>> person who installs Turbid is going to build a custom Y-audio cable and
+>> put a voltmeter (set to the correct mode of course!) on the outputs of
+>> their sound card.  WTF?
+>>
+>> It's fine if conservative, default settings result in Turbid getting
+>> only 100 bits of entropy per second rather than 100 Kbit/sec.  Mix it
+>> into /dev/urandom and call it a day.
+>>
+>> -andy
+> 
+> A while ago, a friend and I bought a smoke detector and a webcam, hacked
+> them together, and built this:
+> http://www.inventgeek.com/Projects/AlphaRad/OverView.aspx
+> 
+> It actually works; when you view the webcam you can see the little
+> points of light where an alpha particle hits the sensor.
+> 
+> However, there wasn't really any software to support it as an RNG, so
+> it's just sitting around.
+> 
+> Is it possible to make an entropy source out of something like that? If
+> so, it was a really simple (less than two hours IIRC) build, and it cost
+> about $40.
+> 
+

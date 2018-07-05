@@ -1,0 +1,470 @@
+Return-path: <cypherpunks-bounces@cpunks.org>
+Envelope-to: rsw@positron.jfet.org
+Delivery-date: Thu, 04 Aug 2016 17:07:34 -0700
+Received: from antiproton.jfet.org ([209.141.47.85])
+	by positron.jfet.org with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.87)
+	(envelope-from <cypherpunks-bounces@cpunks.org>)
+	id 1bVSfj-0006Au-98
+	for rsw@positron.jfet.org; Thu, 04 Aug 2016 17:07:32 -0700
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u74NsOXW007305;
+	Thu, 4 Aug 2016 19:54:24 -0400
+Authentication-Results: antiproton.jfet.org; dkim=fail
+	reason="verification failed; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=SAyHmoSR;
+	dkim-adsp=none (unprotected policy); dkim-atps=neutral
+Received: from mail-it0-f45.google.com (mail-it0-f45.google.com
+ [209.85.214.45])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u74NsLO7007301
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 4 Aug 2016 19:54:22 -0400
+Received: by mail-it0-f45.google.com with SMTP id u186so9346163ita.0
+ for <cypherpunks@cpunks.org>; Thu, 04 Aug 2016 16:54:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+ :cc; bh=jDlb1BvOmH2e2z6tt4ffqUAGyQgsCLPfeLRdoLX2XLU=;
+ b=SAyHmoSRZdqpVKPEcTXSMUYJUNuDOoHRD1rcRpddlZtIOAc+ttYCXBzXic/WnoIhrZ
+ LNlGK44kLTK8RvzooHDhwH+CCr/xxCEfXCjlZvmuHmP6M+BN3Q8n6KT16fxMrE9IQh14
+ wIBrq+E8En15uH0ozXn/m05vlp+T0ig5Chq9JMLI3MDc2IXL16kkc8DhcyngGP+8JVbA
+ WEvd/EDMIAq8Cv8pGfaXzTWNdz7et1yMM5f7KeTTcngpEJKJ67N2FYnud7ZX+hezdX+Y
+ d3EWVHCkQ+1OQ5Zys/YphB7j9LgMQgk1FSvfk075gAq0jkS5ZW4OR5YKKCWnLqDr3ZHI
+ HmTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+ :message-id:subject:to:cc;
+ bh=jDlb1BvOmH2e2z6tt4ffqUAGyQgsCLPfeLRdoLX2XLU=;
+ b=egUMXy9bysT/0WQKpm8dMFYfJK7VPskJdTx3y6DZtvGNNi9asuGrJb2URL73H6L4aH
+ zxShfW0ZEys+mudX2LacCu3QnViBESPCVPLjD0hP9fP6+ADpro1GVrxIadUjtO1JonuA
+ HzP/TpivzpnbCBmxi4wlEvd8s/PQGNJU0DbtxMKdc0H5IJ00z645Aohuct/ALbR4QCk5
+ RZr4aPOt0IvRZ5qSwmuqcav2DSasmYOBNRmcfxWV1G/guhjqz4w+M80px2jMWKtMwaR4
+ lp8cXBo/T0SwyuM2Yq8BhRXt5bjIQ2R7P+wrMGWpGmN/4PETEEV1HjcNeKEpnkkriVeC
+ pZzA==
+X-Gm-Message-State: AEkoouvgAZlqYWznVVgePfnovW4XYuaA1Z+/YeDrPm3IzFvNVWtEQukXMYgBBzK2bgAwOGrW8AQPaIy//1HgTg==
+X-Received: by 10.36.104.146 with SMTP id v140mr810305itb.12.1470354855459;
+ Thu, 04 Aug 2016 16:54:15 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.107.170.26 with HTTP; Thu, 4 Aug 2016 16:53:54 -0700 (PDT)
+In-Reply-To: <39F9132D-2889-4688-9A50-1ECC3B26511A@riseup.net>
+References: <255450741.10726589.1470277325532.JavaMail.yahoo.ref@mail.yahoo.com>
+ <255450741.10726589.1470277325532.JavaMail.yahoo@mail.yahoo.com>
+ <687871470314039@web15g.yandex.ru>
+ <1603947053.11044988.1470329352392.JavaMail.yahoo@mail.yahoo.com>
+ <57a3a57f.0703370a.241d8.c3ea@mx.google.com>
+ <1359771938.2091832.1470347891966.JavaMail.yahoo@mail.yahoo.com>
+ <39F9132D-2889-4688-9A50-1ECC3B26511A@riseup.net>
+From: Cari Machet <carimachet@gmail.com>
+Date: Fri, 5 Aug 2016 02:53:54 +0300
+Message-ID: <CAGRDzQUcVtcDCQD6nWD8dk7qhR2j5Yx3gq8QRX6DN_HHwNfJbw@mail.gmail.com>
+Subject: Re: Quantum entangled-photon Chinese satellite.
+To: Sci Fith <scfith@riseup.net>
+Content-Type: multipart/alternative; boundary=001a1143ff7ada817d053947aaf9
+Cc: "cypherpunks@cpunks.org" <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 393
+
+--001a1143ff7ada817d053947aaf9
+Content-Type: text/plain; charset=UTF-8
+
+fish see surface
+
+but yes our perception but also the n dimension
+
+https://www.youtube.com/watch?v=ZuvK-od647c
+
+Quantum Entanglement & Spooky Action at a Distance
+
+Published on Jan 12, 2015
+
+Does quantum entanglement make faster-than-light communication possible?
+What is NOT random? http://bit.ly/NOTrandoVe
+First, I know this video is not easy to understand. Thank you for taking
+the time to attempt to understand it. I've been working on this for over
+six months over which time my understanding has improved. Quantum
+entanglement and spooky action at a distance are still debated by
+professors of quantum physics (I know because I discussed this topic with
+two of them).
+
+Does hidden information (called hidden variables by physicists) exist? If
+it does, the experiment violating Bell inequalities indicates that hidden
+variables must update faster than light - they would be considered
+'non-local'. On the other hand if you don't consider the spins before you
+make the measurement then you could simply say hidden variables don't exist
+and whenever you measure spins in the same direction you always get
+opposite results, which makes sense since angular momentum must be
+conserved in the universe.
+
+Everyone agrees that quantum entanglement does not allow information to be
+transmitted faster that light. There is no action either detector operator
+could take to signal the other one - regardless of the choice of
+measurement direction, the measured spins are random with 50/50 probability
+of up/down.
+
+Special thanks to:
+Prof. Stephen Bartlett, University of Sydney: http://bit.ly/1xSosoJ
+Prof. John Preskill, Caltech: http://bit.ly/1y8mJut
+
+Looking Glass Universe: http://bit.ly/17zZH7l
+Physics Girl: http://bit.ly/PhysGirl
+MinutePhysics: http://bit.ly/MinPhys
+Community Channel: http://bit.ly/CommChannel
+Nigel, Helen, Luke, and Simon for comments on earlier drafts of this video.
+
+Filmed in part by Scott Lewis: http://google.com/+scottlewis
+
+Music by Amarante "One Last Time": http://bit.ly/VeAmarante
+
+
+
+++++++++++++++++
+
+
+n dimension stuff
+
+
+https://www.youtube.com/watch?v=uI9uuHuc1iU&list=PL865E510770E164CB
+
+
+
+
+On Fri, Aug 5, 2016 at 1:27 AM, Sci Fith <scfith@riseup.net> wrote:
+
+> I believe our understanding of info transfer needs to change. The data is
+> not traveling anywhere because it appears to exist simultaneously here &
+> there and when one changes the other does without delay. There has to be
+> another dimension of energy / ether we need to discover that would make
+> this make sense. Like looking into a fish pond but the fish don't see
+> surface, only your hand dipping in water as a miraculous occurrence.
+>
+> jamescampbell.us
+> 7032039877
+>
+> On Aug 4, 2016, at 5:58 PM, jim bell <jdb10987@yahoo.com> wrote:
+>
+>
+>
+> *From:* juan <juan.g71@gmail.com>
+> On Thu, 4 Aug 2016 16:49:12 +0000 (UTC)
+> jim bell <jdb10987@yahoo.com> wrote:
+>
+> >> Apparently, that is true.   The tantalizing thing is that SOMETHING
+> >> APPEARS   (information, of some nature) to be transferred between one
+> >> particle and another, distant one, and yet there seems to be no way
+> >> to use that transfer to actually transmit useful FTL
+>
+>  >  Which sounds rather absurd no?
+>
+> Certainly that sounds absurd!   It IS absurd!  Which explains a lot of the
+> fascination
+> has for entangled photons and related phenomena.  Einstein never liked the
+> quantum-mechanics idea, famously declaring "God does not play dice with the
+> universe".     Unfortunately for Einstein, dice are actually played.
+>
+> In fact, Einstein's EPR Paradox (Einstein, Podolski, Rosen) was invented by
+> Einstein himself in an attempt to prove that quantum mechanics could not
+> be a complete statement of the problem. https://en.wikipedia.org/wiki/
+> EPR_paradox
+>
+> This principle said that IF quantum mechanics
+> were a complete statement of the problem, then something seemingly
+> impossible [fill in the blank with FTL information travel] would occur.
+> Einstein was
+> quite convinced that nothing (including no information) could travel
+> faster than
+> 'c'.  Amazingly, it appears that nature ("God", for the religious among
+> you) has acted
+> simultaneously to protect the quantum mechanics theory, but ALSO to
+> protect
+> Einstein's belief that nothing could travel faster than 'c'.   If anybody
+> should discover
+> a method to use entangled photons to effectively transmit data FTL (and
+> thus,
+> presumably at infinite speed) that person would surely deserve a Nobel
+> Prize in
+> Physics.
+>
+>
+>  >Either this is ordinary EM
+>  > phenomena that propagate at the so called speed of light, or
+>  > it is something else which could propagate at 'faster than
+>  > light' speed.
+>
+> It's at least 10,000 times 'c' the speed of light in a vacuum, according to
+> experiments involving fiber optics.  It might be essentially infinite.
+>
+>   >  If 'something' is moving at faster than light speed, then some
+>   > information must be being transmitted. If no information is
+> >    being transmitted, then by definition, there's no way to measure
+>   >  speed and the claim makes no sense.
+>
+> Well, that's the problem.  Knowing that SOMETHING is being transmitted,
+> and actually
+> USING that method to transmit useful information, are (quite strangely)
+> two different
+> things.  That, also is the amazing implications of entangled photons.
+>
+>                Jim Bell
+>
+>
+
+
+-- 
+Cari Machet
+NYC 646-436-7795
+carimachet@gmail.com
+AIM carismachet
+Syria +963-099 277 3243
+Amman +962 077 636 9407
+Berlin +49 152 11779219
+Reykjavik +354 894 8650
+Twitter: @carimachet <https://twitter.com/carimachet>
+
+7035 690E 5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187
+
+Ruh-roh, this is now necessary: This email is intended only for the
+addressee(s) and may contain confidential information. If you are not the
+intended recipient, you are hereby notified that any use of this
+information, dissemination, distribution, or copying of this email without
+permission is strictly prohibited.
+
+--001a1143ff7ada817d053947aaf9
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">fish see surface<div><br></div><div>but yes our perception=
+ but also the n dimension<br><div><br></div><div><a href=3D"https://www.you=
+tube.com/watch?v=3DZuvK-od647c">https://www.youtube.com/watch?v=3DZuvK-od64=
+7c</a><br></div><div><br></div><div><h1 class=3D"gmail-watch-title-containe=
+r" style=3D"margin:0px;padding:0px;border:0px;font-weight:normal;font-size:=
+20px;vertical-align:top;width:618px;word-wrap:break-word;color:rgb(0,0,0);f=
+ont-family:roboto,arial,sans-serif;background-image:initial;background-posi=
+tion:initial;background-repeat:initial"><span id=3D"eow-title" class=3D"gma=
+il-watch-title" dir=3D"ltr" title=3D"Quantum Entanglement &amp; Spooky Acti=
+on at a Distance" style=3D"margin:0px;padding:0px;border:0px;background-ima=
+ge:initial;background-color:transparent;background-position:initial;backgro=
+und-repeat:initial">Quantum Entanglement &amp; Spooky Action at a Distance<=
+/span></h1></div><div><br></div><div><div id=3D"gmail-watch-uploader-info" =
+style=3D"margin:0px;padding:0px;border:0px;font-size:13px;color:rgb(51,51,5=
+1);font-family:roboto,arial,sans-serif;line-height:17px;background-image:in=
+itial;background-position:initial;background-repeat:initial"><span class=3D=
+"gmail-watch-time-text" style=3D"margin:0px;padding:0px;border:0px;vertical=
+-align:middle;background-image:initial;background-color:transparent;backgro=
+und-position:initial;background-repeat:initial">Published on Jan 12, 2015</=
+span></div><div id=3D"gmail-watch-description-text" class=3D"gmail-" style=
+=3D"margin:0px;padding:0px;border:0px;background-image:initial;background-p=
+osition:initial;background-repeat:initial"><p id=3D"eow-description" class=
+=3D"gmail-" style=3D"color:rgb(51,51,51);font-family:roboto,arial,sans-seri=
+f;font-size:13px;line-height:17px;margin:0px;padding:0px;border:0px;backgro=
+und-image:initial;background-color:transparent;background-position:initial;=
+background-repeat:initial">Does quantum entanglement make faster-than-light=
+ communication possible?<br>What is NOT random?=C2=A0<a href=3D"http://bit.=
+ly/NOTrandoVe" class=3D"gmail- gmail-yt-uix-servicelink gmail-" target=3D"_=
+blank" rel=3D"nofollow" style=3D"margin:0px;padding:0px;border:0px;color:rg=
+b(22,122,198);text-decoration:none;background-image:initial;background-colo=
+r:transparent;background-position:initial;background-repeat:initial">http:/=
+/bit.ly/NOTrandoVe</a><br>First, I know this video is not easy to understan=
+d. Thank you for taking the time to attempt to understand it. I&#39;ve been=
+ working on this for over six months over which time my understanding has i=
+mproved. Quantum entanglement and spooky action at a distance are still deb=
+ated by professors of quantum physics (I know because I discussed this topi=
+c with two of them).<br><br>Does hidden information (called hidden variable=
+s by physicists) exist? If it does, the experiment violating Bell inequalit=
+ies indicates that hidden variables must update faster than light - they wo=
+uld be considered &#39;non-local&#39;. On the other hand if you don&#39;t c=
+onsider the spins before you make the measurement then you could simply say=
+ hidden variables don&#39;t exist and whenever you measure spins in the sam=
+e direction you always get opposite results, which makes sense since angula=
+r momentum must be conserved in the universe.<br><br>Everyone agrees that q=
+uantum entanglement does not allow information to be transmitted faster tha=
+t light. There is no action either detector operator could take to signal t=
+he other one - regardless of the choice of measurement direction, the measu=
+red spins are random with 50/50 probability of up/down.<br><br>Special than=
+ks to:<br>Prof. Stephen Bartlett, University of Sydney:=C2=A0<a href=3D"htt=
+p://bit.ly/1xSosoJ" class=3D"gmail- gmail-yt-uix-servicelink gmail-" target=
+=3D"_blank" rel=3D"nofollow" style=3D"margin:0px;padding:0px;border:0px;col=
+or:rgb(22,122,198);text-decoration:none;background-image:initial;background=
+-color:transparent;background-position:initial;background-repeat:initial">h=
+ttp://bit.ly/1xSosoJ</a><br>Prof. John Preskill, Caltech:=C2=A0<a href=3D"h=
+ttp://bit.ly/1y8mJut" class=3D"gmail- gmail-yt-uix-servicelink gmail-" targ=
+et=3D"_blank" rel=3D"nofollow" style=3D"margin:0px;padding:0px;border:0px;c=
+olor:rgb(22,122,198);text-decoration:none;background-image:initial;backgrou=
+nd-color:transparent;background-position:initial;background-repeat:initial"=
+>http://bit.ly/1y8mJut</a><br><br>Looking Glass Universe:=C2=A0<a href=3D"h=
+ttp://bit.ly/17zZH7l" class=3D"gmail- gmail-yt-uix-servicelink gmail-" targ=
+et=3D"_blank" rel=3D"nofollow" style=3D"margin:0px;padding:0px;border:0px;c=
+olor:rgb(22,122,198);text-decoration:none;background-image:initial;backgrou=
+nd-color:transparent;background-position:initial;background-repeat:initial"=
+>http://bit.ly/17zZH7l</a><br>Physics Girl:=C2=A0<a href=3D"http://bit.ly/P=
+hysGirl" class=3D"gmail- gmail-yt-uix-servicelink gmail-" target=3D"_blank"=
+ rel=3D"nofollow" style=3D"margin:0px;padding:0px;border:0px;color:rgb(22,1=
+22,198);text-decoration:none;background-image:initial;background-color:tran=
+sparent;background-position:initial;background-repeat:initial">http://bit.l=
+y/PhysGirl</a><br>MinutePhysics:=C2=A0<a href=3D"http://bit.ly/MinPhys" cla=
+ss=3D"gmail- gmail-yt-uix-servicelink gmail-" target=3D"_blank" rel=3D"nofo=
+llow" style=3D"margin:0px;padding:0px;border:0px;color:rgb(22,122,198);text=
+-decoration:none;background-image:initial;background-color:transparent;back=
+ground-position:initial;background-repeat:initial">http://bit.ly/MinPhys</a=
+><br>Community Channel:=C2=A0<a href=3D"http://bit.ly/CommChannel" class=3D=
+"gmail- gmail-yt-uix-servicelink gmail-" target=3D"_blank" rel=3D"nofollow"=
+ style=3D"margin:0px;padding:0px;border:0px;color:rgb(22,122,198);text-deco=
+ration:none;background-image:initial;background-color:transparent;backgroun=
+d-position:initial;background-repeat:initial">http://bit.ly/CommChannel</a>=
+<br>Nigel, Helen, Luke, and Simon for comments on earlier drafts of this vi=
+deo.<br><br>Filmed in part by Scott Lewis:=C2=A0<a href=3D"http://google.co=
+m/+scottlewis" class=3D"gmail- gmail-yt-uix-servicelink gmail-" target=3D"_=
+blank" rel=3D"nofollow" style=3D"margin:0px;padding:0px;border:0px;color:rg=
+b(22,122,198);text-decoration:none;background-image:initial;background-colo=
+r:transparent;background-position:initial;background-repeat:initial">http:/=
+/google.com/+scottlewis</a><br><br>Music by Amarante &quot;One Last Time&qu=
+ot;:=C2=A0<a href=3D"http://bit.ly/VeAmarante" class=3D"gmail- gmail-yt-uix=
+-servicelink gmail-" target=3D"_blank" rel=3D"nofollow" style=3D"margin:0px=
+;padding:0px;border:0px;color:rgb(22,122,198);text-decoration:none;backgrou=
+nd-image:initial;background-color:transparent;background-position:initial;b=
+ackground-repeat:initial">http://bit.ly/VeAmarante</a></p><p id=3D"eow-desc=
+ription" class=3D"gmail-" style=3D"color:rgb(51,51,51);font-family:roboto,a=
+rial,sans-serif;font-size:13px;line-height:17px;margin:0px;padding:0px;bord=
+er:0px;background-image:initial;background-color:transparent;background-pos=
+ition:initial;background-repeat:initial"><br></p><p id=3D"eow-description" =
+class=3D"gmail-" style=3D"color:rgb(51,51,51);font-family:roboto,arial,sans=
+-serif;font-size:13px;line-height:17px;margin:0px;padding:0px;border:0px;ba=
+ckground-image:initial;background-color:transparent;background-position:ini=
+tial;background-repeat:initial"><br></p><p id=3D"eow-description" class=3D"=
+gmail-" style=3D"color:rgb(51,51,51);font-family:roboto,arial,sans-serif;fo=
+nt-size:13px;line-height:17px;margin:0px;padding:0px;border:0px;background-=
+image:initial;background-color:transparent;background-position:initial;back=
+ground-repeat:initial">++++++++++++++++</p><p id=3D"eow-description" class=
+=3D"gmail-" style=3D"color:rgb(51,51,51);font-family:roboto,arial,sans-seri=
+f;font-size:13px;line-height:17px;margin:0px;padding:0px;border:0px;backgro=
+und-image:initial;background-color:transparent;background-position:initial;=
+background-repeat:initial"><br></p><p id=3D"eow-description" class=3D"gmail=
+-" style=3D"color:rgb(51,51,51);font-family:roboto,arial,sans-serif;font-si=
+ze:13px;line-height:17px;margin:0px;padding:0px;border:0px;background-image=
+:initial;background-color:transparent;background-position:initial;backgroun=
+d-repeat:initial">n dimension stuff</p><p id=3D"eow-description" class=3D"g=
+mail-" style=3D"color:rgb(51,51,51);font-family:roboto,arial,sans-serif;fon=
+t-size:13px;line-height:17px;margin:0px;padding:0px;border:0px;background-i=
+mage:initial;background-color:transparent;background-position:initial;backg=
+round-repeat:initial"><br></p><p id=3D"eow-description" class=3D"gmail-" st=
+yle=3D"margin:0px;padding:0px;border:0px;background-image:initial;backgroun=
+d-color:transparent;background-position:initial;background-repeat:initial">=
+<font color=3D"#333333" face=3D"roboto, arial, sans-serif"><span style=3D"l=
+ine-height:17px"><a href=3D"https://www.youtube.com/watch?v=3DuI9uuHuc1iU&a=
+mp;list=3DPL865E510770E164CB">https://www.youtube.com/watch?v=3DuI9uuHuc1iU=
+&amp;list=3DPL865E510770E164CB</a></span></font><br></p><p id=3D"eow-descri=
+ption" class=3D"gmail-" style=3D"margin:0px;padding:0px;border:0px;backgrou=
+nd-image:initial;background-color:transparent;background-position:initial;b=
+ackground-repeat:initial"><font color=3D"#333333" face=3D"roboto, arial, sa=
+ns-serif"><span style=3D"line-height:17px"><br></span></font></p><p id=3D"e=
+ow-description" class=3D"gmail-" style=3D"margin:0px;padding:0px;border:0px=
+;background-image:initial;background-color:transparent;background-position:=
+initial;background-repeat:initial"><font color=3D"#333333" face=3D"roboto, =
+arial, sans-serif"><span style=3D"line-height:17px"><br></span></font></p><=
+/div></div></div></div><div class=3D"gmail_extra"><br><div class=3D"gmail_q=
+uote">On Fri, Aug 5, 2016 at 1:27 AM, Sci Fith <span dir=3D"ltr">&lt;<a hre=
+f=3D"mailto:scfith@riseup.net" target=3D"_blank">scfith@riseup.net</a>&gt;<=
+/span> wrote:<br><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8=
+ex;border-left:1px #ccc solid;padding-left:1ex"><div dir=3D"auto"><div>I be=
+lieve our understanding of info transfer needs to change. The data is not t=
+raveling anywhere because it appears to exist simultaneously here &amp; the=
+re and when one changes the other does without delay. There has to be anoth=
+er dimension of energy / ether we need to discover that would make this mak=
+e sense. Like looking into a fish pond but the fish don&#39;t see surface, =
+only your hand dipping in water as a miraculous occurrence.=C2=A0<br><br><a=
+ href=3D"http://jamescampbell.us" target=3D"_blank">jamescampbell.us</a><di=
+v><a href=3D"tel:7032039877" value=3D"+17032039877" target=3D"_blank">70320=
+39877</a></div></div><div><div class=3D"h5"><div><br>On Aug 4, 2016, at 5:5=
+8 PM, jim bell &lt;<a href=3D"mailto:jdb10987@yahoo.com" target=3D"_blank">=
+jdb10987@yahoo.com</a>&gt; wrote:<br><br></div><blockquote type=3D"cite"><d=
+iv><div style=3D"color:#000;background-color:#fff;font-family:HelveticaNeue=
+,Helvetica Neue,Helvetica,Arial,Lucida Grande,sans-serif;font-size:13px"><d=
+iv></div><div><br><br></div><div style=3D"display:block"><div style=3D"font=
+-family:HelveticaNeue,Helvetica Neue,Helvetica,Arial,Lucida Grande,sans-ser=
+if;font-size:13px"><div style=3D"font-family:HelveticaNeue,Helvetica Neue,H=
+elvetica,Arial,Lucida Grande,sans-serif;font-size:16px"><div dir=3D"ltr"><f=
+ont size=3D"2" face=3D"Arial"> <b><span style=3D"font-weight:bold">From:</s=
+pan></b> juan &lt;<a href=3D"mailto:juan.g71@gmail.com" target=3D"_blank">j=
+uan.g71@gmail.com</a>&gt;<br></font></div><div>On Thu, 4 Aug 2016 16:49:12 =
++0000 (UTC)<br clear=3D"none">jim bell &lt;<a shape=3D"rect" href=3D"mailto=
+:jdb10987@yahoo.com" target=3D"_blank">jdb10987@yahoo.com</a>&gt; wrote:<br=
+ clear=3D"none"><br clear=3D"none">&gt;&gt; Apparently, that is true. =C2=
+=A0 The tantalizing thing is that SOMETHING<br clear=3D"none">&gt;&gt; APPE=
+ARS =C2=A0 (information, of some nature) to be transferred between one<br c=
+lear=3D"none">&gt;&gt; particle and another, distant one, and yet there see=
+ms to be no way<br clear=3D"none">&gt;&gt; to use that transfer to actually=
+ transmit useful FTL <br clear=3D"none"><br clear=3D"none">=C2=A0&gt; =C2=
+=A0Which sounds rather absurd no?</div><div><br></div><div>Certainly that s=
+ounds absurd! =C2=A0 It IS absurd!=C2=A0 Which explains a lot of the fascin=
+ation</div><div dir=3D"ltr">has for entangled photons and related phenomena=
+.=C2=A0 Einstein never liked the=C2=A0</div><div dir=3D"ltr">quantum-mechan=
+ics idea, famously declaring &quot;God does not play dice with the</div><di=
+v dir=3D"ltr">universe&quot;. =C2=A0 =C2=A0 Unfortunately for Einstein, dic=
+e are actually played.</div><div dir=3D"ltr"><br></div><div dir=3D"ltr">In =
+fact, Einstein&#39;s EPR Paradox (Einstein, Podolski, Rosen) was invented b=
+y</div><div dir=3D"ltr">Einstein himself in an attempt to prove that quantu=
+m mechanics could not</div><div dir=3D"ltr">be a complete statement of the =
+problem. <a href=3D"https://en.wikipedia.org/wiki/EPR_paradox" target=3D"_b=
+lank">https://en.wikipedia.org/wiki/<wbr>EPR_paradox</a>=C2=A0</div><div di=
+r=3D"ltr"><br></div><div dir=3D"ltr">This principle=C2=A0said that IF quant=
+um mechanics=C2=A0</div><div dir=3D"ltr">were a complete statement of the p=
+roblem, then something seemingly=C2=A0</div><div dir=3D"ltr">impossible [fi=
+ll in the blank with FTL information travel] would occur.=C2=A0 Einstein wa=
+s</div><div dir=3D"ltr">quite convinced that nothing (including no informat=
+ion) could travel faster than</div><div dir=3D"ltr">&#39;c&#39;.=C2=A0 Amaz=
+ingly, it appears that nature (&quot;God&quot;, for the religious among you=
+) has acted</div><div dir=3D"ltr">simultaneously to protect the quantum mec=
+hanics theory, but ALSO to protect=C2=A0</div><div dir=3D"ltr">Einstein&#39=
+;s belief that nothing could travel faster than &#39;c&#39;. =C2=A0 If anyb=
+ody should discover</div><div dir=3D"ltr">a method to use entangled photons=
+ to effectively transmit data FTL (and thus,</div><div dir=3D"ltr">presumab=
+ly at infinite speed) that person would surely deserve a Nobel Prize in</di=
+v><div dir=3D"ltr">Physics.</div><div dir=3D"ltr"><br></div><div dir=3D"ltr=
+"><br></div><div>=C2=A0&gt;Either this is ordinary EM<br clear=3D"none">=C2=
+=A0&gt; phenomena that propagate at the so called speed of light, or<br cle=
+ar=3D"none">=C2=A0&gt; it is something else which could propagate at &#39;f=
+aster than<br clear=3D"none">=C2=A0&gt; light&#39; speed.=C2=A0</div><div><=
+br></div><div dir=3D"ltr">It&#39;s at least 10,000 times &#39;c&#39; the sp=
+eed of light in a vacuum, according to</div><div dir=3D"ltr">experiments in=
+volving fiber optics.=C2=A0 It might be essentially infinite.<br clear=3D"n=
+one"><br clear=3D"none">=C2=A0 &gt; =C2=A0If &#39;something&#39; is moving =
+at faster than light speed, then some<br clear=3D"none">=C2=A0 &gt; informa=
+tion must be being transmitted. If no information is<br clear=3D"none">&gt;=
+ =C2=A0 =C2=A0being transmitted, then by definition, there&#39;s no way to =
+measure<br clear=3D"none">=C2=A0 &gt; =C2=A0speed and the claim makes no se=
+nse.</div><div dir=3D"ltr"><br></div><div dir=3D"ltr">Well, that&#39;s the =
+problem.=C2=A0 Knowing that SOMETHING is being transmitted, and actually</d=
+iv><div dir=3D"ltr">USING that method to transmit useful information, are (=
+quite strangely) two different</div><div dir=3D"ltr">things.=C2=A0 That, al=
+so is the amazing implications of entangled photons.<br><div><br clear=3D"n=
+one">=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0Jim Bell<br cle=
+ar=3D"none"></div></div> </div> </div>  </div></div></div></blockquote></di=
+v></div></div></blockquote></div><br><br clear=3D"all"><div><br></div>-- <b=
+r><div class=3D"gmail_signature" data-smartmail=3D"gmail_signature"><div di=
+r=3D"ltr"><div>Cari Machet<br>NYC 646-436-7795<br><a href=3D"mailto:carimac=
+het@gmail.com" target=3D"_blank">carimachet@gmail.com</a><br>AIM carismache=
+t<br>Syria +963-099 277 3243<br>Amman +962 077 636 9407<br>Berlin +49 152 1=
+1779219 <br>Reykjavik +354 894 8650<br>Twitter: @carimachet &lt;<a href=3D"=
+https://twitter.com/carimachet" target=3D"_blank">https://twitter.com/carim=
+achet</a>&gt;<br><br></div>7035 690E 5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 218=
+7<br><div><br>Ruh-roh, this is now necessary: This email is intended only f=
+or the <br>addressee(s) and may contain confidential information. If you ar=
+e not the <br>intended recipient, you are hereby notified that any use of t=
+his <br>information, dissemination, distribution, or copying of this email =
+without <br>permission is strictly prohibited.<br><br><br></div></div></div=
+>
+</div>
+
+--001a1143ff7ada817d053947aaf9--
+

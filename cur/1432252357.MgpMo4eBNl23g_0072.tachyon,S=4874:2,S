@@ -1,0 +1,120 @@
+From owner-cypherpunks@al-qaeda.net  Wed Sep 26 16:18:31 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q8QKFrQg028835
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 26 Sep 2012 16:15:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1348690553;
+	bh=EAiJEhS1448iKUn1nCZCNt7JI5vFYknxDqRG7pH1Yf0=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=mL8n6UwPxqucanE22eeP40SfociSofhVZpSM7KiGO5Ck6rxOgK7HhdTDDgI/UFOEC
+	 y9Ym6TL+o9RlRyJRyi+zim5D+EJDAn9aD4H9oondo1jT8rlq0JuGlrwewNRQJxXFr0
+	 EBooCKrCF50VSlIc1+e2/6fYV5DC+crIYWmowCFo=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q8QKFrVQ028834
+	for cypherpunks-outgoing; Wed, 26 Sep 2012 16:15:53 -0400
+Date: Wed, 26 Sep 2012 22:15:50 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: [tor-talk] Tor and P2P
+Message-ID: <20120926201550.GS9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3501
+Lines: 88
+
+----- Forwarded message from Mike Perry <mikeperry@torproject.org> -----
+
+From: Mike Perry <mikeperry@torproject.org>
+Date: Wed, 26 Sep 2012 11:48:14 -0700
+To: tor-talk@lists.torproject.org
+Subject: Re: [tor-talk] Tor and P2P
+Reply-To: tor-talk@lists.torproject.org
+
+Thus spake Nathan Freitas (nathan@freitas.net):
+
+> On 09/26/2012 10:08 AM, meh. wrote:
+> > 
+> > After implementing the torchat protocol and seeing how bad it is,
+> > but how nice the idea is, I started thinking it would be cool to
+> > have a more general protocol for P2P use through hidden services.
+> 
+> This is something we have definitely been considering as a feature or
+> add-on to Orbot - essentially mobile-to-mobile file sharing,
+> messaging/voice messaging via hidden services.
+> 
+> While we don't need a very complex p2p design (in short, we are mostly
+> just talking about simple HTTP servers running on each device, behind
+> a hidden service .onion), I am concerned in the long run about
+> scalability and reliability of this. It is not unheard of for apps
+> that work well and do something cool to suddently have 1M+ users, and
+> already are nearing half that with Orbot.
+
+This is a great point, and I wish I could reply to it and Robert's
+comments about DoSing the hsdirs in the same mail.
+
+It would seem that "simple" solutions might end up destroying the Tor
+network. Based on Robert's comments, it sounds like the properties we
+need are:
+
+1. Persistent hidserv connections. Reconnecting for each message via an
+HTTP POST is right out. Way too many circuits+onionskins to scale.
+
+2. Avoid the situation where a single user is creating multiple hidden
+services for all their crazy P2P apps.
+
+
+For 1: It would seem to me that a system that ships a local torified
+XMPP server would satisfy this. XMPP is fully decentralized, and
+maintains persistent connections between servers. Each user would run
+their own server over .onion.
+
+For 2: The resource identifiers of XMPP mean we can connect multiple
+XMPP clients to a single local XMPP server, and have them provide
+multiple (admittedly linkable) P2P services over XMPP 'streams' without
+spinning up additional hidden services for each client app.
+
+
+XMPP has some obvious downsides... We'd need to audit the whole beast to
+make sure the federation+decentralization properties can't be
+manipulated to connect to things over non-tor.
+
+It also appears to have the property that social networks where
+everybody wants presence notifications for everybody else end up
+requiring O(n^2) persistent hidserv connections between the n XMPP
+servers... Not sure how serious this is, or if there are any workable
+decentralized alternatives.
+
+However, unlike torchat, the XMPP protocol itself is well documented,
+widely used, and seems to be designed for a superset of the things we
+want. I was able to spend just 10 minutes reviewing the XMPP specs to
+fact-check before composing this email:
+http://xmpp.org/xmpp-protocols/rfcs/
+
+I was unable to determine if torchat even has property 1 in that time...
+
+
+-- 
+Mike Perry
+
+
+
+_______________________________________________
+tor-talk mailing list
+tor-talk@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-talk
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

@@ -1,0 +1,190 @@
+From owner-cypherpunks@al-qaeda.net  Mon Nov 17 14:37:42 2008
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id mAHJbFef025469
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 17 Nov 2008 14:37:15 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id mAHJbFLW025468
+	for cypherpunks-outgoing; Mon, 17 Nov 2008 14:37:15 -0500
+Date: Mon, 17 Nov 2008 20:37:11 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Re: Bitcoin P2P e-cash paper
+Message-ID: <20081117193711.GP11544@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 8061
+Lines: 165
+
+----- Forwarded message from Ray Dillinger <bear@sonic.net> -----
+
+From: Ray Dillinger <bear@sonic.net>
+Date: Fri, 14 Nov 2008 18:20:23 -0800
+To: satoshi@vistomail.com
+Cc: jamesd@echeque.com, cryptography@metzdowd.com
+Subject: Re: Bitcoin P2P e-cash paper
+X-Mailer: Evolution 2.6.3 
+
+Okay.... I'm going to summarize this protocol as I understand it. 
+
+I'm filling in some operational details that aren't in the paper 
+by supplementing what you wrote with what my own "design sense" 
+tells me are critical missing bits or "obvious" methodologies for 
+use.
+
+First, people spend computer power creating a pool of coins to use 
+as money.  Each coin is a proof-of-work meeting whatever criteria 
+were in effect for money at the time it was created.  The time of 
+creation (and therefore the criteria) is checkable later because 
+people can see the emergence of this particular coin in the 
+transaction chain and track it through all its "consensus view" 
+spends.  (more later on coin creation tied to adding a link). 
+
+When a coin is spent, the buyer and seller digitally sign a (blinded) 
+transaction record, and broadcast it to a bunch of nodes whose purpose 
+is keeping track of consensus regarding coin ownership.  If someone 
+double spends, then the transaction record can be unblinded revealing 
+the identity of the cheater.  This is done via a fairly standard cut-
+and-choose algorithm where the buyer responds to several challenges 
+with secret shares, and the seller then asks him to "unblind" and 
+checks all but one, verifying that they do contain secret shares any 
+two of which are sufficient to identify the buyer.  In this case the 
+seller accepts the unblinded spend record as "probably" containing 
+a valid secret share. 
+
+The nodes keeping track of consensus regarding coin ownership are in 
+a loop where they are all trying to "add a link" to the longest chain 
+they've so far recieved.  They have a pool of reported transactions 
+which they've not yet seen in a "consensus" signed chain.  I'm going 
+to call this pool "A".  They attempt to add a link to the chain by
+moving everything from pool A into a pool "L" and using a CPU-
+intensive digital signature algorithm to sign the chain including 
+the new block L.  This results in a chain extended by a block 
+containing all the transaction records they had in pool L, plus 
+the node's digital signature.  While they do this, new 
+transaction records continue to arrive and go into pool A again 
+for the next cycle of work. 
+
+They may also recieve chains as long as the one they're trying to 
+extend while they work, in which the last few "links" are links 
+that are *not* in common with the chain on which they're working.
+These they ignore.  (?  Do they ignore them?  Under what 
+circumstances would these become necessary to ever look at again, 
+bearing in mind that any longer chain based on them will include 
+them?) 
+
+But if they recieve a _longer_ chain while working, they 
+immediately check all the transactions in the new links to make 
+sure it contains no double spends and that the "work factors" of 
+all new links are appropriate.  If it contains a double spend, 
+then they create a "transaction" which is a proof of double 
+spending, add it to their pool A, broadcast it, and continue work.  
+If one of the "new" links has an inappropriate work factor (ie, 
+someone didn't put enough CPU into it for it to be "licit" 
+according to the rules) a new "transaction" which is a proof 
+of the protocol violation by the link-creating node is created, 
+broadcast, and added to pool A, and the chain is rejected.  In 
+the case of no double spends and appropriate work factors for 
+all links not yet seen, they accept the new chain as consensus. 
+
+If the new chain is accepted, then they give up on adding their
+current link, dump all the transactions from pool L back into pool 
+A (along with transactions they've recieved or created since 
+starting work), eliminate from pool A those transaction records 
+which are already part of a link in the new chain, and start work 
+again trying to extend the new chain. 
+
+If they complete work on a chain extended with their new link, they 
+broadcast it and immediately start work on another new link with 
+all the transactions that have accumulated in pool A since they 
+began work.  
+
+Do I understand it correctly?
+
+
+
+
+Biggest Technical Problem: 
+
+Is there a mechanism to make sure that the "chain" does not consist 
+solely of links added by just the 3 or 4 fastest nodes?  'Cause a 
+broadcast transaction record could easily miss those 3 or 4 nodes 
+and if it does, and those nodes continue to dominate the chain, the 
+transaction might never get added.  
+
+To remedy this, you need to either ensure provable propagation of
+transactions, or vary the work factor for a node depending on how 
+many links have been added since that node's most recent link.   
+
+Unfortunately, both measures can be defeated by sock puppets.  
+This is probably the worst problem with your protocol as it 
+stands right now; you need some central point to control the 
+identities (keys) of the nodes and prevent people from making 
+new sock puppets. 
+
+Provable propagation would mean that When Bob accepts a new chain 
+from Alice, he needs to make sure that Alice has (or gets) all
+transactions in his "A" and "L" pools.  He sends them, and 
+Alice sends back a signed hash to prove she got them. Once 
+Alice has recieved this block of transactions, if any subsequent 
+chains including a link added by Alice do not include those 
+transactions at or before that link, then Bob should be able to 
+publish the block he sent Alice, along with her signature, in a
+transaction as proof that Alice violated protocol.  Sock puppets 
+defeat this because Alice just signs subsequent chains using a 
+new key, pretending to be a different node. 
+
+If we go with varying the work factor depending on how many new 
+links there are,  then we're right back to domination by the 3 
+or 4 fastest nodes, except now they're joined by 600 or so 
+sock puppets which they use to avoid the work factor penalty. 
+
+If we solve the sock-puppet issue, or accept that there's a central 
+point controlling the generation of new keys, then generation of 
+coins should be tied to the act of successfully adding a block to 
+the "consensus" chain.  This is simple to do; creation of a coin 
+is a transaction, it gets added along with all the other transactions 
+in the block.  But you can only create one coin per link, and of 
+course if your version of the chain isn't the one that gets accepted,
+then in the "accepted" view you don't have the coin and can't spend 
+it.  This gives the people maintaining the consensus database a 
+reason to spend CPU cycles, especially since the variance in work 
+factor by number of links added since their own last link (outlined
+above) guarantees that everyone, not just the 3 or 4 fastest nodes,
+occasionally gets the opportunity to create a coin.
+
+Also, the work requirement for adding a link to the chain should 
+vary (again exponentially) with the number of links added to that 
+chain in the previous week, causing the rate of coin generation 
+(and therefore inflation) to be strictly controlled.  
+
+You need coin aggregation for this to scale.  There needs to be 
+a "provable" transaction where someone retires ten single coins 
+and creates a new coin with denomination ten, etc.  This is not 
+too hard, using the same infrastructure you've already got; it 
+simply becomes part of the chain, and when the chain is accepted
+consensus, then everybody can see that it happened. 
+
+
+
+				Bear
+
+
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

@@ -1,0 +1,98 @@
+From owner-cypherpunks@al-qaeda.net  Fri Jul 24 16:59:31 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id n6OKwu02029813
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 24 Jul 2009 16:58:56 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id n6OKwu9c029812
+	for cypherpunks-outgoing; Fri, 24 Jul 2009 16:58:56 -0400
+Date: Fri, 24 Jul 2009 22:58:51 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Re: Fast MAC algorithms?
+Message-ID: <20090724205851.GK23524@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3854
+Lines: 73
+
+----- Forwarded message from John Gilmore <gnu@toad.com> -----
+
+From: John Gilmore <gnu@toad.com>
+Date: Thu, 23 Jul 2009 19:24:41 -0700
+To: Peter Gutmann <pgut001@cs.auckland.ac.nz>
+cc: cryptography@metzdowd.com, mheyman@gmail.com, Nicolas.Williams@sun.com
+Subject: Re: Fast MAC algorithms? 
+
+> >2) If you throw TCP processing in there, unless you are consistantly going to
+> >have packets on the order of at least 1000 bytes, your crypto algorithm is
+> >almost _irrelevant_.
+
+This is my experience, too.  And I would add "and lots of packets".
+The only crypto "overhead" that really mattered in a real application
+was the number of round-trip times it took to negotiate protocols and
+keys.  Crypto's CPU time is very very seldom the limiting factor in
+real end-user application performance.
+
+> Could the lack of support for TCP offload in Linux have skewed these figures
+> somewhat?  It could be that the caveat for the results isn't so much "this was
+> done ten years ago" as "this was done with a TCP stack that ignores the
+> hardware's advanced capabilities".
+
+I have never seen a network card or chip whose "advanced capabilities"
+included the ability to speed up TCP.  Most such "advanced" designs
+actually ran slower than merely doing TCP in the Linux kernel using an
+uncomplicated chip.  I saw a Patent Office procurement of Suns in the
+'80s that demanded these slow "TCP offload" boards (I had to write the
+bootstrap code for the project) even though the motherboard came with
+an Ethernet chip and software stack that could run TCP *at wire speed*
+all day and night -- for free.  The super whizzo board couldn't even
+send back-to-back packets, as I recall.  Some government contractor
+had added the "TCP offload" requirement, presumably to inflate the
+price that they were adding a percentage markup to.
+
+As a crypto-relevant aside, last year I looked at using the "crypto
+offload" engine in the AMD Geode cpu chip to speed up Linux crypto
+operations in the OLPC.  There was even a nice driver for it.
+Summary: useless.  It had been designed by somebody who had no idea of
+the architecture of modern software.  The crypto engine used DMA "for
+speed", used physical rather than virtual addresses, and stored the
+keys internally in its registers -- so it couldn't work with virtual
+memory, and couldn't conveniently be shared between two different
+processes.  It was SO much faster to do your crypto "by hand" in a
+shared library in a user process, than to cross into the kernel, copy
+the data to be in contiguous memory locations (or manually translate
+the addresses and lock down those pages into physical memory), copy
+the keys and IVs into the accelerator, do the crypto, copy the results
+back into virtual memory, and reschedule the user process.  In typical
+applications (which don't always use the same key) you'd need to do
+this dance once for every block encrypted, or perhaps if you were
+lucky, for every packet.  Even kernel crypto wasn't worth doing
+through the thing.  And the software libraries were not only faster,
+they were also portable, running on anything, not just one obsolete
+chip.
+
+Hardware guys are just jerking off unless they spend a lot of time
+with software guys AT THE DESIGN STAGE before they lay out a single
+gate.  One stupid design decision can take away all the potential gain.
+Every TCP offloader I've seen has had at least one.
+
+	John
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

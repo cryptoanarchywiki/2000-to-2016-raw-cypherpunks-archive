@@ -1,0 +1,96 @@
+From owner-cypherpunks@lne.com  Mon May  5 20:47:48 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h460lkt26675
+	for <rsw@jfet.org>; Mon, 5 May 2003 20:47:46 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h45AF9Ca009143
+	for cypherpunks-goingout345; Mon, 5 May 2003 03:15:09 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Mon, 5 May 2003 05:15:02 -0500 (CDT)
+From: Anonymous <nobody@cryptofortress.com>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@remailer.cryptofortress.com>.
+To: cypherpunks@lne.com
+Subject: Re: Crypto-making vs Crypto-breaking
+Message-ID: <03edc333578b426568d98e13a82e44fc@remailer.cryptofortress.com>
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 3633
+Lines: 70
+
+Eric Cordian writes:
+
+> Let's see.  The mint picks a prime, p, a generator, g, and a random number 
+> k, and publishes (p, g, g^k mod p).
+>
+> The mint then signs stuff by raising it to the k power mod p, and not 
+> telling anyone what k is.
+>
+> We blind coins by picking a random b, and sending the coin times g^b to
+> the mint, and after the mint raises it to the k power and sends it back,
+> we can reverse engineer coin^k.
+
+A few years ago I discovered that this allows the bank to "mark" the cash.
+
+The bank can use a different exponent k' instead of the exponent k it
+is supposed to be using, on certain withdrawals.  On every deposit,
+it checks the incoming coin using both k and k', and is able to quietly
+identify the marked withdrawals.
+
+In more detail: during withdrawal, the user submits y * g^b.  The bank,
+to mark the cash, raises it to the k' power rather than the k power.
+The creates y^k' * g^bk'.  The user unsuspectingly unblinds by calculating
+g^kb and dividing it, leaving y^k' * g^(b(k'-k)).  This is what is later
+submitted to the bank, along with y.
+
+The bank, at this point, knows y, k, k', g, and the product above.
+It does not know b.  It can calculate y^k' and divide to get g^(b(k'-k)).
+It can raise to the inverse power of (k'-k) to get g^b.  Now it can
+multiply by y to get y * g^b.
+
+This is the same value which was submitted to be signed in the first
+place.  By keeping a record of the values which were signed using the
+special k' exponent, the bank can look back and see which one this one
+is, thereby linking the deposit to the withdrawal, which is exactly what
+blinding is supposed to prevent.
+
+In order to avoid this, the bank can prove that it operated correctly
+(that is, it raised its input to the same k power that g is raised to
+in the public g^k value) using a zero-knowledge proof.  I believe the
+latest version of the Lucre software does this.
+
+However, it's possible that the Lucre ZK proof is only honest-verifier
+zero knowledge.  An honest-verifier ZK proof is one which is ZK only
+if the verifier follows the protocol; for example, when it is supposed
+to choose a random value, it in effect flips a coin.  The point of a ZK
+proof is that a transcript is unconvincing to third parties, because the
+verifier would have been able to create a fake transcript.  He could do
+so by, in effect, working backwards from chosen results to figure out
+what his coin flips would have had to be.
+
+However, if the verifier chooses his bits using a fixed sequence like a
+strong PRNG, then when he reveals the transcript, he can also show that
+his "random" bits were determined by his PRNG seed.  This proves that
+he did not in fact have the flexibility to choose his bits by working
+backwards, and therefore the proof is convincing to a third party.
+
+In this case, the transcript of the "ZK proof" would in fact prove that
+the bank knew the k of g^k.  The transcript is therefore a signature,
+and in conjunction with the coin, it is arguably a blind signature.
+Blind signatures are patented until July, 2005.
+
+Given that the whole point of this application of Wagner blinding was
+to avoid the Chaum blind signature patent; that that patent expires in
+two years; that the current licensee has shown no effort to enforce the
+patent; that Wagner blinding also risks falling under another patent,
+on Chaum's undeniable signature; and that the bank's operation even with
+Wagner blinding looks an awful lot like a blind signature; then why not
+just use Chaum's blinding?  It would be enormously simpler, and safer too.
+It's far more widely analyzed and there are a number of improvements in
+the literature.
+

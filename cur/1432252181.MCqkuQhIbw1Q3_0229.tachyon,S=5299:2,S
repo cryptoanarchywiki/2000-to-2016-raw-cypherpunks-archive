@@ -1,0 +1,132 @@
+From owner-cypherpunks@Algebra.COM  Sat Sep  7 09:19:59 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g87DJx229919
+	for <rsw@opamp.org>; Sat, 7 Sep 2002 09:19:59 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id JAA19366
+	for <rsw@mit.edu>; Sat, 7 Sep 2002 09:19:58 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g878hMjP008270
+	for <cypherpunks-outgoing@ak47.algebra.com>; Sat, 7 Sep 2002 03:43:22 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g878hM8C008269
+	for cypherpunks-outgoing; Sat, 7 Sep 2002 03:43:22 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g878hDjP008249
+	for <cypherpunks@ak47.algebra.com>; Sat, 7 Sep 2002 03:43:17 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g878hBQh000701
+	for cypherpunks@ak47.algebra.com; Sat, 7 Sep 2002 01:43:11 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g878doVh000681
+	for cypherpunks-goingout345; Sat, 7 Sep 2002 01:39:50 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Sat, 7 Sep 2002 04:39:46 -0400
+From: Gabriel Rocha <gabe@seul.org>
+To: cypherpunks@lne.com
+Old-Subject: [labs@foundstone.com: Foundstone Labs Advisory - Remotely
+  Exploitable Buffer Overflow in PGP]
+Message-ID: <20020907043946.A18350@seul.org>
+Mail-Followup-To: cypherpunks@lne.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  [labs@foundstone.com: Foundstone Labs Advisory - Remotely
+  Exploitable Buffer Overflow in PGP]
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 2964
+Lines: 82
+
+
+----- Forwarded message from Foundstone Labs <labs@foundstone.com> -----
+
+Date: Fri, 6 Sep 2002 10:54:17 -0700
+From: "Foundstone Labs" <labs@foundstone.com>
+To: <bugtraq@securityfocus.com>
+Subject:  Foundstone Labs Advisory - Remotely Exploitable Buffer Overflow in PGP
+
+Foundstone Labs Advisory - 090502-PCRO
+
+Advisory Name:	Remotely Exploitable Buffer Overflow in PGP
+ Release Date:	September 5, 2002
+  Application:	PGP Corporate Desktop 7.1.1
+    Platforms:	Windows 2000/XP
+     Severity:	Remote code execution and plaintext passphrase
+disclosure
+      Vendors:	PGP Corporation (http://www.pgp.com)
+      Authors:	Tony Bettini (tony.bettini@foundstone.com)
+CVE Candidate:	CAN-2002-0850
+    Reference:	http://www.foundstone.com/advisories
+
+Overview:
+
+In many locations where PGP handles files, the length of the filename is
+not
+properly checked. As a result, PGP Corporate Desktop will crash if a
+user
+attempts to encrypt or decrypt a file with a long filename. A remote
+attacker
+may create an encrypted document, that when decrypted by a user running
+PGP,
+would allow for remote commands to be executed on the client's computer.
+
+Detailed Description:
+
+A malicious attacker could create a filename containing:
+<196 bytes><eip><9 bytes><readable address><29 bytes>
+
+The attacker would then encrypt the file using the public key of the
+target user. In many cases, public keys often contain banners of the
+utilized PGP client software and its associated version.
+
+The encrypted archive could then be sent to the target user; potentially
+via a Microsoft Outlook attachment. The email attachment could have a 
+filename such as "foryoureyesonly.pgp" or "confidential.pgp". When the
+unsuspecting user decrypts the archive (either via autodecrypt or
+manual), the
+overflow will occur if the file within the archive has a long filename.
+
+In some cases the attacker may also obtain the passphrase of the target
+user.
+PGP crashes immediately after the decryption of the malicious file and
+before
+the memory containing the passphrase is overwritten.
+
+Vendor Response:
+
+PGP has issued a fix for this vulnerability, it is available at:
+http://www.nai.com/naicommon/download/upgrade/patches/patch-pgphotfix.as
+p
+
+Foundstone would like to thank PGP for their cooperation with the
+remediation
+of this vulnerability.
+
+Solution:
+
+We recommend applying the vendor patch.
+
+Disclaimer:
+
+The information contained in this advisory is copyright (c) 2002 
+Foundstone, Inc. and is believed to be accurate at the time of 
+publishing, but no representation of any warranty is given, 
+express, or implied as to its accuracy or completeness. In no 
+event shall the author or Foundstone be liable for any direct, 
+indirect, incidental, special, exemplary or consequential 
+damages resulting from the use or misuse of this information.  
+This advisory may be redistributed, provided that no fee is 
+assigned and that the advisory is not modified in any way.
+
+----- End forwarded message -----
+

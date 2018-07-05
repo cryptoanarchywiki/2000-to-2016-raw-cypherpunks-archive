@@ -1,0 +1,73 @@
+From owner-cypherpunks@jfet.org  Tue Mar 21 14:40:33 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.5/8.13.5/Debian-3) with ESMTP id k2LJdbdE026272
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 21 Mar 2006 14:39:37 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.5/8.13.5/Submit) id k2LJdbDn026270
+	for cypherpunks-outgoing; Tue, 21 Mar 2006 14:39:37 -0500
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;         s=beta;
+  d=gmail.com;        
+  h=received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+  b=aduE/wf2gSHVzbnBHT7uEspaxLC/ddtJ9aYCZtbFe8KMo1sNtj5YLiJrnoAufq8lzDbytziK6zFWszwt9CZgWYKuF+iYPwJ0TgGqHN6ZrAy3Wm2N5IROhhzrSQ9OCHE/zdwGKXSuqSZWMNcmWZk/hcpt7bfINrKaZ7qbAA6M9QY=
+Message-ID: <4ef5fec60603211139t27ce024ah231fa38dee60ec4d@mail.gmail.com>
+Date: Tue, 21 Mar 2006 11:39:35 -0800
+From: coderman <coderman@gmail.com>
+To: "Eugen Leitl" <eugen@leitl.org>
+Subject: Re: skype was made by clever people
+Cc: forkit! <fork@xent.com>, cypherpunks@jfet.org
+In-Reply-To: <20060321102243.GB25017@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+References: <20060321102243.GB25017@leitl.org>
+Content-Transfer-Encoding: 7bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by proton.jfet.org
+  id k2LJdapM026227
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 1658
+Lines: 39
+
+On 3/21/06, Eugen Leitl <eugen@leitl.org> wrote:
+> http://www.secdev.org/conf/skype_BHEU06.handout.pdf
+
+it's interesting to note that this clearly allows for a MITM as
+required by legal authorities (Skype mentioned fully cooperating with
+authorities as required - how often do they do this?).
+
+the client authentication uses public keys signed by the Skype
+Authority; presumably any key they sign as being "User Alice", even if
+belonging to "User Eve", will be accepted by the client.  with no
+visibility in client certs at the UI level i don't see how this can be
+avoided.
+
+note that this is really just useful for inter-skype calls as
+CALEA/traditional taps can take place once a skype call hits POTS.
+
+one of the slides mentions: "You are the certification authority - You
+can intercept and decrypt session keys".  if this means that client
+private keys are also handed to the skype authority then eavesdropping
+is trivial (and no longer requires active MITM).  however, this tidbit
+is listed under "Skype Voice Interception - Feasibility of a man in
+the middle attack" so i'm not sure if they are talking about a passive
+eavesdrop or an active MITM with regards to the cert authority
+intervention.
+
+
+other interesting bits:
+
+they use a 2^32 strength key for RC4 obfuscation of data payloads. 
+all this encryption is purely done to obfuscate protocol.  (the binary
+obfuscation is impressive as well; i fucking hate that shit though :)
+
+blocking skype with one rule:
+iptables -I FORWARD -p udp -m length --length 39 -m u32 --u32
+'27&0x8f=7' --u32 '31=0x527c4833' -j DROP
+
+approximately 20,000 super nodes exist.
+
+heap exploits for biggest botnet ever? :P~
+

@@ -1,0 +1,332 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Fri Aug  9 19:27:51 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g79NRoA26173
+	for <rsw@opamp.org>; Fri, 9 Aug 2002 19:27:50 -0400
+Received: from lion.ninthwonder.com (lion.ninthwonder.com [151.199.66.147])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id TAA00907
+	for <rsw@mit.edu>; Fri, 9 Aug 2002 19:27:49 -0400 (EDT)
+Received: by lion.ninthwonder.com (Postfix, from userid 96)
+	id 110D73070E; Fri,  9 Aug 2002 19:23:17 -0400 (EDT)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 645F73070A
+	for <cryptography@wasabisystems.com>; Fri,  9 Aug 2002 19:23:15 -0400 (EDT)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id AAB0AD97C9; Fri,  9 Aug 2002 19:23:14 -0400 (EDT)
+Received: from mercury.ex.ac.uk (mercury.ex.ac.uk [144.173.6.26])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 38CC73070A
+	for <cryptography@wasabisystems.com>; Fri,  9 Aug 2002 17:14:07 -0400 (EDT)
+Received: from cronus ([144.173.6.20] helo=cronus.ex.ac.uk)
+	by mercury.ex.ac.uk with esmtp (Exim 3.33 #1)
+	id 17dH53-0020R3-00; Fri, 09 Aug 2002 22:13:57 +0100
+Date: Fri, 9 Aug 2002 22:13:56 +0100
+From: Adam Back <adam@cypherspace.org>
+To: Seth David Schoen <schoen@loyalty.org>, "R. Hirschfeld" <ray@unipay.nl>,
+   peternbiddle@hotmail.com
+Cc: Cryptography <cryptography@wasabisystems.com>,
+   Cypherpunks <cypherpunks@minder.net>, Adam Back <adam@cypherspace.org>
+Subject: TCPA/Palladium -- likely future implications (Re: dangers of TCPA/palladium)
+Message-ID: <20020809221356.A637432@exeter.ac.uk>
+References: <20020805060031.A518477@exeter.ac.uk> <DAV54W3aqZWxtmwbgRQ000190cd@hotmail.com> <200208081916.VAA02035@home.unipay.nl> <20020809041533.GP23240@zork.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <20020809041533.GP23240@zork.net>; from schoen@loyalty.org on Thu, Aug 08, 2002 at 09:15:33PM -0700
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 11983
+Lines: 289
+
+On Thu, Aug 08, 2002 at 09:15:33PM -0700, Seth David Schoen wrote:
+> Back in the Clipper days [...] "how do we know that this
+> tamper-resistant chip produced by Mykotronix even implements the
+> Clipper spec correctly?".
+
+The picture is related but has some extra wrinkles with the
+TCPA/Palladium attestable donglization of CPUs.
+
+- It is always the case that targetted people can have hardware
+attacks perpetrated against them.  (Keyboard sniffers placed during
+court authorised break-in as FBI has used in mob case of PGP using
+Mafiosa [1]).
+
+- In the clipper case people didn't need to worry much if the clipper
+chip had malicious deviations from spec, because Clipper had an openly
+stated explicit purpose to implement a government backdoor -- there's
+no need for NSA to backdoor the explicit backdoor.
+
+But in the TCPA/Palladium case however the hardware tampering risk you
+identify is as you say relevant:
+
+- It's difficult for the user to verify hardware.  
+
+- Also: it wouldn't be that hard to manufacture plausibly deniable
+implementation "mistakes" that could equate to a backdoor -- eg the
+random number generators used to generate the TPM/SCP private device
+keys.
+
+However, beyond that there is an even softer target for would-be
+backdoorers:
+
+- the TCPA/Palladium's hardware manufacturers endoresment CA keys.
+
+these are the keys to the virtual kingdom formed -- the virtual
+kingdom by the closed space within which attested applications and
+software agents run.
+
+
+So specifically let's look at the questions arising:
+
+1. What could a hostile entity(*) do with a copy of a selection of
+hardware manufacturer endorsement CA private keys?
+
+( (*) where the hostile entity candidates would be for example be
+secret service agencies, law enforcement or "homeland security"
+agencies in western countries, RIAA/MPAA in pursuit of their quest to
+exercise their desire to jam and DoS peer-to-peer file sharing
+networks, the Chinese government, Taiwanese government (they may lots
+of equipment right) and so on).
+
+a. Who needs to worry -- who will be targetted?
+
+Who needs to worry about this depends on how overt third-party
+ownership of these keys is, and hence the pool of people who would
+likely be targetted.  
+
+If it's very covert, it would only be used plausibly deniably and only
+for Nat Sec / Homeland Security purposes.  It if becomse overt over
+time -- a publicly acknowledged, but supposedly court controlled
+affair like Clipper, or even more widely desired by a wide-range of
+entities for example: keys made available to RIAA / MPAA so they can
+do the hacking they have been pushing for -- well then we all need to
+worry.
+
+
+To analyse the answer to question 1, we first need to think about
+question 2:
+
+2. What kinds of TCPA/Palladium integrity depending "trusted"
+applications are likely to be built?
+
+Given the powerful (though balance of control changing) new remotely
+attestable security features provided by TCPA/Palladium, all kinds of
+remote services become possible, for example (though all to the extent
+of hardware tamper-resistance and belief that your attacker doesn't
+have access to a hardware endorsement CA private key):
+
+- general Application Service Providers (ASPs) that you don't have to
+trust to read your data
+
+- less traceable peer-to-peer applications
+
+- DRM applications that make a general purpose computer secure against
+BORA (Break Once Run Anywhere), though of course not secure against
+ROCA (Rip Once Copy Everywhere) -- which will surely continue to
+happen with ripping shifting to hardware hackers.
+
+- general purpose unreadable sandboxes to run general purpose
+CPU-for-rent computing farms for hire, where the sender knows you
+can't read his code, you can't read his input data, or his output
+data, or tamper with the computation.
+
+- file-sharing while robustly hiding knowledge and traceability of
+content even to the node serving it -- previously research question,
+now easy coding problem with efficient
+
+- anonymous remailers where you have more assurance that a given node
+is not logging and analysing the traffic being mixed by it
+
+
+But of course all of these distributed applications, positive and
+negative (depending on your view point), are limited in their
+assurance of their non-cryptographically assured aspects:
+
+- to the tamper resistance of the device
+
+- to the extent of the users confidence that an entity hostile to them
+doesn't have the endorsement CA's private key for the respective
+remote servers implementing the network application they are relying
+on
+
+
+and a follow-on question to question 2:
+
+3. Will any software companies still aim for cryptographic assurance?
+
+(cryptographic assurance means you don't need to trust someone not to
+reverse engineer the application -- ie you can't read the data because
+it is encrypted with a key derived from a password that is only stored
+in the users head).
+
+The extended platform allows you to build new classes of applications
+which aren't currently buildable to cryptographic levels of assurance.
+eg. It allows general purpose policies to be built just by writing
+policy code that sits in a Trusted Agent code compartment, without
+having to figure out how to do split-trust (a la mixmaster chaining),
+or forward-secrecy or secret-sharing or any of the other funky stuff;
+you can just implement some policy code and it becomes so.
+
+The danger is people will use it to build applications with squishy
+interiors, with no cryptographic assurance.  Forward-secrecy
+implemented only by a policy in a Trusted Agent that sets a time-limit
+on access.  Anonymity but only in the sense that you trust the
+hardware isn't tampered with, etc etc.
+
+It will be really tempting because:
+
+- it's much easier: network distributed crypto protocols are
+relatively complex
+
+- you can build things you can't otherwise build, the are currently
+unsolved problems with distributed crypto protocols
+
+- even where good crypto protocols exist, people will defend not using
+them by claims to paranoia: "What you think the NSA has tampered with
+your CPU?", or just laziness, cost of implementation etc
+
+So in short probably mostly the answer will be "No", people won't
+still aim for cryptographic assurance.
+
+And so a big networked world of distributed applications with a very
+squishy and insecure interior inside the closed world will be built.
+
+The new application spaces squishy interior -- like a corporate
+firewall with poor to no internal security -- could be ok if you could
+be sure the firewall is 100% guaranteed reliable.  TCPA/Palladium
+proponents are effectively claiming it be an air-gap grade firewall
+guarding the distributed closed world application spaces squishy
+interior.  But there is a problem: there are master keys by-passing
+all that -- the endorsement CA's private keys.
+
+
+4. What coming political battles will result?
+
+a. If TCPA/Palladium systems get built -- and it may be politically
+unstoppable given the power of the distributed security paradigm it
+opens up -- then the battle of the coming decades will center around
+control of access to that squishy interior.  The keys that control
+access to the closed world are the endoresment CA private keys.
+
+b. You will see many clipper like attempts by governments attempting
+to make policies surrounding conditional access to that closed world:
+
+   - law enforcement access to the endorsement private CA keys
+     controlling access, so they can setup sting operations,
+     demand that ISPs and ASPs collaborate with virtualized versions
+     of network services so they can trace things
+
+   - NSA designed protocols to allow such things, black box mediated,
+     court order approved, split database access to hardware
+     manufacturers private keys
+
+c. As b. progresses RIAA/MPAA will chime in protesting that:
+
+   - Kazaa2 is distributing 10 exabytes a day of ripped recent release
+     content not based on BORA (which is now somewhat harder), but on
+     ROCA (Rip Once Copy Anywhere) as the content rippers move into
+     hardware hacking territory
+
+   - the RIAA/MPAA can't hack, spoof or jam kazaa2 with bogus content
+     because cypherpunks have fixed the protocols using WoT, certified
+     content, and other crypto-fu so they can't even observe who's
+     downloading what or who's serving what
+
+   - and therefore they also demand access to the closed world so they
+     can exert their recent legal rights to hack and DDoS the file
+     sharing networks
+
+d. Unauthorised access to the closed environment (by hacking your own
+hardware) will become illegal with DMCA like restrictions (if it
+wouldn't already be where some relation to copyright could be drawn).
+
+e. Software companies, and OS vendors will follow Microsoft's current
+lead into an unholy battle with highlights such as:
+
+   - undocumented APIs to gain advantage over competitors, not only
+     hardware hacking required to discover APIs, but attestation to
+     ensure only those companies who have licensed the right to use
+     the API can use it
+
+   - incompatible file formats to lock out competition with
+     hardware tamper resistance levels of assurance, even file formats
+     that must have certified documents for applications to open them,
+     so even if you had the spec you couldn't be compatible
+     
+   - copyright protection with software encrypted for the CPU, so you
+     can't even audit the static code
+
+   - software renting models again enforced by hardware
+
+   - whole collection of 2nd generation IP "innovations" which will be
+     built on top of such things
+
+     - charge per person you share file in a given document format;
+
+     - charge per format conversion
+
+f. Lucky's Documentat Revocation lists to allow governments, companies
+etc to to some extent after the fact control distribution of data
+
+g. Increasingly minute enforcement of repressive levels of IP
+tracking, and arbitrarily user hostile, fair-use eroding document
+viewing and use policies
+
+
+5. What could be done to protect the user?
+
+a. implement cryptographic assurance inside the closed space where
+possible -- that way if you are targetted by someone able to get
+inside it you still have the same protection as now.
+
+b. use web-of-trust techniques to provide an overlay of trust on the
+endorsement trust.  ie users endorse their own machines to say "this
+is my machine" this implies that either:
+
+- it's not tampered with (presuming the user himself was not a target
+of some attack or investigation) 
+
+- or the only tamperer is the certifying user
+
+web-of-trust overlaid on the hardware endorsement helps as:
+
+  - This makes the endorsement keys less useful in a
+    covertly obtained endorsement CA private key scenario
+
+  - Even if there are court authorized law enforcement access to
+    endorsement CA private keys, or RIAA/MPAA access to endorsement CA
+    private keys you can to the extent of your connectivity in the web
+    of trust, better avoid using the services of rogue
+    agents inside the closed space.
+
+c. Demand ability to audit information in-flows into trusted agents
+where there are unauditable out-flows; demand that this is implemented
+in a way which allows code under user control to audit
+
+d. Demand the ability to audit information out-flows, where there are
+unauditable in-flows or sensitive user data processed by the
+application; similarly demand that this is implemented in a way which
+allows code under user control to audit
+
+e. Demand cryptographically assured anonymity protection so that there
+are no "trusted third parties" who can link your network usage and
+identify you.
+
+e. Other ideas?  (Other than to lobby to prevent the building or use
+this model).
+
+Adam
+--
+http://www.cypherspace.org/adam/
+
+[1] "FBI Bugs Keyboard of PGP-Using Alleged Mafioso", 6 Dec 2000,
+slashdot
+
+http://slashdot.org/yro/00/12/06/0255234.shtml
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

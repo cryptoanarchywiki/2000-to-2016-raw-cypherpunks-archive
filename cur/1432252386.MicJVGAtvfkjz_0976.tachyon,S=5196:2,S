@@ -1,0 +1,113 @@
+From cypherpunks-bounces@cpunks.org  Tue Jan 21 04:32:49 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0L9WgNn015134;
+	Tue, 21 Jan 2014 04:32:43 -0500
+Received: from plane.gmane.org (plane.gmane.org [80.91.229.3])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0L9WdpA015130
+ (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Tue, 21 Jan 2014 04:32:41 -0500
+Received: from list by plane.gmane.org with local (Exim 4.69)
+ (envelope-from <gcsc-cypherpunks@m.gmane.org>) id 1W5XhC-0004ZU-JN
+ for cypherpunks@cpunks.org; Tue, 21 Jan 2014 10:32:34 +0100
+Received: from ppp37-190-36-25.pppoe.spdop.ru ([37.190.36.25])
+ by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
+ id 1AlnuQ-0007hv-00
+ for <cypherpunks@cpunks.org>; Tue, 21 Jan 2014 10:32:34 +0100
+Received: from yumkam by ppp37-190-36-25.pppoe.spdop.ru with local (Gmexim 0.1
+ (Debian)) id 1AlnuQ-0007hv-00
+ for <cypherpunks@cpunks.org>; Tue, 21 Jan 2014 10:32:34 +0100
+X-Injected-Via-Gmane: http://gmane.org/
+To: cypherpunks@cpunks.org
+From: Yuriy Kaminskiy <yumkam@gmail.com>
+Subject: Re: consistent pcp/pbp formats (was: Curve p25519 Replacements for
+ GnuPG?(x2 now) ..)
+Date: Tue, 21 Jan 2014 13:32:23 +0400
+Lines: 59
+Message-ID: <lbleqq$i7a$1@ger.gmane.org>
+References: <20140114111653.GD3900@r4> <lb4en4$hdt$1@ger.gmane.org>
+ <20140115093443.GE3900@r4> <lb5uvc$lfe$1@ger.gmane.org>
+ <20140115134145.GF3900@r4> <lbj0cq$l0b$1@ger.gmane.org>
+ <20140120133104.GL3900@r4>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=KOI8-R
+Content-Transfer-Encoding: 7bit
+X-Complaints-To: usenet@ger.gmane.org
+X-Gmane-NNTP-Posting-Host: ppp37-190-36-25.pppoe.spdop.ru
+User-Agent: Mozilla/5.0 (X11; Linux x86_64;
+ rv:17.0) Gecko/20131104 Thunderbird/17.0.10
+In-Reply-To: <20140120133104.GL3900@r4>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+Thomas von Dein wrote:
+> On Mon, Jan 20, 2014 at 03:13:42PM +0400, Yuriy Kaminskiy wrote:
+>> FWIW, I quickly looked at pbp [python? hate-hate-hate], it apparently has nearly
+>> same design defect: it uses long-term curve25519 keypair for message encryption.
+>> Unlike pcp, it does not include sender identification in message, receiver must
+>> try all public keys in her keyring.
+> 
+> Nope, the sender's public key is included by pbp with the encrypted
+
+Hmm?
+=== cut pbp-git/doc/fileformats.txt ===
+public key encrypted files have the following structure:
+  5[1]|nonce|len(recipients)[4]|[(recipients...)|c(packet key, nonce, msg)
+where recipients is a concatenated list of
+  random_nonce|c(recipient crypto pk, random_nonce, packet key)
+==== cut ===
+Public key where?
+
+Well, if you look at code, actual format is a bit different:
+=== according to pbp-git/pbp/pbp.py ===
+  5[1]|len(recipients)[4]|(recipients...)|(secretboxes...)
+where recipients is a concatenated list of
+  random_nonce|box(our identity privkey, recipient crypto pk, random_nonce,
+packet key)
+and secretboxes is a list of
+  nonce|secretbox(packet key, nonce, msg[i:i+BLOCK_SIZE]); i+=BLOCK_SIZE;
+=== cut ===
+
+(Too lazy to dig in "chaining-dh" carefully; but it uses "normal pubkey
+encryption" for bootstrap anyway).
+
+Correct format should be:
+  6[1]|temp_keypair.pubkey|len(recipients)[4]|(recipients...)|(secretboxes...)
+where recipients is a concatenated list of
+  random_nonce|box(temp_keypair.privkey, recipient crypto pk, random_nonce,
+packet key)
+
+> message. Since yesterday pcp does the same. However, I use a dynamic
+> keypair on the sender site now. I'm currently in the process to change
+> the encrypted output format of pcp to match the one of pbp.
+> 
+>> It is not easy to mess up with crypto - it is /extremely/ easy :-(
+>>
+>> And that's why it is important to point out at mistakes early on, without any
+>> mercy :-)
+> 
+> Absolutely. Speaking of mistakes: I had even a note in the manpage where
+> I mentioned that it might be a bad idea to include the key-id with
+> encrypted messages, though I totally forgot it :) Oh - and I didn't
+> really include the key-ids, but a hash from it instead. However, this
+
+(Well, this is already fixed and does not matter anymore, but...)
+For eavesdropper, it does not matter if you use keyid or hash(keyid), or
+hash(hash(hash(hash(keyid))))).
+If keyids are same, their hashes are same (this can be fixed by salting). If
+eavesdropper knows keyid, he can calculate hash(keyid) as well, and thus map
+messages to keyids (this *cannot* be fixed by salting).
+
+> has already been changed.
+

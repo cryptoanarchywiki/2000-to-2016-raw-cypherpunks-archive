@@ -1,0 +1,126 @@
+From owner-cypherpunks@lne.com  Fri Apr 25 22:04:16 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h3Q24Bt12817
+	for <rsw@jfet.org>; Fri, 25 Apr 2003 22:04:12 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h3Q1r13h013196
+	for cypherpunks-goingout345; Fri, 25 Apr 2003 18:53:01 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Fri, 25 Apr 2003 21:54:33 -0400
+Subject: Re: Thanks for the living hell, and question about OpenSSL
+Content-Type: text/plain; charset=US-ASCII; format=fixed
+Mime-Version: 1.0 (Apple Message framework v551)
+Cc: cypherpunks@lne.com
+To: lucrative-l@lucrative.thirdhost.com
+From: Patrick Chkoreff <patrick@fexl.com>
+In-Reply-To: <E199Dbm-00071g-00@hall.mail.mindspring.net>
+Message-Id: <07244BFE-778A-11D7-ADBD-000393D91E36@fexl.com>
+Content-Transfer-Encoding: 7bit
+X-Pgp-Rfc2646-Fix: 1
+X-Mailer: Apple Mail (2.551)
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 4320
+Lines: 97
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Tim May wrote:
+
+>> I'm writing "(unblind (sign (blind X))) = (sign X)" on the board one
+>> hundred times.
+>
+> You don't need to take our word for it--you need to see why modern
+> cryptography avoids trust issues almost completely.
+
+No no, I'm not writing it out of blind obeisance.  I actually see how 
+and why blinding achieves anonymity and avoids the trust issue.  When 
+someone presents a note for redemption, the server literally has no way 
+of knowing to whom that note was originally issued.  All it knows, and 
+all it can *possibly* know, is that it is a valid note that has not 
+been redeemed.
+
+In the previous scheme I was simply not aware of this design goal.  I 
+did not even view my system as implying a promise not to look.  I 
+simply viewed it as a system that does not in fact look.  But I see now 
+why that's a problem, because (1) a system that does not look now can 
+start looking tomorrow and (2) users have no way of knowing either way. 
+  So the promise of which you speak is in fact implied, as I know today 
+after my cypher-hangover this morning.  Nothing a four mile walk with 
+the dog couldn't cure.
+
+
+> I suggest that you dig up Chaum's "Communications of the ACM" paper
+> from 1985: "Transaction Systems to Make Big Brother Obsolete." I read
+> it when it came out, and it triggered many ideas. It's online, or was
+> as of a few years ago.
+
+That's funny, it was a 1989 CACM article by J. Steensgaard-Madsen that 
+triggered my ideas about purely function languages like Fexl.  Classic 
+stuff from the 80's.  Thanks for the intriguing reference.
+
+
+> Also, look at his paper on "Dining Cryptographers" to see how
+> information-theoretically secure messages can be sent.
+>
+> Forget worrying about the details of various ciphers in Schneier's
+> book, at least until you have grasped the essence of not relying on
+> trust or "I promise not to look" b.s. schemes.
+
+Right, actually I'm scribbling out a system overview in terms of 
+functions with specific properties independent of their implementation 
+in modular arithmetic or anything else.  Basic relationships like 
+(encrypt (decrypt X)) = X,  (unblind (sign (blind X))) = (sign X),  
+(sign X) = (decrypt (hash X)).  Definitions like a 'note' is <X, (sign 
+X)>.  Identifying which functions are secret to whom and which are 
+public.  Generation procedures such as:  given a public 'encrypt' 
+function, generate a random pair of functions <blind, unblind> with 
+specific desirable properties.  All without reference to any specific 
+number-theoretic + padding implementations.
+
+This helps me get a feel for the whole flow of the system and all it 
+implies.  That plus a strong platform like OpenSSL (I presume) should 
+yield good application code.  I'm not much of a GUI guy, so I may just 
+do a reasonably substantial API layer, a tight set of user-side command 
+line primitives, and a socket-based server program.  Or I may just 
+throw in the towel and burrow around in the Lucrative code, but I'm not 
+much of a Java guy either.
+
+
+> BTW, a more abstract book is Oded Goldreich's "Foundations of
+> Cryptography--Basic Tools," 2001. A little disorganized in places, but
+> lots of core concepts.
+>
+> When you have fully grokked the way messages can be sent without any
+> practical way of tracing their origin, as in the dining cryptographers
+> example, your eyes will be opened. And zero-knowledge interactive proof
+> systems (ZKIPS) will blow your mind. Never again will you argue in
+> terms of "trust me" and "so long as they don't subpoena me" and "I
+> promise not to look."
+
+Again, I must stress that I was never *knowingly* advocating that users 
+must "trust me."  I was not aware until yesterday that "trust me" was, 
+in fact, an implied premise in my system.  Certainly if there was some 
+meta-certain way for users to know that my system was not keeping 
+records, it could work just fine.  But there isn't, so it couldn't.
+
+> (My simple explanation of ZKIPS in terms of demonstrating a Hamiltonian
+> cycle for a graph is in the archives, from around 1992-3.)
+
+Sounds great.  Thanks again.
+
+- -- Patrick
+http://fexl.com
+
+-----BEGIN PGP SIGNATURE-----
+Version: PGP 8.0
+
+iQA/AwUBPqnm4FA7g7bodUwLEQKYrwCg96E4VRcEhFU2jfKspzN1qvY5pM4AoJgl
+QLFXpOib+vwB1WSDTiJQI/8X
+=vZt3
+-----END PGP SIGNATURE-----
+

@@ -1,0 +1,67 @@
+From owner-cypherpunks@lne.com  Wed Jul  9 14:24:21 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h69IOJ631125
+	for <rsw@jfet.org>; Wed, 9 Jul 2003 14:24:19 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h69I8sPK030951
+	for cypherpunks-goingout345; Wed, 9 Jul 2003 11:08:54 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Message-ID: <3F0C59E3.A0C05263@cdc.gov>
+Date: Wed, 09 Jul 2003 11:07:31 -0700
+From: "Major Variola (ret)" <mv@cdc.gov>
+X-Mailer: Mozilla 4.75 [en] (Win95; U)
+X-Accept-Language: en
+MIME-Version: 1.0
+To: "cypherpunks@lne.com" <cypherpunks@lne.com>
+Subject: Re: [CI] Re: Finding collision resistant hash functions
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 1282
+Lines: 40
+
+At 02:59 AM 7/9/03 -0700, Sarad AV wrote:
+>hi,
+>> MV:
+>>There's nothing gained by
+>> increasing
+>> the input entropy (compressing
+>
+>I was looking for such a compression function such
+>that the chances of collision in the message digest
+>obtained by hashing these 2^80 messages is collision
+>free or very low probability of collision or in other
+>words I dont want the birthday attack to work on it.
+>
+>If i hash 2^80 messages they should be equidistibuted
+>in such a manner that it does not affect the security
+>of the algorithm.
+
+Again, unless you know something about the distribution
+of your input AND their interaction with your chosen
+hash function, you gain nothing by remapping (compression
+or otherwise) your input.  And again, a good hash function
+will disperse your input randomly, regardless of its clustering.
+
+So pick a crypto-like hash function
+(which guarantees random dispersion)
+and use it.  You can't do better unless
+you "cheat" and know your input before
+you pick a hash function.  And picking pathological
+inputs (to cause collisions) will be hard.
+
+e.g.,
+
+hash=0
+while (input)
+    hash = hash ^ DES( input, fixed_key )
+return hash
+
+The only reason to compress would be to
+cut down the number of DES operations,
+useful only if compression is cheaper than DES.
+

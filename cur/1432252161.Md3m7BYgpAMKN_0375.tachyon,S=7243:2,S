@@ -1,0 +1,169 @@
+From owner-cypherpunks@al-qaeda.net  Mon Sep 13 16:00:48 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i8DL0UHG011036
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Mon, 13 Sep 2004 16:00:30 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i8DL0UnZ011035
+	for cypherpunks-outgoing; Mon, 13 Sep 2004 16:00:30 -0500
+Mime-Version: 1.0
+X-Sender: rah@bullae.ibuc.com
+Message-Id: <p0611047bbd6bb9e124ab@[66.149.49.5]>
+Date: Mon, 13 Sep 2004 16:56:10 -0400
+To: cypherpunks@al-qaeda.net
+From: "R. A. Hettinga" <rah@shipwright.com>
+Subject: Re: will spammers early adopt hashcash? (Re: Spam Spotlight on 
+  Reputation)
+Content-Type: text/plain; charset="us-ascii"
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Content-Length: 6176
+Lines: 140
+Status: O
+X-Status: 
+X-Keywords:                  
+X-UID: 59
+
+--- begin forwarded text
+
+
+Date: Mon, 13 Sep 2004 16:43:57 -0400
+From: Adam Back <adam@cypherspace.org>
+To: Adam Shostack <adam@homeport.org>
+Cc: Ben Laurie <ben@algroup.co.uk>, bear <bear@sonic.net>,
+	Hadmut Danisch <hadmut@danisch.de>,
+	"R. A. Hettinga" <rah@shipwright.com>, cryptography@metzdowd.com,
+	Eric Johansson <esj@harvee.org>, Adam Back <adam@cypherspace.org>
+Subject: Re: will spammers early adopt hashcash? (Re: Spam Spotlight on
+Reputation)
+User-Agent: Mutt/1.4.1i
+
+Ben and Richard CLayton's paper makes several assumptions and we'll
+see how those pan out in the field as time goes on.
+
+We don't really know what the true cost of maintaining ownership of
+many machines.  No doubt much lower than it should be because of poor
+security on microsoft OSes.  But even so there must be some turn over
+as the user instals AV, firewalls, gets cut off by ISP, gets IP
+blacklisted etc.
+
+The general argument is in the FAQ quoted below.
+
+Essentially whatever resources spammers do have, hashcash is going to
+slow them down because the balance of CPU power vs bandwidth is such
+that 20-bit hashcahs with current hardware is likely to slow down the
+output of a typical consumer destkop+DSL line down by afact or 10-100x
+less spam.  (Depnds on CPU power, DSL uplink, and number of Bcc
+recipients per message).  Hashcash costs equal cpu per Bcc recipient.
+Without hashcash Bcc recipients to the same domain or to a hub cost a
+tiny bit of bandwidth -- the size of the email address (+"RCPT TO
+\r\n").
+
+Will it be enough -- we don't know yet, but if widely deployed it
+would make spammers adapt.  We just don't yet know how they will
+adapt.
+
+The other question Ben & Richards paper doesn't explore is the CAMRAM
+way of using hashcash.  In this model you only pay hashcash for
+_introductions_.  After parties have replied to a mail, the mail is
+whitelisted (short term by address only (risky no auth, joe-job
+hazard) medium term with CAMRAM email header signatures).  If simple
+hashcash per mail turns out not to be enough, CAMRAM can increase the
+work factor, as people do not reply to spammers; and many emails are
+to-and-fro vs first introduction emails.  (So the sender can afford to
+pay more on average).  Eric sent a spreadsheet with some of this type
+of calculation.
+
+There may also be some mileage in Hal Finney's RPOW
+http://www.rpow.net where the legitimate user can re-use stamps he
+receives.  (The scaling issues of the RPOW servers would need to be
+engineered carefully, there are servers, they can be per eg domain ,
+but still compared to hashash this is more infrastructure as hashcash
+is pure end-to-end).
+
+Adam
+
+http://www.hashcash.org/faq/ 2c and 2d
+
+| 2c But won't spammers steal CPU time?
+|
+| Spammers already compromise security on many users machines to make
+| so-called "Zombie" armies to send spam from. However currently the
+| rate at which spammers can send mail on a zombie machine is limited
+| purely by the speed of those machine's internet links. A typical DSL
+| user might be able to send 25 unique messages per second each of size
+| 1KB (assumes 256kbit uplink). Or many more messages per second if the
+| messages are delivered to multiple users at once (using multiple Cc or
+| Bcc recipients). Even a 20-bit stamp takes 1/2 second per recipient on
+| the highest end pc hardware at time of writing. This would slow
+| spammers down by a factor of 10-100 or more per compromised machine
+| (depending on whether the messages sent are sent individually or to
+| many users at once).
+|
+| 2d But won't spammers deliver to many recipients at once?
+|
+| Spammers commonly optimize the amount of spam they can send over a
+| given link speed by delivering messages to 100s or 1000s of Bcc
+| recipients at once directly to an end-site, or to an ISP mail-hub. In
+| this way they can consume just 3.5KB of bandwidth in sending messages
+| to 100 recipients compared to the 100KB which would be used to send
+| each message separately. This would allow a spammer to send 700
+| messages per second (assumes DSL with 256kbit uplink).
+|
+| Delivering in batches reduces the degree of customization the spammer
+| can make because all of the message bodies in a batch have to be the
+| same, but never-the-less is a trick spammers commonly use to increase
+| the number of mails per second they can send.
+|
+| However with hashcash a separate stamp is required for each individual
+| recipient, which stops this spammer trick. If the spammer has to put a
+| hashcash stamp for each recipient, even a 3Ghz Pentium 4 can only
+| generate 2 stamps per second, compared to 700 per second with no
+| hashcash, so using hashcash in this scenario slows the number of mails
+| the spammer can send by 350x.
+
+Adam
+
+On Mon, Sep 13, 2004 at 10:37:47AM -0400, Adam Shostack wrote:
+> On Mon, Sep 13, 2004 at 01:18:32PM +0100, Ben Laurie wrote:
+> | Adam Shostack wrote:
+> |
+> | >On Tue, Sep 07, 2004 at 04:13:13PM -0400, Adam Back wrote:
+> | >
+> | >| Well we'll see.  If they have lots of CPU from zombies and can get and
+> | >| maintain more with limited effort maybe even they can, and CAMRAM's
+> | >| higher cost stamp on introductions only will prevail as the preferred
+> | >| method.
+> | >
+> | >Adam,
+> | >
+> | >	You've thought about this more than me.  What do you see as
+> | >equilibrium postal rates if the spammers have 10k, 100k, or a million
+> | >nodes to send?
+> | >
+> | >        Will spammers run under nice?  Use your graphics card as a
+> | >co-processor?  Is the rate of new vulns high enough to keep their CPU
+> | >pools filled?
+> |
+> | We have some figures for that kind of stuff in
+> | http://www.apache-ssl.org/proofwork.pdf.
+>
+> Thanks!  That was exactly what I was hoping wouldn't get said, because
+> I no longer believe that hashcash is substantially useful.
+>
+> Adam S
+
+--- end forwarded text
+
+
+-- 
+-----------------
+R. A. Hettinga <mailto: rah@ibuc.com>
+The Internet Bearer Underwriting Corporation <http://www.ibuc.com/>
+44 Farquhar Street, Boston, MA 02131 USA
+"... however it may deserve respect for its usefulness and antiquity,
+[predicting the end of the world] has not been found agreeable to
+experience." -- Edward Gibbon, 'Decline and Fall of the Roman Empire'
+

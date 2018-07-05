@@ -1,0 +1,122 @@
+From owner-cypherpunks@al-qaeda.net  Sat Jul 17 13:52:45 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i6HIqakR022179
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Sat, 17 Jul 2004 13:52:37 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i6HIqaAG022178
+	for cypherpunks-outgoing; Sat, 17 Jul 2004 13:52:36 -0500
+Date: Sat, 17 Jul 2004 20:45:15 +0200 (CEST)
+From: Thomas Shaddack <shaddack@ns.arachne.cz>
+To: Cypherpunks <cypherpunks@al-qaeda.net>
+Subject: Secure telephones
+Message-ID: <0407171949520.-1331463516@somehost.domainz.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5515
+Lines: 98
+
+Pondering construction of a secure telephone. (Or at least a cellphone in 
+general. The user interfaces and features available on virtually all the 
+mass-market phones suck, to put it very very mildly, not even mentioning 
+that there's no access to their firmware (so no chance of audit), poor or 
+no support for SSL (while running HTTP through the operator's proxy), and 
+typically no possibility to run more than one Java applet (or other 
+program) at the same time. A combination of a GSM/GPRS module with a 
+suitable embedded Linux-running computer could be the right solution.)
+
+
+The easiest way is probably a hybrid of telephone/modem, doing normal 
+calls in "analog" voice mode and secure calls in digital modem-to-modem 
+connection. The digital layer may be done best over IP protocol, assigning 
+IP addresses to the phones and making them talk over TCP and UDP over the 
+direct dialup. (We cannot reliably use GPRS, as the quality of service is 
+not assured, so we have to use direct dialup. But we can implement "real" 
+IP later, when the available technology reaches that stage.)
+
+Once we have the phones talking over IP with each other, we can proceed 
+with the handshake. I'd suggest using OpenSSL for this purpose, as it 
+offers all we need for certificates and secure transfer of the key. Then 
+use UDP for the voice itself, using eg. stripped-down SpeakFreely as the 
+engine. So during the call, two connections will be open over the IP 
+channel: the command one (SSL-wrapped TCP, for key and protocol handshake, 
+ensuring the identity of the caller, etc.), and the data one (a 
+bidirectional UDP stream). As the command connection should be silent for 
+most of the time, a 14k4 modem should offer us enough bandwidth for 9k6 
+GSM codec, even with the UDP/IP overhead.
+
+The problem is with the calls themselves, determining if they have to be 
+connected as secure or as insecure.
+
+For landlines, it's easy; we can hold the line open while switching the 
+modem between voice and data modes, even if we'd have to do it the 
+"hardcore" way with a relay and a 600-ohm resistor connected to the phone 
+line during modem hangup. We then can freely alternate between voice and 
+data, starting in voice and getting the telephones negotiate over "analog 
+sound" using some sequences of beeps, like during the time of acoustically 
+coupled modems. We need just few 100s bps to tell each other that we both 
+support secure call, and that we want to switch to it.
+
+However, the cellphones pose a much worse problem. The voice/data call 
+type is determined at the connection time, and as far as I know, can't be 
+changed on-fly. So we would have to have the desired call mode specified 
+in the phone's addressbook (with eventual secure mode advertising through 
+the mentioned beep sequence when in insecure mode, and eventual automatic 
+or manual redial in secure mode). Does anybody here know if there is a 
+workaround available for this? How does the Siemens crypto-phone 
+<http://www.vnunet.com/news/1125124> solve this?
+
+It is possible to place data calls from a GSM phone. But it is possible to 
+RECEIVE the data calls on it? Can I connect a cellphone to a laptop and 
+have a dial-in server?
+
+
+A workaround here could be exploiting the always-on properties of GPRS (if 
+the Enfora modules offer GPRS simultaneously with GSM calls, it could 
+provide a lot fo advantages), and use eg. Jabber as a messaging platform 
+(overcoming the difficulties with secure SMS messaging), and optionally 
+also for secure call negotiation, serving here as a control connection.
+
+
+A nice feature could be a phone-located voicemail (won't cover the 
+situations when the phone is outside of the network reach, but could be 
+handy for the situations where the phone is just told to not ring). The 
+advantages would be the possibility of the voice being transported in 
+secure mode, and the possibility of encrypting the messages in storage. 
+
+Another feature, that could make the device rather attractive in some 
+demographics, is the possibility of having the phonebook stored encrypted 
+on the handset, inaccessible without a PIN, or not located there at all, 
+stored remotely. Yet another advantage, useful for closed groups, is the 
+possibility of using Jabber UIDs dynamically mapped to phone numbers, 
+allowing the users to swap the handsets, bringing a bit of deniability 
+into the location tracking.
+
+
+The modularity of the design should allow low degree of lock-in to the 
+vendors and networks; other modules than Enfora can be used for different 
+standards, Enfora produces tri-band (and even quad-band, adding 850 MHz to 
+the mix) ones for both US and EU/AU/NZ markets, the control computer 
+should be exchangeable for any other kind, with just minor tweaks in the 
+software itself. Openness of the design should allow the implementation of 
+other emerging secure comm standards, including but not limited to Skype.
+Various message-anonymizing tricks could be also done, using 
+mixmaster-style forwarding within the network, and/or using secure 
+messaging clients instead, like eg. Silc <http://www.silcnet.org/>.
+
+Any comments from the Collective?
+
+
+-- 
+....Enfora Enabler tri-band GSM module, 
+<http://www.enfora.com/shop/detail.aspx?ID=32>, $120. Full-featured 
+embedded Gumstix computer, <http://www.gumstix.com/>, $185. Big fat 
+lithium battery, $50. Display, keypad, other circuits, case: $100-200. 
+Writing the firmware, 2-3 weeks. Warm fyzzu feeling from pissing into the 
+wiretap operators' beer - priceless!
+

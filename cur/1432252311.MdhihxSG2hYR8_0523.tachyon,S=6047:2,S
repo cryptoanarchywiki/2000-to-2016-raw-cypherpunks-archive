@@ -1,0 +1,137 @@
+From owner-cypherpunks@al-qaeda.net  Tue Oct  2 14:49:19 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q92IjjeV011750
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 2 Oct 2012 14:45:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1349203545;
+	bh=sqotReUjFjNyrQNBvBE9eDpNYDv0bBdvLmTIgLH8+5c=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=I0aZYfghGJGrXw4e9eS4dLtODCLreDRmiqlv6QOuS4SlqXnuEmfdI2qccgdqVHqdq
+	 SG7Y6YfJ5xrEV2MErtkpDEQEn3UkCn618WqLTe8U7cHAC/lQHD/5KlZ6f7oPqA24ic
+	 qZJS8rzlaMyoCd4/6AKAnt1ktwEeQQ0FMeUOUo1w=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q92Ijjql011749
+	for cypherpunks-outgoing; Tue, 2 Oct 2012 14:45:45 -0400
+Date: Tue, 2 Oct 2012 20:45:41 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: info@postbiota.org, cypherpunks@al-qaeda.net, zs-p2p@googlegroups.com
+Subject: [tahoe-dev] Tahoe-LAFS Weekly Dev Chat, 2012-10-02
+Message-ID: <20121002184541.GA9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4627
+Lines: 105
+
+----- Forwarded message from Zooko Wilcox-OHearn <zooko@leastauthority.com> -----
+
+From: Zooko Wilcox-OHearn <zooko@leastauthority.com>
+Date: Tue, 2 Oct 2012 11:18:07 -0600
+To: tahoe-dev@tahoe-lafs.org
+Subject: [tahoe-dev] Tahoe-LAFS Weekly Dev Chat, 2012-10-02
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+Tahoe-LAFS Weely Dev Chat, 2012-10-02
+
+in attendance: Zooko (scribe), David-Sarah, Andrew
+
+CAVEAT LECTOR; Some of this was added by Zooko after the chat ended.
+
+Andrew Miller has found three bugs in #1240: 1. There's a bug. 2. A
+different code path partially compensates for it sometimes
+(David-Sarah calls this "a masking bug"). 3. The tests aren't smart
+enough to realize that that the task has been done wrong and masked
+rather than done right. Unclear if Andrew will fix #1240 before
+David-Sarah stops accepting patches into Tahoe-LAFS v1.10.
+
+Andrew: "Dynamic Merkle Tree" -- a Red-Black Merkle Tree
+
+deterministic balancing, good asymptotic cost even in the worst case,
+good small constant
+
+Any data structure can be Merklized by replacing the links with hashes.
+
+Take MDMF and replace the Merkle Tree with a Red-Black Merkle Tree.
+Now you have an LDMF! (Except the backend needs to be able to store,
+find, and insert data blocks efficiently. Fortunately
+LeastAuthority.com's new Cloud Backend can do that! Well actually
+maybe it can't because it currently identifies the blocks by their
+*block number*. But it is a lot closer than the current disk backend,
+which stores the each block under its offset in a single share file.)
+
+Andrew is trying to work out how to do the physical storage and
+addressing, apart from the logical -- Merkle-Tree-authenticated
+integrity-checking. He's looking at B trees or B+ trees. Zooko thinks
+this may be closely related to tickets #1543, #1687.
+
+Zooko is excited because of the history here. Brian and he thoughtof
+the design of LDMF, then thought it was too hard and thought of the
+design of MDMF, then thought that was too hard and invented SDMF,
+which was stupid enough that they could implement it. Much later,
+Kevan came along and, not realizing how hard MDMF was, decided to do
+it for a summer project (Google Summer of Code) and worked really hard
+and well on it for about two years, which is why we now have MDMF. So
+why is Zooko excited? Because hopefully Andrew doesn't realize how
+hard LDMF is!
+
+Zooko recommended N. Askitis's dissertation on cache-oriented data structures.
+
+Andrew has at least two other ideas, and is talking about putting all
+three of them into his dissertation. Zooko thinks that's three
+dissertations. Maybe Andrew should get three PhD's.
+
+If you add access control at the sub-file level of granularity, so
+that you can grant access to only *part* of an LDMF, then what's the
+difference between a directory structure and an LDMF? You could store
+a deep directory structure in an LDMF. The question is how do you
+identify sub-parts of an LDMF in order to talk about them with someone
+else and grant someone else access to them. You don't want to grant
+them access to a byte span! Like, here's read access to bytes 1000
+through 3000 of this file, because then you could no longer safely
+insert and delete things in that file.
+
+Brian once suggested packing the share data of multiple files and
+directories together for more efficient download and storage -- a
+"Virtual CD" -- #204, #1029.
+
+Once we finish the next RAIC Milestone, David-Sarah will focus on
+Tahoe-LAFS v1.10 release. Zooko may not be able to focus on that much
+due to ongoing LeastAuthority.com work. LeastAuthority.com is bidding
+for another contract.
+
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/204# "virtual CDs"
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1029# download a subtree
+as an archive
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1240# remove
+ResponseCache in favour of MDMFSlotReadProxy's cache
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1543# rearrange share
+format to make downloads faster
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1687# store copy of
+block-hash-chain with each block
+
+
+Regards,
+
+Zooko Wilcox-O'Hearn
+
+Founder, CEO, and Customer Support Rep
+
+https://LeastAuthority.com
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

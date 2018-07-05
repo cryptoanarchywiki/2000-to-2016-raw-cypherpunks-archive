@@ -1,0 +1,91 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Sat Apr  5 16:37:05 2003
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h35Lb5E02352
+	for <rsw@opamp.org>; Sat, 5 Apr 2003 16:37:05 -0500
+Received: from mononoke.wasabisystems.com (mononoke.wasabisystems.com [166.84.0.13])
+	by pacific-carrier-annex.mit.edu (8.12.4/8.9.2) with ESMTP id h35Lb4RX025005
+	for <rsw@mit.edu>; Sat, 5 Apr 2003 16:37:05 -0500 (EST)
+Received: by mononoke.wasabisystems.com (Postfix, from userid 96)
+	id B2C925E460; Sat,  5 Apr 2003 16:36:17 -0500 (EST)
+X-Original-To: cryptography@wasabisystems.com
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by mononoke.wasabisystems.com (Postfix) with ESMTP id EC8435E45E
+	for <cryptography@wasabisystems.com>; Sat,  5 Apr 2003 16:36:16 -0500 (EST)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 377F6D97DC; Sat,  5 Apr 2003 16:36:14 -0500 (EST)
+X-Original-To: cryptography@wasabisystems.com
+Received: from a.smtp-out.sonic.net (a.smtp-out.sonic.net [208.201.224.38])
+	by mononoke.wasabisystems.com (Postfix) with SMTP id F3DF35E437
+	for <cryptography@wasabisystems.com>; Sat,  5 Apr 2003 14:21:35 -0500 (EST)
+Received: (qmail 8296 invoked from network); 5 Apr 2003 19:21:35 -0000
+Received: from turbo.sonic.net (208.201.224.26)
+  by a.smtp-out.sonic.net with SMTP; 5 Apr 2003 19:21:35 -0000
+Received: from billstewart.pobox.com (adsl-208-201-253-88.sonic.net [208.201.253.88])
+	by turbo.sonic.net (8.11.6p2/8.8.5) with ESMTP id h35JLV302315;
+	Sat, 5 Apr 2003 11:21:34 -0800
+X-envelope-info: <bill.stewart@pobox.com>
+Message-Id: <5.1.1.6.2.20030403225236.02e1dc00@idiom.com>
+X-Sender: wcs@idiom.com
+X-Mailer: QUALCOMM Windows Eudora Version 5.1.1
+Date: Fri, 04 Apr 2003 17:10:02 -0800
+To: Bill Frantz <frantz@pwpconsult.com>
+From: Bill Stewart <bill.stewart@pobox.com>
+Subject: Re: Logging of Web Usage
+Cc: Seth David Schoen <schoen@loyalty.org>, cypherpunks@lne.com,
+   cryptography@wasabisystems.com
+In-Reply-To: <v03110736bab23b47a797@[192.168.1.5]>
+References: <20030403021618.GB15220@zork.net>
+ <v0311072ebab104f1e47a@[192.168.1.5]>
+ <3E8963CC.9070203@algroup.co.uk>
+ <kjwuif8b90.fsf@romeo.rtfm.com>
+ <200303311844.h2VIiZdd021188@new.toad.com>
+ <kjwuif8b90.fsf@romeo.rtfm.com>
+ <v0311072ebab104f1e47a@[192.168.1.5]>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 1917
+Lines: 37
+
+At 11:32 AM 04/03/2003 -0800, Bill Frantz wrote:
+>Ah yes, I haven't updated my timings for the new machines that are faster
+>than my 550Mhz.  :-)
+>
+>The only other item is importance is that the exhaustive search time isn't
+>the time to reverse one IP, but the time to reverse all the IPs that have
+>been recorded.
+
+Also, until recently, there was the problem that storing a hash value
+for every IP address took 8-10 bytes * 2**32, and the resulting 32-40GB
+was an annoyingly large storage quantity, requiring a deck of Exabyte tapes
+or corporate-budget quantities of disk drive, which also meant that
+sorting the results was also awkward.  These days, disk drive prices
+are $1/GB at Fry's for 3.5" IDE drives, so there's no reason not to have
+120GB on your desk top.
+
+This does mean that if you're keeping hashed logs you should probably
+use some sort of keyed hash - even if you don't change the keys often,
+you've at least prevented pre-computed dictionary attacks over the
+entire IPv4 address space, and the key should be long enough (e.g. 128 bit)
+so that dictionary attacks on the "IP addresses of Usual Suspects"
+also can't be precomputed.
+
+A related question is keeping lists of public information,
+e.g. don't-spam lists, in some form that isn't readily abusable,
+such as hashed addresses.  The possible namespace there is much larger,
+but the actual namespace isn't likely to be more than a couple of billion,
+in spite of the number of spammers selling their lists of 9 billion names.
+There's the question of how exact a match do you need -
+if mail is for alice+tag1@example.com, you'd ideally like to be able to check
+alice+tag1@example.com, alice@example.com, and @example.com,
+which makes the lookup process more complex.
+
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

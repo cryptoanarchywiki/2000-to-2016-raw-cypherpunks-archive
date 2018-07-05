@@ -1,0 +1,165 @@
+From owner-cypherpunks@Algebra.COM  Wed Aug  8 20:25:11 2001
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id UAA17994
+	for <kwantam@positron.mit.edu>; Wed, 8 Aug 2001 20:25:10 -0400
+Received: from ak47.algebra.com (root@ak47.algebra.com [208.233.99.160])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id UAA21490
+	for <rsw@mit.edu>; Wed, 8 Aug 2001 20:16:55 -0400 (EDT)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f78Nela14085
+	for cypherpunks-outgoing; Wed, 8 Aug 2001 18:40:47 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (dns.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f78Nee414071
+	for <cypherpunks@algebra.com>; Wed, 8 Aug 2001 18:40:40 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id f78NeFQ04174
+	for cypherpunks@algebra.com; Wed, 8 Aug 2001 16:40:15 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id f78Ne2704164
+	for cypherpunks-goingout; Wed, 8 Aug 2001 16:40:02 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+From: Nomen Nescio <nobody@dizum.com>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@dizum.com>.
+To: cypherpunks@lne.com
+Old-Subject: Mixmaster Message Drops
+Message-ID: <70747ffc994593392d662aeac0532bf3@dizum.com>
+Date: Thu,  9 Aug 2001 01:40:15 +0200 (CEST)
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Mixmaster Message Drops
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 4557
+Lines: 121
+
+
+My studies show about 1 chance in 20 that any particular running
+remailer will drop a message.  This is based on sending a bunch of
+messages through chains of remailers of varying length and seeing how
+many arrive in a day or so, and then calculating the average
+probability.  These are not the lame remailers, either, these are the
+cream of the crop, based on various performance reports.
+
+Note that in a chain of twenty remailers this causes many messages to
+be dropped.  Even if we achieve a reliability rate of 1 in 100,000,
+this means about 1 in 5000 messages will be lost through a chain of 20
+remailers - usable.
+
+For some reason remailer culture has accepted message drops as normal.
+They aren't normal.  There isn't any reason why a remailer should be
+any less reliable than a mail server.  I estimate mail servers are far
+more reliable than 1 loss in 100,000 messages.
+
+One possibility is that some of my tests went through remailers that
+are just down.  This hasn't been ruled out beyond any reasonable
+doubt, but it appears that the drops are occuring in remailers which
+are still carrying traffic.
+
+I did an extensive series of tests with an internal mixmaster network
+running Mixmaster 2.0.3.  I had to fool around with it, but I was able
+to run many hundreds of messages through chains of 20 hops without a
+single message drop.
+
+The core software appears to be solid (unless bugs have been
+introduced into more recent releases ;-), but the setup needs to be
+tweaked.
+
+The practice of putting something like this into .forward is a problem:
+"|/usr9/loki/Devel/Mix/mixmaster -R >> /usr/spool/mail/username"
+
+If too many messages come in at once this brings a machine to its
+knees because it runs too many mixmaster processes at once.  This
+feeds on itself because as more processes run, it takes longer for
+each one to complete.
+
+There may also be a bug in mixmaster which is only expressed when many
+mixmaster processes simultaneously try to queue a message.
+
+(FYI, this also creates an easy DoS attack on a mixmaster node.  Just
+send the node a bunch of messages which loop back into itself over and
+over again.  This should rapidly cause sendmail to spawn many
+mixmaster processes and lock up the machine.  I haven't tried this on
+anybody else's mixmaster node.)
+
+The solution is to have a small program which puts incoming messages
+into a spool file.  I've enclosed the perl script I used, which comes
+with no guarantees and hasn't been tested all that much.
+
+The script copies the message into a file in the spool directory
+starting with "temp".  Then it moves it to a file starting with
+"spool".  The reason for the move is to guarantee that all "spool"
+files are complete messages.  The time of creation is encoded in the
+filename so a processing program can get the files in order of
+arrival.
+
+The other pieces needed are a small perl script which monitors the
+spool directory and calls mixmaster to queue up each file and another
+process which calls mixmaster repeatedly to process the queued
+messages.
+
+This setup causes no more than two mixmaster processes to run at a
+time and is more robust.  Would somebody mind polling the remailer
+operators to see how many are running mixmaster directly from
+.forward?
+
+I suspect this is most of the problem.  If it isn't, we need to
+eliminate it before pursuing the next suspect.
+
+---cut here------cut here------cut here------cut here------cut here------cut here---
+#!/usr/bin/perl -w
+
+# This code is in the public domain.
+
+# Put in a .forward file.  Spools mail into a directory for processing
+# by something else.
+
+require 5;
+use strict;
+
+use English;
+
+my(@pwvals) = getpwuid($UID);
+my($homedir) = $pwvals[7];
+my($spooldir) = "$homedir/spool";
+
+die "Home directory doesn't exist." if ! -e $homedir;
+die "Home directory isn't a directory." if ! -d $homedir;
+
+die "$spooldir doesn't exist." if ! -e $spooldir;
+die "$spooldir is not a directory." if ! -d $spooldir;
+
+my($now) = time;
+my($now_string);
+if( length($now) < 12 ) {
+    $now_string = ('0' x (12 - length($now))) . $now;
+}
+
+my($temppath) = "$spooldir/temp.$now_string.$$";
+die "Amazingly, $temppath already exists." if -e $temppath;
+
+open(SPOOLFILE, ">$temppath")
+    or die "Could not open $temppath for writing.\n";
+while(<>) {
+    print SPOOLFILE $_;
+}
+close(SPOOLFILE);
+
+my($spoolpath) = "$spooldir/spool.$now_string.$$";
+die "Amazingly, $spoolpath already exists." if -e $spoolpath;
+
+if( ! rename $temppath, $spoolpath ) {
+    die "Could not rename $temppath to $spoolpath.";
+}
+
+# Let sendmail know everything is fine.
+exit(0);
+

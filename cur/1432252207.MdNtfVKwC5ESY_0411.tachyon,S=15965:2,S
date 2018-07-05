@@ -1,0 +1,312 @@
+From owner-cypherpunks@Algebra.COM  Sat Feb 10 11:49:01 2001
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.72.0.53])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id LAA06520
+	for <kwantam@positron.mit.edu>; Sat, 10 Feb 2001 11:49:01 -0500
+Received: from ak47.algebra.com (root@ak47.algebra.com [208.233.99.160])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id LAA02421
+	for <rsw@mit.edu>; Sat, 10 Feb 2001 11:49:00 -0500 (EST)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f1AGNJX17525
+	for cypherpunks-outgoing; Sat, 10 Feb 2001 10:23:19 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from sirius.infonex.com (sirius.infonex.com [216.34.245.2])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f1AGNGq17510
+	for <cypherpunks@algebra.com>; Sat, 10 Feb 2001 10:23:16 -0600
+Received: (from cpunks@localhost) by sirius.infonex.com (8.8.8/8.8.8) id IAA23545; Sat, 10 Feb 2001 08:23:11 -0800 (PST)
+Received: from cyberpass.net (cyberpass.net [216.34.245.3]) by sirius.infonex.com (8.8.8/8.8.8) with ESMTP id IAA23540 for <cpunks@sirius.infonex.com>; Sat, 10 Feb 2001 08:22:58 -0800 (PST)
+Received: from modemcable005.191-202-24.mtl.mc.videotron.ca (modemcable005.191-202-24.mtl.mc.videotron.ca [24.202.191.5]) by cyberpass.net (8.8.8/8.7.3) with ESMTP id IAA03351 for <cypherpunks@cyberpass.net>; Sat, 10 Feb 2001 08:25:40 -0800 (PST)
+Received: (from adam@localhost)
+	by modemcable005.191-202-24.mtl.mc.videotron.ca (8.9.3/8.9.3) id LAA02276;
+	Sat, 10 Feb 2001 11:24:17 -0500
+Date: Sat, 10 Feb 2001 11:24:17 -0500
+Message-Id: <200102101624.LAA02276@modemcable005.191-202-24.mtl.mc.videotron.ca>
+X-Authentication-Warning: modemcable005.191-202-24.mtl.mc.videotron.ca: adam set sender to adam@modemcable005.191-202-24.mtl.mc.videotron.ca using -f
+From: Adam Back <adam@cypherspace.org>
+To: cypherpunks@cyberpass.net
+Cc: pzakas@toucancapital.com
+Old-Subject: ZKS mail system questions (RE: anonymity)
+Subject:  ZKS mail system questions (RE: anonymity)
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 13613
+Lines: 273
+
+
+
+I think the 2.0 mail system has a number of advantages over the
+reply-blocks based 1.0 pseudonymous mail system, though a couple of
+disadvantages.  These trade offs are documented in the mail system
+white paper.
+
+	http://www.freedom.net/info/whitepapers/
+
+In summary for people who don't want to wade through a wide paper, ZKS
+version 2 mail system is a POP and SMTP server you connect to
+pseudonymously via the freedom network and therefore tunnel your SMTP
+and POP sessions through the freedom cloud.
+
+The system is put together with Dan Bernstein's popular qmail high
+performance mail system to build ZKS' mail hub and pop account system.
+
+The differences are that ZKS has a number of qmail modifications to
+deal with pseudonym to internet and internet to pseudonym mail.  (To
+encrypt incoming mail for the pseudonym and a few other things to do
+with authentication).  The details are in the white paper.
+
+> Does zk traffic traverse public networks (via VPN or otherwise)?
+
+In the case of the connections between the user, the nodes in the
+freedom network, and the ZKS mail system the traffic is all routed
+over the internet.  The nodes in the freedom network are operated by a
+mixture of owners.  Some ISPs, some individuals interested in privacy
+and some ZKS operated.  The user can choose which nodes he trusts.
+
+There is a diagram in the mail system white paper showing the internal
+communications inside the mail system.  However these are just
+messages passing information between the mail system cluster of
+machines and are inside a firewall.  Conceptually you can consider
+this cluster as a single machine owned by ZKS.  The point is if you
+are connecting pseudonymously you have limited need to trust ZKS mail
+system because it doesn't know who you are, and further, nym to nym
+mail is end to end encrypted.  
+
+The mail server sees nym to internet user and internet user to nym
+mail bodies, but so does any passive eavesdropper sniffing packets
+entering and leaving the mail system as the internet user has no
+compatible client software, unless the nym and internet user use end
+to end encryption software such as openPGP or S/MIME.  The mail system
+does encrypt internet to nym mail for the nym's key so it doesn't have
+data it can read after the fact, although clearly it could record it,
+at least it protects against after the fact requests to decrypt mail
+-- ZKS can't decrypt it because only the nym has the keys.
+
+> Do these networks collect packet data (to, say, analyse attacks)?
+
+The freedom network is operated by third parties.  ZKS to my knowledge
+makes all attempts to not log things and to set up the software so
+that it does not.  Third party operators may or may not record data.
+Whether you trust third party operators or ZKS to not log is a matter
+of personal taste, and why you want distributed trust -- so you can
+choose who to trust based on your opinions of who is trustworthy (or
+more correctly which set of nodes can be trusted not to collude -- a
+mutually distrusting pair of nodes operated by NSA and KGB might
+provide pretty good security even if you didn't trust either of them,
+if you trust their paranoia prevents them from colluding or
+collaborating).
+
+The software is not setup or written to log anything which could lead
+to privacy leaks we audit what it does log for error tracking for
+privacy and correlation implications.  So no.  It would probably be
+difficult to log enough to analyse attacks without logging enough to
+erode privacy.  But then as the system attempts to offer distributed
+trust, you should not have to trust that a given node does not log all
+that it could log and this is the case with limitations as discussed
+below.
+
+> Do they stagger packet transmissions to confuse origin and
+> destination?
+
+The freedom network supports only interactive pseudonymous tunnels.
+
+You might think that this would allow a timing correlation attack on
+the mail system by getting ISP usage logs and comparing freedom users
+online time with outgoing mails as there are no (significant) delays
+in the freedom mail system.  However one of the advantages of the
+freedom 2.0 mail system over the 1.0 reply block based one is that web
+and mail traffic act as cover for each other.  An ISP log just shows
+when you logged on, not when you uploaded mail.  The window of time in
+which you send mail may allow some users to be excluded from being
+potential originators of a message, and this effect can be
+cummulative.  The same argument would apply to necessarily interactive
+internet activity -- ISP logs together with logs of pseudonymous
+behavior can lead to correlations.  This latter effect is a general
+attack on any pseudonymity system even with a perfect idealised mix
+net.  You can observe and correlate input and output activity based on
+time if the inputs are not continously connected, continuously sending
+traffic and 100% failure free.  (A tall order).  Mail traffic does not
+need to be completely interactive.  15 mins or even an hours delay may
+be quite acceptable and allows more cover in terms of potential
+originators.  We are looking at this for mail 2.1.
+
+> Do they only broadcast real data and no masking data?
+
+In freedom 2.0 the freedom network used fixed sized data packets at
+the transport layer with end to end crypto between the user and the
+exit node.  There are however other things which limit the amount of
+privacy and anonymity you can get from an interactive communications
+tunnel implemented on top of best effort routing, and selectively and
+plausbily deniably DoSable IP.  There was discussion of this on this
+list a few months back with comments from Lucky Green and Wei Dai.
+These issues are discussed somewhat in "Freedom 2.0 security issues
+and analysis" at the same URL as above.  
+
+Anton Stiglic, Ulf Moeller and I have a paper submitted to the
+Information Hiding Workshop which discusses these issues a little more
+formally which hopefully should stimulate discussion from Lucky and
+others, and hopefully encourage the crypto community to explore the
+open questions we pose in the area of interactive anonymous
+communications.
+
+> And if they properly conceal data how well do they scale?  With all
+> the encryption of traffic, etc. ZK's adoption by isps, etc. etc. is
+> a scalability question.
+
+The encryption is a constant factor.  Each user uses 1, 2 or 3 hops
+and therefore incurs the bandwidth between those hops, and the CPU
+load on those nodes to do the keyexchanges to set the link up and the
+bulk encrypt and decrypt to do the end-to-end crypto, but once the key
+exchange is done an entry level PC can do blowfish at 16MB/sec (there
+are other overheads in the freedom nodes, but it's quite fast).  So if
+you imagine going from 10 nodes to 20 nodes it can support almost
+linearly more users based purely on crypto overhead.  The trickier
+thing to get right is scalable topology management and scalable PKI
+for the authentication of node and nym keys.
+
+> 2. is their e-mail system really anonymous? if i were a known bad
+> actor, le might be capturing data from my pc or my isp or my phone
+> company directly.  why bother worming through zk networks?  
+
+Because your data is end-to-end encrypted through the freedom cloud
+tunneled through a pseudonymous tunnel?
+
+> oh, and if someone could respond to you via your anonymous zk e-mail
+> address, isn't that an instantaneous-tag-the-sender tool for le?
+> Gee, let's see the recipe for this...serve zk a search warrant, map
+> zk address 'A' to e-mail address 'B' and there you have it: easier
+> than instant jello pudding.  Nice system for anonymizing traffic to
+> companies, bad system if you're trying to get away with something
+> you shouldn't.
+
+The mail system doesn't work like penet.fi -- there is no map of nyms
+to users.  Users pick up their mail pseudonymously from a mailbox in
+the pseudonym name.  It's a third type of pseudonymous mail system.
+In the taxonomy of cryptographically secured replyable email systems
+
+- alpha nymserver with reply blocks (or manually maintained and
+  managed reply blocks).  freedom 1.0 mail system worked like this
+  also.
+
+- freedom 2.0 mail system (pop mail account accessed via pseudonymous
+  IP tunnel over anonymous IP network)
+
+The have different properties.
+
+- reply blocks are subpoena-able, because they are not forward secret.
+
+- reply blocks get good cover because they rely on mixing.  But you
+  can flood them and watch the flow of traffic because there is no
+  replay protection as it does not make sense if people are allowed to
+  send arbitrary amounts of mail.  (Mixmaster has replay protection
+  but that is for sending not receiving).
+
+- pseudonymous pop boxes have forward secrecy because all
+  communications with them are forward secret and they have no
+  remaining information which could identify users encrypted or
+  unencrypted.
+
+- pseudonymous pop boxes don't have distributed trust mixing, or
+  delays.  usability advantage, but potential security disadvantage.
+  One could envisage adding trust-the-pop-server delays, or perhaps
+  alternate routing rules inside the anonymity network to have
+  distributed trust mixing and delays for delivery to the mail system.
+  This would a bit like using mixmaster to deliver mail.
+
+> [...].  so i'll go out on a limb and predict now that anonymous
+> email is going to be nearly impossible for them to sell to more than
+> 1/2 of 1% of the world.  
+
+Predicting privacy and anonymity system uptake is an interesting
+discussion.  Do users care?  It seems that many users probably think
+they are fairly anonymous and untouchable just using the internet with
+no privacy tools.  Until they get snarled up in some chat room law
+suit for some dubm-ass defamation suit, or whatever.  Perhaps this
+will change, perhaps not.  Also general public perception of
+"anonymity" and "privacy" are quite different though one is necessary
+to obtain the other.  We see LEs trying to do news management and
+color people's opinion of privacy.
+
+> plus would you want to receive anonymous e-mail?
+
+Who is "Phillip Zakas" is that a nym?  Does it matter?  What about
+hotmail accounts?  Who is dave123@hotmail.com, superman@hotmail.com,
+etc.  Most email accounts for normal purposes are nyms.  So I'd
+suspect in most cases the recipient simply wouldn't care or even
+notice.
+
+> 4. ZK is a commercial entity, ergo cooperation with everyone.  I'm
+> sure they have IPO plans.  They claim IBM as a partner (actually IBM
+> is selling them stuff, but these days anyone who sells you equipment
+> is a 'partner'...I see this every day).  If a grandma in illinois is
+> going to invest in their company when it goes public, is she going to
+> be happy that drug dealers, stalkers and pedophiles use this network?
+> I don't think so.  I'm sure there are contingency plans for
+> 'revealing' activity when served with a subpeona and/or a search
+> warrant.  
+
+ZKS is about cryptographically assured privacy with "zero knowledge",
+This means the systems are designed with distributed trust, which
+means the threat model is that users don't have to trust ZKS.  So
+clearly if they don't trust ZKS it doesn't matter what info ZKS does
+or does not give to LE because ZKS does not know anything to give
+them.
+
+> 5. Is ZK a spammers tool?  If truly secure and anonymous,
+> etc. etc. etc. why couldn't the spam king use it? If it is a spammers
+> tool will ZK be blackholed?  
+
+There are mail sending limits.  Currently around 250 mails per day per
+nym.  Junk mailers want to send 100s of thousands per hour.  Not much
+of a haven for that activity.
+
+> I don't believe a commercial entity, especially a US-based one with
+> IPO plans, can market themselves as a full anonymizing service for
+> e-mail.  
+
+ZKS is development is done in Canada.  ZKS has servers in a number of
+US and European and other locations.
+
+> I think anonymous e-mail is best achieved through a cooperative,
+> non-commercial program of unaffiliated individuals (with no
+> commercial worries, and lots of jurisdictions around the world), or
+> by simply purchasing pre-paid internet access, or if i were a
+> wealthy bad actor find a more expensive solution.
+
+There are a number of anonymous mail systems, and combinations of
+things that can be used to achieve anonymity even though they weren't
+designed for it competing (commercial and non-commercial).  I'm sure
+the market will decide which is used, or if the market even cares
+about the whole issue.  The deciding factors will be the usual things:
+tradeoffs of convenience, usability, reliability, compatibility, cost
+etc.
+
+- mixmaster (anonymous send only, no receive)
+- freedom mail (pseudonymous send and receive)
+- alpha nym server systems (pseudonymous send and receive -- based on
+  cypherpunk remailer reply blocks)
+- a bunch of penet.fi like systems (trust me send and receive
+  pseudonymity) I think proxymate works like this, plus it has target
+  revokable mail, which is handy.
+- a bunch of "trust me" pop/smtp proxies -- seem to be just ISP like
+  setups with the addition that they say "trust us not to record your
+  IP address"
+- privada (trust me pseudonymous send and receive with a twist -- it
+  has a publicly declared spook backdoor -- carnivore enabled -- see
+  their press release
+  http://www.privada.com/news/releases/20000717.html)
+- open access web proxies and hot mail accounts
+- anonymizer.com and hot mail accounts
+- anonymizer.com shell accounts which have mail I presume
+- anonymizer.com shell accounts accessed via freedom network (freedom
+  supports SSH) -- anonymous SSH account -- how cool is that..
+
+All interesting stuff.
+
+Adam
+
+Personal opinions only, of course.
+

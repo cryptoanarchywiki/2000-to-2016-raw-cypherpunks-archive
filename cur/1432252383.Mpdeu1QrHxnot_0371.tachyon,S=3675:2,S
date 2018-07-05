@@ -1,0 +1,82 @@
+From owner-cypherpunks@al-qaeda.net  Wed Sep  8 16:06:28 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i88L6QGK005049
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Wed, 8 Sep 2004 16:06:26 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i88L6Q49005048
+	for cypherpunks-outgoing; Wed, 8 Sep 2004 16:06:26 -0500
+Date: Wed, 8 Sep 2004 17:03:03 -0400
+From: Adam Back <adam@cypherspace.org>
+To: Hal Finney <hal@finney.org>
+Cc: cypherpunks@al-qaeda.net, Adam Back <adam@cypherspace.org>
+Subject: Re: Seth Schoen's Hard to Verify Signatures
+Message-ID: <20040908210303.GA9528@bitchcake.off.net>
+References: <20040908184802.D187857E2B@finney.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20040908184802.D187857E2B@finney.org>
+User-Agent: Mutt/1.4.1i
+X-Hashcash: 1:20:040908:hal@finney.org::55d209c150959323:1f188d       
+X-Hashcash: 1:20:040908:cypherpunks@al-qaeda.net::a1dd3268882bfa9f:3c0 
+  689                                                           
+X-Hashcash: 1:20:040908:adam@cypherspace.org::67b12ff77cfa557e:1f1790 
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2258
+Lines: 50
+
+Hi
+
+I proposed a related algorithm based on time-lock puzzles as a step
+towards non-parallelizable, fixed-minting-cost stamps in section 6.1
+of [1], also Dingledine et al observe the same in [2].
+
+The non-parallelizable minting function is in fact the reverse: sender
+encrypts (expensively) and the verifier encrypts again (but more
+cheaply) and compares, but I think the relationship is quite analogous
+to the symmetry between RSA encryption and RSA signatures.
+
+I think maybe you have observed an additional simplification.  In my
+case I use sender chooses x randomly (actually hash output of random
+value and resource string), and computes y = x^{x^w} mod n as the work
+function (expensive operation); and z = x^w mod phi(n), y =?  x^z mod
+n as the cheap operation (verification).
+
+I think your approach could be applied on the encryption side too
+resulting in simpler, faster verification.  Instead it would be:
+
+x is random, compute y = x^{2^t+1} mod n; verify x =? y^d mod n
+
+I'll add a note about that when I get around to updating it next.
+
+Adam
+
+[1] Hashcash - Amortizable Publicly Auditable Cost-Functions
+http://www.hashcash.org/papers/amortizable.pdf
+
+[2] Andy Oram, editor.  Peer-to-Peer: Harnessing the Power of
+Disruptive Technologies. O'Reilly and Associates, 2001.  Chapter 16
+also available as
+http://freehaven.net/doc/oreilly/accountability-ch16.html.
+
+On Wed, Sep 08, 2004 at 11:48:02AM -0700, "Hal Finney" wrote:
+> Seth Schoen of the EFF proposed an interesting cryptographic primitive
+> called a "hard to verify signature" in his blog at
+>
+> An alternative is based on the paper, "Time-lock puzzles and
+> timed release Crypto", by Rivest, Shamir and Wagner, from 1996,
+> [...]
+> Choose the number of modular squarings, t, that you want the
+> verifier to have to perform.  [...] you will sign your value using
+> an RSA key whose exponent e = 2^t + 1.  > The way you sign, even
+> using such a large e, is to compute phi = (p-1)*(q-1) and to compute
+> e' = e mod phi, which can be done using about 30 squarings of 2 mod
+> phi.  You then compute the secret exponent d as the multiplicative
+> inverse mod phi of e', in the standard way that is done for RSA
+> keys.  Using this method you can sign about as quickly as for
+> regular RSA keys.
+

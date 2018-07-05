@@ -1,0 +1,140 @@
+From owner-cypherpunks@Algebra.COM  Sat Aug 17 17:56:43 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7HLugB21270
+	for <rsw@opamp.org>; Sat, 17 Aug 2002 17:56:42 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id RAA07055
+	for <rsw@mit.edu>; Sat, 17 Aug 2002 17:56:41 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7HJf4kV021237
+	for <cypherpunks-outgoing@ak47.algebra.com>; Sat, 17 Aug 2002 14:41:04 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g7HJf3TB021235
+	for cypherpunks-outgoing; Sat, 17 Aug 2002 14:41:03 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7HJewkV021199
+	for <cypherpunks@ak47.algebra.com>; Sat, 17 Aug 2002 14:40:59 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7HJevsB006316
+	for cypherpunks@ak47.algebra.com; Sat, 17 Aug 2002 12:40:57 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7HJeCsD006301
+	for cypherpunks-goingout345; Sat, 17 Aug 2002 12:40:12 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Sat, 17 Aug 2002 14:26:47 -0500
+From: Anonymous <remailer@remailer.xganon.com>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@remailer.xganon.com>.
+To: cypherpunks@lne.com
+Old-Subject: Re: Signing as one member of a set of keys
+Message-ID: <cf7bd3509621ff804df458f171755b9b@remailer.xganon.com>
+X-DCC-meer-Metrics: inbound2.mv.meer.net 1035; Body=1 Fuz1=1 Fuz2=1
+X-Loop: cypherpunks@lne.com
+X-spam: 20 
+Subject:  Re: Signing as one member of a set of keys
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 3474
+Lines: 91
+
+
+Steps to verify the "ring signature" file (note: you must have the openssl
+library installed):
+
+
+1. Save http://www.inet-one.com/cypherpunks/dir.2002.08.05-2002.08.11/msg00221.html,
+as text, to the file ringsig.c.  Delete the paragraph of explanation, and/or any
+HTML junk, so the file starts with:
+
+/* Implementation of ring signatures from
+ * http://theory.lcs.mit.edu/~rivest/RivestShamirTauman-HowToLeakASecret.pdf
+ * by Rivest, Shamir and Tauman
+
+and it ends with:
+
+lPglqmmy3p4D+psNU1rlNv6yH/L0PgcuW7taVpbopjl4HLuJdWcKHJlXish3D/jb
+eoQ856fYFZ/omGiO9x1D0BsnGFLZVWob4OIZRzO/Pc49VIhFy5NsV2zuozStId89
+[...]
+ */
+
+
+2. The "[...]" above is where a remailer caused some of the signature
+to be stripped out.  Replace the last few lines of ringsig.c with the
+text from
+http://www.inet-one.com/cypherpunks/dir.2002.08.05-2002.08.11/msg00306.html.
+This has the lines from the END PGP PUBLIC KEY BLOCK line onward.
+The last lines of the ringsig.c file should be:
+
+BjHTDH0VZeu3IxUFh37w2fIEehL8WrXvCoCMFnd1/bnn/qI/STXgg6as579/yBIJ
+nJra7Ceru4q4wUssK79T6SdOM6wcvVg96ub4UOTaPO4wYhhadCbLFpl3tPfTLceb
+ */
+
+
+3. Compile ringsig.c using the openssl library, to form an executable file
+"ringsig".  Try running ringsig and you will get a usage message.
+
+
+4. Get the two perl scripts from
+http://www.inet-one.com/cypherpunks/dir.2002.08.05-2002.08.11/msg00313.html
+and save them as "ringver" and "ringsign".
+
+
+5. Run the ringsig.c file through the "pgp" program to create a PGP key
+ring file from the PGP PUBLIC KEY BLOCK data.  With the command line
+version of PGP 2.6.2 the command is:
+
+pgp -ka ringsig.c sigring.pgp
+
+This will also show you the set of keys, one of which made the signature.
+
+*** COULD SOMEONE PLEASE FOLLOW THE STEPS ABOVE AND PUT THE ringsig.c,
+ringsign, ringver, AND sigring.pgp FILES ON A WEB PAGE SO THAT PEOPLE
+CAN DOWNLOAD THEM WITHOUT HAVING TO GO THROUGH ALL THESE STEPS? ***
+
+
+6. Finally, the verification step: run the ringver perl script, giving the
+PGP key file created in step 5 as an argument, and giving it the ringsig.c
+file as standard input:
+
+./ringver sigring.pgp < ringsig.c
+
+This should print the message "Good signature".
+
+
+7. How do you know what this means?  For that you have to read the paper
+referenced in the program to become convinced of the theory, and then to
+study the program to be convinced that it implements the algorithm in the
+paper.
+
+
+8. To create your own signatures, create a PGP keyring file which holds
+your own key as well as the keys of other people that you want people to
+think might have issued the signature.  They must all be RSA public keys.
+Create a PGP secring.pgp file which holds just your secret key, and change
+your passphrase on that key to be blank.  (This is temporary, you can
+change it back or delete the secring.pgp when you are done.)  Then use
+the ringsign perl script:
+
+"./ringsign filetosign pubkeyfile privkeyfile > outfile"
+
+This will append a signature to the file you are signing.  You also need
+to make sure the recipient knows the pubkeyfile, so you may want to send
+that separately, or include it in the file being signed as was done in
+this case.
+
+
+9.  Please report whether you were able to succeed, and if not, which step
+failed for you.  BTW there are a couple of papers on ring signatures to
+be presented at Crypto 02 so there might be some new improvements coming
+to the code if the ideas look good.  One possibility is extending them
+to work with DSS keys in addition to the current RSA keys.
+

@@ -1,0 +1,84 @@
+From cypherpunks-bounces@cpunks.org  Thu Aug 15 10:25:54 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r7FEPrsI001109;
+	Thu, 15 Aug 2013 10:25:53 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r7FEPnCU001105
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Thu, 15 Aug 2013 10:25:51 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 476D5543E4F; Thu, 15 Aug 2013 16:25:49 +0200 (CEST)
+Date: Thu, 15 Aug 2013 16:25:49 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: Re: [liberationtech] Google confirms critical Android crypto flaw
+Message-ID: <20130815142549.GT29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 2056
+Lines: 45
+
+----- Forwarded message from Maxim Kammerer <mk@dee.su> -----
+
+Date: Thu, 15 Aug 2013 15:38:56 +0300
+From: Maxim Kammerer <mk@dee.su>
+To: liberationtech <liberationtech@lists.stanford.edu>
+Subject: Re: [liberationtech] Google confirms critical Android crypto flaw
+Reply-To: liberationtech <liberationtech@lists.stanford.edu>
+
+On Thu, Aug 15, 2013 at 2:34 PM, Nathan of Guardian
+<nathan@guardianproject.info> wrote:
+> The best description is here:
+> http://armoredbarista.blogspot.ch/2013/03/randomly-failed-weaknesses-in-java.html
+
+Unbelievable… It seems that PRNG implementers suffer from NIH
+syndrome. If you are going to use /dev/urandom, then use it all the
+time, and rely on code that's reviewed and maintained by thousands of
+kernel people, not just your favorite buggy seeded PRNG du-jour. And
+even sans the bugs, consider something like the following in Apache
+Harmony (precursor of Dalvik's class library) [1, p. 131]:
+
+  iv = sha1(iv,concat(state, cnt));
+  cnt = cnt + 1;
+  return iv;
+
+So they're essentially constructing a state-based bit stream that
+varies in each block, and hash it with SHA-1 — exposing each
+intermediate hash value in the middle. Who the hell told them it's
+safe from cryptanalysis POV? E.g., SP800-90A's Hash_DRBG [2, p. 40]
+resembles nothing of the sort.
+
+[1] http://dx.doi.org/10.1007/978-3-642-36095-4_9
+[2] http://csrc.nist.gov/publications/nistpubs/800-90A/SP800-90A.pdf
+
+-- 
+Maxim Kammerer
+Liberté Linux: http://dee.su/liberte
+-- 
+Liberationtech is a public list whose archives are searchable on Google. Violations of list guidelines will get you moderated: https://mailman.stanford.edu/mailman/listinfo/liberationtech. Unsubscribe, change to digest, or change password by emailing moderator at companys@stanford.edu.
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

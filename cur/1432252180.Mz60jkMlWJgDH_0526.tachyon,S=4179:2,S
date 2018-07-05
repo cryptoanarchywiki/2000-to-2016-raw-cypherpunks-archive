@@ -1,0 +1,102 @@
+From owner-cypherpunks@al-qaeda.net  Mon May 10 14:55:29 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.mit.edu (localhost [127.0.0.1])
+	by positron.mit.edu (8.12.11/8.12.11/Debian-3) with ESMTP id i4AIqlOa007124
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.mit.edu>; Mon, 10 May 2004 14:52:48 -0400
+Received: (from majordomo@localhost)
+	by positron.mit.edu (8.12.11/8.12.11/Debian-3) id i4AIqlbg007123
+	for cypherpunks-outgoing; Mon, 10 May 2004 14:52:47 -0400
+Date: Mon, 10 May 2004 18:45:56 +0000 (UTC)
+From: Jason Holt <jason@lunkwill.org>
+X-X-Sender: jason@potato.zayda.com
+To: Adam Back <adam@cypherspace.org>
+cc: cryptography@metzdowd.com, Cypherpunks <cypherpunks@minder.net>
+Old-Subject: Re: blinding & BF IBE CA assisted credential system (Re:
+  chaum's  patent expiry?)
+In-Reply-To: <20040510100251.GA13618@bitchcake.off.net>
+Message-ID: <Pine.LNX.4.44.0405101806480.17720-100000@potato.zayda.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Subject: Re: blinding & BF IBE CA assisted credential system (Re:
+  chaum's  patent expiry?)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2908
+Lines: 72
+
+On Mon, 10 May 2004, Adam Back wrote:
+
+> On Mon, May 10, 2004 at 03:03:56AM +0000, Jason Holt wrote:
+> > [...] Actually, now that you mention Chaum, I'll have to look into
+> > blind signatures with the B&F IBE (issuing is just a scalar*point
+> > multiply on a curve).  
+> 
+> I think you mean so that the CA/IBE server even though he learns
+> pseudonyms private key, does not learn the linkage between true name
+> and pseudonym.  (At any time during a show protocol whether the
+> private key issuing protocol is blinded or not the IBE server can
+> compute the pseudonyms private key).
+
+Well, he can always generate private keys for any pseudonym, just as in cash
+systems where the bank can always issue bank notes.  Here's what I'm
+suggesting, where "b" is a blinding function and n1... are random nyms:
+
+Issuing:
+
+Alice              FBI TTP
+b(n1,"agent")---->
+b(n2,"agent")---->
+b(n3,"agent")---->
+
+<---cut & choose: n1,n3
+
+(n1,"agent")----->
+(n3,"agent")----->
+
+<---sig(b(n2,"agent"))
+
+(Alice unblinds and now has a credential for nym n2)
+
+So it's vanilla Chaum-style blinded credentials.  The FBI signs Alice's agent
+cred without learning the nym.  Alice can use the nym, and the server can ask
+the FBI the attributes (agent? chief? secretary?) of the person with the nym,
+but the FBI won't know.  The FBI could eavesdrop on Alice's connection and
+generate whatever creds are necessary to read the resource Bob sends her, but
+that's why I was talking about building it in a protocol with PFS.
+
+But now that I think of it, PFS isn't really necessary at all for Alice&Bob to
+have a conversation where their policies are respected:
+
+Alice                                         Bob
+
+(Alice generates random nonce na)
+HC_E(na, "Bob:agent", FBI)--->
+
+                         (Bob generates random nb)
+                 <---HC_E(nb, "Alice:member", NRA)
+
+Both generate session keys from Hash(na,nb).
+
+So, Alice wants to connect iff Bob's FBI, and Bob wants to talk iff Alice is
+in the NRA, where "Alice" and "Bob" are random pseudonyms.  Thus they send
+their random nonces na and nb encrypted against those creds (HC_E is a hidden
+cred encrypt), then use those nonces for the session keys.
+
+The FBI can *always* impersonate an agent, because, well, they're the CA and
+they can make up pseudonymous agents all day long. But in this protocol, I
+believe they wouldn't be able to be a MITM and/or just eavesdrop on Alice&Bob.  
+That's because Bob only wants to talk to NRA members, and the FBI can't
+impersonate that.
+
+Now, this is for an interactive session, rather than just sending a single
+request/response round like I discuss in the paper.  But even then, policies
+are always respected.  Just change "na" to "request" and "nb" to "response".  
+Alice's policy is respected whether she talks to FBI-authorized-Bob or
+FBI-authorized-FBI, and the FBI doesn't get to read Bob's NRA-Alice-only
+repsonse.
+
+							-J
+

@@ -1,0 +1,140 @@
+From owner-cypherpunks@lne.com  Sat Apr 26 18:31:27 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h3QMTit17113
+	for <rsw@jfet.org>; Sat, 26 Apr 2003 18:29:51 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h3QMLWTv021194
+	for cypherpunks-goingout345; Sat, 26 Apr 2003 15:21:32 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Sat, 26 Apr 2003 23:21:27 +0100
+From: Adam Back <adam@cypherspace.org>
+To: Tim May <timcmay@got.net>
+Cc: cypherpunks@lne.com, Adam Back <adam@cypherspace.org>
+Subject: Re: Making Money in Digital Money
+Message-ID: <20030426232127.A8084118@exeter.ac.uk>
+References: <20030426134155.GA28448@lightship.internal.homeport.org>
+  <775AB29B-7809-11D7-865D-000A956B4C74@got.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <775AB29B-7809-11D7-865D-000A956B4C74@got.net>; from
+  timcmay@got.net on Sat, Apr 26, 2003 at 10:06:48AM -0700
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 5195
+Lines: 109
+
+On Sat, Apr 26, 2003 at 10:06:48AM -0700, Tim May wrote:
+> I don't believe ZKS ended up targeting the remailer niche ("space") we 
+> are interested in. In the years that Freedom nyms were being sold, how 
+> many were used to post to this list? How many were used to post to 
+> Usenet? A set nearly of measure zero.
+
+I think the first mail system at ZKS was relatively unreliable, and
+complex for users to understand and use (setting up a nym as with
+nymserver/type I involved reply blocks, waiting for confirmation etc).
+It was reply block based, but reimplemented from scratch, not based on
+cyphperpunk type I code.
+
+Some of the issues were implications of the design (as with type I
+based reply blocks, some mail does not arrive; also reply blocks
+always seemed fragile to me), others were probably implementation
+issues.
+
+The 2nd gen mail system we built at ZKS (my design) had a different
+set of tradeoffs.  
+
+I found a copy of the "Freedom 2.0 Mail System" white paper here:
+
+http://osiris.978.org/~brianr/crypto-research/anon/www.freedom.net/products/whitepapers/Freedom_2_Mail_System.pdf
+
+It was definately more reliable (the main business reason for doing
+it).  Also there was no reply block pointing back at your real
+identity which is the main weakness of the reply-block design: it is a
+subpeona risk.  Instead it was based on a pop server which you
+optionally connect to via the anonymous freedom network to achieve
+sender anonymity (or deliver via mixmaster if you prefer, it's accepts
+regular mail to interface with non-anonymous users), and via the
+freedom network again to achieve recipient pseudonymity.
+
+So these interactive connections are immediately forward-secret, and
+therefore you have much better protection against subpeona attack.
+However they are more vulnerable to all-powerful observer attacks who
+could probably figure out which pseudonym was which by sending lots of
+unique sized email and then watching traffic patterns flow through the
+network.
+
+
+So as you might expect different systems can be built which optimize
+against different types of threat.  I'd argue the 2nd gen mail system
+would be much better against subpoena attack, but weaker against
+all-powerful passive adversaries.  The typical thing an end user with
+strong desire for privacy would be concerned about (frivolous lawsuits
+related to online discussion groups, defamatio, privacy against law
+enforcement sting operations, etc) would be better protected; where as
+national security issues where you might imagine NSA or such could
+coordinate and implement the all-powerful passive adversary are less
+well protected against.
+
+> I assume _some customers_ were using Freedom...I just don't recall ever 
+> receiving a message from any of them, or seeing any of them on the 
+> lists and groups I frequent.
+
+I think there were more active users of the web browsing side of
+things than the pseudonymous mail for the reasons above.  The version
+might have been better given time, but I think freedom network (and
+mail) was discontinued relatively soon after it's deployment.
+
+> (I still check in on www.zks.net occasionally to see what's going on. 
+> Stuff about firewalls and viruses.)
+
+Yes.  This is why I quit to do other stuff -- limited crypto stuff
+left, and no distributed trust anonymity or privacy left.
+
+ZKS still does have one anonymous networking type sytem called
+websecure which they are actively selling and have subscribers of.
+It's somewhat similar to anonymizer.com in that it is one hop only
+anonymous traffic for web browsing only.  The differences (which make
+it probably more secure I'd argue) are that it doesn't rely on html
+re-writing which is a risky strategy to provide good assurance
+(periodically somone finds some html extension which anonymizer.com
+style html rewriting misses, until they fix it; or fuzzy parsing rules
+in browsers which allow you to slip URLs past the re-writer in a way
+that some browsers will fix up, but the re-writer doesn't recognize as
+a URL).  Unfortunately the websecure approach is also Internet
+Explorer specific, relying on a browser helper object to hook in an
+SSL tunnel to the proxy (run by ZKS).
+
+It's described here:
+
+	http://www.freedom.net/products/websecure/index.html
+
+the fact that it's a browser helper object doesn't hurt the appearance
+-- it doesn't really look like a download, the installation is quite
+rapid and seamless.
+
+(The rest as Tim says is a suite with options of a Personal Firewall,
+Anti-Virus and Parental Control.)
+
+The suite products are primarily sold (actually "rented" as a service
+for $x/month with profit share) via ISPs, preinstalled on hardware
+manufactureres machines etc.  (What you get for your ongoing
+subscription is virus definition updates, firewall rule updates to
+cope with new applications, software updates, and the parental control
+involves ongoing use of a server).
+
+As you can see on the press release page they're quite successful at
+signing up ISPs onto this model:
+
+	http://www.zeroknowledge.com/media/pressrel.asp
+
+with a fairly steady stream of new and fairly major ISPs.  So,
+successful, but not hard-core cryptographically assured, distributed
+trust/zero-trust, privacy related.
+
+Adam
+

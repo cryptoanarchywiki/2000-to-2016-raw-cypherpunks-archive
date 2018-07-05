@@ -1,0 +1,223 @@
+From owner-cypherpunks@al-qaeda.net  Mon Sep 14 08:26:12 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id n8ECPf6T019845
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 14 Sep 2009 08:25:41 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id n8ECPffq019844
+	for cypherpunks-outgoing; Mon, 14 Sep 2009 08:25:41 -0400
+Date: Mon, 14 Sep 2009 14:25:37 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Tor for Android
+Message-ID: <20090914122536.GT9828@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Eugen Leitl <eugen@leitl.org> -----
+
+From: Eugen Leitl <eugen@leitl.org>
+Date: Mon, 14 Sep 2009 14:24:16 +0200
+To: or-talk@freehaven.net
+Subject: Tor for Android
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Reply-To: or-talk@freehaven.net
+
+
+http://www.cl.cam.ac.uk/research/dtg/android/tor/
+
+TorProxy and Shadow
+
+Summer placement project, written by Connell Gauld.
+
+TorProxy is an Android application that makes it possible to use Internet sites and services anonymously from a mobile device. This is possible thanks to the Tor network and OnionCoffee. TorProxy can be used by many different Android applications to obtain an anonymous Internet application. For example, if you want to browse website anonymously you will need to install a web browser which uses TorProxy such as Shadow (see below).
+
+Shadow is an Android application allows you to browse the Web anonymously from your mobile phone. The Shadow browser requires TorProxy (see above) do do this. In addition to using the Tor network to anonymously retrieve information from the Web, Shadow also helps you manage any "cookies" sent to Shadow by Websites to protect your browsing history.
+
+The source code of TorProxy and Shadow are available under the GPL v2 license. Please email us for further details. We hope to provide public access to our SVN repository shortly.
+How to use TorProxy and Shadow
+
+   1. Install TorProxy and Shadow by downloading them from the Android Marketplace.
+   2. Start the TorProxy application.
+   3. Select a profile for TorProxy:
+          * off b do not connect to the tor network.
+          * on-demand b only connect to the tor network if a program (e.g. Shadow) needs it. This profile is probably the best choice if you only want to make occassional use of an anonymous Internet connection.
+          * always on b maintain an anonymous connection whenever the phone is actively in use.
+   4. Once a connection to the Tor network is requested, a notification of the state of the connection appears in the notification bar. A countdown will appear with an estimate of the time remaining before an anonymous connection becomes available. This will take approximately one minute in the first instance, and around 35 seconds when reconnecting after the phone has woken up from a sleep state.
+   5. To browse the Web, start the Shadow web browser. Shadow works in a very similar way to the normal Android Web browser. The Menu button reveals the usual browser options. Typing in a URL will initiate an anonymous connection over the Internet via Tor.
+
+Frequently asked questions
+Why is the Google Website frequently displayed in a foreign language?
+
+Google determines the language you want from the internet address of your device. When browsing anonymously, the Tor network may provide an internet address from another country. You can click on the "Google.com in English" link to see the website in English.
+Source Download
+
+The TorProxy and Shadow source code is available through anonymous access to our SVN repository:
+
+svn co http://www.cl.cam.ac.uk/research/dtg/code/svn/android-tor
+
+We developed and compile this code using Eclipse with Subclipse and the Android developer SDK. Each of the four modules in the above repository should be checked out as separate eclipse projects (each has its own .project file).
+Compiling TorProxyLib
+
+   1. Checkout URL: http://www.cl.cam.ac.uk/research/dtg/code/svn/android-tor/TorProxyLib
+   2. Build in Eclipse as normal
+   3. Right click on export-torproxylib.jardesc and choose Create Jar 
+
+Compiling TorProxy
+
+   1. Checkout URL: http://www.cl.cam.ac.uk/research/dtg/code/svn/android-tor/TorProxy
+
+Compiling Shadow
+
+   1. Checkout URL: http://www.cl.cam.ac.uk/research/dtg/code/svn/android-tor/Shadow
+
+Compiling TorProxyExamples
+
+   1. Checkout URL: http://www.cl.cam.ac.uk/research/dtg/code/svn/android-tor/TorProxyExamples
+
+Documentation for Application Developers
+Overview
+
+In order to anonymize your application's Internet communication:
+
+1. Import TorProxyLib.jar into your project
+
+2. Connect to the TorProxy control service
+
+3. Register for the TorProxy status change broadcast
+
+4. When the Tor connection is available, create your socket and tunnel it through SocksProxy
+1. TorProxyLib
+
+This library contains everything you need to allow your application to anonymize its sockets.
+
+Add TorProxyLib.jar to your build path.
+2. Connect to the TorProxy control service
+
+The TorProxy service exports an interface which you can use to check the availability of the anonymous connection and register your desire to use it.
+
+Example:
+
+// Keep track of the control service
+private ITorProxyControl mControlService = null;
+private final IntentFilter torStatusFilter = new IntentFilter(
+
+                TorProxyLib.STATUS_CHANGE_INTENT);
+
+
+// Service connection to TorProxy service
+private ServiceConnection mSvcConn = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+
+                mControlService = ITorProxyControl.Stub.asInterface(service);
+                // Connected to Control Service
+                // Perhaps check Tor status here
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+                mControlService = null;
+                // Connection to Control Service lost
+        }
+
+};
+
+
+@Override
+protected void onResume() {
+
+        // ...
+
+        // Register to receive Tor status update broadcasts
+
+        registerReceiver(mBroadcastReceiver, torStatusFilter);
+
+        // Bind to the TorProxy control service
+        bindService(new Intent().setComponent(new ComponentName(
+
+                        TorProxyLib.CONTROL_SERVICE_PACKAGE,
+                        TorProxyLib.CONTROL_SERVICE_CLASS)), mSvcConn, BIND_AUTO_CREATE);
+
+        // ...
+
+}
+
+
+@Override
+protected void onPause() {
+
+        // ...
+
+        // Registered in onResume so unregister here
+        unregisterReceiver(mBroadcastReceiver);
+        unbindService(mSvcConn);
+
+        // ...
+}
+
+
+private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+                if (TorProxyLib.STATUS_CHANGE_INTENT.equals(intent.getAction())) {
+
+                        // TorProxy has broadcast a Tor status update
+                        // Check Tor status here
+                }
+        }
+};
+
+Using the control service
+
+The control service has a current profile. The anonymous data connection has a current state.
+
+The profiles are:
+
+    * PROFILE_OFF - the anonymous data connection is turned off
+    * PROFILE_ONDEMAND - you may have to register your interest to get an anonymous connection
+    * PROFILE_ON - the anonymous data connection will be made available (automatically) if possible 
+
+The states are:
+
+    * STATUS_UNAVAILABLE - the anonymous data connection is currently unavailable
+    * STATUS_REQUIRES_DEMAND - the anonymous data connection is currently off but may be available if you register your demand
+    * STATUS_CONNECTING - the anonymous data connection is being set up
+    * STATUS_ON - the anonymous data connection is available for use 
+
+You can get the current profile using:
+
+mControlService.getProfile()
+
+You can get the current status using:
+
+mControlService.getStatus()
+
+Tunneling a socket through SocksProxy
+
+int proxyPort = mControlService.getSOCKSPort();
+
+SocksProxy proxy = new SocksProxy(proxyPort);
+
+Socket s = proxy.connectSocksProxy(null, destHost, destPort, 0);
+
+// Use s as normal
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

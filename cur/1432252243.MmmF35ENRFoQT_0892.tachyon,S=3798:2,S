@@ -1,0 +1,98 @@
+From owner-cypherpunks@lne.com  Wed May 14 11:19:45 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h4EFJgt25472
+	for <rsw@jfet.org>; Wed, 14 May 2003 11:19:42 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h4EEwqO0004557
+	for cypherpunks-goingout345; Wed, 14 May 2003 07:58:52 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Wed, 14 May 2003 15:56:18 +0100
+From: Adam Back <adam@cypherspace.org>
+To: Sunder <sunder@sunder.net>
+Cc: cypherpunks@einstein.ssz.com, Adam Back <adam@cypherspace.org>
+Subject: Re: what fields to hash with hashcash (Re: A Trial Balloon to
+  Ban Email?)
+Message-ID: <20030514155618.B9326809@exeter.ac.uk>
+References: <20030514062743.A9342491@exeter.ac.uk>
+  <Pine.BSO.4.21.0305140958500.1920-100000@anon7.arachelian.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <Pine.BSO.4.21.0305140958500.1920-100000@anon7.arachelian.c
+  om>; from sunder@sunder.net on Wed, May 14, 2003 at 10:02:42AM -0400
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2412
+Lines: 65
+
+On Wed, May 14, 2003 at 10:02:42AM -0400, Sunder wrote:
+> And what happens when there's a network outage and a message gets stuck in
+> the queue for a day on another server?  You know a backup MX server when
+> yours is hosed?
+> 
+> Do you not accept the mail because the current day doesn't match what's in
+> the message?  Or do you accept mails from a day ago?  a week ago? a year
+> ago? 1922?
+
+I was suggesting 30 days.  You could up that if you want -- the
+database won't be that big at say 32 bytes per recieved mail.  
+
+The day is matched against the day in the token, as Bill said the
+tokens contain the date and the email address, in fact they look like
+this:
+
+0:030514:foo@bar.com:482d3c37d5b5c112
+
+where the first field is a version number, 2nd field is date
+(year,month,day), 3rd field is resource name (for email the
+recipient's email address) and last field is random junk to make it
+hash to trailing zeros.
+
+if you hash that with sha1:
+
+% echo -n 0:030514:foo@bar.com:482d3c37d5b5c112 | sha1
+00000bea531c1edbcee4fbb69e094026cd83ed75
+
+You can see that this one has 20 leadings 0s (in binary -- 5x4bit hex
+digits).
+
+> 2nd, why wouldn't the spammer just adjust and send an email to each
+> recipient with a random, but properly hashed token to match the target
+> address + today's date?  More work for sure, but if enough targets start
+> adopting it, the spammer will adapt.  The token doesn't have to contain an
+> actual valid coin, and you'll only find out when you try to cash it.
+
+If the token is random (ie the spammer put no computational work into
+it), it won't have the required number of bits of collision and the
+recipient will reject it.
+
+eg I'll just type this one in myself:
+0:030514:sunder@sunder.net:0123456789abcdef
+
+Then my MTA or my mail-client (or any MTA in the path that does
+checking) will check:
+
+% echo -n 0:030514:sunder@sunder.net:0123456789abcdef
+aeeaf7971f7e30e2485062b17b43189e5361383f
+
+and see that there are insufficient leading 0 bits (none in this
+case).
+
+The tokens are only valid to a given recipient, if a spammer sends you
+a token address to me, you'll reject it because it doesn't have an
+address you receive mail for in it.
+
+If a spammers sends you the same valid token twice, you'll reject it
+because you keep a little database of received tokens.
+
+There is software here (windows GUI, windows cmd line, unix cmd line):
+
+http://www.cypherspace.org/hashcash/
+
+Adam
+

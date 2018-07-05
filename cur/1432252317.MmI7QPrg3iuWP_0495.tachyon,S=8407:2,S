@@ -1,0 +1,208 @@
+From cypherpunks-bounces@cpunks.org  Sat Jan 25 10:54:18 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0PFrcj6008595;
+	Sat, 25 Jan 2014 10:53:43 -0500
+Received: from mail.witmond.nl (mail.wtmnd.nl [80.100.189.3])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0PFrX1g008591
+ for <cypherpunks@cpunks.org>; Sat, 25 Jan 2014 10:53:35 -0500
+Received: from [10.1.2.6] (unknown [10.1.2.6])
+ by mail.witmond.nl (Postfix) with ESMTP id A72FFC0B1B
+ for <cypherpunks@cpunks.org>; Sat, 25 Jan 2014 15:53:26 +0000 (UTC)
+Message-ID: <52E3DDEF.8030402@witmond.nl>
+Date: Sat, 25 Jan 2014 16:53:19 +0100
+From: Guido Witmond <guido@witmond.nl>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64;
+ rv:17.0) Gecko/20131103 Icedove/17.0.10
+MIME-Version: 1.0
+To: cypherpunks@cpunks.org
+Subject: Re: and not a single Tor hacker was surprised...
+References: <CAJVRA1R0_fvsd9jhQLYnOKU5L0ZGLXPAQOG_cPkZaKr32BL7-g@mail.gmail.com>
+ <52DFDFCB.9090003@kjro.se>
+ <CAJVRA1SofFbh7FNRzSR_bW3D0+X_4Ok54HXPDyUjm0m7ZV9J=g@mail.gmail.com>
+In-Reply-To: <CAJVRA1SofFbh7FNRzSR_bW3D0+X_4Ok54HXPDyUjm0m7ZV9J=g@mail.gmail.com>
+X-Enigmail-Version: 1.5.1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="----enig2IIXXGNSCTWLVLENCBUHG"
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 6316
+Lines: 163
+
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+------enig2IIXXGNSCTWLVLENCBUHG
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+On 01/22/14 16:44, coderman wrote:
+> On Wed, Jan 22, 2014 at 7:12 AM, Kelly John Rose <iam@kjro.se>=20
+> wrote:
+>> To verify though, this has no effect on someone using tor and=20
+>> staying on .onion sites or if you are using https end-to-end=20
+>> right?
+>=20
+> correct.
+>=20
+>=20
+>=20
+>> Honestly, if you use Tor and don't use SSL that seems like
+>> laziness to me and deserves to be caught.
+>=20
+> i would agree, and i would also show some sympathy towards the=20
+> unsuspecting.  anything cypherpunks can do to ensure end to end=20
+> crypto everywhere by default is another MitM and eavesdropping attack
+> denied....
+>=20
+> (someone should write more about using client-side certificates as a
+>  method to thwart SSL MitM with a CA signing transparent proxy=20
+> adversary upstream. aka BlueCoat with "enterprise certificate"=20
+> injected or private key pilfer.)
+
+Dear coderman,
+
+Client certificates are part of my answer to MitM attacks.
+
+The other part is to forget about third-party CA's.
+
+1.
+
+The trick is to have each (web-)site sign the client certificates for
+their own users. Users sign up for a site by creating a fresh
+public/private keypair, invent an account name, and create a CSR
+containing just that: the accountname and the public key.
+
+The site's own Certificate Signer (local authority) checks to see if the
+user's chosen account name is unique and if so signs the certificate and
+returns it in the same response.
+
+The site's web server is configured to only accept their own client
+certificates signed by their own Signer. Each site only accepts their
+own certificates.
+
+In addition to that, the server sports a server-certificate that has
+been signed by the site's Signer.
+
+When the user connects to the site, the user agent first connects
+without presenting any client certificates. Ie, anonymously. The agent
+will then offer the user to log in at the site. But it only offers those
+certificates that have been signed by the same local authority.
+
+The client certificate becomes the identity of the client, while the
+site's Certificate Signer Root Certificate becomes the identity of the si=
+te.
+
+The MitM protection so far, is all-or-nothing. The user can only be
+MitM'ed if Mallory sits in between all the time, right from the first
+connection. However, there are several mitigation strategies.
+
+2.
+
+The first mitigation strategy is for the site-owner to publish the
+Site's Local Signer Root Certificate in the DNSSEC-record. I realise
+that "true cypherpunks" don't like centralised systems but bear with me,
+here it is part of the solution.
+
+The user agent does a DNSSEC lookup, validates the signature tree up to
+the pinned DNSSEC root key. This limits MitM attacks to those who have a
+copy of that root key. ie, state level spooks.
+
+This lookup needs only be done once, before the first connect.
+
+The second mitigation strategy is an independent global append-only log
+of created client certificates. Whenever a user agent receives a
+certificate, it submits it to this global log. Every once in a while,
+the agent queries the log for all certificates bearing the account name
+that the user has chosen. There must be exactly one anser.
+
+To improve security at first contact, the agent queries the log for the
+expected value of the sites' Certificate Signer Root certificate. There
+must be only one.
+
+This list must be cryptographically protected against tampering. Ideally
+it is a distributed, decentralised global effort. The downside of this
+second approach, it needs to be designed, the DNSSEC-approach can be
+used right now.
+
+The combination of DNSSEC and the Log make it even more robust. The
+DNSSEC effectively specifies the intentions of the site owner, the log
+measures the reality. These two should match.
+
+3.
+
+So far, I haven't mentioned Tor. When you use this protocol, you are
+protected against spoiled onions. The exit nodes won't have access to
+any site's private key, so they cannot fake a certificate that matches
+the client certificates.
+
+When an exit node creates a fake certificate for a site, the user agent
+interprets that as either a new site, (and offering the user to create
+an account). Or the user agent detects that the server certificate does
+not match with the certificate that it has remembered for this site and
+raises an alarm.
+
+As users change Tor-exit-nodes regularly, there can't be a MitM at each
+connection.
+
+4.
+
+As every connection is encrypted and authenticated, Tor traffic does not
+stand out from non-Tor traffic. Even if people use this protocol to
+connect to facebook and spill their lives there, they are helping
+activists to hide their traffic better.
+
+5.
+
+Using this protocol, we can create an introduction-service that lets
+total strangers exchange and validate each other's public keys. And from
+there bootstrap other secure channels.
+
+
+Coderman (and others), does this appeal to you?
+
+See http://eccentric-authentication.org/ (via Tor, if you want) to read
+more.
+
+I'd love to hear comments.
+
+With regards, Guido Witmond.
+
+
+------enig2IIXXGNSCTWLVLENCBUHG
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+Comment: Using GnuPG with Icedove - http://www.enigmail.net/
+
+iQIcBAEBAgAGBQJS493wAAoJEHPd8GglaNRmJxEQAJlGeBtWquMqh0/gOhNwEKC1
+nspGRbnEYnfkuZxVjYNdWGPDeqEaUDE1U7MpzPDv81Xa1YwQGwSvBE+ufyBZmToc
+A7EX6CftvA1nNpLhMiaerByA0X6cWdTmbTTNLhH1XjnyO2Q2O0V3LOCwG3N8F/5a
+IzasXRnxAwu7MbakxFZqoaTLV/MxoksAxIKeUx6a6CnVsKyM3T89dLPoBk0eJEOb
+zQMqNGMqz/m0djW8qwOxGrEk/+OEVUdnutbUV81zwtbDhE0XdJDrP8whQHmJ1k6o
+u/vvAap4UrhPGyPefrKXsjGx+7j02MJUz5C/mzqrvrL0rZ4Qxz2p2VSL7hTGwy9S
+e9yJ7L9fzsjWdlb3NnxEnZtFkmf+Ig9eWjbZAEBfABWQlx9OjuhI6R6Amdx640gG
+Be8Pm+0vPIOBTfTl/dBTxcfq6shlu6E+oNwIF3rChyBDa1/IHdn2ETDAK+kdp7uN
+J09VcSRnGbaJq9/GrfJzr2JhV8ttWkn6WrapgEu42jqSHz6DAfBCkXh8ZSHTFZ/g
+Xmt+CGjDy0naUl507hr+dI8KbIAYSkh4OFrJ+AlcY+Tt2WgEkQaJpg/wdq3Esq0Y
+LrCQoNm2KaQh2ShVvAdBOadgtfg3pVWiPbH79/dgwKra7UHwpzFhIxLvvkI5D5QB
+WSVWe5jqskYSJGifuFjv
+=9g9H
+-----END PGP SIGNATURE-----
+
+------enig2IIXXGNSCTWLVLENCBUHG--
+

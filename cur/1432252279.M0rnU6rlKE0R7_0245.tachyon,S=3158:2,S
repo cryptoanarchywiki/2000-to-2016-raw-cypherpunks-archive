@@ -1,0 +1,68 @@
+From owner-cypherpunks@lne.com  Tue Aug  5 04:21:09 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h758L7A03730
+	for <rsw@jfet.org>; Tue, 5 Aug 2003 04:21:07 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h7587tFq001190
+	for cypherpunks-goingout345; Tue, 5 Aug 2003 01:07:55 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Message-Id: <5.1.1.6.2.20030805003511.02eaee38@idiom.com>
+X-Sender: wcs@idiom.com
+X-Mailer: QUALCOMM Windows Eudora Version 5.1.1
+Date: Tue, 05 Aug 2003 01:07:10 -0700
+To: cypherpunks@lne.com
+From: Bill Stewart <bill.stewart@pobox.com>
+Subject: Slow but interesting sender-hiding covert channel program
+Cc: lemos@cnet.com, Mark Loveless <loveless@BOS.BINDVIEW.COM>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2066
+Lines: 41
+
+Rob Lemos reports on the following presentation at Blackhat
+by Mark Loveless of Bindview; I've got some comments.
+-----------------
+PROGRAM WOULD HIDE NET COMMUNICATIONS
+CNET reports about a program called NCovert, which uses
+spoofing techniques to hide the source of communications and
+the data that travels over the network.  The technique makes
+it almost impossible to track where the original message
+came from, because the data holds only the addresses of the
+recipient and the third-party server.
+http://news.com.com/2100-1002-5058535.html
+--------------------------------
+
+The technique works by hiding four bytes of data in the
+TCP header's ISN field, bouncing packets off one or more
+innocent third-party machines, setting your destination IP address
+to the third-party and forging your recipient's IP as the source,
+so the recipient appears connection accepts or rejects
+from real, fake, or random locations, and the real message
+is hidden in the header fields.  The connection type can be
+something credible like email or http.
+
+Of course, there _are_ ISPs that do spoof-proofing,
+so if your ISP does this, you won't be able to forge the
+recipient's address on your outgoing packets usefully.
+Spoof-proofing usually limits you to addresses in the
+subnet used by your internet connection - if you've got a /24,
+you can impersonate one of 254 locations near yours,
+but if anybody's seriously trying to track you, you're busted.
+There's also the problem that, unless it's sending call setups
+that the recipient is rejecting, there'll be a lot of half-open
+TCP connections on the recipients, which is a DOS problem.
+It's cute, though.
+
+Also, Bindview's security tools site does have an interesting
+spoofing-detection program that works by looking at TTL values
+for packets you receive that are suspected of being spoofed -
+it traces a connection to/from the purported source IP address
+and sees whether the time-to-live field on the suspicious packet
+is close enough to one from the real route to be believable
+or declares it to be bogus if it's too far off.
+

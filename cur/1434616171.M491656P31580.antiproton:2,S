@@ -1,0 +1,141 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t5I8SmRk031563;
+	Thu, 18 Jun 2015 04:28:51 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=XNoJHWUE;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-ie0-f172.google.com (mail-ie0-f172.google.com
+ [209.85.223.172])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t5I8SiIE031559
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 18 Jun 2015 04:28:45 -0400
+Received: by iebgx4 with SMTP id gx4so50073341ieb.0
+ for <cypherpunks@cpunks.org>; Thu, 18 Jun 2015 01:28:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:date:message-id:subject:from:to:cc:content-type;
+ bh=NWDAocmYZoPVI5q7FjBv8hm7xyKRnAVrSujc5+WUIQk=;
+ b=XNoJHWUE55RnKKq5RsKZ5OOPpV8z777CBilis1YMr3V+VqNUyPXZ9Q420vhDq2aqWp
+ jkSTsrZpsxgD+duQ6FWCB7j5iHdm7974J4o7eLPHsmWzVCTv0P1+Jk9yNN2208ZuPoJD
+ 7eFMtWr6grmbteFQPurI8kNsmDXOFO0AHbCwLU4VTdAfTXd7YAI0fD6789r1+xVED2RM
+ qRxPgnHOhHxkmS9WnVEB8On5YEzR3vbkEBEOYuOzM7m916mZpu7+G0I3/+kaAsfd2WV6
+ rL+pBcTsP3jvKC8atujsWLZ6t3XapX0jDbkAiX5LDhcJC5lBFyDm/7Qu+rrw4e3s4w0S
+ hUAQ==
+MIME-Version: 1.0
+X-Received: by 10.50.176.228 with SMTP id cl4mr16619772igc.2.1434616118714;
+ Thu, 18 Jun 2015 01:28:38 -0700 (PDT)
+Received: by 10.36.51.76 with HTTP; Thu, 18 Jun 2015 01:28:38 -0700 (PDT)
+Date: Thu, 18 Jun 2015 04:28:38 -0400
+Message-ID: <CAD2Ti2_1nQygQGHojOsDqrcX7yEJRT6Ygk2OS3fGsm7kf9SC=A@mail.gmail.com>
+Subject: Matryoshka (fill traffic in networks?) [was: Are TOR holes
+ intentional?]
+From: grarpamp <grarpamp@gmail.com>
+To: tor-talk@lists.torproject.org
+Content-Type: text/plain; charset=UTF-8
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 91
+
+On Thu, Jun 18, 2015 at 12:51 AM, Roger Dingledine <arma@mit.edu> wrote:
+> but it sure looks like another case of somebody not understanding the
+> research field, and thinking that solving the traffic confirmation
+> attack is easy, without actually thinking through the engineering side,
+> the scaling side, or the statistics side.
+
+There's certainly no easy solution to all problems. Though
+there could be value in those that put more odds in your favor,
+even though they do not yield 100% solution or protection.
+
+If you rarely tx but then emit something [unique or timely]
+that pops out at some [rare] destination, you're done for.
+I think we've seen posts from some people who slow crawl the
+web 24x7 when their client is running just to add cover at their
+end for their interspersed real web activity.
+
+By the way, does metrics report the saturation level
+of the net as a whole in terms of bandwidth and processing
+load for exit and non exit relays as both one [and two]
+summed aggregate group[s]?
+
+> But even full scale padding, ignoring the practical side of how to get a
+> Tor network that can afford to waste so much bandwidth
+
+Waste is an incorrect, negative term for designed in padding (fixed
+set of lengths) or fill (empty links) or chaff (ratio) or whatever this is.
+
+A design where fill traffic gets out of the way when real data is
+being sent might have periods of congestion or underutilization
+of the link depending on the distance in hops the fill is managed
+over, and the speed of the sensing and feedback controls.
+Seems that might need to be as fast as you could initiate a first
+packet across, unless you inhibit that packet until ready.
+
+Yes, an individual relay or end node may be subject to various
+billing policies (transfer vs bitrate), but see thread in reply to Titov here...
+https://lists.torproject.org/pipermail/tor-talk/2015-May/037987.html
+https://lists.torproject.org/pipermail/tor-talk/2015-June/038027.html
+
+> doesn't provide
+> protection in the face of active attacks where you induce a gap on one
+> side and then observe the gap on the other side. And it might even be
+> the case that these gaps happen naturally by themselves, due to network
+> congestion and so on, so maybe passive observers will be winners even
+> against a design that does full padding.
+
+I've said that fill seems useful against passives, not actives.
+However a design may actually be possible such that any disturbance
+or deficiency in fill might be possible to make up from other sources.
+In other words, if I knock you off the net, the remaining path your data
+would have taken to your endpoint will still be filled so as not to expose
+the far end as being tied to you (if the fill management scope of the
+network is finer grained than just the end nodes negotiating end-to-end
+with each other (ie: I think the entire net will need to negotiate their own
+mesh of fill peers as an underlying management layer, with possible
+cues from above)). You get knocked off, your former peers sense this
+and recalc their fill sources and sinks.
+
+> Also, to make it really work in practice, all users are going to need
+> to pad not just while fetching their web page or iso or whatever, but
+> sufficiently before and after that too, else an attacker can match up
+> start times and end times:
+> http://freehaven.net/anonbib/#murdoch-pet2007
+
+Well duh, that's necessary :)
+
+> tl;dr the whole premise of this person's blog post is flawed, since
+> their design likely does not work as they think it does.
+
+While someone's design may be insufficient to solve some problem,
+it does add value in the form of talk of possible solutions and trialing
+them. Thereby others can try different / related avenues to a solution.
+
+> For background see e.g.
+> http://freehaven.net/anonbib/#danezis:pet2004
+
+> This is a great area for further research:
+> http://freehaven.net/anonbib/#ShWa-Timing06
+> http://freehaven.net/anonbib/#active-pet2010
+
+I don't mean that Tor specifically needs to investigate or implement
+fill, but that since the research area is probably not complete,
+and that no operational net is trying it, it's worth continued work.
+
+If anyone knows a good list that does or would serve as home for
+such work, please say so as I'm unaware of any.
+
+
+[Bcc'd to matryoshka as FYI]
+

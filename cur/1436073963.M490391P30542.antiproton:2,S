@@ -1,0 +1,97 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t655PQsr030522;
+	Sun, 5 Jul 2015 01:25:28 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=P+ru6RMs;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-la0-f54.google.com (mail-la0-f54.google.com
+ [209.85.215.54])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t655PLvZ030517
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Sun, 5 Jul 2015 01:25:23 -0400
+Received: by laar3 with SMTP id r3so121794131laa.0
+ for <cypherpunks@cpunks.org>; Sat, 04 Jul 2015 22:25:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:date:message-id:subject:from:to:content-type;
+ bh=dFfi44kVWj3KMRqS54ApzrdOnzoUUbsvLlO7aWrL0Nw=;
+ b=P+ru6RMszHDiHGSVwUqIXG4OMQAiBBEEbycVoROVh+r5IM+VpMzF/NzuFbtZZ4bTOA
+ MVXRglgX5nDVTXNKJwIsKWoeraazhxl7m8xYYEYnD2iqrqijGAgcUeJrtKOiFRaUSNfX
+ JmsKodfnm2k3KwTYt2RSESzKLUXteNpQEK8XjjzQy9T0nelTwZ03rJZkR3kKhQEDzDZF
+ TpzyAJPHRoCDVhYf/+kKqL20dQDsWTf361OP++csVYZAn2FK7XqDVs3TRdfw3A/X6l47
+ mO73NG4dGVid0a3DaLEx2XGpcGfM9dIXf1XpR0LO5f6BIyFrh0Xm7Z/GiisCvbdUIqVX
+ ziPg==
+MIME-Version: 1.0
+X-Received: by 10.112.204.6 with SMTP id ku6mr43263559lbc.73.1436073914825;
+ Sat, 04 Jul 2015 22:25:14 -0700 (PDT)
+Received: by 10.25.90.80 with HTTP; Sat, 4 Jul 2015 22:25:14 -0700 (PDT)
+Date: Sat, 4 Jul 2015 22:25:14 -0700
+Message-ID: <CAJVRA1SBMaR5PGMWRHAwUg99Vmv+hQTE91K4=7WMQRk6uAvZyg@mail.gmail.com>
+Subject: speaking of Bitcoin ... the july4th split
+From: coderman <coderman@gmail.com>
+To: cypherpunks@cpunks.org
+Content-Type: text/plain; charset=UTF-8
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 49
+
+sometimes even consensus not enough,
+ [ failure at 95% agreement! ]
+
+
+SPV is a compensating measure that addresses block size without
+reifying incompatibilities. however, with drawbacks and risk, as taken
+on chin in this one:
+
+
+https://bitcoin.org/en/alert/2015-07-04-spv-mining
+
+"""
+Summary: Some miners are currently generating invalid blocks. Almost
+all software (besides Bitcoin Core 0.9.5 and later) will accept these
+invalid blocks under certain conditions. The paragraphs that follow
+explain the cause more throughly.
+
+For several months, an increasing amount of mining hash rate has been
+signaling its intent to begin enforcing BIP66 strict DER signatures.
+As part of the BIP66 rules, once 950 of the last 1,000 blocks were
+version 3 (v3) blocks, all upgraded miners would reject version 2 (v2)
+blocks.
+
+Early morning UTC on 4 July 2015, the 950/1000 (95%) threshold was
+reached. Shortly thereafter, a small miner (part of the non-upgraded
+5%) mined an invalid block--as was an expected occurrence.
+Unfortunately, it turned out that roughly half the network hash rate
+was mining without fully validating blocks (called SPV mining), and
+built new blocks on top of that invalid block.
+
+Note that the roughly 50% of the network that was SPV mining had
+explicitly indicated that they would enforce the BIP66 rules. By not
+doing so, several large miners have lost over $50,000 dollars worth of
+mining income so far.
+
+All software that assumes blocks are valid (because invalid blocks
+cost miners money) is at risk of showing transactions as confirmed
+when they really aren't. This particularly affects lightweight (SPV)
+wallets and software such as old versions of Bitcoin Core which have
+been downgraded to SPV-level security by the new BIP66 consensus
+rules.
+
+The immediate fix, which is well underway as of this writing, is to
+get all miners off of SPV mining and back to full validation (at least
+temporarily). As this progresses, we will reduce our current
+recommendation of waiting 30 extra confirmations to a lower number.
+"""
+

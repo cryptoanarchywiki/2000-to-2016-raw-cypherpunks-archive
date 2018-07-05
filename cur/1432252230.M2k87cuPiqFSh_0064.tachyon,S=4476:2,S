@@ -1,0 +1,91 @@
+From owner-cypherpunks@al-qaeda.net  Mon Nov  8 00:18:46 2010
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-5+lenny1) with ESMTP id oA85FXMB018833
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 8 Nov 2010 00:15:33 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id oA85FXgB018832
+	for cypherpunks-outgoing; Mon, 8 Nov 2010 00:15:33 -0500
+Date: Mon, 8 Nov 2010 05:15:28 +0000 (UTC)
+From: John Case <case@sdf.lonestar.org>
+X-X-Sender: case@otaku.freeshell.org
+To: cypherpunks@al-qaeda.net
+Subject: distributed traffic patterns (for personal traffic)
+Message-ID: <Pine.NEB.4.64.1011080441370.13912@otaku.freeshell.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3445
+Lines: 66
+
+Virtual Private Servers are getting fairly cheap, and Amazon EC2 instances 
+even cheaper.  A hundred or so dollars per month could put together a 
+fairly large set (say, five ?) of general purpose unix nodes on at least 3 
+continents ... EC2 in Asia and Ireland, and then some bullshit VPS 
+provider(s) here and there in the US.
+
+So let's say you assemble a little quiver of these root shells, and your 
+intention is to completely obfuscate your own personal traffic ... to just 
+disappear completely (as an atomic, individual net user).
+
+The technical foundation is pretty basic - just set up your own system, or 
+perhaps a firewall at your home/office to block all traffic except for SSH 
+or HTTPS and to take all outbound traffic and tunnel it over one of those 
+to a random one of your systems.  Easy.
+
+-----
+
+So at this point, what do you have ?  First, your own ISP no longer sees 
+anything but encrypted traffic.  I suppose they also see time patterns, 
+but you've pretty much excluded your own ISP from all information 
+regarding your net usage.
+
+Further, you've upped the ante considerably - an actor has to have a 
+global eye view of the entire global Internet to collect a true portfolio 
+of your net usage.  Maybe a few US nodes are easy, and maybe if you go EC2 
+Ireland, that's easy too ... but some VPS provider in Hong Kong ?  Seoul ? 
+Sao Paulo ?
+
+-----
+
+So where does this start to fall apart ?
+
+First, if you hit any kind of personal/vanity/small sites on a daily or 
+hourly basis, an attacker just has to camp out upstream from there and 
+collect all the source IPs that come in.  So if you run your own 
+mailserver (or whatever), this falls apart almost immediately.  You either 
+need to start hosting a lot more traffic on your own server (giving away 
+accounts or something like that) or you need some kind of jumphost that 
+isn't connected to you, and an out of band link between the jumphost and 
+your own site(s).  This isn't rocket science, though ... just set up a big 
+ubuntu/freebsd/whatever mirror next to your own vanity host, and cross 
+connect with an ethernet cable over non routable IP space.
+
+Second, unencrypted login sessions ... between web forums and chat rooms 
+and any number of other things, somewhere you're entering a user/pass over 
+plain old HTTP... and if an attacker can guess one or more sites that they 
+know you visit, they can, just like above, camp out upstream and just 
+collect all of your proxy IPs.  This is easy to fix with a firewall rule, 
+but may be impractical to deal with that way ... a certain discipline with 
+nyms and aliases, etc., needs to be adopted, and unlike typical "nym 
+leakage" you need to be thinking of nym leakage on an infrastructure 
+level.  Not impossible, though...
+
+Where else does this fall apart ?  I don't think there is a weakness with 
+DNS resolution, since the dns resolution will come from your proxy, which 
+will move around... presumably your local connection has everything but 22 
+(or 443) blocked.
+
+Remember, this isn't Tor ... the idea here is not to create mathematically 
+provable security.  The idea is to make ones own traffic disappear to a 
+degree that one needs to be a nation state to put it back together.  The 
+local ISP can't see it, the servers you visit can't see it, and the 
+intermediate ISPs (and even a conglomeration of several of them) can't see 
+it.
+
+And it looks like this is a fairly cheap thing to put together in 2010...
+

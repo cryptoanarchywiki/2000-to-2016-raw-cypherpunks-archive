@@ -1,0 +1,114 @@
+From owner-cypherpunks@al-qaeda.net  Thu Mar 22 17:31:40 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q2MLSmeJ007070
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 22 Mar 2012 17:28:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1332451728;
+	bh=LONbzrdIcs5wJHha2LP5xkVF4FX0xT1Vj6Py3UTXnVU=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=CzLjJuvb+qo5SmqnN3UHVAWOw3igzXHOztLQ3AdLwk0xiqF9904yuz+3ZaVWHWErQ
+	 aZTInlX+zTFAn4CwipJ5V4r/GGLTQ5dPG6pzXg3l/XJORgEnrrPScS+HtVKBFrSXSN
+	 3JchOWb0tRWmyWM+WfVhXwsVqGcaXl5yYUS2J9NQ=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q2MLSmoj007069
+	for cypherpunks-outgoing; Thu, 22 Mar 2012 17:28:48 -0400
+Date: Thu, 22 Mar 2012 22:28:44 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: tahoe-dev@allmydata.org, info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: [p2p-hackers] Distributed filesystem choices (aka: none yet?)
+Message-ID: <20120322212844.GH9891@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from grarpamp <grarpamp@gmail.com> -----
+
+From: grarpamp <grarpamp@gmail.com>
+Date: Wed, 21 Mar 2012 21:58:54 -0400
+To: p2p-hackers@lists.zooko.com
+Subject: [p2p-hackers] Distributed filesystem choices (aka: none yet?)
+Reply-To: theory and practice of decentralized computer networks <p2p-hackers@lists.zooko.com>
+
+Been looking for a distributed filesystem with no luck, any ideas?
+
+Distributed meaning that there is no single central access point.
+So the concept of mounting might mean amongst the roving set able
+to service it, or some underlying graph of it, something like:
+
+mount -t dht dht://<seed_node> /dist1
+
+
+Users add their free block devices to the global backing store which
+was initialized with certain ZFS-like integrity and redundancy
+guarantees.
+
+Files would never vanish unless there are no longer enough blocks
+in the backing store to meet the init time guarantees.
+
+Users could either copy their hierarchies into the space, or attach
+them into the space for continued local maintenance.
+
+The one time init setting of a space could include whether pki
+recognized root users could maintain the overall hierarchy.  Uid's
+might be an insertion node id.
+
+There may need to be voting authority on file/tree expiry if under
+space pressure, perhaps bitcoin-like, with the metrics established
+at init time.
+
+Users could add their block devices to whatever pool had the metrics
+they like.
+
+Anononymity and crypto would provide incentive to donate resources
+since unlike say bittorrent, no legal fear means no hit and run
+required.
+
+
+I don't really know what it might look like. Just that it needs
+sha2/3 integrity, redundancy, and file lifetime guarantees. It needs
+to be global, anonymous, and be a usable file system. And somehow
+deal with abusive fill such as dd if=/dev/zero of=zero, which implies
+some kind of moderated hierarchies appointed by the initializing
+entity.
+
+AFS is nice that users can bolt their filespace into the tree, and
+it has filesystem semantics.
+
+ZFS/BTRFS is nice due to their sha256 integrity, raidz redundancy
+and simple backing block device ideas.
+
+FreeNet/GnuNet/BitTorrent and all other 'filesharing' protocols are
+no good because there is no guarantee that files will not vanish.
+And they have no filesystem semantics, only push/fetch.
+
+RedHat GFS / DragonFly HAMMER are interesting as a distributed
+filesystem in which real work can be done on live files.
+
+Tahoe-LAFS is nice due to adding in block devices, but no good
+because of the central access point. Perhaps that could be distributed?
+
+Phantom/I2P/Tor could be used as the backend IP transport.
+
+http://en.wikipedia.org/wiki/List_of_file_systems#Distributed_parallel_fault-tolerant_file_systems
+
+
+The only thing that makes it worth while is that a lot of people
+have free space, want to give an get data, safely, and don't want
+to see their work in populating it wasted... so it can't go away.
+_______________________________________________
+p2p-hackers mailing list
+p2p-hackers@lists.zooko.com
+http://lists.zooko.com/mailman/listinfo/p2p-hackers
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

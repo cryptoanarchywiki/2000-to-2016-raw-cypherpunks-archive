@@ -1,0 +1,97 @@
+From owner-cypherpunks@Algebra.COM  Mon Dec 10 21:26:34 2001
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.mit.edu (8.11.6/8.9.3) with ESMTP id fBB2QX328436
+	for <kwantam@positron.mit.edu>; Mon, 10 Dec 2001 21:26:33 -0500
+Received: from ak47.algebra.com (ak47.algebra.com [208.233.99.160])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id VAA25386
+	for <rsw@mit.edu>; Mon, 10 Dec 2001 21:24:49 -0500 (EST)
+Received: from ak47.algebra.com (localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id fBB1nRDL018993
+	for <cypherpunks-outgoing@ak47.algebra.com>; Mon, 10 Dec 2001 19:49:27 -0600
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id fBB1nR3Q018992
+	for cypherpunks-outgoing; Mon, 10 Dec 2001 19:49:27 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (dns.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id fBB1nMDL018966
+	for <cypherpunks@ak47.algebra.com>; Mon, 10 Dec 2001 19:49:23 -0600
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id fBB1nIE23120
+	for cypherpunks@ak47.algebra.com; Mon, 10 Dec 2001 17:49:18 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id fBB1lfq23108
+	for cypherpunks-goingout; Mon, 10 Dec 2001 17:47:41 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+From: Anonymous <nobody@remailer.privacy.at>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@remailer.privacy.at>.
+To: cypherpunks@lne.com
+Old-Subject: Re: "Spoiling" digital cash
+Message-ID: <c1366a4f1970dad90cfd5f7e0dcaf18f@remailer.privacy.at>
+Date: Tue, 11 Dec 2001 02:46:04 +0100 (CET)
+X-Loop: cypherpunks@lne.com
+X-spam: 10 
+Subject:  Re: "Spoiling" digital cash
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+X-spam: 10 
+Status: O
+Content-Length: 2308
+Lines: 48
+
+
+"George" writes:
+
+> Th idea is,  when buying some good or service with
+> digital cash,  the customer first forwards the cash to the vendor
+> in some transformed way such that the vendor 
+> can't yet spend it, but can verify that it is
+> good cash of the correct amount, and that 
+> the customer will no longer be able to spend it.
+>
+> The idea is, if the vendor follows through on his side,
+> the customer will supply the additional information the
+> vendor will need to redeem the cash.  The customer can still
+> rip the vendor off by refusing to do so, but he has no incentive,
+> the money's already gone for him.  Conversely,  an
+> unscrupulous "vendor" could in principle trick a customer
+> into throwing away money on nothing,  but he would gain no profit
+> in doing so.
+
+Yep, see Marcus Jakobsson, "Ripping Coins for Fair Exchange",
+http://www-cse.ucsd.edu/users/markus/rip.ps.  The idea is analogous to
+tearing a $100 bill in half and giving half to the taxi driver so he'll
+wait while you go take care of some business.  The two halves together
+are worth $100, but either alone is worthless.  Once you give him the
+first half you're out $100, so you have no incentive to cheat him by
+not giving the other half when you come back.
+
+A simplification of Jakobsson's scheme works with Chaumian blinded cash
+where the bank's RSA exponent e = e1*e2, where e1 > 1 is an odd integer
+and e2 is prime.
+
+The passenger (in the taxi example) withdrew the coin by choosing a
+value x which had some special structure, blinding it and getting a
+signature s on x such that s^e = x, mod n.  To spend the coin normally
+he would reveal x and s which the bank would accept as it satisfies this
+relation.
+
+To rip the coin, the passenger gives the taxi driver t = s^e1, along
+with x.  The driver can verify that t^e2 = s^(e1*e2) = s^e1 = x mod n
+which tells him that it is a real coin.  He also sends (t, x) to the
+bank, which verifies that no such x has been spent before (no double
+spending) and also stores x as a ripped coin such that only the driver
+can spend it.
+
+When the passenger comes back he gives the taxi driver s, the real RSA
+signature, so the driver can now spend the coin for good.  The passenger
+can't renege and spend the coin himself because the driver has put a
+block on that x value in the database.
+

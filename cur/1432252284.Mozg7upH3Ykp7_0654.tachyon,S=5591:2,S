@@ -1,0 +1,119 @@
+From owner-cypherpunks@Algebra.COM  Sat Aug 24 12:38:09 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7OGc4300900
+	for <rsw@opamp.org>; Sat, 24 Aug 2002 12:38:08 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id MAA08707
+	for <rsw@mit.edu>; Sat, 24 Aug 2002 12:38:03 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7OGHkP3007724
+	for <cypherpunks-outgoing@ak47.algebra.com>; Sat, 24 Aug 2002 11:17:46 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g7OGHkZd007723
+	for cypherpunks-outgoing; Sat, 24 Aug 2002 11:17:46 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from locust.minder.net (locust.minder.net [66.92.53.74])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7OGHiP3007706
+	for <cypherpunks@algebra.com>; Sat, 24 Aug 2002 11:17:45 -0500
+Received: from waste.minder.net (daemon@waste [66.92.53.73])
+	by locust.minder.net (8.11.6/8.11.6) with ESMTP id g7OGHZJ89278
+	for <cypherpunks@algebra.com>; Sat, 24 Aug 2002 12:17:44 -0400 (EDT)
+	(envelope-from cpunks@waste.minder.net)
+Received: (from cpunks@localhost)
+	by waste.minder.net (8.11.6/8.11.6) id g7OGHT225135
+	for cypherpunks@algebra.com; Sat, 24 Aug 2002 12:17:29 -0400
+Received: (from majordom@localhost)
+	by waste.minder.net (8.11.6/8.11.6) id g7OGBxP24652
+	for cypherpunks-outgoing; Sat, 24 Aug 2002 12:11:59 -0400
+Received: from locust.minder.net (locust.minder.net [66.92.53.74])
+	by waste.minder.net (8.11.6/8.11.6) with ESMTP id g7OGBwR24648
+	for <cypherpunks@minder.net>; Sat, 24 Aug 2002 12:11:58 -0400
+Received: from mercury.ex.ac.uk (mercury.ex.ac.uk [144.173.6.26])
+	by locust.minder.net (8.11.6/8.11.6) with ESMTP id g7OGBvJ89001
+	for <cypherpunks@minder.net>; Sat, 24 Aug 2002 12:11:58 -0400 (EDT)
+	(envelope-from A.Back@exeter.ac.uk)
+Received: from cronus ([144.173.6.20] helo=cronus.ex.ac.uk)
+	by mercury.ex.ac.uk with esmtp (Exim 3.33 #1)
+	id 17idVx-0034Xw-00; Sat, 24 Aug 2002 17:11:53 +0100
+Date: Sat, 24 Aug 2002 17:11:42 +0100
+From: Adam Back <adam@cypherspace.org>
+To: Cypherpunks <cypherpunks@minder.net>
+Cc: cryptography@wasabisystems.com, Adam Back <adam@cypherspace.org>
+Old-Subject: Re: Cryptographic privacy protection in TCPA
+Message-ID: <20020824171142.A1130528@exeter.ac.uk>
+References: <0b9f4829b10ce20154d1cca436a26860@aarg.net> <20020818165856.A991609@exeter.ac.uk> <20020821032421.A1059401@exeter.ac.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <20020821032421.A1059401@exeter.ac.uk>; from adam@cypherspace.org on Wed, Aug 21, 2002 at 03:24:21AM +0100
+Old-Subject:  Re: Cryptographic privacy protection in TCPA
+Subject:   Re: Cryptographic privacy protection in TCPA
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 2277
+Lines: 56
+
+
+On Wed, Aug 21, 2002 at 03:24:21AM +0100, Adam Back wrote:
+> Because Camenisch credentials are unlinkable multi-show it makes it
+> harder to recognize sharing, so the user could undetectably share
+> credentials with a small group that he trusts.  
+> 
+> [...]
+> 
+> However if the Camenisch (unlinkable multi-show) credential were
+> shared too widely the issuer may also learn the secret key and hence
+> be able to link and so revoke the overly-shared credentials.  This
+> combats sharing though to a limited extent.
+
+Since writing this I realised that there is a problem revoking
+unlinkable multi-show credentials:
+
+- I was presuming that revealing the credential and it's secret key is
+sufficient to allow someone to link shows of that credential.
+
+- but to link you'd have to try each revoked credential in turn.
+
+Therefore the verifier would have to perform work linear in the number
+of revoked credentials at each show, for the duration of the epoch.
+
+Anonymous suggests one way out is to just define that the issuing CA
+and the refreshing CA to be the same entity.  Then you already have to
+trust the hardware manufacturer not to issue certs whose secrets are
+outside of a TPM.  In this case Brands or Chaum credentials work.
+
+The remaining desiderata are:
+
+- it is not ideal from a risk management perspective to have to have
+the hardware manufacturers endorsement private key online to refresh
+certificates (or in general for there to be any private key online
+that allows issuing of credentials whose private keys lie outside a
+TPM);
+
+- not ideal to have to have an online protocol with an otherwise
+non-existant third party (credential refresh CA) in order to avoid
+linkability;
+
+Other ideas I gave in an earlier post towards fixing these remaining
+issues now that it seems unlinkable multi-show credentials won't work:
+
+| Perhaps there would be someway to have the privacy CA be a different
+| CA to the endorsement CA and for the privacy CA to only be able to
+| refresh existing credentials issued by the endorsement CA, but not to
+| create fresh ones.
+|
+| Or perhaps some restriction could be placed on what the privacy CA
+| could do of the form if the privacy CA issued new certificates it
+| would reveal it's private key.
+
+Adam
+--
+http://www.cypherspace.org/adam/
+

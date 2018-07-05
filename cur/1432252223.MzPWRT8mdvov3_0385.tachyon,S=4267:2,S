@@ -1,0 +1,88 @@
+From owner-cypherpunks@al-qaeda.net  Fri Jul  2 20:38:48 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i631cjI2004749
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Fri, 2 Jul 2004 20:38:45 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i631cjZi004748
+	for cypherpunks-outgoing; Fri, 2 Jul 2004 20:38:45 -0500
+Date: Fri, 2 Jul 2004 21:34:20 -0400
+From: Dave Emery <die@dieconsulting.com>
+To: cypherpunks@al-qaeda.net
+Subject: EZ Pass and the fast lane ....
+Message-ID: <20040703013420.GB8904@pig.dieconsulting.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.4.1i
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: RO
+Content-Length: 3304
+Lines: 63
+
+	Having been inspired by some subversive comments on cypherpunks,
+I actually looked up the signaling format on the EZ-Pass toll
+transponders used throughout the Northeast.  (On the Mass Pike, and most
+roads and bridges in NYC and a number of other places around here).
+
+	They are the little square white plastic devices that one 
+attaches to the center of one's windshield near the mirror and which
+exchange messages with an interrogator in the "FAST LANE" that debits
+the tolls from an account refreshed by a credit card (or other forms of
+payment).   They allow one to sail through the toll booths at about
+15-20 mph without stopping and avoid the horrible nuisance of digging
+out the right change while rolling along at 70 mph in heavy traffic.
+
+	Turns out they use Manchester encoded on-off keying (EG old
+fashioned pulsed rf  modulation) at 500 kilobits/second on a carrier
+frequency of 915 mhz at a power a little under 1 mw (0 dbm).
+
+	The 915 mhz is time shared - the units are interrogated by being
+exposed to enough 915 mhz pulsed energy to activate a broadband video
+detector looking at energy after a 915 mhz SAW filter (presumably around
+-20 dbm or so).  They are triggered to respond by a 20 us pulse and will
+chirp in response to between a 10 and 30 us pulse.   Anything longer and
+shorter and they will not respond.
+
+	The response comes about 100-150 us after the pulse and consists
+of a burst of 256 bits followed by a 16 bit CRC.  No present idea what
+preamble or post amble is present, but I guess finding this out merely
+requires playing with a transponder and DSO/spectrum analyzer.
+
+	Following the response but before the next interrogation the
+interrogator can optionally send a write burst which also presumably
+consists of 256 bits and CRC.
+
+	Both the interrogators and transponders collect two valid
+(correct) CRC bursts on multiple interrogations and compare bit for bit
+before they decide they have seen a valid message.
+
+	Apparently an EEPROM in the thing determines the partition
+between fixed bits set at the factory (eg the unit ESN) and bits that
+can get written into the unit by the interrogators.   This is intended
+to allow interrogators at on ramps to write into the unit the ramp ID
+for units at off ramps to use to compute the toll... (possibilities for
+hacking here are obvious for the criminally inclined - one hopes the
+system designers were thoughtful and used some kind of keyed hash).
+
+	No mention is made of encryption or challenge response
+authentication but I guess that may or may not be part of the design
+(one would think it had better be, as picking off the ESN should be duck
+soup with suitable gear if not encrypted).
+
+	But what I have concluded is that it should be quite simple
+to detect a response from one's transponder and activate a LED or
+beeper, and hardly difficult to decode the traffic and display it
+if it isn't encrypted.   A PIC and some simple rf hardware ought
+to do the trick, even one of those LED flashers that detect cellphone
+energy might prove to work.
+
+	Perhaps someone more paranoid (or subversive) than I am will
+follow up and actually build such a monitor and report whether there
+are any interogations at OTHER than the expected places...
+
+-- 
+   Dave Emery N1PRE,  die@dieconsulting.com  DIE Consulting, Weston, Mass 02493
+

@@ -1,0 +1,173 @@
+From owner-cypherpunks@al-qaeda.net  Wed Dec  1 22:50:30 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.1/8.13.1/Debian-17) with ESMTP id iB24nf71024667
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Wed, 1 Dec 2004 22:49:41 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.1/8.13.1/Submit) id iB24nft1024666
+	for cypherpunks-outgoing; Wed, 1 Dec 2004 22:49:41 -0600
+Mime-Version: 1.0
+X-Sender: rah@localhost (Unverified)
+Message-Id: <p06110428bdd43f77f0e5@[66.149.49.5]>
+X-Clips-URL: <http://zlab.commerce.net/wiki/index.php/MapReduce_for_Decentralized_Compu
+   tation>
+Date: Wed, 1 Dec 2004 22:42:47 -0500
+To: cryptography@metzdowd.com, cypherpunks@al-qaeda.net
+From: "R.A. Hettinga" <rah@shipwright.com>
+Subject: MapReduce for Decentralized Computation - zLabWiki
+Content-Type: text/plain; charset="us-ascii"
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+X-Keywords:                  
+X-UID: 14348
+Status: O
+Content-Length: 5242
+Lines: 144
+
+<http://zlab.commerce.net/wiki/index.php/MapReduce_for_Decentralized_Computation>
+
+
+MapReduce for Decentralized Computation
+
+I was reading Dean and Ghemawat's MapReduce paper this morning. It
+describes a way to write large-grain parallel programs to be executed on
+Google's large clusters of computers in a simple functional style, in C++.
+It occurred to me that the system as described might be well-suited to
+computational cooperation between mutually untrusting entities, computation
+in what we at CommerceNet refer to as a "decentralized" system.
+ [edit]
+
+ Decentralized computational cooperation
+
+ There are five major problems with regard to computational cooperation, by
+which I mean outsourcing some amount of your computation to servers run by
+people you don't trust completely:
+ Cracking 
+ The server trusts the client not to break the server.
+ Storage 
+ The client trusts the server to store the client's data safely.
+ Correctness 
+ The client trusts the server to execute the client's code accurately and
+produce results quickly.
+ Confidentiality 
+ The client trusts the server not to disclose the client's data against the
+client's wishes.
+ Payment 
+ The server usually trusts the client to pay them for the service provided.
+
+ Cracking can be dealt with by known methods: metered resource usage and
+well-known isolation techniques.
+
+ Payment can be dealt with in any number of ways; it should be noted that
+it is not entirely separable from cracking.
+
+ Storage can be dealt with by replicating or erasure-coding data across a
+number of administratively-independent servers.
+
+ This leaves the problems of correctness and confidentiality; I think the
+MapReduce approach can help with correctness.
+ [edit]
+
+ Correctness
+
+ The "map" function converts a record from an input file into a set of
+records in an intermediate file; typically, each input record is replicated
+in several places on the cluster, and the "map" function is deterministic.
+The "reduce" function converts the set of all intermediate records sharing
+the same key (gathered from the many map-stage output files) into a set of
+output records, which are written to an output file; typically the "reduce"
+function is also deterministic.
+
+ In the usual case, where these functions are deterministic, they can be
+executed on two administratively-independent servers, and the results
+(which, in the Google case, are merely files) can be compared. If they
+differ, the same results can be recomputed on more
+administratively-independent servers to see which ones were correct.
+
+ (It may be worthwhile to compare Merkle tree hashes of the output files,
+rather than the output files themselves, since moving the output files over
+the network may entail significant expense.)
+
+ This prevents any single broken or dishonest machine or administrative
+entity from affecting the correctness of the overall computation. Higher
+levels of redundancy can be used to defend against stronger attackers at
+relatively modest cost.
+
+ Some threats can be defeated by even weaker means with negligible
+computational cost. Computing each function for a randomly selected 1% of
+input or intermediate records, then comparing the results, may provide an
+acceptable probability of catching faults or compromises if they are
+expected to affect a significant proportion of the output; and it requires
+negligible computational cost. In the ten-billion-record performance tests
+mentioned in the Google paper, a corrupt "map" function would have to
+affect fewer than 694 of the input records to have less than a 50% chance
+of detection by the 1% sample (including 100 million randomly selected
+records). A corrupt "map" function that affected 5000 input records ---
+only one out of every two million --- would have only an 0.7% chance of not
+being caught.
+
+ This probably deals adequately with machine failures and gross attacks,
+but a careful attack might corrupt the output for only a single input
+record --- and would have only a 1% chance of being caught. This may still
+be enough if the problem is a result of a deliberate attack and the
+attacker is vulnerable to sufficiently severe penalties.
+ [edit]
+
+ Confidentiality
+
+ Confidentiality is a more difficult problem; computing with confidential
+data on hardware that belongs to someone you don't trust requires that you
+compute with encrypted data. In the general case, this is a very difficult
+problem.
+
+ (Perhaps this could be written with a real example.)
+
+	 	 Article
+	 	Discussion
+	 	Edit
+	 	History
+
+
+	 	Create an account or log in
+
+
+
+
+Navigation
+
+	? 	Main Page
+	? 	Community portal
+	? 	Current events
+	? 	Recent changes
+	? 	Random page
+	? 	Help
+
+Search
+
+ 
+
+Toolbox
+
+	? 	What links here
+	? 	Related changes
+	? 	Special pages
+	? 	 This page was last modified 21:20, 29 Nov 2004.
+
+	? 	 This page has been accessed 36 times.
+
+	? 	 About zLabWiki
+
+	? 	 Disclaimers
+
+
+-- 
+-----------------
+R. A. Hettinga <mailto: rah@ibuc.com>
+The Internet Bearer Underwriting Corporation <http://www.ibuc.com/>
+44 Farquhar Street, Boston, MA 02131 USA
+"... however it may deserve respect for its usefulness and antiquity,
+[predicting the end of the world] has not been found agreeable to
+experience." -- Edward Gibbon, 'Decline and Fall of the Roman Empire'
+

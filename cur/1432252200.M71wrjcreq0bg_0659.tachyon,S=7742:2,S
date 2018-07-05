@@ -1,0 +1,176 @@
+From owner-cypherpunks@Algebra.COM  Mon Aug 12 15:57:46 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7CJvj420498
+	for <rsw@opamp.org>; Mon, 12 Aug 2002 15:57:45 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id PAA07931
+	for <rsw@mit.edu>; Mon, 12 Aug 2002 15:57:44 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7CIUxD6030577
+	for <cypherpunks-outgoing@ak47.algebra.com>; Mon, 12 Aug 2002 13:30:59 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g7CIUxYv030576
+	for cypherpunks-outgoing; Mon, 12 Aug 2002 13:30:59 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7CIUrD6030532
+	for <cypherpunks@ak47.algebra.com>; Mon, 12 Aug 2002 13:30:54 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7CIUphp029923
+	for cypherpunks@ak47.algebra.com; Mon, 12 Aug 2002 11:30:51 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7CIUE6b029910
+	for cypherpunks-goingout345; Mon, 12 Aug 2002 11:30:14 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Mon, 12 Aug 2002 19:30:00 +0100
+From: Adam Back <adam@cypherspace.org>
+To: cypherpunks@lne.com
+Cc: cryptography@wasabisystems.com, Adam Back <adam@cypherspace.org>,
+   tim@dierks.org
+Old-Subject: Re: Palladium: technical limits and implications
+Message-ID: <20020812193000.A844266@exeter.ac.uk>
+References: <699bcf9a15f57cec8e85fb08c0c02652@aarg.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <699bcf9a15f57cec8e85fb08c0c02652@aarg.net>; from
+  remailer@aarg.net on Mon, Aug 12, 2002 at 10:55:19AM -0700
+X-Loop: cypherpunks@lne.com
+X-spam: 10 
+Subject:  Re: Palladium: technical limits and implications
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 5229
+Lines: 123
+
+
+Peter Biddle, Brian LaMacchia or other Microsoft employees could
+short-cut this guessing game at any point by coughing up some details.
+Feel free guys... enciphering minds want to know how it works.
+
+(Tim Dierks: read the earlier posts about ring -1 to find the answer
+to your question about feasibility in the case of Palladium; in the
+case of TCPA your conclusions are right I think).
+
+On Mon, Aug 12, 2002 at 10:55:19AM -0700, AARG!Anonymous wrote:
+> Adam Back writes:
+> > +---------------+------------+  
+> > | trusted-agent | user mode  |  
+> > |    space      | app space  |  
+> > |    (code      +------------+  
+> > | compartment)  | supervisor |  
+> > |               | mode / OS  |  
+> > +---------------+------------+
+> > | ring -1 / TOR              |
+> > +----------------------------+  
+> > | hardware / SCP key manager |
+> > +----------------------------+  
+> 
+> I don't think this works.  According to Peter Biddle, the TOR can be
+> launched even days after the OS boots.
+
+I thought we went over this before?  My hypothesis is: I presumed
+there would be a stub TOR loaded bvy the hardware.  The hardware would
+allow you to load a new TOR (presumably somewhat like loading a new
+BIOS -- the TOR and hardware has local trusted path to some IO
+devices).
+
+> It does not underly the ordinary user mode apps and the supervisor
+> mode system call handlers and device drivers.
+
+I don't know what leads you to this conclusion.
+
+>         +---------------+------------+  
+>         | trusted-agent | user mode  |  
+>         |    space      | app space  |  
+>         |    (code      +------------+  
+>         | compartment)  | supervisor |  
+>         |               | mode / OS  |  
+> +---+   +---------------+------------+
+> |SCP|---| ring -1 / TOR |
+> +---+   +---------------+
+
+How would the OS or user mode apps communicate with trusted agents
+with this model?  The TOR I think would be the mediator of these
+communications (and of potential communications between trusted
+agents).  Before loading a real TOR, the stub TOR would not implement
+talking to trusted agents.
+
+I think this is also more symmstric and therefore more likely.  The
+trusted agent space is the same as supervisor mode that the OS runs
+in.  It's like virtualization in OS360: there are now multiple "OSes"
+operating under a micro-kernel (the TOR in ring -1): the real OS and
+the multiple trusted agents.  The TOR is supposed to be special
+purpose, simple and small enough to be audited as secure and stand a
+chance of being so.
+
+The trusted agents are the secure parts of applications (dealing with
+sealing, remote attestation, DRM, authenticated path to DRM
+implementing graphics cards, monitors, sound cards etc; that kind of
+thing).  Trusted agents should also be small, simple special purpose
+to avoid them also suffering from remote compromise.  There's limited
+point putting a trusted agent in a code compartment if it becomes a
+full blown complex application like MS word, because then the trusted
+agent would be nearly as likely to be remotely exploited as normal
+OSes.
+
+> [...] It doesn't follow that the nub has anything to do with the OS
+> proper.  If the OS can run fine without it, as I think you agreed,
+> then why would the entire architecture have to reorient itself once
+> the TOR is launched?
+
+trusted-agents will also need to use OS services, the way you have it
+they can't.
+
+> In other words, isn't my version simpler, as it adjoins the column at
+> the left to the pre-existing column at the right, when the TOR launches,
+> days after boot?  Doesn't it require less instantaneous, on-the-fly,
+> reconfiguration of the entire structure of the Windows OS at the moment
+> of TOR launch?  
+
+I don't think it's a big problem to replace a stub TOR with a given
+TOR sometime after OS boot.  It's analogous to modifying kernel code
+with a kernel module, only a special purpose micro-kernel in ring -1
+instead of ring 0.  No big deal.
+
+> > The parallel stack to the right: OS is computed by TOR; Application is
+> > computed OS.
+> 
+> No, that doesn't make sense.  Why would the TOR need to compute a metric
+> of the OS?  
+
+In TCPA which does not have a ring -1, this is all the TPM does
+(compute metrics on the OS, and then have the OS compute metrics on
+applications.
+
+While Trusted Agent space is separate and better protected as there
+are fewer lines of code that a remote exploit has to be found in to
+compromise one of them, I hardly think Palladium would discard the
+existing windows driver signing, code signing scheme.  It also seems
+likely therefore that even though it offers lower assurance the code
+signing would be extended to include metrics and attestation for the
+OS, drivers and even applications.
+
+> Peter has said that Palladium does not give information about other
+> apps running on your machine:
+
+I take this to mean that as stated somewhere in the available docs the
+OS can not observe or even know how many trusted agents are running.
+So he's stating that they've made OS design decisions such that the OS
+could not refuse to run some code on the basis that a given Trusted
+Agent is running.
+
+This functionality however could be implemented if so desired in the
+TOR.
+
+Adam
+--
+http://www.cypherspace.org/adam/
+

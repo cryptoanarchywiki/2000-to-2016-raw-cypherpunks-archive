@@ -1,0 +1,109 @@
+From cypherpunks-bounces@cpunks.org  Tue Jan 28 18:27:14 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0SNPSZU009755;
+	Tue, 28 Jan 2014 18:25:37 -0500
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; insecure key"
+	header.d=gmail.com header.i=@gmail.com header.b=zj0gSvyi;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-qc0-f178.google.com (mail-qc0-f178.google.com
+ [209.85.216.178])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0SNPONB009751
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Tue, 28 Jan 2014 18:25:26 -0500
+Received: by mail-qc0-f178.google.com with SMTP id m20so1652846qcx.23
+ for <cypherpunks@cpunks.org>; Tue, 28 Jan 2014 15:25:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :content-type; bh=JUwHanlO1NXQscQhKDGfn6fnUkjSeqFKM9Myqp5mVe8=;
+ b=zj0gSvyia3ynm3BetowPZJEpLOAF2F4M2INZ6CEONRlrx5SSsoo6EQnLtxQr8r2qlp
+ iVVgKO4Gy7Z3B8AnpTS36WVR8zrmZcQ8r8DbFrrnR7gB5UpkK+85HT5ZG1fh8PCEsf44
+ uYGQSRxLDx4F3/aZ2KNR3TIM/SZTUavjbYOh+1kT8qpvBb8ZURU2INXW54U7z1xigJYP
+ UhGFe9H1NKpskpBVTlBzI+anw52hv2y59e5ibhaMeQ7Nd/I3NqO/KQtBrbaVMwWxBxUN
+ NMdj8saFHDeIdaYTlsSem93s6XjwvyfOrxdQnGlbl0S1EEaMQj6hOTj7tT0qqYaOA99E
+ pciA==
+MIME-Version: 1.0
+X-Received: by 10.140.100.181 with SMTP id s50mr6479380qge.113.1390951518924; 
+ Tue, 28 Jan 2014 15:25:18 -0800 (PST)
+Received: by 10.96.109.102 with HTTP; Tue, 28 Jan 2014 15:25:18 -0800 (PST)
+In-Reply-To: <CAEha3fcyhooj15LraBLRB4+PGd9UbxtFt7GvJ1rYq1=zb-+YKQ@mail.gmail.com>
+References: <CAEha3fcyhooj15LraBLRB4+PGd9UbxtFt7GvJ1rYq1=zb-+YKQ@mail.gmail.com>
+Date: Tue, 28 Jan 2014 15:25:18 -0800
+Message-ID: <CAJVRA1TTg5WT7wntSbv9DBYLXebdyNjD7CURizfKm+icK_ZW=g@mail.gmail.com>
+Subject: Fwd: [Dailydave] Understanding BIOS & SMM
+From: coderman <coderman@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: text/plain; charset=ISO-8859-1
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 2948
+Lines: 54
+
+---------- Forwarded message ----------
+From: Xeno Kovah <xsk.dailydave@gmail.com>
+Date: Sun, Jan 26, 2014 at 7:45 AM
+Subject: [Dailydave] Understanding BIOS & SMM
+
+
+Our research team at MITRE has been looking into BIOS security for the
+past couple years and starting to publish our results in the last
+year. We described BIOS exploits and an in-BIOS defensive system
+called BIOS Chronomancy at venues like BlackHat and ACM CCS. We also
+released a free tool called Copernicus[1] which lets you detect if a
+BIOS is writable, and dump the contents of the BIOS from a Windows
+system (which makes enterprise-wide configuration and integrity
+checking possible.)
+
+But the question is, let's say you have a BIOS dump and it shows
+differences. How are you going to interpret those differences? How do
+you distinguish natural changes from malicious ones? We wanted to get
+a basic inspection capability out there, but we recognized that people
+were going to need to know a lot more about system internals, hardware
+quirks, and UEFI before they'd be able to make full use of it. So we
+made a class to help bootstrap people faster. Currently the class is
+scheduled for CanSecWest[2] and Syscan[3] (and the prices are going up
+starting Feb 1).
+
+It would be nice if people wanted to understand how the deep system
+architecture worked for it's own sake, because we of course think it's
+super interesting and fulfilling to know things others don't. But
+hopefully the news of the past couple months has made people realize
+that "out of sight, out of mind" isn't a great strategy for BIOS
+security. First there was #badBIOS (which was kicked off by Dragos
+experimenting with Copernicus[4]). Then there was NSA's defensive side
+saying they had caught the Chinese making BIOS bricking attacks[5].
+Then there was NSA's offensive side being caught having their own BIOS
+backdoor capabilities[6]. And of course there were a whole lot of
+people letting their FUD flags fly around all of it.
+
+So if you'd like to get a more technical and quantitative view of what
+the BIOS/SMM security landscape looks like, you should check out our
+classes and watch for talks by Corey Kallenberg, John Butterworth, and
+myself over the next 6 months where we'll be describing 2 new BIOS
+memory-corruption-to-reflash exploits, 2 new SecureBoot-breaking
+tricks, and trustworthy computing extensions to Copernicus that will
+counter many classes of attacks against BIOS dumping software that
+would let an attacker hide his BIOS presence.
+
+Xeno
+
+[1]http://www.mitre.org/capabilities/cybersecurity/overview/cybersecurity-blog/copernicus-question-your-assumptions-about
+[2]https://cansecwest.com/dojo.html
+[3]http://syscan.org/index.php/sg/training
+[4]https://plus.google.com/103470457057356043365/posts/exuXRz5C3L3
+[5]http://www.cbsnews.com/news/nsa-speaks-out-on-snowden-spying/
+[6]http://www.spiegel.de/international/world/catalog-reveals-nsa-has-back-doors-for-numerous-devices-a-940994.html
+

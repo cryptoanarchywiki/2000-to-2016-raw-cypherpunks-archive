@@ -1,0 +1,180 @@
+From owner-cryptography+rsw=mit.edu@metzdowd.com  Wed Nov  3 08:57:26 2004
+Return-Path: <owner-cryptography+rsw=mit.edu@metzdowd.com>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.13.1/8.13.1/Debian-16) with ESMTP id iA3EvD2p022622
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <rsw@opamp.org>; Wed, 3 Nov 2004 08:57:25 -0600
+Received: from red.metdow.com (red.metdow.com [209.166.243.235])
+	by fort-point-station.mit.edu (8.12.4/8.9.2) with ESMTP id iA3EusOo020021
+	for <rsw@mit.edu>; Wed, 3 Nov 2004 09:56:56 -0500 (EST)
+Received: by red.metdow.com (Postfix, from userid 1002)
+	id B838BE7A9; Wed,  3 Nov 2004 09:55:16 -0500 (EST)
+X-Original-To: cryptography@metzdowd.com
+Delivered-To: cryptography@metzdowd.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by red.metdow.com (Postfix) with ESMTP id E54A5E76A
+	for <cryptography@metzdowd.com>; Wed,  3 Nov 2004 09:55:07 -0500 (EST)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 7E219D9949; Wed,  3 Nov 2004 09:54:56 -0500 (EST)
+X-Original-To: cryptography@metzdowd.com
+Received: from gate.alliedtelesyn.co.nz (gate.alliedtelesyn.co.nz [202.49.72.33])
+	by red.metdow.com (Postfix) with SMTP id BD682F28F
+	for <cryptography@metzdowd.com>; Tue,  2 Nov 2004 23:01:46 -0500 (EST)
+Received: (qmail 25118 invoked from network); 3 Nov 2004 04:01:36 -0000
+Received: from mailmarshall.alliedtelesyn.co.nz (10.32.18.40)
+  by gate-int.alliedtelesyn.co.nz with SMTP; 3 Nov 2004 04:01:36 -0000
+Received: from LEO.ALLIEDTELESYN.CO.NZ (Not Verified[10.32.18.53]) by mailmarshall.alliedtelesyn.co.nz with NetIQ MailMarshal (v5.5.6.7)
+	id <B000299bc8>; Wed, 03 Nov 2004 17:01:11 +1300
+Received: from CHCDOM1-MTA by LEO.ALLIEDTELESYN.CO.NZ
+	with Novell_GroupWise; Wed, 03 Nov 2004 17:01:35 +1300
+Message-Id: <s1890eef.029@LEO.ALLIEDTELESYN.CO.NZ>
+X-Mailer: Novell GroupWise Internet Agent 6.5.1 
+Date: Wed, 03 Nov 2004 17:01:12 +1300
+From: "david koontz" <david.koontz@alliedtelesyn.co.nz>
+To: <dahonig@cox.net>, <pgut001@cs.auckland.ac.nz>,
+        <cryptography@metzdowd.com>
+Cc: <cypherpunks@al-qaeda.com>
+Subject: Re: "Scan design called portal for hackers"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Sender: owner-cryptography@metzdowd.com
+Precedence: bulk
+X-Scanned-By: MIMEDefang 2.42
+Content-Length: 4427
+Lines: 128
+Status: O
+X-Status: 
+X-Keywords:                  
+X-UID: 10419
+
+
+
+>>> Peter Gutmann <pgut001@cs.auckland.ac.nz> 2/11/2004 11:30:36 p.m. >>>=
+
+>David Honig <dahonig@cox.net> writes:
+
+>>EETimes 25 Oct 04 has an article about how the testing structures on IC=
+s
+>>makes them vulnerable to attacks. =20
+
+>A link ) would
+>have been useful...
+
+>>The basic idea is that to test a chip, you need to see inside it; this =
+can
+>>also reveal crypto details (e.g., keys) which compromise the chip.
+
+>The JTAG interface is your (that is, the reverse engineer's) friend.  Th=
+is is
+>why some security devices let you disconnect it using a security-fuse ty=
+pe
+>mechanism before you ship your product.  Of course that only works if (a=
+) the
+>device allows it, (b) you remember to activate it, and (c) your attacker=
+=20isn't
+>sufficiently motivated/funded to use something like microprobing or a FI=
+B
+>workstation to bypass the disconnect.
+
+Historically BIST has been more attractive for crypto hardware because=20
+you can also use it for assurance testing prior to use.  Invoking it can =
+be
+hard coded into device initialization.
+
+If JTAG is present, you don't have to have internal scan.  If you have in=
+ternal=20
+scan  you could have a zeroize on entering test mode.  This prevents scan=
+=20chains
+from being capable of being used to save as well as restore state. =20
+
+If and when is it a problem?  If you were to examine FIPS PUB 140-2, 4.5 =
+'Physical
+Security', 'Table 2 Summary of physical security requirements'  and secti=
+on:
+
+4.5.1 General Physical Security Requirements
+
+=20...
+
+SECURITY LEVEL 1
+The following requirements shall apply to all cryptographic modules for=20
+Security Level 1.
+* The cryptographic module shall consist of production-grade components=20
+that shall include standard passivation techniques (e.g., a conformal coa=
+ting=20
+or a sealing coat applied over the module's circuitry to protect against =
+
+environmental or other physical damage).
+* When performing physical maintenance, all plaintext secret and private =
+
+keys and other unprotected CSPs contained in the cryptographic module=20
+shall be zeroized. Zeroization shall either be performed procedurally by =
+
+the operator or automatically by the cryptographic module.
+=20
+---
+Meaning for a cryptographic module boundary at the chip level, the
+keys should have been zeroized before physical access.
+
+----
+=20...
+
+SECURITY LEVEL 3
+In addition to the general requirements for Security Levels 1 and 2, the
+=20following requirements shall apply to all cryptographic modules for=20
+Security Level 3.
+* If the cryptographic module contains any doors or removable covers=20
+or if a maintenance access interface is defined, then the module shall=20
+contain tamper response and zeroization circuitry. The tamper response=20
+and zeroization circuitry shall immediately zeroize all plaintext secret =
+and=20
+private keys and CSPs when a door is opened, a cover is removed, or=20
+when the maintenance access interface is accessed. The tamper response=20
+and zeroization circuitry shall remain operational when plaintext secret =
+and=20
+private cryptographic keys or CSPs are contained within the cryptographic=
+
+module.
+
+---
+Meaning that physical access will cause zeroization.  This would imply
+zeroization on test mode activation on a JTAG interface on a single
+chip cryptographic module.   You start getting real security at levels
+3 and 4, the  certification criteria comes from the Commercial  COMSEC=20
+Evaluation Program (CCEP).
+
+Am I worried someone is producing chips that aren't protected?  No.
+I'm more concerned that implementations (systems) aren't properly
+designed, tested and certified.  "They got AES, we got AES" is just
+a form of snake oil.
+
+
+
+
+
+
+
+
+
+
+
+
+
+NOTICE: This message contains privileged and confidential
+information intended only for the use of the addressee
+named above. If you are not the intended recipient of
+this message you are hereby notified that you must not
+disseminate, copy or take any action in reliance on it.
+If you have received this message in error please
+notify Allied Telesyn Research Ltd immediately.
+Any views expressed in this message are those of the
+individual sender, except where the sender has the
+authority to issue and specifically states them to
+be the views of Allied Telesyn Research.
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+

@@ -1,0 +1,73 @@
+From owner-cypherpunks@lne.com  Wed May 14 17:22:54 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h4ELMqt26935
+	for <rsw@jfet.org>; Wed, 14 May 2003 17:22:52 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h4EL9Luq007063
+	for cypherpunks-goingout345; Wed, 14 May 2003 14:09:21 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Wed, 14 May 2003 22:09:15 +0100
+From: Adam Back <adam@cypherspace.org>
+To: Bill Frantz <frantz@pwpconsult.com>
+Cc: cypherpunks@lne.com, Adam Back <adam@cypherspace.org>
+Subject: Re: what fields to hash with hashcash (Re: A Trial Balloon to
+  Ban Email?)
+Message-ID: <20030514220915.B9388537@exeter.ac.uk>
+References: <Pine.BSO.4.21.0305140958500.1920-100000@anon7.arachelian.c
+  <20030514062743.A9342491@exeter.ac.uk>
+  <Pine.BSO.4.21.0305140958500.1920-100000@anon7.arachelian.com>
+  <20030514155618.B9326809@exeter.ac.uk>
+  <v03110708bae83765b6a3@[192.168.1.5]>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <v03110708bae83765b6a3@[192.168.1.5]>; from
+  frantz@pwpconsult.com on Wed, May 14, 2003 at 11:14:56AM -0700
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 1603
+Lines: 38
+
+I'm not sure what the comment alludes to as it includes a ;-), but you
+can find multiple collisions against the same email address on the
+same day, viz:
+
+0:030514:frantz@pwpconsult.com:49916794a98728f2
+0:030514:frantz@pwpconsult.com:ffbead9be92472a3
+
+etc.  In fact they are also this way because you want there to be a
+relatively low probability of there being an accidental collision in
+the tokens created by different users sending you mail.  
+
+The example implementation chooses the random string from a 2^64
+space, however on average only 2^44 of those will be valid tokens (if
+you use 20 bit collisions), and so if you imagine someone receiving
+256 mails in a day, they have a birthday probability of 2^-29 of
+having a mail falsely deleted because of an accidental collision.
+
+I guess that is a fairly low probability compared to email
+reliability, but anyway the safety margin can be increased simply by
+increasing the random string search space.
+
+Adam
+
+On Wed, May 14, 2003 at 11:14:56AM -0700, Bill Frantz wrote:
+> This approach seems like a good direction.  However, it does limit me to
+> email per address per day.  :-)
+> 
+> At 7:56 AM -0700 5/14/03, Adam Back wrote:
+> >The day is matched against the day in the token, as Bill said the
+> >tokens contain the date and the email address, in fact they look like
+> >this:
+> >
+> >0:030514:foo@bar.com:482d3c37d5b5c112
+> >
+> >where the first field is a version number, 2nd field is date
+> >(year,month,day), 3rd field is resource name (for email the
+> >recipient's email address) and last field is random junk to make it
+> >hash to trailing zeros.
+

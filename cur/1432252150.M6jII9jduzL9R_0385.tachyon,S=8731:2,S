@@ -1,0 +1,182 @@
+From owner-cypherpunks@al-qaeda.net  Thu Nov 29 14:23:19 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id qATJK3d0026529
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 29 Nov 2012 14:20:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1354216803;
+	bh=FT3wCGAvM4YBJt/I8LehZWP4jDTCiSmE+s/HxlFIj9I=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=ndcTKDM6dehul85mG1Xt7NuHJ63w260T+mzPKpkjj5CiwvWC2eyjrUCB5i+YDRdEV
+	 R+zagdiV5W7zzJ7Ae87Yp/QCccwhoaST/i970fT773SYD1B08pwGOJJ9/em2DCX1ta
+	 9G6v6rHkjROSjfi2ATctppDjw9mNPE05Y5WzUsT0=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id qATJK3ko026528
+	for cypherpunks-outgoing; Thu, 29 Nov 2012 14:20:03 -0500
+Date: Thu, 29 Nov 2012 20:19:59 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: [tahoe-dev] LAFS Weekly Dev Chat notes, 2012-11-29
+Message-ID: <20121129191959.GP9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 7250
+Lines: 148
+
+----- Forwarded message from Zooko Wilcox-O'Hearn <zooko@zooko.com> -----
+
+From: Zooko Wilcox-O'Hearn <zooko@zooko.com>
+Date: Thu, 29 Nov 2012 10:51:25 -0700
+To: tahoe-dev <tahoe-dev@tahoe-lafs.org>
+Subject: [tahoe-dev] LAFS Weekly Dev Chat notes, 2012-11-29
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+legend: "b" means Action Item! (If your name is mentioned after "b"
+and you aren't really going to do that thing, then please let us
+know!); "b" means Action Item that is already done.
+
+#include <std/caveat/lector> // I don't have time to write
+explanations of all this, and I may have forgotten parts.
+
+in attendance: Zooko (scribe), Marcus, Brian, Evgeny, David-Sarah,
+Kevan (briefly b technical difficulties), CiC (briefly)
+
+Marcus found the quickstart doc to be fine b it was easy to get
+Tahoe-LAFS set up. He had been using Linux for a while and so he was
+just looking for "What's my 'make'? What's my './configure'
+equivalent?".
+
+Marcus says there's a parallel set of getting-started docs maintained
+by the I2P people.
+
+Marcus wonders why the multi-introducer patch hasn't been merged into
+main Tahoe-LAFS yet, as it has been in use in I2P for a long time and
+is quite stable for them. The I2P setup include a cron job that
+downloads a new set of introducers and also downloads news. Answer:
+the multi-introducer patch may conflict with the accounting project.
+The accounting project is going to add the ability to control which
+servers your client will use or which clients your server will serve.
+In that case, access to the introducer will no longer be sufficient to
+allow you to use a set of servers. In that world, we might want to
+replace "introducers" with a "gossip" strategy.
+
+BUT
+
+We're reconsidering, because when/if we *do* replace the introduction
+process, we could change this behavior without a great deal of
+backward-compatibility problems. In fact, Brian thinks that even after
+it does the sort of gossip he wants, he might still want a
+distinguished set of introducers to serve as "seeds" for gossip, so we
+might want to *keep* multi-introducers as is.
+
+Things to do to about the multi-introduction patch:
+
+b" See if it merges with current trunk (which has the
+signed-announcements patch, which included significant refactoring of
+introduction). b [[Who?]]
+
+b" Let kytv know that we're interested. b [[Zooko]]
+
+b" Write tests that actually exercise the behavior of using multiple
+introducers. b [[kytv?]]
+
+b" Write up a plan for forward-compatibility with gossip. b [[Brian,
+because nobody else knows what sort of gossip Brian wants,
+precisely.]]
+
+Brian says there may be differences of opinion about design strategy
+here. He favors a "fully distributed" approach where no node is
+distinguished in terms of the introduction service that it provides to
+its peers. Zooko wonders if this relates to the "Are We Client-Server
+or Peer-To-Peer?" issue. David-Sarah says that this may not make any
+difference *in terms of security* for our current use cases:
+friendgrids, commercial services, volunteergrids, ... It isn't like
+we're currently trying to implement the One Grid To Rule Them All use
+case.
+
+[[Added by Zooko ex post facto: I long ago posted a design for
+"gossip/distributed-introduction" based on a Chord-like ring which is,
+IMHO, simple and scalable, and which is described in sufficient detail
+to be implemented. Here it is, it is ticket 68, comment 11:
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/68#comment:11 . I don't
+think it matters much whether the set of introducers that are
+participating in that Chord-like ring are a specially selected set a
+la the current I2P branch or whether "everyone is an introducer" a la
+gossip.]]
+
+Zooko says that the thing he is concerned about isn't the introduction
+part b how clients learn about servers b but instead the authorization
+part b how clients choose whether or not to use the servers that they
+know about. Current Tahoe-LAFS combines those two issues, which is a
+problem.
+
+Zooko says that Tahoe-LAFS has very weak security against rollback
+attack or DoS, but that if we had server selection (which is a part of
+the accounting project) then we would have very strong security
+against those. Zooko tells an illustration from Bruce Schneier: if
+you're at a coffeeshop and you need to go to the bathroom, you can ask
+a random stranger sitting nearby to watch your laptop. If you're
+paranoid, you can ask three different random strangers to watch your
+laptop and each other. But if three random strangers approach *you*
+and offer to watch your laptop, that's different! Zooko says server
+selection b where you choose the 1 or 3 servers that you're going to
+rely on instead of accepting the offer from 1 or 3 random servers b
+makes all the difference in the world in terms of security against DoS
+and rollback. Brian wonders what the user experience for that is going
+to be like.
+
+Zooko veers the discussion onto Raph Levien's Trust Metric, and thence
+onto Brian's cool "Not Tahoe" project.
+
+discussion of Brian's Cool "Not Tahoe" Project. Zooko urges Brian to
+make BCNTP be even more "Not-Tahoe-Like" by not having storage
+servers. Not having storage servers means you don't have to worry
+about how much different people's perspectives on the network overlap
+with one another. Brian might use an S3-style hosted approach. He
+might let a client publish which set of servers it uses, for the
+benefit of its file-sharers. Also, file references can be fat in
+Not-Tahoe, since they don't often get sent out of band, so they could
+include information about servers.
+
+
+back to docs: Evgeny's introductory doc is good! It is incomplete. It
+is aimed at less sophisticated users. Zooko is unsure if it would
+"fit" on the Download page of https://tahoe-lafs.org, or if it should
+go somewhere else. It might make a good magazine article. We might end
+up with too many started docs (that would be a good problem to have).
+There is audience segmentation, for example the I2P starter docs have
+been read by many I2P users but not by other users. Zooko wants better
+docs for less sophisticated new users, so Zooko is inclined to use
+Evgeny's doc. What's the next step? 1. LAFS developers answer some of
+Evgeny's questions. b [[Marcus and David-Sarah?]] 2. Test out the doc
+on some lab rats^W^Wnew users. b [[Evgeny?]] Evgeny has some users who
+want to use Tahoe-LAFS who might beta-test his doc.
+
+
+Tune in next time for:
+ b" Proof-of-Retrievability; Zooko will post it to tahoe-dev in advance
+of the meeting so you can read it before the meeting! Warning: it is
+long. You might have to turn your phone off or something in order to
+get through it. (David-Sarah quips that it probably isn't as long as
+the Security Argument For Rainhill.)
+ b" Report from Marlowe about translation efforts.
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

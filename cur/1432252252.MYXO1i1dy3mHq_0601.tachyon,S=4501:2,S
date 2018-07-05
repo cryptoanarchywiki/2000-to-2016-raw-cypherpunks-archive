@@ -1,0 +1,109 @@
+From owner-cypherpunks@al-qaeda.net  Thu Oct 11 05:53:35 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q9B9owvE026451
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 11 Oct 2012 05:50:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1349949058;
+	bh=gdwqUiSfjFODyxqwBM7q1JUzdiZWdq1RNTYVwd0NBU4=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=vdPiCcs8WecLIQvA9E8dbhI62VtL+/I1teFsQpcoNw4jQCWMit7wtuMUw9t+bdy7K
+	 9TEOs3SWiJhNzzUHa9sJMn8FnFf5wf0LEa4MBLc79mD2C1W6gMMLLGwuCyU734DACZ
+	 tuE3cJYc3XR6cSnop1F1Wa4HurD1K5fqmjjlPtKU=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q9B9owB0026450
+	for cypherpunks-outgoing; Thu, 11 Oct 2012 05:50:58 -0400
+Date: Thu, 11 Oct 2012 11:50:55 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: [tor-dev] Proposal 207: Directory guards
+Message-ID: <20121011095055.GD9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3134
+Lines: 77
+
+----- Forwarded message from Nick Mathewson <nickm@torproject.org> -----
+
+From: Nick Mathewson <nickm@torproject.org>
+Date: Wed, 10 Oct 2012 23:46:51 -0400
+To: tor-dev@lists.torproject.org
+Subject: [tor-dev] Proposal 207: Directory guards
+Reply-To: tor-dev@lists.torproject.org
+
+Filename: 207-directory-guards.txt
+Title: Directory guards
+Author: Nick Mathewson
+Created: 10-Oct-2012
+Status: Open
+Target: 0.2.4.x
+
+
+Motivation:
+
+   When we added guard nodes to resist profiling attacks, we made it so
+   that clients won't build general-purpose circuits through just any
+   node.  But clients don't use their guard nodes when downloading
+   general-purpose directory information from the Tor network.  This
+   allows a directory cache, over time, to learn a large number of IPs
+   for non-bridge-using users of the Tor network.
+
+Proposal:
+
+   In the same way as they currently pick guard nodes as needed, adding more
+   guards as those nodes are down, clients should also pick a small-ish set
+   of directory guard nodes, to persist in Tor's state file.
+
+   Clients should not pick their own guards as directory guards, or pick
+   their directory guards as regular guards.
+
+   When downloading a regular directory object (that is, not a hidden
+   service descriptor), clients should prefer their directory guards
+   first.  Then they should try more directories from a recent consensus
+   (if they have one) and pick one of those as a new guard if the
+   existing guards are down and a new one is up.  Failing that, they
+   should fall back to a directory authority (or a directory source, if
+   those get implemented-- see proposal 206).
+
+   If a client has only one directory guard running, they should add new
+   guards and try them, and then use their directory guards to fetch multiple
+   descriptors in parallel.
+
+Discussion:
+
+   The rule that the set of guards and the set of directory guards need to
+   be disjoint, and the rule that multiple directory guards need to be
+   providing descriptors, are both attempts to make it harder for a
+   single node to capture a route.
+
+Open questions and notes:
+
+   What properties does a node need to be a suitable directory guard?
+   If we require that it have the Guard flag, we'll lose some nodes:
+   only 74% of the directory caches have it (weighted by bandwidth).
+
+   We may want to tune the algorithm used to update guards.
+
+   For future-proofing, we may want to have the DirCache flag from 185
+   be the one that nodes must have in order to be directory guards.  For
+   now, we could have authorities set it to Guard && DirPort!=0, with a
+   better algorithm to follow.  Authorities should never get the
+   DirCache flag.
+_______________________________________________
+tor-dev mailing list
+tor-dev@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

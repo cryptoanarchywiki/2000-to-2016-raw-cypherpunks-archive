@@ -1,0 +1,159 @@
+From owner-cypherpunks@Algebra.COM  Sat Aug 10 18:01:49 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7AM1nX31011
+	for <rsw@opamp.org>; Sat, 10 Aug 2002 18:01:49 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id SAA17326
+	for <rsw@mit.edu>; Sat, 10 Aug 2002 18:01:48 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7AK3RpU006106
+	for <cypherpunks-outgoing@ak47.algebra.com>; Sat, 10 Aug 2002 15:03:27 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g7AK3R8f006105
+	for cypherpunks-outgoing; Sat, 10 Aug 2002 15:03:27 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7AK3OpU006088
+	for <cypherpunks@ak47.algebra.com>; Sat, 10 Aug 2002 15:03:25 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7AK3MFU015632
+	for cypherpunks@ak47.algebra.com; Sat, 10 Aug 2002 13:03:22 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7AK1Dja015612
+	for cypherpunks-goingout345; Sat, 10 Aug 2002 13:01:13 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+From: Anonymous User <anonymous@remailer.havenco.com>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@remailer.havenco.com>.
+To: cypherpunks@lne.com, coderpunks@toad.com
+Old-Subject: Re: Signing as one member of a set of keys
+Message-ID: <364bf85b104f607ec4c8ca3ce61ba2c8@remailer.havenco.com>
+Date: Sat, 10 Aug 2002 20:01:09 +0000 (UTC)
+X-Loop: cypherpunks@lne.com
+X-spam: 20 
+Subject:  Re: Signing as one member of a set of keys
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 2343
+Lines: 111
+
+
+Here are the perl scripts I cobbled together to put the ring signature
+at the end of the file, after a separator.  I called the executable
+program from the earlier C source code "ringsig".  I call these ringver
+and ringsign.  I'm no perl hacker so these could undoubtedly be greatly
+improved.
+
+ringver
+===
+#! /usr/bin/perl
+
+# Usage: $0 pubkeyfile < filetoverify
+
+die("Usage: ringver pubkeyfile < filetoverify") if @ARGV != 1;
+
+$outfile = "/tmp/sigdata$$";
+$sigfile = "/tmp/sigfile$$";
+$separator = "  \\+\\+multisig v1\\.0";
+
+$pubfile=$ARGV[0];
+
+-r $pubfile || die ("Error reading $pubfile");
+
+open (OUTFILE, ">".$outfile) || die ("Unable to open $outfile for output");
+open (SIGFILE, ">".$sigfile) || die ("Unable to open $sigfile for output");
+
+# Skip leading blank lines on input file
+$_=<STDIN> while /^$/;
+
+# Save lines to outfile until separator
+print OUTFILE $_;
+while (<STDIN>) {
+	last if /$separator/;
+	print OUTFILE $_;
+}
+
+die ("No signature found in input file") if !$_;
+
+# Save remaining lines ot sigfile
+print SIGFILE while <STDIN>;
+
+close INFILE;
+close OUTFILE;
+close SIGFILE;
+
+open (SIG, "./ringsig -v $outfile $pubfile < $sigfile |") ||
+			die ("Error running verify program");
+
+# Print output from program
+print while <SIG>;
+close SIG;
+
+unlink($sigfile);
+unlink($outfile);
+
+exit($?);
+
+
+
+
+
+
+
+
+ringsign
+===
+#! /usr/bin/perl
+
+# Usage: $0 filetosign pubkeyfile privkeyfile
+
+die("Usage: ringsign filetosign pubkeyfile privkeyfile > outfile") if
+	@ARGV < 3;
+
+$outfile = "/tmp/sigdata$$";
+$separator = "  ++multisig v1.0";
+
+open(INFILE, $ARGV[0]) || die ("Unable to open $ARGV[0] for input");
+$pubfile=$ARGV[1];
+$secfile=$ARGV[2];
+
+-r $pubfile || die ("Error reading $pubfile");
+-r $secfile || die ("Error reading $secfile");
+
+open (OUTFILE, ">".$outfile) || die ("Unable to open $outfile for output");
+
+# Skip leading blank lines on input file
+$_=<INFILE> while /^$/;
+
+# Save lines to outfile
+print OUTFILE $_;
+print OUTFILE $_ while <INFILE>;
+
+close INFILE;
+close OUTFILE;
+
+# Re-open infile
+open(INFILE, $ARGV[0]) || die ("Unable to open $ARGV[0] for input");
+
+open (SIG, "./ringsig -s $outfile $pubfile $secfile|") ||
+			die ("Error signing");
+
+@sigs = <SIG>;
+close SIG;
+die ("Error from signature program") if ($?);
+
+# Output infile, separator, sig
+print while <INFILE>;
+print $separator . "\n";
+print @sigs;
+
+unlink($outfile);
+

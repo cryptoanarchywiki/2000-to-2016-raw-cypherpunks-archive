@@ -1,0 +1,163 @@
+From cypherpunks-bounces@cpunks.org  Mon Jan 20 06:53:13 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0KBqtUb031149;
+	Mon, 20 Jan 2014 06:52:58 -0500
+Received: from mail.h3q.com (mail.h3q.com [213.73.89.199])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0KBqpul031145
+ for <cypherpunks@cpunks.org>; Mon, 20 Jan 2014 06:52:52 -0500
+Received: (qmail 18892 invoked from network); 20 Jan 2014 11:52:47 -0000
+Received: from mail.h3q.com (HELO mail.h3q.com) (hannes)
+ by mail.h3q.com with CAMELLIA256-SHA encrypted SMTP; 20 Jan 2014 11:52:47 -0000
+Message-ID: <52DD0E22.6000307@mehnert.org>
+Date: Mon, 20 Jan 2014 11:53:06 +0000
+From: Hannes Mehnert <hannes@mehnert.org>
+User-Agent: Mozilla/5.0 (X11; FreeBSD amd64;
+ rv:24.0) Gecko/20100101 Thunderbird/24.1.0
+MIME-Version: 1.0
+To: cypherpunks@cpunks.org
+Subject: Re: Programming languages for a safe and secure future
+References: <1389950750.79148.YahooMailNeo@web141202.mail.bf1.yahoo.com>
+ <52DAE12D.9080406@cypherpunks.to>
+ <CAJVRA1QtQySXCmBHK5hey36UL6E8afDMrctcGTnmbka+mfiqRQ@mail.gmail.com>
+ <52DC1500.3020805@mehnert.org>
+ <20140119184343.GF6302@order.stressinduktion.org>
+In-Reply-To: <20140119184343.GF6302@order.stressinduktion.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA384
+
+Hi,
+
+first of all I want to discuss 'verification'. There are so many
+different definitions and it seems everybody uses their own
+definition. It is strongly connected to trusted code base. Which
+axioms of a rule system do you believe in? Do you believe that
+arithmetic is verified? There are some axioms which you need to
+trust... [http://mathworld.wolfram.com/GoedelsIncompletenessTheorem.html]
+
+Some software 'verification systems' trust in more axioms than
+others... and yes, there have been verification systems which accepted
+invalid code/proved falsity.
+
+The other topic is trusted code base:
+ - verification system itself (it's just a piece of software)
+ - compiler? [http://cm.bell-labs.com/who/ken/trust.html]
+ - language runtime?
+ - operating system?
+ - microcode of the processor?
+ - hardware??
+
+On 01/19/2014 18:43, Hannes Frederic Sowa wrote:
+> MPX was already committed to gcc trunk, so I hope this situation
+> could improve in future (it is reverted for 4.9 but I think it will
+> come back after the release in March).
+
+
+The difference, as far as I can tell is in-band vs out-of-band
+signalling... (correct me if I'm wrong) with the former you put some
+magic values before and after the array, and an attacker has to guess
+these. The latter puts the meta-information out of band, hard to
+predict for an attacker.. that's at least the difference between the
+llvm bounds checks plugin (BoundsChecking.cpp / MemorySanitizer.cpp in
+LLVM 3.3) and the softboundCETS approach..
+
+
+>> I can recommend several languages: - coq (http://coq.inria.fr)
+>> [the tutorial software foundations 
+>> http://www.cis.upenn.edu/~bcpierce/sf/ ] - agda
+>> (http://wiki.portal.chalmers.se/agda/pmwiki.php) - idris
+>> (http://www.idris-lang.org/)
+> 
+> Maybe you can comment a bit on the code extraction process into
+> compilable languages.
+
+[I've to admit that I did some research in Coq over the recent 3 years
+(a higher-order separation logic to verify the full functional
+correctness of Java programs). And no, at the moment I don't believe
+anymore in taking off-the-shelf code and verify its correctness.
+That's a myth. If we need to reimplement it anyways, why not in a neat
+modern programming language?]
+
+
+In Coq you can develop programs and extract them to ML code, without
+the irrelevant proof bits. But it seems this is rather cumbersome. The
+verified optimizing compiler for C, compcert
+[http://compcert.inria.fr/] does this.
+
+The softbound plugin [http://acg.cis.upenn.edu/softbound/], although
+they developed a semantics for the LLVM intermediate representation,
+have the real implementation in C++ and no formalized proof (at least
+I couldn't find any) of its correspondence to the Coq development. I
+actually think there are some overflows in the C++ runtime (size +
+start < bound might fail
+
+The verified L4 microkernel redeveloped a bunch of C++ and assembly
+into Haskell in order to be able to prove it.
+
+The main difference between Coq and Agda/Idris is that the dependent
+types are used in Coq to proof stuff, while in Agda/Idris you use them
+for programming. (Obviously, all is the same, and Adam wrote a great
+book about programming with dependent types in Coq
+http://adam.chlipala.net/cpdt/).
+
+
+Agda has a story about people not interested in executing programs,
+but rather type check and prove them.
+
+Idris has a slightly different tradeoff -- instead of forcing
+developers to write only total functions (due to curry-howard, partial
+functions better not be used for proofs [basically if you use a
+partial function for a proof, you assume false, and can prove
+everything]), but also partial functions. Only total ones can be used
+for proving though. Idris has a compiler which produces executable
+programs! :)
+
+Obviously the runtime needs to be looked into. In the end it is part
+of your trusted code base.
+
+Unfortunately I have not used ATS, but if I'm not entirely wrong, it
+is a dependently typed programming language with mutable state and a C
+foreign function interface which treats variables as resources (and
+uses linear logic/linear types to do so). A very interesting system;
+Chris Double wrote several blog posts when he used it
+http://bluishcoder.co.nz/tags/ats/ .
+
+
+I'm happy to discuss further,
+
+
+Hannes
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (FreeBSD)
+
+iQIcBAEBCQAGBQJS3Q4iAAoJELyJZYjffCjuuwAQAIlV480onmDrunNB5GOrRqXK
+EaEfbIQPRZT4tnaj9zrqjxAxgh+gls9ugKPKPaUfQzxzQUPSn88SWx6dpRKfGYZu
+e4N77kSCb1YoTnG9SjWao2IVRxnSZXtATmNAEQG8FqyXejbq+G1IJfP2eX9DRzM8
+nLB1JQLWcI4lZonYYh2pIHA8n0raJav2OCqUhp7tbjEuubU2Uxil8ToHDMfaqzSY
+/hanRu/F9sCFVNtNOysIsbP8bUukZLex3yIgRIiojUy3S2872doqSL1QNeRa3A/Z
+aOifWowLi4UdCdcmk2obvdI4sSanh7LG5ijw9IZDXdOsWM4Jyb9qZS+PP0Rs6I6T
+IzHwA5wf+Te0q6Gh621W6bDnaR4dDd6cARmLafyGyY0ViRbWJoLjLW6d4zfXttvh
+V/dryq4LjdztlyblfjxY9Djlx2O8JO/Q7/YYhb8ZpOn8lek7cQH4FxZWGmWqpiEf
+Ay7A1nPM47BIPgKgTFRdMpeUnrttm+HMXOHtx9sID6jycT8HsJxOA645gunhi4D+
+5UhcKMNUZae2tiqxOeUsvxI9/YwZu7g2FLvgoR4h7koQfl1jpsbNxE2ckopc+2ej
+1YQDF7ZB0gTXyX9xHRxSEb76fFBW1sPz0s/W5DTEnQw+DnT0LIXaNGsvzAE7RU/e
+GcMkqEodPLluzQJgPwz4
+=xZP7
+-----END PGP SIGNATURE-----
+

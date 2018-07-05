@@ -1,0 +1,118 @@
+From owner-cypherpunks@al-qaeda.net  Wed Nov 16 15:18:07 2011
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id pAGKCRmf004240
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 16 Nov 2011 15:12:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1321474347;
+	bh=ALU7kz2soYmQqFeH0ZRn3htgahDB49nYxttoeYrWCdE=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=biYm80TPO15Hg9lLRwgGSoGCSd409xT25GUMbvcecbXcrkhjE65hEMzt3/ptF0+9x
+	 Um6Z1OkboXc42o+dZDgzHHMph85EqxKtca81vV/wsWvw/LlXWgNAlrmhaMIhqbYDGT
+	 goBwqRGb+Me2NvFSVKiZ8eCWiw1zdMdj9xHOQwvw=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id pAGKCRTV004239
+	for cypherpunks-outgoing; Wed, 16 Nov 2011 15:12:27 -0500
+Date: Wed, 16 Nov 2011 21:12:23 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: [Freedombox-discuss] Tahoe-LAFS is not a filesystem
+Message-ID: <20111116201223.GT31847@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3797
+Lines: 86
+
+----- Forwarded message from Zooko O'Whielacronx <zooko@zooko.com> -----
+
+From: Zooko O'Whielacronx <zooko@zooko.com>
+Date: Wed, 16 Nov 2011 13:01:57 -0700
+To: freedombox-discuss@lists.alioth.debian.org
+Subject: [Freedombox-discuss] Tahoe-LAFS is not a filesystem
+
+Folks:
+
+I'm a developer on the Tahoe-LAFS project (https://tahoe-lafs.org )
+and I would be happy to see it used in Freedombox. The projects have
+many goals in common. I'm also the founder of a startup that sells
+Tahoe-LAFS ciphertext storage service: https://leastauthority.com .
+
+I'm just writing this brief note to try to explain something -- Tahoe,
+the Least-Authority File System fits better for file sharing,
+streaming or network-attached-storage than it does for a normal, local
+filesystem.
+
+It should probably be moved from here, where it is currently listed
+next to MooseFS:
+
+http://wiki.debian.org/FreedomBox/ExampleProjects#Filesystems
+
+To here:
+
+http://wiki.debian.org/FreedomBox/ExampleProjects#File_sharing
+
+or maybe here or here or here:
+
+http://wiki.debian.org/FreedomBox/ExampleProjects#Streaming
+http://wiki.debian.org/FreedomBox/ExampleProjects#Network_Attached_Storage
+
+Where it can be listed next to things like ownCloud, SparkleShare,
+BitTorrent, Tin Can Jukebox, etc.
+
+The confusion is that Tahoe-LAFS *is* a file system, in a couple of
+senses. It has arbitrarily nestable directories and files (unlike a
+lot of newfangled storage systems), and it has an SFTP server, which
+means you can point sshfs at it and have a reasonably good access to
+it directly in your kernel VFS. You could also use PyFilesystem to
+integrate it into your local filesystem.
+
+*But*, while the compatibility and correctness of Tahoe-LAFS and its
+SFTP server are pretty good, its performance characteristics as a
+distributed, secure, fault-tolerant storage system are sometimes a bad
+match for the expectations of user-space programs that access their
+storage through the POSIX filesystem API. Some things work fine -- it
+depends on your specific use case, but some access patterns that are
+normal and efficient on a local filesystem like ext4 are painfully
+slow or even infeasible on Tahoe-LAFS. For example, opening a file for
+append, appending a few bytes, and then closing it again, and then
+doing this over and over 10,000 times, will take about O(N) time and
+O(N) space on ext4 (about 10,000 disk operations and about 10,000
+units of storage on disk), but take about O(N**2) time and O(N**2)
+space on Tahoe-LAFS (about 100,000,000 network operations and about
+100,000,000 units of storage on the backend), which means the program
+that does something like that will never finish and might use up a lot
+of your secure cloud storage space.
+
+Everybody wants to use Tahoe-LAFS through FUSE as though it were a
+local filesystem, but nobody actually uses Tahoe-LAFS through FUSE, to
+my knowledge. All the people who actually Tahoe-LAFS end up using it
+less like it is a "filesystem" like ext4 and more like it is an
+"application" for backing up, sharing, or hosting files.
+
+(N.B. the tahoe-lafs developers actively try to support whatever it is
+that our users demand, and so we continue to support and improve its
+behavior when it is treated as though it were a local filesystem, even
+though I don't exactly recommend it.)
+
+Regards,
+
+Zooko
+
+_______________________________________________
+Freedombox-discuss mailing list
+Freedombox-discuss@lists.alioth.debian.org
+http://lists.alioth.debian.org/cgi-bin/mailman/listinfo/freedombox-discuss
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

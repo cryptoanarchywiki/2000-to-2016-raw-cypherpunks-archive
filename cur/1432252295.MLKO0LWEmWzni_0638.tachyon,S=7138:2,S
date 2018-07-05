@@ -1,0 +1,140 @@
+From owner-cypherpunks@al-qaeda.net  Wed Feb 23 14:18:38 2005
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.3/8.13.3/Debian-6) with ESMTP id j1NKHYsL026521
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Wed, 23 Feb 2005 14:17:34 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.3/8.13.3/Submit) id j1NKHYgJ026520
+	for cypherpunks-outgoing; Wed, 23 Feb 2005 14:17:34 -0600
+To: cypherpunks@al-qaeda.net
+Subject: Re: I'll show you mine if you show me, er, mine
+Message-Id: <20050223201404.CE5E657EBA@finney.org>
+Date: Wed, 23 Feb 2005 12:14:04 -0800 (PST)
+From: hal@finney.org ("Hal Finney")
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 6240
+Lines: 118
+
+Markus Jakobsson is a really smart guy who's done some cool stuff, so I
+think this is probably better than it sounds in the article.  His web
+site is http://www.informatics.indiana.edu/markus/ but I don't see any
+papers there that sound like what the article describes.  I tried to
+reverse engineer the protocol from the article, and the results are below.
+But first let me put this into context.
+
+The security property seems to be that you send something to the server,
+and it sends you back something that proves that it knows your password.
+But neither a passive eavesdropper nor a MITM can learn anything about
+your password from observing or influencing the exchange.  The best an
+attacker can do is to try to brute force your password by guessing it
+repeatedly and trying each guess out at the server.  And this can be
+easily prevented by having the server refuse to answer more than a few
+bad password attempts.
+
+Note that this is different from simple PK based authentication,
+because the secret is human memorizable.  And it's different from,
+say, having the server respond with a keyed hash of your passphrase,
+because an eavesdropper could then do an offline brute force search.
+The key feature is that the only attack is online brute forcing.
+
+There are already a lot of protocols in the literature which do this,
+often performing key agreement at the same time.  The original one
+and most famous was SPEKE.  There is a long list of such protocols at
+http://grouper.ieee.org/groups/1363/passwdPK/submissions.html.  I don't
+know what properties this new protocol has that the old ones don't.
+Maybe it does have some and I am missing the point.  Or there might be
+some patent issues that it is trying to work around.
+
+Anyway, here's my attempt at mimicking the protocol, based on the
+description of envelopes and carbon paper.
+
+You have a password, and so does the site you will login to.  (Or,
+maybe the site has a salted hash of your password; you could use that
+instead.)  You set up a homomorphic encryption system.  This is one where
+you can send an encrypted value to someone else, and he can do certain
+operations on the encrypted value, like multiplying it by a constant.
+In this case I think we only need to encrypt the value 1, and let the
+other guy multiply by his constant, which makes it simpler.
+
+I think ElGamal could work: you encrypt 1 as (g^k, y^k), where you'd
+make up a key y = g^x on the spot.  You send this to the other guy who
+picks a random power j and raises both elements to that power, then
+multiplies the 2nd one by c: (g^(k*j), y^(k*j) * c), and sends it back
+to you.  This is now a valid ElGamal encryption of c.  But an observer
+can't tell what c is.
+
+For a first cut at this protocol, you take each bit of the password (or
+salted hash) and create two encryptions of m = 1.  It would look like
+this:
+
+E(1)   E(1)   E(1)   E(1)   E(1)  ...
+E(1)   E(1)   E(1)   E(1)   E(1)  ...
+
+You send all these to the server.  The server knows your password (or
+salted hash) and, for each pair of encrypted values, multiplies the
+one corresponding to password bit b_i by some constant c_i.  The other
+one of the pair, corresponding to !b_i, it multiplies by a random r_i.
+The server sets it up so that the sum of all the c_i is zero.  Then it
+sends all of them back to you.  If your passphrase started 01101...
+it would be:
+
+E(c_1)   E(r_2)   E(r_3)   E(c_4)   E(r_5)  ...
+E(r_1)   E(c_2)   E(c_3)   E(r_4)   E(c_5)  ...
+
+Now, you decrypt just the ones corresponding to the bits b_i and add up
+the decrypted plaintexts, giving you sum of c_i.  If the result is zero,
+you know the server knew your password (or salted hash).
+
+Actually this is not quite right, because the article says that you are
+not supposed to be able to decrypt both ciphertext values in the pair
+that corresponds to a password bit.  Otherwise an imposter might be able
+to figure out your passphrase by doing one interaction with the server,
+then finding an element from each pair such that they all sum to zero.
+This is kind of knapsacky and it might not be that hard, I'm not sure.
+
+So I think what you could do is to send a valid ElGamal encryption of
+1, and a bogus value which is not an ElGamal encryption of anything.
+But the remote party wants to be sure that you can't decrypt them both.
+One way to achieve this is to arrange that the first members of each pair,
+g^k in the good encryption, multiply to some fixed value F for which the
+discrete log is not known.  Maybe it's the hash of "I don't know if this
+will work."  You can't know the DL of that hash, so you can't find two
+g^k values which multiply to that hash.  That means that if you have a
+pair of ElGamal ciphertexts which have this property, only one is a real,
+valid ElGamal ciphertext and so only one is decryptable (I think!).  So
+you would send, in the example above:
+
+(g^k0, y^k0)    (F/g^k1, junk)  (F/g^k2, junk)   (g^k3, y^k3)   ...
+(F/g^k0, junk)  (g^k1, y^k1)    (g^k2, y^k2)     (F/g^k3, junk) ...
+
+When the server did its multiplications as above you'd still get the
+correct encryptions of c_i, but the other pair would be junk and you
+wouldn't learn the r_i values:
+
+E(c_1)   junk     junk     E(c_4)   junk    ...
+junk     E(c_2)   E(c_3)   junk     E(c_5)  ...
+
+Now you can still decrypt it and verify your password.  But for someone
+who is impersonating you and doesn't know your password, they're going
+to get a mix of c_i and r_i values that won't add up to zero, and that
+won't give them any clue about what the real password is, other than
+that they guessed wrong.
+
+I'm not 100% sure this will work, that the attacker can't create a bogus
+pair (F/g^k, junk) which will allow him to determine what value the server
+multiplied by.  At a minimum I see that if junk = F/g^k then it will be
+obvious what the constant was, so the server would have to check for that.
+This is why it's good to have provable security!
+
+This way of doing things would also be quite inefficient; there are
+two ElGamal encryptions going back and forth (typically 2048 bits each)
+for every bit of your password.  I'll bet the actual paper has a much
+more clever scheme which improves the efficiency and has a nice proof
+of security.  I'm looking forward to seeing it.
+
+Hal Finney
+

@@ -1,0 +1,105 @@
+From owner-cypherpunks@jfet.org  Thu May 18 15:20:48 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.6/8.13.6/Debian-1) with ESMTP id k4IJKZ5N002680
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 18 May 2006 15:20:35 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.6/8.13.6/Submit) id k4IJKZTK002679
+	for cypherpunks-outgoing; Thu, 18 May 2006 15:20:35 -0400
+Message-Id: <6.2.1.2.0.20060518114903.03684388@pop.idiom.com>
+X-Mailer: QUALCOMM Windows Eudora Version 6.2.1.2
+Date: Thu, 18 May 2006 12:14:01 -0700
+To: "Chris Olesch" <g13005@gmail.com>
+From: Bill Stewart <bill.stewart@pobox.com>
+Subject: AT&T Cable Modem Traceroutes Re: NS&AT&T
+Cc: cypherpunks@jfet.org
+In-Reply-To: <aa4eafbd0605181020m1171b114t2fc10fb42cf24f4c@mail.gmail.co
+   m>
+References: <20060518070229.GR26713@leitl.org> 
+  <BAY116-F34F56FC8D13EBCE37E19649BA60@phx.gbl> 
+  <aa4eafbd0605181020m1171b114t2fc10fb42cf24f4c@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3906
+Lines: 74
+
+At 10:20 AM 5/18/2006, Chris Olesch wrote:
+>Maybe its just me, but my brother-in-law and I used to wonder why most of
+>AT&T's cable traffic routed thru the east coast before going out west (or
+>asia). This would have been well within the range they decided to setup
+>camp. early 2002 thru 2003 (maybe 2004). On the MOT backbone traffic was
+>routed normally, yet at-home it took extra routes.
+
+Your traceroutes went to the east coast because that's the
+closest peering point to most of the destination networks you were going to,
+and BGP mainly works with hop counts unless you do a lot of tweaking.
+
+AT&T never really ran the cable TV IP networks themselves
+when they bought the cable companies - it was still the different
+cable company operating folks that did most of it,
+and really they knew a lot more about Pay-Per-View than Internet data,
+as you might guess from the Don't-Even-Think-About-Running-Servers rules.
+The level of lack of integration was such that even though
+most of the cable companies had huge infrastructures of dark fiber
+along their cable rights-of-way, we weren't able to use that
+to sell access services to customers until the last few months
+before Wall Street made us sell the cablecos and give the money back.
+
+AT&T did provide them a bunch of wholesale backbone service -
+I don't know most of the details, and probably couldn't tell you if I did
+because of the usual customer-confidentiality rules.
+
+But you've got to remember that 2002 is a long time ago compared to the
+current Internet peering relationships.
+Public Peering back then still mostly happened at the MAEs and NAPs,
+and still mattered back then, though most of the bigger ISPs
+did private peering for the bulk of their traffic..
+I don't remember if everything had moved to Equinix yet.
+I don't know who @Home peered with other than AT&T -
+we peered with them in 9 or 10 cities, and typically peered
+with the really big ISPs in half a dozen cities each and
+the other big ISPs in 3-4 cities each,
+but I don't know how many of them @Home peered with.
+(AT&T peered with @Home in Chicago, but that doesn't mean that
+@Home peered with, say, UUnet there even if they could have.)
+
+AT&T had some OC192 backbone trunks in 2002,
+but mostly OC48 on big routes and there was still a fair amount of OC12,
+and most of the peering was at OC12 or OC3,
+which was still big back then.
+(We were the first carrier to run OC192 trunks, having scooped Sprint
+by a day or two, but for the first few months it was really
+a demo link from NYC-Boston that they only ran in the daytime for PR
+because the Cisco cards didn't really work yet...)
+
+>Tracert after tracert from within att's net, would mention long routes. It
+>would bounce 3 or 4 times go out the chicago trunk then end up on some cia,
+>or other federal line, then go back (but this time around chicago) and end
+>in cali. If our destination was Japan, or Siberia, the chat latency was
+>unbearable.
+>
+>I was glad when comcast took over, but then again maybe all this humdrum was
+>removed from the line (tracesrt's).
+
+Bouncing around Chicago 3-4 times was entirely no surprise -
+until carriers got really big hub switches in,
+you'd typically see at least three hops at any POP,
+one to an inbound router, one to a hub, and one to an outbound router,
+and the reason you don't see that today is that
+a lot of it's happening as Layer 2 Ethernet switching
+or Layer 2.5 MPLS switching depending on the carrier,
+so Traceroute doesn't know about it.
+And if you're going from carrier to carrier, you'll see more.
+
+And then there's annoying weirdness like
+connections from Carrier A in Denver going to Carrier B in Denver
+via Seattle and San Francisco because they don't peer directly there,
+but carrier B peers with Carrier C who's got an OC48 to Carrier A
+in Seattle and only an OC12 in SF so they hand it off there,
+and Carrier A connects Denver to SF and CHicago but not Seattle :-)
+

@@ -1,0 +1,159 @@
+From owner-cypherpunks@Algebra.COM  Thu Aug  8 07:24:15 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g78BOE018171
+	for <rsw@opamp.org>; Thu, 8 Aug 2002 07:24:14 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id HAA08775
+	for <rsw@mit.edu>; Thu, 8 Aug 2002 07:24:14 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g785ZFoA020279
+	for <cypherpunks-outgoing@ak47.algebra.com>; Thu, 8 Aug 2002 00:35:15 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g785ZFDC020278
+	for cypherpunks-outgoing; Thu, 8 Aug 2002 00:35:15 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g785ZAoA020258
+	for <cypherpunks@ak47.algebra.com>; Thu, 8 Aug 2002 00:35:11 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g785Z9hH028847
+	for cypherpunks@ak47.algebra.com; Wed, 7 Aug 2002 22:35:09 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g785YOwp028805
+	for cypherpunks-goingout345; Wed, 7 Aug 2002 22:34:24 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Thu, 8 Aug 2002 06:34:15 +0100
+From: Adam Back <adam@cypherspace.org>
+To: AARG!Anonymous <remailer@aarg.net>
+Cc: cypherpunks@lne.com, cryptography@wasabisystems.com,
+   Adam Back
+  <adam@cypherspace.org>
+Old-Subject: Re: Palladium: hardware layering model
+Message-ID: <20020808063415.A590658@exeter.ac.uk>
+References: <1c9905949ee6ae242d2b3fd69f09eb24@aarg.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <1c9905949ee6ae242d2b3fd69f09eb24@aarg.net>; from
+  remailer@aarg.net on Wed, Aug 07, 2002 at 04:55:11PM -0700
+X-Loop: cypherpunks@lne.com
+X-spam: 10 
+Subject:  Re: Palladium: hardware layering model
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 4026
+Lines: 105
+
+
+On Wed, Aug 07, 2002 at 04:55:11PM -0700, AARG!Anonymous wrote:
+> Adam Back wrote:
+> > +---------------+------------+
+> > | trusted-agent | user mode  |
+> > |    space      | app space  |
+> > |    (code      +------------+
+> > | compartment)  | supervisor |
+> > |               |    mode    |
+> > +---------------+------------+
+> > | ring-0  / Memory mgmt unit |
+> > +----------------------------+
+> > | hardware / SCP key manager |
+> > +----------------------------+
+> >
+> > each layer below can decide policy and information disclosure through
+> > APIs to the layer above.  
+> 
+> I don't think this is right, as Peter said that the Palladium stuff could
+> load many days after boot.  So I don't think the "ring-0" mode underlies
+> normal supervisor mode as you have shown it.  Instead I think they are
+> relatively orthogonal.
+
+No I think the above diagram is closer than what you propose.  Peter
+also pointed us at Seth Schoen's blog [1] which is a write up of a
+briefing Microsoft gave to EFF.  It contains the statement:
+
+| The nub is a kind of trusted memory manager, which runs with more
+| privilege than an operating system kernel. The nub also manages access
+| to the SCP.
+
+Looks consistent with my picture to me.
+
+Your other objection:
+
+> I don't think this is right, as Peter said that the Palladium stuff could
+> load many days after boot.  
+
+I think would just be covered by the details of how the machine
+switches from this picture:
+
++------------+
+| user mode  |
+| app space  |
++------------+
+| supervisor |
+|   mode     |
++------------+
+
+to the one above.
+
+For example imagine a default stub nub/TOR that leaves the new MMU
+features wide open.  (Supervisor mode can access everything, no
+Trusted Agent code compartments running).  The would be some API to
+allow the supervisor mode code to load a TOR and switch the TOR code
+to ring-0 while leaving the OS running in supervisor mode.
+
+Or alternatively and with equivalent effect: with the boot state, the
+OS runs in full ring-0 mode, but just isn't written to make use of any
+of the extra ring-0 features.  When it switches to loading a nub/TOR
+the OS is relagated to supervisor mode, some MMU permission bits are
+juggled around and the TOR occupies ring-0, and the TOR is just an OS
+micro-kernel which happens to be written to use the new hardware
+features (code compartmentalization, new MMU features, sealing etc)
+
+Clarification on this:
+
+> > So in the general case it seems that remote attestation is also
+> > effectively virtualizable, modifiable and debuggable by first nopping
+> > out remote attestation checks.  (This is not strictly virtualizable as
+> > the remote dongle call nopping modification makes it no longer the
+> > same application, but as I said unless this is necessary for the
+> > application it doesn't otherwise change it's behavior, so it's
+> > effectively virtualizable).
+> 
+> I'm not sure I follow this, but it sounds like you are talking about
+> manipulating the server machine doing the checks, while in most cases
+> you can only manipulate the client machine making the request.
+
+Not what I meant.  Say that you have some code that looks like this:
+
+/* some code */
+if ( ! remote_attest( /* ... */ ) ) { exit 0; }
+/* lots more code */
+
+then the remote attest is not doing anything apart from acting as a
+remote dongle, so all I have to do to virtualize this code, or break
+the licensing scheme based on the remote dongle is nop out the remote
+attest verification, then the code can be run as a user application
+rather than a trusted agent application and so can be run in a
+debugger, have it's state examined etc.
+
+If on the other hand the code says:
+
+download_sealed_content( /* ... */ );
+key = remote_attest_and_key_negotiate( /* ... */ );
+decrypt_sealed_content( key, /* ... */ );
+
+then nopping out the remote_attest will have a deleterious effect on
+the applications function, and so virtualizing it with the remote
+attests nopped out will not be useful in bypassing it's policies. 
+
+Adam
+--
+http://www.cypherspace.org/adam/
+

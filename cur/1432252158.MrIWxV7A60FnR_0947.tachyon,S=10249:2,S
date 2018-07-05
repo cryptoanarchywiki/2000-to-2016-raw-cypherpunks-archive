@@ -1,0 +1,239 @@
+From cryptography-owner@c2.net  Tue Oct 24 21:52:06 2000
+Received: from MIT.EDU (SOUTH-STATION-ANNEX.MIT.EDU [18.72.1.2])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id VAA02139
+	for <kwantam@positron.mit.edu>; Tue, 24 Oct 2000 21:52:06 -0400
+Received: from blacklodge.c2.net by MIT.EDU with SMTP
+	id AA19705; Tue, 24 Oct 00 21:51:36 EDT
+Received: from localhost (daemon@localhost) by blacklodge.c2.net (8.8.8/8.7.3) with SMTP id SAA22192; Tue, 24 Oct 2000 18:52:21 -0700 (PDT)
+Received: by blacklodge.c2.net (bulk_mailer v1.11); Tue, 24 Oct 2000 18:51:15 -0700
+Received: (from majordom@localhost) by blacklodge.c2.net (8.8.8/8.7.3) id SAA21772 for cryptography-outgoing; Tue, 24 Oct 2000 18:51:13 -0700 (PDT)
+Message-Id: <4.1.20001023133229.009a04b0@pop.ix.netcom.com>
+Message-Id: <4.1.20001023133229.009a04b0@pop.ix.netcom.com>
+X-Sender: kelsey.j@pop.ix.netcom.com
+X-Mailer: QUALCOMM Windows Eudora Pro Version 4.1 
+Date: Mon, 23 Oct 2000 14:31:08 -0400
+To: "Arnold G. Reinhold" <reinhold@world.std.com>,
+        Vin McLellan <vin@shore.net>
+From: John Kelsey <kelsey.j@ix.netcom.com>
+Subject: Re: Paranoid Encryption Standard (was Re: Rijndael & Hitachi)
+Cc: cryptography@c2.net, cypherpunks@cyberpass.net
+In-Reply-To: <v04210103b60bd1b404ee@[24.218.56.92]>
+References: <4.1.20001011195157.0099edf0@pop.ix.netcom.com>
+ <4.2.2.20001008163631.00c6cc40@shell1.shore.net>
+ <4.2.2.20001005031644.00b1a570@shell1.shore.net>
+ <4.2.2.20001004024006.00be6d60@shell1.shore.net>
+ <4.2.2.20001002220826.00bdb370@shell1.shore.net>
+ <4.2.2.20001004024006.00be6d60@shell1.shore.net>
+ <4.2.2.20001005031644.00b1a570@shell1.shore.net>
+ <4.2.2.20001008163631.00c6cc40@shell1.shore.net>
+ <4.1.20001011195157.0099edf0@pop.ix.netcom.com>
+Mime-Version: 1.0
+Old-Content-Type: text/plain; charset="us-ascii"
+Sender: owner-cryptography@c2.net
+Content-Type: application/pgp; format=text; x-action=sign
+Status: O
+Content-Length: 8325
+Lines: 201
+
+-----BEGIN PGP SIGNED MESSAGE-----
+
+At 02:26 PM 10/20/00 -0400, Arnold G. Reinhold wrote:
+>At 8:13 PM -0400 10/11/2000, John Kelsey wrote:
+
+...
+>I read the Massey and Maurer paper (One can find it at
+>http://www.isi.ee.ethz.ch/publications/isipap/umaure-mass-inspec-1993
+> 1.pdf  ) and I have a couple of comments on it.  
+
+Okay.  I think it's a lot easier to understand their result
+and all its implications like this:
+
+Suppose we have two ciphers, E_{K}(X),F_{K}(X), and we
+encrypt by computing
+
+C[i] = E_{K1}( F_{K2}( P[i] ) )
+
+Now, suppose I can break this composed cipher, when you
+choose E and F's keys independently, in a known plaintext
+attack.  I have some algorithm, A(), into which I feed my
+known plaintexts and the corresponding ciphertexts, and it
+churns on them for awhile, and returns the keys K1,K2.  This
+algorithm can be used to break E in a known plaintext attack
+as follows:
+
+You encrypt a bunch of messages under E_{K1}(X).  I know
+nothing of K1, but I know the plaintexts and their
+corresponding ciphertexts.  I randomly choose a key K2,
+encrypt all those ciphertexts with F_{K2}, and then feed the
+original plaintexts and my ciphertexts into my algorithm for
+breaking the composed cipher E_{K1}(F_{K2}(X)).
+
+That means that a known plaintext attack on E(F()) leads to
+a known plaintext attack on E().
+
+I can also mount a chosen plaintext attack on F, when you
+choose a random key K2.  I randomly select a key K1,
+randomly select a bunch of plaintexts, and encrypt them all
+under E_{K1}.  I then send you the ciphertexts and ask you
+to encrypt them under F_{K2}.  You do so, and send me back
+the results.  I now send my original plaintexts and the
+ciphertexts you sent me into my algorithm for breaking the
+composed cipher E_{K1}(F_{K2}(X)).
+
+That means that a known-plaintext attack on E(F()) leads to
+a chosen-plaintext attack on F().
+
+All the result is saying is that you can always convert
+breaking both ciphers to breaking either cipher
+individually.  The cool part of this isn't the worry about
+which cipher comes first, it's the fact that, with
+independent keys, you can show that composing the ciphers
+gives you a cipher no weaker than the stronger of the two
+ciphers.
+
+The reason the keys have to be independent is because
+otherwise, the proof doesn't work.  If the keys are chosen
+so that K1 == K2, then I can't build these attacks for my
+proof, because I can't choose F_{K2} without knowing K1.
+
+Now, we can also come up with examples of places where
+choosing K1 and K2 to be related is a bad idea.  For
+example, imagine the following ``game:''  You define some
+structure for putting N block ciphers together, and
+then I get to choose the N ciphers, with the constraint that
+at least one of the N must be strong against all attacks.
+Now, in this model, it's clear that if the keys are all
+equal, I can choose the ciphers so that a structure like
+E1(E2(E2(X))) is easily broken.  (Let E1 = 3DES encryption,
+E2 = 3DES decryption, and E3 = the identity cipher.)
+
+In this model, it's also clear that when the keys are
+independent, I can't choose the ciphers to include one
+strong cipher and N-1 ones specially designed to me to make
+the composition weak.  If I could, I could always convert
+the algorithm into a chosen-plaintext attack on the strong
+cipher.
+
+But these are different arguments.  The Massey and Maurer
+argument, at least as I've understood it, is that the keys
+have to be independent because otherwise the proof doesn't
+work, and so we can't say anything about their security.
+The game example I just gave argues that it's clearly
+possible to choose strong ciphers that fit into this
+multiple-encryption structure, and combine them in a way
+that's weak, when the keys are not independent.  (But it's
+been five years or so since I read their paper, so I may be
+forgetting some of what they said.)
+
+...
+>However in the case of a chosen-plaintext attack, Massey
+>and Maurer's argument does not work. In fact the proof they
+>give of their "Proposition" can easily be adapted to prove
+>that a concatenated cipher C1*...*Cn is always at least as
+>difficult to break by chosen-plaintext as *any* cipher in
+>the concatenation.
+
+Right.  This falls out of the basic argument really nicely.
+If you want to use an algorithm to break E1(E2(X)) to break
+E1(X), it has to use a chosen-plaintext attack on E1.
+
+>My main question is how much weight should we give to this
+>result in designing a crypto system by combining AES
+>candidates?
+
+Probably not too much, in terms of worrying about
+known-plaintext vs. chosen-plaintext attacks.  Though
+honestly, I think designing your PES is like providing
+really effective padlocks for screen doors.  (But you could
+say the same thing about AES with 256-bit keys.)
+
+...
+>>a.  The keys need to be independent.  (Otherwise, imagine if
+>>cipher #1 is DES encryption, and cipher #2 is DES
+>>decryption.)
+>
+>I don't think it is quite that clear. It might well be easier to
+>prove,  say,  that Twofish is not the inverse of MARS for the same
+>key than it is to prove the same result for separately hashed keys.
+>But again, the likelihood of two different ciphers being accidental
+>inverses is even lower than the likelihood of guessing the key
+>correctly (there are (2**n)! bijections on n-bit blocks). And NIST
+>has just released SHA-2 which provides 256 bit hashes,  so I suppose
+>we might as well use it here.
+
+See above.  The important part of the Maurer and Massey
+proof, IMO, is that it shows that you do get at least the
+strength of the strongest component cipher against
+chosen-plaintext attacks.  But that proof falls apart when
+you don't have independent keys, which means you can't
+really say anything about the strength of the composed
+cipher.  And the game argument shows that it's possible to
+choose those ciphers with non-independent keys badly enough
+to make the composed cipher weaker than any of its
+components.
+
+>>b.  There order of the ciphers matters for the kind of
+>>security proof you can do.  If you do Twofish, then
+>>Rijndael, you can prove that a known-plaintext attack on
+>>this system = a known plaintext attack on Twofish and a
+>>chosen-plaintext attack on Rijndael.  (That is, the combined
+>>system can be no easier to break than the easier of a
+>>known-plaintext attack on Twofish or a chosen-plaintext
+>>attack on Rijndael.)
+>
+>Is this the Massey and Maurer result or is there something
+>specific about these two ciphers?
+
+It's the Massey and Maurer result.
+
+...
+>The problem with OFB is that what you get is a stream
+>cipher and that, in turn, means a unique IV for each message
+>is required.
+
+Hmm.  It seems like you're going to need an IV for any
+chaining mode.  Using a superstrong block cipher, but then
+not bothering to use a chaining mode, is just silly.
+
+The IV reuse problem *is* a lot worse for OFB and counter
+modes than for any other mode.  Though once you decide
+you're going to use CFB- or CBC-mode, and choose a random
+IV, nearly all attacks end up being chosen-plaintext
+attacks, so maybe that's another reason not to worry too
+much about which cipher is first.
+
+>So here is my draft proposal for the Paranoid Encryption Standard,
+>PES:  (P is a plaintext block and K is the user key.)
+>
+>PES(P) =Twofish(Serpent(MARS(DEAL(AES(P))))), where:
+
+>the key for AES is SHA2(K||"Rijndael")
+>the key for DEAL is SHA2(K||"DEAL")
+>the key for MARS is SHA2(K||"MARS")
+>the key for Serpent is SHA2(K||"Serpent")
+>the key for Twofish is SHA2(K||"Twofish")
+
+Just an aside:  What properties are you assuming for SHA2?
+Because you're going to all this trouble to build a paranoid
+encryption standard, but then you're doing this weird
+construction to derive keys for everything, and it's not
+clear that you can prove anything about the structure when
+SHA2 is just a collision-resistant hash function.
+...
+
+>Arnold Reinhold
+ --John Kelsey, Counterpane Internet Security, kelsey@counterpane.com
+PGP Fingerprint: 5D91 6F57 2646 83F9  6D7F 9C87 886D 88AF
+
+-----BEGIN PGP SIGNATURE-----
+Version: PGPfreeware 6.5.1 Int. for non-commercial use
+<http://www.pgpinternational.com>
+Comment: foo
+
+iQCVAwUBOfSD3iZv+/Ry/LrBAQFBoAP+Jeq0bc9cA36WxnxOl+rz3O8bOYPkB0cG
+GLmCSm0gyxTPtfrDiqWW/fGFxOl0/E+Ec6IzG+WPrg7lwy5gjeOEHfzIkfB5dC0E
+rctkTSTum0lXGD3WKAOc4E+SKPaaU6pQRDZ4YcYkOZXGN9WVO88v7zZSGJvMCay9
+ig11jvhdgGc=
+=Xa+c
+-----END PGP SIGNATURE-----
+

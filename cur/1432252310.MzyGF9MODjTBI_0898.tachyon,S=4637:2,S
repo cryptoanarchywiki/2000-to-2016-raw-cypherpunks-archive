@@ -1,0 +1,96 @@
+From owner-cypherpunks@al-qaeda.net  Wed Sep  7 02:51:00 2011
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id p876mEaj027038
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 7 Sep 2011 02:48:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1315378095;
+	bh=c+4c96FUCWEY0AbkqakyfIkhoxUTri4FWqtUY0oAK5A=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=fBsckIBHNXlLQQaKYNFcXclHCyFGzgW/BkXHu8mP5L9k7AjhLJY8l78YyzDACNv9n
+	 Q3xBGbmXgtgfXrLn1MZgpd9mD3jHzc0keyb1SwoSLF5VE4jRgm8MH/9kxnmTn7Il1+
+	 onLVYxypFjWAiIZVRkftscFGM8EuJ/84dlKBJsBw=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id p876mE2E027037
+	for cypherpunks-outgoing; Wed, 7 Sep 2011 02:48:14 -0400
+Date: Wed, 7 Sep 2011 08:48:11 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Re: [cryptography] Diginotar broken arrow as a tour-de-force of
+  	PKI fail
+Message-ID: <20110907064811.GI16334@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Peter Gutmann <pgut001@cs.auckland.ac.nz> -----
+
+From: Peter Gutmann <pgut001@cs.auckland.ac.nz>
+Date: Wed, 07 Sep 2011 14:40:57 +1200
+To: cryptography@randombit.net,
+	mozilla-dev-security-policy@lists.mozilla.org, observatory@eff.org
+Subject: Re: [cryptography] Diginotar broken arrow as a tour-de-force of PKI
+	fail
+Reply-To: Crypto discussion list <cryptography@randombit.net>
+
+[Responding to the same three lists as before, please trim followups if you
+ feel it's off-topic]
+
+In response to my earlier "OCSP is unfixably broken, by design" comments, a
+couple of people have responded off-list with variants of "OK smartypants, how
+would you do it better?".  In order to provide a general answer (and avoid
+fragmenting the discussion into lots of private-mail threads), I'll point to
+this:
+
+  http://tools.ietf.org/id/draft-gutmann-cms-rtcs-01.txt
+
+This addresses all the problems I've pointed out in OCSP, as well as things
+OCSP never considered like performance issues (thus Verisign's security-
+breaking OCSP "optimisations").  It's been peer-reviewed and vetted, and I
+could have it re-posted in current draft format in a couple of days if there's
+any interest in finally switching validity-checking to proper whitelists (and
+fixing all of OCSP's other bugs).
+
+Two notes:
+
+1. This isn't a "get my pet protocol published", just a convenient means of
+   pointing out that this problem has been well-known among security
+   architects, thought about, and solutions designed, at least a decade ago.
+
+2. You may notice the rather odd form of the draft, as an S/MIME work item.
+   The reason why this was never published was because it proved impossible to
+   get past PKIX because it wasn't blacklist-based and was therefore
+   incompatible with CRLs.  The document starts in the late 1990s and mutates
+   over time as I tried to work around PKIX' resistance to whitelist-based
+   validity-checking.  After a couple of years of battling to get anything
+   like this adopted I just gave up, as the "CMS" in the draft implies towards
+   the end I was resorting to trying to launder it via the S/MIME working
+   group to get it published.  I think it was when someone told me that it'd
+   be referred back to PKIX for approval (as part of some IETF mechanism to
+   prevent people doing end-runs around working groups as I was doing) that I
+   realised it was never going to go anywhere.
+
+Anyway, a solution exists, it's been implemented and in active use for at
+least a decade, and I believe it fixes all of OCSP's numerous flaws as well as
+ones that were never even considered in OCSP, such as performance implications
+(in one test while looking at throughput I managed to - accidentally - DoS a
+LAN with a single 300MHz PIII machine running this protocol.  Try doing that
+with OCSP).
+
+Peter.
+_______________________________________________
+cryptography mailing list
+cryptography@randombit.net
+http://lists.randombit.net/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

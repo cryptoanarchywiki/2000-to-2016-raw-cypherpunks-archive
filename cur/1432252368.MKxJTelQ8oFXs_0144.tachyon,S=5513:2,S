@@ -1,0 +1,122 @@
+From owner-cypherpunks@al-qaeda.net  Fri Dec 28 06:28:58 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id qBSBPLVS025035
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 28 Dec 2012 06:25:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1356693921;
+	bh=GNlbu2OHnhH8CTgJmCcIE70FBTDmCmhTUXIejuRi0us=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=1Y3jg5UGhc+i9577qK8WxaDTea4F3BTudsCKLNT9T41VB6GF8yZpcA3NJyCH+t278
+	 EF28v7sSiz7PTa8CP6Q444RMYzGZWngn2C6v5plQW1R25VrLRz8Rw9wBMyPQHanCoQ
+	 irH9JjFi1R/ZQvwBgjlZjXy4NKYNapavSsbJQyPo=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id qBSBPKnq025034
+	for cypherpunks-outgoing; Fri, 28 Dec 2012 06:25:20 -0500
+Date: Fri, 28 Dec 2012 12:25:16 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, zs-p2p@googlegroups.com
+Subject: Re: [liberationtech] Travel with notebook habit
+Message-ID: <20121228112516.GR9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4056
+Lines: 88
+
+----- Forwarded message from Julian Oliver <julian@julianoliver.com> -----
+
+From: Julian Oliver <julian@julianoliver.com>
+Date: Fri, 28 Dec 2012 01:56:25 +0100
+To: liberationtech <liberationtech@lists.stanford.edu>
+Subject: Re: [liberationtech] Travel with notebook habit
+User-Agent: Mutt/1.5.20 (2009-06-14)
+Reply-To: liberationtech <liberationtech@lists.stanford.edu>
+
+..on Thu, Dec 27, 2012 at 09:51:02PM +0100, Jerzy Eogiewa wrote:
+> I am just reading this,
+> http://www.schneier.com/blog/archives/2012/12/breaking_hard-d.html
+> 
+> Can we start some discussion about good notebook travel habit? I have read
+> Jacob Appelbaum say he does not travel with _ANY_ drive in notebook, and this
+> seem to be extreme.
+> 
+> Without removing drive, what is the best habit for FDE for prevent attacks as
+> Schneier describe? Full power-down? No hibernate file? Any other things?
+
+Well, it's not the disk but what's on it. 
+
+I don't trust closed platforms like OS X or Windows systems. Take what I write
+with a grain of salt but here's my general approach on a GNU/Linux system:
+
+First tar up all the documents/files you need at the destination, note the
+md5sum and then securely copy them to a server you trust. Then start an sshd
+instance on port 443 (https) on the file server, so as to get around standard
+filtering on port 22 on the other end. Even some hotels filter against ssh but
+none do 443.
+
+Then set up two bootable stock Linux distributions with *full disk encryption*
+on fast USB sticks andsetup user accounts. Ensure tsocks, macchanger and Tor
+Browser Bundle, ssh, nmap and a few other basics are on the machine. Install Do
+Not Track plugin (or similar) alongside a User Agent Switcher. Take the actual
+hard disk out of the machine. Put one stick in your pocket and another in your
+check-in luggage. Take a few external USB wireless internet adapters with you.
+
+Take the plane/train/car over the border.
+
+On arrival and when you know you have an Internet gateway, plug one of the
+sticks in and boot up and get online using the external USB wireless adapter. If
+you have a link using Ethernet cable (RJ45) with an onboard Ethernet adapter
+then use it but only if you change your MAC address. Use macchanger to do this
+like so:
+
+    sudo ifconfig eth0 down # now plug in Ethernet cable
+    sudo macchanger -A eth0 # A random hardware address will be assigned
+    sudo ifconfig eth0 up
+    sudo dhclient eth0
+
+Now securely copy all the files back onto the local machine as a torified
+instance (only with tsocks to avoid UDP and DNS leaks) something like so:
+
+    cd
+    torify scp -P 443 you@remotehost.net:/path/to/files.tar.gz .
+    md5sum files.tar.gz # check it's the real deal against noted md5sum earlier
+    tar xvzf files.tar.gz
+
+Avoid using any web services that track you across sites (at the least use Do
+Not Track plugins and the like). Change your User Agent in the Torified browser
+you use to something ubiquitous like the Android browser (most popular
+smartphone by 3x in most countries). Always use SSL when connecting to mail
+services and the like.
+
+Before you fly again destroy that USB stick physically (smash with hammer and
+then burn). Destroy the USB network adapter you purchased also. Buy another USB
+stick, copy from the other stick you have (use 'dd' or 'cpio') and fly.
+
+I'm sure there's a far more user friendly approach that's sane enough out in the
+field. One can't expect journalists to learn the CLI (albeit I think anyone that
+needs to trust their machine, isolate and mitigate network threats (among
+others) ought to!).
+
+Cheers,
+
+-- 
+Julian Oliver
+http://julianoliver.com
+http://criticalengineering.org
+--
+Unsubscribe, change to digest, or change password at: https://mailman.stanford.edu/mailman/listinfo/liberationtech
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

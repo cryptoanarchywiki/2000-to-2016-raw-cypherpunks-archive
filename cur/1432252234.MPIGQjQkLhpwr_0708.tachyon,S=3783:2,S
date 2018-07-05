@@ -1,0 +1,81 @@
+From cypherpunks-bounces@cpunks.org  Sun Aug  4 06:21:21 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r74AL1Bn009644;
+	Sun, 4 Aug 2013 06:21:04 -0400
+Received: from oak.forest.a5775.uk0.bigv.io (lupine.me.uk [213.138.100.8])
+ by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r74AKrkM009639
+ (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Sun, 4 Aug 2013 06:20:55 -0400
+Received: from
+ 8.c.6.2.4.d.e.f.f.f.7.d.4.2.2.0.3.0.0.0.f.1.1.1.0.b.8.0.1.0.0.2.ip6.arpa
+ ([2001:8b0:111f:3:224:d7ff:fed4:26c8])
+ by oak.forest.a5775.uk0.bigv.io with esmtpsa
+ (SSL3.0:DHE_RSA_AES_256_CBC_SHA1:32) (Exim 4.72)
+ (envelope-from <nick@lupine.me.uk>) id 1V5vQh-00027U-SM
+ for cypherpunks@cpunks.org; Sun, 04 Aug 2013 11:20:51 +0100
+Message-ID: <1375611645.22095.18.camel@nlwork.lan>
+Subject: Re: Breaking PRISM and friends
+From: Nick Thomas <nick@lupine.me.uk>
+To: cypherpunks@cpunks.org
+Date: Sun, 04 Aug 2013 11:20:45 +0100
+In-Reply-To: <51FE1792.5090808@yahoo.com>
+References: <E1V5oVl-0003IQ-G1@oak.forest.a5775.uk0.bigv.io>
+ <51FE1792.5090808@yahoo.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.8.3 (3.8.3-2.fc19) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+Hi,
+
+On Sun, 2013-08-04 at 01:57 -0700, m wrote:
+> How is this conceptually different from a 2-node Tor network, where each 
+> ISP operates one node of the pair linking to every other ISP (so there 
+> are I^2 pairs)? Additional benefit of using Tor would be mixing and 
+> making traffic analysis harder. Threat modelling could draw on the 
+> existing research on Tor vulnerabilities.
+
+It may be misguided, but avoiding I^2 / M:N sessions was a goal. As
+numbers go, it's big enough to be uncomfortable (there's ~40K ASNs).
+
+There are other differences; with something like hide-eid, the source IP
+isn't hidden from the destination, and vice-versa. This lets SIP and
+FTP, for instance, work transparently over it. Also, if a peer or their
+ISP objects to the traffic, they know who's responsible for it so can
+take action.
+
+That last may be a disadvantage, depending on your preferences ;). My
+tor node's exit IP got added to a DNSBL for being the visible peer in
+abusive HTTP requests within a day or so of being started up. 
+
+Traditional tor is also dog-slow by comparison; packets through hide-eid
+take the same network path as they ordinarily would between wrap and
+unwrap. I assume that a 2-node tor network would replicate this
+property? I don't feel qualified to comment on scalability potential to
+any large degree, but it's something I've got an eye on. Hopefully, it's
+easier to scale this kind of limited packet futzing than it is to scale
+an onion router. 
+
+> Also, an ISP could easily, today, run single-node Tor network to obscure 
+> end point locations.
+
+Would the end-users need to run tor as well, or does it have support for
+scooping up a whole network's worth of traffic, transparently? I've only
+gotten as far as running it, not using it...
+
+/Nick
+

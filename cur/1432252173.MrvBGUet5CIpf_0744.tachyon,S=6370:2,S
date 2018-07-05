@@ -1,0 +1,134 @@
+From cypherpunks-bounces@cpunks.org  Fri Sep  6 17:03:37 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r86L3ZC7001943;
+	Fri, 6 Sep 2013 17:03:36 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; insecure key"
+	header.d=gmail.com header.i=@gmail.com header.b=pCTkEBmk;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-vc0-f176.google.com (mail-vc0-f176.google.com
+ [209.85.220.176])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r86L3XRm001939
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Fri, 6 Sep 2013 17:03:34 -0400
+Received: by mail-vc0-f176.google.com with SMTP id lf11so2552670vcb.35
+ for <cypherpunks@al-qaeda.net>; Fri, 06 Sep 2013 14:03:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:date:message-id:subject:from:to:cc:content-type;
+ bh=EXoi/7QNsYo2BQjHQFvi/JVK/HQ5uTr6s1RV8esZ7Ks=;
+ b=pCTkEBmkTeIIaif8sLJgCEo50AE7bDUktrJkDthCWF3kd6Dc2crLSOyGiO0UfCla/9
+ L+dmai7Jpg/wS8+hDNzT6g18s3NhfLI7Q7oSb9WgGZC98wEBLI8mdGy69hN702E0Dwtu
+ sFKpSi/lhZcTq6PFj9T3bfUQ1u/tlNlZDi4zA8pA0nZQmFf7hBbwYXI9Vc4TGLrtTTDd
+ JS/J2WLWs/nO1FXE3ZO0TGEjIBJ/fqXwWl+OTHnldfQcZpdwh7LOyDVvB5amcynsIFUw
+ C2r/jHVAq2KLrNTOquHl47c0rGuJU0MMs6+a5gie3ziCzBtNtksjO935AtmjtvAdbDz0
+ epWQ==
+MIME-Version: 1.0
+X-Received: by 10.58.137.167 with SMTP id qj7mr4124588veb.1.1378501407938;
+ Fri, 06 Sep 2013 14:03:27 -0700 (PDT)
+Received: by 10.220.223.205 with HTTP; Fri, 6 Sep 2013 14:03:27 -0700 (PDT)
+Date: Fri, 6 Sep 2013 17:03:27 -0400
+Message-ID: <CAD2Ti28CNogyX47GDxkFYTF5B8LhqhJ8umS99+15M1q4yP61BQ@mail.gmail.com>
+Subject: Random number generation influenced, HW RNG
+From: grarpamp <grarpamp@gmail.com>
+To: cypherpunks@al-qaeda.net
+Content-Type: text/plain; charset=UTF-8
+Cc: cryptography@randombit.net
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 3699
+Lines: 80
+
+On 9/6/13, Eugen Leitl <eugen@leitl.org> wrote:
+> ----- Forwarded message from Andy Isaacson <adi@hexapodia.org> -----
+>
+> From: Andy Isaacson <adi@hexapodia.org>
+> Subject: Re: [liberationtech] Random number generation being influenced -
+> rumors
+>
+> On Fri, Sep 06, 2013 at 10:45:46AM -0700, Joe Szilagyi wrote:
+>> Does anyone put any stock into the rumors floating lately that the
+>> government may have influenced Intel and/or AMD into altering
+
+> However, I claim that the fear is well founded and should be taken into
+> account by all threat models.
+>
+> HWRNG is a nearly-uniquely difficult security problem to crack.  By
+> definition it is impossible to prove that a black-box HWRNG is safe.
+> This is different from the security properties of a blackbox AES or
+> MODMUL accelerator, which can be demonstrated to conform
+> ...
+> By contrast, a properly functioning HWRNG cannot be tested in a way that
+> distinguishes it from the output of a stream cipher seeded with a
+> backdoor key.  And there's no way to test the behavior of HWRNG on an
+> ongoing basis; even if you had a test to run, it might switch to "stream
+> cipher mode" under the covers.
+
+Even dieharding the stream since inception is insufficient test.
+
+> If your AES instructions don't do AES, then testing
+> against a software implementation will show it!
+
+Unless some of those billion gates are dedicated to
+recognizing and modifying software AES to match, and
+every separate processor you might have handy to run
+software test on since AES came out has also been
+backdoored. There is always custom test rig or by hand.
+
+> This is not to say that RdRand is completely unusable.  Putting RdRand
+> entropy into a software pool implementation like /dev/urandom (or
+> preferably, a higher-assurance multipool design like Fortuna) is a cheap
+> way to prevent a putative backdoor from compromising your system state.
+
+> Weighing towards distrusting HWRNG we have the fact that NSA is reported
+> (yesterday) to have intentionally backdoored Dual_EC_DRBG, and to have
+> spent significant amounts of money to backdoor chip implementations,
+> with enough success that they brag about it in administrative summaries.
+>
+> So, I put a lot of credence in distrusting HWRNG black box
+> implementations.  But unfortunately we need a lot more reliable entropy.
+> A fully open source, nothing up my sleeve hardware entropy source would
+> be a huge improvement.
+
+True, if you can't see and verify it you can't trust it. Assuming
+there is no aforementioned subversion in other parts of the CPU,
+an RNG is then of base importance to much crypto...
+
+So what would be the cost per box to build 10,000 open source [1]
+RNG's [2] and sell them for middling/no profit? As assembled boxes,
+as you-build kits, or as free blueprints.
+
+If you don't need speed/quantity for speedy/large OTP XOR streams,
+these hobby jobbers would suffice to seed software prngs, and work
+well in combination with other software sources.
+
+What would be the cost bumps for speedy units, still complying
+with [1 and 2], for various definitions of speed?
+
+Dieharding this and any rng since inception over various
+block sizes would seem warranted to catch component and other
+failures [3], whereupon the /dev/<rng> device would block and
+warn until fixed. No one is doing this extra step in kernel or
+even in userland yet afaik. Why not?
+
+
+[1] For example, entirely from breadboard discrete logic you can buy
+and validate from any local parts supplier. ie: not using embedded
+asics or fancy usb fobs... but resistors, diodes, 74 series gates, etc.
+
+[2] Based on radiation, radio, audio/video, environmentals, etc.
+
+[3] Neutrino and other hits, Intel/AMD on-die gate failure, etc.
+

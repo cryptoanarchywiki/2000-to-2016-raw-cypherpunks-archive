@@ -1,0 +1,138 @@
+From cypherpunks-bounces@cpunks.org  Fri Oct 18 02:02:09 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9I6252X009156;
+	Fri, 18 Oct 2013 02:02:06 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9I620Q0009152
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Fri, 18 Oct 2013 02:02:02 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 4BFCE5435B5; Fri, 18 Oct 2013 08:01:59 +0200 (CEST)
+Date: Fri, 18 Oct 2013 08:01:59 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: Re: [Cryptography] /dev/random has issues
+Message-ID: <20131018060159.GJ10405@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 4529
+Lines: 100
+
+----- Forwarded message from Theodore Ts'o <tytso@mit.edu> -----
+
+Date: Thu, 17 Oct 2013 17:26:22 -0400
+From: Theodore Ts'o <tytso@mit.edu>
+To: John Denker <jsd@av8n.com>
+Cc: Cryptography <cryptography@metzdowd.com>
+Subject: Re: [Cryptography] /dev/random has issues
+Message-ID: <20131017212622.GB14512@thunk.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+
+On Thu, Oct 17, 2013 at 09:12:48AM -0700, John Denker wrote:
+> Here is an experiment you can do, if you have a Linux system:
+>   cat /proc/sys/kernel/random/entropy_avail
+> 
+> I predict that it is likely to be a smallish number, less than 192
+> bits, not enough to cut a PGP key.  This seems to conflict with
+> the stated purpose of having /dev/random, and with the purpose
+> of having buffers within the device.
+
+This is a known problem, and I have a patch pending for the next merge
+window to address this.
+
+http://git.kernel.org/cgit/linux/kernel/git/tytso/random.git/commit/?h=dev&id=f5c2742c23886e707f062881c5f206c1fc704782
+
+The Chrome browser in particular is a very heavy /dev/urandom user,
+and this is causing the problem you describe below:
+
+> On 10/17/2013 06:08 AM, Theodore Ts'o wrote:
+> > using a Yarrow-like approach,
+> 
+> I find the current version of /dev/random to be partly yarrow-like 
+> and partly not.  It is yarrow-like in the sense that it performs 
+> updates in batches, with a substantial minimum batch-size. It 
+> is non-yarrow-like in that it presents far too much load on the 
+> upstream source of entropy.
+
+With my recent change, /dev/urandom becomes much more like a
+periodically seeded CRNG, where we aren't even pretending to extract a
+bit of entropy from the input pool for each bit sent to userspace.  If
+you want that, then you should use /dev/random.
+
+> A non-exhaustive list of questions and issues -- some quite 
+> deep and some quite superficial -- can be found at
+>   http://www.av8n.com/turbid/paper/devrandom.htm
+
+There are some good questions here.  Some of them have been recently
+addressed, others have not been yet.  I don't have time right now to
+go through them all in detail, but I will put this on my reading list.
+
+Some quick notes: I have considered the possibility of replacing the
+output pools with something that uses AES instead, which would be
+especially useful for those architectures which have an AESNI-like
+instruction.  That's obviously something that would require a lot of
+thinking and prototyping before making such a major change, though.
+
+As far as your comments about /proc/sys/kernel/random/entropy_avail
+usually being close to zero, I'm currently running an upstream kernel
+with the dev branch of the random.git tree merged in, and things are
+significantly improved on that score:
+
+% cat /proc/sys/kernel/random/entropy_avail 
+2847
+
+On a process note, there is a huge amount of interest about
+/dev/random that has been demonstrated on this mail thread, and while
+some seem to be from people who haven't necessarily looked at the
+actual drivers/char/random.c source code, nor are interested in
+proposing specific changes, your comments above indicate that you have
+done this, and I very much appreciate your thoughts.
+
+Is the cryptography mailing list the best place to be having these
+discussions?  There is the moderation delay, and I'm also not sure how
+eager the moderators are about having the mailing list taken over by
+people talking about code patches, etc., on this list.  I wonder if we
+should create a separate mailing list, perhaps a
+linux-random@vger.kernel.org, and take the more technical discussions
+to that mailing list.
+
+					- Ted
+
+P.S.  If there are folks who will be at the LISA Conference in
+Washington, D.C, I'm hoping to meet with Matthew Green and try to
+interest him into doing a detailed look into at the random driver, and
+perhaps dragoon some of his students into evaluating entropy sources
+on various embedded Linux platforms.  If there are other people who
+are interested in talking /dev/random while I'm in DC, I've
+tentatively blocked off the afternoon of Tuesday, November 5th for
+that purpose.  Let me know off-line....
+
+_______________________________________________
+The cryptography mailing list
+cryptography@metzdowd.com
+http://www.metzdowd.com/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

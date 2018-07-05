@@ -1,0 +1,195 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u5T1UkHk028345;
+	Tue, 28 Jun 2016 21:30:47 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=zAm90nHb;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-vk0-f51.google.com (mail-vk0-f51.google.com
+ [209.85.213.51])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u5T1UhVD028335
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Tue, 28 Jun 2016 21:30:45 -0400
+Received: by mail-vk0-f51.google.com with SMTP id u68so3850947vkf.2
+ for <cypherpunks@cpunks.org>; Tue, 28 Jun 2016 18:30:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to;
+ bh=nCL8V/KTbx6Sth29F51ZG1iu1sziM48VU52GacjoQ8A=;
+ b=zAm90nHbLefQp26biG5gSRxblScpPwG8UJyGWy31/RpFSQkIfZJcvToxLIubKtxAiy
+ pDPj5NOfox+ALMu8IVCENW0s4nsbFehMprodqH5w+KHBLSFgz+RuRVh/90qxKU6XF7Bw
+ OPxlXGpMkC3QvtMIeC/EAOtGXAkoWlYMY+CiHGYm5wCkMq5Rq0vG/UslqoQFkZaGvd2Y
+ P59Ap/9Tpl3lSJg/vDWoNIDtcixj0cZC5D+oNLK2RA8rr/bOy+pWef+geyemubisQAHk
+ j7OuFV+ANl61gv6J+XFjPV5qlMJLUmuXqmCj6L6Eep11UTfQvQF8sHgOPKn7i7WSQswU
+ Ls/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to;
+ bh=nCL8V/KTbx6Sth29F51ZG1iu1sziM48VU52GacjoQ8A=;
+ b=XELG0/Ywi463rNVoD2unmHWiV7KZcqC31wAYfsK6As6RhaRS7x4hTT6O7gCCULN4O2
+ MYC3gkubt2xQ9FOQz4i7f8vtRtbCPbM1KrC0nIDnix5gT3rVeg9TkO4xhwms3q3tINlp
+ 8cTweEhbGU/ckH7ndGSmhnBZgr8cIUAM/UTQ/iRlz1BIPFhEGzzlRhEwgQNBoXJfl8qj
+ /xNqyPjCtPGywjggmRHDZdincSBJEtmoNf8ECHyZ9Y78opuBm41Ev/W8PogJIM6A0HNE
+ Xm7p+DEcsG5pW8LNcPm+7PMDTaih64GyzqQxPLItqPRi+DiQ8ENbQzyxV2E24RrpFOO5
+ S5yQ==
+X-Gm-Message-State: ALyK8tKyva06LtS1nUUp/IpsfY/uEOEHperuij+wfcfsF0B7MQiAZOdtjylH/gwC4wIQbhSGE5BikgUJnHMrVw==
+MIME-Version: 1.0
+X-Received: by 10.159.40.37 with SMTP id c34mr2088262uac.79.1467163837992;
+ Tue, 28 Jun 2016 18:30:37 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Tue, 28 Jun 2016 18:30:37 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Tue, 28 Jun 2016 18:30:37 -0700 (PDT)
+In-Reply-To: <5772D5A1.7010700@pilobilus.net>
+References: <CAG2tMp4_AFAvpJc-6mzaCgfMVZjqbNdJyw+oZm-y+6ra2KCk+A@mail.gmail.com>
+ <CAG2tMp513NmS4gcBZhM2JAxNGkpRr7c=JsZL+wQpEwCqsK7QdA@mail.gmail.com>
+ <CAG2tMp52AKKv+KiuwKBwA6iQGMVGuG=1AabtPGJuPPCjyvEFaA@mail.gmail.com>
+ <CAG2tMp40-3DpsEx=6Z5+XjoVKR7oCqQBJqxNSHaqPejOcBZN4A@mail.gmail.com>
+ <CAG2tMp5EWsXDPKcU_goW=ApqRdNFdEqMX3r05KfrEYsijgtfqA@mail.gmail.com>
+ <CAG2tMp77DA1Dwbz_Cq_A3yo2Th+NH6A2gp+D0Q=3ERgpM8RUgQ@mail.gmail.com>
+ <CAG2tMp7Fj73uvndcSLG3JqgM+x8P5DFNiZhOq3BYaYYxqs=X-Q@mail.gmail.com>
+ <CAG2tMp5t9Po62LYcAOJFvopjaeYQgQY4KpqaSkDqniX5ePoVTQ@mail.gmail.com>
+ <CAG2tMp64E2enGMFxO+Q2P44zmm-KbkAnjtWf4xhMbO5rDFaS+g@mail.gmail.com>
+ <CAG2tMp4iwP8vVW5qo-2h62km8ceZ_akrJCqKY+kaw47_3av-AA@mail.gmail.com>
+ <CAG2tMp6gygObFZvLY41H7jVjP27w-1ikBPUe7gE5t2ns35N+kg@mail.gmail.com>
+ <5771DEBD.7000803@riseup.net>
+ <CAG2tMp5us0ZWyeN6=kmdzapZN-UuXCnGtBrXFWhthHcQR5J3oQ@mail.gmail.com>
+ <5772067B.5090701@pilobilus.net>
+ <CAG2tMp5U5a4aQrx-QB+hacNtUk53srDCAdqKsRN4ihoTUj1MjQ@mail.gmail.com>
+ <5772D5A1.7010700@pilobilus.net>
+Date: Tue, 28 Jun 2016 22:30:37 -0300
+Message-ID: <CAG2tMp4GiAgtD-91x5yZ+NprYJUST7ezt0aACqY7ZJSO94YHtA@mail.gmail.com>
+Subject: Re: [OT] Five Simple Rules
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=94eb2c048128641642053660b345
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 117
+
+--94eb2c048128641642053660b345
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+On Jun 28, 2016 4:57 PM, "Steve Kinney" <admin@pilobilus.net> wrote:
+>
+> Many people I know credit Prometheus Rising, also by Wilson, for saving
+their so-called "sanity."
+
+Oh, unhappily I have no much sanity to be saved...  meh!  :(
+
+But I swear I will read it with care and attention.  I absolutely do love
+books!  They make me purr, rom rom...  <3
+
+( 'rom rom' is a Brazilian onomatopoeia for 'purring' and, for me, it
+sounds pretty cute when talking about books because 'hon'  - 'book' in
+Japanese -  sounds like 'rom', hihi...  So I am happy, purring and asking
+for more books at same time, haha!!  'rom rom' feelings, meow!  <3 )
+
+> This revered Holy Book by Wislon, Bob Shea and other contributors is a
+lot of fun; may puzzling Internet in-jokes will make sense after reading.
+It's amazing what can happen when smart people take LSD.
+
+Oh, I really love this book, haha!!  Already read "Principia Discordia"
+some years ago and it saved my life, haha!!  I was pretty stressed and
+almost killing a boss when read it.  The book made me laugh a lot and saved
+two lifes, my <world's worst bad word> boss and mine, hihi...  ;)
+
+I didn't learn the world's worst bad word yet, but used to call him
+'boss-ta'.  'Bosta' is a Brazilian bad word, which means 'sh=C2=A1t', but i=
+t is
+a bit less offensive...  :P
+
+It's a lovely coincidence, Steve.  Today I was seriously considering to
+kill one of my stalkers, but it would be pretty hard to hide his body and
+killing a person wouldn't be a vegan thing, uff...  :-/
+
+Well, I never tried LSD.  I don't have inclination for drugs, but I know a
+lot of different users, including several Apple products addicteds and
+hardcore Microsoft users.  I sincerely try to respect and understand all of
+them, but I prefer ice cream.  :)
+
+One of my craziest friends invited me to travel with him to know an
+indigenous tribe and use an hallucinogen made with frogs' poison.  He
+already tried it three times, really loved it and swears it will heal my
+broken heart.  So I told him the cheekiest lie of my life to avoid hurting
+his feelings...  "Oh, Dani, poison extracted from frogs?  Sorry, it is not
+vegan!"  :P  :P  :P
+
+( I am not vegan anymore, just veggie, but he doesn't need to know it or
+will invite me to taste one of his hallucinogen teas, uh!  Luckly, he
+thinks vegans are a kind of 'radical veggie nazis', who don't taste
+anything without "free animal cruelty" labels.  It is not true, but it is
+pretty convenient for me!  "Sorry, Dani, your hemp is a plant, but it has
+no labels.  Is it organic?" Hahaha!! )
+
+Tender kisses, warm hugs and lots of 'rom rom' from Brazil, my dear!  :*
+
+Cecilia
+
+--94eb2c048128641642053660b345
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p>On Jun 28, 2016 4:57 PM, &quot;Steve Kinney&quot; &lt;<a href=3D"mailto:=
+admin@pilobilus.net">admin@pilobilus.net</a>&gt; wrote:<br>
+&gt;<br>
+&gt; Many people I know credit Prometheus Rising, also by Wilson, for savin=
+g their so-called &quot;sanity.&quot;=C2=A0</p>
+<p>Oh, unhappily I have no much sanity to be saved...=C2=A0 meh!=C2=A0 :( <=
+/p>
+<p>But I swear I will read it with care and attention.=C2=A0 I absolutely d=
+o love books!=C2=A0 They make me=C2=A0purr, rom rom...=C2=A0 &lt;3</p>
+<p>( &#39;rom rom&#39; is a Brazilian onomatopoeia for &#39;purring&#39; an=
+d, for me, it sounds pretty cute when talking about books because &#39;hon&=
+#39;=C2=A0 - &#39;book&#39; in Japanese -=C2=A0 sounds like &#39;rom&#39;, =
+hihi...=C2=A0 So I am happy, purring and asking for more books at same time=
+, haha!!=C2=A0 &#39;rom rom&#39; feelings, meow!=C2=A0 &lt;3 )</p>
+<p>&gt; This revered Holy Book by Wislon, Bob Shea and other contributors i=
+s a lot of fun; may puzzling Internet in-jokes will make sense after readin=
+g.=C2=A0 It&#39;s amazing what can happen when smart people take LSD.</p>
+<p>Oh, I really love this book, haha!!=C2=A0 Already read &quot;Principia D=
+iscordia&quot; some years ago and it saved my life, haha!!=C2=A0 I was pret=
+ty stressed and almost killing a boss when read it.=C2=A0 The book made me =
+laugh a lot and saved two lifes, my &lt;world&#39;s worst bad word&gt; boss=
+ and mine, hihi...=C2=A0 ;)</p>
+<p>I didn&#39;t learn the world&#39;s worst bad word yet, but used to call =
+him &#39;boss-ta&#39;.=C2=A0 &#39;Bosta&#39; is a Brazilian bad word, which=
+ means &#39;sh=C2=A1t&#39;, but it is a bit less offensive...=C2=A0 :P</p>
+<p>It&#39;s a lovely coincidence, Steve.=C2=A0 Today I was seriously consid=
+ering to kill one of my stalkers, but it would be pretty hard to hide his b=
+ody and killing a person wouldn&#39;t be a vegan thing, uff...=C2=A0 :-/</p=
+>
+<p>Well, I never tried LSD.=C2=A0 I don&#39;t have inclination for drugs, b=
+ut I know a lot of different users, including several Apple products addict=
+eds and hardcore Microsoft users.=C2=A0 I sincerely try to respect and unde=
+rstand all of them, but I prefer ice cream.=C2=A0 :)</p>
+<p>One of my craziest friends invited me to travel with him to know an indi=
+genous tribe and use an hallucinogen made with frogs&#39; poison.=C2=A0 He =
+already tried it three times, really loved it and swears it will heal my br=
+oken heart.=C2=A0 So I told him the cheekiest lie of my life to avoid hurti=
+ng his feelings...=C2=A0 &quot;Oh, Dani, poison extracted from frogs?=C2=A0=
+ Sorry, it is not vegan!&quot;=C2=A0 :P=C2=A0 :P=C2=A0 :P</p>
+<p>( I am not vegan anymore, just veggie, but he doesn&#39;t need to know i=
+t or will invite me to taste one of his hallucinogen teas, uh!=C2=A0 Luckly=
+, he thinks vegans are a kind of &#39;radical veggie nazis&#39;, who don&#3=
+9;t taste anything without &quot;free animal cruelty&quot; labels.=C2=A0 It=
+ is not true, but it is pretty convenient for me!=C2=A0 &quot;Sorry, Dani, =
+your hemp is a plant, but it has no labels.=C2=A0 Is it organic?&quot; Haha=
+ha!! )</p>
+<p>Tender kisses, warm hugs and lots of &#39;rom rom&#39; from Brazil, my d=
+ear!=C2=A0 :*</p>
+<p>Cecilia</p>
+
+--94eb2c048128641642053660b345--
+

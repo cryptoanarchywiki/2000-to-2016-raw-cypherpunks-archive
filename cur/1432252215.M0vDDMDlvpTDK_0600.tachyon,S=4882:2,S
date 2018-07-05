@@ -1,0 +1,103 @@
+From owner-cypherpunks@Algebra.COM  Fri Jun  7 16:46:03 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.mit.edu (8.11.6/8.9.3) with ESMTP id g57Kk2B26584
+	for <rsw@jfet.org>; Fri, 7 Jun 2002 16:46:02 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id QAA13228
+	for <rsw@mit.edu>; Fri, 7 Jun 2002 16:44:31 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g57KDR95020677
+	for <cypherpunks-outgoing@ak47.algebra.com>; Fri, 7 Jun 2002 15:13:27 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g57KDRgB020676
+	for cypherpunks-outgoing; Fri, 7 Jun 2002 15:13:27 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from einstein.ssz.com (cpunks@[207.200.56.4])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g57KDO95020661
+	for <cypherpunks@algebra.com>; Fri, 7 Jun 2002 15:13:25 -0500
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id PAA14549
+	for cypherpunks@algebra.com; Fri, 7 Jun 2002 15:18:38 -0500
+Received: from locust.minder.net (locust.minder.net [66.92.53.74])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id PAA14543
+	for <cpunks@EINSTEIN.ssz.com>; Fri, 7 Jun 2002 15:18:35 -0500
+Received: from waste.minder.net (daemon@waste [66.92.53.73])
+	by locust.minder.net (8.11.6/8.11.6) with ESMTP id g57KDGE61947
+	for <cpunks@EINSTEIN.ssz.com>; Fri, 7 Jun 2002 16:13:16 -0400 (EDT)
+	(envelope-from cpunks@waste.minder.net)
+Received: (from cpunks@localhost)
+	by waste.minder.net (8.11.6/8.11.6) id g57KDF117247
+	for cpunks@ssz.com; Fri, 7 Jun 2002 16:13:15 -0400
+Received: (from majordom@localhost)
+	by waste.minder.net (8.11.6/8.11.6) id g57K8LH16916
+	for cypherpunks-outgoing; Fri, 7 Jun 2002 16:08:21 -0400
+Received: from locust.minder.net (locust.minder.net [66.92.53.74])
+	by waste.minder.net (8.11.6/8.11.6) with ESMTP id g57K8Ku16910
+	for <cypherpunks@minder.net>; Fri, 7 Jun 2002 16:08:20 -0400
+Received: from zayda.com (celery.zayda.com [208.186.180.200])
+	by locust.minder.net (8.11.6/8.11.6) with ESMTP id g57K8IE61721
+	for <cypherpunks@minder.net>; Fri, 7 Jun 2002 16:08:19 -0400 (EDT)
+	(envelope-from jason@lunkwill.org)
+Received: from localhost (jason@localhost)
+	by zayda.com (8.11.6/8.11.6) with ESMTP id g57K7oZ26440
+	for <cypherpunks@minder.net>; Fri, 7 Jun 2002 20:08:06 GMT
+Date: Fri, 7 Jun 2002 20:07:50 +0000 (UTC)
+From: Jason Holt <jason@lunkwill.org>
+X-X-Sender: jason@zayda.com
+To: cypherpunks@minder.net
+Old-Subject: More of Ben's blinding
+Message-ID: <Pine.LNX.4.44.0206071911570.1718-100000@zayda.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Old-Subject:  More of Ben's blinding
+Subject:   More of Ben's blinding
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+X-spam: 5 
+Status: O
+Content-Length: 1664
+Lines: 37
+
+
+
+> But actually another solution is much simpler, which is to do blinding
+> as just h * g^b, without a y factor.  That works fine as long as the
+> bank is known not to be misbehaving.  Ben's paper shows how the bank
+> can use a ZK proof to show that it is raising to the same power k every
+> time, basically again that same ZK proof regarding discrete logarithms.
+> If the bank uses such a proof then you can use simpler blinding without
+> a y factor, and you can recover the signature on the product of your h
+> values by dividing by g^k^(sum of b's).
+
+	Somewhere I got the idea that that was patented, but looking at
+undeniable signatures, they're actually much closer to (h^y)(g^b), so your
+suggestion should work great.  Thanks!
+
+	Anybody know of other patents which might get in the way?  I'm worried
+about Chaum's blind signature and undeniable signature patents, and want to
+present as patent-free a system as possible.
+
+	One more thing.  If the issuer returns the signature:
+
+(h1*g^b1 *h2*g^b2 *h3*g^b3...)^k
+
+	Can I separate out any of the h^k values?  My system relies on that
+being hard.  If I replace h1 with (g^b0) and get the issuer to sign:
+
+((g^b0)*g^b1 *h2*g^b2 *h3*g^b3...)^k
+
+	I should be able to divide the two results and get h1^k.  But part of
+the cut-and-choose protocol will be to require that the n/2 checked documents
+are all valid and different from any previous instances of the protocol.  So
+it should be extremely hard for the user to sneak lots of previously used
+values and fake h's (which are really blinding factors) into the unrevealed
+documents.  But are there other ways to separate out signatures on individual
+h's?
+
+					-J
+

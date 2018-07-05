@@ -1,0 +1,107 @@
+From coderpunks-errors@toad.com  Wed Jan 17 21:30:57 2001
+Received: from MIT.EDU (SOUTH-STATION-ANNEX.MIT.EDU [18.72.1.2])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id VAA28275
+	for <kwantam@positron.mit.edu>; Wed, 17 Jan 2001 21:30:57 -0500
+Received: from toad.com by MIT.EDU with SMTP
+	id AA26784; Wed, 17 Jan 01 21:29:37 EST
+Received: (from majordom@localhost) by toad.com (8.7.5/8.7.3) id SAA29237 for coderpunks-outgoing; Wed, 17 Jan 2001 18:09:15 -0800 (PST)
+Received: from smile.idiom.com ([209.209.13.26]) by toad.com (8.7.5/8.7.3) with ESMTP id SAA29232; Wed, 17 Jan 2001 18:09:12 -0800 (PST)
+Received: from billstewart (bay-29-b-22.sfo.dsl.cerfnet.com [216.148.82.22])
+	by smile.idiom.com (8.9.1/8.8.5) with SMTP id SAA29818;
+	Wed, 17 Jan 2001 18:08:55 -0800 (PST)
+Message-Id: <3.0.5.32.20010117180756.009cbd00@idiom.com>
+X-Sender: wcs@idiom.com
+X-Mailer: QUALCOMM Windows Eudora Light Version 3.0.5 (32)
+Date: Wed, 17 Jan 2001 18:07:56 -0800
+To: "Xiao, Peter" <pxiao@Liberate.com>, coderpunks@toad.com,
+        cypherpunks@toad.com
+From: Bill Stewart <bill.stewart@pobox.com>
+Subject: Re: crypto implementation for small footprint devices
+In-Reply-To: <953A023D1ACA2F45A31A6F9B7B2A992502E8A1F1@usscmail1.liberat
+ e.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: owner-coderpunks@toad.com
+Precedence: bulk
+Status: O
+Content-Length: 4088
+Lines: 77
+
+At 03:42 PM 1/9/01 -0800, Xiao, Peter wrote:
+>I am currently looking for crypto implementation that can fit into small
+>footprint (in the order of 50K or less) devices. Ideally, an SSL type of
+>protocol meets my requirements but it is almost impossible to implement it
+>within 50K even with selected cipher suites. So, I am looking for
+>alternatives (either symmetric key or public key based). I was thinking
+>about WTLS but looks like its implementation can not be significantly
+>smaller than that of TLS since it is also based on Public Key cryptography
+>(I am wondering how it fits into a cellphone). Can any one tell me what is
+>the approximate size of the client implementation of WTLS. Also, would
+>anyone send some pointers to me regarding what I am looking for.
+
+There's been a lot of work in the Smart Card community on
+fitting crypto into small memory space - I don't know if the
+"Independent Smart Card Developers' Organization" is still active
+- probable address - https://scard.org
+plus there are products from a number of smart card vendors.
+Dallas Semiconductor's i-button includes a crypto version.
+Certicom has the patents to many of the Elliptic Curve cryptosystem
+versions, and they've done a lot of work on products for small environments.
+ECC has an advantage over RSA and Diffie-Hellman public key methods
+because the key lengths are much shorter, typically 160-256 bits
+instead of 1024 or 512.  On the other hand, the math is much more complex
+than the bignum modular multiply and exponentiation that RSA and DH use,
+so the code space would be larger.  And 128 bytes may be large on a smartcard,
+but it's not that big on anything else.
+
+Is your space constraint RAM, or ROM/Flash code space?
+It's easy to fit the data space for most crypto algorithms
+into a few KB; the complexity is in the code space.
+Some of the data transfer formats wrap a lot of header
+and encoding around it, but some are simpler.
+Unfortunately, ASN.1 and PGP both put lots of complexity
+into data formats to squeeze out a few bits of space,
+so the code tends to be bloatware.
+If you're willing to do your own data formats, or use XDR,
+you can eliminate most of this.  (Simple bignums, etc.)
+On the other hand, if you want full browser capability,
+you'll need to do real SSL, so you can't avoid them.
+
+Most of the crypto algorithms themselves are relatively small -
+RSA and Diffie-Hellman are each a few lines (plus a bignum handler).
+The RC4 symmetric-key algorithm is extremely small,
+and operates on 8-bit bytes rather than bignums or bit-twiddling,
+and the 128-bit versions are very secure as long as you
+follow a few simple rules about usage.
+DES is ugly, and the hash functions are ugly,
+but they're still not very large.
+The 2-lines-of-perl versions are horrendously ugly,
+	http://www.cypherspace.org/~adam/rsa/
+and drag in perl's hugeness, but most of the ugliness
+is because Perl doesn't have native bignums and
+because they were converting from decimal input instead of hex.
+The Lisp and Python equivalents are pretty clean and still small :-)
+
+Digital signatures themselves are generally more complex
+because you need to handle the name of the thing that's being signed,
+and any semantics that thing drags with it.  For instance,
+are signatures fully general with N layers deep of key certification,
+or are you just going to handle signatures from a built-in key
+signing hashes of messages and code updates?  (Or signatures from
+keys signed by a built-in key.)
+
+What you need for space depends a lot on your objectives and on
+how general you need to be.  Sometimes you can get by with
+a few primitives to secure your communication to a central server
+and do the more complex stuff on the server.
+
+You're also going to have issues if you want to use the crypto
+for protecting television content :-),
+since that's typically a fast-moving target that changes
+almost as fast as the pirates figure out how to crack it.
+But even that crypto normally fits on smartcards.
+				Thanks! 
+					Bill
+Bill Stewart, bill.stewart@pobox.com
+PGP Fingerprint D454 E202 CBC8 40BF  3C85 B884 0ABE 4639
+

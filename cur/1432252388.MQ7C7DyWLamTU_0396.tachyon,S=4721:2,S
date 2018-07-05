@@ -1,0 +1,107 @@
+From cypherpunks-bounces@cpunks.org  Fri Aug 23 07:32:29 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r7NBWTkH003734;
+	Fri, 23 Aug 2013 07:32:29 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r7NBWPPn003730
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Fri, 23 Aug 2013 07:32:27 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 3AC705417FD; Fri, 23 Aug 2013 13:32:25 +0200 (CEST)
+Date: Fri, 23 Aug 2013 13:32:25 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: Re: [liberationtech] Open Whisper Systems' neat asynch FPS
+ "pre-keying"
+Message-ID: <20130823113225.GP29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 2918
+Lines: 67
+
+----- Forwarded message from Maxim Kammerer <mk@dee.su> -----
+
+Date: Fri, 23 Aug 2013 00:43:11 +0300
+From: Maxim Kammerer <mk@dee.su>
+To: liberationtech <liberationtech@lists.stanford.edu>
+Subject: Re: [liberationtech] Open Whisper Systems' neat asynch FPS "pre-keying"
+Reply-To: liberationtech <liberationtech@lists.stanford.edu>
+
+On Thu, Aug 22, 2013 at 9:03 PM, Joseph Lorenzo Hall <joe@cdt.org> wrote:
+> TextSecure’s upcoming iOS client (and Android data channel client) uses
+> a simple trick to provide asynchronous messaging while simultaneously
+> providing forward secrecy.
+
+Not sure if I understand all iOS-related issues described, but this
+seems like overcoming engineering problems with a synchronous protocol
+like OTR on iOS at the expense of exposing the clients to a DOS attack
+of exhausting the prekeys.
+
+However, an asynchronous protocol does not mean that all information
+must be delivered in one push. In cables communication [1], I chose
+simple asynchronous messages because I don't trust complex SSL
+handshakes or the cumbersome OTR protocol, and because I believe that
+reliable delivery receipts and resilience to DOS attacks are as
+important as the message itself. The exchange goes similar to the
+following (each line describes what is sent by sender (s) / receiver
+(r)) [2]:
+
+(s) peer request
+    (r) certificate, signed peer key
+(s) certificate, signed peer key, encrypted message+MAC
+    (r) receipt+MAC
+(s) acknowledgement+MAC
+
+and is similar to a state machine where each state is retried in
+sender / receiver until a new state is reached. The exchange above is
+somewhat implementation-specific for short requests followed by long
+fetches (implementation is HTTP-based and targeted for .onions), and
+for generic messages it can be reformulated as:
+
+(s) certificate, signed peer key
+    (r) certificate, signed peer key
+(s) encrypted message+MAC
+    (r) receipt+MAC
+(s) acknowledgement+MAC
+
+(In cables, username is certificate's fingerprint, so MITM'ing the
+certificate is not an issue.)
+
+So, with a centralized DB / prekeys I guess it's possible to shave off
+the first two messages, but does it really matter if the protocol is
+asynchronous to begin with?
+
+[1] http://dee.su/cables
+[2] https://github.com/mkdesu/cables/blob/master/doc/cable.txt
+
+-- 
+Maxim Kammerer
+Liberté Linux: http://dee.su/liberte
+-- 
+Liberationtech is a public list whose archives are searchable on Google. Violations of list guidelines will get you moderated: https://mailman.stanford.edu/mailman/listinfo/liberationtech. Unsubscribe, change to digest, or change password by emailing moderator at companys@stanford.edu.
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

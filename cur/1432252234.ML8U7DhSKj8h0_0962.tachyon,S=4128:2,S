@@ -1,0 +1,89 @@
+From owner-cryptography+rsw=mit.edu@metzdowd.com  Sat Jun 28 18:44:30 2003
+Return-Path: <owner-cryptography+rsw=mit.edu@metzdowd.com>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h5SMiU614247
+	for <rsw@opamp.org>; Sat, 28 Jun 2003 18:44:30 -0400
+Received: from red.metdow.com (72.muf123.nycm.n54ny05r18.dsl.att.net [12.103.123.72])
+	by fort-point-station.mit.edu (8.12.4/8.9.2) with ESMTP id h5SMiTZP020124
+	for <rsw@mit.edu>; Sat, 28 Jun 2003 18:44:30 -0400 (EDT)
+Received: by red.metdow.com (Postfix, from userid 1002)
+	id 2A274182F90; Sat, 28 Jun 2003 22:43:49 +0000 (UTC)
+X-Original-To: cryptography@metzdowd.com
+Delivered-To: cryptography@metzdowd.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by red.metdow.com (Postfix) with ESMTP id EE455182F93
+	for <cryptography@metzdowd.com>; Sat, 28 Jun 2003 22:43:47 +0000 (UTC)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id EF382D97CE; Sat, 28 Jun 2003 18:43:46 -0400 (EDT)
+X-Original-To: cryptography@metzdowd.com
+Received: from eth0.a.smtp.sonic.net (eth0.a.smtp.sonic.net [64.142.16.244])
+	by red.metdow.com (Postfix) with ESMTP id 6538A182F59
+	for <cryptography@metzdowd.com>; Sat, 28 Jun 2003 20:06:08 +0000 (UTC)
+Received: from billstewart.pobox.com (adsl-208-201-253-88.sonic.net [208.201.253.88])
+	by eth0.a.smtp.sonic.net (8.12.9/8.12.7) with ESMTP id h5SK5whl011827;
+	Sat, 28 Jun 2003 13:05:58 -0700
+Message-Id: <5.1.1.6.2.20030628124252.033e5600@idiom.com>
+X-Sender: wcs@idiom.com
+X-Mailer: QUALCOMM Windows Eudora Version 5.1.1
+Date: Sat, 28 Jun 2003 13:06:03 -0700
+To: cypherpunks@lne.com
+From: Bill Stewart <bill.stewart@pobox.com>
+Subject: Attacking networks using DHCP, DNS - probably kills DNSSEC
+Cc: cryptography@metzdowd.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Sender: owner-cryptography@metzdowd.com
+Precedence: bulk
+Status: O
+Content-Length: 2110
+Lines: 48
+
+Somebody did an interesting attack on a cable network's customers.
+They cracked the cable company's DHCP server, got it to provide a
+"Connection-specific DNS suffic" pointing to a machine they owned,
+and also told it to use their DNS server.
+This meant that when your machine wanted to look up yahoo.com,
+it would look up yahoo.com.attackersdomain.com instead.
+
+This looks like it has the ability to work around DNSSEC.
+Somebody trying to verify that they'd correctly reached yahoo.com
+would instead verify that they'd correctly reached
+yahoo.com.attackersdomain.com, which can provide all the signatures
+it needs to make this convincing.
+
+So if you're depending on DNSSEC to secure your IPSEC connection,
+do make sure your DNS server doesn't have a suffix of echelon.nsa.gov...
+
+
+------------------------------
+RISKS-LIST: Risks-Forum Digest  Saturday 17 June 2003  Volume 22 : Issue 78
+http://catless.ncl.ac.uk/Risks/22.78.html
+------------------------------
+Date: Fri, 20 Jun 2003 15:33:15 -0400
+From: Tom Van Vleck <thvv@multicians.org>
+Subject: ISP's DHCP servers infiltrated
+
+http://ask.slashdot.org/article.pl?sid=03/06/19/2325235&mode=thread&tid=126&tid=172&tid=95
+
+"... It turns out, Charter Communications' DHCP servers were
+infiltrated and were providing p5115.tdko.com as the
+'Connection-specific DNS suffix', causing all non-hardened Windows
+(whatever that means in a Windows context) machines to get lookups
+from a hijacked subdomain DNS server which simply responded to every
+query with a set of 3 addresses (66.220.17.45, 66.220.17.46,
+66.220.17.47).
+
+On these IPs were some phantom services. There were proxying Web
+servers (presumably collecting cookies and username/password combos),
+as well as an ssh server where the perpetrators were most likely
+hoping people would simply say 'yes' to the key differences and enter
+in their username/password..."
+
+Hmm, my cable ISP was down this morning.  Maybe coincidence.
+
+
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+

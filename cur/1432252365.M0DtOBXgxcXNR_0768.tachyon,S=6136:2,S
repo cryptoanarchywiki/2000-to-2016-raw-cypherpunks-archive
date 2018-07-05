@@ -1,0 +1,151 @@
+From owner-cypherpunks@al-qaeda.net  Tue Feb  8 16:32:03 2005
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.3/8.13.3/Debian-5) with ESMTP id j18MVdpo019183
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Tue, 8 Feb 2005 16:31:39 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.3/8.13.3/Submit) id j18MVdMe019182
+	for cypherpunks-outgoing; Tue, 8 Feb 2005 16:31:39 -0600
+Date: Tue, 8 Feb 2005 23:14:49 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: [i2p] weekly status notes [feb 8] (fwd from jrandom@i2p.net)
+Message-ID: <20050208221449.GE1404@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.4i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5022
+Lines: 124
+
+----- Forwarded message from jrandom <jrandom@i2p.net> -----
+
+From: jrandom <jrandom@i2p.net>
+Date: Tue, 8 Feb 2005 12:57:44 -0800
+To: i2p@i2p.net
+Subject: [i2p] weekly status notes [feb 8]
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Hi y'all, update time again
+
+* Index
+1) 0.4.2.6-*
+2) 0.5
+3) i2p-bt 0.1.6
+4) fortuna
+5) ???
+
+* 1) 0.4.2.6-*
+
+It doesn't seem like it, but its been over a month since the 0.4.2.6
+release came out and things are still in pretty good shape.  There
+have been a series of pretty useful updates [1] since then, but no
+real show stopper calling for a new release to get pushed.  However,
+in the last day or two we've had some really good bugfixes sent in
+(thanks anon and Sugadude!), and if we weren't on the verge of the
+0.5 release, I'd probably package 'er up and push 'er out.  anon's
+update fixes a border condition in the streaming lib which has been
+causing many of the timeouts seen in BT and other large transfers,
+so if you're feeling adventurous, grab CVS HEAD and try 'er out.  Or
+wait around for the next release, of course.
+
+[1] http://dev.i2p.net/cgi-bin/cvsweb.cgi/i2p/history.txt?rev=HEAD
+
+* 2) 0.5
+
+Lots and lots of progress on the 0.5 front (as anyone on the i2p-cvs
+list [2] can attest to).  All of the tunnel updates and various
+performance tweaks have been tested out, and while it doesn't
+include much in the way of the various [3] enforced ordering
+algorithms, it does get the basics covered.  We've also integrated
+a set of (BSD licensed) Bloom filters [4] from XLattice [5],
+allowing us to detect replay attacks without requiring any
+per-message memory usage and nearly 0ms overhead.  To accomodate our
+needs, the filters have been trivially extended to decay so that
+after a tunnel expires, the filter doesn't have the IVs we saw in
+that tunnel anymore.
+
+While I'm trying to slip in as much as I can into the 0.5 release, I
+also realize that we need to expect the unexpected - meaning the
+best way to improve it is to get it into your hands and learn from
+how it works (and doesn't work) for you.  To help with this, as I've
+mentioned before, we're going to have a 0.5 release (hopefully out in
+the next week), breaking backwards compatability, then work on
+improving it from there, building a 0.5.1 release when its ready.
+
+Looking back at the roadmap [6], the only thing being deferred to
+0.5.1 is the strict ordering.  There'll also be improvements to the
+throttling and load balancing over time, I'm sure, but I expect
+we'll be tweaking that pretty much forever.  There have been some
+other things discussed that I've hoped to include in 0.5 though,
+like the download tool and the one-click update code, but it looks
+like those will be deferred as well.
+
+[2] http://dev.i2p.net/pipermail/i2p-cvs/2005-February/thread.html
+[3] http://dev.i2p.net/cgi-bin/cvsweb.cgi/i2p/router/doc/
+                    tunnel-alt.html?rev=HEAD#tunnel.selection.client
+[4] http://en.wikipedia.org/wiki/Bloom_filter
+[5] http://xlattice.sourceforge.net/index.html
+[6] http://www.i2p.net/roadmap
+
+* 3) i2p-bt 0.1.6
+
+duck has patched up a new i2p-bt release (yay!), available at the
+usual locations, so get yours while its hot [7].  Between this
+update and anon's streaming lib patch, I pretty much saturated my
+uplink while seeding some files, so give it a shot.
+
+[7] http://forum.i2p.net/viewtopic.php?t=300
+
+* 4) fortuna
+
+As mentioned in last week's meeting, smeghead has been churning away
+at a whole slew of different updates lately, and while battling to
+get I2P working with gcj, some really horrendous PRNG issues have
+cropped up in some JVMs, pretty much forcing the issue of having a
+PRNG we can count on.  Having heard back from the GNU-Crypto folks,
+while their fortuna implementation hasn't really been deployed yet,
+it looks to be the best fit for our needs.  We might be able to get
+it into the 0.5 release, but chances are it'll get deferred to 0.5.1
+though, as we'll want to tweak it so that it can provide us with the
+necessary quantity of random data.
+
+* 5) ???
+
+Lots of things going on, and there has been a burst of activity on
+the forum [8] lately as well, so I'm sure I've missed some things.
+In any case, swing on by the meeting in a few minutes and say whats
+on your mind (or just lurk and throw in the random snark)
+
+=jr
+[8] http://forum.i2p.net/
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.4 (GNU/Linux)
+
+iD8DBQFCCSaRGnFL2th344YRApVpAKCEypMmgxmJu7ezMwKD5G3ROClh8ACfRqj6
++bDiCX8vfeua3lkyUfiF7ng=
+=+m56
+-----END PGP SIGNATURE-----
+_______________________________________________
+i2p mailing list
+i2p@i2p.net
+http://i2p.dnsalias.net/mailman/listinfo/i2p
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a>
+______________________________________________________________
+ICBM: 48.07078, 11.61144            http://www.leitl.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+http://moleculardevices.org         http://nanomachines.net
+
+[demime 1.01d removed an attachment of type application/pgp-signature]
+

@@ -1,0 +1,45 @@
+From rsw@jfet.org Wed May 14 13:18:44 2014
+Date: Wed, 14 May 2014 13:18:44 -0400
+From: "Riad S. Wahby" <rsw@jfet.org>
+To: cypherpunks@cpunks.org
+Subject: cypherpunks administrivia: no more reply-to header stripping
+Message-ID: <20140514171844.GA9696@antiproton.jfet.org>
+Mail-Followup-To: cypherpunks@cpunks.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+Status: RO
+Content-Length: 1204
+Lines: 29
+
+Folks,
+
+Until now, mailman has been stripping Reply-To: headers from messages
+to the list. I've just turned this off.
+
+Some webmail services (notably, Yahoo!) set the Reply-To: header and
+include it in the headers signed with DKIM. Stripping Reply-To: thus
+breaks the DKIM signature. In the case of Yahoo! this signature
+breakage is especially problematic, because their DMARC policy is set
+to reject. (In other words, messages with yahoo.com in the From:
+header that fail both SPF and DKIM should be rejected by compliant
+mail services, e.g., AOL, Gmail, Hotmail, Yahoo!)
+
+Messages to the mailing list should pass SPF, since the envelope
+sender domain for list messages is cpunks.org and I publish an
+appropriate spf RR. However, any list subscriber who forwards mail to
+another account will have broken SPF and an invalid DKIM signature,
+which trips the DMARC policy and causes delivery failures.
+
+I realize that this might cause some inconvenience, but I would prefer
+to err on the side of successfully delivering messages whenever
+possible. If you're using procmail and prefer the old behavior, the
+following recipe should suffice:
+
+:0H
+* ^list-id.*cypherpunks.cpunks.org
+| formail -IReply-To
+
+-=rsw
+

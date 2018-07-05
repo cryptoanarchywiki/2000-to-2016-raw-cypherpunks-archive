@@ -1,0 +1,241 @@
+From owner-cypherpunks@lne.com  Fri Apr 25 22:03:59 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h3Q23rt12807
+	for <rsw@jfet.org>; Fri, 25 Apr 2003 22:03:54 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h3Q1pLCv013143
+	for cypherpunks-goingout345; Fri, 25 Apr 2003 18:51:21 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Sat, 26 Apr 2003 02:50:46 +0100
+From: Adam Back <adam@cypherspace.org>
+To: Tim May <timcmay@got.net>
+Cc: cypherpunks@lne.com, Adam Back <adam@cypherspace.org>
+Subject: Re: double-spending prevention w. spent coins
+Message-ID: <20030426025046.A8088505@exeter.ac.uk>
+References: <5.1.1.6.2.20030424214841.02ce9738@idiom.com>
+  <D3F84545-776D-11D7-B966-000A956B4C74@got.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <D3F84545-776D-11D7-B966-000A956B4C74@got.net>; from
+  timcmay@got.net on Fri, Apr 25, 2003 at 03:32:42PM -0700
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 10695
+Lines: 210
+
+On Fri, Apr 25, 2003 at 03:32:42PM -0700, Tim May wrote:
+> I have a _completely_ different impression of which model has been
+> more prominent around Cypherpunks.
+
+Most people I've noticed prefer to avoid the "and then he goes to
+jail" step because it invites regulation and government involvement,
+is expensive and unappealing.  It also involves a identifying
+registration step to participate which is a barrier to entry.
+
+> I agree that Chaum and Brands have had more regime-friendly schemes, 
+> heavily involving identity revealing under some circumstances, but I 
+> would hardly say that they are either prominent Cypherpunks or that 
+> their approaches are prominent _around_ Cypherpunks. The earliest Chaum 
+> system, circa 1985-89, sought to preserve full 2-way untraceability via 
+> online clearing. Later Chaum systems--and Brands systems at all times, 
+> as I recall--made various compromises in what I think were ill-fated 
+> attempts to be more palatable to the various dictators in the world.
+
+I think the controversy surrounding political friendliness was
+centered on properties which are not intrinsic but apparently selected
+by implementors or proponents:
+
+- there are five schemes we can look at:
+
+- chaum online (CON), chaum/ferguson offline (CFOFF), brands online
+(BON), brands offline (BOFF), brands p2p offline (BP2P), and wagner
+online (WON)
+
+  - offline means payees can receive funds without connecting to the
+    bank immediately to check validity; their remaining assurance of
+    not accepting double-spent coins is that if a coin they receive is
+    double spent the bank will learn who is responsible; all offline
+    schemes also have an online deposit protocol for when the money is
+    paid into the bank.
+
+  - in fact offline coins generally can not be respent without
+    exchanging for a fresh coin at the bank, so the offline function is
+    perhaps better described as "delayed deposit".
+
+    - for why this is the case consider bank -> U1 -> U2 -> U3 -> bank
+      with 3 payer/payees U1, U2, U3; bank->U1 is withdrawal, U3->
+      bank is deposit, U1->U2 is pay, but U2->U3 isn't safe and here's why:
+
+      - U2 can't convince U3 that he knows the private key for the
+        coin because U2 does not have it to give him (U3 needs that
+        proof to know that U2s identity is in the coin and will be
+        revealed to the bank in case of double spending)
+
+      - if U1 did give U2 his private key, so that U2 could convince
+        U3 to accept his coin, then U2 could double spend
+        and U1 would get blamed, so it is not in U1's interests to
+        give U2 the coin private key
+
+  - but in the special case of Brands offline, there is a peer-to-peer
+    offline (which I called BP2P) which is a respendable offline
+    option which allows safe offline peer-to-peer transfers.  (The
+    trick is in fact to cryptographically bind peer2peer coins (which
+    grow at each exchange) to 0-value coins with the p2p recipient's
+    identity in them.  This trick only works with Brands offline I
+    think, because CFOFF doesn't have a private key to bind with).
+
+- all of the systems provide unconditional payer anonymity (CON, COFF,
+BON, BOFF, BP2P, WON)
+
+And collusion proof robust payee and payer anonymity is inherently
+possible with all the systems by using accountless operation - this
+works generically on all systems.  Basically the bank provides an
+interface to allow deposit of coins and getting back fresh blind
+coins.  
+
+In fact for this Brands has an extra protocol option to allow this to
+be done in a single operation (so-called re-freshed coin -- same
+attributes, new blinding factors).  This is not just an efficiency
+win, it has important privacy value: with this protocol the bank does
+not learn the coin attributes.  In particular this means the bank
+would not learn the amount of the transaction, as one of the
+attributes will be the transaction value (ie it can not distinguish 1c
+from $1000).  This I'd argue makes the Brands protocol much more
+pragmatically secure against flow analysis.  (With Chaum the bank has
+a separate public key per coin denomination, and could to some extent
+statistically trace groups of coin denominations).
+
+Chosing not to offer accountless operation is a policy decision by
+implementors and proponents (the usual argument is to avoid the
+"blackmail attack" -- ie so an unwilling payer extorted can later
+collude with the bank to identify the extorter).  However the
+side-effect (which is bad) is to make sting operations possible
+against anonymous sellers who are politicaly unpopular.  As Tim has
+articulated before there are lots of good reasons a seller should be
+able to be robustly anonymous.
+
+Then are two approaches to extracting payee anonymity even if the bank
+makes the political decision to not support accountless operation
+which due to the math work as follows:
+
+1. money changers - this works generically on all schemes -- basically
+an entity launders the money handing out fresh coins for used coins,
+optionally depositing the coins at the bank before handing out fresh
+coins.  Typically it is supposed that the money changer would charge a
+commission.  You do not have to trust the money changer with your
+privacy because you chose your own blinding factors.
+
+2. payer cooperation -- this also works (to varying extents) with all
+schemes.  
+
+  - one approach to getting payee privacy is if the payer cooperates
+    with the payee in an online fashion so that only the payee knows
+    the blinding factors (essentially the payee acts as the withdrawer
+    also, and the payer acts as a bit pipe).  This protects the payee
+    as the payer no longer has information allowing him to collude
+    with the bank
+
+    - the other side of adding payee privacy with this approach
+      is presumably the payer would also like to retain his privacy 
+ 
+    - with Chaum's online protocol double blinding works because of
+      the math, so the payer and payee can both be private without
+      needing to trust the other party not to collude with the bank
+
+    - with the other schemes the double blinding trick does not work
+      which creates a privacy risk for the payer -- the payee can
+      collude with the bank and identify the payer -- this essentially
+      means that only one of the payer or payee can be robustly
+      private at a time (if the bank refuses to offer accounless
+      operation)
+
+So in summary the best and simplest way to generically get robust
+payer and payee privacy is accountless operation.
+
+If bank chooses to not offer this option, then Chaum online protocol
+has the best workaround (retaining payer privacy); however even it is
+quite inconvenient requiring both parties to be simultaneously online.
+This requires non-standard software, and interferes with usage pattern
+-- many normal uses may not require the online aspect -- eg email your
+payment.  Forced to be online also practically reduces the privacy of
+both payer and payee against observers as interactive connections tend
+to offer less robust privacy.
+
+The money changer approach works also, but the bank may be able to
+recognize money changers by their high turn over and cancel their
+accounts, which you'd have to presume they would do if they
+intentionally did not offer accounless operation.
+
+Not satisfying in that there are no equi-functional work-arounds to
+the bank not offering accountless operation.
+
+> I also disagree that a model where identity is embedded in digital 
+> money has more technically interesting characteristics than a pure, 
+> first-class system has. More cruft and more baroqueness, yes, as all 
+> such systems somehow requiring identity or "is-a-person" credentials, 
+> no matter how well disguised, have more cruft and baroqueness.
+
+The protocols which offer the offline option where identity is
+revealed to bank if you double spend model do have more complex math.
+
+However you do get other extra features (in the case of Brands) such
+as single operation coin-refresh which has significant privacy value,
+and offer extra attributes which are useful for digital bearer bonds
+to convey information, and better efficiency, and you don't have to
+use the offline or p2p offline options -- they are just options.  So
+I'd argue that Brands is just a more flexible, private and efficient
+system.  Granted actually using the identity embedding offline option
+has problems -- but the lesson there is just don't use that option.
+
+
+Re. the side discussion about whether it's fair to call these tokens
+coins as the value lies in the double spend database rather than the
+coin, I had the same discussion with Bob some time ago, and I concur.
+
+I'd argue the p2p offline Brands option is more "coin" like in that
+you (personally) can spend the coin without relying on the
+double-spend database (providing the payee doesn't do an online
+deposit before accepting your payment).
+
+> A clean system requiring no identity would be much more interesting to 
+> see today. It's how bearer bonds and "markers" and various other forms 
+> of money (IOUs, chop marks, warehouse receipts, "pay to the holder of" 
+> forms) work. Systems based on identity, even when the identity is only 
+> findable via alleged double spending, are more like certain kinds of 
+> checks.
+
+Another bad aspect of identity is that it afects usability -- everyone
+has to be a registered and identified user at the bank to participate,
+even if they allow accountless operation just to meet the offline
+double-spending system.
+
+This is bad for functionality as you'd like to be able to fully
+participate without ever registering with or identifying yourself to
+the bank.
+
+
+I suppose the argument for the offline p2p systems and why people find
+them tempting is that aside from the identity registration issue, it
+works much better with intermittently connected devices like PDAs etc,
+which may not at all times have TCP/IP connectivity.
+
+But if you were using offline p2p I'd think you'd only want to accept
+low value payments, or have a good reason to want the added privacy of
+high latency deposit to the extent that you'd be willing to accept the
+risk, and you'd think the bank would not want to accept liability
+unless they had really good identity verification if the coins were
+going to circulate for weeks before mass double spending might be
+noticed.  (Though the higher the double-spending multiple, the sooner
+it will be noticed as on average someone will deposit two of them
+sooner.)  The problem for the bank would be people who either managed
+to fake the identity system, or the odd nutter who comits identity
+suicide for a brief burst of unlimited credit -- such people could do
+a lot of damage.
+
+Adam
+

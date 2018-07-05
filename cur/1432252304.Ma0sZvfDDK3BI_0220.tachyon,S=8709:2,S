@@ -1,0 +1,209 @@
+From owner-cypherpunks@Algebra.COM  Wed Aug  7 19:10:45 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g77NAii16184
+	for <rsw@opamp.org>; Wed, 7 Aug 2002 19:10:44 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id TAA22676
+	for <rsw@mit.edu>; Wed, 7 Aug 2002 19:10:43 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g77KeZoA031432
+	for <cypherpunks-outgoing@ak47.algebra.com>; Wed, 7 Aug 2002 15:40:35 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g77KeZuA031431
+	for cypherpunks-outgoing; Wed, 7 Aug 2002 15:40:35 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g77KeSoA031413
+	for <cypherpunks@ak47.algebra.com>; Wed, 7 Aug 2002 15:40:29 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g77KeRXu025598
+	for cypherpunks@ak47.algebra.com; Wed, 7 Aug 2002 13:40:27 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g77Kd7Bw025582
+	for cypherpunks-goingout345; Wed, 7 Aug 2002 13:39:07 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Wed, 7 Aug 2002 21:38:55 +0100
+From: Adam Back <adam@cypherspace.org>
+To: AARG!Anonymous <remailer@aarg.net>
+Cc: cryptography@wasabisystems.com, cypherpunks@lne.com,
+   Adam Back
+  <adam@cypherspace.org>
+Old-Subject: Palladium: hardware layering model (Re: Palladium: technical
+  limits and implications)
+Message-ID: <20020807213855.A597654@exeter.ac.uk>
+References: <51678c581368e18c35beca5d8665c528@aarg.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <51678c581368e18c35beca5d8665c528@aarg.net>; from
+  remailer@aarg.net on Wed, Aug 07, 2002 at 12:35:12PM -0700
+X-Loop: cypherpunks@lne.com
+X-spam: 10 
+Subject:  Palladium: hardware layering model (Re: Palladium: technical
+  limits and implications)
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 6114
+Lines: 153
+
+
+some definitions:
+
+hw layer -- SCP which I think provides crypto key store, crypto
+ 	    co-processor for sealing, remote attesation
+
+ring 0 -- new layer which controls memory management unit and secured
+code compartments
+
+supervisor mode -- normal supervisor mode, which can now only read
+user space, but not trusted agents running in code compartments
+
+user mode -- legacy user level apps under complete control of
+supervisor mode
+
+and some ASCII art:
+
++---------------+------------+
+| trusted-agent | user mode  |
+|    space      | app space  |
+|    (code      +------------+
+| compartment)  | supervisor |
+|               |    mode    |
++---------------+------------+
+| ring-0  / Memory mgmt unit |
++----------------------------+
+| hardware / SCP key manager |
++----------------------------+
+
+each layer below can decide policy and information disclosure through
+APIs to the layer above.  
+
+The implications of which are:
+
+- the SCP can implement sealing with data separation against ring-0
+(ring-0 can't bypass sealing data separation)
+
+- ring-0 can read all superviser, user, and trusted agent space, but
+
+- ring-0 and MMU can compartmentalize trusted agents so they can't
+tamper with each other, and
+
+- ring-0 and MMU can exclude supervisor mode from trusted agent space
+and ring-0 space; supervisor mode is itself just another
+compartmentalized trusted-agent level space.  Therefore ring-0 can
+restrict what supervisor mode (where the normal OS is located) can do.
+
+whereas the normal protected CPU architecture is just:
+
++------------+
+| user mode  |
+| app space  |
++------------+
+| supervisor |
+|   mode     |
++------------+
+
+- from these assumptions it appears an OS could be implemented so that
+all OS calls pass through ring-0 APIs and mediation to get to
+supervisor mode OS.  In this case the OS could observe system calls
+the trusted agent makes, but not in general read, debug, modify
+virtualize or modify trusted-agent code.  The non-virtualization
+presumes encrypted trusted-agent code, which Peter said is not done,
+so this can't be how it works.
+
+
+I would be interested to hear what model takes for Palladium mapping
+the interactions and restrictions between Trusted Agents, user space,
+OS kernel, TOR to the hardware.  We need this kind of detail to reason
+about limits of the Palladium and make distinctions between what is
+possible with Palladium implementation choices vs what other types of
+OSes could be built from the hardware features.
+
+
+One idea I think would be interest is as follows:
+
+- the TOR (which lives in ring-0) _could_ be used together with the OS
+to force all trusted-agent in-flows and out-flows (network traffic) to
+go through code under supervisor mode control.  
+
+I don't think this is likely in the current design; but this change
+would be an improvement: 
+
+- it would at least allow user audit and control of in-flows and
+out-flows;
+
+- the user could block suspicious phone-home information out-flows,
+
+- the user could read out-flows and demand un-encrypted documented
+formats, or if encrypted, encrypted with keys the supervisor mode gets
+copies of.
+
+- similarly in-flow control is interesting, because with no in-flows a
+trusted agent could be more liberally allowed to make out-flows (if it
+has no input knowledge, and is in a code compartment, and the user
+gave it no sensitive it doesn't know anything to leak.)
+
+(Even with encrypted code, or public code which could not otherwise be
+audited actively in the sense of debugging it's actual operation to
+see what it does in practice in your machine given your data and
+circumstances rather than looking at static code and third party
+certifications to try to deduce that.  Not all apps may be unencrypted
+(a TOR and SCP could clearly be built to support this feature).
+
+
+So on anonymous comments about OS control:
+
+> Obviously no application can reliably know anything if the OS is
+> hostile.  Any application can be meddled with arbitrarily by the OS.
+
+I'm not sure if anonymous is just generalising when he says the app
+can't in any circumstances know anything if the OS is hostile, but I
+think it could potentially know things if the OS is hostile.  As I
+described with the control and layer I think the palladium hardware
+uses.  It seems possible to build some of separations and exclude the
+OS from certain types of application.  It depends what you include in
+the OS; if the OS includes the TOR, then no.  But it was stated that
+the TOR is somewhat independent from the OS.  You could mix and match
+and use an MS Palladium TOR with linux potentially (though perhaps not
+in practice, it would have to be designed to allow it).  It also
+depends on how the OS, trusted agents and supervisor mode is mapped to
+the hardware.
+
+> What Palladium can do, though, is arrange that the app can't get at
+> previously sealed data if the OS has meddled with it.  The sealing
+> is done by hardware based on the app's hash.  So if the OS has changed
+> the app per the above, it won't be able to get at old sealed data.
+
+Peter seemed to claim these kinds of assurance.  Sealing doesn't
+prevent application virtualization, it just prevents the sealed data
+being shared between non-virtualized instances of the apps and
+virtualized instances.
+
+So I was wondering how Peter could simultaneously claim that
+encryption was not used and that "SW can known that it is running on a
+given platform."
+
+> And of course remote attestation will not work either, if the app
+> has been meddled with.
+
+Remote attestation, which is not itself general -- just a remote
+dongle thing -- if not tied to remote dongle controlled sealing which
+is necessary for the main application function could be nopped out.
+
+So in the general case it seems that remote attestation is also
+effectively virtualizable, modifiable and debuggable by first nopping
+out remote attestation checks.  (This is not strictly virtualizable as
+the remote dongle call nopping modification makes it no longer the
+same application, but as I said unless this is necessary for the
+application it doesn't otherwise change it's behavior, so it's
+effectively virtualizable).
+
+Adam
+

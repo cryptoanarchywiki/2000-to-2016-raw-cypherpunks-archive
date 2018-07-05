@@ -1,0 +1,149 @@
+From owner-cypherpunks@Algebra.COM  Fri Aug 30 06:13:57 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7UADq430036
+	for <rsw@opamp.org>; Fri, 30 Aug 2002 06:13:52 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id GAA26279
+	for <rsw@mit.edu>; Fri, 30 Aug 2002 06:13:52 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7U8H9Hf007847
+	for <cypherpunks-outgoing@ak47.algebra.com>; Fri, 30 Aug 2002 03:17:09 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g7U8H9Ns007846
+	for cypherpunks-outgoing; Fri, 30 Aug 2002 03:17:09 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7U8H4Hf007829
+	for <cypherpunks@ak47.algebra.com>; Fri, 30 Aug 2002 03:17:05 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7U8H3aZ020936
+	for cypherpunks@ak47.algebra.com; Fri, 30 Aug 2002 01:17:03 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7U8EoZR020927
+	for cypherpunks-goingout345; Fri, 30 Aug 2002 01:14:50 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+From: Eric Cordian <emc@artifact.psychedelic.net>
+Message-Id: <200208300814.g7U8E3l11027@artifact.psychedelic.net>
+Old-Subject: Dead Bovine RC5??
+To: cypherpunks@lne.com
+Date: Fri, 30 Aug 2002 01:14:03 -0700 (PDT)
+X-Mailer: ELM [version 2.5 PL3]
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Dead Bovine RC5??
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 4455
+Lines: 101
+
+
+The Bovine RC5 project on distributed.net has so far checked 86.742% of
+the keyspace in 1,772 days, without finding the key.
+
+Assuming that all values of the key are equally likely, it is perhaps time
+to start thinking about the entertaining prospect that the entire keyspace
+will be exhausted without a key being found.
+
+This could happen if there were a bug in the client, a bug in the server,
+or if people were spoofing blocks to the server, reporting them as
+failures without having actually searched them for the key.
+
+Let's let "eps" in [0,1] be the probability that something is screwed up
+in the project which prevents the key from being located.  Let C in [0,1]
+be the percentage of the keyspace that has been searched so far, and let F
+in [0,1] be the probability that the project is F---ed, which we define as
+the project continuing to completion without finding a key.
+
+Obviously 1-eps is the probability that the software will find a key
+somewhere, and after searching a C fraction of the keyspace, C*(1-eps) is
+the probability that we will have declared victory and gone home, and
+(1-C)*(1-eps)+eps is the probability that we are still chugging along.
+
+Ergo, the probability that we will complete without finding a key, over
+the probability that we are still in business after searching the fraction
+C, becomes after some minor algebraic tweeking...
+
+              F = eps/(1-C*(1-eps))
+
+Let's look at this function for various degrees of completion of the
+search, and various probabilities that the software is broken.
+
+For eps = .01, a 1 in 100 chance that the software doesn't work, the
+chances that the project is F---ed rachets up in the following manner as
+more and more keyspace is searched without a successful conclusion.
+
+                   % Searched     F---ed?
+                   ----------     -------
+                       86.742      7.0794
+                       90          9.1743
+                       95         16.807
+                       99         50.251
+                       99.9       90.992
+                       99.99      99.02
+                       99.999     99.901
+
+After 99% of the keyspace is searched without finding a key, there is
+about a 50-50 chance no key will be found, and if 99.9% of the keyspace is
+searched with no key, we may say with 90% confidence that the project will
+not end successfully.
+
+For eps = .001, a 1 in 1000 chance that some horrible bug or vindictive
+hacker has made an appearance, the table looks like this.
+
+                   % Searched     F---ed?
+                   ----------     -------
+                       86.742     0.74936
+                       90         0.99108
+                       95         1.9627
+                       99         9.0992
+                       99.9      50.025
+                       99.99     90.917
+                       99.999    99.011
+
+Now, we have to search 99.9% of the keyspace before we have a 50-50 chance
+no key will be found at all, and 99.99% before we know that fact with 90%
+confidence.
+
+And providing the project checked their code with sufficient sloppiness
+that there is a 1 in 10 chance all the CPU spent so far has been wasted,
+we have the following table.
+
+                   % Searched     F---ed?
+                   ----------     -------
+                       86.742      45.595
+                       90          52.632
+                       95          68.966
+                       99          91.743
+                       99.9        99.108
+                       99.99       99.91
+                       99.999      99.991
+
+Here we see they are almost to the point aleady where they are as likely
+as not to fail, but we will still need 99% of the keyspace to be searched,
+to be able to state that with over 90% confidence.
+
+For a piece of software a complex as the RC5 client, and associated
+keyblock server, I think 99% confidence that the software does not have a
+major undiscovered bug is a comfortable upper bound.  This means that
+there is less than a 10% chance that the project is screwed now, but
+things will start to get interesting once we get into the high 90's in
+terms of percentage keyspace search, if the key has still not been
+located.
+
+I'm sure we'll all be watching with breathless anticipation as the
+remaining keyspace is exhausted over the next few months.
+
+-- 
+Eric Michael Cordian 0+
+O:.T:.O:. Mathematical Munitions Division
+"Do What Thou Wilt Shall Be The Whole Of The Law"
+

@@ -1,0 +1,94 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Fri Feb  7 12:45:58 2003
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id h17HjwL16162
+	for <rsw@opamp.org>; Fri, 7 Feb 2003 12:45:58 -0500
+Received: from mononoke.wasabisystems.com (mononoke.wasabisystems.com [166.84.0.13])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id MAA21500
+	for <rsw@mit.edu>; Fri, 7 Feb 2003 12:45:55 -0500 (EST)
+Received: by mononoke.wasabisystems.com (Postfix, from userid 96)
+	id C44D85E401; Fri,  7 Feb 2003 12:45:27 -0500 (EST)
+X-Original-To: cryptography@wasabisystems.com
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by mononoke.wasabisystems.com (Postfix) with ESMTP id 523CE5E3F5
+	for <cryptography@wasabisystems.com>; Fri,  7 Feb 2003 12:45:27 -0500 (EST)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 27E1DD981D; Fri,  7 Feb 2003 12:45:27 -0500 (EST)
+X-Original-To: cryptography@wasabisystems.com
+Received: from mail.okiok.com (unknown [207.61.238.66])
+	by mononoke.wasabisystems.com (Postfix) with ESMTP id 8498C5E3F5
+	for <cryptography@wasabisystems.com>; Fri,  7 Feb 2003 12:23:57 -0500 (EST)
+Received: from p1038mobile (58-12-171-36.dial.mtl1.sprint-canada.net [149.99.171.36])
+	by mail.okiok.com (Postfix) with ESMTP
+	id A9ACDB4064; Fri,  7 Feb 2003 12:05:35 -0500 (EST)
+Message-ID: <001401c2cecd$8a2ae640$24ab6395@p1038mobile>
+From: "Anton Stiglic" <astiglic@okiok.com>
+To: "Adam Back" <adam@cypherspace.org>,
+   "Peter Gutmann" <pgut001@cs.auckland.ac.nz>
+Cc: <cryptography@wasabisystems.com>, <cypherpunks@lne.com>
+References: <200302050408.h1548H209355@medusa01.cs.auckland.ac.nz> <20030207010716.A2504400@exeter.ac.uk>
+Subject: Re: password based key-wrap (Re: The Crypto Gardening Guide and Planting Tips)
+Date: Fri, 7 Feb 2003 12:22:45 -0500
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+X-MSMail-Priority: Normal
+X-Mailer: Microsoft Outlook Express 5.50.4133.2400
+X-MimeOLE: Produced By Microsoft MimeOLE V5.50.4133.2400
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 2048
+Lines: 47
+
+----- Original Message -----
+From: "Adam Back" <adam@cypherspace.org>
+To: "Peter Gutmann" <pgut001@cs.auckland.ac.nz>
+Cc: <cryptography@wasabisystems.com>; <cypherpunks@lne.com>; "Adam Back"
+<adam@cypherspace.org>
+Sent: Thursday, February 06, 2003 8:07 PM
+Subject: password based key-wrap (Re: The Crypto Gardening Guide and
+Planting Tips)
+
+
+> [...]
+> Or is the problem that the above ensemble is ad-hoc (though using
+> standardised constructs).  Or just that the ensemble is ad-hoc and so
+> everyone will be forced to re-invent minor variations of it, with
+> varying degrees of security.
+
+One of the problems is exactly that.  There is no known proof of security
+for PBKDF2 (it might be possible to come up with one, but to the best
+of my knowledge nobody did so far).  Ironically, there are some proofs
+of security for the older version of the same standard, PBKDF1 (which
+was replaced by PBKDF2 only because the output of PBKDF1 was of
+fixed length, so you couldn't derive much key material).  You can prove
+some things about PBKDF1 relating to the fact that an adversary cannot
+compute the result of PBKDF1 without having to compute a certain required
+amount of hashes (this is the stretching part).  The details
+of that are in the paper "Secure Applications of Low-Entropy
+Keys" by Kelsey, Schneier, Hall and Wagner:
+http://www.counterpane.com/low-entropy.pdf
+
+But I do think that PBKDF2 sounds reasonable, and I wouldn't be
+surprised if we can prove something about it's security in some reasonable
+model.  I would use PBKDF2 if I needed to wrap a session key
+with only a password.
+
+In general, the problems with existing proposed key derivation
+functions is that they are all based on ad-hoc constructions.
+There is a skunks work group trying to come up with a
+proposal for a key derivation function which is based on some
+provable secure results.
+
+--Anton
+
+
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

@@ -1,0 +1,142 @@
+From owner-cypherpunks@Algebra.COM  Thu Jun 14 11:19:50 2001
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id LAA29778
+	for <kwantam@positron.mit.edu>; Thu, 14 Jun 2001 11:19:50 -0400
+Received: from ak47.algebra.com (root@ak47.algebra.com [208.233.99.160])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id LAA00772
+	for <rsw@mit.edu>; Thu, 14 Jun 2001 11:19:31 -0400 (EDT)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f5EElJ215064
+	for cypherpunks-outgoing; Thu, 14 Jun 2001 09:47:19 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com ([209.157.136.81])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f5EElD115049
+	for <cypherpunks@algebra.com>; Thu, 14 Jun 2001 09:47:13 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id f5EEl0L24989
+	for cypherpunks@algebra.com; Thu, 14 Jun 2001 07:47:00 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id f5EEkxs24980
+	for cypherpunks-goingout; Thu, 14 Jun 2001 07:46:59 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Received: (from ericm@localhost) by slack.lne.com (8.11.0/8.11.0) id
+  f5EEkiE24970; Thu, 14 Jun 2001 07:46:44 -0700
+Date: Thu, 14 Jun 2001 07:46:44 -0700
+From: Eric Murray <ericm@lne.com>
+To: "Trei, Peter" <ptrei@rsasecurity.com>
+Cc: cypherpunks@lne.com
+Old-Subject: Re: Fixing ORBS, and spam-proofing open relays.
+Message-ID: <20010614074644.A24781@slack.lne.com>
+References: <F504A8CEE925D411AF4A00508B8BE90A01E907A6@exna07.securitydyn
+  amics.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <F504A8CEE925D411AF4A00508B8BE90A01E907A6@exna07.securitydy
+  n amics.com>; from ptrei@rsasecurity.com on Wed, Jun 13, 2001 at
+  10:28:55AM -0400
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Re: Fixing ORBS, and spam-proofing open relays.
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 3724
+Lines: 90
+
+
+On Wed, Jun 13, 2001 at 10:28:55AM -0400, Trei, Peter wrote:
+> Instead of bitching about ORBS (which certainly 
+> behaves sub-optimally), I'd like to suggest that we 
+> discuss how a 'better' spam blocklist could  be 
+> operated.
+> 
+> Who knows - maybe someone could set one up 
+> to follow good practices. Under the right circumstances, 
+> high-quality information can drive out bad.
+> 
+> [For the record, I'm not as exercised about email 
+> spam as are many people - it takes me less time 
+> each day to trash the electronic junk mail than it 
+> does to sort out the paper kind, despite an internet 
+> presence stretching back decades, and posting to both
+> mailing lists and Usenet with my real address. My 
+> main objection to spam is that I don't want sexually 
+> explicit email arriving in my 10 year old daughter's 
+> inbox].
+> 
+> I'd like to suggest that if ORBS gave a little more 
+> information about *why* a given site was listed, 
+> and sites where thus able to implement their own 
+> policies over what parts of the list to use,
+> then that would be a far more equitable situation. 
+
+ORBS couldn't do this with any granularity
+because of the way it was implemented- you did
+a DNS lookup on the IP address to see if it was in the
+ORBS database.  There was no meta-info available.
+
+They (MAPS) did have three different databases-
+one for open relays (ORBS), one listing addresses that
+are within an ISP's range of dialups (and which should
+have been using the ISP's mail servers to relay, not
+sending directly), and one other database that I can't
+remember at the moment (was it known spammers?).
+
+Using DNS for database lookups had some technical
+advantages- it's low bandwidth and caching was already built in
+to DNS.  So for example a site like mine which has
+limited bandwidth (I live out in the woods) and does
+a lot of email could still do the various MAPS lookups
+without significantly increasing the traffic load.
+
+But that's not to say that a newer reputation system
+couldn't be designed and written to meet the same
+goals and include more info about why a site is
+on the list.
+
+However I think that the main problems with
+such a reputation system aren't technical, they're legal.
+At least in the U.S., such a system would be the
+subject of extreme legal harassment by spammers and
+their ilk, just as MAPS was.
+
+ 
+> -------------------
+> 
+> BTW, I expect that it should be possible to spam-proof an
+> open relay, by tinkering very slightly with the protocol
+> implementation.
+> 
+> For example: if a server required a 10 second pause between
+> successive  RCPT commands, then a message to a
+> single recipient would pass without problems, but a spammer
+> trying to send to many people would be blocked.
+
+The benefit to the spammer of sending spam through a relay is
+that the spammer can multiply his bandwidth-- the spam will
+include many To: addresses in the envelope, so the relay has
+to do the work of sending out all the mail, not the spammer's
+machine.  There may be hundreds of To: adresses in the envelope
+for each mail that the spammer sends to the relay.
+So this solution wouldn't work- it'll slow the spammer
+down only a little.  You could restrict the number of
+ To: addresses in the envelope, but that might also keep
+you from sending mail to an "all" alias at a company.
+
+> There are *many* other ways to tinker with the protocol
+> implementations which would let legitimate users send mail
+> without difficulty, using normal agents, but which would
+> make the spammers' life far more difficult.
+
+I'd like to hear some of them.  I've been having a hard time
+coming up with ways to differentiate spam based on the header
+info.  I've had more luck identifying spam based on the content.
+
+Eric
+

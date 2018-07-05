@@ -1,0 +1,144 @@
+Return-path: <cypherpunks-bounces@cpunks.org>
+Envelope-to: rsw@positron.jfet.org
+Delivery-date: Thu, 28 Jul 2016 18:58:12 -0700
+Received: from antiproton.jfet.org ([209.141.47.85])
+	by positron.jfet.org with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.87)
+	(envelope-from <cypherpunks-bounces@cpunks.org>)
+	id 1bSx40-0006F1-B0
+	for rsw@positron.jfet.org; Thu, 28 Jul 2016 18:58:12 -0700
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u6T1lmpS018262;
+	Thu, 28 Jul 2016 21:47:49 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=MI7aB7/D;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-ua0-f178.google.com (mail-ua0-f178.google.com
+ [209.85.217.178])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u6T1lkvh018253
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 28 Jul 2016 21:47:47 -0400
+Received: by mail-ua0-f178.google.com with SMTP id l32so52345571ual.2
+ for <cypherpunks@cpunks.org>; Thu, 28 Jul 2016 18:47:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to;
+ bh=N6ICTQXtEIXnzl83OEnPMoM8GhbXrgQUVDIXnmZvluY=;
+ b=MI7aB7/DvdLXvFVusMBtFFDEzpiTo3zsinqJZNxNcZKWXto0o3Pe1Up7elLUTkViEF
+ wv0UnEqooPSzCR9rD6JO4jhfikbmZZekU4iuOLsu2gAVXr0U8bi+Q98YecKJykoC3Q8M
+ zIt6kaGMaKPouxzTyCVx5OfEXlHca/rW1eW5Hx1iMY5wqtu8V57Pq5mhWF3MmIkrlf+0
+ JFxpy1mwvueG+zU7RWk/y4zpoQ3EBTcfJDusAxrdslBCEynVSYUvJ7L4fVdfCsMstqbt
+ +07evzvs5+UBs7FrGq8yBvqm70mExb71uO1tR9ZjrI7fJHM3d++hcA6RkXs+mNmVfzcl
+ rmLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to;
+ bh=N6ICTQXtEIXnzl83OEnPMoM8GhbXrgQUVDIXnmZvluY=;
+ b=FzGrhSHoE/F6ECHBpSs0WF3+7skWrZ+ZKqke+rd1RjDIbJD8o1WnxdY8R8ZMUL7ppG
+ Na5e4M62MSFWs2H+gBCsI12mTg8ZC5O1hsYPEArOaA0CGmQMzSRxGktQOqh9iyfdZC3c
+ KIhhGTmosammUIgrgfTB1X9vtDXh0K3qUrJN8esurlUhWnWqfiTO3Mu/EO/F2Wa3BlLp
+ S0r8cN14vy7hypI+EbM6u9HS/YzIZK6hVFCORaq/HYcAyY2fKdaxpAsmxGRAksGLkb+4
+ NBEOwaPbbIdQ8Wrbx1dNKhgJRoGBjMzvstnxewTI/e86KJTiBe2Ep+sIJm1XLeqzGL1b
+ p68Q==
+X-Gm-Message-State: AEkoout3+LLrLixQwAVULkjCG7Y/hM8DzlymTQJpSVM8wzluO9gENFF4esBOMdYLA6znOrH0nt2opeVxtsVEjA==
+MIME-Version: 1.0
+X-Received: by 10.176.3.116 with SMTP id 107mr17191660uat.131.1469756860419;
+ Thu, 28 Jul 2016 18:47:40 -0700 (PDT)
+Received: by 10.176.2.138 with HTTP; Thu, 28 Jul 2016 18:47:40 -0700 (PDT)
+Received: by 10.176.2.138 with HTTP; Thu, 28 Jul 2016 18:47:40 -0700 (PDT)
+In-Reply-To: <CAG2tMp4Xy20820xJumg6HJXh8cCnEOJGzGjttw06Qu1GeePysQ@mail.gmail.com>
+References: <CAG2tMp4t=8PNcXTj06caT5_0bJRpnxcDjcksL8NbzU7q6rZY3g@mail.gmail.com>
+ <CAG2tMp4RxHVWThdGP_SyzsYFk9=Q0aRZN4x0Dcdti_L+qQORyA@mail.gmail.com>
+ <CAG2tMp4EZD5LWgTx9YT1+GQK-5Tk+gkALtHETYSpaOGMaupZ_A@mail.gmail.com>
+ <CAG2tMp7a3gauiLfFrZH0NsWS5HSkTd9GtfUJEj3ns676FMKbAg@mail.gmail.com>
+ <CAG2tMp4PDhKbyrBPE1hySp64A2Umwimih++drKOev6w2JaQi0w@mail.gmail.com>
+ <CAG2tMp6JzSx7zJWmdpQmOn4GhaeiUtBVrCLmFnyKcvA0WGODrg@mail.gmail.com>
+ <CAG2tMp4Xy20820xJumg6HJXh8cCnEOJGzGjttw06Qu1GeePysQ@mail.gmail.com>
+Date: Thu, 28 Jul 2016 22:47:40 -0300
+Message-ID: <CAG2tMp6RCD6zms_rK=V=nheo1-aRKp0xKVDHVUSF6KWVsoE_zQ@mail.gmail.com>
+Subject: Re: Scanning the Dark Web with Python (was Re: cypherpunks Digest,
+ Vol 37, Issue 101)
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>, justin@automatingosint.com
+Content-Type: multipart/alternative; boundary=001a113b13649258570538bc6f4e
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 66
+
+--001a113b13649258570538bc6f4e
+Content-Type: text/plain; charset=UTF-8
+
+Whoops, my bad!  Wrong email address.  Sorry everybody, Justin included!  :P
+On Jul 28, 2016 10:34 PM, "Cecilia Tanaka" <cecilia.tanaka@gmail.com> wrote:
+
+> Hi, Justin!  Hope you are doing fine!  :)
+>
+> I liked your project a lot and forwarded the message you had originally
+> sent to the list "Data Driven Journalism and Open Data in Journalism" to
+> two different lists.
+>
+> A Brazilian guy wants to talk with you about the project.  He contacted me
+> and I asked to talk directly to you.  And, well, Flipchan sent this cute
+> message now:
+>
+> ===
+> On Jul 28, 2016 9:45 PM, "Flipchan" <flipchan@riseup.net> wrote:
+> >
+> > Cant u scan tor in a simplier way?like generating .onion addresses then
+> curl(ing) them with multiple threads in py?:)
+> ===
+>
+> Sorry, my programming is still a shame, even worst than my English.
+> Please, may you answer to the questions?  I am curious and will forward
+> your answer to Python Brazil list too!  :)
+>
+> Thank you very much!  Good luck and success!  <3
+>
+> Ceci
+>
+
+--001a113b13649258570538bc6f4e
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p>Whoops, my bad!=C2=A0 Wrong email address.=C2=A0 Sorry everybody, Justin=
+ included!=C2=A0 :P</p>
+<div class=3D"gmail_quote">On Jul 28, 2016 10:34 PM, &quot;Cecilia Tanaka&q=
+uot; &lt;<a href=3D"mailto:cecilia.tanaka@gmail.com">cecilia.tanaka@gmail.c=
+om</a>&gt; wrote:<br type=3D"attribution"><blockquote class=3D"gmail_quote"=
+ style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"><p=
+>Hi, Justin!=C2=A0 Hope you are doing fine!=C2=A0 :)</p>
+<p>I liked your project a lot and forwarded the message you had originally =
+sent to the list &quot;Data Driven Journalism and Open Data in Journalism&q=
+uot; to two different lists.</p>
+<p>A Brazilian guy wants to talk with you about the project.=C2=A0 He conta=
+cted me and I asked to talk directly to you.=C2=A0 And, well, Flipchan sent=
+ this cute message now:</p>
+<p>=3D=3D=3D<br>
+On Jul 28, 2016 9:45 PM, &quot;Flipchan&quot; &lt;<a href=3D"mailto:flipcha=
+n@riseup.net" target=3D"_blank">flipchan@riseup.net</a>&gt; wrote:<br>
+&gt;<br>
+&gt; Cant u scan tor in a simplier way?like generating .onion addresses the=
+n curl(ing) them with multiple threads in py?:)<br>
+=3D=3D=3D</p>
+<p>Sorry, my programming is still a shame, even worst than my English.=C2=
+=A0 Please, may you answer to the questions?=C2=A0 I am curious and will fo=
+rward your answer to Python Brazil list too!=C2=A0 :)</p>
+<p>Thank you very much!=C2=A0 Good luck and success!=C2=A0 &lt;3</p>
+<p>Ceci</p>
+</blockquote></div>
+
+--001a113b13649258570538bc6f4e--
+

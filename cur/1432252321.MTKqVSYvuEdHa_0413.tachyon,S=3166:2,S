@@ -1,0 +1,70 @@
+From owner-cypherpunks@lne.com  Thu Jul 10 11:06:33 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h6AF6V601816
+	for <rsw@jfet.org>; Thu, 10 Jul 2003 11:06:31 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h6AEkf92006781
+	for cypherpunks-goingout345; Thu, 10 Jul 2003 07:46:41 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Thu, 10 Jul 2003 16:45:58 +0200 (CEST)
+From: Thomas Shaddack <shaddack@ns.arachne.cz>
+X-X-Sender: <shad@Zeta>
+To: Eric Murray <ericm@lne.com>
+cc: <cypherpunks@lne.com>
+Subject: Re: MRAM, persistance of memory
+In-Reply-To: <20030709104333.A30503@slack.lne.com>
+Message-ID: <Pine.LNX.4.33.0307101631030.25940-100000@Zeta>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2128
+Lines: 43
+
+On Wed, 9 Jul 2003, Eric Murray wrote:
+> I doubt it as well.  DRAM also has power-off memory persistence
+> and nearly everyone in security ignores that as well.
+>
+> But not the spooks :
+>
+> "The FEI-374i-DRS is a data recovery system that captures and preserved
+> digital data, in its original format, directly from the Dynamic Random
+> Access Memory (DRAM) of Digital Telephone Answering Machines (DTAMs)
+> ..
+> The FEI-374i-DRS is an indispensable tool for forensic investigators
+> required to evaluate residual audio and tag information retained in
+> today's DRAM-based DTAMs."
+>
+> http://www.nomadics.com/374idrs.htm
+
+The system doesn't seem to be able to recover data from powered-off DRAM.
+The specs say it can recover files that were erased. The DRAM-based DTAMs
+use the DRAM as a RAM disk. For some reason unknown to us (may be
+conspiracy with TLA, but Occam's razor says it's mere negligence/laziness)
+the designers don't overwrite the memory region that pertains to an erased
+file, only deallocate it, leaving the data there. I suppose the DRAM
+refresh circuits are backed up with a small battery to cover brief
+blackouts.
+
+It is impossible to get access to the voltage on the DRAM cell capacitors
+(at least if the chip is in its case and we can access only its pins). We
+can only see if it is in the range for H or L. And after a power-down (or
+even a sufficiently long period without a refresh of the given cell) the
+cell capacitor loses voltage steadily, reaching the level of L (or maybe
+H?) within at most couple seconds.
+
+Seems the device is nothing more than a logic analyzer connected to the
+DRAM pins.
+
+This is a nice illustration of the problem with comercial vendors and
+closed-architecture devices they peddle. If we'd have access to the
+firmware of the DTAMs, writing extensions for storing data in (at least
+somehow) encrypted format and their overwriting after deletion won't be a
+big problem. Hope the price of embeddable computer "cores" will continue
+to fall. (Apropos, whats the current cost of the cheapest cores able to
+run stripped-down Linux? Maybe something based on ARM or MIPS
+architecture?)
+

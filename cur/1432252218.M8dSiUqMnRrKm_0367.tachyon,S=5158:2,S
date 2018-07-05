@@ -1,0 +1,114 @@
+From owner-cypherpunks@jfet.org  Fri Sep 30 04:34:35 2005
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.4/8.13.4/Debian-3) with ESMTP id j8U8YEQ9015002
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 30 Sep 2005 04:34:14 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.4/8.13.4/Submit) id j8U8YEGl015001
+	for cypherpunks-outgoing; Fri, 30 Sep 2005 04:34:14 -0400
+Date: Fri, 30 Sep 2005 10:34:00 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@jfet.org
+Subject: [jason@lunkwill.org: Re: Pseudonymity for tor: nym-0.1 (fwd)]
+Message-ID: <20050930083400.GG2249@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.5.9i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4075
+Lines: 87
+
+----- Forwarded message from Jason Holt <jason@lunkwill.org> -----
+
+From: Jason Holt <jason@lunkwill.org>
+Date: Thu, 29 Sep 2005 23:32:48 +0000 (UTC)
+To: or-talk@seul.org
+Subject: Re: Pseudonymity for tor: nym-0.1 (fwd)
+Reply-To: or-talk@freehaven.net
+
+
+
+---------- Forwarded message ----------
+Date: Thu, 29 Sep 2005 23:32:24 +0000 (UTC)
+From: Jason Holt <jason@lunkwill.org>
+To: Ian G <iang@systemics.com>
+Cc: cryptography@metzdowd.com
+Subject: Re: Pseudonymity for tor: nym-0.1 (fwd)
+
+
+On Thu, 29 Sep 2005, Ian G wrote:
+>Couple of points of clarification - you mean here
+>CA as certificate authority?  Normally I've seen
+>"Mint" as the term of art for the "center" in a
+>blinded token issuing system, and I'm wondering
+>what the relationship here is ... is this something
+>in the 1990 paper?
+
+Actually, it was just the closest paper at hand for what I was trying to do,
+which is "nymous accounts", just as you say.  So I probably shouldn't have
+referred to "spending" at all.
+
+My thinking is that if all Wikipedia is trying to do is enforce a low
+barrier of pseudonymity (where we can shut off access to persons, based on a
+rough assumption of scarce IPs or email addresses), a trivial blind
+signature system should be easy to implement.  No certs, no roles, no CRLs,
+just a simple blindly issued token.  And in fact it took me about 4 hours
+(while the conversation on or-talk has been going on for several days...)
+
+There are two problems with what I wrote. First, the original system is
+intended for cash instead of pseudonymity, and thus leaves the spender a
+disincentive to duplicate other serial numbers (since you'd just be accused
+of double spending); this is a problem since if an attacker sees you use
+your token, he can get the same token signed for himself and besmirch your
+nym. And second, it would be a pain to glue my scripts into an existing
+authentication system.
+
+Both problems are overcome if, instead of a random token, the client blinds
+the hash of an X.509 client cert.  Then the returned signature gives you a
+complete client cert you can plug into your web browser (and which web
+servers can easily demand).  Of course, you can put anything you want in the
+cert, since the servers know that my CA only certifies 1 bit of data about
+users (namely, that they only get one cert per scarce resource).  But the
+public key (and verification mechanisms built in to TLS) keeps abusers from
+being able to pretend they're other users, since they won't have the users'
+private keys.
+
+<rant>
+The frustrating part about this is the same reason why I'm getting out of
+the credential research business.  People have solved this problem before
+(although I didn't know of any Free solutions; ADDS and SOX are hard to
+google -- are they Free?).  I even came up with at least a proof of concept
+in an afternoon. And yet the argument on the list went on and on, /without
+even an acknowledgement of my solution/.  Everybody just kept debating the
+definitions of anonymity and identity, and accusing each other of anarchy
+and tyranny.  We go round and round when we talk about authentication
+systems, but never get off the merry-go-round.
+
+Contrast that with Debevec's work at Berkeley; Ph.D in 1996 on "virtual
+cinematography", then The Matrix comes out in 1999 using his techniques and
+revolutionizes action movies.  Sure, graphics is easier because it doesn't
+require everyone to agree on an /infrastructure/, but then, neither does the
+tor/wikipedia problem.  I'm grateful for guys like Roger Dingledine and Phil
+Zimmerman who actually make a difference with a privacy system, but they
+seem to be the exception, rather than the rule.
+</rant>
+
+So thanks for at least taking notice.
+
+						-J
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a>
+______________________________________________________________
+ICBM: 48.07100, 11.36820            http://www.leitl.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+
+[demime 1.01d removed an attachment of type application/pgp-signature which had a name of signature.asc]
+

@@ -1,0 +1,149 @@
+From owner-cypherpunks@al-qaeda.net  Fri Dec  2 08:33:53 2011
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id pB2DS9XW010218
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 2 Dec 2011 08:28:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1322832489;
+	bh=jpXCZZl73TNZsyYNM/w6GF0Z6hbZG9BghwAy01VINKI=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=W4q1EMC/ZdZ/8IlqvSVN58Lj0iglH3+ttGlTYhW6dmJMMIr5NwdcLDTN5q62gB0c0
+	 DT6r/03hLwEoVXfv/aQrdP0EFazIG9bYObafSn058nZV7ponvAXKveqlyNczq3ELzp
+	 xlFA73V0nuqTdkfXZV2z9N67drnUhpeAo23eZq6k=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id pB2DS9m4010217
+	for cypherpunks-outgoing; Fri, 2 Dec 2011 08:28:09 -0500
+Date: Fri, 2 Dec 2011 14:28:05 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Re: [cryptography] if MitM via sub-CA is going on, need a 
+  name-and-shame catalog (Re: really sub-CAs for MitM deep packet 
+  inspectors?)
+Message-ID: <20111202132805.GM31847@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5533
+Lines: 115
+
+----- Forwarded message from Adam Back <adam@cypherspace.org> -----
+
+From: Adam Back <adam@cypherspace.org>
+Date: Fri, 2 Dec 2011 14:00:03 +0100
+To: Peter Gutmann <pgut001@cs.auckland.ac.nz>
+Cc: cryptography@randombit.net
+Subject: Re: [cryptography] if MitM via sub-CA is going on,
+	need a name-and-shame catalog (Re: really sub-CAs for MitM deep
+	packet inspectors?)
+User-Agent: Mutt/1.5.21 (2010-09-15)
+
+On Sat, Dec 03, 2011 at 01:00:14AM +1300, Peter Gutmann wrote:
+> I was asked not to reveal details and I won't, 
+
+Of course, I would do the same if so asked.  But there are lots of people on
+the list who have not obtained information indirectly, with confidentiality
+assurances offered, and for them remailers exist.
+
+> but in any case I don't know whether it would achieve much.  For the case
+> of a public CA doing it, you'd see that CA X is involved, ...
+
+personally I'd like to know who is doing this and at what scale.
+
+> I guess if you're running into this sort of thing for the first time then
+> you'd be out for blood, but if you've been aware of this it going on for more
+> than a decade then it's just business as usual for commercial PKI.  I'm
+> completely unfazed by it, it's pretty much what you'd expect.
+
+I do not think its what you'd expect.  A CA should issue certificates only
+to the holders of certificates.  It should NOT issue sub-CA certifactes to
+third parties who will then issue certs to domains they dont own.  Not even
+on the fly inside a "packet inspection" box.
+
+If someone wants to inspect packets on a corporate lan they can issue their
+own self-signed cert, and install that in their users browsers in their OS
+install image.
+
+Then if I go on their LAN with my own equipment, I'll get a warning.
+
+I think its unacceptable to have CAs issuing such certs.
+
+>> It breaks a clear expectation of security and privacy the user, even very
+>> sophisitcated user, has about privacy of their communications.
+>
+> Not on a corporate LAN.  IANAL but AFAIK your employer's allowed to run that
+> in whatever way they want.
+
+No.  Also IANAL but there were several cases where employees did have an
+expectation of privacy upheld even in the US.  Certainly you cant do that in
+the EU legally either.
+
+>> 3. public provider SSL MitM - if your ISP, wifi hotspot, 3g data prov, is
+>> doing this to you, paid or free, thats illegal IMO.  Heads should roll up
+>> the CA tree.
+>
+> I think this is where we differ in our outlook.  This (and yeah, I'd still
+> like to see the certs for one of these from a public location :-) is business
+> as usual for commercial PKI.  
+
+I dont view this as business as usual.  If I am on a public hotspot, 3g or
+my own DSL/cable I do ABSOLUTELY NOT expect the ISP to be getting inside my
+SSL connection to my bank, my gmail account etc.  Whether I paid or not.  
+For any reason at all (not to do advert analysis, not to do anti-virus, not
+to re-write pages etc).  I use airport/hotel wifi a lot and I've never seen
+it and I am suspicious enough to use cert patrol etc.
+
+> Remember the link to the SonicWall docs I posted
+> a few days ago,
+> http://www.sonicwall.com/downloads/SonicOS_Enhanced_5.6_DPI-SSL_Feature_Module.pdf?
+> It's an advertised feature of the hardware (not just from SonicWall, other
+> vendors do it too), d'you think people are going to buy that and then not make
+> use of it?  So you just build your defences around the fact that it's broken
+> and then you won't run into problems.
+
+Well yes I know the hardware exists.  I even helped design and implement a
+software-only MitM at ZKS.  Before you get alarmed the cert it created was
+known only to the user, generated on the machine, and its purpose was to
+protect the user via a cookie manager protecting their privacy.
+
+If you read the sonic wall stuff its fairly clear the model that they talk
+about at least is that you do not have a sub-CA key.  You generate a
+self-signed CA key, and install it in your corporate LAN browsers trusted CA
+dbs.  Clearly it would also work with such a cert.
+
+Similarly their doco about server SSL shows they dont expect you to have a
+proper sub-CA key.  (scenario where the web server for public access is
+behind the sonicwall) you are expected to import your server SSL certs
+mapped per IP address into the box.  (Otherwise the public would see
+self-signed MitM notices when they browse the site.  Or the sub-CA cert.
+
+> Oh, another place where this happens is WAP gateways, where they MITM
+> everything so they can rewrite the content to save bandwidth and make things
+> work on mobile devices.  So, is that bad, or good, or both, or neither?
+
+Well people were complaining about the "WAP gap" a long time ago.  I thought
+this was more about the phones at the time being not CPU powerful enough to
+terminate SSL.  The idea that a gap exists somewhere where your traffic is
+decrypted was viewed as a significant security limitation people were
+pleased to see go a way with phones fast enough to terminate their own SSL.
+
+That is bad.  Are you saying there is anyone doing SSL mitm for stream
+compression reasons?  Who?
+
+Adam
+_______________________________________________
+cryptography mailing list
+cryptography@randombit.net
+http://lists.randombit.net/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

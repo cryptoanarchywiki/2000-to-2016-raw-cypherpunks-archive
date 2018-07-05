@@ -1,0 +1,125 @@
+From owner-cypherpunks@lne.com  Sun Aug  3 07:25:06 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h73BP4A23912
+	for <rsw@jfet.org>; Sun, 3 Aug 2003 07:25:04 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h73BEXHf017085
+	for cypherpunks-goingout345; Sun, 3 Aug 2003 04:14:33 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+X-Authentication-Warning: waste.minder.net: majordom set sender to
+  owner-cypherpunks@minder.net using -f
+Message-ID: <20030803111315.94827.qmail@web21204.mail.yahoo.com>
+Date: Sun, 3 Aug 2003 04:13:15 -0700 (PDT)
+From: Sarad AV <jtrjtrjtr2001@yahoo.com>
+Old-Subject: RE: Secure IDE? (fwd)
+To: cypherpunks@minder.net
+In-Reply-To: <F504A8CEE925D411AF4A00508B8BE90A0558D236@exna07.securitydy
+  namics.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Subject: RE: Secure IDE? (fwd)
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2785
+Lines: 96
+
+hi,
+
+> This isn't a communications protocol. We're talking
+> about
+> disk storage. The only circumstances where an
+> attacker
+> could use this as an attack vector would be if the
+> attacker
+> could take multiple snapshots of the disk, possibly
+> replacing
+> blocks at later times.
+> 
+> Peter
+> 
+
+Thank you-i get that.The attacker might certainly like
+to try it ,if it is a banking DatBase.
+
+
+Bill Stewart" <bill.stewart@pobox.com> wrote
+>However, there's an emerging application for which
+>disk drives are more vulnerable, which is remote
+>storage.
+>Some of the new disk interface standards, like Fibre
+>Channel,
+>and probably some of the flavors of iSCSI,
+>can operate over distances of 20km and longer over
+>fiber,
+>leading to businesses like colocation centers in New
+>Jersey
+>providing big disk drive farms for New York City
+>financial businesses
+>which have their mainframes in Manhattan.
+>For applications like that, it is important to do
+>good IVs,
+>because control of the disk drive doesn't imply
+>control of the machine.
+
+
+okay-lets look the same in a communication protocol.
+We have digital cash transactions between Bank A and
+Bank B.
+
+Say I am an employee of Bank A.
+I don't keep the IV as secret,i just append the IV
+along with the cipher text which i have chained using
+a chaining mode and send it to bank B.There is a man
+in the middle M,who also sniffs out the IV,now he can
+successfully perform a block replay attack.
+
+I can think of one way this can be prevented.
+It would take us to share a common seed value (a
+secret)between Bank A and Bank B.
+
+
+1.Bank A uses a pseudo random number generator like
+Tauss88 with a period of nearly 2^80 or MT19937 with a
+period of 2^19937-1 and generates the first IV using
+the generator.
+
+
+2.This IV,is used for chaining but the IV itself is
+not transmitted along with the cipher text to the bank
+of B.
+
+3.Once the chained cipher text reaches bank of B, they
+use the common seed to generate the first IV and this
+IV can be used to obtain the actual cipher text.
+
+4.Continue steps 1 to 4 till the period of the
+generator.If we use Taus88 we can get nearly 2^80 IV's
+and if we use MT19937 we can get upto 2^19937-1 IV's.
+
+
+
+We also dont need to hash the IV's itself though they
+form a linear recurring sequence, since they are not
+transmitted from Bank A to Bank B and we derive no
+information of the IV from any number of blocks of the
+chained cipher text.
+
+In this way the attacker can no longer perform block
+replay attacks.
+
+
+The funny part is that I have seen some cryptographic
+utilities simply appened the IV to the chained cipher
+text and transmit to a receiver.
+
+
+Regards Sarath.
+
+__________________________________
+Do you Yahoo!?
+Yahoo! SiteBuilder - Free, easy-to-use web site design software
+http://sitebuilder.yahoo.com
+

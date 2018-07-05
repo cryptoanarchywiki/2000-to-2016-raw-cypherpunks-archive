@@ -1,0 +1,122 @@
+From owner-cypherpunks@al-qaeda.net  Fri Feb  4 12:42:45 2005
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (majordomo@localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.3/8.13.3/Debian-4) with ESMTP id j14IgbFl008046
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Fri, 4 Feb 2005 12:42:37 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.3/8.13.3/Submit) id j14IgaIH008045
+	for cypherpunks-outgoing; Fri, 4 Feb 2005 12:42:36 -0600
+X-Mailer: exmh version 2.6.3 04/04/2003 with nmh-1.0.4
+From: "Steven M. Bellovin" <smb@cs.columbia.edu>
+To: Dan Kaminsky <dan@doxpara.com>
+Cc: Erwann ABALEA <erwann@abalea.com>,
+        "Trei,     Peter"
+  <ptrei@rsasecurity.com>,
+        Tyler Durden
+  <camera_lumina@hotmail.com>, rah@shipwright.com,
+        cryptography@metzdowd.com, cypherpunks@al-qaeda.net
+Subject: Re: Dell to Add Security Chip to PCs 
+In-Reply-To: Your message of "Fri, 04 Feb 2005 02:02:43 EST."           
+    <42031E13.4040205@doxpara.com> 
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Date: Fri, 04 Feb 2005 13:30:59 -0500
+Message-Id: <20050204183059.931D43C022A@berkshire.machshav.com>
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4838
+Lines: 89
+
+In message <42031E13.4040205@doxpara.com>, Dan Kaminsky writes:
+>
+>>>Uh, you *really* have no idea how much the black hat community is
+>>>looking forward to TCPA.  For example, Office is going to have core
+>>>components running inside a protected environment totally immune to
+>>>antivirus.
+>>>    
+>>>
+>>
+>>How? TCPA is only a cryptographic device, and some BIOS code, nothing
+>>else. Does the coming of TCPA chips eliminate the bugs, buffer overflows,
+>>stack overflows, or any other way to execute arbitrary code? If yes, isn't
+>>that a wonderful thing? Obviously it doesn't (eliminate bugs and so on).
+>>
+>>  
+>>
+>TCPA eliminates external checks and balances, such as antivirus.  As the 
+>user, I'm not trusted to audit operations within a TCPA-established 
+>sandbox.  Antivirus is essentially a user system auditing tool, and 
+>TCPA-based systems have these big black boxes AV isn't allowed to analyze.
+>
+>Imagine a sandbox that parses input code signed to an API-derivable 
+>public key.  Imagine an exploit encrypted to that.  Can AV decrypt the 
+>payload and prevent execution?  No, of course not.  Only the TCPA 
+>sandbox can.  But since AV can't get inside of the TCPA sandbox, 
+>whatever content is "protected" in there is quite conspicuously unprotected.
+>
+>It's a little like having a serial killer in San Quentin.  You feel 
+>really safe until you realize...uh, he's your cellmate.
+>
+>I don't know how clear I can say this, your threat model is broken, and 
+>the bad guys can't stop laughing about it.
+>
+
+I have no idea whether or not the bad guys are laughing about it, but 
+if they are, I agree with them -- I'm very afriad that this chip will 
+make matters worse, not better.  With one exception -- preventing the 
+theft of very sensitive user-owned private keys -- I don't think that 
+the TCPA chip is solving the right problems.  *Maybe* it will solve the 
+problems of a future operating system architecture; on today's systems, 
+it doesn't help, and probably makes matters worse.
+
+TCPA is a way to raise the walls between programs executing in 
+different protection spaces.  So far, so good.  Now -- tell me the last 
+time you saw an OS flaw that directly exploited flaws in conventional 
+memory protection or process isolation?  They're *very* rare.
+
+The problems we see are code bugs and architectural failures.  A buffer 
+overflow in a Web browser still compromises the browser; if the 
+now-evil browser is capable of writing files, registry entries, etc., 
+the user's machine is still capable of being turned into a spam engine, 
+etc.  Sure, in some new OS there might be restrictions on what such an 
+application can do, but you can implement those restrictions with 
+today's hardware.  Again, the problem is in the OS architecture, not in 
+the limitations of its hardware isolation.
+
+I can certainly imagine an operating system that does a much better job 
+of isolating processes.  (In fact, I've worked on such things; if 
+you're interested, see my papers on sub-operating systems and separate 
+IP addresses per process group.)  But I don't see that TCPA chips add 
+much over today's memory management architectures.  Furthermore, as Dan 
+points out, it may make things worse -- the safety of the OS depends on 
+the userland/kernel interface, which in turn is heavily dependent on 
+the complexity of the privileged kernel modules.  If you put too much 
+complex code in your kernel -- and from the talks I've heard this is 
+exactly what Microsoft is planning -- it's not going to help the 
+situation at all.  Indeed, as Dan points out, it may make matters worse.
+
+Microsoft's current secure coding initiative is a good idea, and from 
+what I've seen they're doing a good job of it.  In 5 years, I wouldn't 
+be at all surprised if the rate of simple bugs -- the buffer overflows, 
+format string errors, race conditions, etc. -- was much lower in 
+Windows and Office than in competing open source products.  (I would 
+add that this gain has come at a *very* high monetary cost -- training, 
+code reviews, etc., aren't cheap.)  The remaining danger -- and it's a 
+big one -- is the architecture flaws, where ease of use and 
+functionality often lead to danger.  Getting this right -- getting it 
+easy to use *and* secure -- is the real challenge.  Nor are competing 
+products immune; the drive to make KDE and Gnome (and for that matter 
+MacOS X) as easy to use (well, easier to use) than Windows is likely to 
+lead to the same downward security sprial.
+
+I'm ranting, and this is going off-topic.  My bottom line: does this 
+chip solve real problems that aren't solvable with today's technology?  
+Other than protecting keys -- and, of course, DRM -- I'm very far from 
+convinced of it.  "The fault, dear Brutus, is not in our stars but in 
+ourselves."
+
+		--Prof. Steven M. Bellovin, http://www.cs.columbia.edu/~smb
+

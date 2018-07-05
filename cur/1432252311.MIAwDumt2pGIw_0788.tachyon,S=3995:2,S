@@ -1,0 +1,101 @@
+From owner-cypherpunks@al-qaeda.net  Mon Aug 27 13:06:57 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q7RH1ZEJ025824
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 27 Aug 2012 13:01:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1346086896;
+	bh=B+rWR4UVJHu1bDQIhCKbHvslIfRA8PzO1FOhfladtgw=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=6RHLs3954mE3CtPRMtJY+Ny5uCnO1JZYMCaxpHoG4P9BJNw76lj7GhO1HmjTI01oB
+	 u6RIMAnTFTbwubQaVJzNJ/pBIA/qVOLYpkljQ9oM5iWMcqBkKXIxkZSwqG8dMEJoN5
+	 aHwv3ld5qkMlJsUeabVy6IimPMOdci5Uvl2RLBlI=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q7RH1ZSg025823
+	for cypherpunks-outgoing; Mon, 27 Aug 2012 13:01:35 -0400
+Date: Mon, 27 Aug 2012 19:01:33 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: [tor-talk] End-to-end correlation for fun and profit
+Message-ID: <20120827170133.GT12615@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2533
+Lines: 67
+
+----- Forwarded message from Maxim Kammerer <mk@dee.su> -----
+
+From: Maxim Kammerer <mk@dee.su>
+Date: Sat, 25 Aug 2012 02:51:29 +0300
+To: tor-talk@lists.torproject.org
+Subject: Re: [tor-talk] End-to-end correlation for fun and profit
+Reply-To: tor-talk@lists.torproject.org
+
+On Sat, Aug 25, 2012 at 1:12 AM, Mike Perry <mikeperry@torproject.org> wrote:
+> The Raccoon has made a believer out of me, but there are some limits to
+> both of his/her proofs.. The full proofs can still be found here:
+> http://web.archive.org/web/20100416150300/http://archives.seul.org/or/dev/Sep-2008/msg00016.html
+
+Wrt. the first proof, it seems to me that the assumed correlation
+accuracy rate of 99.9% is incredibly low, and I think that the Raccoon
+recognized that by referring to sampling and retention at the end of
+his post. With the targeted attack that's similar to bExample 3b in
+Raccoon's post that I described in my previous comment here, where one
+analyzes all exit traffic without missing packets, I would expect the
+correlation accuracy (and as a result, match confidence) to
+exponentially approach 100% very quickly with the number of relevant
+packets seen, and extremely quickly if the traffic is interactive
+(i.e., browsing).
+
+Actually, c/n of 30% in bExample 3b is close to the 25% that's
+discussed in the OP here, so let's redo the example with c/n=25% and
+different correlation accuracies (leaving the other numbers intact):
+
+(using bbc -lb)
+ca  = 0.999
+pm  = (1/5000) * (0.25)^2
+ca*pm / (pm*ca + (1-pm)*(1-ca))
+
+ca  = 0.999
+.01233363786760166917
+ca = 0.9999
+.11110246894375430565
+ca = 0.99999
+.55555617284636495961
+ca = 0.999999
+.92592671467910125759
+ca = 0.9999999
+.99206358969515668554
+ca = 0.99999999
+.99920064946444143613
+ca = 0.999999999
+.99992000739924807495
+
+So reducing correlation accuracy error to 10^-9 will give you 99.99%
+confidence in end-to-end correlation match. I suspect that a few
+seconds of interactive traffic will give you a correlation accuracy
+that's much better than a 10^-9 error.
+
+-- 
+Maxim Kammerer
+LibertC) Linux: http://dee.su/liberte
+_______________________________________________
+tor-talk mailing list
+tor-talk@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-talk
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

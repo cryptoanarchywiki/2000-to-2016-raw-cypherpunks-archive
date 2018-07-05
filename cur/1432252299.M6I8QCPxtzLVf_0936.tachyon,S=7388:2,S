@@ -1,0 +1,169 @@
+From owner-cypherpunks@al-qaeda.net  Wed Jun 20 02:51:02 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q5K6lTUE021306
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 20 Jun 2012 02:47:29 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q5K6lTVq021305
+	for cypherpunks-outgoing; Wed, 20 Jun 2012 02:47:29 -0400
+Date: Wed, 20 Jun 2012 08:47:26 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: zs-p2p@googlegroups.com, info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: RE: [HacDC:Byzantium] I'd like to help out
+Message-ID: <20120620064726.GK17120@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Dave Duchesneau <ddd@crisis-force.org> -----
+
+From: Dave Duchesneau <ddd@crisis-force.org>
+Date: Tue, 19 Jun 2012 17:11:48 -0700
+To: byzantium@hacdc.org
+Subject: RE: [HacDC:Byzantium] I'd like to help out
+X-Mailer: Microsoft Office Outlook 11
+Reply-To: byzantium@hacdc.org
+
+> "Rooting the phone will allow for adhoc mesh network capability and is 
+> required for full functionality of the software. By choosing not to 
+> root the phone, the software will still be able to provide free calls 
+> to phones  that are connected to the same Access Point."
+
+AFAIK, although Serval currently requires a rooted phone for the phone
+itself to be part of the mesh, the standard Serval download for Android
+allows phone-to-phone communications through an AP with a non-rooted phone.
+This is more of a fallback plan, since a key aspect of the Serval project is
+to have the phones be mesh nodes.  However, as one may surmise, even such
+AP-based communications would not be possible if the AP is configured to
+disallow client-to-client communications (i.e., client isolation mode).
+
+On the other hand, if the AP is really just an SSID offered by the nodes on
+a bridged mesh network, then AP-based Serval communications may reach
+anywhere that the underlying mesh network reaches.  Because such a network
+is in bridged mode, it operates at layer 2 (based on MAC addresses), and
+thus is effectively a big software switch, so collectively, all the nodes
+act as one big AP (in some configurations, clients can roam between mesh
+nodes without losing sessions, IP addresses, etc.).  
+
+For those who may not be aware, two examples of such bridged mesh networks
+are the open-source SECN offering from Village-Telco.org (which is also
+collaborating with the Serval project to make their meshes interoperate),
+and also Open-Mesh.com (providing the bridge-mode option is selected).  Both
+meshes are based on batman-adv, so you could expect similar behavior from
+any mesh based on batman-adv (in bridge mode), and possibly other bridged
+meshes.
+
+Bridged meshes are relatively straightforward, but are not without issues,
+especially with respect to scalability.  One avenue to address scalability
+issues is to adopt hybrid models where layer 2 is used for localized mesh
+clusters (up to 20-200 nodes, let's say), and layer 3 is used to route
+between localized mesh clusters.  Note that with a hybrid approach, layer 3
+may also serve as an interoperability layer to connect meshes with differing
+protocols, so that Byzantium-style OLSR meshes may be routed to
+VillageTelco-style batman-adv meshes.  Layer 3 routing consumes more
+resources than layer 2, so such an approach may not be feasible on every
+mesh node.  Of course, multiple protocols may coexist on run-of-the-mill
+mesh nodes, too, if there's enough local capacity (memory, CPU, radio
+bandwidth, etc.).
+
+In general, it would be good to make all the meshes work together, at least
+at arm's length (i.e., this can be done a non-trusted basis, assuming
+end-to-end encryption).  To maximize communications survivability, our own
+approach incorporates a smattering of optional multi-radio nodes (multiple
+bands, channels, protocols) in every mesh.  These nodes have extra capacity
+for routing, proxying, protocol translation, serving, store-and-forward,
+caching, etc.
+
+Preachin' to the Choir,
+
+Dave Duchesneau
+ddd@crisis-force.org
+
+CRISIS-FORCE Emergency Network
+
+
+-----Original Message-----
+From: Ben Mendis [mailto:dragonwisard@gmail.com] 
+Sent: Tuesday, June 19, 2012 5:20 AM
+To: byzantium@hacdc.org
+Subject: Re: [HacDC:Byzantium] I'd like to help out
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+It may be accurate. I may have misunderstood something. I haven't gotten
+an opportunity to test out Serval myself yet.
+
+
+On Tue, 19 Jun 2012, John wrote:
+
+> On 6/12/2012 11:40 AM, Ben Mendis wrote:
+>> It seems that Serval (http://www.servalproject.org/) has
+>> managed to get BATMAN-Adv to run as an Android app without requiring
+>> root, so maybe it's possible for Babel and OLSR too.
+>
+> Does that mean this document is out-of-date?
+>
+> http://developer.servalproject.org/files/Serval_Manual_Prototype_v0.05.pdf
+>
+> Scroll down to 2.3,
+> "Rooting the phone will allow for adhoc mesh network capability and is 
+> required for
+> full functionality of the software. By choosing not to root the phone, the
+
+> software
+> will still be able to provide free calls to phones  that are connected to
+the 
+> same
+> Access Point."
+>
+> John
+>
+> -- 
+> You received this message because you are subscribed to the Google Groups 
+> "Project Byzantium (Emergency Mesh Networking)" group.
+> To post to this group, send email to Byzantium@hacdc.org.
+> To unsubscribe from this group, send email to 
+> Byzantium+unsubscribe@hacdc.org.
+> For more options, visit this group at 
+> http://groups.google.com/a/hacdc.org/group/Byzantium/?hl=en.
+>
+>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJP4G57AAoJEMco5sYyM+0wq58H/RmhKlbWA7prhiD2CaJS0h4s
+SVH9Wj/HfFh2D3Rs25gyOYnZ/o05/KRMS38MSNCDrUxg9uqqUavZ+85I2yfw6XKJ
+p905Ejo0E1SXpiWpxtTeZ3J8ZKQP5vTFa0NTSs07U0dCE1h59vTkEdjA8cQk6oEc
+z0yytSLlXNa9okLof1AK6U0m0Jjdkps/NcjScQFOsuJ0gT4SYluzecrV2E5UL/tI
+HFqtdsxvtil8m9xnmVfg7z3GvqhpCbPxVMVsCEvWXCSDiVL6euw/a4Usz3/8IBps
+8TCiYnkQvZvtXMJ83zG7uVogdMOHt0BRGhM+s0RFlNNUvPFG6P832yD8b2mD1qU=
+=2Vlj
+-----END PGP SIGNATURE-----
+
+-- 
+You received this message because you are subscribed to the Google Groups
+"Project Byzantium (Emergency Mesh Networking)" group.
+To post to this group, send email to Byzantium@hacdc.org.
+To unsubscribe from this group, send email to
+Byzantium+unsubscribe@hacdc.org.
+For more options, visit this group at
+http://groups.google.com/a/hacdc.org/group/Byzantium/?hl=en.
+
+-- 
+You received this message because you are subscribed to the Google Groups "Project Byzantium (Emergency Mesh Networking)" group.
+To post to this group, send email to Byzantium@hacdc.org.
+To unsubscribe from this group, send email to Byzantium+unsubscribe@hacdc.org.
+For more options, visit this group at http://groups.google.com/a/hacdc.org/group/Byzantium/?hl=en.
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

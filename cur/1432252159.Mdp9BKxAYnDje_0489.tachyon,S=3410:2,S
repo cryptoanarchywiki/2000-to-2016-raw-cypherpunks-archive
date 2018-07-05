@@ -1,0 +1,74 @@
+From rsw@jfet.org Tue Jul 23 08:27:27 2002
+Date: Tue, 23 Jul 2002 08:27:27 -0400
+From: "Riad S. Wahby" <rsw@jfet.org>
+To: cypherpunks@lne.com
+Subject: Re: Tunneling through a hostile proxy?
+Message-ID: <20020723082727.A3928@positron.quux>
+Mail-Followup-To: cypherpunks@lne.com
+References: <3D3D0D4A.961.177A81@localhost> <040c01c2324e$2cca79a0$c71121c2@sharpuk.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.5i
+In-Reply-To: <040c01c2324e$2cca79a0$c71121c2@sharpuk.co.uk>; from DaveHowe@gmx.co.uk on Tue, Jul 23, 2002 at 02:38:00PM +0100
+X-key-url: http://www.jfet.org/pgp.asc
+X-url: http://www.jfet.org
+X-keyserver: cryptonomicon.mit.edu
+X-key-fingerprint: B1CD 1262 0B82 47B1 BB4E  15D3 920D 1BEF 3D38 5585
+X-red-meat: hand-hewn from fossilized pap
+X-rand-ascii: 4k:Q?reavHUtsO)Th;vC^}cCBnzevC{'J-9PvvU6%I'CZ4kkUO;;?qm*UonYPD,V
+X-NSA: NASA OLIVER NORTH kibo HILLARY CLINTON REVOLUTION MI5
+X-brought-to-you-by: a cadre of angry caymons
+Status: RO
+Content-Length: 2360
+Lines: 48
+
+David Howe <DaveHowe@gmx.co.uk> wrote:
+> Not sure if it is what you are asking - but a HTTP proxy doesn't handle
+> the SSL; it simply forwards the packets to the destination site, and
+> forwards the reply back to you; the SSL encryption is handled by your
+> machine and the server (the proxy doesn't touch it)
+> In theory, if your corporate force-included its own root key into your
+> browser, they could generate their own certificates on the fly and have
+> it work transparently - but checking who issued the cert would show that
+> up.
+
+Doing this would violate the HTTP CONNECT semantics described in the
+IETF Internet-Draft "Tunneling TCP based protocols through Web proxy
+servers" by Ari Luotonen.  Not that that's stopping anyone.
+
+I've written a perl module, Net::HTTPTunnel, that allows you to make a
+CONNECT tunnel through an HTTP proxy and treat it as a normal socket
+object (it's very simple---it just handles talking to the proxy server
+and returns an IO::Socket::INET object).  It's available on CPAN.
+
+Note that most proxy servers are configured to allow CONNECTs only to
+port 443 (https) and 563 (snews).  Of course, all you have to do to
+get around this is run an ssh server on port 443 or port 563 on a
+machine you control that lives outside the firewall.
+
+Using the above-mentioned perl module, have a program listening for
+connections on your machine inside the firewall which will, upon
+receiving a connection, establish a CONNECT tunnel and forward packets
+in both directions.  Now all you do is ssh to that port on your local
+machine and tunnel any other protocols you want through the ssh
+connection (for example, run squid on the machine outside the firewall
+and forward a local port to the squid server across the SSH tunnel if
+you wish to conceal your at-work browsing habits).  I'm using just
+such a tunnel to write this email.
+
+Of course, there are lots of ways to make tunnels.  A good friend of
+mine used to tunnel through his high school's firewall using a program
+he tossed off that would get the data back and forth through the
+firewall in HTTP POSTs.  Sure, it's more complicated, but when his
+school turned off CONNECTs to prevent the method described above, he
+took it personally.
+
+I think there's even a program out there that creates a (very high
+latency!) tunnel using email.
+
+-- 
+Riad Wahby
+rsw@jfet.org
+MIT VI-2/A 2002
+

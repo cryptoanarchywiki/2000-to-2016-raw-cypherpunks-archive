@@ -1,0 +1,116 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Thu Aug 22 23:43:47 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7N3hl918531
+	for <rsw@opamp.org>; Thu, 22 Aug 2002 23:43:47 -0400
+Received: from lion.ninthwonder.com (lion.ninthwonder.com [151.199.66.147])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id XAA19977
+	for <rsw@mit.edu>; Thu, 22 Aug 2002 23:43:46 -0400 (EDT)
+Received: by lion.ninthwonder.com (Postfix, from userid 96)
+	id 5C3883070A; Thu, 22 Aug 2002 23:42:20 -0400 (EDT)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 09B8630706
+	for <cryptography@wasabisystems.com>; Thu, 22 Aug 2002 23:42:19 -0400 (EDT)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 7FCF7D97C9; Thu, 22 Aug 2002 23:42:18 -0400 (EDT)
+Received: from sigurd.x509.com (nebula.x509.com [199.175.150.19])
+	by lion.ninthwonder.com (Postfix) with SMTP id 0C40E30706
+	for <cryptography@wasabisystems.com>; Thu, 22 Aug 2002 20:20:20 -0400 (EDT)
+Received: from nebula.x509.com by sigurd.x509.com
+          via smtpd (for lion.ninthwonder.com [151.199.66.147]) with SMTP; 23 Aug 2002 00:20:19 UT
+Received: from crack.x509.com (mail.x509.com [199.175.150.1])
+	by nebula.x509.com (8.11.6/XCERT) with ESMTP id g7N0KCF15582;
+	Thu, 22 Aug 2002 17:20:12 -0700 (PDT)
+Received: from rsasecurity.com (eskarina.eng.x509.com [10.7.33.45])
+	by crack.x509.com (8.11.6/XCERT) with ESMTP id g7N0KBt01220;
+	Thu, 22 Aug 2002 17:20:11 -0700 (PDT)
+Message-ID: <3D65802E.8040000@rsasecurity.com>
+Date: Thu, 22 Aug 2002 17:22:06 -0700
+From: Marc Branchaud <marcnarc@rsasecurity.com>
+User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.0.1) Gecko/20020816
+X-Accept-Language: en-us, en
+MIME-Version: 1.0
+To: Ben Laurie <ben@algroup.co.uk>
+Cc: Adam Back <adam@cypherspace.org>, Steve Schear <schear@lvcm.com>,
+   cypherpunks@lne.com, Cryptography <cryptography@wasabisystems.com>
+Subject: Re: the underground software vulnerability marketplace and its hazards
+ (fwd)
+References: <Pine.LNX.4.33.0208220842040.8506-100000@hydrogen.leitl.org > <5.1.0.14.2.20020822075450.0464b388@pop3.lvcm.com> <20020822165451.A1099142@exeter.ac.uk> <3D65306E.9090708@algroup.co.uk>
+X-Enigmail-Version: 0.63.3.0
+X-Enigmail-Supports: pgp-inline, pgp-mime
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 3177
+Lines: 66
+
+
+Ben Laurie wrote:
+> 
+> Incidentally I was put under a lot of pressure when releasing the
+> OpenSSL advisory a few weeks ago to allow CERT to notify "vendors"
+> before going on general release. I have a big problem with this - who
+> decides who are "vendors", and how? And why should I abide by their
+> decision? Why should I pick CERT and not some other route to release the
+> information?
+
+I agree that such pressure is pretty reprehensible.  As others in this
+thread have said, it's your decision how you want to publish the
+information.  People should respect that decision.
+
+However...
+
+> Also, if the "vendors" were playing the free software game properly,
+> they wouldn't _need_ advance notification - their customers would have
+> source, and could apply the patches, just like real humans.
+
+I agree with that to a certain extent.  However, we (RSA) recently had
+to release patches to several versions of Xcert's old Sentry CA because
+of the OpenSSL fixes.  I do not know how our customers would have been
+helped by having the source.
+
+First, I want to point out that Xcert's use of OpenSSL was entirely in
+agreement with OpenSSL's license.  The fact that we built closed-source
+product atop OpenSSL was playing the game properly, as far as the rules
+were laid out.  (If you think OpenSSL's users should behave differently,
+change the license!)
+
+Even if we gave our customers our source code, we had made a few changes
+to the OpenSSL code for use in Sentry CA.  Mostly to deal with things
+like PKCS#11 and ECC (we used OpenSSL for crypto, some ASN.1 and SSL).
+So patches don't necessarily apply perfectly cleanly (though these ones
+did).  It seems unreasonable for us to expect our customers to make the
+appropriate changes themselves.  (We even had to make our own patch for
+a particularly early version of Sentry CA that used a verison of OpenSSL
+that did not get a patch from openssl.org.  There's nothing like money
+to bring out the whore in all of us...)
+
+Also, one of the selling points of Sentry CA was that it's thoroughly
+tested.  We had to make sure that the patches didn't break the product.
+ Again, we can't really expect our customers to do that themselves.
+
+Now, I'm a big fan of open-source software, and am very sympathetic to
+its ideas in many ways.  All I'm trying to point out is that the issues
+aren't necessarily so black-and-white.  We certainly could have
+benefitted from advanced notice of the flaws, but I personally think
+that "vendors" shouldn't get first dibs at any patches.  That said, I
+don't really know what we could've done with the news while waiting for
+OpenSSL's patches to come out.  So the way things happened is probably
+the fairest outcome possible.  It was a rough couple of weeks for us,
+though, getting our own fixes together while OpenSSL was sitting pretty.
+ Customers don't seem to like _knowing_ they're vulnerable, for some
+reason...
+
+(I speak for myself, and these opinions are my own, and I might even be
+lying about everything.)
+
+		M.
+
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

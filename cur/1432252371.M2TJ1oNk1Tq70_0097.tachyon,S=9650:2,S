@@ -1,0 +1,189 @@
+From owner-cypherpunks@al-qaeda.net  Wed Nov 11 10:05:28 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id nABF5PfD008829
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 11 Nov 2009 10:05:25 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id nABF5PuP008828
+	for cypherpunks-outgoing; Wed, 11 Nov 2009 10:05:25 -0500
+Date: Wed, 11 Nov 2009 16:05:22 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: hedging our bets -- in case SHA-256 turns out to be insecure
+Message-ID: <20091111150522.GS17686@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 8641
+Lines: 164
+
+----- Forwarded message from Zooko Wilcox-O'Hearn <zooko@zooko.com> -----
+
+From: Zooko Wilcox-O'Hearn <zooko@zooko.com>
+Date: Sun, 8 Nov 2009 03:30:47 -0800
+To: Cryptography List <cryptography@metzdowd.com>, tahoe-dev@allmydata.org
+Subject: hedging our bets -- in case SHA-256 turns out to be insecure 
+X-Mailer: Apple Mail (2.753.1)
+
+Folks:
+
+We're going to be deploying a new crypto scheme in Tahoe-LAFS next  
+year -- the year 2010.  Tahoe-LAFS is used for long-term storage, and  
+I won't be surprised if people store files on Tahoe-LAFS in 2010 and  
+then rely on the confidentiality and integrity of those files for  
+many years or even decades to come.  (People started storing files on  
+Tahoe-LAFS in 2008 and so far they show no signs of losing interest  
+in the integrity and confidentiality of those files.)
+
+This long-term focus makes Tahoe-LAFS's job harder than the job of  
+protecting transient network packets.  If someone figures out in 2020  
+or 2030 how to spoof a network transaction that you sent in 2010 (see  
+[1]), it'll be far too late to do you any harm, but if they figure  
+out in 2030 how to alter a file that you uploaded to a Tahoe-LAFS  
+grid in 2010, that might harm you.
+
+Therefore I've been thinking about how to make Tahoe-LAFS robust  
+against the possibility that SHA-256 will turn out to be insecure.
+
+A very good way to do this is to design Tahoe-LAFS so that it relies  
+as little as possible on SHA-256's security properties.  The property  
+that seems to be the hardest for a secure hash function to provide is  
+collision-resistance.  We are analyzing new crypto schemes to see how  
+many security properties of Tahoe-LAFS we can continue to guarantee  
+even if the collision-resistance of the underlying secure hash  
+function fails, and similarly for the other properties of the secure  
+hash function which might fail [2].
+
+This note is not about that design process, though, but about how to  
+maximize the chance that the underlying hash function does provide  
+the desired security properties.
+
+We could use a different hash function than SHA-256 -- there are many  
+alternatives.  SHA-512 would probably be safer, but it is extremely  
+expensive on the cheap, low-power 32-bit ARM CPUs that are one of our  
+design targets [3], and the output size of 512 bits is too large to  
+fit into Tahoe-LAFS capabilities.  There are fourteen candidates left  
+in the SHA-3 contest at the moment.  Several of them have  
+conservative designs and good performance, but there is always the  
+risk that they will be found to have catastrophic design flaws or  
+that a great advance in hash function cryptanalysis will suddenly  
+show how to crack them.  Of course, a similar risk applies to SHA-256!
+
+So I turn to the question of how to combine multiple hash functions  
+to build a hash function which is secure even if one or more of the  
+underlying hash functions turns out to be weak.
+
+I've read several interesting papers on the subject -- such as [4, 5]  
+and especially "Robust Multi-Property Combiners for Hash Functions  
+Revisited" by Marc Fischlin, Anja Lehmann, and Krzysztof Pietrzak  
+[6].  The good news is that it turns out to be doable!  The latter  
+two papers show nice strong theoretical results -- ways to combine  
+hash functions so that the resulting combination is as strong or  
+stronger than the two underlying hash functions.  The bad news is  
+that the proposal in [6] builds a combined function whose output is  
+twice the size of the output of a single hash function.  There is a  
+good theoretical reason for this [4], but it won't work for our  
+practical engineering requirements -- we need hash function outputs  
+as small as possible (partially due to usability issues)
+
+The other bad news is that the construction proposed in [6] is  
+complicated, underspecified, and for the strongest version of it, it  
+imposes a limit on the length of the inputs that you can feed to your  
+hash function.  It grows to such complexity and incurs such  
+limitations because it is, if I may call it this, "too theoretical".   
+It is designed to guarantee certain output properties predicated on  
+minimal theoretical assumptions about the properties of the  
+underlying hash functions.  This is a fine goal, but in practice we  
+don't want to pay such a high cost in complexity and performance in  
+order to gain such abstract improvement.  We should be able to "hedge  
+our bets" and achieve a comfortable margin of safety with a very  
+simple and efficient scheme by making stronger, less formal, but very  
+plausible assumptions about the underlying hash functions.  Read on.
+
+I propose the following combined hash function C, built out of two  
+hash functions H1 and H2:
+
+C(x) = H1(H1(x) || H2(x))
+
+The first observation is that if H1 is collision-resistant then so is  
+C.  In practice I would expect to use SHA-256 for H1, so the  
+resulting combiner C[SHA-256, H2] will be at least as strong as  
+SHA-256.  (One could even think of this combiner C as just being a  
+tricky way to strengthen SHA-256 by using the output of H2(x) as a  
+randomized salt -- see [7].)
+
+The next observation is that finding a pair of inputs x1, x2 which  
+collide in *both* H1 and in H2 is likely to be much harder than  
+finding a pair of inputs that collide in H1 and finding a pair of  
+inputs that collide in H2 (see [5]).
+
+Now the reason that a combiner like this one is not published in  
+theoretical crypto literature is that it obviously could fail if the  
+outer hash function H1 fails.  For example, even if H2 is collision- 
+resistant, if H1 turns out to be susceptible to collisions, then  
+theoretically speaking C[H1, H2] might be susceptible to collisions.   
+However, in real life C[H1, H2] would most likely still be collision  
+resistant!
+
+All practical attacks on real hash functions so far (if I understand  
+correctly) are multi-block attacks in which the attacker is able to  
+feed a sufficiently long and unconstrained input to the hash  
+functions that the effects of the later parts of his inputs are able  
+to manipulate the state generated by the earlier parts of his  
+inputs.  My combiner C uses H1 in its outer invocation on a single- 
+block-sized input, which means no such multi-block attacks are  
+possible on the outer invocation.  In addition, the inputs that the  
+attacker gets to feed to the outer invocation of H1 are highly  
+constrained.  Basically, he would already have to be very good at  
+manipulating the inner invocations H1 and H2 in ways that he isn't  
+supposed to before he can even begin to manipulate the outer  
+invocation of H1.
+
+A measure of the practical security of a combiner like this one would  
+be "how safe would it be if it were instantiated using broken  
+practical hash functions such as MD5 and SHA1?".  It appears to me  
+(from an admittedly cursory analysis) that there is no realistic way  
+to find collisions in C[MD5, SHA1] even though there are realistic  
+ways to find collisions in MD5 and in SHA1.  Of course, I'm not  
+proposing to use C[MD5, SHA1]!  I'm proposing to use C[SHA-256, _]  
+where _ is some other hash function which is believed to be strong.   
+The example of instantiating C with MD5 and SHA1 just goes to show  
+that C is a hash function which is stronger than either of its two  
+underlying hash functions.
+
+The other desirable security properties such as second-preimage  
+resistance and pre-image resistance seem to follow the same pattern  
+as collision-resistance -- C[H1, H2] seems to be much stronger than  
+H1 or H2 alone.
+
+Regards,
+
+Zooko
+
+[1] http://extendedsubset.com/Renegotiating_TLS.pdf
+[2] http://allmydata.org/trac/tahoe/wiki/NewCaps/WhatCouldGoWrong
+[3] http://bench.cr.yp.to/results-hash.html#arm-apollo
+[4] Krzysztof Pietrzak: "Non-Trivial Black-Box Combiners for  
+Collision-Resistant Hash-Functions don't Exist"
+[5] Jonathan J. Hoch, Adi Shamir: "On the Strength of the  
+Concatenated Hash Combiner when All the Hash Functions are Weak"
+[6] Marc Fischlin, Anja Lehmann, Krzysztof Pietrzak: "Robust Multi- 
+Property Combiners for Hash Functions Revisited"
+[7] http://webee.technion.ac.il/~hugo/rhash/rhash.pdf
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

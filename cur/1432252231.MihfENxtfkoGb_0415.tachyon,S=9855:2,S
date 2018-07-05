@@ -1,0 +1,195 @@
+From owner-cypherpunks@Algebra.COM  Thu Mar 29 05:20:01 2001
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.72.0.53])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id FAA23281
+	for <kwantam@positron.mit.edu>; Thu, 29 Mar 2001 05:20:01 -0500
+Received: from ak47.algebra.com (root@ak47.algebra.com [208.233.99.160])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id FAA12150
+	for <rsw@mit.edu>; Thu, 29 Mar 2001 05:20:01 -0500 (EST)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f2T9xMK28526
+	for cypherpunks-outgoing; Thu, 29 Mar 2001 03:59:22 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from sirius.infonex.com (sirius.infonex.com [216.34.245.2])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f2T9xLW28510
+	for <cypherpunks@algebra.com>; Thu, 29 Mar 2001 03:59:21 -0600
+Received: (from cpunks@localhost) by sirius.infonex.com (8.8.8/8.8.8) id BAA29478; Thu, 29 Mar 2001 01:59:19 -0800 (PST)
+Received: from cyberpass.net (cyberpass.net [216.34.245.3]) by sirius.infonex.com (8.8.8/8.8.8) with ESMTP id BAA29474 for <cpunks@sirius.infonex.com>; Thu, 29 Mar 2001 01:59:15 -0800 (PST)
+Received: from mail.lemuria.org (lemuria.org [62.197.4.65]) by cyberpass.net (8.8.8/8.7.3) with ESMTP id CAA08177 for <cypherpunks@cyberpass.net>; Thu, 29 Mar 2001 02:02:06 -0800 (PST)
+Received: from unicorn.lemuria.org (p3EE2D5F4.dip.t-dialin.net [62.226.213.244])
+	by mail.lemuria.org (Postfix) with ESMTP id 5D5CE84A8
+	for <cypherpunks@cyberpass.net>; Thu, 29 Mar 2001 11:59:20 +0200 (CEST)
+Received: by unicorn.lemuria.org (Postfix, from userid 1000)
+	id CA543175197; Thu, 29 Mar 2001 11:55:57 +0200 (CEST)
+Date: Thu, 29 Mar 2001 11:55:57 +0200
+From: Tom <tom@lemuria.org>
+To: cypherpunks@cyberpass.net
+Old-Subject: [haceaton@hotmail.com: Re: [dvd-discuss] DeCSS public key, been there, done that]
+Message-ID: <20010329115557.D14583@lemuria.org>
+Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="vkogqOf2sHV7VnPd"
+Content-Disposition: inline
+User-Agent: Mutt/1.2.5i
+Subject:  [haceaton@hotmail.com: Re: [dvd-discuss] DeCSS public key, been there, done that]
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 7395
+Lines: 152
+
+
+
+--vkogqOf2sHV7VnPd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+after an initial (only half-serious) idea posted by me to the
+dvd-discuss mailing list, someone actually created a program to create
+secret keys that result in your public key being a compressed version
+of decss.
+
+
+----- Forwarded message from Harold Eaton <haceaton@hotmail.com> -----
+
+Date: Mon, 26 Mar 2001 16:31:38 -0500
+From: "Harold Eaton" <haceaton@hotmail.com>
+To: dvd-discuss@eon.law.harvard.edu
+Subject: Re: [dvd-discuss] DeCSS public key, been there, done that
+
+Ok, everybody can have efdtt.c.gz as their public key!
+
+Here is the algorithm:
+
+Choose a j such that 256^j is a large enough random
+space for you to feel secure, and factors of that order
+will be hard to find in a composite number.
+
+Pick a random number, R < 256^j
+Find q = nextprime(256^j - R)
+Find k = decimal representation of efdtt.c.gz
+Find p = nextprime(k*256^(j+1)/q)
+Verify that (p-1)(n-1) is relatively prime to your public exponent,
+if not, try a few public exponents, or start over with a new
+random number.
+
+Compute n=pq, this is the public key modulus.
+Verify that n/256^(j+1) = k in case there was a large (>256) gap
+in the primes.  If it fails, try p=nextprime(k*256^(j+2)/q).
+n can be converted to hex and gunzipped to the efdtt.c source code.
+
+Go compute your private exponent d, then destroy p, q and R.
+Let everybody know your public key and what it can be used for ;-)
+
+Attached is a sample program to illustrate the key generation.
+Feed efdtt.c.gz to its standard input.
+For j=32 (256 bit random number), it takes about 1-1/2 minutes
+on my 266MHz G3. Be sure to use your own random number, not the
+one in the code.
+
+
+_________________________________________________________________
+Get your FREE download of MSN Explorer at http://explorer.msn.com
+
+
+
+
+----- End forwarded message -----
+
+-- 
+-- http://www.lemuria.org
+-- http://www.Nexus-Project.net
+--
+
+--vkogqOf2sHV7VnPd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="public.c"
+
+#include <gmp.h>
+#include <stdio.h>
+/* J is j * 8 to use powers of 2 instead of 256 */
+/* R is your random number, don't use the one shown
+ * if this is really going to produce your public key
+ */
+#define J 256L
+#define R "8741288239734901231012300419439827747721239184132"
+
+main ()
+{
+  mpz_t a, q, p, n, k;
+  unsigned long c;
+
+  mpz_init (q);
+  mpz_init (p);
+  mpz_init (n);
+  mpz_init (k);
+  mpz_init (a);
+  while ((c = getchar ()) != EOF)
+    {
+      mpz_mul_ui (k, k, 256L);
+      mpz_add_ui (k, k, c);
+    }
+  printf ("k is:\n");
+  mpz_out_str (stdout, 10, k);
+  printf ("\n\nq is:\n");
+  mpz_set_str (q, R, 0);
+  mpz_set_ui (p, 1L);
+  mpz_mul_2exp (p, p, J);
+  mpz_sub (q, p, q);
+  mpz_nextprime (q, q);
+  mpz_out_str (stdout, 10, q);
+  printf ("\n\np is:\n");
+/* over-expanding should guarantee an answer */
+  mpz_mul_2exp (a, k, J + 16L);
+  mpz_tdiv_q (p, a, q);
+  mpz_nextprime (p, p);
+  mpz_out_str (stdout, 10, p);
+  printf ("\n\nn is:\n");
+  mpz_mul (n, p, q);
+  mpz_out_str (stdout, 10, n);
+  printf ("\n\n65537 gcd (p-1)(q-1) is:\n");
+  mpz_sub_ui (p, p, 1L);
+  mpz_sub_ui (q, q, 1L);
+  mpz_mul (a, p, q);
+  mpz_gcd_ui (a, a, 65537L);
+  mpz_out_str (stdout, 10, a);
+  printf ("\n\nn/256^34 is:\n");
+  mpz_set_ui (q, 1L);
+  mpz_mul_2exp (q, q, J + 16L);
+  mpz_tdiv_q (q, n, q);
+  mpz_out_str (stdout, 10, q);
+  printf ("\n\n difference from k is:\n");
+  mpz_sub (k, k, q);
+  mpz_out_str (stdout, 10, k);
+  printf ("\n");
+}
+
+--vkogqOf2sHV7VnPd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename=keys
+
+k is:
+489791971139294721492890070820155569620855660960671152212956498742039672112756515508187293741821313343828432787304645596036261708404238649106578165524494163400608981624770671588151402810099681387253505295523873528607505025404055656640662917263299188105134143828382070106290368480093502782669567301116939263880957511639706827141547209129803084934032419725412566483604334931280689111374224553996188329634360332732653261350171222703208193468891532899326692623514903323012432164895187708186345355697953671882383578250883882558619759274176822251124822180272439609500079726934520797625058937758586291699109806463439054605698740756573226324905651996790831494040667293495224230225078284196001746999337737330711700914242699218902328035406113882295732383384553898452229896017081749832945397093734240256603444289486458831879575367414145067878143633157580402523817166917607364019003392000
+
+q is:
+115792089237316195423570984999946619613535083434628263620017756260191890456207
+
+p is:
+32099006620584818867758043683692909179157113078856802328307357725679404828875458036112204440028287258720600878846414464221802919598857755802551492120960491443536919941289105406159302962848983801052659527723163782414700203964980283244265254677334683288229164946558372183147626488962268484716538959807411260791234028030592489974438867729461987791791553884810951540842460393345315628177603284809889244563826187850440471139025472057683483388847187895555835840248034326855258817994192035983332746563490378241602993686226024065423242879590873464950086580106928582897514901915848883068408264220378135988671718732214067062726547117458692721591359406370200290314624754063127400960094087895867637742075025483639428201109722721079724930178043745028933885128829906698168853154318706644966851186313088493594654968888582627071463897569198911359861742320383875823857580617071265625042430280842643
+
+n is:
+3716811039039960706457524364949523842483974709176236306917175996062120032369708610745538218545522531664764465328423063494363196237644912389564475489661364952303184692294444935724490425975207070376229471778973717896788807789416839263843979568326381262723493245674672893710695001177760276359941234091237449113769973392194789233069068685293909686054825572223619425889488695186536175849988709242777545311678609308300767119865148164828450064163356019724173532529678780021610811588427801992612303262463310985388919921159292894103158798781854907467097518709574773757761042400077263602354838379849589374059901729799489357305145264298609194342967597564222428418510955996385751370907147998230866973978555948242731998082064388086263087200167120592207556402931775017115750800793843162008617148122395051131879332692680935185080661392002417411017976827918323597340834406580075343884328073239968728524701751479392305371080458252121291682088279177666443938518065897649635101
+
+65537 gcd (p-1)(q-1) is:
+1
+
+n/256^34 is:
+489791971139294721492890070820155569620855660960671152212956498742039672112756515508187293741821313343828432787304645596036261708404238649106578165524494163400608981624770671588151402810099681387253505295523873528607505025404055656640662917263299188105134143828382070106290368480093502782669567301116939263880957511639706827141547209129803084934032419725412566483604334931280689111374224553996188329634360332732653261350171222703208193468891532899326692623514903323012432164895187708186345355697953671882383578250883882558619759274176822251124822180272439609500079726934520797625058937758586291699109806463439054605698740756573226324905651996790831494040667293495224230225078284196001746999337737330711700914242699218902328035406113882295732383384553898452229896017081749832945397093734240256603444289486458831879575367414145067878143633157580402523817166917607364019003392000
+
+ difference from k is:
+0
+
+--vkogqOf2sHV7VnPd--
+

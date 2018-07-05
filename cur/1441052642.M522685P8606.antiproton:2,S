@@ -1,0 +1,113 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t7VKNAXh008590;
+	Mon, 31 Aug 2015 16:23:12 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=YwMU3ubs;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-pa0-f54.google.com (mail-pa0-f54.google.com
+ [209.85.220.54])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t7VKN6NI008586
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Mon, 31 Aug 2015 16:23:07 -0400
+Received: by pacdd16 with SMTP id dd16so149805962pac.2
+ for <cypherpunks@cpunks.org>; Mon, 31 Aug 2015 13:23:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=subject:to:references:from:message-id:date:user-agent:mime-version
+ :in-reply-to:content-type:content-transfer-encoding;
+ bh=yvQIAu+ApvymiK4rEaVKmm4ZZSFYRrKoL+ezhiNmh/M=;
+ b=YwMU3ubsfDojXp5wLV91t706265jx7vdsstnaypjBnuPkCLrpm/Adr7cJQ4NtXgLc+
+ dPpuKWqQPOEqJamYvYmkqlC+skVGIM+oZEx+/chdeV+8s6AGARP3OPspafT8ocDN6JVI
+ Rcvx0N9lwUwFDTDIg6bUAsbnE9MPZTmedQ6BvySvnFKtsgAMePqWhn1dw8a41D0fUHG1
+ Ee6E7LPZDe+kwf92hPSmXchTkvUwTlOhjgXaMIFls0WZy+88a+X/M2TwW9Ku7SKx3OTy
+ s2F4MeDUouNeq/Yj1Nu4UmyuLjY6vzNind6i1GbBAIMYxCrnlQJdp1+6XpPLVV9KpWZz
+ WiiQ==
+X-Received: by 10.68.226.73 with SMTP id rq9mr24165613pbc.60.1441052580604;
+ Mon, 31 Aug 2015 13:23:00 -0700 (PDT)
+Received: from [192.168.254.42] ([50.125.2.210])
+ by smtp.gmail.com with ESMTPSA id gs2sm15535890pbc.15.2015.08.31.13.22.58
+ for <cypherpunks@cpunks.org>
+ (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+ Mon, 31 Aug 2015 13:22:59 -0700 (PDT)
+Subject: Re: Linux Foundation' Linux workstation security checklist
+To: cypherpunks@cpunks.org
+References: <20150831111344.GA2558@sivokote.iziade.m$>
+From: Blibbet <blibbet@gmail.com>
+X-Enigmail-Draft-Status: N1110
+Message-ID: <55E4B7A2.1090907@gmail.com>
+Date: Mon, 31 Aug 2015 13:22:58 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.2.0
+MIME-Version: 1.0
+In-Reply-To: <20150831111344.GA2558@sivokote.iziade.m$>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 54
+
+On 08/31/2015 04:13 AM, Georgi Guninski wrote:
+> The document appears to be:
+> https://github.com/lfit/itpol/blob/master/linux-workstation-security.md
+> Linux workstation security checklist
+
+Since the Linux Foundation advise is recommending UEFI and Secure Boot
+and TPMs,
+I think they should also recommend running Intel CHIPSEC -- directly or
+via LUV-live -- for firmware vulnerability analysis, at least on the
+Intel systems (AMD has no CHIPSEC port). If system was designed
+vulnerable by vendor, there's little point in bothering with Secure Boot
+or any OS-level hardening....
+https://01.org/linux-uefi-validation/downloads/luv-live-image
+https://github.com/chipsec/chipsec
+Guidance should probably enable Verified Boot when running Chrome,
+perhaps the Verified U-Boot and other secure coreboot/U-Boot
+implementations.
+The advise should also mention something about each distro's Secure Boot
+varies in strength, some allow unsigned kernel drivers to be loaded even
+if Secure Boot is enabled.
+http://firmwaresecurity.com/2015/07/17/secure-boot-strength-varies-by-linux-implementation/
+It should mention virtual firmware security (inside VirtualBox, QEMU,
+etc), especially after last BlackHat talk:
+http://firmwaresecurity.com/2015/08/08/689/
+There's more to do, taking snapshots of rom, scanning for changes,
+tracking vendor firmware updates, ensuring system has fresh firmware
+bits, etc. But it's a nice start.
+
+> Troll-friendly appears this claim:
+> UEFI boot mode is used (not legacy BIOS) (CRITICAL)
+> UEFI and SecureBoot
+>
+> (ask RMS ;-) )
+
+AFAIK, RMS uses an IBM Thinkpad retrofitted with LibreBoot (presumably
+using SeaBIOS BIOS clone).
+https://stallman.org/stallman-computing.html
+I don't think RMS is responsible for LF's IT security policies. :-)
+
+If someone has one of these old Thinkpads boxes (sold by "Ministry of
+Freedom" (formerly trading as Gluglug), please try to run CHIPSEC on it;
+if it runs, run chipsec_main.py to see if it passes the security tess. I
+don't expect CHIPSEC will recognize the ancient Intel chipset used by
+the old IBM Thinkpad. It'd probably take someone to update CHIPSEC to
+add system data for this old chipsec, in order to make it work. Perhaps
+Ministry of Freedom has a vested interest? :-)
+Potential insecurely-built IBM system firmware security aside, I don't
+think Libreboot nor SeaBIOS offers much in terms of security to stop
+attackers, as well. U-Boot and coreboot both have PKI-enabled boot
+flavors that're vaguely like UEFI's Secure Boot, which Ministry of
+Freedom could be using, to help secure their modern customers.
+
+

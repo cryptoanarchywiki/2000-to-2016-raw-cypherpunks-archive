@@ -1,0 +1,135 @@
+From owner-cypherpunks@al-qaeda.net  Sat Mar 17 16:43:54 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q2HKelGT020956
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sat, 17 Mar 2012 16:40:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1332016847;
+	bh=uLZtFiWjFOEZd4B10f6VLdSFN8Ju3OYwTm2swuzKJBg=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=mHK50QOAlR7LqAqKSkiEC9VNWXnF4CnzVsgUv7RaZ853GubKp/uD48EUinEo//Deb
+	 gZvTO/D3gAX8dnpmMOoeDgy5LlctXp4jVb+uf23Ri/xJ0ryd7EslhADkc4rWmbpnw1
+	 iFvkzV4nsWQeZFB4N7nEVr9+36fxVJKBMm6DwkiU=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q2HKel50020955
+	for cypherpunks-outgoing; Sat, 17 Mar 2012 16:40:47 -0400
+Date: Sat, 17 Mar 2012 21:40:43 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: Re: [tahoe-dev] several questions about tahoe backup
+Message-ID: <20120317204043.GJ9891@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5080
+Lines: 103
+
+----- Forwarded message from Brian Warner <warner@lothar.com> -----
+
+From: Brian Warner <warner@lothar.com>
+Date: Sat, 17 Mar 2012 12:54:21 -0700
+To: tahoe-dev@tahoe-lafs.org
+Subject: Re: [tahoe-dev] several questions about tahoe backup
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6;
+	rv:11.0) Gecko/20120313 Thunderbird/11.0
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+On 3/1/12 11:50 AM, Dmitriy Kazimirov wrote:
+
+> 98% of this are results of tahoe backup runs and deep-check --repair
+> --add-lease takes more than 2 days to complete and it never completed
+> successfully for one reason or another. Usually it crashes on
+> network(I think related to gateway's network connection) errors and
+> starts from beginning.
+
+Yeah, I'm really satrting to think that we need that RepairAgent that we
+keep talking about: something inside the tahoe client node (or inside
+the "Agent" that we discusses briefly at the last Summit) which can
+manage a rate-limited asynchronous interruptable/restartable
+check/repair/renew process. Doing it entirely from the command line is
+too fragile: it basically implies that the whole process needs to
+complete before 1: your CLI command gets killed, 2: the node gets
+bounced, 3: the client's connections to the storage servers remain
+intact.
+
+The hard part about the RepairAgent has always been how to configure it.
+But I'm starting to think that tahoe.cfg should just be able to list a
+couple of aliases and a frequency (once/day, etc).
+
+> I tried to make specific aliases for each tahoe backup destination and
+> parallize deep-check but new questions arise:
+> - if other gateway performs deep-check on directory, and at same time
+>   - tahoe backup writes new backup - is it safe?Will worse possible
+>   result be 'Uncoordinate Write Error' but no data loss except
+>   possible current backup session?
+
+Backups use almost entirely immutable files and directories, and
+immutable files are not vulnerable to collision problems. The only
+mutable directory is the top-level one (which contains the timestamped
+subdirectories and the "Latest" link). So the only potential danger is
+that the "tahoe backup" is modifying that directory while the
+"deep-check --repair" is repairing it.
+
+It's hard to say what the chances are of bad things happening here. A
+couple of thoughts:
+
+ - "tahoe backup" modifies the top-level directory at the very end of
+   the process, while "deep-check --repair" visits the top directory at
+   the very beginning of the process. If you start both at the same
+   time, they probably won't collide.
+ - if the directory needed repairing, then the "tahoe backup"
+   modify-directory operation will effectively repair it at the same
+   time, perhaps reducing the chances that deepcheck--repair will try to
+   repair it later
+ - The chances of UCWE resulting in lost data depends upon the encoding
+   parameters and how many simultaneous writers there are. With 3-of-10,
+   assuming all shares are available, there'd have to be 5 simultaneous
+   versions of the file before none of them are recoverable (two shares
+   of version A, two of version B, two*C, two*D, two*E). Which
+   theoretically means that one tahoe-backup writer, one repairer, and
+   one previously-existing version should always result in at least one
+   version being recoverable. But, this is highly dependent upon what
+   sort of damage the repairer was trying to fix in the first place.
+
+> - if several deep-checks are being performed on directory, from
+>   different gateways(due for example script error) - is it safe?(I
+>   knew it does not make sense to do so but what will be worse possible
+>   result?)
+
+(incidentally deep-check without --repair is always safe: it doesn't
+modify the shares at all)
+
+Multiple deep-check --repair operations on the same directory runs the
+same UCWE risk as multiple writers trying to modify a directory at the
+same time: the danger is that each will successfully replace shares on
+different servers at the same time, resulting in some old "A" shares,
+some new "B" shares, and some new (different) "C" shares. Having a
+variety of share versions reduces your recoverability margins.
+
+We haven't ever tried to seriously model or test this. It would be
+interesting to create a directory, set up multiple clients, have them
+all repeatedly hammer away at it (making modifications) and measure how
+many UCWEs they get, and when/if the file becomes unrecoverable. It'd
+probably be a good idea to instrument the storage servers to send
+details of how the shares are changing to a common logfile, so we could
+reconstruct the process later.
+
+cheers,
+ -Brian
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+http://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

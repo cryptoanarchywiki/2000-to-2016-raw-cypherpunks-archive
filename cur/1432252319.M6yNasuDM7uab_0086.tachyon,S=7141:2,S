@@ -1,0 +1,174 @@
+From cypherpunks-bounces@cpunks.org  Tue Apr  8 05:24:26 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id s389NTwt006314;
+	Tue, 8 Apr 2014 05:23:44 -0400
+Received: from cannabis.dataforce.net (cannabis.dataforce.net [195.42.160.49])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id
+ s389NOf5006310
+ for <cypherpunks@cpunks.org>; Tue, 8 Apr 2014 05:23:26 -0400
+Received: by cannabis.dataforce.net (Postfix, from userid 12794)
+ id 871A64A2332; Tue,  8 Apr 2014 13:23:24 +0400 (MSK)
+Date: Tue, 8 Apr 2014 12:23:24 +0300
+From: Georgi Guninski <guninski@guninski.com>
+To: cypherpunks@cpunks.org
+Subject: Should openssl accept weak DSA/DH keys with g = +/- 1 ?
+Message-ID: <20140408092323.GA11169@sivokote.iziade.m$>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="7AUc2qLy4jB3hD7Z"
+Content-Disposition: inline
+header: best read with a sniffer
+User-Agent: Mutt/1.5.20 (2009-06-14)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.16
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 5399
+Lines: 135
+
+
+--7AUc2qLy4jB3hD7Z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+I am a noob at crypto.
+
+IIRC similar attack was used against Tor
+several years ago.
+
+In DSA it is possible to force g=1 or g \equiv -1 \mod p.
+The first is unit and the second is of multiplicative
+order 2.
+
+This are clearly weak and insane choices,
+but this might have implications to MITM
+(might be wrong on this).
+
+For DH could generate key with g=1, though
+couldn't test it.
+
+Tested both 1 and -1 cases in DSA,
+the probability of successful connection
+was about 1/4 (or maybe 1/2), errors in the
+other cases. (for $1$ I would expect probability
+$1$).
+
+Attached are cacert.pem and cacert2.pem,
+the magic word is 1234.
+
+To test:
+$ openssl s_server -accept 8888 -www -cert cacert.pem
+$ openssl s_client -connect localhost:8888 -showcerts
+
+To examine
+$openssl x509 -text -in cacert2.pem
+$openssl dhparam -text -in dHParam.pem
+
+(not sure if dHParam.pem this is usable, forged generation).
+
+Firefox refuses connections, Konqueror works
+with same probability.
+
+Suspect this might be related to EC refusing
+the point at infinity.
+
+Might have MITM implications, don't have
+working exploit (If a MITM can forge $g=1$ in DH,
+the private keys are useless).
+
+
+
+--7AUc2qLy4jB3hD7Z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="cacert.pem"
+
+-----BEGIN DSA PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: DES-EDE3-CBC,DB7F9CD65ADD77AB
+
+Xn9Qv7Lai2TC5lL6+gjO6c8TZc/afHcQRkzMOu5Jgonz9yVxMA02x6eVIRmKyosK
+KeeaaPCBqquWOaP3cgf2Qjq7pdYiexd1yAv+aLT/+d6BY5Mou+Mqif8/lWsTyoEC
+Hn1c+I7WCVyBw2Gw5RhgLmA321Ry1lQbjcrm7q9S9O59xG9QbaicZ/lY2nQz75oL
+oMzRhzFvbsOYs86f1Q2cK2y09+RvVY/HxBEugs98ITKoNVdrXbpPVBhnWOqfVcgc
+GizvsLLM92dAe0Ar5vgIP7Dtv8oz/jXo0U4fbBw5/hHHwhC5tLZdYbXPixff+4qx
+yQOuED5GBVZY1bKCAUPAinGcQ8KPadUQyNx7Mv5rRoWEZHF/bC9kFodqFe1j3d0+
+t0RWgrCY9xSHAOq22lhPI5MEOXAcjaUeJh/ykga4NiZ28keL8MzNXHT5HdtvR+GB
+zhkAv7gAF5erzlJbt1FzsQQJFRMu1NKC53Dy9/uzpe+ADtptti9LhLU0SXQ5AWIW
+zoIXa8FtNw71Nv45onBZmCwmy1fSp3Dm4mhYeC6BHIw8AeqLfpm4vHmPTutEVL05
+ODDc2xk0v8b8F1sn0h1rE9xo4S/mAfbv
+-----END DSA PRIVATE KEY-----
+-----BEGIN CERTIFICATE-----
+MIIDXDCCAy+gAwIBAgIJAJ4Q4SMgSc5DMAkGByqGSM44BAMwRTELMAkGA1UEBhMC
+QVUxEzARBgNVBAgTClNvbWUtU3RhdGUxITAfBgNVBAoTGEludGVybmV0IFdpZGdp
+dHMgUHR5IEx0ZDAeFw0xNDA0MDgwNjA2MThaFw0xNDA1MDgwNjA2MThaMEUxCzAJ
+BgNVBAYTAkFVMRMwEQYDVQQIEwpTb21lLVN0YXRlMSEwHwYDVQQKExhJbnRlcm5l
+dCBXaWRnaXRzIFB0eSBMdGQwggG4MIIBLAYHKoZIzjgEATCCAR8CgYEAzW4QxCTN
+cMtydrq+ef9XUrAz+A7LsU0u0MFXKIzo5RxNap5PuiG3aOmAu4nV8abi6SAEx9sQ
+q5Q+tuHxXt+eNGdozbZJzVzOe+VKq9untmufUEE6B0R92aXm6ZSWqLo0s6xQN0jv
+At0BnR7+OVHupSW51SLHFjjl+I8u/MQPa+kCFQDYafvWAxlN4zQCarbUaXWMmdeH
+bwKBgQDNbhDEJM1wy3J2ur55/1dSsDP4DsuxTS7QwVcojOjlHE1qnk+6Ibdo6YC7
+idXxpuLpIATH2xCrlD624fFe3540Z2jNtknNXM575Uqr26e2a59QQToHRH3Zpebp
+lJaoujSzrFA3SO8C3QGdHv45Ue6lJbnVIscWOOX4jy78xA9r6AOBhQACgYEAzW4Q
+xCTNcMtydrq+ef9XUrAz+A7LsU0u0MFXKIzo5RxNap5PuiG3aOmAu4nV8abi6SAE
+x9sQq5Q+tuHxXt+eNGdozbZJzVzOe+VKq9untmufUEE6B0R92aXm6ZSWqLo0s6xQ
+N0jvAt0BnR7+OVHupSW51SLHFjjl+I8u/MQPa+ijgacwgaQwHQYDVR0OBBYEFGo6
+avmmK25QUfw2FSU684prw3kIMHUGA1UdIwRuMGyAFGo6avmmK25QUfw2FSU684pr
+w3kIoUmkRzBFMQswCQYDVQQGEwJBVTETMBEGA1UECBMKU29tZS1TdGF0ZTEhMB8G
+A1UEChMYSW50ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkggkAnhDhIyBJzkMwDAYDVR0T
+BAUwAwEB/zAJBgcqhkjOOAQDAxwAMBkCAQACFEHWsp2rVgBO4mK5C+J1rnCMhD4t
+-----END CERTIFICATE-----
+
+--7AUc2qLy4jB3hD7Z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="cacert2.pem"
+
+-----BEGIN ENCRYPTED PRIVATE KEY-----
+MIIBljBABgkqhkiG9w0BBQ0wMzAbBgkqhkiG9w0BBQwwDgQIUbBedH6EQe8CAggA
+MBQGCCqGSIb3DQMHBAjo+UVA5oKM3wSCAVCK5idMcNAuMjE8rzpM0BP1LYUdgDHF
+NJeUSS849HCNr/HCNME7L9+ieruuESKFsAoNCI7f49XrtoUKn6xjykVwy8fEIgvY
+h2pM/zuMEVOgU1CC5iaxopW2RFVwJa/qZRGuZQl62UwwKYezshu2Aq1yhDcA5F51
+gXhYayS3G/oTXtzMx7+C87VZnltWIFbaE9sh3KCBRHfWD02zTnBoUHjUt7QvuMeR
+NlVnAI/anhzB9dW+++QDX2oLJ4Ch45jRZy0Eg9taT+jAclda7R8madXd+7esai3x
+cbgxSSZHDi662XKxT1Cj8CZpdMp/GaAjJjeXnvzdIzSgqJzosME3G9/tEAs8qyiU
+6pzpejFOxwNkkp7aPNMb9OBtaOShFPaHdeDhwqff4AdMNkI47L6s0tNhfW9Is+pO
+vIcEtBckJJRBV5fOH4IRjauvG3TqXoNZwOY=
+-----END ENCRYPTED PRIVATE KEY-----
+-----BEGIN CERTIFICATE-----
+MIICgjCCAlWgAwIBAgIJAPNFA67yoKQ1MAkGByqGSM44BAMwRTELMAkGA1UEBhMC
+QVUxEzARBgNVBAgMClNvbWUtU3RhdGUxITAfBgNVBAoMGEludGVybmV0IFdpZGdp
+dHMgUHR5IEx0ZDAeFw0xNDA0MDgwNzQ2MDBaFw0xNDA1MDgwNzQ2MDBaMEUxCzAJ
+BgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5l
+dCBXaWRnaXRzIFB0eSBMdGQwggE2MIIBLAYHKoZIzjgEATCCAR8CgYEAj6FTWA+z
+FLie9ojr3+hs7PhWHX6cZ8iJxfDJoNf6BRIjAeFO5GqNy329c8IWR1TjEFGesbxb
+DuVawrnpaPI+H6vPt3QYtRJKgEmhAddNaruQ4DvGXI3ROwRQQDnIjZ5G53XnROqq
+xJ01AbHZm3fIqfUhlObieabuVM9v7JrzViMCFQDJa1wUK89qXPyMPNhBlkTD/iiw
+bQKBgQCPoVNYD7MUuJ72iOvf6Gzs+FYdfpxnyInF8Mmg1/oFEiMB4U7kao3Lfb1z
+whZHVOMQUZ6xvFsO5VrCuelo8j4fq8+3dBi1EkqASaEB101qu5DgO8ZcjdE7BFBA
+OciNnkbndedE6qrEnTUBsdmbd8ip9SGU5uJ5pu5Uz2/smvNWIgMEAAIBAaNQME4w
+HQYDVR0OBBYEFKJObNzcZ8MX+c5Wegvz1wQAZq9IMB8GA1UdIwQYMBaAFKJObNzc
+Z8MX+c5Wegvz1wQAZq9IMAwGA1UdEwQFMAMBAf8wCQYHKoZIzjgEAwMcADAZAgEB
+AhRR7IPxVOY1ELLGCsGGcQL6e2Bv+A==
+-----END CERTIFICATE-----
+
+--7AUc2qLy4jB3hD7Z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="dHParam.pem"
+
+-----BEGIN DH PARAMETERS-----
+MIGHAoGBAOnh7CKkyZlo8RdK7m4IL085MUpVxBeKrArx7kJZp8/3ctjEli2m5U32
+GuwUBYmi5t65ChuOOc+nTQiTYwsoviPJnhM0uxPz3Hu5wtlJtBQQNoOwKvK7RwHS
+JOs/JhVBjL+VErMe90QbW77wmtZWx9KzDY/O9kYGtzT/37AGP32TAgEB
+-----END DH PARAMETERS-----
+
+--7AUc2qLy4jB3hD7Z--
+

@@ -1,0 +1,94 @@
+From owner-cypherpunks-outgoing@einstein.ssz.com  Tue Sep  5 14:11:22 2000
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.72.0.53])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id OAA31030
+	for <kwantam@positron.mit.edu>; Tue, 5 Sep 2000 14:11:18 -0400
+Received: from einstein.ssz.com (mdom@einstein.ssz.com [204.96.2.99])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id OAA12457
+	for <rsw@MIT.EDU>; Tue, 5 Sep 2000 14:11:17 -0400 (EDT)
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id NAA26498
+	for cypherpunks-outgoing; Tue, 5 Sep 2000 13:17:29 -0500
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id NAA26476
+	for cypherpunks@ssz.com; Tue, 5 Sep 2000 13:17:20 -0500
+Received: from sirius.infonex.com (sirius.infonex.com [216.34.245.2])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id NAA26462
+	for <cpunks@ssz.com>; Tue, 5 Sep 2000 13:17:13 -0500
+Received: (from cpunks@localhost) by sirius.infonex.com (8.8.8/8.8.8) id LAA14517; Tue, 5 Sep 2000 11:00:30 -0700 (PDT)
+Received: from cyberpass.net (cyberpass.net [216.34.245.3]) by sirius.infonex.com (8.8.8/8.8.8) with ESMTP id LAA14496 for <cpunks@sirius.infonex.com>; Tue, 5 Sep 2000 11:00:18 -0700 (PDT)
+Received: from nym.alias.net (nym.alias.net [18.26.0.252]) by cyberpass.net (8.8.8/8.7.3) with SMTP id LAA18872 for <cypherpunks@cyberpass.net>; Tue, 5 Sep 2000 11:02:16 -0700 (PDT)
+Date: 5 Sep 2000 18:00:09 -0000
+Message-ID: <20000905180009.22147.qmail@nym.alias.net>
+To: cypherpunks@cyberpass.net
+From: lcs Mixmaster Remailer <mix@anon.lcs.mit.edu>
+X-Comment1: This message did not originate from the
+X-Comment2: above address. It was automatically remailed
+X-Comment3: by an anonymous mail service. Please report
+X-Comment4: problems or inappropriate use to
+X-Comment5: <postmaster@anon.lcs.mit.edu>
+Subject: CDR: Re: "ChronoCryption" algorithm - $50 reward for spotting a flaw
+Sender: owner-cypherpunks@einstein.ssz.com
+Precedence: bulk
+Reply-To: cypherpunks@einstein.ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Language: English, Russian, German
+Status: O
+Content-Length: 2720
+Lines: 53
+
+Ray Dillinger writes:
+> In the interest of making  some news if you don't like the news 
+> you're getting, I present -- the Country Mile Cipher.  Algorithm 
+> details available (for now) on 
+>
+>         http://www.sonic.net/~bear/crypto/countrymile.html
+>
+> This is a stream cipher based on the Blum-Blum-Shub pseuodo-
+> random number generator -- and on work done more recently by 
+> Ronald Rivest, who "digitally sealed" a message that he expects 
+> to take 30 years of continuous computing to unscramble. 
+
+Your idea is to take BBS as a stream cipher, use a value based on a
+secret short key as a starting point, and then cycle it potentially a
+whole lot, millions or billions of cycles or more, before beginning to
+cipher the message with it.
+
+Using the idea of Rivest et all you can cycle BBS forward arbitrarily
+far in a limited amount of work, if you know the modulus factors.  So
+you can encrypt with little work, while making the decryptor do an
+arbitrary amount of work even if he knows the key.
+
+You've combined the idea of time lock crypto with an encryption function.
+
+It's not clear these two ideas go all that well together, like the SNL
+product that was both a floor wax and a dessert topping.  Usually you
+either want to encrypt, in which case you want to make it easy to decrypt
+for the guy who knows the key, or you want to time-lock, in which case
+you want to control how hard it will be to find the key.  There don't
+seem to be that many cases where you want to allow decryption but only
+if you both know the key and are willing to put in a lot of time.
+
+Even if you did want to do that, you could just use Rivest's time lock
+to hide a key which then gets combined with your short key to produce
+the actual key to the message.
+
+Along these lines your own idea could be simplified; don't encipher the
+whole message using BBS, just encipher a block-cipher key and use 3DES
+or similar to encipher the message.
+
+You might also want to take a look at the paper by Dan Boneh and
+Moni Naor from Crypto 2000,
+http://crypto.stanford.edu/~dabo/abstracts/timedcommit.html.
+
+They have a similar idea but came up with an application for it in fair
+contract signing (where one party should not end up with the signature on
+a contract unless the other party does too).  For their application they
+need to be able to encrypt a message such that it can only be decrypted
+with a specified large amount of work.  However they must be able to
+reveal the encrypted message and prove that the decryption was accurate,
+using a small amount of work.  This could be done in your scheme simply
+by revealing the modulus factors (the "long key") but they want to reuse
+the modulus so they use some fancy zero knowledge proofs.
+

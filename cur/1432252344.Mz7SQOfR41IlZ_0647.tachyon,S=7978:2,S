@@ -1,0 +1,178 @@
+From owner-cypherpunks@al-qaeda.net  Mon Mar 11 11:35:30 2013
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id r2BFTUcl000929
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 11 Mar 2013 11:29:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1363015770;
+	bh=rqI4L4d+kFnSzxKIpLSjiFAk7vu8XiGyIQchEyMosWc=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=b1WzTmmcU5NtvFJuF+yXzQWPP8d4ogOXEVWpha28N53J15veuEdMPSQTKz2pIpArq
+	 ItWOqd0DuTMJQtjFd+0KxxrD1Il47F53eHJJIRDkem40dmajc51NQWIUqe/BzKfFhw
+	 TWhUfaZJ76e8hmA/AceajhdmqVOir6A5xsLH4pAY=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id r2BFTUHC000928
+	for cypherpunks-outgoing; Mon, 11 Mar 2013 11:29:30 -0400
+Date: Mon, 11 Mar 2013 16:29:26 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: [tahoe-dev] Weekly Dev Chat notes from 2013-03-07
+Message-ID: <20130311152926.GO6172@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Zooko Wilcox-OHearn <zooko@leastauthority.com> -----
+
+From: Zooko Wilcox-OHearn <zooko@leastauthority.com>
+Date: Mon, 11 Mar 2013 06:27:05 +0000
+To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+Subject: [tahoe-dev] Weekly Dev Chat notes from 2013-03-07
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+Sheesh, it takes a lot longer to write these notes up for the list
+than it does to actually attend the dev chat.
+
+
+
+in attendance: Oleksandr, Zooko (scribe), David-Sarah, Randall
+"ClashTheBunny" Mason, Brian (latebone lash), Tony (latebone lash)
+
+not in attendance: Andrew (ABSENTbtwo lashes)
+
+sort-of-in-attendance (on the IRC channel): a lot of folks
+
+Agenda: Tahoe-LAFS v1.10 (Nuts and Bolts)
+
+SUMMARY:
+
+This was awesome. We got lots of tickets closed, or at least pushed forward a
+step or two. This was the most productive hour of ticket-closing work
+ever. We're going to do it again next week! If you like doing code-review and
+writing unit tests, you should join us.
+
+
+DETAILS:
+
+You can see also use the Trac Timeline:
+
+https://tahoe-lafs.org/trac/tahoe-lafs/timeline
+
+
+ClashTheBunny has some patches for IPv6 for Tahoe-LAFS and Foolscap (#867),
+and has some tests of them but needs more thorough tests. However, we didn't
+look at that this time, because we focused on tickets for Tahoe-LAFS v1.10.
+
+Nejucomo said on IRC that he wasn't going to get around to manually verifying
+that the bug we fixed in ticket #1679 was the same as the bug he reported. I
+decided to just close the ticket for the following reasons: there *is* a bug
+that we understand, there is a fix which is clear, there is a unit test that
+exercises the bug that is red without the fix and green with the fix, and The
+Dod manually verified that it fixed the problem in practice for him. The only
+reason we've left the ticket open waiting for Nejucomo to test is in case
+Nathan actually has a *different* bug than this one. But we don't need to
+keep the ticket open for that eventuality.
+
+ClashTheBunny did design review on #1732. He approved the design and made
+good comments that showed that he actually had thought about it. Subsequently
+Zooko added another design question and assigned it to Brian for design
+re-re-re-review.
+
+We looked at #1926. It is a blocker because it makes the SFTP frontend
+incompatible with the current stable release of Twisted. However it is closed
+as a duplicate of #1525 because the improvement in #1525 would remove the
+incompatibility. We briefly considered kludging it by requiring people to
+install an older Twisted, but instead decided to fix it the good
+way. David-Sarah had already implemented the fix to #1525 but there was
+something wrong with the unit test.
+
+NEWFLASH! This just in! As we were going to press, David-Sarah posted on
+#1525 a comment that they are currently working on it.
+
+We discussed #1767. David-Sarah had an idea for how to make the
+implementation simple, by incrementing the server-wide counter once for each
+service. Brian will work on it. It and #1732 are the two blockers that
+require new code to be written before we release Tahoe-LAFS v1.10.
+
+We closed #1484 as fixed. Yay!
+
+#1746 is finished, reviewed, and ought to go into Tahoe-LAFS v1.10, but I
+can't figure out how to merge it into master using git. I don't understand
+how to use git very well, since I've only been using it on a daily basis for
+a little more than two years now...
+
+#1812 was already applied, but there was something wrong with it according to
+Brian. Do we need to fix that as a blocker for 1.10 release?
+
+We agreed to drop support for Python 2.5 and therefore for CentOS 5.
+
+In the last few minutes of the hangout, we agreed that next week's hangout
+will be another Nuts And Bolts like this one, hopefully bringing Tahoe-LAFS
+v1.10 close to completion. Brian will work on #1767. Someone (maybe Zooko??)
+will work on #1732.
+
+Then we briefly mentioned the possibility of switching from a "semantic
+versioning" style version number, to a YEAR.RELEASE_COUNT version number like
+Twisted does. So instead of Tahoe-LAFS v1.10, this might be Tahoe-LAFS
+v13.0. Then if there is another release in 2013, that would be Tahoe-LAFS
+v13.1. We also considered leaving it alone for the "v1.10" release, and
+switching styles for the next release.
+
+Currently we use the "1." in "Tahoe-LAFS v1.10" to mean that it has
+backward-compatibility with all of the stable Tahoe-LAFS releases since v1.0
+(released March 25, 2008:
+https://tahoe-lafs.org/trac/tahoe-lafs/wiki/Doc#TheParadeofReleaseNotes
+). I'm not sure that's accurate. While we have never deliberately violated
+that goal, and we are not aware of any change that we've made which would
+break that compatibility, on the other hand we don't have automated or manual
+testing of backwards compatibility. Anyway, I suspect that there aren't any
+users of Tahoe-LAFS versions older than 1.9.2:
+https://tahoe-lafs.org/trac/tahoe-lafs/wiki/OSPackages
+
+tickets mentioned in this letter:
+
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/867# use ipv6
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1484# CLI: overzealous
+quoting of error messages
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1525# SFTP: handle
+download failures correctly; remove use of IFinishableConsumer
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1679# Nondeterministic
+NoSharesError for direct CHK download in 1.8.3 and 1.9.1
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1732# consider changes
+to webapi "Move" API before release
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1746# write test for
+anti-Ubuntu-crash-reporter exception-catching code
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1767# update
+Announcement "timestamp": sequence number?
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1812#
+parse_abbreviated_size doesn't accept T for terabytes (and other
+quibbles with the regex it uses)
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1926# Failed to load
+application: cannot import name IFinishableConsumer
+
+-- 
+Regards,
+
+Zooko Wilcox-O'Hearn
+
+Founder, CEO, and Customer Support Rep
+
+https://LeastAuthority.com
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

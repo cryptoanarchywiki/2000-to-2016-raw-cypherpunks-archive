@@ -1,0 +1,122 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u6463sOO028989;
+	Mon, 4 Jul 2016 02:03:55 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=goruyV5H;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-vk0-f51.google.com (mail-vk0-f51.google.com
+ [209.85.213.51])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u6463qPc028984
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Mon, 4 Jul 2016 02:03:53 -0400
+Received: by mail-vk0-f51.google.com with SMTP id m127so160201325vkb.3
+ for <cypherpunks@cpunks.org>; Sun, 03 Jul 2016 23:03:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to;
+ bh=kh7/a7XZ4IcOHz9SIdNcKMtkxrpZ47fyZncQVYMQSsU=;
+ b=goruyV5HD1kie9UKn/DWz+2yu+0+aonBRvIegvXeUERcbDF1800ME9p88HXrGS3IO8
+ bXS1GMofCuF7xBAtXTX6D0Zg4KeNMny5hHyxOMFGelPsvy1AtznR7nVi2xC6ykZ2+9Jo
+ RlIjz5mOXFiikKSZk9/Hb1w2nRYN5Rir2i43RlGwWZd6kh2WGfDjIcIYEtjes6Tn8OPn
+ /LGnrD8B/U8jd+e7Ogg8CJTTqK44XW62mD5GxUeTihzjzGHhIFqEbZeTHlGaAsFc8Afx
+ 8w3Riv5pPMN7BUbEnhsqz0WbvrStCP7WgaE7rqxItyTP4R89xeq04Ty9il3lK20eIS8/
+ iS1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to;
+ bh=kh7/a7XZ4IcOHz9SIdNcKMtkxrpZ47fyZncQVYMQSsU=;
+ b=GArrjWZ2K+rh6j1Re+b2xH72NjkMGsInNSXPZ5Hth4m/M8IRuQIz9yvJitDQ2u2BGi
+ zITsimnSuH/81doNNPb6hJ0US0ZOmk2woQo7JFgjEFDwaL8mwLZSyM/yUE0lpWVnGxcw
+ IQPWG0ai35Rhc1/2xyCkpTXV/nSY8OSzckNErJDoiHYzeiFHyzUK2+mBEVa/JDr4jQyU
+ H/Lfa3dzP/NctChxmC5L7aCTpydVUYjRy4tHb2pgPqhRx/qTzsiWs8VKBtLA+9VX5ki2
+ MEMEwNpZR+qMGo0N7lfb3Li1AjORitj7+tPpQX2Dgu4eQj+wktTVT+kqz3m0wSNWhrms
+ dHRg==
+X-Gm-Message-State: ALyK8tJYCm06gh9YaDI9bsdMnWFMX8FmNuaGIoHKRwksfZEhv4wPnBdmnELCVz6ZhYYdTDKX6DZwD1QTU84+4w==
+MIME-Version: 1.0
+X-Received: by 10.31.56.69 with SMTP id f66mr4311101vka.135.1467612225283;
+ Sun, 03 Jul 2016 23:03:45 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Sun, 3 Jul 2016 23:03:45 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Sun, 3 Jul 2016 23:03:45 -0700 (PDT)
+In-Reply-To: <20160704053527.GQ30352@x220-a02>
+References: <5778112d.8e63370a.7ac2f.ffff816d@mx.google.com>
+ <CAG2tMp7omFpzYRLWNLDVHXy1jE2PY7XdWDHoe1=iypTu_B=VZw@mail.gmail.com>
+ <CAG2tMp78EY+MuhD2XeUcr2px+F7qayhN=yUpvJQn06gOUi4BCw@mail.gmail.com>
+ <CAG2tMp4rSLMT3yq_XhjS1deCACW1UG8QY5TG1u_=-LULHWSVkg@mail.gmail.com>
+ <577960d5.8d38c80a.6ba10.ffff8609@mx.google.com>
+ <CAG2tMp4OcN4MFN-G_P3bf7jZNwEJu18eTZgUWKzM3Bk8RM6P3Q@mail.gmail.com>
+ <5779949e.564e370a.24a9.575b@mx.google.com>
+ <CAG2tMp6j=aFJDCVbmvBx0ON+qB_HGOZ7L_6jc8C-BKZ_VnvBAw@mail.gmail.com>
+ <5779bb44.489d370a.25971.0877@mx.google.com>
+ <CAG2tMp65HBKTz-jspMBshj0FrNQuE-ZBxYo-SK74U06bpvAeew@mail.gmail.com>
+ <20160704053527.GQ30352@x220-a02>
+Date: Mon, 4 Jul 2016 03:03:45 -0300
+Message-ID: <CAG2tMp7LjgV4pabYcELTvEscJJNRzt1RGvrU6rxyZofuErxfzw@mail.gmail.com>
+Subject: Re: TSA Thugs: TSA Agents Beat And Jail Disabled Teen With Brain
+ Cancer
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=001a1143f0ec5b308c0536c91930
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 48
+
+--001a1143f0ec5b308c0536c91930
+Content-Type: text/plain; charset=UTF-8
+
+On Jul 4, 2016 2:45 AM, "Zenaan Harkness" <zen@freedbms.net> wrote:
+>
+> > [Cecilia]  Part of world's beauty is how different can be the persons.
+Some people explode cities using nuclear weapons, some people try to build
+a whole new world...  :-)
+>
+> Yes, from an artistic point of view, exploding a city could be seen as a
+"beautiful thing".
+
+I never said that exploding a city is a "beautiful thing".  I was not
+talking about art, just about human nature.  Contrasts between destruction
+and creation.
+
+Sorry, I will leave the thread or I will spend millions of words to say the
+obvious in an absolutely not polite way.
+
+After telling that half of my family was killed because the city they used
+to live was destroied, I think it is pretty hard to see a city exploding
+and people dying under "an artistic point of view".
+
+--001a1143f0ec5b308c0536c91930
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p>On Jul 4, 2016 2:45 AM, &quot;Zenaan Harkness&quot; &lt;<a href=3D"mailt=
+o:zen@freedbms.net">zen@freedbms.net</a>&gt; wrote:<br>
+&gt;<br>
+&gt; &gt; [Cecilia]=C2=A0 Part of world&#39;s beauty is how different can b=
+e the persons.=C2=A0 Some people explode cities using nuclear weapons, some=
+ people try to build a whole new world...=C2=A0 :-)<br>
+&gt;<br>
+&gt; Yes, from an artistic point of view, exploding a city could be seen as=
+ a &quot;beautiful thing&quot;.</p>
+<p>I never said that exploding a city is a &quot;beautiful thing&quot;.=C2=
+=A0 I was not talking about art, just about human nature.=C2=A0 Contrasts b=
+etween destruction and creation.</p>
+<p>Sorry, I will leave the thread or I will spend millions of words to say =
+the obvious in an absolutely not polite way.=C2=A0 </p>
+<p>After telling that half of my family was killed because the city they us=
+ed to live was destroied, I think it is pretty hard to see a city exploding=
+ and people dying under &quot;an artistic point of view&quot;. </p>
+
+--001a1143f0ec5b308c0536c91930--
+

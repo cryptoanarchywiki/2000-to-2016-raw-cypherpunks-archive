@@ -1,0 +1,159 @@
+From owner-cypherpunks@al-qaeda.net  Thu Apr  5 12:17:40 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q35GEhH9027265
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 5 Apr 2012 12:14:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1333642483;
+	bh=psDTK6I7HJenpcIcd4gSa85zy30OJyZXsz7pNDZbsGI=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=uFTxOopAb289xBdQFOlp6nmB9NZVrRMK/kP40HMC+C26STZDkHi9Ul+6LTJfhnt7O
+	 PIn4cAgpEUaWfw9jMPyITpL3YRkA+jJOl/Gso1gOsT9v0/yKolApNXSIH/4ZXX+Mic
+	 OLlBGc9DcuupTn1fy7td8im4JSCtfSIM/srL32gc=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q35GEhdY027264
+	for cypherpunks-outgoing; Thu, 5 Apr 2012 12:14:43 -0400
+Date: Thu, 5 Apr 2012 18:14:40 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: tor-talk@lists.torproject.org, cypherpunks@al-qaeda.net,
+        info@postbiota.org
+Subject: How China Blocks the Tor Anonymity Network
+Message-ID: <20120405161440.GR14482@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+http://www.technologyreview.com/blog/arxiv/27697/
+
+How China Blocks the Tor Anonymity Network
+
+Security analysts reveal the inner workings of China's efforts to block the
+Tor anonymity network--and how to get around this censorship.
+
+kfc 04/04/2012
+
+The Tor Project is a free network run by volunteers that hides users'
+locations and usage from surveillance and traffic analysis. Essentially, it
+provides online anonymity to anybody who wants it.  Tor users can send email
+and instant messages, surf websites, and post content online without anyone
+knowing who or where they are. Consequently, it is widely acknowledged as an
+important tool for freedom of expression. 
+
+That's clearly a worry for authoritarian regimes that want to control and
+limit their citizens' access to the outside world. The biggest and most
+powerful of these is China, and the government there operates a firewall that
+denies its citizens online access to the outside world. 
+
+It's no surprise then that the Great Firewall of China, as it is called,
+actively blocks access to the Tor network. So an interesting question is how
+this censorship works and how it might be circumvented.
+
+Today, Philipp Winter and Stefan Lindskog at Karlstad University in Sweden
+provide an answer. 
+
+These guys have conducted a comprehensive analysis of the way the Great
+Firewall of China blocks Tor and how these measures might be sidestepped.
+
+First, a bit of background about Tor. Let's imagine a fictional user called
+Alice. To use the Tor network, Alice must first download the free software
+package, which she runs on her computer. 
+
+This software encrypts Alice's online communication and sends it to a Tor
+server called an entry relay, which then directs it randomly through a
+network of Tor relays operated by volunteers around the world. Anybody
+receiving information from Alice can trace the message back only to the last
+Tor server. 
+
+Also, since the Internet address of the sender and receiver are encrypted
+while they are in the network, an eavesdropper cannot tell who sent a message
+or where it is going. 
+
+The obvious way for China to prevent access to Tor is to block access from
+inside the country to the entry relays. That's easy because the entry relays
+are publicly listed, and, indeed, the Great Firewall of China does exactly
+this.
+
+However, in anticipation of this tactic, the Tor network always operates a
+number of entry relays without publishing their details. These are much
+harder to block and can easily be changed.
+
+The trouble is that the Great Firewall of China seems to have found a way to
+detect and block these secret relays as well. 
+
+Now Winter and Lindskog think they've worked out how this is done. The trick
+has been to set up their own secret relay and to try to connect to it from
+inside China (building on previous work by Tim Wilde at Team Cymru).
+
+The Tor software that Alice runs must connect with any Tor relay it contacts
+using a special handshake protocol. This protocol contains unique sequences
+of code. 
+
+Winter and Lindskog say the firewall uses deep pattern inspection to look for
+this code in any outgoing communications. If it finds it, it assumes a
+potential Tor connection. It then attempts to make its own connection. If
+that works, the firewall then blocks future access to this IP address. 
+
+Impressively, Winter and Lindskog have worked out the details of how the deep
+packet inspection does this. 
+
+Even more impressively, these guys have used Google's reverse DNS lookup
+service to work out who seems to be behind this censorship. The evidence
+points strongly to two of China's largest telecom companies: China Telecom
+and China Unicom. 
+
+Both of these organisations are government-owned and clearly well placed to
+operate a firewall on this scale.
+
+So what to do? With their newfound knowledge of how the Great Firewall of
+China works, Winter and Lindskog suggest a number of strategies that Tor
+users could exploit to beat it. 
+
+One idea is packet fragmentation--dividing up the packets to confuse the deep
+packet inspection system so that it cannot easily find and block secret
+relays.  
+
+However, that relies on all Tor users using packet fragmentation. A single
+Tor user who connects to a secret relay in the conventional way will give it
+away, allowing the authorities to block it.
+
+Perhaps the most promising avenue is a tool currently being developed called
+Obfsproxy. This camouflages Tor traffic, making it look like something else,
+such as Skype traffic, for example.
+
+China is clearly worried about this approach. The Great Firewall of China
+currently blocks all published relays designed to use Obfsproxy. However,
+Winter and Lindskog set up a private Obfsproxy relay in Sweden and
+successfully connected to it from inside China. "We initiated several
+connections to it over several hours and could always successfully establish
+a Tor circuit," they say.
+
+That seems to prove that the deep packet inspection system cannot spot
+private Obfsproxy relays and so looks like a promising route forward. 
+
+The main reason the Great Firewall is able to detect Tor traffic is that it
+is easily distinguishable from other types of Internet traffic. "It is
+crucial that this distinguishability is minimised," conclude Winter and
+Lindskog.
+
+There is a broader issue of course. Because Tor is an open and transparent
+organisation, these kinds of discussions about how best to circumvent the
+Chinese firewall inevitably take place in public, in full view of the Chinese
+authorities they are attempting to outwit.
+
+The mere publication of Winter and Lindskog's paper gives the Chinese
+authorities full view of the techniques these guys have used to reveal how
+the firewall works.
+
+Security analysts and the developers behind Tor must be sorely tempted to
+hide their deliberations and protect their future work behind an impenetrable
+veil of secrecy. That must be resisted. 
+
+These kinds of open discussion may be like fighting with one hand tied behind
+your back. But surely such is the price of freedom.
+
+Ref: arxiv.org/abs/1204.0447: How China Is Blocking Tor
+

@@ -1,0 +1,177 @@
+From owner-cypherpunks@lne.com  Sun Aug  3 12:33:14 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h73GXBA24469
+	for <rsw@jfet.org>; Sun, 3 Aug 2003 12:33:11 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h73GKcG2018515
+	for cypherpunks-goingout345; Sun, 3 Aug 2003 09:20:38 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Sun, 3 Aug 2003 12:12:58 -0400 (edt)
+From: Sunder <sunder@sunder.net>
+X-Sender: sunder@anon7.arachelian.com
+To: Adam Back <adam@cypherspace.org>
+cc: "Trei, Peter" <ptrei@rsasecurity.com>, cypherpunks@lne.com,
+   Peter
+  Gutmann <pgut001@cs.auckland.ac.nz>
+Subject: Re: Secure IDE?
+In-Reply-To: <20030803044121.GA15240144@exeter.ac.uk>
+Message-ID: <Pine.BSO.4.21.0308031125090.31094-100000@anon7.arachelian.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 7494
+Lines: 148
+
+So build an individual key for each cluster by some function that uses the
+original key.  Same idea as using IV's, but with a few twists.  IMHO,
+using CBC's for disk encryption sucks because you'll need to read previous
+sectors, and that's slower...
+
+I say cluster, not sector, as it's usually faster to work in 128k chunks
+than in 512 byte chunks when reading/writing to disk.  YMMV, etc.
+
+Here's the idea:
+
+
+For example, use a very large random key preferably from a good
+hrng... say a few megs in size... maybe something that would fit on a
+flash fob... say 16-128mb.  Let's call this K.  (This can also be one of
+those business card CD's, etc...)
+
+Protect the actual key by encrypting it with a has from the user's
+passphrase to prevent someone from grabbing the fob and just using it of
+course.  Call this E(k).  Make sure that the user has backup copies of
+this fob.
+
+Perhaps this can be an N of M split for the backup, so the user will need
+several of the backup fob's to generate the key...  This way an attack
+that has temporary physical access won't be able to simply steal a backup
+fob.
+
+
+At boot up/mount time, you'll need both the flash fob and the key to
+unlock it.
+
+You can even put some sort of unique disk id on the physical disk and use
+this as part of the key for that disk.  Call this D.  D might depend
+on the physical parameters of the disk and the manufacturer - but this 
+is probably not such a great idea -- if the disk fails, you can't just 
+restore it's image over another for example...  So more random numbers 
+are a good way to go.  D can be stored on the disk itself (in encrypted
+form of course - say by a hash of the passphrase or something else.)
+
+This way, you can securely encrypt multiple disks with the same
+fob/passphrase.
+
+You can now build some function that grabs N bits from K based on the
+value of D and the cluster number, where N is the size of the key for your
+cypher.  This will serve instead of the IV.  You should also test this key
+to see if it is a weak key for the particular cypher - and if so, switch
+to an alternate function, etc.
+
+In the case of cyphers such as blowfish where the cypher is relatively
+fast, but the setup time is too slow to have as many keys as clusters,
+you'll need to limit the above function so that it can only produce a
+manageable number of keys (say 256, 1024, or whatever you think is
+manageable) - that way you can intialize each decode key ahead of time and
+keep them in non-swapable RAM.  You'll need to figure out what a good
+balance is so you don't wind up exhausting RAM, and at the same time, have
+enough keys available to give you protection.
+
+
+Optionally, if you have access to the file system (i.e. you're running an
+open source OS and have access to the file system structures), you might
+want to add something that fills in deleted blocks with random garbage to
+throw off attackers.  No need to encrypt them, but you'll need to make
+sure that there's nothing statistically distinguishing them from encrypted
+blocks.  This can help you speed things up if you have access to a
+moderately fast rng.
+
+Another thing to consider from the "I have OS source code" level is to
+perhaps optionally also compress files stored to the disk, and use a file
+system that can handle gappy files.  The worse thing you could do is to
+actually store a long string of clusters of 00's in the plaintext... (Then
+again, if your crypto cypher is good, this is much less of an issue.)
+
+Another thing to worry about is how to not have known plaintext on the
+encrypted disk - the majority of binaries for example are going to be well
+known and can act as this plaintext for the attacker.  Compression
+somewhat takes care of this.  Compiling your own software with
+slightly different optimizations or compiler versions rather than using
+the distributed binaries of your OS is a good thing.  i.e. use Linux from
+Scratch as a distro and tweak your compiler to use different optimizations
+or target processors than usual.
+
+
+Having access to the OS adds another advantage in that you can reserve
+access to the fob (or key cd) just for the disk encryption system and
+prevent rogue software from just stealing the key.  (Assuming of course
+that your kernel is secured, and can limit non-kernel access to devices,
+etc, etc, etc.) 
+
+
+A lot of this can be done in hardware if you have enough $$$ to build it
+on a separate embedded computer -- I constantly see these advertised in
+the usual Linux mags for several hundred dollars and they contain flash,
+ethernet, serial ports, etc...  Some even have IDE ports... This would be
+a perfect thing to sit between your disks and your main computer.  It
+could add another layer of complexity for the attacker to have to deal
+with...  In this case, the main computer wouldn't even have access to the
+key fob at all.  This embedded computer can possibly do other things for
+you, such as act as a hardware RAID controller - thus freeing up the host
+machine from that task, etc, and even better, the host machine wouldn't
+store any keys on it whatsoever.  You could also make the embedded machine
+into a firewall with an application level http/smtp filter as well.
+
+It would just access the embedded machine as if it were an IDE or SCSI
+device without any way to attack it.  This way you could even run
+Windblows on it (somewhat) securely.  If you added a firewall to the
+embedded machine, it could also prevent trojans from sending back
+information to their owners, installing spyware, whatever...
+
+
+You can even go as far as using one of those happy gamer clear plastic
+cases (very bad because of RF emissions, but it will let you see the
+insides of your computer making it harder for someone to add their own
+hardware to it.)
+
+
+
+Now backups are going to be the next main thing to worry about.  Letting
+the user make backups of plaintext data is a horrible idea.  It's better
+to provide a backup facility ahead of time that would take chunks of the
+disk 650MB/800MB/4.5GB (or tape sized) at a time so they can be burned to
+CD.  You may optionally wish to not write the empty random clusters - but
+that would aid an attacker in that they wouldn't have to deal with
+figuring out what the ununsed sectors were as per the previous paragraph.
+
+
+
+BTW: If you implement this idea commercially, all I ask in return is that
+you give me a copy of the software/hardware -- or license it under the
+GPL, or FreeBSD license. :)
+
+
+----------------------Kaos-Keraunos-Kybernetos---------------------------
+ + ^ + :25Kliters anthrax, 38K liters botulinum toxin, 500 tons of   /|\
+  \|/  :sarin, mustard and VX gas, mobile bio-weapons labs, nukular /\|/\
+<--*-->:weapons.. Reasons for war on Iraq - GWB 2003-01-28 speech.  \/|\/
+  /|\  :Found to date: 0.  Cost of war: $800,000,000,000 USD.        \|/
+ + v + :           The look on Sadam's face - priceless!       
+--------_sunder_@_sunder_._net_------- http://www.sunder.net ------------
+
+On Sun, 3 Aug 2003, Adam Back wrote:
+
+> I believe that is what some of them are doing.  I think it's a little
+> better to use some fast PRNG seeded from the sector (or eg HMAC of
+> sector number or encryption of sector number if you have hardware).
+> The sector number is changing in counter order and cancels with the
+> plaintext difference.  I did some tests on a 10GB disk full of windows
+> app and program data (accessed the raw windows partition from linux
+> /dev/hda1) and if you do that (xor first block of sector with sector
+> number) you get a fair few collisions.
+

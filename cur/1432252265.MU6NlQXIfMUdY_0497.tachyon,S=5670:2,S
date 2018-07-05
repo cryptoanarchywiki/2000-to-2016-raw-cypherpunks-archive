@@ -1,0 +1,119 @@
+From owner-cypherpunks@al-qaeda.net  Tue Jan  1 17:21:55 2013
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id r01MIJJw010050
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 1 Jan 2013 17:18:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1357078699;
+	bh=tSdY77hTQCYuW7cd1W0bFwu57ER6YZDVWHR9kCcDTIo=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=ZMSTpv4NgOs1NLoGNkI9EiI7UZCgXbn704R8PS/c2iHm2UDLEodWN6L4eMLE5QKpM
+	 p9jJ3xqisz3pkbC1IyLRmeWkGrTZjAaxHYQ6xU3KyQEU0OYCw7Ahca8ZyovR8K6Eer
+	 dX85PxjYKhM4pwzLdKtNcrCyR0HXLl+of5PFxO8s=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id r01MIJ7w010049
+	for cypherpunks-outgoing; Tue, 1 Jan 2013 17:18:19 -0500
+Date: Tue, 1 Jan 2013 23:18:15 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: Re: [FoRK] Recommendations for a reliable subscription-based
+  SSL 	VPN or proxy service for "secure, portable, virtual" office?
+Message-ID: <20130101221815.GZ9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4173
+Lines: 86
+
+----- Forwarded message from "Stephen D. Williams" <sdw@lig.net> -----
+
+From: "Stephen D. Williams" <sdw@lig.net>
+Date: Sat, 29 Dec 2012 14:43:51 -0800
+To: fork@xent.com
+Subject: Re: [FoRK] Recommendations for a reliable subscription-based SSL
+	VPN or proxy service for "secure, portable, virtual" office?
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8;
+	rv:17.0) Gecko/17.0 Thunderbird/17.0
+Reply-To: Friends of Rohit Khare <fork@xent.com>
+
+On 12/26/12 10:05 AM, Ben (B.K.) DeLong wrote:
+> Hi all -
+>
+> Hope everyone had/is having an enjoyable holiday break. I'm at my new
+> gig and thinking about being more vigilant regarding the separation of
+> personal life and work technologically. Any access of personal files
+> or activities, while at work, is done via a Portable Apps setup
+> through a Mountable TrueCrypt drive stored on DropBox.
+
+Surprised that works well without corruption...
+Although for a whole drive it would be a bit of an efficient storage use 
+issue (requiring just periodic reset maintenance), SparkleShare+Gitolite 
+git server via ssh is a great combination, with clients for 
+Windows/Macosx/Linux or you can use any git client.  If the git server were 
+storing into a TrueCrypt loopback on the server, you'd ruin offline attacks 
+against your data.  Simply sync to another drive somewhere to get 
+redundancy.
+
+Why not run an ephemeral VM (VirtualBox is free) that mounts a local host 
+TrueCrypt volume that is a cache for SparkleShare/Git.  You could run the 
+VM from the TrueCrypt volume, but then it would be mounted on the local OS 
+and Panopticon-like admin / system software would get to it.  An ephemeral 
+VM (that doesn't save updates to disk) that mounts the TrueCrypt volume is 
+more difficult to attack. This was always a feature of VMWare; not sure how 
+to do it with VirtualBox.  Perhaps with snapshots or similar COW drive  
+mounts with the drives in the TrueCrypt loopback.
+
+The VM should tunnel all network traffic over SSH to a shell server 
+somewhere, home if you properly setup incoming ports.  Use dynamic DNS to 
+get to it or something simpler (file on the ssh server is enough).
+
+It's not to hard to get the beginnings of cover traffic to make traffic 
+analysis tough.  This could be done various ways from random data, traffic 
+sensing reaction, to a smart tunnel that directly augments traffic patterns 
+with chaff.  Modify netcat and then run that over SSH socket proxies.
+
+>
+> It syncs regularly and while most of the activity is over SSL, I'd
+> like to ensure any and all activity being done from those particular
+> applications are done either over an encrypted hosted VPN or (if I
+> must) a hosted virtual machine that I can VPN/remote into from work.
+>
+> I'm not trying to be surreptitious here at my new job, but at the same
+> time, I've been trying to find the sweet-spot to this "secure,
+> portable, backed-up virtual office" solution for a while and the VPN
+> or Virtual machine setup is my last piece.
+>
+> I'm looking for something that's no more than $10-$30 a month. But I
+> am open to alternatives if I replace the dropbox solution.
+
+I've been running a colocated machine one way or another since 1992, with 
+my own DNS server, etc.  When I get around to building almost-never-fail 
+mini-servers, I have at least two other stable but seldom visited locations 
+to put servers.  I currently have an underused Linux box with 4 large 
+drives and 10Mb symmetric unlimited use.  The hard drive wears out about 
+once every 2 years; it gets rebooted about once every 6-12 months.  It 
+would probably be a good idea to share it and defray some of the costs, 
+especially while I'm in (relative) vow-of-poverty startup mode again.
+
+>
+> Many thanks in advance for thoughts. I'll share what I come up with.
+>
+
+sdw
+
+_______________________________________________
+FoRK mailing list
+http://xent.com/mailman/listinfo/fork
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

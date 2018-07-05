@@ -1,0 +1,92 @@
+From owner-cypherpunks-outgoing@ssz.com  Thu Sep  7 01:33:20 2000
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.72.0.53])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id BAA04556
+	for <kwantam@positron.mit.edu>; Thu, 7 Sep 2000 01:33:20 -0400
+Received: from einstein.ssz.com (mdom@einstein.ssz.com [204.96.2.99])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id BAA10700
+	for <rsw@MIT.EDU>; Thu, 7 Sep 2000 01:33:19 -0400 (EDT)
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id AAA04618
+	for cypherpunks-outgoing; Thu, 7 Sep 2000 00:43:09 -0500
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id AAA04597
+	for cypherpunks@ssz.com; Thu, 7 Sep 2000 00:43:03 -0500
+Received: from sirius.infonex.com (sirius.infonex.com [216.34.245.2])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id AAA04588
+	for <cpunks@EINSTEIN.ssz.com>; Thu, 7 Sep 2000 00:43:00 -0500
+Received: (from cpunks@localhost) by sirius.infonex.com (8.8.8/8.8.8) id WAA01529; Wed, 6 Sep 2000 22:25:54 -0700 (PDT)
+Received: from cyberpass.net (cyberpass.net [216.34.245.3]) by sirius.infonex.com (8.8.8/8.8.8) with ESMTP id WAA01518 for <cpunks@sirius.infonex.com>; Wed, 6 Sep 2000 22:25:46 -0700 (PDT)
+Received: from toad.com (toad.com [140.174.2.1]) by cyberpass.net (8.8.8/8.7.3) with ESMTP id WAA21520 for <cypherpunks@cyberpass.net>; Wed, 6 Sep 2000 22:27:48 -0700 (PDT)
+Received: (from majordom@localhost) by toad.com (8.7.5/8.7.3) id WAA03162 for cypherpunks-unedited-outgoing; Wed, 6 Sep 2000 22:21:59 -0700 (PDT)
+Received: from hcs.harvard.edu (hcs.harvard.edu [140.247.73.252]) by toad.com (8.7.5/8.7.3) with ESMTP id WAA03157 for <cypherpunks@toad.com>; Wed, 6 Sep 2000 22:21:56 -0700 (PDT)
+Received: from localhost (dmolnar@localhost)
+	by hcs.harvard.edu (8.9.3/8.9.3) with ESMTP id BAA28671;
+	Thu, 7 Sep 2000 01:21:51 -0400 (EDT)
+Date: Thu, 7 Sep 2000 01:21:51 -0400 (EDT)
+From: dmolnar <dmolnar@hcs.harvard.edu>
+To: Asymmetric <all@biosys.net>
+cc: cypherpunks@toad.com
+Subject: CDR: Re: StoN, Diffie-Hellman, other junk..
+In-Reply-To: <4.3.2.7.2.20000907002505.00b2fbf8@mail.megapathdsl.net>
+Message-ID: <Pine.OSF.4.05.10009070110540.5721-100000@hcs.harvard.edu>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-cypherpunks@ssz.com
+Precedence: bulk
+Reply-To: cypherpunks@ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Language: English, Russian, German
+Status: O
+Content-Length: 2260
+Lines: 47
+
+
+
+On Thu, 7 Sep 2000, Asymmetric wrote:
+
+> Now, my main question about D/H is quite simple.. what is considered a 
+> "good" size for the prime and primitive used, in bits?  Obviously something 
+> somewhat large, but how large is large enough?  64bits?  Less or more?  I 
+> can't find much information on this anywhere, and my copy of Applied 
+> Cryptography (2nd ed.) while covering D/H in detail, doesn't even mention this.
+
+The modulus should be rather large -- something like 512 or 1024 bits.
+With 64 bits, someone can use Pollard's method to find discrete logs in
+roughly 2^32 trials, which is Bad. Taking discrete logs for larger primes
+requires a variant of the number field sieve; the largest announced
+modulus for which I'm aware of this being done is 300-400 bits, but it
+hasn't received as much attention as factoring. 
+
+I think www.cryptosavvy.com has some key length recommendations. You might
+also check the April RSA Data Security Bulletin for Bob Silverman's
+dispute of their model. The storage problem he mentions is actually worse
+for discrete logs; while the vectors involved in the final step of
+factoring are 0-1, the vectors in the final stage of discrete log finding
+have full-size group elements and are therefore harder to store and
+manipulate.
+
+The size of the generator is a different issue. I don't see any reason why
+a small size generator would hurt...but I haven't thought about it very
+much. Note that you need the factors of p-1 in order to test if
+something's a generator, which means you may want to look into Maurer or
+Mihailescu's methods for prime generation. (Mihailescu has a paper on
+the subject aimed at implementors at 
+http://www.inf.ethz.ch/~mihailes/papers/primgen.ps )
+
+> Delphi and has any libraries like this already, I'd much appreciate hearing 
+> about them.. or even some a web resource or paper Real Book (tm) resource 
+> that explains in abstract terms how to go about something like this would 
+> be appreciated.
+
+It was after my time, but the AP Computer Science curriculum now has a
+BigInteger library as its "case study." :-)
+
+A web search turned up 
+http://www.efg2.com/lab/library/Delphi/MathFunctions/Cryptography.htm
+
+which has, among other things, a Pascal header for the Gnu MP library. 
+
+-David
+

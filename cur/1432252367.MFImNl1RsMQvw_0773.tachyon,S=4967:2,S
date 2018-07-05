@@ -1,0 +1,111 @@
+From owner-cypherpunks@al-qaeda.net  Wed Nov 10 16:46:20 2010
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-5+lenny1) with ESMTP id oAALhE8V009336
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 10 Nov 2010 16:43:14 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id oAALhEiF009335
+	for cypherpunks-outgoing; Wed, 10 Nov 2010 16:43:14 -0500
+Date: Wed, 10 Nov 2010 22:43:07 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: [p2p-hackers] how do I tell these Chinese people "You're doing
+  it 	wrong!" ?
+Message-ID: <20101110214307.GK28998@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3932
+Lines: 85
+
+----- Forwarded message from Zooko O'Whielacronx <zooko@zooko.com> -----
+
+From: Zooko O'Whielacronx <zooko@zooko.com>
+Date: Wed, 10 Nov 2010 08:19:53 -0800
+To: theory and practice of decentralized computer networks <p2p-hackers@lists.zooko.com>,
+	tahoe-dev <tahoe-dev@tahoe-lafs.org>,
+	liberationtech@lists.stanford.edu
+Subject: [p2p-hackers] how do I tell these Chinese people "You're doing it
+	wrong!" ?
+Reply-To: theory and practice of decentralized computer networks <p2p-hackers@lists.zooko.com>
+
+Dear people of p2p-hackers, tahoe-dev, and liberationtech:
+
+I think I confused the issue when I said in [1] "some people in China
+might be relying on using the Tahoe-LAFS public demo over unencrypted
+HTTP and thinking that it provides security properties like they would
+get if they ran their own copy of Tahoe-LAFS locally".
+
+Encryption of the HTTP connection isn't very important, so it was
+confusing when I mentioned "over unencrypted HTTP". I should have just
+said "some people in China might be relying on using the Tahoe-LAFS
+public demo and thinking that it provides security properties like
+they would get if they ran their own copy of Tahoe-LAFS
+locally".
+
+Look at this diagram:
+
+http://tahoe-lafs.org/source/tahoe-lafs/trunk/docs/about.html
+
+Using an unencrypted connection (HTTP or FTP) between the Tahoe-LAFS
+client and the Tahoe-LAFS gateway means that the link between those
+two objects on the diagram is red, meaning that you are vulnerable to
+anyone who controls that link. If you instead used an encrypted
+connection (HTTPS or SFTP) between those two objects then that link
+would be black, meaning that you are not vulnerable to someone just
+because they control that link. But you are still vulnerable to
+whoever controls the Tahoe-LAFS gateway which the link goes to!
+
+The right way to do it is to run the Tahoe-LAFS gateway yourself on a
+computer that you control. The Tahoe-LAFS gateway object is red on
+that diagram, meaning that you rely on it for your security, which is
+why you should run it on a computer that you control.
+
+You could run it on the same laptop or desktop that you are running
+your web browser (which is acting as the Tahoe-LAFS client), in which
+case it doesn't matter whether you use HTTP or HTTPS because the
+connection is only running over the loopback interface anyway.
+
+Or you could run it on some other computer that you control, in which
+case you need to use HTTPS so that you aren't vulnerable to anyone who
+controls the link between your local computer running your web browser
+on and your remote computer running your Tahoe-LAFS gateway.
+
+So, how do we explain to these Chinese users (and everyone else) that
+if they want good security, they must run a Tahoe-LAFS gateway (which
+is a web server) on a computer they control? Perhaps it would help to
+draw one variant of this diagram showing a user using a gateway on a
+remote server and being vulnerable to the people who control that
+server (which may include more people than the server's legal owner
+thinks), and another picture showing a user using a gateway on his
+local machine and being safe against the threat of the server operator
+betraying him.
+
+Does anyone have design skills (and Chinese!) and could try to explain this?
+
+Here is the source code for the current version of the diagram:
+
+http://tahoe-lafs.org/source/tahoe-lafs/trunk/docs/network-and-reliance-topology.svg
+
+Regards,
+
+Zooko
+
+[1] http://lists.zooko.com/pipermail/p2p-hackers/2010-November/002551.html
+_______________________________________________
+p2p-hackers mailing list
+p2p-hackers@lists.zooko.com
+http://lists.zooko.com/mailman/listinfo/p2p-hackers
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

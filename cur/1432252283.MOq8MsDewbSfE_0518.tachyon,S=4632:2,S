@@ -1,0 +1,116 @@
+From owner-cypherpunks@al-qaeda.net  Wed Aug 18 08:26:49 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i7IDQnNv001431
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Wed, 18 Aug 2004 08:26:49 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i7IDQnwn001430
+	for cypherpunks-outgoing; Wed, 18 Aug 2004 08:26:49 -0500
+Mime-Version: 1.0
+X-Sender: rah@bullae.ibuc.com
+Message-Id: <p06110437bd4908511bdc@[66.149.49.5]>
+Date: Wed, 18 Aug 2004 09:21:53 -0400
+To: cypherpunks@al-qaeda.net
+From: "R. A. Hettinga" <rah@shipwright.com>
+Subject: Re: MD5 collisions?
+Content-Type: text/plain; charset="us-ascii"
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3675
+Lines: 91
+
+--- begin forwarded text
+
+
+Delivered-To: cryptography@metzdowd.com
+Date: Wed, 18 Aug 2004 13:11:22 +1000
+To: Mads Rasmussen <mads@opencs.com.br>
+From: Greg Rose <ggr@qualcomm.com>
+Subject: Re: MD5 collisions?
+Cc: cryptography@metzdowd.com
+Sender: owner-cryptography@metzdowd.com
+
+At 14:12 2004-08-17 -0300, Mads Rasmussen wrote:
+>Eric Rescorla wrote:
+>
+>>Check out this ePrint paper, which claims to have collisions in
+>>MD5, MD4, HAVAL, and full RIPEMD.
+>>
+>>http://eprint.iacr.org/2004/199.pdf
+>>
+>>The authors claim that the MD5 attack took an hour for the first
+>>collision and 15 seconds to 5 minutes for subsequent attacks
+>>with the same first 512 bits.
+>So what's the status?, the MD5 collisions has been confirmed by Eric
+>Rescorla (taken the type into consideration), the MD4  by David Shaw, what
+>about Haval and RipeMD?.
+>
+>I did a test on the RipeMD results and couldn't get the results written.
+>Anybody else having the same problems?
+>
+>Any news on Antoine Joux and his attack on SHA-0? how did he create the
+>collision previously announced on sci.crypt?
+
+Eli Biham -- has collisions on 34 (out of 80) rounds of SHA-1, but can
+extend that to probably 46. Still nowhere near a break.
+
+Antoine Joux -- his team announced the collision on SHA-0 earlier this
+week. There is concentration on the so-called "IF" function in the first 20
+rounds... f(a,b,c) = (a & b) ^ (~a & c). That is, the bits of a choose
+whether to pass the bits from b, or c, to the result. The technique (and
+Eli's) depends on getting a "near collision" in the first block hashed,
+then using more near collisions to move the different bits around, finally
+using another near collision to converge after the fourth block hashed.
+This took 20 days on 160 Itanium processors. It was about 2^50 hash
+evaluations.
+
+Xiaoyun Wang was almost unintelligible. But the attack works with "any
+initial values", which means that they can take any prefix, and produce
+collisions between two different suffixes. The can produce the first
+collision for a given initial value in less than an hour, and then can
+crank them out at about one every 5 minutes. It seems to be a
+straightforward differential cryptanalysis attack, so one wonders why
+no-one else came up with it. The attack on Haval takes about 64 tries. On
+MD4, about 4 tries. RIPE-MD, about 2 hours (but can improve it).  SHA-0
+about 2^40 (1000 times better than Joux).
+
+Xuejia Lai clarified that the paper on E-print has been updated with
+correct initial values. They were initially byte-reversed, which they
+blamed on Bruce Schneier.
+
+Greg.
+
+>Regards,
+>
+>Mads Rasmussen
+>Open Communications Security
+>
+>---------------------------------------------------------------------
+>The Cryptography Mailing List
+>Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+
+
+Greg Rose                                    INTERNET: ggr@qualcomm.com
+Qualcomm Australia       VOICE:  +61-2-9817 4188   FAX: +61-2-9817 5199
+Level 3, 230 Victoria Road,             http://people.qualcomm.com/ggr/
+Gladesville NSW 2111/232B EC8F 44C6 C853 D68F  E107 E6BF CD2F 1081 A37C
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+
+--- end forwarded text
+
+
+-- 
+-----------------
+R. A. Hettinga <mailto: rah@ibuc.com>
+The Internet Bearer Underwriting Corporation <http://www.ibuc.com/>
+44 Farquhar Street, Boston, MA 02131 USA
+"... however it may deserve respect for its usefulness and antiquity,
+[predicting the end of the world] has not been found agreeable to
+experience." -- Edward Gibbon, 'Decline and Fall of the Roman Empire'
+

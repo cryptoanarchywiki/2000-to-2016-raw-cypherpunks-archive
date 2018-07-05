@@ -1,0 +1,131 @@
+From owner-cypherpunks@al-qaeda.net  Tue Feb 19 15:03:27 2008
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id m1JK312s000922
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 19 Feb 2008 15:03:01 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id m1JK31pE000921
+	for cypherpunks-outgoing; Tue, 19 Feb 2008 15:03:01 -0500
+Date: Tue, 19 Feb 2008 15:02:59 -0500
+From: "Riad S. Wahby" <rsw@jfet.org>
+To: Sarad AV <jtrjtrjtr2001@yahoo.com>
+Cc: cypherpunks@al-qaeda.net
+Subject: Re: uniform pseudo random number generation
+Message-ID: <20080219200259.GB31089@proton.jfet.org>
+Mail-Followup-To: Sarad AV <jtrjtrjtr2001@yahoo.com>, 
+  cypherpunks@al-qaeda.net
+References: <323390.13399.qm@web33302.mail.mud.yahoo.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <323390.13399.qm@web33302.mail.mud.yahoo.com>
+X-key-url: http://web.jfet.org/pgp.asc
+X-url: http://web.jfet.org
+X-keyserver: cryptonomicon.mit.edu
+X-key-fingerprint: B1CD 1262 0B82 47B1 BB4E  15D3 920D 1BEF 3D38 5585
+X-Habeas-SWE-1: winter into spring
+X-Habeas-SWE-2: brightly anticipated
+X-Habeas-SWE-3: like Habeas SWE (tm)
+X-Habeas-SWE-4: Copyright 2002 Habeas (tm)
+X-Habeas-SWE-5: Sender Warranted Email (SWE) (tm). The sender of this
+X-Habeas-SWE-6: email in exchange for a license for this Habeas
+X-Habeas-SWE-7: warrant mark warrants that this is a Habeas Compliant
+X-Habeas-SWE-8: Message (HCM) and not spam. Please report use of this
+X-Habeas-SWE-9: mark in spam to <http://www.habeas.com/report/>.
+X-red-meat: bite-mark festoonery
+X-rand-ascii: arkF<NQfYO;WFDpA4e}A&&09*gw'hu^5[]:B$y3Kjrn5\.7B@y6@lM`ay*VJ{E
+  	Dc
+X-NSA: arrangements AK-47 RUBY RIDGE Ft. Meade 12TH GROUP Uzi
+X-bofh: The rolling stones concert down the road caused a brown out
+User-Agent: Mutt/1.5.17+20080114 (2008-01-14)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3389
+Lines: 83
+
+Sarad AV <jtrjtrjtr2001@yahoo.com> wrote:
+> A full period linear congruence generator with modulus
+> 360 was used to obtain what is required with the help
+> of 40 different seeds. The problem is that i find the
+> data too correlated. 
+> 
+> Hence a much better linear generator,mersenne twister,
+> mt19937's 32 bit  implementation was used. It gives
+> integer outputs between 0 and 2^32 -1. 360 consecutive
+> outputs were taken and (each_output modulo 360) was
+> computed. It was found that there are repetitions in
+> the output. However i like to have them without
+> repetitions.
+> 
+> Is there anyway to get 'good' uniform pseudo random
+> integers between 0 and user_given_limit, such that it
+> generates all the numbers between 0 and
+> user_given_limit?
+
+It seems to me like the extent to which you can decorrelate the output
+sequences is rather limited because of the requirement that each
+sequence contain {0..360} precisely once, essentially because the
+uniqueness requirement means that each sequence is, to a large majority,
+characterized by the entropy at the beginning of the sequence, but not
+at the end.
+
+For example, let's say you have generated all but one digit of the
+sequence.  Since there is only one unused number remaining, there is no
+information encoded in the final digit of the sequence.  Similarly, the
+second-last digit is one of only two possibilities, third-last is one of
+three, et cetera.  So, at most, the second-last digit has one bit of
+entropy, while the first has log2(361) =~ 8.5 bits.
+
+If this doesn't trouble you, it should at least motivate you to attempt
+to appropriately weight the digits in the sequence when you measure
+correlation (correlation early in the sequence is "worse" than late,
+since there's more information encoded in the early numbers).
+
+So then, on to generating the sequence (and then back, briefly, to the
+correlation question):
+
+Let's assume you get entropy from an oracle,
+	k = rand(state)
+(implicitly assuming here that, like in the SysV function, state gets
+updated appropriately).  Also, assume the existence of a function
+	newarray = delete(k,array)
+that removes the kth element from an array and returns a new array with
+length reduced by 1, and
+	newarray = push(elm, array)
+that appends elm to array and returns a new array with length increased
+by 1.  Then:
+
+(1) Initialize numarray = {0..360}.
+
+(2) k = rand(state);
+
+(3) nextInd = k mod length(numarray);
+
+(4) nextNum = numarray[k];
+
+(5) outarray = push(nextNum, outarray);
+
+(5) numarray = delete(k, numarray);
+
+(6) goto (2) while length(numarray) >= 0;
+
+This should preserve as much entropy as possible in the generation of
+your sequences.
+
+Now, back to the correlation for a second: I claimed earlier that you
+had to weight the digits by how much information they contain, but I
+didn't talk about how you might do this.  If you generate the sequence
+with the above method, I claim that you can easily accomplish this by
+saving the sequence of k's that you generate, as long as you are careful
+to store each k in a number of bits (approximately, in practice) equal
+to log2(length(numarray)) for the corresponding step in the sequence. By
+doing this, the early k's are guaranteed to take up more bits than the
+late ones; thus correlating the sequence of k's stored in this way gives
+a truer measure of the correlation of the sequences.
+
+Just my $0.02 +/- delta...
+
+-=rsw
+

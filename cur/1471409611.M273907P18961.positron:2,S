@@ -1,0 +1,193 @@
+Return-path: <cypherpunks-bounces@cpunks.org>
+Envelope-to: rsw@positron.jfet.org
+Delivery-date: Tue, 16 Aug 2016 21:53:30 -0700
+Received: from antiproton.jfet.org ([209.141.47.85])
+	by positron.jfet.org with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.87)
+	(envelope-from <cypherpunks-bounces@cpunks.org>)
+	id 1bZsr3-0004vY-RJ
+	for rsw@positron.jfet.org; Tue, 16 Aug 2016 21:53:30 -0700
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u7H4hQLV002420;
+	Wed, 17 Aug 2016 00:43:27 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=BCHruUnc;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-io0-f170.google.com (mail-io0-f170.google.com
+ [209.85.223.170])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u7H4hO86002416
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Wed, 17 Aug 2016 00:43:26 -0400
+Received: by mail-io0-f170.google.com with SMTP id q83so126783000iod.1
+ for <cypherpunks@cpunks.org>; Tue, 16 Aug 2016 21:43:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+ :cc; bh=5cc/ZJtgYwdv0ZScRm+LxVxJpTL20tmnfbd6hM89ayI=;
+ b=BCHruUncS5zbIT//SgED6WcRe/xt5rPQ+F6EXwSdtJEJ+yR5mCmJ7c4Z1zmXkKuNeV
+ 8hSGJDO1i8eOCutmUTwq4safky4StfriQ4xq/LcHLY/65uE0fvhw7VMhqf3L2GsCMfdq
+ 0f281VvwjlIxLPVXuWqcRZow7J8ijigZy+WhBQKe5jK/0sE+KJfMiHgghnzYjFmY2AxI
+ fEh9j5oMFN8+X9HB2ovhTRtIM1OP1SsHN3Mgaz5IqsrBs/06JxCF+Sisx+elJqWuG6Kl
+ p9k0KaIMY/q2AtA9uNutvsAcho5Gu5D8paiqQ5yAo90FTZ1GvipQ34DduRT/WxGFzKta
+ wD5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+ :message-id:subject:to:cc;
+ bh=5cc/ZJtgYwdv0ZScRm+LxVxJpTL20tmnfbd6hM89ayI=;
+ b=eMYMj8lTHzuy8XyBal84nLMMWgmN+K61sRMvJAC6KOl//9DWkKWZYAiNwzGoOW8M9q
+ WVwMozbRniVL5m94EV+ckmMLmHPmWiJguXVtg46CrmXNNTMEVMeDe19DQMen0DuaUuT8
+ mZSknEtvf1kmifXIWoBWf8tk8oq/SneHviY5nsNkxOAvLcO1kEb94oGI4uVJ8uuTYopg
+ PjoWfLFpSA4Q6bx2biAcaBKYID6oM/5+ylJal7tV+6nbA75FVEZMcWP6Xl1UOj3as9bW
+ vklzmUDeeScUherA9AKwGodoIA0iQZ3xJAqh7xji6Fb5zIkvsBMWxv8H5Lz+cOVmnmCH
+ zMpA==
+X-Gm-Message-State: AEkooutdOHWgeKZpyjsxNmOhMqZY25Uw+2oYVz91xSzJuaxuTcdGSQ9mUVjerq6/f89p5f2rB1AaZWMLPSmgvg==
+X-Received: by 10.107.183.132 with SMTP id h126mr43913376iof.87.1471408998701; 
+ Tue, 16 Aug 2016 21:43:18 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.50.218.135 with HTTP; Tue, 16 Aug 2016 21:42:48 -0700 (PDT)
+In-Reply-To: <20160817035906.GK16816@x220-a02>
+References: <20160816150853.GA16816@x220-a02>
+ <7FD4B3D2-FD18-4F98-AD3C-EA87B9138C61@synfin.org>
+ <CAN9H=iJoiC23E9KczY6SEZdyhWpMFMg=Cc=1JNKOZpqQWh7zoQ@mail.gmail.com>
+ <E145D632-BE6C-4CEB-A17B-8F45BC8CAF1A@synfin.org>
+ <917690462.6021877.1471371999666.JavaMail.yahoo@mail.yahoo.com>
+ <20160817004103.GF16816@x220-a02>
+ <B0C63D75-05B1-4430-A40C-82A08E1BC6AC@synfin.org>
+ <20160817035906.GK16816@x220-a02>
+From: =?UTF-8?B?0JDQu9C10LrRgdCw0L3QtNGA?= <afalex169@gmail.com>
+Date: Wed, 17 Aug 2016 07:42:48 +0300
+Message-ID: <CAEm6KbJvDGi7sh2+mC7Psi=rfTDMNsd-9etLNrSwEr2JU-9SBg@mail.gmail.com>
+Subject: Re: [WAR] A brief bit of Hillary history.
+To: Zenaan Harkness <zen@freedbms.net>
+Content-Type: multipart/alternative; boundary=94eb2c0b9fe8afde02053a3d1a1e
+Cc: CypherPunks <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 115
+
+--94eb2c0b9fe8afde02053a3d1a1e
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+I must emphasize a few key-points by Zenaan on the "global warming" fairy
+tale:
+
+Well, this one was brought by Jim
+
+> I don't see how there can be "scientific consensus" unless there are
+> accurate computer models which show how up climate temperature increases =
+as
+> a product of addition of CO2 to the atmosphere.  Both qualitatively and
+> quantitatively.
+>
+> From Lord Kelvin:
+> =E2=80=9CWhen you can measure what you are speaking about, and express it=
+ in
+> numbers, you know something about it, when you cannot express it in
+> numbers, your knowledge is of a meager and unsatisfactory kind; it may be
+> the beginning of knowledge, but you have scarely, in your thoughts advanc=
+ed
+> to the stage of science.=E2=80=9D
+>
+
+Zenaan
+
+> Vehemently claiming "theory" is not theory and is actually "fact" does no=
+t
+> make said theory, facts.
+>
+!!!
+
+Yes we are impacting the environment (pollution), yes we are pumping
+> various gases into the atmosphere, no we cannot be certain of
+> anthropogenic global warming OVER AND ABOVE 'natural' causes (the sun
+> cycles, natural/ cyclical changes in the earth, more?)
+>
+!!!
+
+Could it be that those challenging a dearly held assertion ***(here it's
+> the global "warming" assertion, yesterday it was the moon fairy-tale and
+> the Tor fairness assertions, you know), do so not from any contrariness,
+> not from any obtuse stubbornness nor even belligerance, but from a
+> heartfelt desire to seek 'the truth' and to discover the true facts behin=
+d
+> an assertion made by another?
+>
+!!!
+
+*Is there any possibility that our personal programming be our Western*
+> *schooling system is so ingrained, so deep, that parts of it are simply*
+> *unseen by our not so humble selves?*
+>
+!!!
+
+And could it be that such deep programming is in fact used by wealthy
+> oligarchs around the world who meet behind closed doors to discuss and
+> execute intentions to spin certain stories based on "the glory, power
+> and untouchable truth of 'science'" to their personal and
+> group/corporate economic benefit?
+>
+!!!
+
+--94eb2c0b9fe8afde02053a3d1a1e
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">I must emphasize a few key-points by Zenaan on the &quot;g=
+lobal warming&quot; fairy tale:<br><br>Well, this one was brought by Jim <b=
+r><blockquote style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(2=
+04,204,204);padding-left:1ex" class=3D"gmail_quote">I don&#39;t see how the=
+re can be &quot;scientific consensus&quot; unless there are=20
+accurate computer models which show how up climate temperature increases
+ as a product of addition of CO2 to the atmosphere.=C2=A0 Both qualitativel=
+y=20
+and quantitatively. <br><br>From Lord Kelvin:<br>=E2=80=9CWhen you can meas=
+ure what you are speaking about, and express it in numbers, you know someth=
+ing about it, when you cannot express it in numbers, your knowledge is of a=
+ meager and unsatisfactory kind; it may be the beginning of knowledge, but =
+you have scarely, in your thoughts advanced to the stage of science.=E2=80=
+=9D<br></blockquote><br>Zenaan<br><blockquote style=3D"margin:0px 0px 0px 0=
+.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex" class=3D"gmai=
+l_quote">Vehemently claiming &quot;theory&quot; is not theory and is actual=
+ly &quot;fact&quot; does not make said theory, facts.<br></blockquote>!!!<b=
+r><br><blockquote style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid r=
+gb(204,204,204);padding-left:1ex" class=3D"gmail_quote">Yes we are impactin=
+g the environment (pollution), yes we are pumping<br>
+various gases into the atmosphere, no we cannot be certain of<br>
+anthropogenic global warming OVER AND ABOVE &#39;natural&#39; causes (the s=
+un<br>
+cycles, natural/ cyclical changes in the earth, more?)<br></blockquote>!!!<=
+br><br><blockquote style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid =
+rgb(204,204,204);padding-left:1ex" class=3D"gmail_quote">Could it be that t=
+hose challenging a dearly held assertion ***(here it&#39;s the global &quot=
+;warming&quot; assertion, yesterday it was the moon fairy-tale and the Tor =
+fairness assertions, you know), do so not from any contrariness, not from a=
+ny obtuse stubbornness nor even belligerance, but from a heartfelt desire t=
+o seek &#39;the truth&#39; and to discover the true facts behind an asserti=
+on made by another?<br></blockquote>!!!<br><br><blockquote style=3D"margin:=
+0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex" =
+class=3D"gmail_quote"><b>Is there any possibility that our personal program=
+ming be our Western</b><br><b>schooling system is so ingrained, so deep, th=
+at parts of it are simply</b><br><b>unseen by our not so humble selves?</b>=
+<br></blockquote>!!!<br><br><blockquote style=3D"margin:0px 0px 0px 0.8ex;b=
+order-left:1px solid rgb(204,204,204);padding-left:1ex" class=3D"gmail_quot=
+e">And could it be that such deep programming is in fact used by wealthy<br=
+>oligarchs around the world who meet behind closed doors to discuss and<br>=
+execute intentions to spin certain stories based on &quot;the glory, power<=
+br>and untouchable truth of &#39;science&#39;&quot; to their personal and<b=
+r>group/corporate economic benefit?<br></blockquote>!!!</div>
+
+--94eb2c0b9fe8afde02053a3d1a1e--
+

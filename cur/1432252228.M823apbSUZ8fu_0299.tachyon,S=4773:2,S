@@ -1,0 +1,124 @@
+From owner-cypherpunks@Algebra.COM  Wed Nov  6 13:52:00 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id gA6Iq0f00377
+	for <rsw@opamp.org>; Wed, 6 Nov 2002 13:52:00 -0500
+Received: from ak47.algebra.com ([209.120.156.51])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id NAA09739
+	for <rsw@mit.edu>; Wed, 6 Nov 2002 13:51:58 -0500 (EST)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id gA6GQQgw012832
+	for <cypherpunks-outgoing@ak47.algebra.com>; Wed, 6 Nov 2002 10:26:26 -0600
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id gA6GQQnh012830
+	for cypherpunks-outgoing; Wed, 6 Nov 2002 10:26:26 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id gA6GQLgw012811
+	for <cypherpunks@ak47.algebra.com>; Wed, 6 Nov 2002 10:26:23 -0600
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id gA6GQKHL003226
+	for cypherpunks@ak47.algebra.com; Wed, 6 Nov 2002 08:26:20 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id gA6GNQUc003211
+	for cypherpunks-goingout345; Wed, 6 Nov 2002 08:23:26 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Message-ID: <F504A8CEE925D411AF4A00508B8BE90A041BAF0F@exna07.securitydynamics.com>
+From: "Trei, Peter" <ptrei@rsasecurity.com>
+To: "'cryptography@wasabisystems.com'" <cryptography@wasabisystems.com>,
+   "'cypherpunks@lne.com'" <cypherpunks@lne.com>
+Old-Subject: Did you *really* zeroize that key?
+Date: Wed, 6 Nov 2002 11:22:50 -0500 
+MIME-Version: 1.0
+X-Mailer: Internet Mail Service (5.5.2653.19)
+Content-Type: text/plain
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Did you *really* zeroize that key?
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 2463
+Lines: 76
+
+
+>From RISKS:
+http://catless.ncl.ac.uk/Risks/22.35.html#subj6
+
+Those of us who write code need to be reminded of this 
+now and then.
+
+Peter Trei
+
+---------------
+Software leaves encryption keys, passwords lying around in memory
+
+       Monty Solomon <monty@roscom.com> 
+       Wed, 30 Oct 2002 22:31:46 -0500
+
+
+         http://online.securityfocus.com/archive/82/297827
+
+       Date: Thu, 31 Oct 2002 05:11:31 +1300 (NZDT)
+       From: pgut001@cs.auckland.ac.nz (Peter Gutmann)
+       Subject: Software leaves encryption keys, passwords lying around in
+memory
+
+       The following problem was first pointed out (in private mail) by
+Michael
+       Howard from Microsoft.  His writeup is now available at
+ 
+http://msdn.microsoft.com/library/en-us/dncode/html/secure10102002.asp.
+       From a representative check of a few widely-used open source crypto
+       programs, this affects quite a bit of software.
+
+       The problem he points out is that clearing sensitive information such
+as
+       encryption keys from memory may not work as expected because an
+optimising
+       compiler removes the memset() if it decides it's redundant.  Consider
+for
+       example the following:
+
+       int encrypt( const void *key )
+         {
+         puts( key );     /* Normally we'd encrypt here */
+         }
+
+       void main( void )  /* Because we can */
+         {
+         char key[ 16 ];
+
+         strcpy( key, "secretkey" );
+         encrypt( key );
+         memset( key, 0, 16 );
+         }
+
+       When compiled with any level of optimisation using gcc, the key
+clearing
+       call goes away because of dead code elimination (see the MSDN article
+for
+       more details on this, which uses VC++ to get the same effect).  While
+you
+       can kludge enough stuff around a custom memory-clear call to fool the
+       optimiser (hacks with 'volatile', touching the memory after it's
+cleared and
+       hoping the optimiser is fooled, etc etc) there's no guarantee that
+it'll
+       work for anything but the compiler(s) you happen to test it with -
+any
+       future enhancement to the optimiser may turn it back into a nop.
+What it
+       really needs is the addition of a #pragma
+dont_remove_this_code_you_bastard
+       in the compiler.  Until then, a lot of security code will be affected
+by
+       this problem.
+
+         [In RISKS, I tend never to alter British spellings.  However,
+         in American English, an "optimiser" must be the ultimate miser.]
+

@@ -1,0 +1,132 @@
+From cypherpunks-bounces@cpunks.org  Tue Jan 14 17:50:19 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0EMoC49028569;
+	Tue, 14 Jan 2014 17:50:13 -0500
+Received: from plane.gmane.org (plane.gmane.org [80.91.229.3])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0EMo8fG028565
+ (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Tue, 14 Jan 2014 17:50:10 -0500
+Received: from list by plane.gmane.org with local (Exim 4.69)
+ (envelope-from <gcsc-cypherpunks@m.gmane.org>) id 1W3Co7-0006Ju-UK
+ for cypherpunks@cpunks.org; Tue, 14 Jan 2014 23:50:03 +0100
+Received: from ppp37-190-36-17.pppoe.spdop.ru ([37.190.36.17])
+ by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
+ id 1AlnuQ-0007hv-00
+ for <cypherpunks@cpunks.org>; Tue, 14 Jan 2014 23:50:03 +0100
+Received: from yumkam by ppp37-190-36-17.pppoe.spdop.ru with local (Gmexim 0.1
+ (Debian)) id 1AlnuQ-0007hv-00
+ for <cypherpunks@cpunks.org>; Tue, 14 Jan 2014 23:50:03 +0100
+X-Injected-Via-Gmane: http://gmane.org/
+To: cypherpunks@cpunks.org
+From: Yuriy Kaminskiy <yumkam@gmail.com>
+Subject: Re: consistent pcp/pbp formats (was: Curve p25519 Replacements for
+ GnuPG?(x2 now) ..)
+Date: Wed, 15 Jan 2014 02:46:08 +0400
+Lines: 81
+Message-ID: <lb4en4$hdt$1@ger.gmane.org>
+References: <20140114111653.GD3900@r4>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Complaints-To: usenet@ger.gmane.org
+X-Gmane-NNTP-Posting-Host: ppp37-190-36-17.pppoe.spdop.ru
+User-Agent: Mozilla/5.0 (X11; Linux x86_64;
+ rv:17.0) Gecko/20131005 Thunderbird/17.0.9
+In-Reply-To: <20140114111653.GD3900@r4>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+Thomas von Dein wrote:
+>> consistent key formats are critical
+> 
+> more than fine with me.
+> 
+>> need to converge on:
+>> - endianness
+> 
+> I'm currently using big endian for multibyte values whereever they
+> appear. It's already verified to work on little and big endian platforms
+> (e.g. tested on aix/ppc)
+> 
+>> - coordinate representation x, x&y, x and sign ...
+>> or bits to show which of these ... perhaps borrow ANSI method
+> 
+> Could you please explain this further?
+> 
+>> - hint / indication of cipher suite / curve 
+> 
+> In pcp there's already such a hint included in exported keys, however
+> I'm not using it, since there's no choice of different curves in
+> libsodium so far. But it's on the list.
+> 
+>> - text encoding of binary format (ascii)
+> 
+> As already stated in the other subthread, I use Z85, while stef is using
+> base85. Since Z85 is a subset of base85, I'm pretty sure we can agree on
+> something.
+> 
+>> - human readable format
+> 
+> There's a human readable version of keys in pcp, but the tool itself
+> doesn't use it (example attached). It uses the z85 encoded binary part
+> of such a file.
+> 
+> pcp has some more fields stored in a key than pbp:
+> 
+> - a key id (e.g. 0x54E9C62E1852EBC5) which is required to identify a key
+> - some text fields (owner, mail)
+> - a serial number
+> - key format version number
+> 
+> I'm not sure, how stef solved the ed25519 issue (you can't use a
+> curve25519 secret key to create an ed25519 signature directly). After
+> some discussion on the libsodium mailinglist we came up with this:
+> 
+> When the user generates a new key, the ed25519 secret key will be
+> generated first. The curve25519 secret will be derived from that, since
+
+In general, reusing keys for different purposes (signing and encryption)
+considered bad idea, even through it is possible (RSA signing and RSA
+encryption, DSA signing and ElGamal/DH encryption [fwiw, this one considered
+*very* bad idea]).
+
+> the ed25519 already contains a usable curve25519 key. In pcp I store
+> both of them for easier access, so the ed25519 and curve25519 secret and
+> public keys are stored, the secret keys are encrypted and I store the
+> nonce as well (see include/pcp/key.h).
+> 
+> Speaking of key encryption: @stef: according to your docs you're already
+> using scrypt() for key derivation. I'd like to use that as well, but
+> it's not part of libsodium (afaik), so I use my own method for this til
+> scrypt() is implemented in libsodium. That's because I want to avoid
+> writing crypto code myself.
+
+> Maybe we should iron out the details off-list?
+
+PS If I'm not mistaken, pcp is using longtime curve25519 secret key for message
+encryption.
+1) Recipient needs to know sender public key. Bad.
+2) Message remains decipherable by sender. Very bad.
+3) Sender public key/identity leaks with each message. Very bad.
+4) Sender needs access to her secret key. Bad.
+5)6)7)...
+Wut? WTF? WHY?????
+Just generate single-use keypair, send public part with message, throw away
+secret part right after encryption.
+
+PPS gnupg devs are currently working on adding support for curve25519/​ed25519;
+though, it's on very early development stage. Oh, well, NIH-NIH-NIH, let's
+invent our own square-wheel bycicle.
+

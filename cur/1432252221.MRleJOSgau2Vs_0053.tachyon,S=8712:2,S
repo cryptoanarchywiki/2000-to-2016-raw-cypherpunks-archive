@@ -1,0 +1,173 @@
+From owner-cypherpunks@al-qaeda.net  Thu Jun 28 07:51:21 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q5SBlkxe031587
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 28 Jun 2012 07:47:46 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q5SBlkOE031586
+	for cypherpunks-outgoing; Thu, 28 Jun 2012 07:47:46 -0400
+Date: Thu, 28 Jun 2012 13:47:42 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: [tor-talk] possible to identify tor user via hardware DRM?
+Message-ID: <20120628114742.GX7109@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Seth David Schoen <schoen@eff.org> -----
+
+From: Seth David Schoen <schoen@eff.org>
+Date: Wed, 27 Jun 2012 22:28:20 -0700
+To: tor-talk@lists.torproject.org
+Subject: Re: [tor-talk] possible to identify tor user via hardware DRM?
+User-Agent: Mutt/1.5.21 (2010-09-15)
+Reply-To: tor-talk@lists.torproject.org
+
+Nick M. Daly writes:
+
+> I've actually been reading similar concerns (about hardware-based
+> tracking) on the FreedomBox list, and I have no basis for validating the
+> claims.  Wondering if anybody could shed some light on just how serious
+> these claims are and how they'd impact Tor users (or privacy generally)?
+> The mail seems full of generalizations, but the author seems genuine:
+> 
+> http://lists.alioth.debian.org/pipermail/freedombox-discuss/2012-June/004049.html
+
+I find this message misleading in various ways.  The basic thing that
+I've been telling people is that there are few situations in which
+either PSN or TPM uniqueness makes things qualitatively worse.
+
+There are lots of hardware unique IDs.  On Linux, try "sudo lshw" and
+be surprised at all the things that have unique serial numbers.  There
+are also things that are unique about your machine that are not
+hardware serial numbers, like filesystem serial numbers and observed
+combinations of software configurations.
+
+These can be bad for privacy because software can tell which computer
+it's running on.  If the software has an adversarial relationship with
+you, it can then use that information in a way that you don't like.
+We would be better off in some regards if operating systems let us
+hide local uniqueness from software so that the software couldn't tell
+what machine it was running on, or set fake values for these unique
+identifiers.
+
+Some proprietary software including Microsoft Windows already makes
+a sophisticated profile of the local machine, including many kinds of
+observations, to tie a copy of the software (or an "activation") to a
+particular device (!).
+
+The only substantive difference with the TPM uniqueness is that the TPM
+uniqueness lets you prove (like a smartcard) to a remote system that
+you're running some software on the same machine as before.  Even if
+the OS did let you set fake values when software tried to examine the
+system it was running on, the remote system could see that the
+TPM-related values were fake.  That's useful for some applications,
+including but not limited to DRM-like ones.
+
+I've argued that this is bad in some ways, but at least you can still
+turn off the TPM.  Then your system can't attempt to offer that kind
+of proof.  As far as I know, turning off the TPM is pretty robust:
+it really is turned off.
+
+All of these things are anonymity problems in particular when some
+software on your computer is actively _trying_ to tell someone else
+what machine you're running on, either because it's programmed to do
+so or because someone has broken into your computer and installed
+spyware and is trying to use it to monitor you.  If you're not in
+that situation, there is nothing especially magical about having
+unique hardware IDs in your machine, because everyone's machine has
+some uniqueness, and (for the most part) that uniqueness isn't part
+of standard network protocols like TCP/IP and doesn't automatically
+leak out to anyone and everyone you communicate with over the
+Internet.  (There is a possible exception about clock skew, which you
+can read about in Steven Murdoch's paper from 2006.)
+
+Similarly, having a GPS receiver in your phone does not mean that
+everyone you send an SMS to or everyone you call will learn your
+exact physical location.  However, it does mean that if there's
+spyware on your phone, that spyware is able to use the GPS to learn
+your location and leak it.  If you're worried about spyware threats
+on your phone, which can be quite a realistic concern, the GPS
+itself isn't necessarily the unique core of the threat, because
+there are also lots of other things in the phone that can be read to
+help physically locate you (like wifi base station MAC addresses,
+taking photographs of your surroundings with the phone's camera,
+recording the identities and signal strengths of the GSM base
+stations your phone sees...).  So a more fundamental question might
+be whether your phone operating system is able to either prevent
+you from getting malware or prevent the malware from accessing the
+sensors on your phone.
+
+In the case of a desktop PC, the hardware uniqueness is _there to
+be read by software_, and if it's in a TPM it _may be able to give
+the software remotely verifiable cryptographic proof that the
+software is really running on the machine containing that particular
+TPM_.  In neither case does the hardware uniqueness directly
+broadcast itself to other machines, and in neither case does the
+hardware uniqueness prevent the operating system from preventing
+other software from reading it.
+
+If you do have some kind of software running on your machine that's
+trying to track you or trying to help other people track you,
+hardware uniqueness is one thing that the software might look at.
+But if you're a Tor user, a more basic thing for the software to
+try to do is make network connections to leak your real IP address
+in order to associate your Tor-based network activity with your
+non-Tor-based network activity.  That might be even easier because
+the tracking software could just try to make a direct network
+connection.
+
+If you're not using Tor, at least not at a particular moment, but
+are still concerned about tracking, there's another problem, which
+is that all existing browsers _already_ reveal a great deal of
+software-based uniqueness to any interested web site, usually enough
+to make your browser unique.  See
+
+https://panopticlick.eff.org/browser-uniqueness.pdf
+
+This is important because it doesn't require there to be any
+malicious software on your computer, just a traditional web browser.
+
+One of the defenses people have talked about against hardware
+fingerprinting is running inside a virtual machine.  Normally,
+software inside the virtual machine, even if it's malicious,
+doesn't learn much about the physical machine that hosts the VM.
+If you always use Tor inside a VM, then even if there's a bug
+that lets someone take over your computer (or if they trick you
+into installing spyware), the malicious software won't be able
+to read much real uniqueness from the host hardware, unless
+there's also a bug in the VM software.
+
+Running in a VM isn't exactly a defense against software
+fingerprinting (like browser fingerprinting) if you use the VM
+for various non-Tor activities that you don't want to be linked
+to one another, because the software configuration inside the VM
+might be, or become, sufficiently different from others that it
+can be recognized.  There's probably more research to be done
+about the conditions under which VMs can be uniquely identified
+both "from the inside" by malware, and remotely by remote
+software fingerprinting, absent VM bugs that give unintended
+access to the host.
+
+-- 
+Seth Schoen  <schoen@eff.org>
+Senior Staff Technologist                       https://www.eff.org/
+Electronic Frontier Foundation                  https://www.eff.org/join
+454 Shotwell Street, San Francisco, CA  94110   +1 415 436 9333 x107
+_______________________________________________
+tor-talk mailing list
+tor-talk@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-talk
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

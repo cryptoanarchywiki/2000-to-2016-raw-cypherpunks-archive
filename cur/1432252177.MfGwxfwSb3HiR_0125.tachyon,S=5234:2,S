@@ -1,0 +1,100 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Mon Aug  5 16:35:17 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g75KZEd05256
+	for <rsw@opamp.org>; Mon, 5 Aug 2002 16:35:15 -0400
+Received: from lion.ninthwonder.com (lion.ninthwonder.com [151.199.66.147])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id QAA13381
+	for <rsw@mit.edu>; Mon, 5 Aug 2002 16:35:09 -0400 (EDT)
+Received: by lion.ninthwonder.com (Postfix, from userid 96)
+	id 52DCD30714; Mon,  5 Aug 2002 16:30:46 -0400 (EDT)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by lion.ninthwonder.com (Postfix) with ESMTP id F376230712
+	for <cryptography@wasabisystems.com>; Mon,  5 Aug 2002 16:30:44 -0400 (EDT)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id A3F20D97CA; Mon,  5 Aug 2002 16:30:44 -0400 (EDT)
+Received: from www.aarg.net (www.aarg.net [206.101.74.70])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 07A0B30706
+	for <cryptography@wasabisystems.com>; Mon,  5 Aug 2002 15:30:25 -0400 (EDT)
+Received: from www.aarg.net (IDENT:mix@localhost.localdomain [127.0.0.1])
+	by www.aarg.net (8.12.3/8.12.3) with ESMTP id g75JUCIG017651
+	(version=TLSv1/SSLv3 cipher=EDH-RSA-DES-CBC3-SHA bits=168 verify=NO);
+	Mon, 5 Aug 2002 12:30:12 -0700
+Received: (from mix@localhost)
+	by www.aarg.net (8.12.3/8.12.1/Submit) id g75JUBGP017647;
+	Mon, 5 Aug 2002 12:30:11 -0700
+Date: Mon, 5 Aug 2002 12:30:11 -0700
+From: AARG!Anonymous <remailer@aarg.net>
+Comments: This message did not originate from the Sender address above.
+	It was remailed automatically by anonymizing remailer software.
+	Please report problems or inappropriate use to the
+	remailer administrator at <abuse@aarg.net>.
+To: adam@cypherspace.org, cypherpunks@lne.com, cryptography@wasabisystems.com
+Subject: Suggested entry into the TCPA spec
+Message-ID: <0e7a92034f27922f4e9ef6fc2d085eef@aarg.net>
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 3046
+Lines: 58
+
+Here is a suggestion for how to appraoch the TCPA spec based on the parts
+I have found to be relatively good explanations.  The spec is available
+from http://www.trustedcomputing.org/docs/main%20v1_1b.pdf.
+
+First read the first few pages up to page 7.  This provides an overview
+and a block diagram, although at this point not all the terms will be
+familiar.  One hint: the "root of trust for measurement" is the set of
+hardware which has to be working for the boot measurement process to work:
+the CPU, the TPM, the part of the BIOS that deals with measurements, the
+motherboard, the secure connections of the chips to the motherboard.
+If all this stuff is OK then the measurements will be accurate.
+(Measurements basically are hashes of code and of machine configuration
+status.)  The "root of trust for reporting" is the endorsement key, or
+more fundamentally the cert on the endorsement key.  The cert is issued by
+the manufacturer, AKA the "TPM Entity" or TPME.  That's what makes other
+people believe your attestations.  And the "root of trust for storage"
+is the storage root key, described in the section on protected storage.
+
+There are a few more pages of introduction which aren't too clear,
+then a long section of data structures which should be skipped until
+you need to reference them.
+
+This brings you to page 97, authorization and ownership.  I haven't
+really studied this part.  Probably just read this one page to get
+an idea of what is involved.  I still need to learn more about this.
+
+I'd skip on to pages 136-137, on the measurement process and the
+PCRs which hold the results of the measurement.
+
+Then I'd read pages 145-150 on protected storage.  This part is pretty
+well written.  It is a reasonably self contained part of the TPM
+functionality.  You just need to know a little bit about the PCRs from
+the earlier section to understand how data is locked to the specific
+program which is running.
+
+Then I'd read page 261 on the endorsement key, and then 267-269 on
+how it is used to create a pseudonymous identity.  This is the part
+about communicating with the Privacy CA.  BTW an expert told me he has
+concerns about possible security loopholes in this protocol, but he is
+communicating with TCPA about them.
+
+I think if you just read these selections, about 15 pages, you will have
+a much better idea of how the spec works.  Then you can read some of
+the specific API descriptions to see more details about the functionality.
+
+There is also a glossary at the end which can be helpful for some (but
+not all) of the terminology.
+
+There is another spec,
+http://www.trustedcomputing.org/docs/TCPA_PCSpecificSpecification_v100.pdf
+that describes the specific register and trap binding for implementing
+the TCPA API on Intel PCs.  It is much shorter but it is pretty
+incomprehensible until you have at least read the basics of the main
+spec.
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

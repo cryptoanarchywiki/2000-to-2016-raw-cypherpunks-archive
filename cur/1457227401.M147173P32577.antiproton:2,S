@@ -1,0 +1,107 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u261Mgs2032560;
+	Sat, 5 Mar 2016 20:22:44 -0500
+Received: from relay01.pair.com (relay01.pair.com [209.68.5.15])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u261Mc4S032556
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Sat, 5 Mar 2016 20:22:39 -0500
+Received: from [192.168.1.7] (pool-71-180-1-121.tampfl.fios.verizon.net
+ [71.180.1.121])
+ by relay01.pair.com (Postfix) with ESMTP id 8E9B7D0092B
+ for <cypherpunks@cpunks.org>; Sat,  5 Mar 2016 20:22:32 -0500 (EST)
+To: cypherpunks@cpunks.org
+From: Steve Kinney <admin@pilobilus.net>
+Subject: Unredacted SecureDrop 0.3.4 audit report
+Message-ID: <56DB8656.4030406@pilobilus.net>
+Date: Sat, 5 Mar 2016 20:22:30 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 71
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+An independent audit found a substantial deficiency in one of the
+dependencies of the SecureDrop document submission / management
+protocol.  SecureDrop gave the devs time to fix it before
+publishing, but so far the issue remains unresolved:
+
+Publishing the unredacted SecureDrop 0.3.4 audit report
+
+https://freedom.press/blog/2015/12/publishing-unredacted-securedrop-
+034-audit-report
+
+vs. https://tinyurl.com/hgeyab8
+
+FTA:
+
+SecureDrop uses OSSEC, a popular open source host-based intrusion
+detection system (HIDS). The OSSEC architecture consists of a
+single central server, called the Manager, which monitors one or
+more systems. The monitored systems have programs called Agents,
+which collect a variety of information and forward it to the
+Manager for analysis and correlation.
+
+The Manager and the Agents may communicate with one of two
+protocols: "syslog" or "secure". The "secure" protocol is a custom
+crypto protocol based on shared secret keys that are set up during
+OSSEC deployment. NCC Group reviewed the custom protocol and found
+two serious issues in its cryptographic design:
+
+    Protocol messages are encrypted with the shared secret key
+using Blowfish in CBC mode. Unfortunately, the protocol uses a
+static initialization vector (IV) to encrypt and decrypt all
+messages. This essentially reduces CBC mode to ECB mode and fails
+to achieve semantic security.
+
+    Protocol messages are not authenticated. Each message includes
+an MD5 hash of the plaintext payload with the encrypted content,
+but this is not a strong authenticator. Among other things, it
+violates Moxie Marlinspike's "Cryptographic Doom Principle".
+
+For more detail, see the finding in the unredacted audit report.
+
+NCC Group did not take the time to investigate a proof of concept
+(PoC) attack based on this vulnerability, but that is not
+surprising given the limited duration of their engagement and the
+fact that their focus was on SecureDrop, not OSSEC. Nonetheless,
+these are serious cryptographic design flaws that could lead to a
+practical attack in the future. We encourage all OSSEC users to
+examine their current deployments, consider the level of exposure
+of any OSSEC "secure" protocol traffic to potential adversaries,
+and make changes accordingly.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJW24ZTAAoJEDZ0Gg87KR0LJHAP/ihVjalG8ZNc8kvIQxgSCRro
+DtwCzakkNSxPzCSjX28UMhDy2nnBkz6IIBBcMP7A7p40lQHKmRRhg34ceGgk1rOw
+1SGrPZWeZCZH+s2T30mGHZDGskpe6tmnlZTajbZ5oEe3qSNW1soRqsYTa3K4vNC6
+ezPV28SNIwUaqKZ3JWu1Z+QMnHW6lLsbmIpGmCRByAI5tYOYoxpyXEoxRb4sA9Iq
+//B1vJgfhkAdE7eES2aVGwAidOfPGUHi6M3mWy5TP912yMUok9YW2kyIqDisBpjr
+BMJRutGCiK9ih0OFiJig/kcHpENGROQVtD0cAa7mEJhBLUB/Mt4brYHT2+XQFSC6
+rpjEBbm4iHr+0mn4JBZC+Op4ImJpU8Bhx26EaDU2t5xVZ3m3GFMTQal7PuMieZS+
+05vKIFHMJhkg0tOS6SqC62wKYuxy9XcvlaUlpXcAfnKn9E3tYXP1P2Ez5Ahuqhml
+WXiIX+JCbE9nLcvuK6IFUvTvWe62JTP3IXv38vP1tFi7j2OWlnYd5PsVsvJecT/U
+ibiUb/uw8gdsmLHmcAXEJ/YgWsIC7zOul8ORL7MGwa2rcytOf8i3ckUbA6dGM9iA
+6nzM//V/H91DsHicngwZ9+zMQRtm3vmp+biXPsSv+fXGdRhxOGiePbrbeeEuVvqq
+d67XJxo5T/IpitF2L4j0
+=gRP3
+-----END PGP SIGNATURE-----
+

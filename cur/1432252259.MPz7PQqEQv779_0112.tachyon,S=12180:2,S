@@ -1,0 +1,219 @@
+From owner-cypherpunks@Algebra.COM  Tue Aug 13 04:49:10 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7D8n9d22812
+	for <rsw@opamp.org>; Tue, 13 Aug 2002 04:49:09 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id EAA09308
+	for <rsw@mit.edu>; Tue, 13 Aug 2002 04:49:09 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7D78BD6018561
+	for <cypherpunks-outgoing@ak47.algebra.com>; Tue, 13 Aug 2002 02:08:11 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g7D78BD1018560
+	for cypherpunks-outgoing; Tue, 13 Aug 2002 02:08:11 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7D784D6018544
+	for <cypherpunks@ak47.algebra.com>; Tue, 13 Aug 2002 02:08:05 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7D783OQ002203
+	for cypherpunks@ak47.algebra.com; Tue, 13 Aug 2002 00:08:03 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7D75QIq002193
+	for cypherpunks-goingout345; Tue, 13 Aug 2002 00:05:26 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Tue, 13 Aug 2002 00:05:19 -0700
+From: AARG! Anonymous <remailer@aarg.net>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@aarg.net>.
+To: cypherpunks@lne.com, cryptography@wasabisystems.com
+Old-Subject: TCPA and Open Source
+Message-ID: <493d6827fe7ac4aa92fb4defc2d0ae2a@aarg.net>
+X-Loop: cypherpunks@lne.com
+X-spam: 5 
+Subject:  TCPA and Open Source
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 9837
+Lines: 171
+
+
+One of the many charges which has been tossed at TCPA is that it will
+harm free software.  Here is what Ross Anderson writes in the TCPA FAQ
+at http://www.cl.cam.ac.uk/~rja14/tcpa-faq.html (question 18):
+
+> TCPA will undermine the General Public License (GPL), under which
+> many free and open source software products are distributed....
+>
+> At least two companies have started work on a TCPA-enhanced version of
+> GNU/linux. This will involve tidying up the code and removing a number
+> of features. To get a certificate from the TCPA corsortium, the sponsor
+> will then have to submit the pruned code to an evaluation lab, together
+> with a mass of documentation showing why various known attacks on the code
+> don't work.
+
+First we have to deal with this certificate business.  Most readers
+probably assume that you need this cert to use the TCPA system, and
+even that you would not be able to boot into this Linux OS without such
+a cert.  This is part of the longstanding claim that TCPA will only boot
+signed code.
+
+I have refuted this claim many times, and asked for those who disagree to
+point to where in the spec it says this, without anyone doing so.  I can
+only hope that interested readers may be beginning to believe my claim
+since if it were false, somebody would have pointed to chapter and verse
+in the TCPA spec just to shut me up about it if for no better reason.
+
+However, Ross is actually right that TCPA does support a concept for
+a certificate that signs code.  It's called a Validation Certificate.
+The system can hold a number of these VC's, which represent the "presumed
+correct" results of the measurement (hashing) process on various software
+and hardware components.  In the case of OS code, then, there could be
+VC's representing specific OS's which could boot.
+
+The point is that while this is a form of signed code, it's not something
+which gives the TPM control over what OS can boot.  Instead, the VCs
+are used to report to third party challengers (on remote systems) what
+the system configuration of this system is "supposed" to be, along with
+what it actually is.  It's up to the remote challenger to decide if he
+trusts the issuer of the VC, and if so, he will want to see that the
+actual measurement (i.e. the hash of the OS) matches the value in the VC.
+
+So what Ross says above could potentially be true, if and when TCPA
+compliant operating systems begin to be developed.  Assuming that there
+will be some consortium which will issue VC's for operating systems,
+and assuming that third parties will typically trust that consortium and
+only that one, then you will need to get a VC from that group in order
+to effectively participate in the TCPA network.
+
+This doesn't mean that your PC won't boot the OS without such a cert; it
+just means that if most people choose to trust the cert issuer, then you
+will need to get a cert from them to get other people to trust your OS.
+It's much like the power Verisign has today with X.509; most people's
+software trusts certs from Verisign, so in practice you pretty much need
+to get a cert from them to participate in the X.509 PKI.
+
+So does this mean that Ross is right, that free software is doomed under
+TCPA?  No, for several reasons, not least being a big mistake he makes:
+
+> (The evaluation is at level E3 - expensive enough to keep out
+> the free software community, yet lax enough for most commercial software
+> vendors to have a chance to get their lousy code through.) Although the
+> modified program will be covered by the GPL, and the source code will
+> be free to everyone, it will not make full use of the TCPA features
+> unless you have a certificate for it that is specific to the Fritz chip
+> on your own machine. That is what will cost you money (if not at first,
+> then eventually).
+
+The big mistake is the belief that the cert is specific to the "Fritz"
+chip (Ross's cute name for the TPM).
+
+Actually the VC data structure is not specific to any one PC.  It is
+intentionally designed not to have any identifying information in it
+that will represent a particular system.  This is because the VC cert
+has to be shown to remote third parties in order to get them to trust the
+local system, and TCPA tries very hard to protect user privacy (believe
+it or not!).  If the VC had computer-identifying information in it, then
+it would be a linkable identifier for all TCPA interactions on the net,
+which would defeat all of the work TCPA does with Privacy CAs and whatnot
+to try to protect user privacy.  If you understand this, you will see
+that the whole TCPA concept requires VC's not to be machine specific.
+
+People always complain when I point to the spec, as if the use of facts
+were somehow unfair in this dispute.  But if you are willing, you can look
+at section 9.5.4 of http://www.trustedcomputing.org/docs/main%20v1_1b.pdf,
+which is the data structure for the validation certificate.  It is an
+X.509 attribute certificate, which is a type of cert that would normally
+be expected to point back at the machine-specific endorsement cert.
+But in this case they have altered the Holder field, which normally
+performs this function, to instead hold the measurement result that the
+certificate asserts is correct (i.e. in this context, the hash of the OS).
+As a result, no data in the VC is machine specific.
+
+The bottom line is that VCs are not machine specific and are designed
+not to be.  Therefore if HP or anyone else gets a cert on their version
+of Linux, anyone will be able to use that same cert and prove to remote
+users that they are running a TCPA compliant OS.  This contradicts one
+of Ross's main claims above.
+
+In fact, with Microsoft now apparently commited to Palladium, it appears
+that if TCPA survives at all, it may be solely as a Linux phenomenon!
+Reports are that both HP and IBM are working on Linux compatible
+versions of TCPA.  Ironically, not only is Ross's claim wrong about TCPA
+undermining open source, it could conceivably turn out that TCPA will
+be completely reliant on open source operating systems.
+
+At the same time I think it is fair to say that there is an inherent
+conflict between the usual development techniques for open source code,
+and the requirements for security certification.  Once an OS has been
+certified by some respected body as being secure and trusted along TCPA
+lines, then changes to the code will invalidate the certification.
+
+This makes sense on two levels.  Logically, if the code has changed
+from what was inspected and certified, we can no longer have the same
+guarantees that the security properties have been preserved.  And
+in terms of syntax, with the TCPA Validation Certificate holding a
+hash of the certified code, making any change will change the hash
+and so the certificate will be invalid.
+
+The result is that any modification to the code, no matter how slight,
+will change the hash and keep it from being usable with the old VC.
+Of course, the same thing happens with commercial code.  But GPL tends
+to rely more on frequent, small, incremental changes - "release early
+and often".  This practice will not work well with a hash-based security
+certification concept.
+
+There may be some creative workarounds possible for "trusted Linux"
+developers.  They could set up their own certification infrastructure
+and allow core Linux kernel team members to issue certs.  Especially
+if TCPA is not used on Windows systems, as seems likely to be the case
+now, Linux kernel developers will have considerable leverage in working
+out the best way to tackle this problem.
+
+Keep in mind, too, that one can make a strong case that open source
+code in general is a far better fit for the general concept of remote
+trust that TCPA/Palladium attempt to build.  If your trusted system is
+running code whose source you can inspect, code which you might even be
+able to build yourself from source, you can have much greater confidence
+and peace of mind when you allow it to run on your system.  I would be
+much more likely to trust a piece of software that was going to lock up
+its data, if I could be confident of exactly what it was doing.
+
+Adam Back wrote earlier about ideas to let the user inspect the data
+stream into or out of a Palladium application.  I responded that this
+would invalidate the security guarantees for a large and interesting
+class of apps, such as the secure P2P enhancements I have sketched.
+But you can achieve much of what Adam wanted simply by choosing to run
+open source Palladium apps.  Those are the ones where you know exactly
+what you are trusting the system to do.  They are the ones that you know
+have no backdoor, spyware, or other objectionable, secret features.
+
+And note that in the context of application programs, there is no need
+for the OS certification described above.  Trust in these programs would
+be handled on a completely decentralized basis, with each distributed
+application handling its own trust decisions.  There would be no
+centralized certification system.  Rather, the software would decide
+for itself which versions to trust.
+
+Summing up, it is at best a vast oversimplification to say that TCPA is
+a GPL-killer.  It may cause some problems specifically for Linux due to
+the need to get certifications that are widely accepted.  But it sounds
+like HP and possibly IBM are going to at least get the ball rolling
+with these certifications, so we can expect a TCPA compliant Linux in
+some form.  And Linux developers may be able to come up with mechanisms
+that will allow them to continue making frequent Linux releases while
+still being able to support TCPA features.
+
+For general applications, TCPA/Palladium could be a tremendous marketing
+opportunity for open source.  Transparency and trust go together like
+hand in glove.  In the long run I think the open source community will
+thrive and benefit from TCPA and Palladium.
+

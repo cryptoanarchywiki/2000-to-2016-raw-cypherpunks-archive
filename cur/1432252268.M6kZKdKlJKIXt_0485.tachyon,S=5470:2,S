@@ -1,0 +1,115 @@
+From owner-cypherpunks@al-qaeda.net  Tue May 11 17:20:59 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.mit.edu (localhost [127.0.0.1])
+	by positron.mit.edu (8.12.11/8.12.11/Debian-3) with ESMTP id i4BLI4UA028085
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.mit.edu>; Tue, 11 May 2004 17:18:04 -0400
+Received: (from majordomo@localhost)
+	by positron.mit.edu (8.12.11/8.12.11/Debian-3) id i4BLI4Hj028084
+	for cypherpunks-outgoing; Tue, 11 May 2004 17:18:04 -0400
+Date: Tue, 11 May 2004 21:10:35 +0000 (UTC)
+From: Jason Holt <jason@lunkwill.org>
+X-X-Sender: jason@potato.zayda.com
+To: Adam Back <adam@cypherspace.org>
+cc: cryptography@metzdowd.com, Cypherpunks <cypherpunks@minder.net>
+Old-Subject: Re: who goes 1st problem
+In-Reply-To: <20040511193825.GA16834@bitchcake.off.net>
+Message-ID: <Pine.LNX.4.44.0405111949060.6891-100000@potato.zayda.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Subject: Re: who goes 1st problem
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4318
+Lines: 87
+
+[Adam and I are taking this discussion off-list to spare your inboxes, but
+this message seemed particularly relevant.  Perhaps we'll come back later if
+we come up with anything we think will be of general interest.]
+
+					-J
+
+On Tue, 11 May 2004, Adam Back wrote:
+
+> Anyway the who goes 1st problem definition has my interest piqued: I
+> am thinking this would be a very practically useful network protocol
+> for privacy, if one could find a patent-free end-2-end secure (no
+> server trust), efficient solution.  Another desirable feature I think
+> is to not use too much funky crypto, people are justifiably nervous
+> about putting experimental crypto into standards, even if it has
+> security proofs until some peer review has happened.
+
+Agreed.  Ninghui Li's RSA OSBEs might be the answer; they're not quite as
+elegant as the IBE version, but they work with blinded RSA signatures, and so
+should be patent-free by next year, assuming Ninghui doesn't seek any patents.  
+Section 4 of his PODC paper describes the RSA implementation.  He also has a
+new paper which does neat things with commitments that I haven't wrapped my
+mind around yet.
+
+Actually, we might also consider contacting Dan Boneh at some point; he seems
+to be interested in the proliferation of IBE, and might be sympathetic to the
+needs of the IETF to have free standards, especially considering the exposure
+it'd get for his system.
+
+However, we need to define just what we need to accomplish.  Since my lab
+works in trust negotiation, we think in terms of policies a lot, whereas SSL
+just assumes you know what certs you want to send to whom.  But let's assume
+the SSL model for simplicity.
+
+The second issue, now that I think of it in this context, would be how you
+actually get your certs to the other guy.  Hidden credentials, as Ninghui
+pointed out, assume you have some means for creating the other guy's cert,
+eg., a template "(nym):Senior_Agent:(current year)" producing
+"Bob:Senior_Agent:2004".
+
+The OSBE paper, OTOH, assumes we're going to exchange our certificates, just
+without the CA signatures.  Then I can send you messages you can only read if
+you really do have a signature on that cert.  But I've always thought that was
+problematic, since why would honest people bother to connect then use fake
+certs?  The attacker doesn't need to see the signature - he believes you.  So
+honest users would need to regularly give out fake certs so they can hide
+their legit behavior among the fake connects.  Will Winsborough also suggests
+this with the notion of ACK policies - you *always* give people something they
+ask for, so they can't tell what you have and what you don't.
+
+So maybe what we really want is some sort of fair exchange or something, where
+I can show you my valid certs as you show me the valid certs of your own.  
+
+If one side is guessable, we've discussed this sort of thing with hidden
+creds:
+
+E("Hi Bob, since you're a senior agent, you can see my agent credential:
+'Alice:Denver field office agent (apprentice):2004",
+	"Bob:Senior_Agent:2004")
+
+E("Hi Bob, since you're a BYU alumnus, you can see my BYU credential:
+'Alice:Senior:computer science:3.96 gpa:2004",
+	"Bob:Senior_Agent:2004")
+
+etc.
+
+So that's an open problem.  But let's assume guessable-certs, since that's the
+only way I know how to really keep certs and policies safe for now. The
+OSBE-RSA math still works.  So we're good so far, except that the RSA approach
+is interactive.  Section 4 says that in the RSA scheme, Alice sends her cert
+/and blinded signature/ to Bob (which may or may not be bogus), and then Bob
+can send back an encrypted message.  (In HC and IBE-OSBEs, Bob doesn't need
+the blinded signature to use as a public key).
+
+But maybe Robert's improved secret sharing scheme from the new HC paper can 
+give us some ideas:
+
+1. Alice sends blinded signatures for each of her relevant certs, not
+revealing which signature goes with each cert, and not revealing the cert
+contents.
+
+2. Bob generates the contents of each of Alice's certs relevant to his policy,
+and simply generates each possible combination of hash-of-cert-contents and
+blinded-signature.  One from each row will be a match-up between contents and
+signature, and Alice will have to figure out which.  Unfortunately, this
+requires n^2 multiplies and exponentiations.
+
+						-J
+

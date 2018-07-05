@@ -1,0 +1,170 @@
+From owner-cypherpunks@al-qaeda.net  Thu May 20 10:52:32 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.mit.edu (localhost [127.0.0.1])
+	by positron.mit.edu (8.12.11/8.12.11/Debian-3) with ESMTP id i4KEqVPE011461
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.mit.edu>; Thu, 20 May 2004 10:52:31 -0400
+Received: (from majordomo@localhost)
+	by positron.mit.edu (8.12.11/8.12.11/Debian-3) id i4KEqVPM011460
+	for cypherpunks-outgoing; Thu, 20 May 2004 10:52:31 -0400
+Mime-Version: 1.0
+X-Sender: rah@bullae.ibuc.com
+Message-Id: <p06110431bcd273f9c131@[66.149.49.5]>
+Date: Thu, 20 May 2004 10:42:12 -0400
+To: e$@vmeng.com, cypherpunks@al-qaeda.net
+From: "R. A. Hettinga" <rah@shipwright.com>
+Subject: Re: [p2p-hackers] Onion Routing Economy
+Content-Type: text/plain; charset="us-ascii"
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 6689
+Lines: 145
+
+--- begin forwarded text
+
+
+Delivered-To: p2p-hackers@zgp.org
+Date: Thu, 20 May 2004 02:24:46 -0400
+From: Roger Dingledine <arma@mit.edu>
+To: "Peer-to-peer development." <p2p-hackers@zgp.org>
+Subject: Re: [p2p-hackers] Onion Routing Economy
+User-Agent: Mutt/1.2.5.1i
+Reply-To: "Peer-to-peer development." <p2p-hackers@zgp.org>
+List-Id: "Peer-to-peer development." <p2p-hackers.zgp.org>
+List-Archive: <http://zgp.org/pipermail/p2p-hackers>
+List-Post: <mailto:p2p-hackers@zgp.org>
+List-Help: <mailto:p2p-hackers-request@zgp.org?subject=help>
+List-Subscribe: <http://zgp.org/mailman/listinfo/p2p-hackers>,
+	<mailto:p2p-hackers-request@zgp.org?subject=subscribe>
+Sender: p2p-hackers-bounces@zgp.org
+
+On Thu, May 20, 2004 at 06:26:44AM +0200, Johan F?nge wrote:
+> What papers and ideas are there on the economy aspect of Onion Routing?
+
+Check out "Using Payments to Promote Cooperation in Anonymity Protocols"
+by Figueiredo et al, ftp://gaia.cs.umass.edu/pub/Anon_Incentive_03-31.pdf
+for a pretty good introduction to the problem. There are a lot of unsolved
+problems here though. For example:
+
+One could imagine a payment protocol where the initiator delivers to
+node i+1 a coin which is only valuable to node i, and if all is going
+well then i+1 hands the coin to i. But what about paying the last node
+in the path? External sites (e.g. webservers) don't know about your
+protocol. So either you don't pay the last hop, in which case there's
+no incentive for anybody to honor that, or you give him the money and
+hope for the best, which again isn't so good incentive-wise.
+
+This is critical because of another sort of free-riding on systems
+like onion routing: many users would prefer to run middleman nodes
+(relaying traffic only inside the network, and allowing nothing to exit
+from their node).
+
+Another issue to consider is collusion. If nodes work together, can
+they take your money without providing service? An incentive/payment
+scheme should at the least tolerate some amount of this, especially in
+the context of Sybil attacks: http://freehaven.net/anonbib/#sybil
+
+Does the payment system enable the adversary to attract more traffic by
+performing well? See "Reliable MIX Cascade Networks through Reputation"
+for more details around this issue: http://freehaven.net/anonbib/#casc-rep
+
+Rather than explicitly trying to reward good behavior, you might also
+consider implicit incentives. For example, running a node (and relaying
+traffic) can provide *better anonymity* for a user, so he should want to
+do it, and the most plausible cover traffic is actual other traffic. See
+"On the Economics of Anonymity", http://freehaven.net/anonbib/#econymics
+
+Another area to look at is the token-based incentive scheme in GNUnet --
+http://freehaven.net/anonbib/topic.html#ebe2003 and
+http://freehaven.net/anonbib/#bennett:pet2003
+
+>How can one stop the flooding/spamming of the network with junk? How can
+>one stop people from using too much resources? How can one create
+>incentive to give and not lie?
+>
+>I've though about it some myself, and I'm curious as to whether i've
+>reinvented part of the wheel.
+>
+>The basic idea is:
+>
+> You pay for your packets in bandwidth, by contributing to the system.
+>
+> When passing on a packet you receive credits from the originator.
+> Prioritize credited transfer. (Credits could possibly be the
+> "guaranteed" transfer of an amount of data.) After having "payed" for
+> one package to be passed on by a node, you pay a node, possibly the
+> same, and have it sponsor the continued transfer of the node, by trading
+> bandwidth with it. (You pay the sponsor by forwarding something, and the
+> sponsor then pays the forwarder of your package, by forwarding something
+> from the forwarder.)
+
+There's a lot still to be worked out here.
+
+How do you make sure the guy you just paid gets the guys later in the
+path to perform well?
+
+Is "credit" local (relative to just you) or global (I do something for
+Janet, then get to use Jane's resources)? If global, how do I tell people
+that somebody has performed well/poorly without revealing that I just
+used them?
+
+Do I choose nodes for my paths based on my view of peoples' credit, so
+an adversary who tracks my perspective could guess which paths are mine
+based on which nodes are in the path? (Or worse, he could influence my
+view of the network so I'm likely to pick nodes that nobody else picks,
+making me even more partitioned.)
+
+How do you distinguish between somebody who's legitimately down sometimes
+and somebody who provides selective service (relays some traffic, but
+always just takes Jane's money and ignores her)?
+
+What incentive do nodes have to pass traffic *back*? Most requests
+in Tor (the deployed second-generation onion routing system, see
+http://freehaven.net/tor/) send a few bytes forward and get many bytes
+in return.
+
+If the credits are local, here's another attack: the adversary shows
+up and uses your node, then gives you a token so you can use his. He's
+just bought the right to relay some of your traffic. Depending on the
+design, either you get to choose the later hops in the path, in which
+case you'll probably have to pay for them too (meaning you'll have
+gathered tokens for them -- and how did you do that? Some nice guy
+showed up and used your node, then gave you a token to use him back),
+or the adversary gets to choose your next hop, and we all know where
+that leads (cf http://freehaven.net/anonbib/#morphmix:wpes2002).
+
+I've written a bit more discussion about these topics in
+http://freehaven.net/anonbib/#rep-anon, including some questions about
+reputation and currency in section 6.
+
+It might sound like I'm trying to convince you this is an impossible
+problem. But I actually think we're getting closer to finding some sort
+of halfway-decent incentive scheme in the next couple of years. I figure
+the first step is to understand it well enough to figure out which parts
+we can ignore. Maybe enumerating the problems will drive somebody to
+show me how easy it is? :)
+
+--Roger
+
+_______________________________________________
+p2p-hackers mailing list
+p2p-hackers@zgp.org
+http://zgp.org/mailman/listinfo/p2p-hackers
+_______________________________________________
+Here is a web page listing P2P Conferences:
+http://www.neurogrid.net/twiki/bin/view/Main/PeerToPeerConferences
+
+--- end forwarded text
+
+
+-- 
+-----------------
+R. A. Hettinga <mailto: rah@ibuc.com>
+The Internet Bearer Underwriting Corporation <http://www.ibuc.com/>
+44 Farquhar Street, Boston, MA 02131 USA
+"... however it may deserve respect for its usefulness and antiquity,
+[predicting the end of the world] has not been found agreeable to
+experience." -- Edward Gibbon, 'Decline and Fall of the Roman Empire'
+

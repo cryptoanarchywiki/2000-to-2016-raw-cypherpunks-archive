@@ -1,0 +1,70 @@
+From cryptography-owner@c2.net  Mon Nov 20 10:39:10 2000
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.72.0.53])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id KAA27951
+	for <kwantam@positron.mit.edu>; Mon, 20 Nov 2000 10:39:10 -0500
+Received: from blacklodge.c2.net (blacklodge.c2.net [140.174.185.245])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id KAA07442;
+	Mon, 20 Nov 2000 10:39:05 -0500 (EST)
+Received: from localhost (daemon@localhost) by blacklodge.c2.net (8.8.8/8.7.3) with SMTP id HAA16668; Mon, 20 Nov 2000 07:40:54 -0800 (PST)
+Received: by blacklodge.c2.net (bulk_mailer v1.11); Mon, 20 Nov 2000 07:36:26 -0800
+Received: (from majordom@localhost) by blacklodge.c2.net (8.8.8/8.7.3) id HAA16383 for cryptography-outgoing; Mon, 20 Nov 2000 07:36:25 -0800 (PST)
+From: obfuscation@beta.freedom.net
+Message-Id: <200011200208.SAA13909@blacklodge.c2.net>
+X-Freedom-Envelope-Sig: cryptography@c2.net AQHJGEpt1Vu/nxSYROEcXWQ6gC7brs6Ec41lboj05v8c1b7QuFh9ucAk
+Date: Sun, 19 Nov 2000 18:07:08 -0800
+Old-From: obfuscation@beta.freedom.net
+To: bram@gawth.com, obfuscation@beta.freedom.net
+Subject: Re: Public Key Infrastructure: An Artifact...
+Cc: cryptography@c2.net, cypherpunks@cyberpass.net
+Sender: owner-cryptography@c2.net
+Status: O
+Content-Length: 2112
+Lines: 46
+
+> On Sat, 18 Nov 2000 obfuscation@beta.freedom.net wrote:
+>
+> > Bram Cohen <bram@gawth.com> writes:
+> > > Unless that problem is fixed, man in the middle is hardly made more
+> > > difficult - for example, Mallory could break into some random machine on
+> > > the net and steal it's public key, then hijack local DNS and when someone
+> > > goes to amazon.com redirect them to amazon.hackeddomain.com, and then
+> > > proxy to amazon.com - now even SSL says the connection is safe.
+> > 
+> > Are you sure that works?  I would think the SSL client would do a
+> > connection to the URL the user typed, www.amazon.com, and check the
+> > name in the cert to see if it (approximately) matches.
+>
+> When the user goes to www.amazon.com, they get a plaintext http redirect
+> to amazon.hackeddomain.com, which does check.
+
+Still confused...
+
+The original connection to www.amazon.com is an SSL connection, right?
+We are following an https: URL?  (Otherwise, SSL would not even come
+into the picture.)
+
+If you do a DNS hack to redirect www.amazon.com to amazon.hackeddomain.com,
+the latter site will not be able to complete SSL handshaking without
+triggering a browser warning, will it?
+
+Are you suggesting that the server would reply to the SSL handshake
+with a NULL transform?  I just checked my browser (Netscape) and it
+did not offer NULL as an option.  The only ciphersuites offered in the
+client_hello message were:
+
+     V2CipherSpec SSL_RC4_128_WITH_MD5          = { 0x01,0x00,0x80 };
+     V2CipherSpec SSL_RC4_128_EXPORT40_WITH_MD5 = { 0x02,0x00,0x80 };
+     V2CipherSpec SSL_RC2_CBC_128_CBC_WITH_MD5  = { 0x03,0x00,0x80 };
+     V2CipherSpec SSL_RC2_CBC_128_CBC_EXPORT40_WITH_MD5 = { 0x04,0x00,0x80 };
+     V2CipherSpec SSL_IDEA_128_CBC_WITH_MD5     = { 0x05,0x00,0x80 };
+     V2CipherSpec SSL_DES_192_EDE3_CBC_WITH_MD5 = { 0x07,0x00,0xC0 };
+
+The server must choose from this list, and all of these require the
+server to respond with an RSA certificate.
+
+So it looks to me like the SSL protocol will not allow the redirection
+attack to work without triggering a user alert, unless there is some
+subtlety here...
+
+Ob
+

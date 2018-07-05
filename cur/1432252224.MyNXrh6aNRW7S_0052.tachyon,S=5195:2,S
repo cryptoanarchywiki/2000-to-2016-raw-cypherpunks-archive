@@ -1,0 +1,118 @@
+From owner-cypherpunks@al-qaeda.net  Thu Feb  3 03:54:48 2005
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (majordomo@localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.3/8.13.3/Debian-4) with ESMTP id j139qZYb030975
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Thu, 3 Feb 2005 03:52:35 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.3/8.13.3/Submit) id j139qZWY030974
+	for cypherpunks-outgoing; Thu, 3 Feb 2005 03:52:35 -0600
+Date: Thu, 3 Feb 2005 10:40:44 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Tor: Please block these file-sharing ports from your exit
+  policy (fwd from arma@mit.edu)
+Message-ID: <20050203094043.GJ1404@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.4i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4042
+Lines: 90
+
+----- Forwarded message from Roger Dingledine <arma@mit.edu> -----
+
+From: Roger Dingledine <arma@mit.edu>
+Date: Thu, 3 Feb 2005 03:42:31 -0500
+To: tor-ops@freehaven.net
+Subject: Tor: Please block these file-sharing ports from your exit policy
+User-Agent: Mutt/1.2.5.1i
+
+Hi folks,
+
+You're getting this mail because you've registered a Tor server. Thanks
+for contributing to the Tor network! We've been getting a lot of nodes
+lately from people saying they're happy Tor exists because now they can
+publish anonymously, reach websites that are blocked from their country,
+etc etc. This is all possible because of people like you.
+
+There are two parts to this mail: (1) asking how Tor servers are doing
+and reminding you to upgrade / restart them, and (2) asking you to
+prepend some more exit policy lines in their torrc.
+
+****** Part one: ******
+
+If your Tor server has crashed and you haven't noticed, please notice,
+and consider upgrading to at least 0.0.9.3 and restarting it. :) If it
+was running 0.0.9.3 when it crashed, please let me know of any hints
+(e.g. core files and error messages) you might have for us.
+
+If you've turned off your Tor server because it's eating too much of your
+bandwidth/CPU, please consider setting BandwidthRate and BandwidthBurst
+and starting it up again. Bandwidth limiting also limits the cpu use,
+since it's tied to how many bytes you process. Even cable and DSL
+rates are usable and useful to us. Also, note that we've implemented
+Hibernation, which lets you set a maximum number of bytes to handle per
+day/week/month, and your server goes to sleep in between. Let me know if
+you need help choosing good configuration parameters; I'm happy to help.
+
+If you're feeling adventurous, feel free to try the code in CVS:
+http://tor.eff.org/developers.html
+It hasn't crashed on us lately, and it uses pthreads rather than forking
+so the "using lots of memory for each dnsworker" problem should be
+resolved. We'll be putting out an actual package for 0.1.0-alpha in a
+week or two, if you prefer to wait.
+
+If you're feeling adventurous and still have bandwidth to spare, feel free
+to set your BandwidthRate to something higher than the 780 KB default.
+http://serifos.eecs.harvard.edu:8000/cgi-bin/exit.pl?sortbw=1 shows the
+daily top servers by usefulness, for those with a competitive streak. :)
+
+And if you have any wishlist items or other comments, we'd love to
+hear them.
+
+****** Part two: ******
+
+In the past weeks, file-sharing has been pummeling the Tor network:
+http://www.noreply.org/tor-running-routers/
+
+While we don't have any legal or moral opinions about this particular
+traffic, we need to take technical measures to make the network usable
+again. One solution would be to enumerate the ten or so ports that
+we know we want to accept, and reject the rest. We may end up needing
+to do that, but we'd like to try an intermediate approach first. So,
+please prepend the following line to your exit policy, by putting this
+line in your torrc file:
+
+ExitPolicy reject *:4661-4666,reject *:6346-6429,reject *:6881-6999
+
+There's no need to do this if you're a middleman node, or your chosen
+exit policy already rejects these. But otherwise, please do it even
+if you personally do not mind carrying traffic for these ports: Tor's
+architecture means that most of the hops in the circuit don't know what
+traffic they're carrying, and at least for now we'd like to crank down
+the overall bandwidth used by applications on these ports. Hopefully in
+the future we'll have a better (e.g. more decentralized) Tor that can
+handle it, but there's no point letting the network die in the meantime.
+
+Thanks!
+--Roger
+
+
+
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a>
+______________________________________________________________
+ICBM: 48.07078, 11.61144            http://www.leitl.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+http://moleculardevices.org         http://nanomachines.net
+
+[demime 1.01d removed an attachment of type application/pgp-signature]
+

@@ -1,0 +1,103 @@
+From owner-cypherpunks@al-qaeda.net  Mon Apr 11 12:11:24 2005
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.4/8.13.4/Debian-1) with ESMTP id j3BHBM6T005084
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Mon, 11 Apr 2005 12:11:22 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.4/8.13.4/Submit) id j3BHBMRF005082
+	for cypherpunks-outgoing; Mon, 11 Apr 2005 12:11:22 -0500
+Message-Id: <6.2.1.2.0.20050408213514.04108038@pop.idiom.com>
+X-Mailer: QUALCOMM Windows Eudora Version 6.2.1.2
+Date: Fri, 08 Apr 2005 22:17:46 -0700
+To: "James A. Donald" <jamesd@echeque.com>, cryptography@metzdowd.com
+From: Bill Stewart <bill.stewart@pobox.com>
+Subject: Re: how email encryption should work
+Cc: cypherpunks@minder.net
+In-Reply-To: <42484635.17176.D9C8400@localhost>
+References: <r02010400-1038-C3DD61819CBD11D9AA730030658F0F64@[192.168.1.5]>
+   <42484635.17176.D9C8400@localhost>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+X-OriginalArrivalTime: 11 Apr 2005 02:47:03.0992 (UTC)
+  FILETIME=[BE354B80:01C53E40]
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-1.5.6
+  (outlier.minder.net [65.75.150.100]); Mon, 11 Apr 2005 12:48:42 -0400
+  (EDT)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-1.5.6
+  (waste.minder.net [127.0.0.1]); Sun, 10 Apr 2005 23:21:07 -0400 (EDT)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-1.5.6
+  (waste.minder.net [127.0.0.1]); Sun, 10 Apr 2005 23:20:01 -0400 (EDT)
+X-Greylist: Delayed for 00:31:12 by milter-greylist-1.5.6
+  (waste.minder.net [66.92.53.73]); Sun, 10 Apr 2005 23:19:08 -0400
+  (EDT)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3241
+Lines: 62
+
+At 07:00 PM 3/28/2005, James A. Donald wrote:
+>In my blog http://blog.jim.com/ I post "how email encryption should work"
+
+I see a couple of problems with your proposal.
+I'm not sure I like your external trusted mail-server assumptions,
+but they're probably good enough for many people,
+and other people will have better comments about them.
+
+Your plan is really designed for a small number of addresses per sender,
+as opposed to a quasi-infinite set of tagged addresses.
+It's becoming pretty common for anti-spam reasons
+to give different recipients different mail addresses like
+         tag@mydomain.com (or tag@mysubdomain.domain.com) or
+         myname+tag@domain.com
+so you can track and whitelist/blacklist people you communicate with,
+and some ISPs automagically translate between the two formats.
+Building a user interface that does that unobtrusively
+is probably a hard problem, or at least not a well-solved one,
+and building a cryptosystem that assumes a small number of
+addresses per user could make that style of mailer harder.
+A good user interface probably has some version of petname support,
+though, so there's some commonality with key handling.
+
+On the other hand, if you assume that most people will get domains,
+whether 2LD or 3LD or other subdomain,
+you could do a model that says that a user gets one key per domain,
+so you could think about hanging the keys off DNS.
+That may not be the right choice (do you want your email addresses
+to be easily correlated, and cracking/stealing one address's key
+to reveal the keys you use for everybody else?  Or does the domain
+pretty much imply that to the skilled recipient anyway so who cares?)
+And of course it gets into the whole squabble about DNSSEC,
+and why its deployment failed, and whether it was trying to do
+a perfect job and therefore less scalable than a mostly-good-enough job,
+or at least into the politics of those questions if not the technology.
+
+The related problem is what to do if you *do* want different keys
+for different recipients; you could do that with different subdomains,
+or you could do a non-DNS approach.
+
+- Is (sender+recipient+timestamp+message) the right thing to sign?
+The Subject: line is in the mail headers, but it's probably
+something that should be part of the message.
+I'm not sure about some various X-headers.
+And of course the From: line includes both the email address
+and the sender's name, and the sender's name may be different
+for different recipients (in some sense, it may be the
+recipient's petname for the sender.)
+
+- Also, if you're attaching a key strictly to the email address,
+what happens to old signatures if you move email addresses?
+I suppose that's part of the point of getting your own domain name,
+so you can avoid having to change contact addresses when you change ISPs,
+but if you're using a new email address, how do you forward the signature?
+One option is to do what you can do in Crypto Kong,
+where you send a message from old-address signed by old-address,
+saying that you'll be using new address and new key,
+but that seems a bit awkward, since you need a convenient way to
+include the new keys for people who whitelist you or who you
+only want to send encrypted mail to.
+
+         Thanks; Bill Stewart
+

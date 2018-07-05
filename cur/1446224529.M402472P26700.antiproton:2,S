@@ -1,0 +1,126 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t9UH22PM026683;
+	Fri, 30 Oct 2015 13:02:02 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=literati_org.20150623.gappssmtp.com header.i=@literati_org.20150623.gappssmtp.com
+	header.b=SGL3ZVO8; dkim-adsp=none (unprotected policy);
+	dkim-atps=neutral
+Received: from mail-ig0-f177.google.com (mail-ig0-f177.google.com
+ [209.85.213.177])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t9UH2044026678
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Fri, 30 Oct 2015 13:02:01 -0400
+Received: by igvi2 with SMTP id i2so14141667igv.0
+ for <cypherpunks@cpunks.org>; Fri, 30 Oct 2015 10:01:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=literati_org.20150623.gappssmtp.com; s=20150623;
+ h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+ :content-type; bh=ceabJFM795BWXYHuSxODtCYs5fgrFfXcvHGSLF0hjt0=;
+ b=SGL3ZVO8DweEGJpMJyD2W8FnDXzVhTwIEM7yZNvVndxgxK3EOXFsw7Czm7hBqsD2LX
+ zNjI+ECgLilHBZGhat7o3RqY9xeBZWREkaMnWOvj/k1617638wzVhCCeiGPwBl2MciPq
+ OaaWEzIBKjlVXv9Rsb+5TMWYylqYlVT+8bwyLa8kzxjk0ugMlCTE2KlHfFenx/wVUbtY
+ w+QGlRK7oFsgc1CewAbXo6Q5zjECSZw81uv9I5v8E3bYwwlEcLpMFlwEwSdsAHo6sQeP
+ JOoLvpgVdc/k+zTMWjhxAHxmBo2MTQDhe8S7CjyiXj8HeTgdAfEUVVes+Pdj1Jlk4BaK
+ i2RA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+ :message-id:subject:to:content-type;
+ bh=ceabJFM795BWXYHuSxODtCYs5fgrFfXcvHGSLF0hjt0=;
+ b=KPx/4qoojihzoWHFieR4+dr51OIiTh0BDMZ7hutLUZShdBOf+0CNAeMboQleRpqS2O
+ Krc7rrt/9kaiukwUtX+sdFx7R/XXn+sYXUI7c4ypMApYfg0hjHgwlTli73+5UrLUsTqc
+ 8B4LXyH9V0ZDXBkxSQ89xwDKT5SFZObg/0+A8bWwdcJWGB48weKHL3psLM7w4+BnNIy2
+ JOcPfERzWSKFCc0WZ0BIsai3lmK68jRR1OtDzMJhuUEs7ecNHWxc4KTn+Evbp7ZCg5U+
+ YU4ssphcKLPXvy34WLOUjMJ+SA+gKMI6zGrhNxcbYTddonajyPq/INnPlvCZqvJQ1lWV
+ oDBQ==
+X-Gm-Message-State: ALoCoQk4ChBP+Qfge9KMNvM6KmLMDs7XCD1p3RyHNsSYymDHlgqOcmdieVGQqv1WvWOOyxtd/zx4
+X-Received: by 10.50.4.68 with SMTP id i4mr3732917igi.96.1446224514704; Fri,
+ 30 Oct 2015 10:01:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAHWD2rJNTxt2+=0rPkkc+323pTn-njkvJVgUE624LShu2xg1Eg@mail.gmail.com>
+ <150b0aeef50.276e.4d489027c0c4d0c1b1ca03a1f48f1ffb@misanthropia.org>
+ <20151028231728.1A96CC00019@frontend1.nyi.internal>
+ <CAOsGNSThwv=c9K4v4HkD27PD+wY9+XykyTNOWs=7FOwPpxctZw@mail.gmail.com>
+ <150b1290920.276e.4d489027c0c4d0c1b1ca03a1f48f1ffb@misanthropia.org>
+ <20151029013945.C7D9FC00012@frontend1.nyi.internal>
+ <CAHWD2rLJ0RgxcGZi=mKD=OfYYtCy1j9sfbzDKOVZuuX5EPCnJg@mail.gmail.com>
+ <5632417A.3070402@riseup.net>
+ <CAHKdp-=YBD8ZokGvWOc0s359nESwXQMkR_3RnVJD0saWUZOA-A@mail.gmail.com>
+ <5632A554.60601@riseup.net>
+ <CAHKdp-kzwaD8u9+P2y=zrVvPOu64sZLdL6kw9y9ZhByz_B1sNg@mail.gmail.com>
+ <5633A143.3010809@riseup.net>
+In-Reply-To: <5633A143.3010809@riseup.net>
+From: Sean Lynch <seanl@literati.org>
+Date: Fri, 30 Oct 2015 17:01:45 +0000
+Message-ID: <CAHKdp-=nnkHerGTnBNXQaZp_xnLW4UCOTaRxdi2i1Cc0k472Vg@mail.gmail.com>
+Subject: Re: Shiny stuff and designer societies (addenda)
+To: Razer <Rayzer@riseup.net>, "cy >> cpunks" <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=001a11c30f7877072305235562a0
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 52
+
+--001a11c30f7877072305235562a0
+Content-Type: text/plain; charset=UTF-8
+
+On Fri, Oct 30, 2015 at 9:56 AM Razer <Rayzer@riseup.net> wrote:
+
+> On 10/30/2015 09:52 AM, Sean Lynch wrote:
+>
+> Something that one might call "societal equality" is of interest to me,
+> too. But different people have different ideas of what that means.
+>
+> And that is the point of commonality we work from. The idea is to work
+> towards more of that commonality without sacrificing our individual ethics
+> or morals. Ideas are the 'mutable' element.
+>
+
+This may seem like something of a red herring, but I wish more people read
+Adam Smith's Theory of Moral Sentiments before, instead of, or at least in
+addition to An Inquiry Into the Nature and Causes of the Wealth of Nations.
+And definitely instead of (or at least before) anything written by Ayn
+Rand. I think Rand and cherry-pickers of Smith have done a lot of damage to
+the cause of individualism and free-marketism.
+
+--001a11c30f7877072305235562a0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><br><br><div class=3D"gmail_quote"><div dir=3D"ltr">On Fri=
+, Oct 30, 2015 at 9:56 AM Razer &lt;<a href=3D"mailto:Rayzer@riseup.net">Ra=
+yzer@riseup.net</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" s=
+tyle=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"><div=
+ bgcolor=3D"#FFFFFF" text=3D"#000000"><div>On 10/30/2015 09:52 AM, Sean Lyn=
+ch
+      wrote:<br>
+      <blockquote type=3D"cite">Something that one might call &quot;societa=
+l
+        equality&quot; is of interest to me, too. But different people have
+        different ideas of what that means.</blockquote></div></div><div bg=
+color=3D"#FFFFFF" text=3D"#000000"><div>
+      And that is the point of commonality we work from. The idea is to
+      work towards more of that commonality without sacrificing our
+      individual ethics or morals. Ideas are the &#39;mutable&#39; element.=
+<br></div></div></blockquote><div><br></div><div>This may seem like somethi=
+ng of a red herring, but I wish more people read Adam Smith&#39;s Theory of=
+ Moral Sentiments before, instead of, or at least in addition to An Inquiry=
+ Into the Nature and Causes of the Wealth of Nations. And definitely instea=
+d of (or at least before) anything written by Ayn Rand. I think Rand and ch=
+erry-pickers of Smith have done a lot of damage to the cause of individuali=
+sm and free-marketism.</div></div></div>
+
+--001a11c30f7877072305235562a0--
+

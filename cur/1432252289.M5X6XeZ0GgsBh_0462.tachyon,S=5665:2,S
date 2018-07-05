@@ -1,0 +1,124 @@
+From cypherpunks-bounces@cpunks.org  Tue Apr 22 14:49:56 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id s3MInK4C029193;
+	Tue, 22 Apr 2014 14:49:29 -0400
+Received: from mail.h3q.com (mail.h3q.com [213.73.89.199])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id s3MInAYQ029182
+ for <cypherpunks@cpunks.org>; Tue, 22 Apr 2014 14:49:13 -0400
+Received: (qmail 24935 invoked from network); 22 Apr 2014 18:49:03 -0000
+Received: from mail.h3q.com (HELO mail.h3q.com) (mail.h3q.com)
+ by mail.h3q.com with CAMELLIA256-SHA encrypted SMTP; 22 Apr 2014 18:49:03 -0000
+Message-ID: <5356B97B.5000308@mehnert.org>
+Date: Tue, 22 Apr 2014 20:48:27 +0200
+From: Hannes Mehnert <hannes@mehnert.org>
+User-Agent: Mozilla/5.0 (X11; FreeBSD amd64;
+ rv:24.0) Gecko/20100101 Thunderbird/24.1.0
+MIME-Version: 1.0
+To: liberationtech <liberationtech@mailman.stanford.edu>,
+        tor-talk@lists.torproject.org, p2p-hackers@zim.maski.org,
+        cpunks <cypherpunks@cpunks.org>
+Subject: Re: [liberationtech] Programming language for anonymity network
+References: <5350E1BD.5010304@mpi-sws.org>
+In-Reply-To: <5350E1BD.5010304@mpi-sws.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Cc: wonko@mpi-sws.org, Peter Druschel <druschel@mpi-sws.org>,
+        Dave Choffnes <choffnes@ccs.neu.edu>,
+        Nicholas Merritt <nmerritt@mpi-sws.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.16
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 3463
+Lines: 78
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA384
+
+Hey,
+
+On 04/18/2014 10:26, Stevens Le Blond wrote:
+> We are a team of researchers working on the design and
+> implementation of a traffic-analysis resistant anonymity network
+> and we would like to request your opinion regarding the choice of a
+> programming language / environment. Here are the criteria:
+
+I'm a researcher with some experience in formal methods
+(http://itu.dk/people/hame) and also software development
+(https://github.com/hannesm) in different kinds of programming languages.
+
+> 1) Familiarity: The language should be familiar or easy to learn
+> for most potential contributors, as we hope to build a diverse
+> community that builds on and contributes to the code.
+> 
+> 2) Maturity: The language implementation, tool chain and libraries 
+> should be mature enough to support a production system.
+> 
+> 3) Language security: The language should minimize the risk of
+> security relevant bugs like buffer overflows.
+> 
+> 4) Security of runtime / tool chain: It should be hard to 
+> inconspicuously backdoor the tool chain and, if applicable,
+> runtime environments.
+
+I actually question whether your criteria is extensive enough.
+Especially from crypto systems and anonymity systems, I'd want to have
+a proper specification of the protocol, either by writing it in a
+logic system or by using a declarative programming language.
+
+In my experience, code with lots of shared mutable data (such as
+object-oriented and imperative programming) tends to produce usable
+applications quickly, but once you want to go
+multi-core/multi-threaded or extend at points not thought upfront, the
+code becomes messy and really hard to maintain. Thus I'd go for some
+functional programming language where you write most of the time code
+which does not mutate the heap.
+
+Another piece of thought is this static typing vs dynamic typing.
+While the latter produces prototypes quickly, the former results in
+much more confidence that the application will actually do the right
+thing (again, static typing is not a replacement for testing).
+
+Your fourth point can be mitigated by a) two compilers to
+cross-bootstrap [http://cm.bell-labs.com/who/ken/trust.html] and/or b)
+formalised and small runtimes.
+
+At the time being I'd suggest to look into OCaml/Haskell/Erlang or
+Idris (if you need a really expressive type system), maybe write
+specifications upfront in Coq/HOL/Lem. I don't see any reason these
+days to use C/C++ or another unsafe macro-assembly language (and
+currently develop a TLS stack in pure OCaml to run with openmirage.org
+/ be used by nymote.org).
+
+Happy hacking,
+
+Hannes
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (FreeBSD)
+
+iQIcBAEBCQAGBQJTVrl7AAoJELyJZYjffCjuxi8P/3jyRJ6nTVbypBQUZ/dH/F28
+tx3LTzAAsULtaA6FK+0udRyAVRc/EH3vX6gSjm3lqEayVHg5BSQNfye6mT0efAMX
+i3/ZUh+JfJ4E8sbgBiaMzqXTvYQGHPyhP3swq3vjwrQCrYn3jeISWAJd2x800KzO
+pxOU9W1vpx93fVHig5CfvL1EEoLOLDCQ9yWnRJJaNwy1cDncFb8sg7QmjsMpFHus
+q9w2sQRE6UEdC3Os217uN1OzgylMo8vrbFxbbg4JMGAs08jaovhbMJCucci5q0Zk
+xrv/903v3hAiprZGnvxMOX45F5JVgAiySbW7M+5Ph0j2xIk7dKs4ceNcem9iLTbJ
+rewv4MOkmPnYlepCdkdepRDwV2bcWyzN/efeMZpOg4Yg7w4HW4rD7csuvRkX19NM
+znnLXLRx3VH2UrK1hO9wGjv9RBzGj+eSR/3UxAgPwJ8oZppxMinZgNV+bWmDEgmP
+XI/Z2RDMGMyyEg6FBK8ArVuEmcND6hSFp8df5kzdOfyXnPK1JQ7w58Vf76hAceSN
+MVaJ7eEnIvBBYHY6V61ZHs5ix2I2q6b7MYhiE1ku28K6enRCGsW6FcfR2I2rMyyk
+5P8zCEhMIG+q4Hy3ri1UO8yPBGmNzI7fo3r0t5WLrEldaUyruLpEHjLvBZnNJa9M
+PuMhWbd5ETMetRBKtv2V
+=eO1g
+-----END PGP SIGNATURE-----
+

@@ -1,0 +1,144 @@
+From owner-cypherpunks-outgoing@ssz.com  Sun Oct 29 18:16:15 2000
+Received: from MIT.EDU (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.69.0.28])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id SAA14497
+	for <kwantam@positron.mit.edu>; Sun, 29 Oct 2000 18:16:14 -0500
+Received: from einstein.ssz.com by MIT.EDU with SMTP
+	id AA22745; Sun, 29 Oct 00 18:17:15 EST
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id RAA20352
+	for cypherpunks-outgoing; Sun, 29 Oct 2000 17:09:42 -0600
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id RAA20343
+	for cypherpunks@ssz.com; Sun, 29 Oct 2000 17:09:40 -0600
+Received: from sirius.infonex.com (sirius.infonex.com [216.34.245.2])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id RAA20315
+	for <cpunks@EINSTEIN.ssz.com>; Sun, 29 Oct 2000 17:09:17 -0600
+Received: (from cpunks@localhost) by sirius.infonex.com (8.8.8/8.8.8) id PAA20058; Sun, 29 Oct 2000 15:00:37 -0800 (PST)
+Received: from cyberpass.net (cyberpass.net [216.34.245.3]) by sirius.infonex.com (8.8.8/8.8.8) with ESMTP id PAA20046 for <cpunks@sirius.infonex.com>; Sun, 29 Oct 2000 15:00:31 -0800 (PST)
+Received: from maynard.mail.mindspring.net (maynard.mail.mindspring.net [207.69.200.243]) by cyberpass.net (8.8.8/8.7.3) with ESMTP id PAA03306 for <cypherpunks@cyberpass.net>; Sun, 29 Oct 2000 15:02:42 -0800 (PST)
+Received: from oemcomputer (rtp-nc17-46.ix.netcom.com [207.222.182.46])
+	by maynard.mail.mindspring.net (8.9.3/8.8.5) with SMTP id RAA21057;
+	Sun, 29 Oct 2000 17:59:50 -0500 (EST)
+Message-Id: <4.1.20001028204425.009b9280@pop.ix.netcom.com>
+Message-Id: <4.1.20001028204425.009b9280@pop.ix.netcom.com>
+X-Sender: kelsey.j@pop.ix.netcom.com
+X-Mailer: QUALCOMM Windows Eudora Pro Version 4.1 
+Date: Sat, 28 Oct 2000 21:16:13 -0400
+To: "Arnold G. Reinhold" <reinhold@world.std.com>,
+        "Carskadden, Rush" <carskar@netsolve.net>,
+        Damien Miller  <djm@mindrot.org>
+From: John Kelsey <kelsey.j@ix.netcom.com>
+Subject: CDR: RE: Paranoid Encryption Standard (was Re: Rijndael & Hitachi)
+Cc: Bram Cohen <bram@gawth.com>, cryptography@c2.net,
+        cypherpunks@cyberpass.net
+In-Reply-To: <v04210104b61f90f4e90c@[24.218.56.92]>
+References: <59816DD7DAE9D11184E400104B66A3530555479E@cobra.netsolve.net>
+ <59816DD7DAE9D11184E400104B66A3530555479E@cobra.netsolve.net>
+Mime-Version: 1.0
+Old-Content-Type: text/plain; charset="us-ascii"
+Sender: owner-cypherpunks@ssz.com
+Precedence: bulk
+Reply-To: cypherpunks@ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Language: English, Russian, German
+Content-Type: application/pgp; format=text; x-action=sign
+Status: O
+Content-Length: 3967
+Lines: 93
+
+-----BEGIN PGP SIGNED MESSAGE-----
+
+At 04:20 PM 10/27/00 -0400, Arnold G. Reinhold wrote:
+>At 1:00 PM -0500 10/27/2000, Carskadden, Rush wrote:
+
+>>Are you guys still talking about the feasibility of a
+>>cipher that implements each AES candidate in turn with the
+>>same key? I don't really get this idea. Provided you were
+>>actually using the same key with each stage of the
+>>encryption, then your system is only gong to be as secure as
+>>the key of the first algorithm. In fact, it seems that if
+>>the key is compromised at any one point, then the entire
+>>system is shot, given that you know the algorithm
+>>(Kerckhoff's principle IIRC). Maybe I am misunderstanding.
+
+Actually, it doesn't work this way.  Nearly all block
+ciphers are product ciphers, which means you take some
+relatively short key, derive ``subkeys'' (often in some
+simple linear way) for each round, and apply the rounds in
+sequence to get a strong cipher.  Each round is weak enough
+to be broken, usually pretty trivially.  So the
+non-independence of keys for successive rounds isn't
+generally enough to make the cipher weak.
+
+>That is the theoretical question that I am asking. What you
+>say appears to be the conventional wisdom, and I am claiming
+>that it is wrong.
+
+The conventional wisdom is not that it's bad, but that it
+*could* be bad.  There are good reasons to expect that E =
+Twofish, F = Rijndael with the same key will be no weaker
+than the stronger of Twofish or Rijndael.  But you can at
+least imagine choices of E and F so pathological that the
+result is weaker.  (I know you understand this, but I think
+it's useful to state exactly what we mean with stuff like
+this, especially on a list.)
+
+>As long as there is some way to make sure
+>that none of the ciphers in a chain are inverses of the
+>others, or close to an inverse, in some sense, then I claim
+>as long as one of the ciphers is strong, there is no way to
+>get any information out about the keys from the other
+>ciphers, even if they are all designed to reveal that
+>information.
+
+Hmmm.  I'm trying to think of what condition you need to
+specify for this.  You need something stronger than ``not
+the inverse,'' but I am not sure what.  If you say ``not too
+close to the inverse,'' we need to figure out how to measure
+distance.
+
+For example, one way of considering the distance between two
+permutations E and F is to see what number of inputs x have
+the property that E(x)==F(x).  In this case, you could then
+talk about E^{-1}(x) (inverse of E(X)) and F(x) needing to
+have a certain distance.  But you have to be careful with
+that; what do you do when E(x) is Twofish without the
+whitening, and F(x) = inverse of Twofish without the
+whitening, and missing the last two rounds?  F() and
+E^{-1}() won't be close at all in the sense of our distance
+metric.
+
+>As a practical matter, you may as well derive the sub keys
+>from the master key using a one-way hash, but I am
+>questioning the theoretical justification for doing that.
+>Massey and Maurer base their paper on oracles that give you
+>the key for all component ciphers but one. I am saying such
+>oracles cannot exist if one of the ciphers is strong and
+>"inverses" of the strong cipher are excluded.
+
+I'll comment more on this from another note of yours.  I
+think you're probably right, but that we need to figure out
+how to really nail that argument down, which means
+specifying exactly what's meant by ``close to an inverse,''
+or whatever.
+
+>Arnold Reinhold
+
+ --John Kelsey, Counterpane Internet Security, kelsey@counterpane.com
+PGP Fingerprint: 5D91 6F57 2646 83F9  6D7F 9C87 886D 88AF
+
+
+-----BEGIN PGP SIGNATURE-----
+Version: PGPfreeware 6.5.1 Int. for non-commercial use
+<http://www.pgpinternational.com>
+Comment: foo
+
+iQCVAwUBOft6CiZv+/Ry/LrBAQH7PwQAtqG0DsDfKxQllVQcWljBK8xjQePZeV4k
+Z40lMrsVHghwhsfyWqepISENrWJkepbIQ7ECc3TvYkVX4Yh13fZA/xnfoYX++sQx
+AfnVozmp2an/I0rKdxCB47UGmTqVsiOIVHIHlT18H4UAzOft9/Nu8FPEIwllp8yH
+aoHSwqS+4EE=
+=5AUg
+-----END PGP SIGNATURE-----
+

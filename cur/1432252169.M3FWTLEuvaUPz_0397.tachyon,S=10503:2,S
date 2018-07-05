@@ -1,0 +1,227 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Sun Oct 20 22:56:04 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g9L2u3L10058
+	for <rsw@opamp.org>; Sun, 20 Oct 2002 22:56:04 -0400
+Received: from lion.ninthwonder.com (lion.ninthwonder.com [151.199.66.147])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id WAA24204
+	for <rsw@mit.edu>; Sun, 20 Oct 2002 22:56:01 -0400 (EDT)
+Received: by lion.ninthwonder.com (Postfix, from userid 96)
+	id 483F73070A; Sun, 20 Oct 2002 22:54:33 -0400 (EDT)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by lion.ninthwonder.com (Postfix) with ESMTP id CCE5130706
+	for <cryptography@wasabisystems.com>; Sun, 20 Oct 2002 22:54:31 -0400 (EDT)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 2FECBD97FA; Sun, 20 Oct 2002 22:54:31 -0400 (EDT)
+Received: from rwcrmhc51.attbi.com (rwcrmhc51.attbi.com [204.127.198.38])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 6D68930706
+	for <cryptography@wasabisystems.com>; Sun, 20 Oct 2002 22:39:00 -0400 (EDT)
+Received: from [192.168.0.2] ([24.61.132.190]) by rwcrmhc51.attbi.com
+          (InterMail vM.4.01.03.27 201-229-121-127-20010626) with ESMTP
+          id <20021021023853.DHDM18217.rwcrmhc51.attbi.com@[192.168.0.2]>;
+          Mon, 21 Oct 2002 02:38:53 +0000
+Mime-Version: 1.0
+X-Sender: @mail.attbi.com (Unverified)
+Message-Id: <v04210100b9d7c556a854@[192.168.0.2]>
+In-Reply-To: <20021017191538.A53194@exeter.ac.uk>
+References: <20021017191538.A53194@exeter.ac.uk>
+Date: Sun, 20 Oct 2002 22:38:35 -0400
+To: Adam Back <adam@cypherspace.org>, Cypherpunks <cypherpunks@minder.net>
+From: "Arnold G. Reinhold" <reinhold@world.std.com>
+Subject: Re: palladium presentation - anyone going?
+Cc: Cryptography <cryptography@wasabisystems.com>,
+   Adam Back <adam@cypherspace.org>, dcsb@ai.mit.edu
+Content-Type: text/plain; charset="us-ascii" ; format="flowed"
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 8299
+Lines: 185
+
+At 7:15 PM +0100 10/17/02, Adam Back wrote:
+>Would someone at MIT / in Boston area like to go to this [see end] and send a
+>report to the list?
+
+I went. It was a good talk. The room was jam packed. Brian is very 
+forthright and sincere. After he finished speaking, Richard Stallman 
+gave an uninvited rebuttal speech,  saying Palladium was very 
+dangerous and ought to be banned.  His concerns are legitimate, but 
+the net effect, I think, was to make the Q&A session that followed 
+less hostile.
+
+Palladium sets up a separate trusted virtual computer inside the PC 
+processor, with its own OS, called Nexus, and it own applications, 
+called agents. The trusted computer communicates with a security 
+co-processor on the mother board,  and has a secure channel to your 
+keyboard and mouse and to a selected window on your CRT screen.
+
+How to prevent the secure channel to the on-screen window from being 
+spoofed is still an open problem. Brian suggested a secure mode LED 
+that lights when that window has focus or having the secure window 
+display a mother's-maden-name type code word that you only tell 
+Nexus.  Of course this doesn't matter for DRM since *your* trusting 
+the window is not the issue.
+
+All disk and network I/O is done thru the untrusted Windows OS on the 
+theory that the trusted machine will encrypt anything it wants to 
+keep private. Windows even takes care of Nexus scheduling.
+
+A major design goal is that all existing software must run without 
+change. Users are not required to boot Palladium at all, and are to 
+be able to boot it long after Windows has booted.
+
+>Might help clear up some of the currently
+>unexplained aspects about Palladium, such as:
+>
+>- why they think it couldn't be used to protect software copyright (as
+>the subject of Lucky's patent)
+
+The specific question never came up. As Brain did say, Palladium is 
+just a platform. People can built whatever they want on top of it. 
+It seemed clear to me that the primary goal is DRM, but as someone 
+else in the audience said (approximate quote) "We always hear that 
+you can't do this or that without trusted hardware. Well, this is 
+trusted hardware."  I don't see why anyone would think protecting 
+software copyright could not be done.
+
+>
+>- are there plans to move SCP functions into processor?  any relation
+>to Intel Lagrange
+
+No. The SCP is based on a smart card core and is to be a "light 
+weight, low pin count chip" with a target cost of $1 in volume.  I 
+presume future deals between MS and Intel are always possible.
+
+The SCP will support several algorithms, including 2048-bit RSA, 
+128-bit AES, SHA1, an HMAC. They may include another cipher and 
+another hash. There will also be a FIPS140-2 Random Number Generator 
+and several monotonic counters, but no time of day clock. Each chip 
+will have a unique RSA key pair, an AES key and a HMAC key. The only 
+key that the SCP will reveal to the outside is the RSA public key and 
+it will only do that once per power up cycle.
+
+>
+>- isn't it quite weak as someone could send different information to
+>the SCP and processor, thereby being able to forge remote attestation
+>without having to tamper with the SCP; and hence being able to run
+>different TOR, observe trusted agents etc.
+
+There is also a change to the PC memory management to support a 
+trusted bit for memory segments. Programs not in trusted mode can't 
+access trusted memory. Also there will be three additional x86 
+instructions (in microcode) to support secure boot of the trusted 
+kernel and present a SHA1 hash of the kernel code in a read only 
+register.  There may be a hole somewhere, but Microsoft is trying 
+hard to get it right and Brian seemed quite competent.
+
+>
+>I notice at the bottom of the talk invite it says
+>
+>| "Palladium" is not designed to provide defenses against
+>| hardware-based attacks that originate from someone in control of the
+>| local machine.
+>
+>but in this case how does it meet the BORA prevention.  Is it BORA
+>prevention _presuming_ the local user is not interested to reconfigure
+>his own hardware?
+
+Near as I can see, the real trust comes from the RSA key pair stored 
+in the SCP and a cert on that key from the SCP manufacturer.  There 
+is no command to obtain the private key from the SCP.  Presumably 
+they leverage smart card technology plus what ever tricks they think 
+of to make it hard to get that key.   Differential power analysis or 
+HNO3 might do the trick. We'll have to wait and see.
+
+>
+>Will it really make any significant difference to DRM enforcement
+>rates?  Wouldn't the subset of the file sharing community who produce
+>DVD rips still produce Pd DRM rips if the only protection is the
+>assumption that the user won't make simple hardware modifications.
+
+The real question from Microsoft's stand point is will the 
+entertainment industry be satisfied with Palladium's level of 
+security and release content that can play on Palladium equipped PCs? 
+DVDs aren't Hollywood's main problem.  Movies are becoming available 
+online long before the DVD is released.  Hollywood probably wants 
+something that monitors ALL content for watermarks. Palladium as 
+presented doesn't do this.  But again it is a platform. Once it 
+exists, a later version of Windows might require it to be up and 
+would then verify all content displayed.  If Hollywood doesn't 
+convince Microsoft to do this, Sen. Hollings will be more than glad 
+to introduce the necessary legislation. To paraphrase Stallman's 
+rant, in the Palladium context Alice and Bob are corporations and 
+Mallory is the PC owner.
+
+Arnold Reinhold
+
+
+>
+>Adam
+>
+>-------- Original Message --------
+>Subject: LCS/CIS Talk, OCT 18, TOMORROW
+>Date: Thu, 17 Oct 2002 12:49:01 -0400
+>From: Be Blackburn <be@theory.lcs.mit.edu>
+>To: theory-seminars@theory.lcs.mit.edu
+>CC: cis-seminars@theory.lcs.mit.edu
+>
+>
+>Open to the Public
+>
+>Date:     Friday, Oct 18, 2002
+>Time:     10:30 a.m.- 12:00 noon
+>Place:    NOTE: NE43-518, 200 Tech Square
+>Title:    Palladium
+>Speaker:  Brian LaMacchia, Microsoft Corp.
+>Hosts:    Ron Rivest and Hal Abelson
+>
+>Abstract:
+>
+>This talk will present a technical overview of the Microsoft
+>"Palladium" Initiative.  The "Palladium" code name refers to a set of
+>hardware and software security features currently under development
+>for a future version of the Windows operating system.  "Palladium"
+>adds four categories of security services to today's PCs:
+>
+>  a. Curtained memory. The ability to wall off and hide pages of main
+>memory so that each "Palladium" application can be assured that it is
+>not modified or observed by any other application or even the
+>operating system.
+>
+>  b. Attestation. The ability for a piece of code to digitally sign
+>or otherwise attest to a piece of data and further assure the
+>signature recipient that the data was constructed by an unforgeable,
+>cryptographically identified software stack.
+>
+>  c. Sealed storage. The ability to securely store information so
+>that a "Palladium" application or module can mandate that the
+>information be accessible only to itself or to a set of other trusted
+>components that can be identified in a cryptographically secure
+>manner.
+>
+>  d. Secure input and output. A secure path from the keyboard and
+>mouse to "Palladium" applications, and a secure path from "Palladium"
+>applications to an identifiable region of the screen.
+>
+>Together, these features provide a parallel execution environment to
+>the "traditional" kernel- and user-mode stacks.  The goal of
+>"Palladium" is to help protect software from software; that is, to
+>provide a set of features and services that a software application can
+>use to defend against malicious software also running on the machine
+>(viruses running in the main operating system, keyboard sniffers,
+>frame grabbers, etc).  "Palladium" is not designed to provide defenses
+>against hardware-based attacks that originate from someone in control
+>of the local machine.
+>
+>
+>---------------------------------------------------------------------
+>The Cryptography Mailing List
+>Unsubscribe by sending "unsubscribe cryptography" to 
+>majordomo@wasabisystems.com
+
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

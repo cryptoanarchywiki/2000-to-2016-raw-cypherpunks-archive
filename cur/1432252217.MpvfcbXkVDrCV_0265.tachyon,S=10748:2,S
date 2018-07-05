@@ -1,0 +1,201 @@
+From cypherpunks-bounces@cpunks.org  Wed Jan  8 14:58:48 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s08Jwf30028939;
+	Wed, 8 Jan 2014 14:58:42 -0500
+Authentication-Results: antiproton.jfet.org; dkim=fail
+	reason="verification failed; insecure key"
+	header.d=gmail.com header.i=@gmail.com header.b=NEDAIPqN;
+	dkim-adsp=none (insecure policy); dkim-atps=neutral
+Received: from mail-qe0-f46.google.com (mail-qe0-f46.google.com
+ [209.85.128.46])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s08JwdHr028925
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Wed, 8 Jan 2014 14:58:40 -0500
+Received: by mail-qe0-f46.google.com with SMTP id a11so2194797qen.19
+ for <cypherpunks@cpunks.org>; Wed, 08 Jan 2014 11:58:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:reply-to:sender:from:date:message-id:subject:to
+ :content-type; bh=zGljbwABwaVSqDDjP6NCMscqTAXrqBsCgv4g1K8FF0Q=;
+ b=NEDAIPqNz2wj7zxyrMOIkdpz9ytAJ/4vcVDCrxa4O8vprq9Uyq4YIODPNffe4Qf0Zo
+ vFpKItZmkV4rLw/qOdTBbOGRd3PEeh2Jhfl0P5wwQ8cyzqKhkJe6RWvEyVROfVSZPC5X
+ 8rsRh5VPwJ+LC0fWkiG27HsDP22S1ZHN/UxaBw378FNi4Et/XT7E1MpMsIJmhLHnBADU
+ OziZkjRTHwUXuQUDq8fbA1Mqt4iKjOkVdOnNKmYfwMDrW/zDd1lpKhaXJDR74VF4uRgs
+ 3pVn/r6YacrytxUy18yLWE4/wrDM+aO7XZajIYCsZjVbeT4EVPRI5ObGB3GANFw3dn5/
+ vGcA==
+X-Received: by 10.49.28.101 with SMTP id a5mr214014352qeh.70.1389211111591;
+ Wed, 08 Jan 2014 11:58:31 -0800 (PST)
+MIME-Version: 1.0
+Received: by 10.229.182.137 with HTTP; Wed, 8 Jan 2014 11:58:01 -0800 (PST)
+From: Rich Jones <rich@openwatch.net>
+Date: Wed, 8 Jan 2014 11:58:01 -0800
+X-Google-Sender-Auth: FKwx6yZe8R-h9_7snCx_eaY7hHg
+Message-ID: <CADJYzxKcXjW-z9eRXHs+ujEEn-H0q8EyA6==T+x0DVATwHvM3w@mail.gmail.com>
+Subject: Private Distributed Hash Tables
+To: "cypherpunks@cpunks.org" <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=047d7bd6adbcd3162e04ef7aea95
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+--047d7bd6adbcd3162e04ef7aea95
+Content-Type: text/plain; charset=ISO-8859-1
+
+Far too much yap yap yappin' around here lately.. cpunks write code,
+remember? Let's get back to business.
+
+Here's an idea for a private, censorship-resistant communication/file
+sharing system with integrated invitations and access control. I don't
+think I've ever seen this before, but it's quite possible that people have
+discussed this idea previously. Either way, I don't know of any
+implementations yet.
+
+Problem
+=======
+
+The current P2P file sharing landscape is divided up into two spaces: 1)
+private tracker communities (what.cd // Demonoid // etc) which provide high
+quality network speeds and file quality through moderation, but which are
+often subject to outages due to centralization, and 2) the single giant
+BitTorrent 'peer exchange' distributed hash table, which provides universal
+file access and fault-tolerance, but at the cost of abuse and surveillance
+of those participating.
+
+Ideally, we want a peer-to-peer community which is decentralized and
+fault-tolerant, but with enough authority to maintain a high network
+quality and private enough to avoid open surveillance.
+
+Proposed Solution
+=======
+
+It might be possible to combine the exclusivity and moderation of private
+trackers with the fault-tolerance of distributed hash tables by having each
+private table operate with a certificated-authority based public key
+infrastructure. Essentially, to participate in the DHT, peers must
+cryptographically prove that they have been invited to participate.
+
+Power and trust flow down a through a concentric certificate web. A
+client's authority in the network is a function of how far away from the
+root authority they are (not dissimilar to Scientology's hierarchy.)
+Clients should automatically respect commands coming from those higher up
+the cert chain or from those closer to the root than they are, and should
+listen to, but not automatically respect, commands from those lower down
+the cert chain or from "lower-ranking" clients.
+
+* Bootstrapping and Invitation
+
+The very first user of the network will have to generate a root
+certificate. He is then able to generate new signing certificates, which he
+can give to new users of a network to allow them the ability to access the
+network. These new users should be able to use their own certificates to do
+the same for their own new users. (This could be done with certificate
+signing requests coming from potential new users as well, but that might
+come at the cost of a slightly more complicated user experience).
+
+* Revocation
+
+Bannings can be performed by issuing updates to a network-wide revocation
+list. Clients will automatically respect revocations coming from superiors,
+and may or may not choose to respect revocations coming from underlings.
+
+* Implementation
+
+Everything needed to create the heart of this should exist already in
+Kademlia and OpenSSL. BitTorrent could serve as the basis for the
+file-sharing application, but vanilla BitTorrent has a content discovery
+problem, so I'd suggest that any implementations of BitTorrent on Private
+Distributed Hash Tables should have some kind of discovery BEP included as
+well, possibly one which uses the authority system of the PDHT to verify
+files. There's also a possibility there for what you might call "trusted
+amnesia" - the ability for a user with a high authority to publish verified
+documents to the whole network without having to broadly expose themselves
+as the source of the content by having peers in their same trust level sign
+their content, forget the source, then increase the availability by one
+access level.
+
+Anyway, that's the sketch. Any thoughts?
+
+Rich
+
+--047d7bd6adbcd3162e04ef7aea95
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div><div><div><div><div><div>Far too much yap yap yappin&=
+#39; around here lately.. cpunks write code, remember? Let&#39;s get back t=
+o business.<br><br></div>Here&#39;s an idea for a private, censorship-resis=
+tant communication/file sharing system with integrated invitations and acce=
+ss control. I don&#39;t think I&#39;ve ever seen this before, but it&#39;s =
+quite possible that people have discussed this idea previously. Either way,=
+ I don&#39;t know of any implementations yet.<br>
+
+<br></div><div>Problem<br>=3D=3D=3D=3D=3D=3D=3D<br></div><br>The current P2=
+P file sharing landscape is divided up into two spaces: 1) private tracker =
+communities (<a href=3D"http://what.cd">what.cd</a> // Demonoid // etc) whi=
+ch provide high quality network speeds and file quality through moderation,=
+ but which are often subject to outages due to centralization, and 2) the s=
+ingle giant BitTorrent &#39;peer exchange&#39; distributed hash table, whic=
+h provides universal file access and fault-tolerance, but at the cost of ab=
+use and surveillance of those participating.<br>
+
+<br></div><div>Ideally, we want a peer-to-peer community which is decentral=
+ized and fault-tolerant, but with enough authority to maintain a high netwo=
+rk quality and private enough to avoid open surveillance.<br></div><div>
+
+<br></div>Proposed Solution<br>=3D=3D=3D=3D=3D=3D=3D<br><br></div>It might =
+be possible to combine the exclusivity and moderation of private trackers w=
+ith the fault-tolerance of distributed hash tables by having each private t=
+able operate with a certificated-authority based public key infrastructure.=
+ Essentially, to participate in the DHT, peers must cryptographically prove=
+ that they have been invited to participate.<br>
+
+<br></div><div>Power and trust flow down a through a concentric certificate=
+ web. A client&#39;s authority in the network is a function of how far away=
+ from the root authority they are (not dissimilar to Scientology&#39;s hier=
+archy.) Clients should automatically respect commands coming from those hig=
+her up the cert chain or from those closer to the root than they are, and s=
+hould listen to, but not automatically respect, commands from those lower d=
+own the cert chain or from &quot;lower-ranking&quot; clients.<br>
+
+</div><div><br></div><div>* Bootstrapping and Invitation<br><br>The very fi=
+rst user of the network will have to generate a root certificate. He is the=
+n able to generate new signing certificates, which he can give to new users=
+ of a network to allow them the ability to access the network. These new us=
+ers should be able to use their own certificates to do the same for their o=
+wn new users. (This could be done with certificate signing requests coming =
+from potential new users as well, but that might come at the cost of a slig=
+htly more complicated user experience).<br>
+
+</div><div><br></div>* Revocation<br><br></div><div>Bannings can be perform=
+ed by issuing updates to a network-wide revocation list. Clients will autom=
+atically respect revocations coming from superiors, and may or may not choo=
+se to respect revocations coming from underlings.<br>
+
+</div><div><br></div><div>* Implementation<br><br></div><div>Everything nee=
+ded to create the heart of this should exist already in Kademlia and OpenSS=
+L. BitTorrent could serve as the basis for the file-sharing application, bu=
+t vanilla BitTorrent has a content discovery problem, so I&#39;d suggest th=
+at any implementations of BitTorrent on Private Distributed Hash Tables sho=
+uld have some kind of discovery BEP included as well, possibly one which us=
+es the authority system of the PDHT to verify files. There&#39;s also a pos=
+sibility there for what you might call &quot;trusted amnesia&quot; - the ab=
+ility for a user with a high authority to publish verified documents to the=
+ whole network without having to broadly expose themselves as the source of=
+ the content by having peers in their same trust level sign their content, =
+forget the source, then increase the availability by one access level.<br>
+
+</div><div><br></div>Anyway, that&#39;s the sketch. Any thoughts?<br><br>Ri=
+ch<br></div>
+
+--047d7bd6adbcd3162e04ef7aea95--
+

@@ -1,0 +1,113 @@
+From owner-cypherpunks@al-qaeda.net  Fri Dec 21 04:53:08 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id qBL9mtZw007987
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 21 Dec 2012 04:48:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1356083335;
+	bh=tero9o9S3kxlfk7DgfGaZAhwuBGOUGHW1Dpn6GA8Fg4=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=N+/MccddQnn1qG0i1e3lgPQvSIXy5U33khEhMhXbvujEGr5vEMOIxbx82dptk9k2Q
+	 0pFiWgQjCouL2BOfFt9X/W8rB5ej1EZzS3HQPO2bHmmvXSt2uQ7YAM4tRX8sONzghg
+	 wi8bh39uO0nIx9D0GyBn+yT8ZVfsyWg/nl1+cmqA=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id qBL9mtNL007986
+	for cypherpunks-outgoing; Fri, 21 Dec 2012 04:48:55 -0500
+Date: Fri, 21 Dec 2012 10:48:50 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: [tahoe-dev] Weekly Dev notes, 20-Dec-2012
+Message-ID: <20121221094850.GP9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3489
+Lines: 81
+
+----- Forwarded message from Brian <warner@lothar.com> -----
+
+From: Brian <warner@lothar.com>
+Date: Thu, 20 Dec 2012 09:36:20 -0800
+To: tahoe-dev <tahoe-dev@tahoe-lafs.org>
+Subject: [tahoe-dev] Weekly Dev notes, 20-Dec-2012
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8;
+	rv:17.0) Gecko/17.0 Thunderbird/17.0
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+It's our last weekly chat of the year! Here are some notes:
+
+in attendance: Zooko (scribe), Marlowe, freddyb, amiller, David-Sarah,
+Warner (late)
+
+* translation: Rana from the Tor project walked Marlowe through
+    workflow; Their git repo is checked by transifex. Transifex git
+    pulls their repo. The one thing we have to do manually is that
+    transifex has no way to check for malicious coding added in
+    translations, like XSS/injection-style attacks. Transifex maintains
+    a glossary of "one-offs", words that appear. voulnet does
+    translations for Guardian Project and Tor and would be interested in
+    doing Tahoe-LAFS as well.
+
+* Tenerife, Blake2
+
+* ticket notes:
+  #937, #1159, #1539: land them!
+  #1240: probably ready to land
+  #1525: if tests can be made to pass, land it!
+
+  #1298: trivial, let's land it. If DS doesn't land by this weekend,
+         warner will.
+  #1643: DS will poke at it, else warner will try to fix
+  #1679: warner will try to write a test, test_client.NodeMaker
+  #166: DS will consider 166-3.diff, if no objections by this weekend,
+        warner will land. The -d issue can be figured out for 1.11
+  #1732: warner will try to write a patch this weekend
+  #1802: warner will write the patch
+  #1735: warner will review and land
+  #1777: warner will land
+  rest of 1.10 tickets: can be landed if simple, else kick out to 1.11
+
+* 1.10: warner will make a push this weekend and over holidays. Goal is
+        to get a 1.10-alpha1 out by xmas, then aim for 1.10-final by
+        late January.
+
+* leasedb
+  * warner still needs to review davidsarah/1818-leasedb
+  * we still need to implement starter-lease code before landing
+    1818-leasedb, probably in january
+  * DS will rebase 1819-cloud-merge on top of 1818-leasedb
+  * DS decided to stick with separate SI,shnum columns instead of a
+    single merged shareid column: sqlite accepts foreign keys and unique
+    keys and handles primary keys well enough that quota-measuring
+    queries (finding unique lists of shares owned by a given account)
+    are simple, or at least they can't be simplified enough to justify
+    the denormalization hit
+  * DS will consider adding the additional leasedb state-transitions to
+    the docs (COMING->GONE when the upload process is interrupted before
+    the backend creates any part of the share object, STABLE->GONE when
+    the shares are deleted out-of-band, GOING->GONE when the share
+    deletion process is interrupted but completes anyways), even before
+    those transitions are actually implemented.
+
+There will be no dev call next week on 27-Dec-2012. We'll meet again
+03-Jan-2012.
+
+happy holidays!
+ -Brian
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

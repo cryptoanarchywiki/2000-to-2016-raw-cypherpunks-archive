@@ -1,0 +1,143 @@
+From owner-cypherpunks@Algebra.COM  Tue Nov  5 15:38:54 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id gA5KcnY27529
+	for <rsw@opamp.org>; Tue, 5 Nov 2002 15:38:54 -0500
+Received: from ak47.algebra.com ([209.120.156.51])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id PAA22604
+	for <rsw@mit.edu>; Tue, 5 Nov 2002 15:38:49 -0500 (EST)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id gA5Iwgll014270
+	for <cypherpunks-outgoing@ak47.algebra.com>; Tue, 5 Nov 2002 12:58:42 -0600
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id gA5Iwg3Z014268
+	for cypherpunks-outgoing; Tue, 5 Nov 2002 12:58:42 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from locust.minder.net (locust.minder.net [66.92.53.74])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id gA5IwXll014244
+	for <cypherpunks@algebra.com>; Tue, 5 Nov 2002 12:58:36 -0600
+Received: from waste.minder.net (daemon@waste [66.92.53.73])
+	by locust.minder.net (8.12.6/8.12.6) with ESMTP id gA5IwP2f087467
+	for <cypherpunks@algebra.com>; Tue, 5 Nov 2002 13:58:29 -0500 (EST)
+	(envelope-from cpunks@waste.minder.net)
+Received: (from cpunks@localhost)
+	by waste.minder.net (8.11.6/8.11.6) id gA5IwO825469
+	for cypherpunks@algebra.com; Tue, 5 Nov 2002 13:58:24 -0500
+Received: (from majordom@localhost)
+	by waste.minder.net (8.11.6/8.11.6) id gA5IuxV25212
+	for cypherpunks-outgoing; Tue, 5 Nov 2002 13:56:59 -0500
+Received: from VL-MS-MR002.sc1.videotron.ca (relais.videotron.ca [24.201.245.36])
+	by waste.minder.net (8.11.6/8.11.6) with ESMTP id gA5IuwQ25204
+	for <cypherpunks@minder.net>; Tue, 5 Nov 2002 13:56:58 -0500
+Received: from stefanhome ([24.202.123.18]) by VL-MS-MR002.sc1.videotron.ca
+ (iPlanet Messaging Server 5.2 HotFix 0.9 (built Jul 29 2002))
+ with ESMTP id <0H5400GXB9YT5I@VL-MS-MR002.sc1.videotron.ca> for
+ cypherpunks@minder.net; Tue, 05 Nov 2002 13:56:53 -0500 (EST)
+Date: Tue, 05 Nov 2002 13:56:22 -0500
+From: Stefan Brands <sbrands@videotron.ca>
+Old-Subject: "patent free(?) anonymous credential system pre-print" - a simple
+ attack and other problems
+In-reply-to: <Pine.LNX.4.44.0211051819100.21586-100000@potato.zayda.com>
+To: cryptography@wasabisystems.com, dbs@philodox.com, cypherpunks@minder.net
+Message-id: <000f01c284fd$08d58b00$127bca18@stefanhome>
+MIME-version: 1.0
+X-MIMEOLE: Produced By Microsoft MimeOLE V5.50.4807.1700
+X-Mailer: Microsoft Outlook, Build 10.0.3416
+Content-type: text/plain; charset=us-ascii
+Content-transfer-encoding: 7BIT
+Importance: Normal
+X-Priority: 3 (Normal)
+X-MSMail-priority: Normal
+Old-Subject:  "patent free(?) anonymous credential system pre-print" - a simple
+ attack and other problems
+Subject:   "patent free(?) anonymous credential system pre-print" - a simple
+ attack and other problems
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 4073
+Lines: 78
+
+
+The paper shows some promise but, apart from being insecure, has other
+drawbacks that should be addressed:
+
+- The system is subject to a simple attack. The problem lies with the
+multiplication of the  hashes. Let's take the Chaum blinding as an
+example, something similar work for the "Laurie"  protocol. The simple
+idea is to take 
+
+   X1 = [ \prod hash(bogus_att, salt_i) ] \times [hash(correct_att,
+salt)]^{-n/2} modulo pq
+
+   X2 = X3 = ... = Xn = hash(correct_att, salt)
+
+Submit the blinded Xi's. Assuming X1 will not have to be opened (prob =
+1/2 or 1, depending on  whether or not protocol is interactive), one
+obains X1^d modulo pq from the signer, which  contains consistently all
+the bogus attributes. Here is a suggestion for a "fix" to repair  this
+total break. Make sure to that the signer, in additional to the
+consistency check for the  opened blinded candidates, also checks that
+the opened blinded candidates have _different_  values. Of course,
+serious analysis needs to be done to ensure that this is enough to
+guarantee security. I do not have the time to look into this, but my gut
+feeling is that  variations of the attack based on the same principle
+will still work, but with lower success  probability; this will have to
+be compensated for by making n bigger, which makes the protocol  even
+more inefficient. My advice is to the author is to analyze the proposed
+fix, and explore  other possible fixes, before distributing an updated
+version. 
+
+- My work certainly does provide for "revocable anonymity" and "pooling"
+prevention. For  pooling protection, see paragraph 2 on page 193,
+section 5.11 page 210 paragraph 2, and  section 5.5.2 on page 211. For
+not needing separate signing exponents for each attribute, see  page 266
+last paragraph on the page. For recovable anonymity, see the e-cash
+references on  page 264/5.
+
+- The proposed hashing technique for selective disclosure was introduced
+by myself in 1999.  Quoting from page 27 of my MIT Press book titled
+"Rethinking Public Key Infrastructures":  "Another attempt to protect
+privacy is for the CA to digitally sign (salted) oneway hashes of
+attributes, instead of (the concatenation of) the attributes themselves.
+When transacting or  communicating with a verifier, the certificate
+holder can selectively disclose only those  attributes needed.22 {22
+Lamport [244] proposed this hashing construct in the context of
+one-time signatures. When there are many attributes, they can be
+organized in a hash tree to  improve efficiency, following Merkle
+[267].} This generalizes the dual signature technique  applied in SET
+[257]." Since this technique is merely at the level of an observation,
+and  because it is a simple generalization of the SET technique, I in
+fact decided at the time to  put the entire paragraph under section
+header 1.2.2 of my book, titled "Previous  privacy-protection efforts
+and their shortcomings". 
+
+- More seriously, the simple hash technique has numerous drawbacks, as I
+explain on page page  27 of my MIT Press book, in the very same
+paragraph: "Although certificate holders now have  some control over
+which attributes they reveal to verifiers, they are forced to leave
+behind 
+digital signatures. Furthermore, they are seriously restricted in the
+properties they can  demonstrate about their attributes; Boolean
+formulae, for instance, are out of the question.  Worse, nothing
+prevents the CA and others from tracing and linking all the
+communications and  transactions of each certificate holder." Other
+techniques, such as lending prevention and  limited-show, do not work
+either. It was for these and other reasons that I was motivated to  work
+on the more sophisticated selective disclosure in the first place. 
+
+- In addition to various other drawbacks pointed out by of Dr. Adam Back
+(see
+www.mail-archive.com/cypherpunks-moderated@minder.net/msg02752.html),
+the proposal does not  offer a wallet-with-observer mode, discarding
+protection, anonymous recertification /  updating, multi-application
+certificates, etcetera. 
+
+Hope this helps,
+
+Stefan Brands
+

@@ -1,0 +1,58 @@
+From owner-cypherpunks@lne.com  Thu Dec 11 22:33:05 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p3/8.11.6-03-31-03) with ESMTP id hBC3X3Y03242
+	for <rsw@jfet.org>; Thu, 11 Dec 2003 22:33:04 -0500
+Received: from slack.lne.com (slack.lne.com [127.0.0.1])
+	by slack.lne.com (8.12.10/8.12.10) with ESMTP id hBC3L14g011410
+	(version=TLSv1/SSLv3 cipher=EDH-DSS-DES-CBC3-SHA bits=168 verify=NO)
+	for <cypherpunks-goingout345@slack.lne.com>; Thu, 11 Dec 2003 19:21:01 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.10/8.12.10/Submit) id hBC3L1N2011409
+	for cypherpunks-goingout345; Thu, 11 Dec 2003 19:21:01 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Fri, 12 Dec 2003 04:20:51 +0100 (CET)
+From: Thomas Shaddack <shaddack@ns.arachne.cz>
+To: cypherpunks <cypherpunks@lne.com>
+Subject: Idea: Using GPG signatures for SSL certificates
+Message-ID: <0312120353350.-1212489260@somehost.domainz.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 1504
+Lines: 30
+
+The problem that makes me feel uneasy about SSL is the vulnerability
+of the certification authorities; when they get compromised, everything
+they signed gets compromised too.
+
+However, the system could be for some applications potentially get
+hardened to certain degree, using the web-of-trust approach.
+
+The server presents its certificate to the client. The client then can
+optionally request the GPG signature of the certificate from the server
+either by always trying if it is there or only if its presence is
+indicated in the certificate data fields, and verify it by the specified
+GPG public key (which then can be firmly embedded in the web of trust).
+
+The server's key may be stored on the server itself together with the
+certificate signature file, or the signature file may indicate the
+keyserver it should be fetched from. Being signed by several trusted keys
+is crucial for this purpose, as otherwise it would be trivial to
+compromise the GPG pubkey together with the signature and the SSL
+certificate, if the adversary gets access to the server and manages to
+compromise the CA (risk especially with in-house CAs, or when Agencies get
+involved).
+
+The clients should cache the server's authentication information, and
+report any changes, like SSH does.
+
+The location of the signature may vary; it can be stored in a default
+place on the server (https://secure.server.com/cert-gpgsignature.asc), or
+the location can be specified in a X509 field.
+
+Is it a good idea? Could it fly? If not, why?
+

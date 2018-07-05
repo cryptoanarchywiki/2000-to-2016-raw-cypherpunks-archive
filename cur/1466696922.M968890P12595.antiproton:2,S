@@ -1,0 +1,150 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u5NFmD1A012580;
+	Thu, 23 Jun 2016 11:48:15 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=XHJ8z6AD;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-vk0-f47.google.com (mail-vk0-f47.google.com
+ [209.85.213.47])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u5NFm9D1012576
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 23 Jun 2016 11:48:11 -0400
+Received: by mail-vk0-f47.google.com with SMTP id j2so112138044vkg.2
+ for <cypherpunks@cpunks.org>; Thu, 23 Jun 2016 08:48:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :cc; bh=VczkvkgRLg/ILbC6yEnqO6WSNGZrHw4iSetWtdx/rxU=;
+ b=XHJ8z6AD8D1IBMDLmAbR5raxyXQyBs+gDyiplc30bGe+Jx0/R1PmLPsvdj0eY1Iv3o
+ zaDs0FkEuHoCekYxdYGkwxnzgOwIzw3Lz1pMZ4GzcRHtyqJPmIXmi9TD3fs4hwdg83uZ
+ 3m2asvo/itZu99hi9Q8gj5O4URcc/Rr8JqvbcRI3RwDUzjWlOztrXNafC6AhvOtSxGY3
+ PHecEvhKPsYlimg/MUEVSqiz42f1l6UzdvMJ0qbugnVzO4+P4Pq/I97eheo9FDYJCrHO
+ st8Hgpl07J0bsvCWzAzEfNRmfYAIA21bAyI7XDjT9FFCTA2TL7NPwq3P1sc4tFShxFCO
+ WiNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to:cc;
+ bh=VczkvkgRLg/ILbC6yEnqO6WSNGZrHw4iSetWtdx/rxU=;
+ b=C0jFmy4+NagyCJ4BQ836aEI6j0wENBqtHLjwMr2+tZG26GOCozZ/YF0Zcq3b8LEEhc
+ 2j9tEGEEZjW7Ybc2t9nSNQXyaJ5ShL5IgnZxV/dEVVobGo7oQOy6Z8k+kFJHxyy9RBZs
+ i7UN2OmcNJLucj0HN5NddevHrrecBrdQ+bCTJiWEXXiKoAuF4hKSh/9f+5Wn2oDzn2rd
+ 8bzIIz3V0ZlzViWPLBPndLNgY1L6103Ajviz+qwsO8S5JvZVh3wuH2eAyDlCk3soeHKo
+ +9Rbe9MekHEeUBanaop+vbUOHbt9l6WN8nf2CTO6iQiE2mqxPRR8EkJ47jKseSszOcoV
+ gW8Q==
+X-Gm-Message-State: ALyK8tIq/RjUY8zZcfeyfc95PscazBt0fHEdKACO9ZKROfX0Ihssf9sfNO83kspFABh4hK8OakV9i+XrXbz/MQ==
+MIME-Version: 1.0
+X-Received: by 10.176.7.1 with SMTP id h1mr15990500uah.97.1466696883593; Thu,
+ 23 Jun 2016 08:48:03 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Thu, 23 Jun 2016 08:48:03 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Thu, 23 Jun 2016 08:48:03 -0700 (PDT)
+In-Reply-To: <1466693732.5723.9.camel@moonpatrol>
+References: <CAG2tMp7EY3UtEE+eZZQJ_rvHFnM77dcjR-kAgQOK0KSV8LfhbA@mail.gmail.com>
+ <CAG2tMp5pyWsG_6doHL8i4yO+NN2X2fkENAJ0Qkz5=yidE-R2nQ@mail.gmail.com>
+ <576b0d29.c8249f0a.fdc44.32aa@mx.google.com>
+ <CAG2tMp5Yw4k2WQ05FEcQfQYtdvMqEve85XxinNmZ7bus6jqavg@mail.gmail.com>
+ <576b20a2.e701b00a.1d4b5.415d@mx.google.com>
+ <CAG2tMp4s1HTNOHw5Or7OKwcox1u9FPp9oUKJjcanb8Hb2rHi2w@mail.gmail.com>
+ <CAG2tMp4Pzg=4h9pXOZqX1cek8tpWNZbCJbN5XPtjAUu7zetahg@mail.gmail.com>
+ <CAEm6KbLxHJBPt1yYvf1ny=bgJMDKF514zhu=9nP9j=92ApWroQ@mail.gmail.com>
+ <20160623123854.GC6268@x220-a02>
+ <1466688813.3365.13.camel@moonpatrol>
+ <20160623140817.GE6268@x220-a02>
+ <1466693732.5723.9.camel@moonpatrol>
+Date: Thu, 23 Jun 2016 12:48:03 -0300
+Message-ID: <CAG2tMp7L3ZrH6XYwtyzkOEcitrZsWafebZyGn6VWm+J7=r-oVA@mail.gmail.com>
+Subject: Re: Hi, Boyce! (was Fwd: tor-talk subscription update)
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+To: skquinn@rushpost.com
+Content-Type: multipart/alternative; boundary=94eb2c124810bd66fd0535f3fa5a
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 75
+
+--94eb2c124810bd66fd0535f3fa5a
+Content-Type: text/plain; charset=UTF-8
+
+On Jun 23, 2016 12:00 PM, "Shawn K. Quinn" <skquinn@rushpost.com> wrote:
+>
+> On Fri, 2016-06-24 at 00:08 +1000, Zenaan Harkness wrote:
+> > I don't know who you're referring to - I've seen no threats to rejoin,
+>
+> Graham Boyce alluded to it in one of his messages.
+
+Oh, it was pretty obvious.  So sorry, Quinn, I thought it was a neurosis of
+yours.  It is Boyce's neurosis, instead.  Or maybe just another lie.  :P
+
+> That said, one should not need to read a law book or a holy book to know
+how to behave as a member of decent society. Threatening to rejoin a
+mailing list one has just been booted from, is not how decent people behave.
+
+My dear, I was waiting for Boyce's answer.  I asked humbly after his
+offenses and had no answers, so I gave up.  Sorry, I won't die or be sick
+because of it.  I cried yesterday, I admiss, but just because it was really
+stupid calling me a "rape apologetics".
+
+Today is a new day and I have several perspectives for my life and my
+studies.  I don't need tor-talk list, it is past.  I will never use lies to
+subscribe there.  My nature is really easy to understand.  I used my real
+name and a public account in all the moments.  I like true colors.
+
+And being sincere, probably I already read much more Law books and holy
+books  (not only the Bible)  than you and I think it is really complex to
+define how "decent people behave".  I don't have this kind of pretention.
+
+Take care and be happy.
+
+Cecilia
+
+--94eb2c124810bd66fd0535f3fa5a
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p><br>
+On Jun 23, 2016 12:00 PM, &quot;Shawn K. Quinn&quot; &lt;<a href=3D"mailto:=
+skquinn@rushpost.com">skquinn@rushpost.com</a>&gt; wrote:<br>
+&gt;<br>
+&gt; On Fri, 2016-06-24 at 00:08 +1000, Zenaan Harkness wrote:<br>
+&gt; &gt; I don&#39;t know who you&#39;re referring to - I&#39;ve seen no t=
+hreats to rejoin,<br>
+&gt;<br>
+&gt; Graham Boyce alluded to it in one of his messages.</p>
+<p>Oh, it was pretty obvious.=C2=A0 So sorry, Quinn, I thought it was a neu=
+rosis of yours.=C2=A0 It is Boyce&#39;s neurosis, instead.=C2=A0 Or maybe j=
+ust another lie.=C2=A0 :P<br></p>
+<p>&gt; That said, one should not need to read a law book or a holy book to=
+ know how to behave as a member of decent society. Threatening to rejoin a =
+mailing list one has just been booted from, is not how decent people behave=
+.<br></p>
+<p>My dear, I was waiting for Boyce&#39;s answer.=C2=A0 I asked humbly afte=
+r his offenses and had no answers, so I gave up.=C2=A0 Sorry, I won&#39;t d=
+ie or be sick because of it.=C2=A0 I cried yesterday, I admiss, but just be=
+cause it was really stupid calling me a &quot;rape apologetics&quot;. </p>
+<p>Today is a new day and I have several perspectives for my life and my st=
+udies.=C2=A0 I don&#39;t need tor-talk list, it is past.=C2=A0 I will never=
+ use lies to subscribe there.=C2=A0 My nature is really easy to understand.=
+=C2=A0 I used my real name and a public account in all the moments.=C2=A0 I=
+ like true colors.</p>
+<p>And being sincere, probably I already read much more Law books and holy =
+books=C2=A0 (not only the Bible)=C2=A0 than you and I think it is really co=
+mplex to define how &quot;decent people behave&quot;.=C2=A0 I don&#39;t hav=
+e this kind of pretention.</p>
+<p>Take care and be happy.</p>
+<p>Cecilia<br>
+</p>
+
+--94eb2c124810bd66fd0535f3fa5a--
+

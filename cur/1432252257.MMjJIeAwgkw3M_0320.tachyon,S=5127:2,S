@@ -1,0 +1,119 @@
+From cypherpunks-bounces@cpunks.org  Tue Feb  4 16:04:45 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id s14L3JwT011498;
+	Tue, 4 Feb 2014 16:03:25 -0500
+Received: from plane.gmane.org (plane.gmane.org [80.91.229.3])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id s14L3Fns011494
+ (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Tue, 4 Feb 2014 16:03:17 -0500
+Received: from list by plane.gmane.org with local (Exim 4.69)
+ (envelope-from <gcsc-cypherpunks@m.gmane.org>) id 1WAn9E-0005bI-H7
+ for cypherpunks@cpunks.org; Tue, 04 Feb 2014 22:03:12 +0100
+Received: from 37.190.56.0 ([37.190.56.0])
+ by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
+ id 1AlnuQ-0007hv-00
+ for <cypherpunks@cpunks.org>; Tue, 04 Feb 2014 22:03:12 +0100
+Received: from yumkam by 37.190.56.0 with local (Gmexim 0.1 (Debian))
+ id 1AlnuQ-0007hv-00
+ for <cypherpunks@cpunks.org>; Tue, 04 Feb 2014 22:03:12 +0100
+X-Injected-Via-Gmane: http://gmane.org/
+To: cypherpunks@cpunks.org
+From: Yuriy Kaminskiy <yumkam@gmail.com>
+Subject: Re: consistent pcp/pbp formats
+Date: Wed, 05 Feb 2014 01:03:00 +0400
+Message-ID: <lcrkhn$6nk$1@ger.gmane.org>
+References: <20140114111653.GD3900@r4> <lb4en4$hdt$1@ger.gmane.org>
+ <20140115093443.GE3900@r4> <lb5uvc$lfe$1@ger.gmane.org>
+ <20140115134145.GF3900@r4> <lbj0cq$l0b$1@ger.gmane.org>
+ <20140120133104.GL3900@r4> <lbleqq$i7a$1@ger.gmane.org>
+ <20140204150729.GB62910@r4>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=KOI8-R
+Content-Transfer-Encoding: 7bit
+X-Complaints-To: usenet@ger.gmane.org
+X-Gmane-NNTP-Posting-Host: 37.190.56.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64;
+ rv:17.0) Gecko/20131104 Thunderbird/17.0.10
+In-Reply-To: <20140204150729.GB62910@r4>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.16
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 2551
+Lines: 63
+
+Thomas von Dein wrote:
+> a short update about the progress. I've made the following changes to
+> pcp[1] so far:
+> 
+> - asymmetrically and symmetrically encrypted files are now created in
+>   the same format as pbp does (binary output only). Verified to work
+>   with symmetric mode only because of some open issues.
+> 
+> - the same applies for signatures, binary only as well. pcp has another
+>   format for armored sigs (which I like better).
+> 
+> - crypt+sign is supported now as well (pcp only).
+
+Hmm... so, it sign plaintext, but transmit signature unencrypted.
+
+If attacker knows/expect content of message, he can discover (and prove) message
+authorship.
+This is not most likely scenario, but still totally not good. Signature should
+be encrypted too.
+
+And, same with pgp & co, it is vulnerable to "Surreptitious Forwarding" [1]:
+Alice sends to Bob "I love you", Bob decrypt message, re-encrypt it to Charlie,
+keeping Alice signature intact. To avoid this problem, you can include
+"len(recipients list)|recipients list" in signed material (thus, any attempt to
+alter recipient list will automagically invalidate signature) [XXX: not exactly
+usual, requires review].
+
+[1] http://world.std.com/~dtd/sign_encrypt/sign_encrypt7.html#tth_sEc1.1
+
+When you invent new protocol, it is very good idea too look at *existing
+standards first*. And then learn from known mistakes in them :-)
+
+> - pcp can import and export pbp public keys.
+> 
+> - encryption keys are derived using scrypt().
+> 
+> - crypto and signing keypairs are generated separately.
+> 
+> 
+> The todo list contains a bunch of open issues anyway:
+> 
+> - we still need a consistent pubkey file format.
+> 
+> - we also need an agreement on armoring (base85 va z85).
+> 
+> - cipher mode: currently pbp (and pcp now) encrypts data in ECB mode
+>   with a blocksize of 32k. I think CBC would be better, and I already
+
+????????????????????????????? What ????????????????????????????????
+
+With ECB, if you encrypt same block with same key, you have same ciphertext.
+Attacker can identify repetitive content, identify blocks that are same with
+blocks of known plaintext, etc. All that, obviously, bad.
+
+With pbp encryption scheme, each 32kb block is encrypted with stream cipher with
+*explicit random nonce*. Unlike ECB, if you encrypt same blocks on same key,
+you'll have *different* ciphertext (as they used different nonces). None of
+above ECB problems apply.
+
+>   implemented it (enabled with ./configure --enable-cbc). We'd need an
+>   agreement here as well.
+
+> [1] https://github.com/TLINDEN/pcp
+

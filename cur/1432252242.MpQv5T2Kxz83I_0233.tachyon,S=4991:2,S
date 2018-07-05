@@ -1,0 +1,119 @@
+From owner-cypherpunks@lne.com  Thu Apr 24 11:18:35 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h3OFIXt03549
+	for <rsw@jfet.org>; Thu, 24 Apr 2003 11:18:33 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h3OF7OVp030522
+	for cypherpunks-goingout345; Thu, 24 Apr 2003 08:07:24 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Thu, 24 Apr 2003 11:09:00 -0400
+Subject: Re: [Lucrative-L] lucrative accounts revisited
+Content-Type: text/plain; charset=US-ASCII; format=fixed
+Mime-Version: 1.0 (Apple Message framework v551)
+Cc: cypherpunks@lne.com
+To: lucrative-l@lucrative.thirdhost.com
+From: Patrick Chkoreff <patrick@fexl.com>
+In-Reply-To: <E198hiM-0002ap-00@tisch.mail.mindspring.net>
+Message-Id: <ADFE99C4-7666-11D7-B4FF-000393D91E36@fexl.com>
+Content-Transfer-Encoding: 7bit
+X-Pgp-Rfc2646-Fix: 1
+X-Mailer: Apple Mail (2.551)
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 3833
+Lines: 90
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+On Thursday, April 24, 2003, at 10:28 AM, R. A. Hettinga wrote:
+
+> ... Since we're literally moving title to an asset around the net 
+> instead
+> of changing records in a database somewhere (remember the
+> double-spend database at the mint is only *redeemed* notes, not
+> copies of what's out there), ...
+
+I am taking a different approach, where the server stores RIPEMD-160 
+hashes of all the redeemable coins "out there."  It completely forgets 
+redeemed coins.
+
+Because the server only stores hashes, the entire contents of the 
+server database could literally be published on the web in streaming 
+live form without seriously reducing the security of the system.  Of 
+course, this would be stupid because it would needlessly invite 
+collision attacks, but in principle the idea of avoiding security 
+through obscurity could be applied to the database itself.  But then, 
+why not hide the hash file behind a Unix password, and behind an 
+AES-256 key while we're at it?  :-)
+
+So a coin consists of an lseek position in the server data file, 256 
+bits of random gibberish, and 64 bits representing the amount.  When 
+you present the coin to the server, the server hashes it and looks at 
+the given lseek position.  If it matches, it manufactures a new coin at 
+some other lseek place and sends it to you.  You store the coin, 
+compute the RIPEMD-160 hash yourself, and send that to the server, at 
+which point it kills the old coin and enlivens the new coin.
+
+Obviously all the smart folks who talk about storing only the redeemed 
+notes and even using probabilistic double-spend detection methods have 
+reasons for doing so.  I expect my scheme will be slapped down 
+forthwith.  :-)
+
+> Finally, I would also strongly recommend that we try like hell not to
+> invent new cryptographic conventions, much less new cryptography,
+> here.
+
+You're preaching to the choir here.  I haven't seen any snake oil 
+proposals lately (unless I just gave one above.  :-)
+
+
+> First, crypto is hard. :-), and our chances of actually inventing
+> something new that isn't trivially broken on its face is even harder.
+> Obviously, if you're one of those big swinging di-, er, big giant
+> heads, who actually do the math, understand what cryptography
+> protocols do, and see something that's wrong, or that you can do
+> better, that's different, but there's a whole lot of time that can be
+> wasted in reinventing the wheel here that won't get us to code that
+> earns money. ...
+
+Good C libraries for existing crypto protocols are always welcome.  I'm 
+just getting Rijndael, RSA, RIPEMD, BBS, etc. into a shape I like.  
+Mostly, I don't like routines that declare *anything* on the stack -- 
+all of my working space is allocated on a single 4k mlocked page up 
+front and Mersenne-twisted before munlock and free.
+
+
+> Second, and in that vein, there is a whole published language of
+> crypto that's already being used, and if we don't use it from the
+> outset, nobody will understand us later if we get stuck. In
+> particular, a trusted third party, or trusted entity, is "Trent", for
+> some reason, probably because Schneier had it in Applied Cryptography
+> 10 or 12 years ago. :-).
+
+Ah, Marvin for "medium" considered non-standard.  :-)  OK, Trent it is.
+
+
+> We should change nomenclature only when we've added to it, yes?
+>
+> Believe me, we'll get there, especially after we're actually
+> operating this code the way we want it to run, at a profit, in an
+> open market. That's certainly something that nobody's done before,
+> :-), and we're going to have our hands full when we make it happen.
+
+Truly.
+
+- -- Patrick
+http://fexl.com
+
+-----BEGIN PGP SIGNATURE-----
+Version: PGP 8.0
+
+iQA/AwUBPqf+F1A7g7bodUwLEQISIgCfTVhs4Q+8xc4w5xuH1z5+DPMb/EAAoK/j
+al4Clq6VA/dR5aFIb0ZxPsEe
+=pNFb
+-----END PGP SIGNATURE-----
+

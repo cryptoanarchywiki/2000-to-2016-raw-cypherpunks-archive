@@ -1,0 +1,139 @@
+From cypherpunks-bounces@cpunks.org  Wed Jan 15 08:42:43 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0FDfwpI001157;
+	Wed, 15 Jan 2014 08:42:03 -0500
+Received: from mx.daemon.de (mx.daemon.de [78.47.130.37])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0FDftGD001153
+ (version=TLSv1/SSLv3 cipher=CAMELLIA256-SHA bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Wed, 15 Jan 2014 08:41:57 -0500
+Received: from r4.daemon.de (mx.daemon.de [78.47.130.37])
+ by mx.daemon.de (Postfix) with SMTP id 602B79698E;
+ Wed, 15 Jan 2014 14:41:45 +0100 (CET)
+Received: by r4.daemon.de (sSMTP sendmail emulation);
+ Wed, 15 Jan 2014 14:41:45 +0100
+Date: Wed, 15 Jan 2014 14:41:45 +0100
+From: Thomas von Dein <tom@vondein.org>
+To: cypherpunks@cpunks.org
+Subject: Re: consistent pcp/pbp formats (was: Curve p25519 Replacements for
+ GnuPG?(x2 now) ..)
+Message-ID: <20140115134145.GF3900@r4>
+References: <20140114111653.GD3900@r4> <lb4en4$hdt$1@ger.gmane.org>
+ <20140115093443.GE3900@r4> <lb5uvc$lfe$1@ger.gmane.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <lb5uvc$lfe$1@ger.gmane.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-mx-MailScanner-Information: Please contact Tom for more information
+X-mx-MailScanner-ID: 602B79698E.A478D
+X-mx-MailScanner: Found to be clean
+X-mx-MailScanner-From: tom@vondein.org
+X-Spam-Status: No
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+On Wed, Jan 15, 2014 at 04:29:44PM +0400, Yuriy Kaminskiy wrote:
+> > Well, the libsodium developers not only told me how to do it, it was
+> > their idea. However, it's of course very simple to generate them
+> > separate.
+> 
+> It is *possible* to use same RSA keypair for encryption and signing (and earlier
+> pgp versions used to that). Does not mean it is *good idea* (and newer
+> openpgp/gnupg switched to use separate keys for signing/encryption/certificate
+> signing purposes, by subkeys mechanism).
+
+We're not talking about RSA, do we?
+ 
+> (For DH/DSA it is even worse, you *can* reuse same keypair, but this leads to
+> leak of secret key material. I'm not sure if same leak scenario apply to
+> ECDH[curve25519]/EdDSA[ed25519], but better safe than sorry. And keypair reuse
+> is bad from operational security pov anyway).
+
+As I alredy said, it's no problem to have separate keyspairs for signing
+and encrypting, just a couple of lines to change.
+
+> >> 1) Recipient needs to know sender public key. Bad.
+> 
+> [clarification: sender *long-term* public key; of course, receiver needs to know
+> public key that was used for message encryption; but this key need not be same
+> with sender *long-term* key]
+>
+> > That's the way curve25519 works. It would be possible to use one time
+> > keys but for this there has to be some kind of key exchange process
+> > before. But since pcp runs in offline mode, I'm not sure how to do this
+> > in a user friendly way.
+> 
+> I explained: include (single-use) public key in message, in place of "hash of
+> sender key id").
+
+Ok, let me formulate it better: I can use a single-use keypair on the
+sender's side and include the public part in the message. Cool. But the
+sender would nevertheless need a public key from the recipient. This one
+has to be from a long-term key, since we're operating in a
+store-and-forward environment. But it doesn't make sense to use a
+single-use key only on one side of the communication, does it?
+
+As a sidenote, in pcp it's possible to generate a keypair for one
+recipient (it's derived from the long-term keypair), so you'd at least
+have one keypair per peer. But it's unclear to me, how to use single-use
+keys on both sides of a communication in a store-and-forward
+environment. Any hints? 
+ 
+> >> 2) Message remains decipherable by sender. Very bad.
+> > 
+> > No, it doesn't. In order to decrypt a message one needs the recipient
+> > secret key and the sender public key.
+> 
+> Yes, it does. With your protocol, message can be alternatively deciphered with
+>    crypto_open_box(c, n, sender_public_key, receiver_secret_key);
+> (by receiver, good) or, alternatively, with
+>    crypto_open_box(c, n, receiver_public_key, sender_secret_key);
+> (by sender, *BAD*).
+
+Really? I'll try it, but if this is the case, then it's bad indeed.
+
+> With openpgp (and with my suggested change), sender does not retain secret key
+> used for message encryption, and thus cannot decipher his own message.
+
+Yea, I see.
+
+> Incorrect. This is NOT daily business with pgp. Openpgp does not use long-term
+> sender keypair when it encrypt message (otherwise, how could you encrypt message
+> without using passphrase?) and does not leak sender keyid (/by default/ gnupg
+> leaks /recipient/ keyid, but it can be disabled with --hidden-recipient).
+
+ok, got it.
+ 
+> DJB has nothing to do with your self-invented protocol.
+> DJB invented bending tool. *You* decided to use it to make square wheels.
+
+Come on, have a heart. The only thing I "invented", was how to store
+keys and encrypted files. It's just a fun project in it's early
+stages and everything can be changed. And I'm really glad when someone
+points out some errors I made.
+
+> P.S. there were thing that openpgp did horrible wrong: keyids (they are harmful
+> and useless crap). Funnily, you repeated their misdesign.
+
+ok, really got it.
+
+
+- Tom
+
+-- 
+This message has been scanned for viruses and
+dangerous content by MailScanner, and is
+believed to be clean.
+

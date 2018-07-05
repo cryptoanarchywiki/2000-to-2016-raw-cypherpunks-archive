@@ -1,0 +1,261 @@
+From owner-cypherpunks@al-qaeda.net  Wed Dec  7 08:19:29 2011
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id pB7DE6cJ016695
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 7 Dec 2011 08:14:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1323263646;
+	bh=gilVcP2h/U8M4L7WFPF83CI1EqaMk7H/esv6zlSWFH0=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=FO33s1PdWjdpUBm0fbQf0RfAIXM6p6ewDTyVjV1nCGqEdRiW2dpARf/ftnlR42viO
+	 8n5sbMn7eV4HKnFfvHwTygzwNTDjMbHgs9neoU8zU0wMfqvJKThoGejBmbF9pYrGby
+	 JUoYuLgf5Ed3uLVZA15+cZ5OaopYRarHhKCIQ7Y0=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id pB7DE6rp016694
+	for cypherpunks-outgoing; Wed, 7 Dec 2011 08:14:06 -0500
+Date: Wed, 7 Dec 2011 14:14:03 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: [cryptography] Malware-signing certs with 512-bit keys
+Message-ID: <20111207131402.GN31847@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 12721
+Lines: 229
+
+----- Forwarded message from Peter Gutmann <pgut001@cs.auckland.ac.nz> -----
+
+From: Peter Gutmann <pgut001@cs.auckland.ac.nz>
+Date: Thu, 08 Dec 2011 01:30:44 +1300
+To: cryptography@randombit.net,
+	mozilla-dev-security-policy@lists.mozilla.org
+Subject: [cryptography] Malware-signing certs with 512-bit keys
+
+[NB: Crossposted to two lists where this issue has been discussed in the past]
+
+So it seems like pretty much everyone (at least on these lists) has heard
+about the Malaysian CA that issued 512-bit certs for which the keys were
+factored and used to sign malware, and that had their CA cert pulled because
+of this.
+
+What's had much less (in fact apparently zero) attention is the fact that
+Digicert Sdn. Bhd. only issued three of the nine certificates that were used
+for malware signing.  Three more were issued by Cybertrust, and one each by
+GlobalSign, Taiwan-CA, and Anthem.  The first three are root CAs, Anthem is
+one of the vast number of you'll-only-find-out-they-exist-when-they're-used-
+to-attack-you sub-CAs that are out there.
+
+Given that the Malaysian CA had its cert pulled for this, can we get a
+statment from browser vendors on whether Cybertrust, GlobalSign, and the
+others will also similarly have their certs pulled for exactly the same
+behaviour?
+
+A rather interesting feature of the malware signatures is that although the
+issuers look like random unconnected CAs, if you look at the signatures that
+the nine certs were used with, each of them ends up at the GTE Cybertrust 
+(= Verizon, the last time I checked) root.  Using data from the mid-2010 dates
+in question:
+
+http://www.securityspace.com/s_survey/data/man.201004/casurvey.html
+
+gives them a 0.11% market share, but they represent 100% of the roots used for
+the malware signatures.  That just doesn't seem right.
+
+Finally, there are even further 512-bit certs out there, some issued as
+recently as a few months ago.  The A-Data one in the collection below was
+reported to the CA but they haven't taken any action (do they get their cert
+pulled as well for that?).  As the person who provided them commented, "so
+knock yourself out, have the modulus factorized and sign some crazy code :-)".
+
+Acknowledgements: Michael Sandee and Ondrej Mikle provided information for
+this report.  Any inadvertent mangling of details was my fault.
+
+Peter.
+
+-----BEGIN CERTIFICATE-----
+MIIEMjCCAxqgAwIBAgIDCCiOMA0GCSqGSIb3DQEBBQUAMIGHMQswCQYDVQQGEwJB
+VDFIMEYGA1UECgw/QS1UcnVzdCBHZXMuIGYuIFNpY2hlcmhlaXRzc3lzdGVtZSBp
+bSBlbGVrdHIuIERhdGVudmVya2VociBHbWJIMRYwFAYDVQQLDA1hLXNpZ24tU1NM
+LTAzMRYwFAYDVQQDDA1hLXNpZ24tU1NMLTAzMB4XDTEwMTEyMzEyMDYzMloXDTE1
+MTEyMzEyMDYzMlowOTEgMB4GA1UEAwwXbW9id2ViZGF2LmhvY2hnZXJuZXIuYXQx
+FTATBgNVBAUTDDY3OTU0Njc0MzMwNDBcMA0GCSqGSIb3DQEBAQUAA0sAMEgCQQCX
+zfoFylBNoYtgK//wMeJ/0ihq1N8hfjr9gw1Tqgk6IeBDnFmxIqz6eSssC8N/HyBE
+i2VGRlplzorD7Q0QGdazAgMBAAGjggG6MIIBtjATBgNVHSMEDDAKgAhAPqHTYrQD
+3TByBggrBgEFBQcBAQRmMGQwJwYIKwYBBQUHMAGGG2h0dHA6Ly9vY3NwLmEtdHJ1
+c3QuYXQvb2NzcDA5BggrBgEFBQcwAoYtaHR0cDovL3d3dy5hLXRydXN0LmF0L2Nl
+cnRzL2Etc2lnbi1zc2wtMDMuY3J0MEsGA1UdIAREMEIwQAYGKigAEQEUMDYwNAYI
+KwYBBQUHAgEWKGh0dHA6Ly93d3cuYS10cnVzdC5hdC9kb2NzL2NwL2Etc2lnbi1z
+c2wwgY8GA1UdHwSBhzCBhDCBgaB/oH2Ge2xkYXA6Ly9sZGFwLmEtdHJ1c3QuYXQv
+b3U9YS1zaWduLVNTTC0wMyxvPUEtVHJ1c3QsYz1BVD9jZXJ0aWZpY2F0ZXJldm9j
+YXRpb25saXN0P2Jhc2U/b2JqZWN0Y2xhc3M9ZWlkQ2VydGlmaWNhdGlvbkF1dGhv
+cml0eTARBgNVHQ4ECgQIQjKcthkEWcUwDgYDVR0PAQH/BAQDAgWgMB4GA1UdEQQX
+MBWBE3JvbWFuQGhvY2hnZXJuZXIuYXQwCQYDVR0TBAIwADANBgkqhkiG9w0BAQUF
+AAOCAQEAJfdXmLQUKUQByU4WS2pthkD9QZW2CB498FwCfT/v69lgtzU8h8Hu1L1g
+zVwG0GbitXk92rDxwF7XdU9MANFvGSxqKxGfcErZuqCX2+pYU4/zJCHlR6voYHoX
+AJQPCY3PRM5USUWmysKaQ2wzwap8nqWpRMpcq+fUk49LR8CfFa9f63z++GthJtl6
+d2OytiukgZ8Ea0edLyLDWr4B9UC+C+UhNJXjKtiMXHDYbbFmNzIszdUNOPuN4YI9
+O2LG3YUH44McHiFGdU4WKtIOpkDJJPi7xPQp8uAOxCHnSFuJWem21ca/am1InMPG
+hPWV3vw3Qht0GbhHrROdAu2Rxi5Kfg==
+-----END CERTIFICATE-----
+
+-----BEGIN CERTIFICATE-----
+MIID0zCCArugAwIBAgIDLo6gMA0GCSqGSIb3DQEBBQUAME4xCzAJBgNVBAYTAkhL
+MRYwFAYDVQQKEw1Ib25na29uZyBQb3N0MScwJQYDVQQDEx5Ib25na29uZyBQb3N0
+IGUtQ2VydCBDQSAxIC0gMTAwHhcNMTEwODAyMDQwNjQxWhcNMTIwODI4MDgyNzUx
+WjCBtTELMAkGA1UEBhMCSEsxJjAkBgNVBAoTHUhvbmdrb25nIFBvc3QgZS1DZXJ0
+IChTZXJ2ZXIpMRMwEQYDVQQLEwowMDAxODUyODYwMSEwHwYDVQQLExgzODkxNzE1
+MjAwMDAxMTEyMDAwTFA0MDkxKjAoBgNVBAsTIVRDSElCTyBNRVJDSEFORElTSU5H
+IEhPTkcgS09ORyBMUDEaMBgGA1UEAxMRb3RzLnRjaGliby5jb20uaGswXDANBgkq
+hkiG9w0BAQEFAANLADBIAkEA4K8j18RyT+8dXi396kNp+5/GbJsjDpYJYNDWo8Ba
+pmJXDapaR3RHsbtmMmpnXjaBCH+s7cNxWy6BIgiQju3vEQIDAQABo4IBGDCCARQw
+PgYDVR0gBDcwNTAzBgorBgEEAf0eAQETMCUwIwYIKwYBBQUHAgEWF3d3dy5ob25n
+a29uZ3Bvc3QuZ292LmhrMAkGA1UdEwQCMAAwEQYJYIZIAYb4QgEBBAQDAgZAMA4G
+A1UdDwEB/wQEAwIFIDBaBgNVHSMEUzBRoUukSTBHMQswCQYDVQQGEwJISzEWMBQG
+A1UEChMNSG9uZ2tvbmcgUG9zdDEgMB4GA1UEAxMXSG9uZ2tvbmcgUG9zdCBSb290
+IENBIDGCAgR5MEgGA1UdHwRBMD8wPaA7oDmGN2h0dHA6Ly9jcmwxLmhvbmdrb25n
+cG9zdC5nb3YuaGsvY3JsL2VDZXJ0Q0ExLTEwQ1JMMS5jcmwwDQYJKoZIhvcNAQEF
+BQADggEBAEBPvjxHDOFXYbkHeIWoF6Y3iODAtxYoDvPXIsEPYCS+MAyxWUYoOtIi
+XHKnuSk17czOwsFsr/7rmKUID1lzH0l0/XduELw7SzsiwuSEFrS35Zsy8LYXdXLa
+Y131CRGlM6ZTW6+OZRaavD0SC5S1ZACpSoG2DV5ZfvUgbqnJRpmGkA4VMC7cD2Iv
+xCGNjGoS3XTmFC0ZFnwAelguyzqgCvIyR2cTAfKf0vyTOJq4ntD5ZCkQN9sKd4o6
+0UNKI0KAjFOE6mdrEnKYTfIogYMLJAw+QtxF2KesTI00OrYCIWhrz/tZVKL8IXah
+76Z3si0R7Dki1cHdVMrQrFRxExiSRPY=
+-----END CERTIFICATE-----
+
+-----BEGIN CERTIFICATE-----
+MIID2zCCAsOgAwIBAgIDLi8KMA0GCSqGSIb3DQEBBQUAME4xCzAJBgNVBAYTAkhL
+MRYwFAYDVQQKEw1Ib25na29uZyBQb3N0MScwJQYDVQQDEx5Ib25na29uZyBQb3N0
+IGUtQ2VydCBDQSAxIC0gMTAwHhcNMTAxMDIwMDIyMzUxWhcNMTIxMTAzMDY0NzUw
+WjCBvTELMAkGA1UEBhMCSEsxJjAkBgNVBAoTHUhvbmdrb25nIFBvc3QgZS1DZXJ0
+IChTZXJ2ZXIpMRMwEQYDVQQLEwowMDAxNzYwOTg5MSUwIwYDVQQLExwwMDAwMDAw
+MDAwMDAwMDAwMDAwMDAwMDBMQ1NEMSEwHwYDVQQLExhIb25nIEtvbmcgU0FSIEdv
+dmVybm1lbnQxDTALBgNVBAsTBExDU0QxGDAWBgNVBAMTD29pYy5sY3NkLmdvdi5o
+azBcMA0GCSqGSIb3DQEBAQUAA0sAMEgCQQDxH35W/jV6jNLBDJ1y9n+ANnjPfLLy
+VrAicVMaK9/azMvt+xSfZ9+BSNbtF737Vj8hrohRrFWr/IOnb7oS8RT/AgMBAAGj
+ggEYMIIBFDA+BgNVHSAENzA1MDMGCisGAQQB/R4BARMwJTAjBggrBgEFBQcCARYX
+d3d3Lmhvbmdrb25ncG9zdC5nb3YuaGswCQYDVR0TBAIwADARBglghkgBhvhCAQEE
+BAMCBkAwDgYDVR0PAQH/BAQDAgUgMFoGA1UdIwRTMFGhS6RJMEcxCzAJBgNVBAYT
+AkhLMRYwFAYDVQQKEw1Ib25na29uZyBQb3N0MSAwHgYDVQQDExdIb25na29uZyBQ
+b3N0IFJvb3QgQ0EgMYICBHkwSAYDVR0fBEEwPzA9oDugOYY3aHR0cDovL2NybDEu
+aG9uZ2tvbmdwb3N0Lmdvdi5oay9jcmwvZUNlcnRDQTEtMTBDUkwxLmNybDANBgkq
+hkiG9w0BAQUFAAOCAQEAEMFWGh83PWc61ymoOFv0tvo8xMkQQmB+vO3MWhBf8YzS
+aEetmYVP5O1LINV5KHHWpT5EZMIIA3ffRD7QVkRZOxPFewkLWK6UaujV9XevP2Fe
+RotXs0tPpOHQbz5+z7ZCRvQBxayT+O/dQopKC0gfDEvDvJrV+6Mlelkric+mPkSM
+x5zYaRdqMupVUTvYiY8D/dtG9ITrpk/lhVKcIJzwY0EFRCVUoUX1ldAEn4gyckMP
+VSrG8qtuZmzsv8JjFOcwpDe+5Ull/87SCw3KUmnA0VNbU26WfzPYhTEBIizbj4dI
+YinocNVD3+LRLubcgApi7YI0aepeBYns+OOOfwL+RQ==
+-----END CERTIFICATE-----
+
+-----BEGIN CERTIFICATE-----
+MIID2zCCAsOgAwIBAgIDLi8KMA0GCSqGSIb3DQEBBQUAME4xCzAJBgNVBAYTAkhL
+MRYwFAYDVQQKEw1Ib25na29uZyBQb3N0MScwJQYDVQQDEx5Ib25na29uZyBQb3N0
+IGUtQ2VydCBDQSAxIC0gMTAwHhcNMTAxMDIwMDIyMzUxWhcNMTIxMTAzMDY0NzUw
+WjCBvTELMAkGA1UEBhMCSEsxJjAkBgNVBAoTHUhvbmdrb25nIFBvc3QgZS1DZXJ0
+IChTZXJ2ZXIpMRMwEQYDVQQLEwowMDAxNzYwOTg5MSUwIwYDVQQLExwwMDAwMDAw
+MDAwMDAwMDAwMDAwMDAwMDBMQ1NEMSEwHwYDVQQLExhIb25nIEtvbmcgU0FSIEdv
+dmVybm1lbnQxDTALBgNVBAsTBExDU0QxGDAWBgNVBAMTD29pYy5sY3NkLmdvdi5o
+azBcMA0GCSqGSIb3DQEBAQUAA0sAMEgCQQDxH35W/jV6jNLBDJ1y9n+ANnjPfLLy
+VrAicVMaK9/azMvt+xSfZ9+BSNbtF737Vj8hrohRrFWr/IOnb7oS8RT/AgMBAAGj
+ggEYMIIBFDA+BgNVHSAENzA1MDMGCisGAQQB/R4BARMwJTAjBggrBgEFBQcCARYX
+d3d3Lmhvbmdrb25ncG9zdC5nb3YuaGswCQYDVR0TBAIwADARBglghkgBhvhCAQEE
+BAMCBkAwDgYDVR0PAQH/BAQDAgUgMFoGA1UdIwRTMFGhS6RJMEcxCzAJBgNVBAYT
+AkhLMRYwFAYDVQQKEw1Ib25na29uZyBQb3N0MSAwHgYDVQQDExdIb25na29uZyBQ
+b3N0IFJvb3QgQ0EgMYICBHkwSAYDVR0fBEEwPzA9oDugOYY3aHR0cDovL2NybDEu
+aG9uZ2tvbmdwb3N0Lmdvdi5oay9jcmwvZUNlcnRDQTEtMTBDUkwxLmNybDANBgkq
+hkiG9w0BAQUFAAOCAQEAEMFWGh83PWc61ymoOFv0tvo8xMkQQmB+vO3MWhBf8YzS
+aEetmYVP5O1LINV5KHHWpT5EZMIIA3ffRD7QVkRZOxPFewkLWK6UaujV9XevP2Fe
+RotXs0tPpOHQbz5+z7ZCRvQBxayT+O/dQopKC0gfDEvDvJrV+6Mlelkric+mPkSM
+x5zYaRdqMupVUTvYiY8D/dtG9ITrpk/lhVKcIJzwY0EFRCVUoUX1ldAEn4gyckMP
+VSrG8qtuZmzsv8JjFOcwpDe+5Ull/87SCw3KUmnA0VNbU26WfzPYhTEBIizbj4dI
+YinocNVD3+LRLubcgApi7YI0aepeBYns+OOOfwL+RQ==
+-----END CERTIFICATE-----
+
+-----BEGIN CERTIFICATE-----
+MIID6TCCAtGgAwIBAgIDLi62MA0GCSqGSIb3DQEBBQUAME4xCzAJBgNVBAYTAkhL
+MRYwFAYDVQQKEw1Ib25na29uZyBQb3N0MScwJQYDVQQDEx5Ib25na29uZyBQb3N0
+IGUtQ2VydCBDQSAxIC0gMTAwHhcNMTAxMDE5MDM0MzE0WhcNMTIxMTA3MDMxMzI3
+WjCByzELMAkGA1UEBhMCSEsxJjAkBgNVBAoTHUhvbmdrb25nIFBvc3QgZS1DZXJ0
+IChTZXJ2ZXIpMRMwEQYDVQQLEwowMDAxODU2ODU4MSEwHwYDVQQLExgzMDI4ODIy
+MDAwMDA1MDhBMDA2NzcxNDcxPDA6BgNVBAsTM0ZBUlJJTkdUT04gQU1FUklDQU4g
+RVhQUkVTUyBUUkFWRUwgU0VSVklDRVMgTElNSVRFRDEeMBwGA1UEAxMVd3d3LmFt
+ZXh0cmF2ZWwuY29tLmhrMFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAM9OjldrW2Ar
+jiLKl6MhSFzonx787bsy54r/cmKhsH+wb27BVf/Oo1Da4oPerVDH1DG3E3WRsoNc
+Ew5bN5lYiHUCAwEAAaOCARgwggEUMD4GA1UdIAQ3MDUwMwYKKwYBBAH9HgEBEzAl
+MCMGCCsGAQUFBwIBFhd3d3cuaG9uZ2tvbmdwb3N0Lmdvdi5oazAJBgNVHRMEAjAA
+MBEGCWCGSAGG+EIBAQQEAwIGQDAOBgNVHQ8BAf8EBAMCBSAwWgYDVR0jBFMwUaFL
+pEkwRzELMAkGA1UEBhMCSEsxFjAUBgNVBAoTDUhvbmdrb25nIFBvc3QxIDAeBgNV
+BAMTF0hvbmdrb25nIFBvc3QgUm9vdCBDQSAxggIEeTBIBgNVHR8EQTA/MD2gO6A5
+hjdodHRwOi8vY3JsMS5ob25na29uZ3Bvc3QuZ292LmhrL2NybC9lQ2VydENBMS0x
+MENSTDEuY3JsMA0GCSqGSIb3DQEBBQUAA4IBAQAqIGebX6Iqm1pRg9JkuVzdAfpA
+TDqO7S/4pZNXC9ZIp+fv/1sLIJiNwhmtMhyuO6h8wWkiMREP34orSXJ0xLks/JPM
+cmyuSb12DduUPVFYnykEYtDHUD+By+62u08Gg0VeBNuSzPDWHFlVEHweCsbaDrvo
++eN3s1v8mDduWE5iNkAwGbtnDC4mKgj66TIip15YAlHxF9U0X6Iaq03L+oXxy76n
+BAUke1picAgMX5ShALRlGuOUOFI0Yi4S383xuXOE0ZjgOobNArFIDZbSkEtTiEyl
+PrM/QFq8c7K/mhO7Wsrt0TBBauIVqKA/irIKpg+jeJG+lL6JP7/9P1yTSVma
+-----END CERTIFICATE-----
+
+-----BEGIN CERTIFICATE-----
+MIID6zCCAtOgAwIBAgIDI4qRMA0GCSqGSIb3DQEBBQUAMEkxCzAJBgNVBAYTAkhL
+MRYwFAYDVQQKEw1Ib25na29uZyBQb3N0MSIwIAYDVQQDExlIb25na29uZyBQb3N0
+IGUtQ2VydCBDQSAxMB4XDTA5MTEyMzA0MjkyMVoXDTExMTIwOTAzMjMzOFowgdUx
+CzAJBgNVBAYTAkhLMSYwJAYDVQQKEx1Ib25na29uZyBQb3N0IGUtQ2VydCAoU2Vy
+dmVyKTETMBEGA1UECxMKMDAwMTIxMDkzMTEnMCUGA1UECxMeMDAwMDAwMDAwMDAw
+MDAwMDAwMDAwMDAwREgtUkhVMSEwHwYDVQQLExhIb25nIEtvbmcgU0FSIEdvdmVy
+bm1lbnQxITAfBgNVBAsTGERILVJhZGlhdGlvbiBIZWFsdGggVW5pdDEaMBgGA1UE
+AxMRd3d3LmRoLXJodS5nb3YuaGswXDANBgkqhkiG9w0BAQEFAANLADBIAkEAoqbv
+uYXV9xswou8XILtutEmdT9kwUMb5ltUdBSDGQcAz/Ku1r/rG22JG5Wenih7Du1tt
+qzpKEbKgtSAaEjSe0wIDAQABo4IBFTCCAREwPgYDVR0gBDcwNTAzBgorBgEEAf0e
+AQEQMCUwIwYIKwYBBQUHAgEWF3d3dy5ob25na29uZ3Bvc3QuZ292LmhrMAkGA1Ud
+EwQCMAAwEQYJYIZIAYb4QgEBBAQDAgZAMA4GA1UdDwEB/wQEAwIFIDBaBgNVHSME
+UzBRoUukSTBHMQswCQYDVQQGEwJISzEWMBQGA1UEChMNSG9uZ2tvbmcgUG9zdDEg
+MB4GA1UEAxMXSG9uZ2tvbmcgUG9zdCBSb290IENBIDGCAgPtMEUGA1UdHwQ+MDww
+OqA4oDaGNGh0dHA6Ly9jcmwxLmhvbmdrb25ncG9zdC5nb3YuaGsvY3JsL2VDZXJ0
+Q0ExQ1JMMi5jcmwwDQYJKoZIhvcNAQEFBQADggEBAAu625vond5fw/D2B2a0Cj4S
+5OMtNOKxzR485W3UoTV/b7ABx13QRKwJK3AWlMwRY7HzbHtDQOHg2HiXvXICpYsq
+J3PKRotpR+s7yXKjxxtEY0o/cdlYMTTHc443ZIYvDQBbI2CPJsSD8O6q+4dxj1Qp
+w3H/pCFoZ/z7tNK7nzVuVQolLbruVv5i99dGCa2kNN5+2qgp9aV8G4vo1GpLxpi/
+rb/ZUvCDqzOeigmewW/vtGZe0mOZJW29EMLEXBfzcrW2iIw7TClvIGxaQXrxFjAc
+zu1JEq19/96d7sMkIxdWGW9BfOoY9zMFb9w5srUupK7Z/Y8Ydn/DBsOrnS6AxMQ=
+-----END CERTIFICATE-----
+
+-----BEGIN CERTIFICATE-----
+MIID3DCCAsSgAwIBAgIDLm8+MA0GCSqGSIb3DQEBBQUAME4xCzAJBgNVBAYTAkhL
+MRYwFAYDVQQKEw1Ib25na29uZyBQb3N0MScwJQYDVQQDEx5Ib25na29uZyBQb3N0
+IGUtQ2VydCBDQSAxIC0gMTAwHhcNMTEwNDI2MDI1MzA0WhcNMTMwNTE5MDcyODA5
+WjCBvjELMAkGA1UEBhMCSEsxJjAkBgNVBAoTHUhvbmdrb25nIFBvc3QgZS1DZXJ0
+IChTZXJ2ZXIpMRMwEQYDVQQLEwowMDAxODQ4NzM4MSUwIwYDVQQLExwwMDAwMDAw
+MDAwMDAwMDAwMDAwMDAwMDBMQ1NEMSEwHwYDVQQLExhIb25nIEtvbmcgU0FSIEdv
+dmVybm1lbnQxDTALBgNVBAsTBExDU0QxGTAXBgNVBAMTEGltdHMubGNzZC5nb3Yu
+aGswXDANBgkqhkiG9w0BAQEFAANLADBIAkEAyey2HOeEHR459PxjQwBQmX8Z8AJ0
+IemQhl19uXZJcd6IGOtcFrCWOKT1/pEn1IxzeAejErxAVJAUSoDqnMq1qQIDAQAB
+o4IBGDCCARQwPgYDVR0gBDcwNTAzBgorBgEEAf0eAQETMCUwIwYIKwYBBQUHAgEW
+F3d3dy5ob25na29uZ3Bvc3QuZ292LmhrMAkGA1UdEwQCMAAwEQYJYIZIAYb4QgEB
+BAQDAgZAMA4GA1UdDwEB/wQEAwIFIDBaBgNVHSMEUzBRoUukSTBHMQswCQYDVQQG
+EwJISzEWMBQGA1UEChMNSG9uZ2tvbmcgUG9zdDEgMB4GA1UEAxMXSG9uZ2tvbmcg
+UG9zdCBSb290IENBIDGCAgR5MEgGA1UdHwRBMD8wPaA7oDmGN2h0dHA6Ly9jcmwx
+Lmhvbmdrb25ncG9zdC5nb3YuaGsvY3JsL2VDZXJ0Q0ExLTEwQ1JMMS5jcmwwDQYJ
+KoZIhvcNAQEFBQADggEBAFSjUZ7jGO593Gt2soWUQmDsEhLlRRaW3V4cyr7glVL5
+9UIw+Zn4fciiLTAgXsG6DSaxcsoDZSWxFzjgZCGGw2rWnSnHxbXWQudD3y+jnPC9
+h4j/XB8XRkdPDyESOJkF1cwPqYsqZZV+gvMBO9nU7W4q8nt6WCy6qi5DOiHtzyea
+NO+hQJAd807ge9pKdveH8hPbZdMSBAmhkZZSMN14ItyfEqe1wNCNv6siRtUgzfp8
+0G9fV8OoZATYOHlqLuFrXcyRwGqPu/rwcMb1fDyf7PM5L9JerwDsz1ygIgCwmKTV
+vH4ElrId5uf3mSBt87bkvwLT3VGKS0eldjbIhEwp4Ns=
+-----END CERTIFICATE-----
+_______________________________________________
+cryptography mailing list
+cryptography@randombit.net
+http://lists.randombit.net/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

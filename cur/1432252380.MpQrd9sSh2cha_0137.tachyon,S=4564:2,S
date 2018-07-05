@@ -1,0 +1,105 @@
+From cypherpunks-bounces@cpunks.org  Thu Sep 12 06:33:56 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r8CAXqqq012802;
+	Thu, 12 Sep 2013 06:33:52 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r8CAW5sx012789
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Thu, 12 Sep 2013 06:32:07 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id F1C49543E35; Thu, 12 Sep 2013 12:32:04 +0200 (CEST)
+Date: Thu, 12 Sep 2013 12:32:04 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: Re: [tor-relays] Getting max bandwidth out of a relay
+Message-ID: <20130912103204.GC10405@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 2809
+Lines: 67
+
+----- Forwarded message from Andy Isaacson <adi@hexapodia.org> -----
+
+Date: Thu, 12 Sep 2013 02:06:13 -0700
+From: Andy Isaacson <adi@hexapodia.org>
+To: tor-relays@lists.torproject.org
+Subject: Re: [tor-relays] Getting max bandwidth out of a relay
+User-Agent: Mutt/1.5.20 (2009-06-14)
+Reply-To: tor-relays@lists.torproject.org
+
+On Wed, Sep 11, 2013 at 05:13:04PM +0200, Jeroen Massar wrote:
+> Are boxes that are doing these speeds running at a CPU or a network cap?
+> Or maybe better asked, they do run at 100% usage of their cores or do
+> they just use two/three cores to the max?
+
+There are three main sinks of CPU usage in a well-configured large Tor
+relay:
+
+1. doing AES and SHA.  This scales with the network bandwidth used.
+2. doing Montgomery multiplication for circuit creation requests.
+3. bookkeeping.
+
+(4. kernel TCP overhead etc.)
+
+Until the August botnet hit, #1 was the primary user of CPU on most
+relays.  A single Xeon core can do about 150 MB/sec of AES, or with
+AES-NI around 700 MB/sec.
+
+With the vastly increased circuit creation load currently in progress,
+#2 and #3 have become a larger problem.  The bookkeeping, in particular,
+has grown significantly.  On noisetor right now, 17% of all CPU cycles
+are being spent in a single bookkeeping routine,
+circuit_unlink_all_from_channel, according to "perf top".
+
+https://trac.torproject.org/projects/tor/ticket/9683
+
+This increased circuit-create-and-destroy CPU load reduces the CPU
+available to do useful AES, so as a result, currently many Tor relays
+are showing increased CPU usage with decreased bandwidth usage.
+
+
+You'll have trouble getting a single Xeon core to run much more than 300
+Mbps even with AES-NI, even without the botnet increasing CPU load
+without increasing throughput usage.  In the current state, with so much
+extra bignum work and bookkeeping, a single daemon will have even more
+trouble pushing much bandwidth.
+
+Best practice for maximum bandwidth is to run one Tor daemon per
+physical core, each on a distinct IP address.  Plan for each daemon to
+push about 15 MByte/sec.  They can do more like 20 or 30, but planning
+for lower leaves some headroom.
+
+Your boxes, with 12 cores and 70 GB of RAM, are quite a bit overpowered
+for running 500 Mbps of Tor.  If you ran a Tor daemon per core, you'd be
+able to push around 2 Gbps of Tor traffic, easily.
+
+-andy
+_______________________________________________
+tor-relays mailing list
+tor-relays@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-relays
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

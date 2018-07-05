@@ -1,0 +1,137 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u7CGtSbs024001;
+	Fri, 12 Aug 2016 12:55:29 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=eSlC2jVq;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-ua0-f178.google.com (mail-ua0-f178.google.com
+ [209.85.217.178])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u7CGtOLU023997
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Fri, 12 Aug 2016 12:55:26 -0400
+Received: by mail-ua0-f178.google.com with SMTP id 97so50805350uav.3
+ for <cypherpunks@cpunks.org>; Fri, 12 Aug 2016 09:55:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
+ bh=L1CkmQ5BX1d9Db1lcMXl0KopFdYivG+k4piyrCiTHyA=;
+ b=eSlC2jVqjCCvbq7+2eljijFZKSD6b6GvhWcjM43Qm/izPDhW2c3pDBBQHpkquKfD/5
+ WTHCiuXHIbCAgBNO6ufRT0XHEGz6TCcL6wzRYxBLK87gF9S3v44vwrT2m7v7P0VGJ2zy
+ uaJKNzynvahvacOjs0Yy6vlD5a5pfcGa8Ee5fKoLVncPuHdVOpoM+4recqUJzP2qbu5I
+ T9tSXFJY3BjqLrek2EaFZxaztgApH7R4FzhvoaAsHAVArzpAmQPx14ZZMJDgzR46nyvV
+ o2gQLCobjPYeWLo/kT+ManPmwtUVEqGexapoVs51Q+TCwZUhg6xDBoqyl17BS85wKyEn
+ 3t5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+ :message-id:subject:to;
+ bh=L1CkmQ5BX1d9Db1lcMXl0KopFdYivG+k4piyrCiTHyA=;
+ b=mU6qwxBz0/VSjPjj8YekbOkVXH1VLv4nm8CsUsIPq/kPBiP7EsqOUQqTH6aWUwNCil
+ NLKDNUaL2OZxHlP099K3CQFBPcUyMh/8Lw0BVNwPVrJjKtUFnUe0b2fcCc4xNK+Z6rRy
+ yHTCPYYuWp08EAfflHyJfKPNq9AypgGqmyRhHM519vp5viSoTj7prT67FvfquzjvNYVZ
+ 0Lg3HefWWwzBU1o1xzaKcdk7rrdknM3qdycUp6OlGbR1Tn0GW0SYOKJlubEtpfAs676Y
+ JTHpl93hFNksKAwlZ/4zim6FM8TKCfoUvXWt/4nJxd/Y49yVAkcQNwEhehBGQPYdBeYp
+ kHeQ==
+X-Gm-Message-State: AEkoousbU1tIMW1JVI86hT5tLT/JSnpM5jYSd9hTqjpFaNAw3R8H5wzZP/REVQC+k0RPTGe7UohRSULostAbAA==
+X-Received: by 10.176.2.76 with SMTP id 70mr6945524uas.70.1471020918513; Fri,
+ 12 Aug 2016 09:55:18 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.176.3.45 with HTTP; Fri, 12 Aug 2016 09:55:16 -0700 (PDT)
+Received: by 10.176.3.45 with HTTP; Fri, 12 Aug 2016 09:55:16 -0700 (PDT)
+In-Reply-To: <1901740634.15491731.1470940533090.JavaMail.yahoo@mail.yahoo.com>
+References: <CAG2tMp55nML9+v0hnLVfe+OqPsCMUNiB66FR-VjmTn3pkGSTRw@mail.gmail.com>
+ <CAG2tMp7M3BpOUOcv6fkOYK=cYvYCWmg3nFrL8QSGBF0JPr5pjg@mail.gmail.com>
+ <CAG2tMp5A5AxiYHR4JQ-ECFCy80nsa8-xxYw5gs5vMEfHtHKRgg@mail.gmail.com>
+ <CAG2tMp4HdMnuXO7K5OvAie1+f1bsU5_iDg-nEcy=PTvJfV+XFA@mail.gmail.com>
+ <CAG2tMp6sd1r-FwLWd2SmQTQ-JJJpCPyU9hDKKKkew8symGGtJQ@mail.gmail.com>
+ <CAG2tMp5CmWA9rzgwDpe9XDYbOcKooAq15PrDD1UtorcnPZo--Q@mail.gmail.com>
+ <CAG2tMp5VUSFrJJXVXU35VBkY4trmH8K+7yECpnQAvfX7iRF3qQ@mail.gmail.com>
+ <20160809194322.GA24863@synfin.org> <770311470819794@web20h.yandex.ru>
+ <7b8410ac-c780-1d5e-e074-672c9160bfaf@pilobilus.net>
+ <20160811154619.GA2957@x220-a02>
+ <1901740634.15491731.1470940533090.JavaMail.yahoo@mail.yahoo.com>
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+Date: Fri, 12 Aug 2016 13:55:16 -0300
+Message-ID: <CAG2tMp5txzXKY-cs28VYEC7dY3+1C5iJ+Z7R96yN8p=Lzgeq_A@mail.gmail.com>
+Subject: Re: Anarchist Bibliography, please? (was Re: Deconstructing an
+ Institutional Slander...)
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=001a11415bda4e26c80539e2bfa1
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 63
+
+--001a11415bda4e26c80539e2bfa1
+Content-Type: text/plain; charset=UTF-8
+
+The sweetest person of this list [1] asked me if this music could be a good
+Cypherpunks theme song...  :)
+
+https://www.youtube.com/watch?v=s2LUqMH8x-I
+
+Being sincere, I didn't like the music, but the lyrics are very
+interesting, hihi!  ;)
+
+We already had some suggestions in this thread, like "Propagandhi" and
+"Rage Against The Machine", but what could be a really good anarchist
+soundtrack for this weekend, please?  :D
+
+Ah, thank you very much for all the suggested readings, lovely people!  I
+am reading the bibliography a bit every day.  Lots of books at same time,
+of course.  Chaos is fun.  :)
+
+Happy kisses, love and tickles!!!  <3
+
+Ceci
+
+[1]  Ah, when he is not complaining and being acid, he is almost a very
+happy labrador able of typing, wagging his tail like a fan while listens
+to  (ahem, bad!)  music, haha!!  Definitely love him, haha!!  ;D
+
+No, it isn't Steve.  He never is acid and is always more charming than
+Snoopy dancing.  Happy beagle's dance, ow!  Love Steve too!  <3  <3  <3
+
+<http://youtu.be/iFNLbAs3KAU>
+
+--001a11415bda4e26c80539e2bfa1
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p>The sweetest person of this list [1] asked me if this music could be a g=
+ood Cypherpunks theme song...=C2=A0 :)</p>
+<p><a href=3D"https://www.youtube.com/watch?v=3Ds2LUqMH8x-I">https://www.yo=
+utube.com/watch?v=3Ds2LUqMH8x-I</a></p>
+<p>Being sincere, I didn&#39;t like the music, but the lyrics are very inte=
+resting, hihi!=C2=A0 ;)</p>
+<p>We already had some suggestions in this thread, like &quot;Propagandhi&q=
+uot; and &quot;Rage Against The Machine&quot;, but what could be a really g=
+ood anarchist soundtrack for this weekend, please?=C2=A0 :D</p>
+<p>Ah, thank you very much for all the suggested readings, lovely people!=
+=C2=A0 I am reading the bibliography a bit every day.=C2=A0 Lots of books a=
+t same time, of course.=C2=A0 Chaos is fun.=C2=A0 :)</p>
+<p>Happy kisses, love and tickles!!!=C2=A0 &lt;3</p>
+<p>Ceci</p>
+<p>[1]=C2=A0 Ah, when he is not complaining and being acid, he is almost a =
+very happy labrador able of typing, wagging his tail like a fan while liste=
+ns to=C2=A0 (ahem, bad!)=C2=A0 music, haha!!=C2=A0 Definitely love him, hah=
+a!!=C2=A0 ;D</p>
+<p>No, it isn&#39;t Steve.=C2=A0 He never is acid and is always more charmi=
+ng than Snoopy dancing.=C2=A0 Happy beagle&#39;s dance, ow!=C2=A0 Love Stev=
+e too!=C2=A0 &lt;3=C2=A0 &lt;3=C2=A0 &lt;3</p>
+<p>&lt;<a href=3D"http://youtu.be/iFNLbAs3KAU">http://youtu.be/iFNLbAs3KAU<=
+/a>&gt;</p>
+
+--001a11415bda4e26c80539e2bfa1--
+

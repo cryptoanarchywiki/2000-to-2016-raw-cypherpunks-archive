@@ -1,0 +1,114 @@
+From owner-cypherpunks@Algebra.COM  Thu Nov  7 19:39:40 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id gA80deh08726
+	for <rsw@opamp.org>; Thu, 7 Nov 2002 19:39:40 -0500
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id SAA04727
+	for <rsw@mit.edu>; Thu, 7 Nov 2002 18:39:27 -0500 (EST)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id gA7LbHf1027785
+	for <cypherpunks-outgoing@ak47.algebra.com>; Thu, 7 Nov 2002 15:37:17 -0600
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id gA7LbHBR027784
+	for cypherpunks-outgoing; Thu, 7 Nov 2002 15:37:17 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id gA7LbCf1027754
+	for <cypherpunks@ak47.algebra.com>; Thu, 7 Nov 2002 15:37:13 -0600
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id gA7LbAh7011525
+	for cypherpunks@ak47.algebra.com; Thu, 7 Nov 2002 13:37:10 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id gA7LahjM011518
+	for cypherpunks-goingout345; Thu, 7 Nov 2002 13:36:43 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Message-ID: <F504A8CEE925D411AF4A00508B8BE90A041BAF1A@exna07.securitydynamics.com>
+From: "Trei, Peter" <ptrei@rsasecurity.com>
+To: "Email List: Cypherpunks" <cypherpunks@lne.com>,
+   "'Dave Howe'"
+  <DaveHowe@gmx.co.uk>
+Old-Subject: RE: Did you *really* zeroize that key? 
+Date: Thu, 7 Nov 2002 16:36:05 -0500 
+MIME-Version: 1.0
+X-Mailer: Internet Mail Service (5.5.2653.19)
+Content-Type: text/plain
+X-Loop: cypherpunks@lne.com
+X-spam: 5 
+Subject:  RE: Did you *really* zeroize that key? 
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 2354
+Lines: 65
+
+
+> ----------
+> From: 	Dave Howe[SMTP:DaveHowe@gmx.co.uk]
+> Sent: 	Thursday, November 07, 2002 3:46 PM
+> To: 	Email List: Cypherpunks
+> Subject: 	Re: Did you *really* zeroize that key? 
+> 
+> David Honig wrote:
+> > I was thinking more in terms of arrays
+> >
+> > memset( arr, 0, sizeof(arr)) // zero
+> > unsigned int v=1;
+> > for (int i=0; i< arr_size; i++) v += arr[i]; // check
+> > if ( v>0 && v<2 ) // test
+> > sanity();
+> > else
+> > insanity();
+> >
+> > But I suppose that if compilers can be arbitrarily 'clever'
+> > (eg about memset() and the additive properties of zero)
+> > you'll have to check the assembly code...
+> >
+> > Perhaps
+> >
+> > for (int i=0; i< arr_size; i++) arr[i]=i; // "zero"
+> > unsigned int v=0;
+> > for (i=0; i< arr_size; i++) v += arr[i]; // check
+> > if ( v != expected_value( arr_size ) ) insanity();
+> > else sanity();
+> >
+> > is better?  (In the sense that this code will be treated
+> > as worth-keeping.)
+> as an abstract, probably not - there is always a chance that *any* given
+> structure will be optimised away in a future compiler that is both
+> arbitarily "smart" but stupid enough not to understand you are going to
+> extreme effort to try and avoid the optimiser removing a clear.
+> about all I can think of that could not be optimised away would be a
+> dynamic
+> library call - if a library call "int clearthismem(void pointer*, long
+> lengthinbytes);" is used, as the optimising compiler can't look inside the
+> code for it to see exactly what it does with the passed variable, it can't
+> optimise it away - and the compiler that compiled the "blank passed mem to
+> zero" code won't know that it isn't used once the subroutine is exited
+> (and
+> in fact, it could also be used as a convenient way to force-initialise an
+> array or string to zeros if execution time wasn't an issue)
+> 
+The #pragma fixes are good, but non-portable.
+
+None of the portable fixes can be trusted against an arbitrarily smart
+optimizer. and they have space and performance hits.
+
+The 'volatile' keyword seems to have poorly defined behaviour.
+
+Perhaps the next 'C' standard needs a new keyword, 'always'
+which tells the compiler that this line *must* be included:
+
+always memset(arr,0,sizeof(arr));
+
+...but this seems to break the rules, in that it's really a 
+standard-defined #pragma in disguise.
+
+This is one fun Heisenbug :-)
+
+Peter
+

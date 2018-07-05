@@ -1,0 +1,231 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u21KdiVP007494;
+	Tue, 1 Mar 2016 15:39:50 -0500
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=rt9OXh9t;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-io0-f175.google.com (mail-io0-f175.google.com
+ [209.85.223.175])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u21Kdgu5007490
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Tue, 1 Mar 2016 15:39:43 -0500
+Received: by mail-io0-f175.google.com with SMTP id b188so18740291iof.1
+ for <cypherpunks@cpunks.org>; Tue, 01 Mar 2016 12:39:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+ :cc; bh=AWqdByrOfGMJk5B97wNyiXk92L8XgA1hIaqRuARymbg=;
+ b=rt9OXh9tgd2ezreCnobFZnVyWWmajeVTbJUiT+aJYvpU89o17hqAMdZ42EpTClasCh
+ O26wo8dNrHJsbl262nMqoBinw33o26G9b7AqfltyQHQWMO0wZtk7rwao5bs/AhfM8dgU
+ Ox2n5kjg0u/tJHmdu/eTaMqRbdla4Doga1WIGT3oTnIYW4z90V6Ss9oi7zOo/DnFtoFN
+ NwHdjnBdDGN8hVew8tsNkh/yruJKK8uhZER3DhC1ApCZmG9MkWircWLzp/eSBKBPus/8
+ WOujBL0IaL2z31MBb0wHwGXCDyIjZmmeUNsh6T9idyctB0FXL2yT/tgfAVjHkfazIu7L
+ A78A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+ :message-id:subject:to:cc;
+ bh=AWqdByrOfGMJk5B97wNyiXk92L8XgA1hIaqRuARymbg=;
+ b=fxl5uDeUYg0JSaD28ZgTKga9TGGPKvfc6RWGQkTXAvZr+mdj8QcOhJGA7n0o0WwX47
+ OQ0f0VI3i4f/0Y522dReVQXwp4alpqIJqqiBC7knbE4xn3mIROVJan+mrPzipbRLBe7E
+ ZYhecbj9OjtQvA37VLoJ0lJTxf2YSbJzdyTSfszJj8uz4zHqB8D5unaHgNDGSmLnm5en
+ gyqsypcbLR69Ftu2hGWliF7cWqoMfEmOA9jYyTlKQMHBdo9eEs96dn9PP0RmBe8KMWdd
+ FTdajozy9mpnALYswVGO6GVKMETjjUDagOQlXv0jbaEk2Or3zDfV488C7/0QC1DTY4aD
+ a8+g==
+X-Gm-Message-State: AG10YOSx2ouEQz8a44cpvz/imjiPnTRvjp6XyEkQIpMOA/kkH6HPL2wtD1FWfbWpezrvD2YXjVRYCxniN45Nag==
+X-Received: by 10.107.3.33 with SMTP id 33mr27363319iod.80.1456864776547; Tue,
+ 01 Mar 2016 12:39:36 -0800 (PST)
+MIME-Version: 1.0
+Received: by 10.107.145.70 with HTTP; Tue, 1 Mar 2016 12:39:17 -0800 (PST)
+In-Reply-To: <CAD2Ti28t0dScbR-nkVteQi-29D2pytPYjQw6oWkvPvJhVvho8w@mail.gmail.com>
+References: <20160229074429.GA2571@sivokote.iziade.m$>
+ <CAD2Ti2_+348bjcA5eaNrqvECU45=eJPspu0xhPdj4hntuP0cHQ@mail.gmail.com>
+ <20160229100643.GB2571@sivokote.iziade.m$>
+ <CAD2Ti29is2Z-6qJFgh8OG1UrAHPae++PZyfZ1-iuADXG=Bd9pQ@mail.gmail.com>
+ <20160229113804.GC2571@sivokote.iziade.m$>
+ <CAD2Ti2911evPsw0dZQWXvTr9Wgu6Su5PHDytQc81iAUJgMde9w@mail.gmail.com>
+ <20160301065454.GA2577@sivokote.iziade.m$>
+ <CAD2Ti29HE8xBWmXujbGQHHoj5L+2wk7iyBpgTZ9JownWxX-gOQ@mail.gmail.com>
+ <20160301094345.GC2577@sivokote.iziade.m$>
+ <CAD2Ti28t0dScbR-nkVteQi-29D2pytPYjQw6oWkvPvJhVvho8w@mail.gmail.com>
+From: Cari Machet <carimachet@gmail.com>
+Date: Tue, 1 Mar 2016 21:39:17 +0100
+Message-ID: <CAGRDzQW2_Cg6fvT+cAPpK6-vH6m0_dAHTcMYKVoD8pVg2iF1Wg@mail.gmail.com>
+Subject: Re: Once again: Tor timing attacks and a Tor confession
+To: grarpamp <grarpamp@gmail.com>
+Content-Type: multipart/alternative; boundary=001a113ed3a47df2bb052d02c3c3
+Cc: cpunks <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 159
+
+--001a113ed3a47df2bb052d02c3c3
+Content-Type: text/plain; charset=UTF-8
+
+i like the idea of mathmatical echo as solution
+
+http://guap.ru/guap/nids/pdf_2010/kuyumchev.pdf
+
+On Tue, Mar 1, 2016 at 7:52 PM, grarpamp <grarpamp@gmail.com> wrote:
+
+> On 3/1/16, Georgi Guninski <guninski@guninski.com> wrote:
+> >> > Is jitter/fill traffic full solution?
+> > The threat model is the entire world --
+>
+> Then the full solution is to unplug, smash, and go outside and play...
+>
+> > in real life do you care much what accident
+> > will "own" your life?
+>
+> ... just be sure to wear your helmet :)
+>
+>
+> > Combination of many threats -- owning, timing, crypto, etc
+>
+> If the thread is a thread just griping on threats that's fine.
+> But lumping them all in versus fill traffic (being a possible solution
+> to the one specific subthreat of GPA)... probably isn't productive
+> towards solving anything... whether the entire threat
+> or any particular subthreat. Especially when fill traffic hasn't
+> yet been speculated here to enhance the efficacy of any other
+> existing threat, or to create new threats.
+>
+>
+> >> Do they and their court docs officially say that?
+> >
+> > Don't know about courts, here is a reference from thereg:
+> > http://www.theregister.co.uk/2012/03/07/lulzsec_takedown_analysis/
+>
+> That's not a quote from an original source. Neither is what it
+> references...
+> http://blog.erratasec.com/2012/03/notes-on-sabu-arrest.html
+> ... which goes to Fox, which probably goes to... and to... and to...
+> ... including possibly to stretching / ignoring the law, parallel
+> construction...
+> or to some other legit defendant screwup... at least until the quote
+> is validated.
+>
+> Have the actual chain of custodied investigative materials as to exactly
+> how the SilkRoad server was found come out yet? (And other similarly fishy
+> cases where nodes on supposedly strong overlay networks were found...)
+> Or is that still wrapped in grand jury, work product, state secret,
+> in camera, sealed...
+>
+
+
+
+-- 
+Cari Machet
+NYC 646-436-7795
+carimachet@gmail.com
+AIM carismachet
+Syria +963-099 277 3243
+Amman +962 077 636 9407
+Berlin +49 152 11779219
+Reykjavik +354 894 8650
+Twitter: @carimachet <https://twitter.com/carimachet>
+
+7035 690E 5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187
+
+Ruh-roh, this is now necessary: This email is intended only for the
+addressee(s) and may contain confidential information. If you are not the
+intended recipient, you are hereby notified that any use of this
+information, dissemination, distribution, or copying of this email without
+permission is strictly prohibited.
+
+--001a113ed3a47df2bb052d02c3c3
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">i like the idea of mathmatical echo as solution<div><br></=
+div><div><a href=3D"http://guap.ru/guap/nids/pdf_2010/kuyumchev.pdf">http:/=
+/guap.ru/guap/nids/pdf_2010/kuyumchev.pdf</a><br></div><img src=3D"http://t=
+.sidekickopen42.com/e1t/o/5/f18dQhb0S7ks8dDMPbW2n0x6l2B9gXrN7sKj6v5dfb6W5vw=
+kZs7fZjrnW2BpKgF2zlZNzW8v-hnY1k1H6H0?si=3D5459291358625792&amp;pi=3Dabdf783=
+1-721a-429b-ca78-0645e9960608" style=3D"display:none!important" height=3D"1=
+" width=3D"1"></div><div class=3D"gmail_extra"><br><div class=3D"gmail_quot=
+e">On Tue, Mar 1, 2016 at 7:52 PM, grarpamp <span dir=3D"ltr">&lt;<a href=
+=3D"mailto:grarpamp@gmail.com" target=3D"_blank">grarpamp@gmail.com</a>&gt;=
+</span> wrote:<br><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .=
+8ex;border-left:1px #ccc solid;padding-left:1ex"><span class=3D"">On 3/1/16=
+, Georgi Guninski &lt;<a href=3D"mailto:guninski@guninski.com">guninski@gun=
+inski.com</a>&gt; wrote:<br>
+&gt;&gt; &gt; Is jitter/fill traffic full solution?<br>
+</span><span class=3D"">&gt; The threat model is the entire world --<br>
+<br>
+</span>Then the full solution is to unplug, smash, and go outside and play.=
+..<br>
+<span class=3D""><br>
+&gt; in real life do you care much what accident<br>
+&gt; will &quot;own&quot; your life?<br>
+<br>
+</span>... just be sure to wear your helmet :)<br>
+<span class=3D""><br>
+<br>
+&gt; Combination of many threats -- owning, timing, crypto, etc<br>
+<br>
+</span>If the thread is a thread just griping on threats that&#39;s fine.<b=
+r>
+But lumping them all in versus fill traffic (being a possible solution<br>
+to the one specific subthreat of GPA)... probably isn&#39;t productive<br>
+towards solving anything... whether the entire threat<br>
+or any particular subthreat. Especially when fill traffic hasn&#39;t<br>
+yet been speculated here to enhance the efficacy of any other<br>
+existing threat, or to create new threats.<br>
+<span class=3D""><br>
+<br>
+&gt;&gt; Do they and their court docs officially say that?<br>
+&gt;<br>
+</span><span class=3D"">&gt; Don&#39;t know about courts, here is a referen=
+ce from thereg:<br>
+&gt; <a href=3D"http://www.theregister.co.uk/2012/03/07/lulzsec_takedown_an=
+alysis/" rel=3D"noreferrer" target=3D"_blank">http://www.theregister.co.uk/=
+2012/03/07/lulzsec_takedown_analysis/</a><br>
+<br>
+</span>That&#39;s not a quote from an original source. Neither is what it r=
+eferences...<br>
+<a href=3D"http://blog.erratasec.com/2012/03/notes-on-sabu-arrest.html" rel=
+=3D"noreferrer" target=3D"_blank">http://blog.erratasec.com/2012/03/notes-o=
+n-sabu-arrest.html</a><br>
+... which goes to Fox, which probably goes to... and to... and to...<br>
+... including possibly to stretching / ignoring the law, parallel<br>
+construction...<br>
+or to some other legit defendant screwup... at least until the quote<br>
+is validated.<br>
+<br>
+Have the actual chain of custodied investigative materials as to exactly<br=
+>
+how the SilkRoad server was found come out yet? (And other similarly fishy<=
+br>
+cases where nodes on supposedly strong overlay networks were found...)<br>
+Or is that still wrapped in grand jury, work product, state secret,<br>
+in camera, sealed...<br>
+</blockquote></div><br><br clear=3D"all"><div><br></div>-- <br><div class=
+=3D"gmail_signature"><div dir=3D"ltr"><div>Cari Machet<br>NYC 646-436-7795<=
+br><a href=3D"mailto:carimachet@gmail.com" target=3D"_blank">carimachet@gma=
+il.com</a><br>AIM carismachet<br>Syria +963-099 277 3243<br>Amman +962 077 =
+636 9407<br>Berlin +49 152 11779219 <br>Reykjavik +354 894 8650<br>Twitter:=
+ @carimachet &lt;<a href=3D"https://twitter.com/carimachet" target=3D"_blan=
+k">https://twitter.com/carimachet</a>&gt;<br><br></div>7035 690E 5E47 41D4 =
+B0E5 B3D1 AF90 49D6 BE09 2187<br><div><br>Ruh-roh, this is now necessary: T=
+his email is intended only for the <br>addressee(s) and may contain confide=
+ntial information. If you are not the <br>intended recipient, you are hereb=
+y notified that any use of this <br>information, dissemination, distributio=
+n, or copying of this email without <br>permission is strictly prohibited.<=
+br><br><br></div></div></div>
+</div>
+
+--001a113ed3a47df2bb052d02c3c3--
+

@@ -1,0 +1,122 @@
+From owner-cypherpunks@al-qaeda.net  Tue Sep  6 06:57:12 2011
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id p86AsUAM010989
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 6 Sep 2011 06:54:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1315306470;
+	bh=ZhrBrbkcbxLFNJ+vex86+Yw/fj4L88Ih+rc9NyHBVZs=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=nXriUTNjbB4GluAHDijlx0KacpffpTeL4ia3EWNp70i4jz6PibFj6Vr4yP6OGbZiZ
+	 xoAzwIPMVTzvuyZ2UMNf71l+PVRwE6h9yvku5Oi3xHRWdcF+ZxuPx9qtp65Hk0RaIg
+	 gVcYCNOYaBq8AXPxbZcFQrtVisWvLSUko+fDsqP0=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id p86AsUvj010988
+	for cypherpunks-outgoing; Tue, 6 Sep 2011 06:54:30 -0400
+Date: Tue, 6 Sep 2011 12:54:27 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, mixter@gmail.com
+Subject: Re: [cryptography] kernel.org hack and kernel integrity
+Message-ID: <20110906105427.GO16334@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Tim Shepard <shep@alum.mit.edu> -----
+
+From: Tim Shepard <shep@alum.mit.edu>
+Date: Sat, 03 Sep 2011 13:16:42 -0400
+To: Jeffrey Walton <noloader@gmail.com>,
+	Crypto discussion list <cryptography@randombit.net>
+Subject: Re: [cryptography] kernel.org hack and kernel integrity
+Reply-To: Crypto discussion list <cryptography@randombit.net>
+
+
+
+> Could anyone explain git's security assurances to a non-git layman?
+> 
+
+Git internally uses the SHA-1 hash of a small header and the object
+contents (file, directory, or commit message) as the internal name for
+each object, and claims to check that the hash of the data still
+matches the name every time it fetches the object from the underlying
+file system, or pulls it over the net from another repository.
+
+(I think the small object header is included so that the null
+ directory and null source file will have different hash values.)
+
+This is supposed to make it difficult to corrupt the content and
+history stored in a git repository, because if you change anything,
+the SHA-1 hash will no longer match the name.
+
+And if you are pulling updates from an upstream repository, there's
+no way to slip something by you that won't be detectable as something
+changing when your downstream repository receives it.  The locally
+computed summary and difference of an update really is what has
+changed.  And any attempt to rewrite any part of the history that you
+already had a copy of (from previous updates pulled) will not go
+unnoticed.
+
+And with many developers pulling updates, there are many distributed
+copies, and many people watching.
+
+
+The commit IDs are displayed as the SHA-1 hash values, and developers
+refer to particular commits by these SHA-1 hash values.   For example,
+the latest commit I have from the mainline linux kernel tree that
+Linus maintains is:
+
+    9e79e3e9dd9672b37ac9412e9a926714306551fe
+
+And anyone else who has a sufficiently-recently updated remote in their
+repository can reference this commit by using this SHA-1 hash value.
+(For example, "git log 9e79e3e9dd9672b37ac9412e9a926714306551fe" would
+show the history of commits going backwards in time starting from this
+particular commit.)
+
+What this does is provide some technical assurance that when we talk
+(communicate out-of-band) about particular versions of the linux source
+tree, we can be sure that we really are talking about the same bits.
+(Unless someone has managed to make use of a SHA-1 hash collision, and
+AFAIK no one has yet published a SHA-1 hash collision.  Or unless
+someone has corrupted the git software that one or both of us is
+using.)
+
+One thing I've been curious about is what would have to happen in the
+world of git when (a) someone shows how to construct SHA-1 hash
+collisions, or (b) someone shows how to consturct SHA-1 second
+preimages.  There is a "repositoryformatversion = 0" in the on-disk
+format.  I'm not sure if there are any other mechanisms in git storage
+or communication formats for crypto hash agility.  (I expect there is
+no code in git that anticipates needing crypto hash agility.)
+
+
+Anyway, I hope this helps.
+
+
+When I was learning git, I found the paper _Git from the bottom up_ by
+John Wiegley very helpful for understanding what is going on inside
+git:
+
+   http://newartisans.com/2008/04/git-from-the-bottom-up/
+
+
+
+			-Tim Shepard
+			 shep@alum.mit.edu
+_______________________________________________
+cryptography mailing list
+cryptography@randombit.net
+http://lists.randombit.net/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

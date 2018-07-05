@@ -1,0 +1,353 @@
+From owner-cypherpunks@al-qaeda.net  Mon Sep  3 04:33:55 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q838QWRY010286
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 3 Sep 2012 04:26:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1346660792;
+	bh=r+d9EcG6c3nyb4Hx3tKIfBBWidEB/7C0xTKsjqXKdrE=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=VofoXM0GnQQuR7mIjJl3zDQLY7uAV6uyjbyzFP5w05zuqcQP7uHnji9BceZKJ2evg
+	 u2ZP7VEuSEjTKnNZvPwRvTSuFyNs11NHBfJbHC1H2t/FGYz3hSRtx2Dx9Oi6JulUGC
+	 1fDua/xlklyX1IrQh6Aq5thLnwgCdgOPdqowazYM=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q838QWcX010285
+	for cypherpunks-outgoing; Mon, 3 Sep 2012 04:26:32 -0400
+Date: Mon, 3 Sep 2012 10:26:27 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: [tahoe-dev] TWN 37
+Message-ID: <20120903082627.GU12615@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 14874
+Lines: 319
+
+----- Forwarded message from Patrick R McDonald <marlowe@antagonism.org> -----
+
+From: Patrick R McDonald <marlowe@antagonism.org>
+Date: Mon, 3 Sep 2012 03:09:08 -0500
+To: tahoe-dev@tahoe-lafs.org
+Subject: [tahoe-dev] TWN 37
+User-Agent: Mutt/1.5.21 (2010-09-15)
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+=========================================================
+Tahoe-LAFS Weekly News, issue number 37, September 3 2012
+=========================================================
+
+Welcome to the Tahoe-LAFS Weekly News (TWN).  Tahoe-LAFS_ is a secure,
+distributed storage system. `View TWN on the web`_ *or* `subscribe to TWN`_.
+If you would like to view the "new and improved" TWN, complete with pictures;
+please take a `look`_.
+
+.. _Tahoe-LAFS: https://tahoe-lafs.org
+.. _View TWN on the web: https://tahoe-lafs.org/trac/tahoe-lafs/wiki/TahoeLAFSWeeklyNews
+.. _subscribe to TWN: https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-lafs-weekly-news
+.. _look: https://tahoe-lafs.org/~marlowe/TWN37.html
+
+Announcement and News
+=====================
+
+Interview with Brian Warner
+---------------------------
+This past week, TWN interviewed Brian Warner |brian|.  Brian is a member
+of the Tahoe-LAFS development team.  Brian is currently working on
+Accounting which is a major milestone in Tahoe-LAFS.  Please thank Brian
+for taking the time to provide us with this interview.
+
+Patrick: First, why don't you introduce yourself to our readers, tell us
+who you are?
+
+Brian: sure, my name is Brian Warner, I'm a programmer based in San
+Francisco. I created the Buildbot many many years ago, and the "EGD"
+entropy-gathering daemon before that, I guess those are my two
+best-known projects. I worked at AllMyData.com from 2005 to 2009, and
+created Tahoe along with Zooko and our coworker Rob Kinninmont. I'm
+probably still the author of the majority of the current code, but
+that's slowly changing as we get more developers involved. By day, I'm a
+developer at Mozilla, working on the Persona (aka BrowserID) project.
+
+Patrick: Currently you are associated with the accounting work.  Can you
+describe exactly what that is and why our readers will be interested in
+the final results?
+
+Brian: Yeah, the goal is to give Tahoe users more visibility into (and
+control over) how their data is being stored, and how their server space
+is being used. The current system is pretty all-or-nothing: as a server
+operator, you can reserve some amount of disk space (and, for the most
+part, the server won't use it to hold shares of client data), but you
+can't find out that e.g. Alice is using 20GB but Bob is only using 3GB.
+
+Similarly, as a client, you don't have control over where your shares
+are placed: they'll be spread uniformly among any server that connects
+to your grid, even though you might consider some of those servers to be
+unreliable.
+
+The general idea behind the Account project is that each client gets an
+identifier (a public key), and each share they put on a server is kept
+alive by a lease, which is tagged with their identifier.
+
+Patrick: so accounting would allow me as a server operator to prevent
+people from abusing the commons so to speak?
+
+Brian: Right. All leases will have client identifiers: when you enable
+"no free riders" mode, the server will reject completely anonymous
+clients. To begin with, there will be no connection between the client
+identifiers and anything else (names, etc). Servers will just get a
+table of "client 123 is using 23GB of space", etc.  As a client, you'll
+be able to volunteer a "nickname", so the table can say "client 123 (who
+calls themselves Alice) is using 23GB". Later, we'll add better UI, so
+if you've actually met Alice, and she tells you her ID, that table can
+say "client 123 (who you know as Alice) is using 23GB". (technically
+speaking, this will be a "petname").
+
+We'll probably start with simple monitoring but then make it possible
+for servers to require explicit approval from their admins before
+accepting shares from new clients.  There are a lot of reasons why you
+might hold data for someone else: maybe they're your friend, maybe
+they're paying you, maybe they're providing service in kind.
+
+Patrick: Sounds like a much robust system to control the service than is
+currently in place.  I look forward to it.
+
+Brian: In the long run, we want to make it easy to support lots of
+modes: maybe using Bitcoin for purely economic pay-for-storage
+transactions, or a form of tit-for-tat barter system where your usage is
+limited by how much space you've provided for others.
+
+Yeah, it's been a long road, but I think we're getting closer to finally
+implementing the design.
+
+Patrick: When should we expect to see accounting enter the stable
+release?
+
+Brian: Oh, that's a good question. I'd like to say 6-12 months, but
+given our history with this particular feature, I couldn't make any
+promises. The problem is that we keep scaling back the design to make it
+easier to implement, and then we discover all sorts of complexity that
+means it's twice as hard as we anticipated. Then we talk about it a lot,
+then we go away and forget about it for a while, then a few months later
+we simplify it some more an try again.  I think we're on the 5th or 6th
+cycle now, and realistically we probably have another one or two to go
+before we get something implementable.
+
+That said, it's likely that we can get some of the basics in place
+(simple monitoring of space consumed) in the next six months.
+
+Patrick: Certainly sounds like a fantastic way to start off the new
+year.
+
+Brian: Heh, yeah, that'd be a nice holiday present.
+
+Patrick: I will make sure to ask Santa.  You were also recently a
+release manger for Tahoe-LAFS.  What was that like?
+
+Brian: It was fun. I've driven other projects in the past (especially
+Buildbot), so most of the work is mechanical: assembling release notes,
+checking test results, building tarballs. And we've automated many of
+the pieces. (not all of them: my goal is for a simple 'git tag; git
+push' to trigger everything else, but we're not there yet). The main
+thing about release management is all the "does this feature/bugfix/etc
+make it in or not" decisions. That and bossing the other developers
+around for a while: trying to get the most important changes completed
+early enough so that you can get enough beta coverage to feel confident
+in them. I work on other projects (BrowserID, and Firefox, for that
+matter) that use a strict periodic "train" model, where the release
+happens every N weeks regardless of what features are done: if you don't
+get it finished, you miss the train, but that's ok because there's
+another one just down the road that you can aim for. I don't think we
+have enough developers or momentum (or automation) to use that mode for
+Tahoe right now, but given another 6 months of practice, maybe we could
+pull it off.  For a small project, periodic releases run the risk of
+having an empty release when nothing significant has been landed.
+
+Patrick: Wow, that was pretty in depth.  Great answer.  What is your
+favorite part about working on Tahoe-LAFS?
+
+Brian:  Hm.. one big part is getting to brainstorm with Zooko and
+David-Sarah and the others: talking through a design in realtime is a
+lot of fun, and we come at it from such different angles; I always
+learn so much from that interaction. It's also great to get to build
+something that works "Correctly" (with a capital C), without the dozens
+of little assumptions and compromises that break the security of most
+other tools. This may sacrifice usability or compatibility, but I'm ok
+with building something right and then trying to make it more usable
+later (doing it the other way around is a well-explored space). But I
+think my favorite part is that this project is starting to influence
+others: we're establishing the notion that storing things "in the cloud"
+doesn't have to mean giving up control over your security. Sort of
+adjusting people's expectations, making them realize they deserve more.
+We've got projects like Unhosted out there working on making data
+storage independent from application service, Firefox Sync providing
+client-side encryption of browser data, and Tarsnap doing client-side
+security, all of which are in this family of reducing reliance on the
+server's behavior. It's great space to be working in.
+
+Patrick: Okay, two more questions. First what would you like to see TWN
+which it isn't doing now and where would you like Tahoe-LAFS to go in
+the next year?
+
+Brian: Hm, I guess it'd be fun to have TWN cover some of the questions
+that have come up in the development meetings: e.g. recently we've
+been talking about whether Accounting should lean towards an
+"invitation" model (in which you join a grid by getting invited by
+someone/anyone who's already in the grid), or a more
+centralized/explicit model (in which one person controls the whole grid,
+and adds people by including their public key in a config file). It'd be
+great to hear from the wider community what they think about the
+different potential models, and TWN might be a better vehicle for that
+question than just the tahoe-dev mailing list.
+
+As for Tahoe itself, personally I'm getting more interested in browser
+integration (tahoe-as-addon, "lafs://" URLs, web-apps that can store
+their runtime state in a tahoe filesystem), and easier grid-management
+tools (the "invitation" model, simple Accounting controls). I'd love to
+simplify our protocols enough to get developers comfortable with porting
+Tahoe to other languages: we used Foolscap because it provided
+everything we needed (and because I wrote it) but it's too big, and that
+discourages folks from porting it (and Tahoe) to Ruby or Javascript,
+etc.  I'm especially eager to get the larger world of web-service
+authors (like the Node.js community) interested in Tahoe, or Tahoe-like
+systems, to tap into some of the energy building in that space.
+
+Patrick: That would be really cool.  Anything else you would like to add
+to the interview?
+
+Brian: Nope, just thanks for the time, and thanks for putting so much
+energy into our little project.  TWN is a great service you provide to
+this community.  I really appreciate your dedication!
+
+.. |brian| image:: warner.png
+   :height: 35
+   :alt: Brian Warner
+   :target: http://tahoe-lafs.org/trac/tahoe-lafs/wiki/AboutUs
+
+Company of the Week
+===================
+The Company of the Week is `Rentanode.nl`_ |rentanode.nl|  Rentanode.nl
+is a new company based in The Netherlands that offers Tahoe-LAFS
+storage service. You use the Tahoe-LAFS client software to encrypt and
+upload your data, so you can be sure that the company b Rentanode.nl b
+never sees your plaintext or your encryption keys. You can rent multiple
+nodes for added fault-tolerance. Pricing starts at b, 5.00/month for 10
+GB.
+
+`Rentanode.nl was announced`_ by Guido Witmond |witmond| back in June on
+the tahoe-dev mailing list and `opened for business on July 31`_.  Their
+page says "Making reliable backups on the internet is as hard as doing
+an engine overhaul but should be as simple as an oil change. And as
+afforable."  Rentanode.nl accepts payment in either Bitcoin or Euro.
+
+.. |rentanode.nl| image:: rentanode-logo-small.png
+   :height: 35
+   :alt: Rentanode.nl
+   :target: https://www.rentanode.nl
+
+.. |witmond| image:: witmond.jpg
+   :height: 35
+   :alt: Guido Whitmod
+   :target: https://www.rentanode.nl
+
+.. _`Rentanode.nl`: https://www.rentanode.nl
+.. _`Rentanode.nl was announced`:
+   https://tahoe-lafs.org/pipermail/tahoe-dev/2012-June/007467.html
+.. _`opened for business on July 31`:
+   https://tahoe-lafs.org/pipermail/tahoe-dev/2012-July/007612.html
+
+Glowing Quotes
+==============
+
+bsince 1997b&I've tried lots of hardware/software raid solutions, backup
+schemes, and so on, and tahoe-lafs is simply amazingb
+
+Tahoe-LAFS on Twitter
+=====================
+
+@zooko just saw a Tahoe-LAFS t-shirt wearing pedestrian crossing Duboce
+at Guerrero here In SF [`0`_]
+
+@zooko ok, the Tahoe-LAFS t-shirt acknowledgement protocol is settled,
+then: "Tahoe-LAFS!" "WHOO!" "WHOO!"+ [`1`_]
+
+.. _`0`: https://twitter.com/gojomo/status/241025836357124097
+.. _`1`: https://twitter.com/gojomo/status/241287960622927873
+
+Patches Needing Review of the Week
+==================================
+
+There are seven (7) ticket still needing review for 1.10.0:
+
+* `#1735`: the banner on the Welcome page saying that a helper is not
+  configured should not be red
+* `#1777`_: cleanups to tests and mutables for 1.10
+* `#166`_: command line order is problematic
+* `#937`_: 'tahoe run' doesn't work for an introducer node
+* `#1539`_: stop putting pkg_resources.require() into .tac files
+* `#1159`_: stop using .tac files: make it possible to change appname,
+  Python package-directory name, perhaps other names
+* `#1693`_: flogtool doesn't get automatically provided
+
+There are two (2) tickets still needing review of 1.11.0:
+
+* `#1265`_: New Visualizer is insufficiently labelled/documented (plus
+  layout problem)
+* `#1382`_: immutable peer selection refactoring and enhancements
+
+.. _`#1735`: http://tahoe-lafs.org/trac/tahoe-lafs/ticket/1735
+.. _`#1777`: http://tahoe-lafs.org/trac/tahoe-lafs/ticket/1777
+.. _`#166`: http://tahoe-lafs.org/trac/tahoe-lafs/ticket/166
+.. _`#937`: http://tahoe-lafs.org/trac/tahoe-lafs/ticket/937
+.. _`#1539`: http://tahoe-lafs.org/trac/tahoe-lafs/ticket/1539
+.. _`#1159`: http://tahoe-lafs.org/trac/tahoe-lafs/ticket/1159
+.. _`#1693`: http://tahoe-lafs.org/trac/tahoe-lafs/ticket/1693
+.. _`#1265`: http://tahoe-lafs.org/trac/tahoe-lafs/ticket/1265
+.. _`#1382`: http://tahoe-lafs.org/trac/tahoe-lafs/ticket/1382
+
+----
+
+*The Tahoe-LAFS Weekly News is published once a week by The Tahoe-LAFS*
+*Software Foundation, President and Treasurer: Peter Secor* |peter|
+*. Scribes: Patrick "marlowe" McDonald* |marlowe| *, Zooko Wilcox-O'Hearn*
+|zooko| *, Editor: Zooko.* `View TWN on the web`_ *or* `subscribe to TWN`_
+*. Send your news stories to* `marlowe@antagonism.org`_ *b submission
+deadline: Friday night.*
+
+.. _marlowe@antagonism.org: mailto:marlowe@antagonism.org
+.. |peter| image:: psecor.jpg
+   :height: 35
+   :alt: peter
+   :target: http://tahoe-lafs.org/trac/tahoe-lafs/wiki/AboutUs
+.. |marlowe| image:: marlowe-x75-bw.jpg
+   :height: 35
+   :alt: marlowe
+   :target: http://tahoe-lafs.org/trac/tahoe-lafs/wiki/AboutUs
+.. |zooko| image:: zooko.png
+   :height: 35
+   :alt: zooko
+   :target: http://tahoe-lafs.org/trac/tahoe-lafs/wiki/AboutUs
+
+
+
+
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

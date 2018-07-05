@@ -1,0 +1,131 @@
+From owner-cypherpunks@al-qaeda.net  Tue Jul 13 23:51:45 2010
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-5+lenny1) with ESMTP id o6E3pPuk000353
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 13 Jul 2010 23:51:25 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id o6E3pPZt000352
+	for cypherpunks-outgoing; Tue, 13 Jul 2010 23:51:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;        
+  d=gmail.com; s=gamma;        
+  h=domainkey-signature:mime-version:received:received:in-reply-to      
+     :references:date:message-id:subject:from:to:cc:content-type        
+   :content-transfer-encoding;        
+  bh=q/yE5AEz7KOLAt4XLl6vm+xui5aP29Dq7IOIe0oUpaI=;        
+  b=Ac+okwCtCCQf397oT8kBluBBlMlhpiA9NwjkQ+K2yWG3FBChPIqYgveE5oBUq7f4Wy  
+  osWpBSFB+g5DlRMNfmVEF5eqkLrK2XhL8XN8lRfVRssA7+Q7Ff5s0M9jEoEOZ7xbxFZC  
+         1LUd7EJ/ujsEoi3uDV/bePvRXElHuizmW1Uo8=
+DomainKey-Signature: a=rsa-sha1; c=nofws;         d=gmail.com; s=gamma; 
+  h=mime-version:in-reply-to:references:date:message-id:subject:from:to 
+          :cc:content-type:content-transfer-encoding;        
+  b=BmCuY6YFRMnL7JHDdqabItpfn9053S4CZm2jD4mGp9+xHoKX6rv1wk6Jj85Ty0AsMD  
+  TCbQhV8A2G4yGFZXHJVlwU69nsFy8dZr6OF7ntLs/D99oUTU5x59NZtprwEPW+RoNf/Q  
+         EzTLRxC39FffmVKl2o8pxyfLL3K1gwPBRhoeU=
+MIME-Version: 1.0
+In-Reply-To: <20100713204814.DCSB6.11048.imail@fed1rmwml4101>
+References: <20100712122251.5d2ad614@jabberwock.cb.piermont.com> 
+  <20100713204814.DCSB6.11048.imail@fed1rmwml4101>
+Date: Tue, 13 Jul 2010 20:51:16 -0700
+Message-ID: <AANLkTilRvvPkMpTwya7oXmwyPkvIZaYsjZnES10_P4VJ@mail.gmail.com>
+Subject: Re: Intel to also add RNG
+From: coderman <coderman@gmail.com>
+To: dahonig@cox.net
+Cc: "Perry E. Metzger" <perry@piermont.com>,
+        Peter Gutmann
+  <pgut001@cs.auckland.ac.nz>, cypherpunks@al-qaeda.net,
+        cryptography@metzdowd.com, eugen@leitl.org, benl@google.com
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3762
+Lines: 84
+
+On Tue, Jul 13, 2010 at 5:48 PM,  <dahonig@cox.net> wrote:
+>...
+> Obviously there are costs associated with a HW RNG as someone enumerated.
+ Since Intel
+> can no doubt shut it off when not used, it is free.
+
+uh, what? you realize you're comparing a very noisy but very very
+small entity against the remaining core of a modern many hundred
+million gate processor right?
+
+you can certainly disable / idle the sources when not needed, but
+really, left wide open all the time they're a drop in the bucket.
+
+
+> ...  So crypto hw will continue to be increasingly useful.
+
+it is the throughput and efficiency that makes it most useful. like
+the AES XCRYPT instruction in VIA Padlock cores. you may avoid a
+number of cache timing and other timing based side channel attacks on
+software cipher implementations using hw as well, since they often
+execute one or more rounds in a handful of cycles. there are probably
+other advantages.
+
+
+> Since the crypto cluefull would never use a single raw RNG of any kind,
+
+the crypto cluefull know the value of mixing a high throughput, easily
+managed entropy source with host and application true random number
+facilities (/dev/random, /dev/urandom, OpenSSL random engine support,
+XSTORE instruction in userspace, etc.)
+
+the key to using a hw source properly:
+1. initialize, measure, and mix the raw source(s) with a userspace
+entropy daemon.
+2. continuously sanity check the read data over a large byte span and
+remove a hardware entropy source that is not functioning within
+comfortable tolerance. FIPS does have a nice suite of checks - again,
+this can't prove your source is robust, only that it doesn't suck
+horribly and obviously. :)
+3. run the hw random data through a block cipher or hash digest to
+mask generator bias before adding to host entropy facilities with a
+conservative entropy density estimate. while the VIA and other good HW
+sources can produce very high density output i prefer at most an 80%
+estimation on input for robust distribution into the host pool as
+needed.
+4. periodically save state for use with mixing initialization in step
+#1 on next restart.
+5. monitor without writing if anomalies in the hw sources arise during
+operation. with VIA XSTORE on C5P or greater (not C5XL with single
+source) you have two independent sources which can be enabled or
+disabled as needed. on such systems you can fall back to half-rate
+throughput on the good source if the other goes bad.
+
+if you mean "raw" as in omitting all of the steps above and just
+reading /dev/hwrandom then i agree. otherwise, see above. :)
+
+
+> and would even seek to use multiple diverse conditioning algorithms, cpu
+> bandwidth allowing, a "hw" source can only help.
+
+i can get > 80Mbps of entropy on VIA hw entropy sources. have you ever
+tried to use /dev/random on a headless server? a recently booted
+workstation? for more than a few keys at a time? etc?
+
+
+> Except as someone wrote, if its the devil's hwrng, or can be clandestinely
+> switched into that mode as useful.
+
+keep secure state, properly mixed, and even a highly biased input
+would be whitened and obscured beyond utility. i'd like to see
+reasoning otherwise for XSTORE sources and XCRYPT AES mixing before
+conservatively mixed into properly seeded /dev/random kernel pool. if
+it is too biased (OpenSSL weak keys :) then the FIPS sanity checks
+will kick it out and you're denied entropy rather than compromised
+silently.
+
+it's really a shame crypto isn't standard on every DIE. although if
+they do a poor job of it the annoyance outweighs the utility. the SHA
+instruction on Padlock borders on unusable without hacks like
+interrupting the REP mode instruction with a fault/intr. so you can
+grab the un-finalized work-in-progress digest state for large
+lengths...
+
+best regards,
+

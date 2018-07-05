@@ -1,0 +1,141 @@
+From owner-cryptography+rsw=mit.edu@metzdowd.com  Fri May 16 12:12:50 2003
+Return-Path: <owner-cryptography+rsw=mit.edu@metzdowd.com>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h4GGCot06180
+	for <rsw@opamp.org>; Fri, 16 May 2003 12:12:50 -0400
+Received: from red.metdow.com (72.muf123.nycm.n54ny05r18.dsl.att.net [12.103.123.72])
+	by fort-point-station.mit.edu (8.12.4/8.9.2) with ESMTP id h4GGCmxL029375
+	for <rsw@mit.edu>; Fri, 16 May 2003 12:12:48 -0400 (EDT)
+Received: by red.metdow.com (Postfix, from userid 1002)
+	id 03706182FBD; Fri, 16 May 2003 15:57:13 +0000 (UTC)
+X-Original-To: cryptography@metzdowd.com
+Delivered-To: cryptography@metzdowd.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by red.metdow.com (Postfix) with ESMTP id EA58B182F99
+	for <cryptography@metzdowd.com>; Fri, 16 May 2003 15:57:11 +0000 (UTC)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 81163D97C5; Fri, 16 May 2003 11:57:11 -0400 (EDT)
+X-Original-To: cryptography@metzdowd.com
+Received: from mercury.ex.ac.uk (mercury.ex.ac.uk [144.173.6.26])
+	by red.metdow.com (Postfix) with ESMTP id 52D1A182F8E
+	for <cryptography@metzdowd.com>; Thu, 15 May 2003 08:56:29 +0000 (UTC)
+Received: from [144.173.6.20] (helo=cronus.ex.ac.uk)
+	by mercury.ex.ac.uk with esmtp (Exim 4.14)
+	id 19GEXM-00RaiF-8P; Thu, 15 May 2003 09:56:28 +0100
+Date: Thu, 15 May 2003 09:56:17 +0100
+From: Adam Back <adam@cypherspace.org>
+To: cypherpunks@einstein.ssz.com
+Cc: sommerfeld@orchard.arlington.ma.us, bear <bear@sonic.net>,
+   Matt Crawford <crawdad@fnal.gov>, cypherpunks@lne.com,
+   cryptography@metzdowd.com, Adam Back <adam@cypherspace.org>
+Subject: using PoW + filters to avoid false positives (Re: Re: A Trial Balloon to Ban Email?)
+Message-ID: <20030515095617.A9475477@exeter.ac.uk>
+References: <Your <Pine.LNX.4.40.0305121022230.16578-100000@bolt.sonic.net> <5.2.0.9.0.20030512183116.044db8d0@pop.ix.netcom.com> <021501c319ca$39747ed0$6701a8c0@JOSEPHAS>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <021501c319ca$39747ed0$6701a8c0@JOSEPHAS>; from ashwood@msn.com on Tue, May 13, 2003 at 08:21:16PM -0700
+Sender: owner-cryptography@metzdowd.com
+Precedence: bulk
+Status: O
+Content-Length: 5129
+Lines: 96
+
+On Tue, May 13, 2003 at 08:21:16PM -0700, Joseph Ashwood wrote:
+> From: "John Kelsey" <kelsey.j@ix.netcom.com>
+> > [...].  Anyone who is spending 1/2 sec on a reasonable
+> > machine per e-mail sent isn't likely to be spamming you, because that
+> > won't scale up very well for sending out thousands of e-mails at a 
+> > time.  The problem is that until it is widely adopted, it's not a
+> > very useful additional filter.
+
+The short term usefulness of a hashcash / PoW filter when used with
+bayesian filters (which I think is what Joseph is saying below) is
+that you are less likely to accidentally lose mail due to Bayesian
+filters.  Ideally blackhole lists should also be exempted if there is
+hashcash (they are another big source of loss of email, I've been hit
+by that a number of times).
+
+I suspect increasngly more email will be lost to filters and blackhole
+lists because the anti-spam people are becoming increasingly gung-ho
+and sweeping in their blackholing and filtering because the problem is
+accelerating out of control, so the short term function of hashcash to
+improve email reliability could be a useful extra function.
+(Estimates vary but at ASRG kick off at IETF there were some very high
+per month growth figures (10% and higher per month) for spam which
+were far in excess of (non-spam) email growth).
+
+Similarly your incentive to send hashcash in the short term is to
+avoid your own mail similarly being swallowed by blackholes and
+Bayesian filtering false positives.
+
+The limitation with blackholes is it depends on the blackhole
+implementation, some are simply refusing the TCP connection at
+firewall level; others are accepting but giving you a 500 (or whatever
+it is) response code explaining why -- but that is already too early
+for them to have read the X-Hashcash headder.  One way around that is
+to include hashcash as an ESMTP address parameter which I understand
+allows you to say things after the RCPT TO, but even that may be too
+late (if they already said go away after the HELO).
+
+Another approach but only longer term and it is debatably too
+aggressive/draconian, and in the short term has same problem as TCP
+rejection of blackholed IPs would be integration of hashcash into TCP
+like syncookie (see section 4.2 hashcash cookies of [1]) so that the
+mailer can reject port 25 connections which don't have hashcash
+tokens.  Or perhaps (less aggressively) to use a getsocketops or ioctl
+to read from the socket whether the sender is using hashcash or not.
+One problem with this approach is the PoW received by the MTA may not
+be convincing to the recipient, so there remains risk that the
+recipient could be spammed by a colluding or host compromised MTA at
+their ISP.  (You could add envelope recipient emails to the puzzle,
+but that's sufficiently SMTP related you'd just as well send it in
+SMTP).  Another integration point could be IPSEC.
+
+On the interactive connection DoS hardening side, there was a paper
+about using Juel's and Brainard's Client Puzzles [2] (which is a known
+solution puzzle where the server has to issue the challenge
+interactively) for SSL DoS hardening [3].
+
+More recently, though I haven't obtained a copy yet, Xiaofeng Wang and
+Michael Reiter have a paper about an implementation hardening the
+linux kernel TCP stack against DoS using puzzles [4], I'm presuming
+this is similar to the hashcash-cookie approach from the abstract,
+though I'm not sure which puzzle they used.  (Not sure what the puzzle
+auction mechanism is).
+
+Adam
+
+[1] Aug 02 - "Hashcash - A Denial of Service Counter Measure" (5 years
+on), Tech Report, Adam Back
+http://www.cypherspace.org/adam/hashcash/hashcash.pdf
+
+[2] Ari Juels and John Brainard. Client puzzles: A cryptographic
+countermeasure against connection depletion attacks. In Network and
+Distributed System Security Symposium, 1999. Also available as
+http://www.rsasecurity.com/rsalabs/staff/bios/ajuels/publications/client-puzzles/
+
+[3] Drew Dean and Adam Stubblefield. Using cleint puzzles to protect
+tls. In Proceedings of the 10th USENIX Security Symposium, Aug
+2001. Also available as http://www.cs.rice.edu/~astubble/papers.html
+
+[4] XiaoFeng Wang and Michael Reiter, "Defending Against
+Denial-of-Service Attacks with Puzzle Auctions", IEEE Symposium on
+Security and Privacy 2003
+http://www.computer.org/proceedings/sp/1940/19400078abs.htm
+
+Joseph Ashwood wrote:
+> I disagree. If you assume that the entire internet will eventually take up
+> on the process, start with a rule that says "if it has a hashcash token
+> don't process the other rules." Obviously at first this rule would be hit
+> rarely, but a big PR campaign surrounding it would get to people, as would
+> implementing it in Outlook. Eventually your other rules would be rarely hit,
+> and you could change them to simply discard. Once it's everywhere you can
+> begin culling the bad ones. I just don't see where the necessary overhead
+> bult into the servers will take place, or be justified.
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+

@@ -1,0 +1,107 @@
+From owner-cypherpunks@al-qaeda.net  Sat Nov  3 05:10:25 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id qA3970g3010343
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sat, 3 Nov 2012 05:07:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1351933620;
+	bh=sw6wEV+Ygsvp30wj39sU3BYe07GlTT2A8Jm2ISHadSo=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=txKETDXkPvOZVHjIhZ9Zv8bZd0YOFpcng81iDITXdFqzp6Cx9X3P0Yc30mu+qNiji
+	 tnwY8CpRXCNUeKZbNQlx7bFB4ESmeqoSV0rX7Yi7pU7g+0KiBO1uIDj5q4LfTcBmWU
+	 12YNEBAKx+ANo5UvFfdzy/wkDHp4a8HICSrn9eOg=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id qA3970wi010342
+	for cypherpunks-outgoing; Sat, 3 Nov 2012 05:07:00 -0400
+Date: Sat, 3 Nov 2012 10:06:56 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: Re: [tahoe-dev] hello
+Message-ID: <20121103090656.GR9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3278
+Lines: 73
+
+----- Forwarded message from Zooko Wilcox-O'Hearn <zooko@zooko.com> -----
+
+From: Zooko Wilcox-O'Hearn <zooko@zooko.com>
+Date: Fri, 2 Nov 2012 15:33:13 -0600
+To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+Subject: Re: [tahoe-dev] hello
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+On Tue, Oct 30, 2012 at 9:25 AM, han zheng <z.han0903@gmail.com> wrote:
+>
+> Is there a way to directly upload a local file to the "tahoe cloud" not using the web server?
+
+Tahoe-LAFS doesn't offer any API reachable from other processes
+(command-line, kernel, or remote-procedure-call) which *doesn't* route
+through the webapi. The diagram "network-and-reliance-toplogy.svg" 9
+shows this architecture. Everything goes through the "Tahoe-LAFS
+gateway", and the only API that the Tahoe-LAFS gateway exports is the
+webapi.
+
+9 https://tahoe-lafs.org/trac/tahoe-lafs/browser/docs/network-and-reliance-topology.svg
+
+Han Zheng: why do you want to upload a local file to the tahoe grid
+not using the web server?
+
+
+The way to accomplish that is to write some Python code that runs in
+the same Python process as the Tahoe-LAFS gateway. The way that I find
+easiest to do such things is to look at other code that already does
+it and copy and modify that.
+
+So, here is the code that gets run when someone makes a PUT request to
+the webapi (as described in webapi.rst 2):
+
+2 https://tahoe-lafs.org/trac/tahoe-lafs/browser/git/docs/frontends/webapi.rst?rev=05d0b8b5b9247e1d0541e58250a81df89d5c9115#writing-uploading-a-file
+
+web/root.py parses the HTTP request and decides what sort of upload
+this is (mutable or immutable):
+
+https://tahoe-lafs.org/trac/tahoe-lafs/browser/git/src/allmydata/web/root.py?annotate=blame&rev=880af4e1fd398adb290ed7cb6c56c1d2306a0481#L40
+
+Then it calls web/unlinked.py which constructs a FileHandle object.
+That object is provides the interface that the uploader expects, and
+it has a handle (open file descriptor) to the file on disk from which
+it will read the data while the data is being uploaded.
+
+https://tahoe-lafs.org/trac/tahoe-lafs/browser/git/src/allmydata/web/unlinked.py?annotate=blame&rev=3d771132a843a85578dc23a6cac55b4fae09fc64#L12
+
+Then (after an unnecessary layer of indirection that I'm skipping),
+immutable/upload.py starts doing some real work: setting the encoding
+parameters, deciding whether to literalize this immutable file, etc:
+
+https://tahoe-lafs.org/trac/tahoe-lafs/browser/git/src/allmydata/immutable/upload.py?annotate=blame&rev=3a1c02cfdfd0d7ca09037c05b5e82dd3d402df40#L1543
+
+So, if you write some Python code that invokes immutable/upload.py's
+"upload()" method, and passes an "uploadable" as the argument (note
+that in case shown above the "uploadable" is the FileHandle object
+constructed by web/unlinked.py), then you'll upload a file directly to
+the grid.
+
+Regards,
+
+Zooko
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

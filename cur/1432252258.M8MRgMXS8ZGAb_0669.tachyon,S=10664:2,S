@@ -1,0 +1,217 @@
+From cryptography-owner@c2.net  Fri Oct 20 16:35:17 2000
+Received: from MIT.EDU (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.69.0.28])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id QAA32153
+	for <kwantam@positron.mit.edu>; Fri, 20 Oct 2000 16:35:16 -0400
+Received: from blacklodge.c2.net by MIT.EDU with SMTP
+	id AA11122; Fri, 20 Oct 00 16:36:10 EDT
+Received: from localhost (daemon@localhost) by blacklodge.c2.net (8.8.8/8.7.3) with SMTP id NAA26695; Fri, 20 Oct 2000 13:35:08 -0700 (PDT)
+Received: by blacklodge.c2.net (bulk_mailer v1.11); Fri, 20 Oct 2000 13:31:03 -0700
+Received: (from majordom@localhost) by blacklodge.c2.net (8.8.8/8.7.3) id NAA26430 for cryptography-outgoing; Fri, 20 Oct 2000 13:31:02 -0700 (PDT)
+Mime-Version: 1.0
+Message-Id: <v04210103b60bd1b404ee@[24.218.56.92]>
+In-Reply-To: <4.1.20001011195157.0099edf0@pop.ix.netcom.com>
+References: <4.2.2.20001008163631.00c6cc40@shell1.shore.net>
+ <4.2.2.20001005031644.00b1a570@shell1.shore.net>
+ <4.2.2.20001004024006.00be6d60@shell1.shore.net>
+ <4.2.2.20001002220826.00bdb370@shell1.shore.net>
+ <4.2.2.20001004024006.00be6d60@shell1.shore.net>
+ <4.2.2.20001005031644.00b1a570@shell1.shore.net>
+ <4.2.2.20001008163631.00c6cc40@shell1.shore.net>
+ <4.1.20001011195157.0099edf0@pop.ix.netcom.com>
+Date: Fri, 20 Oct 2000 14:26:05 -0400
+To: John Kelsey <kelsey.j@ix.netcom.com>, Vin McLellan <vin@shore.net>
+From: "Arnold G. Reinhold" <reinhold@world.std.com>
+Subject: Paranoid Encryption Standard (was Re: Rijndael & Hitachi)
+Cc: cryptography@c2.net, cypherpunks@cyberpass.net
+Content-Type: text/plain; charset="us-ascii" ; format="flowed"
+Sender: owner-cryptography@c2.net
+Status: O
+Content-Length: 8990
+Lines: 185
+
+At 8:13 PM -0400 10/11/2000, John Kelsey wrote:
+>-----BEGIN PGP SIGNED MESSAGE-----
+>
+>At 01:44 PM 10/10/00 -0400, Arnold G. Reinhold wrote:
+>
+>...
+>>I was thinking it might be useful to define a "Paranoid
+>>Encryption Standard (PES)" that is a concatenation of all
+>>five AES finalists, applied in alphabetical order, all with
+>>the same key (128-bit or 256-bit).  If in fact RC6 is the
+>>only finalist still subject to licensing by its developer,
+>>it could be replaced by DEAL (alphabetized under "D"). Since
+>>DEAL is based on DES, it brings the decades of testing and
+>>analysis DES has received to the party.
+>
+>This basic idea is discussed in Massey and Maurer's ``The
+>Importance of Being First'' paper.  There are a couple
+>issues:
+
+I read the Massey and Maurer paper (One can find it at 
+http://www.isi.ee.ethz.ch/publications/isipap/umaure-mass-inspec-1993- 
+1.pdf  ) and I have a couple of comments on it.
+
+As I understand it, their argument goes like this: Let the 
+concatenated cipher C1*C2 applied to plaintext P be C2(C1(P)). If C2 
+is subject to attack when the plaintext it gets has certain 
+statistical properties, then it is possible for C1's ciphertext to 
+have those properties and the concatenated cipher to be less 
+resistant to statistical attack than either component.
+
+Massey and Maurer give a very simple example to show this can occur. 
+Here is a bit more realistic example: Suppose C1 simply permutes the 
+input bits and that in doing so it takes the high-order bit of each 
+plaintext byte and moves it to the first two bytes of the cipher 
+text. Suppose further plaintext blocks that have the first two bytes 
+zeroed are weak for C2. Then if C1 is fed ordinary printable ascii 
+text with no parity, the first two bytes of C1-ciphertext will be 
+zero, exposing the weakness of C2.  On the other hand, if C2 were 
+used alone on the same ascii plaintext it would never see zeros as 
+input bytes and thus would not be subject to attack.
+
+However in the case of a chosen-plaintext attack, Massey and Maurer's 
+argument does not work. In fact the proof they give of their 
+"Proposition" can easily be adapted to prove that a concatenated 
+cipher C1*...*Cn is always at least as difficult to break by 
+chosen-plaintext as *any* cipher in the concatenation.
+
+Here is an outline of the proof. Note, as they do, that the worst 
+case is when you can easily determine the key to every cipher except 
+one.  In their case it is the first cipher, in ours say it is Ci, 
+1<=i<=n.  Then any set of chosen plaintext, ciphertext pairs (PTj, 
+CTj) that results in a break of the concatenated cipher C1*...*Cn 
+can be converted in to a set of chosen plaintext, ciphertext pairs 
+(PT'j,  CT'j) that results in a break of Ci as follows (I'll use CCk 
+to denote the inverse cipher of Ck):
+
+PT'j = (C1*...*Ci-1)(PTj)
+
+CT'j = (CCi+1*...*CCn)(CTj)
+
+One might ask why this proof works in the chosen-plaintext attack but 
+not the statistical attack. The reason is that in the later,  while 
+you can still compute each PT'j, there is no reason to expect that 
+they will have the same statistical properties as the original PTj. 
+However PT'1 is always equal to PT1, so the proof does work for the 
+first cipher in the statistical attack case. That is where "the 
+importance of being first" comes from.
+
+My main question is how much weight should we give to this result in 
+designing a crypto system by combining AES candidates? Remember that 
+the AES candidates were designed to resist chosen-plaintext attack. 
+Resistance to chosen-plaintext attack is a far more stringent demand 
+on a cipher than resistance to statistical attack. And I have just 
+shown that a concatenated cipher is at least as strong as any of its 
+components against chosen-plaintext attack. So why should we even 
+consider Massey and Maurer's result? The one argument I can think of 
+goes like this:  Suppose we are wrong and all the component ciphers 
+are subject to chosen-plaintext attack and, even worse, so is the 
+concatenated cipher. The component ciphers might still be resistant 
+to statistical attack and often this is the best attackers can do, so 
+we would like the extra insurance.
+
+But in the real world of AES candidates I claim even that argument 
+should be discarded.  Massey and Maurer worry about the possibility 
+that the output of one cipher may have statistical properties that 
+cause weakness when that output is fed into the subsequent ciphers. 
+The AES candidates were designed to have outputs that appear 
+uniformly random and have all undergone extensive statistical testing 
+http://csrc.nist.gov/encryption/aes/round1/r1-rand.pdf. The have also 
+been studied for weak inputs. Thus the first cipher in the 
+concatenation can be expected to destroy patterns in the plaintext, 
+not create them. While not a mathematical proof, the results of the 
+AES candidate analysis and testing to date make it overwhelmingly 
+more likely that the concatenation of AES-candidate ciphers will in 
+fact be more resistant to statistical attack than any of the 
+individual ciphers.
+
+
+>
+>a.  The keys need to be independent.  (Otherwise, imagine if
+>cipher #1 is DES encryption, and cipher #2 is DES
+>decryption.)
+
+I don't think it is quite that clear. It might well be easier to 
+prove,  say,  that Twofish is not the inverse of MARS for the same 
+key than it is to prove the same result for separately hashed keys. 
+But again, the likelihood of two different ciphers being accidental 
+inverses is even lower than the likelihood of guessing the key 
+correctly (there are (2**n)! bijections on n-bit blocks). And NIST 
+has just released SHA-2 which provides 256 bit hashes,  so I suppose 
+we might as well use it here.
+
+
+>
+>b.  There order of the ciphers matters for the kind of
+>security proof you can do.  If you do Twofish, then
+>Rijndael, you can prove that a known-plaintext attack on
+>this system = a known plaintext attack on Twofish and a
+>chosen-plaintext attack on Rijndael.  (That is, the combined
+>system can be no easier to break than the easier of a
+>known-plaintext attack on Twofish or a chosen-plaintext
+>attack on Rijndael.)
+
+Is this the Massey and Maurer result or is there something specific 
+about these two ciphers?
+
+>
+>A smarter way to do this is to do OFB-mode or counter-mode
+>with all N ciphers.  That way, you can prove that breaking
+>the resulting cipher is equivalent to breaking OFB mode
+>encryption under all N of the ciphers.
+
+The problem with OFB is that what you get is a stream cipher and 
+that, in turn, means a unique IV for each message is required. I have 
+spent a lot of effort in my CipherSaber project teaching people how 
+to do that, and the risk of implementors getting it wrong is high. 
+I've even seen commercial products that claim to use RC4 but don't do 
+IVs. Note that IV reuse is far more catastrophic in a stream cipher 
+than it would be in a block cipher used in a feedback mode.
+
+Also OFB means that ciphertext is always bigger than plaintext (if 
+you include the IV). That prevents encryption in place, for example. 
+I'd rather have a block cipher if at all possible.
+
+So here is my draft proposal for the Paranoid Encryption Standard, 
+PES:  (P is a plaintext block and K is the user key.)
+
+PES(P) =Twofish(Serpent(MARS(DEAL(AES(P))))), where:
+
+the key for AES is SHA2(K||"Rijndael")
+the key for DEAL is SHA2(K||"DEAL")
+the key for MARS is SHA2(K||"MARS")
+the key for Serpent is SHA2(K||"Serpent")
+the key for Twofish is SHA2(K||"Twofish")
+
+The character string constants are 8-bit ascii with zero parity bit.
+
+The order of each cipher is determined alphabetically, except that I 
+obviously could have chosen to put Rijndael under "R"  instead of 
+"A."  By putting it first we can take advantage of Massey and 
+Maurer's result and state the PES is at least as strong against 
+statistical attack as AES.  The second cipher, DEAL, is based on DES, 
+which has received the most public scrutiny of any cipher. I am not 
+aware of any  statistical attack on DES inputs or any statistical 
+weaknesses in DES output that might compromise MARS.  And, as we have 
+shown above, PES is at least as resistant to chosen plaintext attack 
+as any of its components.
+
+PES is intended to address concerns that AES might have a design flaw 
+or deliberate, hidden weakness. Confidence that neither exist can 
+only come from additional years of testing and analysis.  PES, 
+because it is at least as strong as AES and incorporates the 
+strengths of  four other AES design teams and the decades of work on 
+DES, might be a better choice for very high value messages, where 
+encryption time is not an issue.
+
+Some other comments I have received urged the use of salt.  Salt is 
+very important is overall system design, but it is not part of the 
+cipher per se.  As I mentioned in my earlier post, RC6 is not being 
+used because it still requires licensing. No criticism of RC6 or its 
+owner's decision to retain commercial licensing rights is intended.
+
+FWIW
+
+Arnold Reinhold
+

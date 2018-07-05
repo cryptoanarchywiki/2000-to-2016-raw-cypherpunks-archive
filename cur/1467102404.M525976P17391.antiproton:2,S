@@ -1,0 +1,145 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u5S8NsOl017368;
+	Tue, 28 Jun 2016 04:23:54 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=Bb6Fphfj;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-vk0-f53.google.com (mail-vk0-f53.google.com
+ [209.85.213.53])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u5S8NpAi017363
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Tue, 28 Jun 2016 04:23:53 -0400
+Received: by mail-vk0-f53.google.com with SMTP id c2so12213270vkg.1
+ for <cypherpunks@cpunks.org>; Tue, 28 Jun 2016 01:23:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to;
+ bh=9aKUWEope6l2QXfT3I7AUVHGsKoaTOazVQ0ohO93h1Y=;
+ b=Bb6FphfjAGarUk4N+F1DG18iy9r514CBqDgTaPCg/iYPB+/vcbdgBPAqJUe2Rngn6y
+ RWhqAj51mXSWBkgL7ot+JfBCx1mk6KqO+/ud9sRkj8AfpwfARJQj0SddWxXyvTawZ+8y
+ Q8Rbc3VBmzOhbUaFAxWn3V4uq0/HahXzUzQxbw/H0YEWD9VHeaYXnlPJyy6ncJp9iCIY
+ 11ikDbfi1F90inc4TdaN3/nK3BUZa2mIl7LHx3OyI0eaEp+9QikDQwh0EEV0AAbzvi+b
+ 5Yjux9AYN9ISvZqVRG581ZAUow5aRWFCZl14QuPxXsVBgaagWjrKeAJbzC3tCvg2h9Nu
+ vnZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to;
+ bh=9aKUWEope6l2QXfT3I7AUVHGsKoaTOazVQ0ohO93h1Y=;
+ b=ma1bwqIx6+pv7PKGCCdYWVA7rT9slAMopNDgXhhBcn8RUXbl+d8frQUGNitoBHNQQo
+ B82BxyBg0fs5msv+/jeM8bQ2+UKc6y9bVNXsAMlo0L2XWmWeo3RVVVSF7M1DIBPlIjIm
+ m1Iz7JYIT0H9QvT2j4m1o94niUKfaU4MMLfDOKTBORXKvd+JXy+JnveePYZk+w0h3YkO
+ W4wVCj2Y/qibIZg7+X5qP3egPAipQsOmfUbb3I0RcJsRnTpZOM8NQgOG1SFCRqwhPbQ5
+ pCGNWok6MWNFv5FndAlGXuNameZWd2Hp3i9lSsTvK/l3nOLhZiOXpXE+l0BtujxZJmLW
+ sELw==
+X-Gm-Message-State: ALyK8tLG041VBmNlj4Cr99k5OOjy0EGkXRTCOpztf/WjSVx7Uss83jfWjc5T6pzXPXEphRNB+2RA2PU71+gQWA==
+MIME-Version: 1.0
+X-Received: by 10.176.1.17 with SMTP id 17mr567107uak.154.1467102225818; Tue,
+ 28 Jun 2016 01:23:45 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Tue, 28 Jun 2016 01:23:45 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Tue, 28 Jun 2016 01:23:45 -0700 (PDT)
+In-Reply-To: <57721FEE.4070407@riseup.net>
+References: <CAG2tMp4_AFAvpJc-6mzaCgfMVZjqbNdJyw+oZm-y+6ra2KCk+A@mail.gmail.com>
+ <CAG2tMp7oJmTUoRU1RME4mei_LerBQ=m5LmerJs-u+xL31sV8ug@mail.gmail.com>
+ <CAG2tMp513NmS4gcBZhM2JAxNGkpRr7c=JsZL+wQpEwCqsK7QdA@mail.gmail.com>
+ <CAG2tMp52AKKv+KiuwKBwA6iQGMVGuG=1AabtPGJuPPCjyvEFaA@mail.gmail.com>
+ <CAG2tMp40-3DpsEx=6Z5+XjoVKR7oCqQBJqxNSHaqPejOcBZN4A@mail.gmail.com>
+ <CAG2tMp5EWsXDPKcU_goW=ApqRdNFdEqMX3r05KfrEYsijgtfqA@mail.gmail.com>
+ <CAG2tMp77DA1Dwbz_Cq_A3yo2Th+NH6A2gp+D0Q=3ERgpM8RUgQ@mail.gmail.com>
+ <CAG2tMp7Fj73uvndcSLG3JqgM+x8P5DFNiZhOq3BYaYYxqs=X-Q@mail.gmail.com>
+ <CAG2tMp5t9Po62LYcAOJFvopjaeYQgQY4KpqaSkDqniX5ePoVTQ@mail.gmail.com>
+ <CAG2tMp64E2enGMFxO+Q2P44zmm-KbkAnjtWf4xhMbO5rDFaS+g@mail.gmail.com>
+ <CAG2tMp4iwP8vVW5qo-2h62km8ceZ_akrJCqKY+kaw47_3av-AA@mail.gmail.com>
+ <CAG2tMp6gygObFZvLY41H7jVjP27w-1ikBPUe7gE5t2ns35N+kg@mail.gmail.com>
+ <5771DEBD.7000803@riseup.net>
+ <CAG2tMp5us0ZWyeN6=kmdzapZN-UuXCnGtBrXFWhthHcQR5J3oQ@mail.gmail.com>
+ <5772067B.5090701@pilobilus.net> <57721FEE.4070407@riseup.net>
+Date: Tue, 28 Jun 2016 05:23:45 -0300
+Message-ID: <CAG2tMp7Eu0niKjCX_tvc40MsO9qvV1DDt0=PQTSV9-QzuzaQJQ@mail.gmail.com>
+Subject: Re: [OT] Five Simple Rules
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=001a113cfa7004ea0b0536525bc8
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 68
+
+--001a113cfa7004ea0b0536525bc8
+Content-Type: text/plain; charset=UTF-8
+
+The truth, the whole truth, and nothing but the truth, my dear Mirimir.
+Thank you, sweetie!  :*
+
+Small hours soundtrack:  Gershwin Brothers, The Beach Boys and Henry
+Mancini.  My old grumpy lady selection while reading lots of books and
+links at same time, hihi...  ;)
+On Jun 28, 2016 4:10 AM, "Mirimir" <mirimir@riseup.net> wrote:
+
+> On 06/27/2016 11:09 PM, Steve Kinney wrote:
+> > On 06/27/2016 11:06 PM, Cecilia Tanaka wrote:
+> >
+> [Mirimir wrote]
+> >>> There is no truth. You can only know what's probably not true.
+> >>
+> >> No truth.  It hurts.  And it is probably true.  :(
+> >
+> > What is truth?
+>
+> Well, Cecilia posted about science, and I was also talking about the
+> concept of truth in science.
+>
+> See http://plato.stanford.edu/entries/popper/
+>
+> <SNIP>
+>
+>
+
+--001a113cfa7004ea0b0536525bc8
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p>The truth, the whole truth, and nothing but the truth, my dear Mirimir.=
+=C2=A0 Thank you, sweetie!=C2=A0 :*</p>
+<p>Small hours soundtrack:=C2=A0 Gershwin Brothers, The Beach Boys and Henr=
+y Mancini.=C2=A0 My old grumpy lady selection while reading lots of books a=
+nd links at same time, hihi...=C2=A0 ;)</p>
+<div class=3D"gmail_quote">On Jun 28, 2016 4:10 AM, &quot;Mirimir&quot; &lt=
+;<a href=3D"mailto:mirimir@riseup.net" target=3D"_blank">mirimir@riseup.net=
+</a>&gt; wrote:<br type=3D"attribution"><blockquote class=3D"gmail_quote" s=
+tyle=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">On 0=
+6/27/2016 11:09 PM, Steve Kinney wrote:<br>
+&gt; On 06/27/2016 11:06 PM, Cecilia Tanaka wrote:<br>
+&gt;<br>
+[Mirimir wrote]<br>
+&gt;&gt;&gt; There is no truth. You can only know what&#39;s probably not t=
+rue.<br>
+&gt;&gt;<br>
+&gt;&gt; No truth.=C2=A0 It hurts.=C2=A0 And it is probably true.=C2=A0 :(<=
+br>
+&gt;<br>
+&gt; What is truth?<br>
+<br>
+Well, Cecilia posted about science, and I was also talking about the<br>
+concept of truth in science.<br>
+<br>
+See <a href=3D"http://plato.stanford.edu/entries/popper/" rel=3D"noreferrer=
+" target=3D"_blank">http://plato.stanford.edu/entries/popper/</a><br>
+<br>
+&lt;SNIP&gt;<br>
+<br>
+</blockquote></div>
+
+--001a113cfa7004ea0b0536525bc8--
+

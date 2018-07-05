@@ -1,0 +1,110 @@
+From owner-cypherpunks@al-qaeda.net  Tue Aug 16 01:59:58 2011
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id p7G5urwA009312
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 16 Aug 2011 01:56:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1313474213;
+	bh=WYROY0AWMrHiaiP8wqnb6nei9lYZwnzHYpVeGf64WNs=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=JvNOHM1c+BRAFco4lN7dn4LowPXswd8zF3O7NhwvVfD4uL7GAsLgq6YjN1IMD441H
+	 Y4BDg71leRIXCNmYc9aRs7XEioB3KG9ONVmarlp6imS4p/8vSL7Cd3OfEAKbYxv3qD
+	 JzOfGaIT2h3OHKkNITJ+TLd+eJ6Osr/LFkO7J820=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id p7G5urrA009311
+	for cypherpunks-outgoing; Tue, 16 Aug 2011 01:56:53 -0400
+Date: Tue, 16 Aug 2011 00:56:45 -0500 (CDT)
+From: "J.A. Terranson" <measl@mfn.org>
+To: cypherpunks@al-qaeda.net
+Subject: Re: [cryptography] [cicm] CICM Scope (fwd)
+Message-ID: <Pine.LNX.4.64.1108160056331.12620@mx1.mfn.org>
+X-ABUSE-NOTICE\: NOTIFY POSTMASTER FOR ABUSE ISSUES
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+---------- Forwarded message ----------
+Date: Tue, 16 Aug 2011 04:41:49 +0200
+From: Alfonso De Gregorio <adg@crypto.lo.gy>
+Reply-To: Crypto discussion list <cryptography@randombit.net>
+To: CICM Discussion List <cicm@ietf.org>
+Cc: "cryptography@randombit.net" <cryptography@randombit.net>
+Subject: Re: [cryptography] [cicm] CICM Scope
+
+Lev,
+
+On Mon, Aug 15, 2011 at 11:19 PM, Novikov, Lev <lnovikov@mitre.org> wrote:
+> (Cross-posted on the Cryptography mailing list at randombit.net)
+>
+> I've been doing a bit of reading based on the comments we've received.
+>
+> The results of the BOF at IETF 81 suggested we should broaden our
+> scope and discuss the impact of the CICM Model, particularly Security
+> Domain Separation, on (2 or more) existing IETF protocols.
+>
+> Here are the suggestions we've heard to-date (in no particular order):
+>  * IPsec (suggested by almost everyone)
+>  * TLS (via Paul Hoffman, David McGrew)
+>  * AEAD (in RFC 5116; via David McGrew)
+>  * VPN establishment crypto protocols (via Alfonso De Gregorio)
+>  * Domain Security Services (as in RFC 3183; via Alfonso De Gregorio)
+>
+> ** Alfonso:
+>  Can you elaborate on which protocols you had in mind regarding VPN?
+>
+> It seems clear that, at the very least, we should look at IPsec.
+
+Absolutely. Thanks for asking.
+
+IPsec is the most natural protocol we should look at, indeed.
+
+In my opinion, the Secure Shell Connection Protocol (RFC 4254) is also
+to be consider among the (de-facto) VPN establishment crypto
+protocols, if we consider its most popular implementation. Let me
+elaborate why this is the case.
+
+As we know, the SSH protocol doesn't provide a VPN establishment
+mechanism built-in. However, at the connection layer the IETF standard
+defines the channel mechanism and specify the first four basic channel
+types. Real world implementations have the possibility to build upon
+this mechanism extending the protocol to accommodate new use cases.
+
+This is what OpenSSH did with the tunnel forward extension. As of
+version 4.3, OpenSSH supports layer 2 and layer 3 tunnelling via the
+"tun@openssh.com" channel type. On network endpoints equipped with
+pseudo-device interface like the BSD tun(4), this extended channel
+type allows to forward layer 2 frames and layer 3 packets back and
+forth, and hence to establish an encrypted VPN connections.
+
+
+Building on the above, there is yet another IETF protocol that we
+might want to consider in order to discuss the impact of CICM Model
+and it is iSCSI (RFC 3720).
+
+If we try to frame a CICM-enabled-iSCSI endpoint in the use cases
+detailed in draft-lanz-cicm-lm, we would find it related to both the
+HAIPE and the data-at-rest cases.
+
+iSCSI uses the IPsec mechanism for providing integrity, authentication
+and confidentiality at the IP level between the initiator and the
+target (RFC 3723). Here, considerations originating from to the
+presence of queues (e.g., latency) may be especially relevant.
+
+At the same time, the data-at-rest use case is also relevant, when we
+relax the architectural constraints, moving the cryptographic-module
+interface to the storage from a local bus to the network.
+
+
+Cheers,
+
+-- alfonso     blogs at http://Plaintext.crypto.lo.gy   tweets @secYOUre
+_______________________________________________
+cryptography mailing list
+cryptography@randombit.net
+http://lists.randombit.net/mailman/listinfo/cryptography
+

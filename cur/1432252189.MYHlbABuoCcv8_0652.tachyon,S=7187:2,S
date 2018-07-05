@@ -1,0 +1,145 @@
+From owner-cypherpunks@al-qaeda.net  Fri Feb 22 07:39:19 2013
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id r1MCVE4q008740
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 22 Feb 2013 07:31:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1361536274;
+	bh=Ce19DOgIYT3oU3CDwZMfz2oktCyDUCHllz1XmQ8RWIE=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=R33gJLEO03kx326P8nezLD2h0fwCH1naCuGywW4W2xzN4b7Tjoz8kDqw02xkWCsOh
+	 45NXY3zSfqePNlDWVAWC3W9xcO0tKdv3uLjJz616IKuYIP+1h5mNK9W+onPtISyY13
+	 sm+3Gz4lO/Jx2rA068v5WkrqrfRpVeMelyOyUrtk=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id r1MCVEDx008739
+	for cypherpunks-outgoing; Fri, 22 Feb 2013 07:31:14 -0500
+Date: Fri, 22 Feb 2013 13:31:11 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: Re: NYT covers China cyberthreat
+Message-ID: <20130222123111.GV6172@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5782
+Lines: 113
+
+----- Forwarded message from Rich Kulawiec <rsk@gsp.org> -----
+
+From: Rich Kulawiec <rsk@gsp.org>
+Date: Thu, 21 Feb 2013 11:00:24 -0500
+To: nanog@nanog.org
+Subject: Re: NYT covers China cyberthreat
+User-Agent: Mutt/1.5.20 (2009-06-14)
+
+On Thu, Feb 21, 2013 at 01:34:13AM +0000, Warren Bailey wrote:
+> I can't help but wonder what would happen if US Corporations simply
+> blocked all inbound Chinese traffic. Sure it would hurt their business,
+> but imagine what the Chinese people would do in response.
+
+Would it hurt their business?  Really?
+
+Well, if they're eBay, probably.  If they're Joe's Fill Dirt and
+Croissants in Omaha, then probably not, because nobody, NOBODY in China
+is ever actually going to purchase a truckload of dirt or a tasty
+croissant from Joe.  So would it actually matter if they couldn't
+get to Joe's web site or Joe's mail server or especially Joe's VPN server?
+Probably not.
+
+Nobody in Peru, Egypt, or Romania is likely to be buying from Joe
+any time soon either.
+
+This is why I've been using geoblocking at the network and host levels
+for over a decade, and it works. But it does require that you make an
+effort to study and understand your own traffic patterns as well as your
+organizational requirements. [1]
+
+I use it on a country-by-country basis (thank you ipdeny.com) and
+on a service-by-service basis: a particular host might allow http
+from anywhere, but ssh only from the country it's in.  I also
+deny selected networks access to selected services, e.g., Amazon's
+cloud doesn't get access to port 25 because of the non-stop spam
+and Amazon's refusal to do anything about it.  Anything on the
+Spamhaus DROP or EDROP lists (thank you Spamhaus) is not part
+of my view of the Internet.  And so on.  Combined, all this
+achieves lossless compression of abusive traffic.
+
+This is not a security fix, per se; any services that are vulnerable
+are still vulnerable.  But it does cut down on the attack surface as
+measured along one axis, which in turn reduces the scope of some
+problems and renders them more tractable to other approaches.
+
+An even better approach, when appropriate, is to block everything
+and then only enable access selectively.  This is a particularly
+good idea when defending things like ssh.  Do you *really* need to
+allow incoming ssh from the entire planet?  Or could "the US, Canada,
+the UK and Germany" suffice?  If so, then why aren't you enforcing that?
+Do you really think it's a good idea to give someone with a 15-million
+member global botnet 3 or 5 or 10 brute-force attempts *per bot*
+before fail2ban or similar kicks in?  I don't.  I think 0 attempts per
+most bots is a much better idea.  Let 'em eat packet drops while they
+try to figure out which subset of bots can even *reach* your ssh server.
+
+Which brings me to the NYTimes, and the alleged hacking by the Chinese.
+Why, given that the NYTimes apparently handed wads of cash over to
+various consulting firms, did none of those firms get the NYTimes to
+make a first-order attempt at solving this problem?  Why in the world
+was anything in their corporate infrastructure accessible from the 2410
+networks and 143,067,136 IP addresses in China?  Who signed off on THAT?
+
+(Yes, yes, I *know* that the NYTimes has staff there, some permanently
+and some transiently.  A one-off solution crafted for this use case
+would suffice.  I've done it.  It's not hard.  And I doubt that
+it would need to work for more than, what, a few dozen of the NYTimes'
+7500 employees?  Clone and customize for Rio, Paris, Moscow, and
+other locations.  This isn't hard either.  Oh, and lock it out of
+everything that a field reporter/editor/photographer doesn't need,
+e.g., there is absolutely no way someone coming in through one of
+those should be able to reach the subscriber database.)
+
+Two more notes: first, blocking inbound traffic is usually not enough.
+Blocks should almost always be bidirectional. [2]  This is especially
+important for things like the DROP/EDROP lists, because then spam
+payloads, phishes, malware, etc. won't be able to phone home quite
+so readily, and while your users will still be able to click on
+links that lead to bad things...they won't get there.
+
+Second, this may sound complex.  It's not.  I handle my needs with
+make, rsync, a little shell, a little perl, and other similar tools,
+but clearly you could do the same thing with any system configuration
+management setup.  And with proper logging, it's not hard to discover
+the mistakes and edge cases, to apply suitable fixes and temporary
+point exceptions, and so on.
+
+---rsk
+
+[1] 'Now, your typical IT executive, when I discuss this concept with
+him or her, will stand up and say something like, "That sounds great,
+but our enterprise network is really complicated. Knowing about all the
+different apps that we rely on would be impossible! What you're saying
+sounds reasonable until you think about it and realize how absurd it
+is!" To which I respond, "How can you call yourself a 'Chief Technology
+Officer' if you have no idea what your technology is doing?" A CTO isn't
+going to know detail about every application on the network, but if you
+haven't got a vague idea what's going on it's impossible to do capacity
+planning, disaster planning, security planning, or virtually any of the
+things in a CTO's charter.'  --- Marcus Ranum
+
+[2] "We were so concerned with getting out that we never stopped to
+consider what we might be letting in, until it was too late."
+
+Let's see who recognizes that one. ;-)
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

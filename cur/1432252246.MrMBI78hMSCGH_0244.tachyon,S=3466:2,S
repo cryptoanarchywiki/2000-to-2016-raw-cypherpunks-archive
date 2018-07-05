@@ -1,0 +1,80 @@
+From owner-cypherpunks@al-qaeda.net  Thu Nov  5 10:59:35 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id nA5FxMr1013570
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 5 Nov 2009 10:59:22 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id nA5FxMEU013569
+	for cypherpunks-outgoing; Thu, 5 Nov 2009 10:59:22 -0500
+Message-Id: <439C30E6-F1C1-42B8-8D82-E30A25BF3BEA@shipwright.com>
+From: "R.A. Hettinga" <rah@shipwright.com>
+To: Gold Silver Crypto <gold-silver-crypto@rayservers.com>,
+        cypherpunks@al-qaeda.net, Cryptography <cryptography@metzdowd.com>
+Content-Type: text/plain; charset=WINDOWS-1252; format=flowed; delsp=yes
+Content-Transfer-Encoding: 7bit
+Subject: SSL: Another Protocol Bites The Dust
+Mime-Version: 1.0 (Apple Message framework v936)
+Date: Thu, 5 Nov 2009 11:59:18 -0400
+X-Mailer: Apple Mail (2.936)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2288
+Lines: 53
+
+<http://www.links.org/?p=780>
+
+Links
+
+
+Ben Laurie blathering
+
+
+Another Protocol Bites The Dust
+
+For the last 6 weeks or so, a bunch of us have been working on a
+really serious issue in SSL. In short, a man-in-the-middle can use SSL
+renegotiation to inject an arbitrary prefix into any SSL session,
+undetected by either end.
+
+To make matters even worse, through a piece of (in retrospect)
+incredibly bad design, HTTP servers will, under some circumstances,
+replay that arbitrary prefix in a new authentication context. For
+example, this is what happens if you configure Apache to require
+client certificates for one directory but not another. Once it emerges
+that your request is for a protected directory, a renegotiation will
+occur to obtain the appropriate client certificate, and then the
+original request (i.e. the stuff from the bad guy) gets replayed as if
+it had been authenticated by the client certificate.
+
+But it hasnt.
+
+Not that the picture is all rosy even when client certificates are not
+involved. Consider the attacker sending an HTTP request of his
+choosing, ending with the unterminated line X-Swallow-This: . That
+header will then swallow the real request sent by the real user, and
+will cause any headers from the real user (including, say,
+authentication cookies) to be appended to the evil request.
+
+Its obviously going to take a little while for the world to patch
+this  and since the news is spreading like wildfire Ive put up a
+patch to OpenSSL that bans all renegotiation. Im sure an official
+release will follow very shortly.
+
+Note that the patch is against the head of the OpenSSL 0.9.8
+development tree (that is, it is against 0.9.8l-dev). You may have to
+do a little work to patch against other versions. And if you intend to
+deploy this patch permanently, please change at least the textual
+version of the version number, which you can find in crypto/
+opensslv.h. Also note that if you need renegotiation for your site to
+work, I have no solution for you, other than you redesign your site.
+Sorry.
+
+Share This
+This entry was posted on Thursday, November 5th, 2009 at 8:03 and is
+filed under Crypto, Open Source, Security. You can follow any
+responses to this entry through the RSS 2.0 feed. You can leave a
+response, or trackback from your own site.
+

@@ -1,0 +1,186 @@
+From owner-cypherpunks@lne.com  Fri Dec 12 03:30:05 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p3/8.11.6-03-31-03) with ESMTP id hBC8U1Y05656
+	for <rsw@jfet.org>; Fri, 12 Dec 2003 03:30:02 -0500
+Received: from slack.lne.com (slack.lne.com [127.0.0.1])
+	by slack.lne.com (8.12.10/8.12.10) with ESMTP id hBC8Gm4g012772
+	(version=TLSv1/SSLv3 cipher=EDH-DSS-DES-CBC3-SHA bits=168 verify=NO)
+	for <cypherpunks-goingout345@slack.lne.com>; Fri, 12 Dec 2003 00:16:48 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.10/8.12.10/Submit) id hBC8GmRC012771
+	for cypherpunks-goingout345; Fri, 12 Dec 2003 00:16:48 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Fri, 12 Dec 2003 09:16:39 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: transhumantech@yahoogroups.com, cypherpunks@lne.com
+Subject: Re: [linux-elitists] Monday 15 Dec: first all-Open Source
+  System-on-Chip (fwd from schoen@loyalty.org)
+Message-ID: <20031212081639.GR13099@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+User-Agent: Mutt/1.4i
+X-Converted-To-Plain-Text: from multipart/signed by demime 0.97c
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 7622
+Lines: 153
+
+----- Forwarded message from Seth David Schoen <schoen@loyalty.org> -----
+
+From: Seth David Schoen <schoen@loyalty.org>
+Date: Thu, 11 Dec 2003 23:32:31 -0800
+To: Jason Spence <jspence@lightconsulting.com>
+Cc: linux-elitists@zgp.org
+Subject: Re: [linux-elitists] Monday 15 Dec: first all-Open Source
+	System-on-Chip
+User-Agent: Mutt/1.5.4i
+
+Jason Spence writes:
+
+>  - Really fast PKI crypto on a dedicated processor for ipsec type
+>    stuff
+
+I don't think the TCG TPM is the really fast processor you're looking
+for; from all accounts I've heard, it's really rather slow.
+
+>  - Provide a trusted "hypervisor" or "ring -1" environment from which
+>    authorized code can spy on the operating system and make sure it's
+>    not running any reverse engineering tools or known cracks before
+>    the authorized code can install itself or download privileged data
+>    like strictly licensed content or restricted documents, etc
+
+I don't think "spy on the operating system" is quite the right term.
+It might be better to say "prove that the relevant parts of the
+operating system, if any, are completely unmodified".  There is no
+intrinsic value judgment and there is also no attempt to identify
+particular _ways_ of modifying the operating system as "bad".  At the
+same time, you can also try to reduce the privilege of the operating
+system to affect certain things, so that it may not matter to certain
+secure operations whether the operating system is compromised or not.
+
+>  - Protected cert store in hardware that is somehow immune or
+>    resistent to tampering (I don't completely understand how this
+>    can't be attacked by patching the nexus on the hard disk; I'm
+>    learning more about it)
+
+There is an ingenious thing called a platform configuration register
+(PCR) that contains hashes of running code.  The hardware is designed
+in a such a way that, if the PCRs are used at all, at least the first
+PCR will accurately reflect the code first loaded and to which control
+was first transferred.
+
+Because of the way the hardware is set up, if you load different code
+(a different or modified nexus, for example), the PCR values are
+guaranteed to be different.
+
+To put this a different way, the hardware has (minimal, but
+security-relevant) knowledge of what software is running.  If
+different software is running -- for whatever reason -- the PCR values
+will be different.
+
+The encryption and decryption keys for the seal and unseal operation
+are derived by hashing the PCRs, and the PCRs are derived by hashing
+running code.  There is supposed to be no way to get arbitrary values
+into PCRs (which is actually an oversimplification, but you can
+pretend it's true) and so you can choose not to use them at all, but
+you can't choose to load values into them that precisely correspond to
+the values they would have been loaded with if you had booted an
+operating environment other than the operating environment you
+actually did boot.
+
+Therefore, the _availability_ of a valid encryption or decryption key
+inside the TPM -- to make an unseal operation work properly -- depends
+on what software is really running.  You can have many different
+operating environments installed on a single PC -- differing by a
+little or a while -- and in principle they cannot unseal one another's
+sealed data at all, because each one has its own family of PCR values
+that results when it's booted.
+
+> I write a worm.  It's a nasty little bugger.  It pokes around your
+> machine and your network for anything that looks like a credit card
+> number.  It's allowed to install itself in the protected memory area
+> because it's ostensibly a popup blocker or spam blocker or something
+> and I got it certified by NGSCB or whoever'll be in charge of handing
+> out signatures.
+
+There is no central CA necessarily implied by NGSCB.  Loading these
+applets should require some kind of user decision and should not be
+automatic based on presentation of a certificate.
+
+The trusted computing applets are not supposed to have direct access
+to any hardware (except that they can take input directly from the
+keyboard when no other process is doing so, and they can write output
+directly to the video framebuffer).  That is the NGSCB model.  So they
+can't themselves directly "poke around your machine and your network";
+they would need to have an ordinary (unencrypted) user-space agent
+that does that.  In priciple, it should be possible to detect and
+interfere with the operation of that agent by standard anti-virus or
+IDS techniques.  If there is some reason that the user-space agent
+can't be disrupted or detected -- which I don't imagine is the case --
+then you have a severe problem.  But note that the trusted computing
+applet can't authenticate the identity of the user-space agent code.
+
+> It joins a p2p network of other worms which can't be spied upon
+> because the crypto keys are located in curtained memory and since your
+> debugger doesn't have access to curtained memory, you can't get a copy
+> of them.
+
+This part seems very possible.
+
+> You can't get a copy of the destination addresses that your
+> credit card numbers are being sent to either, because those are also
+> located in curtained memory.
+
+Since the worm applet needs to use regular operating system services
+to access the network, and since your computer is connected to a
+network you can observe, you should be able to see the IP addresses of
+the peers -- you can just run netstat, or you can run a sniffer, or a
+firewall that monitors connection requests.  You can tell who the
+peers are.  Of course, the worm can conceivably conceal where the
+_ultimate_ destination is, if the worm network is a store-and-forward
+kind of network.  In fact, the attacker who wrote the worm can join
+the worm network in a way that looks like just another infected peer
+-- but unlike other peers, the worm author can decrypt the messages
+from all the other worms and make use of them.  (But that can be done
+today.  Just have worms join an IRC channel and post data there
+encrypted with some public key.  The worm author can join the same
+channel -- pretending to be another infected victim -- and log what
+gets posted there, and then decrypt it with the corresponding private
+key.)
+
+> Oh yeah, and it'll fire up your modem
+> and wardial for fax machines and randomly fax the credit card numbers
+> around too, just because I like to be a pain in the ass.
+
+I'm told there is a scheme like this in Europe now where people are
+unwittingly calling the equivalent of 900 numbers.
+
+But remember that in NGSCB the code in curtained memory can't access
+the modem -- it needs to rely on a user-space agent to ask the OS to
+do that.  The OS could still enforce a policy saying that the agent
+can't actually access the modem, or the agent could still be detected
+by an antivirus program.
+
+--
+Seth David Schoen <schoen@loyalty.org> | Very frankly, I am opposed to people
+     http://www.loyalty.org/~schoen/   | being programmed by others.
+     http://vitanuova.loyalty.org/     |     -- Fred Rogers (1928-2003),
+                                       |        464 U.S. 417, 445 (1984)
+_______________________________________________
+linux-elitists
+http://zgp.org/mailman/listinfo/linux-elitists
+
+----- End forwarded message -----
+-- Eugen* Leitl <a href="http://leitl.org">leitl</a>
+______________________________________________________________
+ICBM: 48.07078, 11.61144            http://www.leitl.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+http://moleculardevices.org         http://nanomachines.net
+
+[demime 0.97c removed an attachment of type application/pgp-signature]
+

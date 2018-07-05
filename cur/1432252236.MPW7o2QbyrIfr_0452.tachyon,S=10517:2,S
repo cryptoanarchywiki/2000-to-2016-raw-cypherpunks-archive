@@ -1,0 +1,209 @@
+From owner-cypherpunks@al-qaeda.net  Tue Aug  7 10:07:31 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q77E29Dv011207
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 7 Aug 2012 10:02:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1344348129;
+	bh=t9tt9O9lSdEmwYv27fYO6xv86mg6AG3IYrWFbwJRxs4=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=XfFYrk7R5YAKYR7xZY2CelbQWC/cCstE5f0h7pxlavVTJifMkEEnlsonfcag3ZcLL
+	 LC+xAVs6A/QgHyUqbYGhTZXg6tbYxbnSqXnZ3UMU11MBYkZZuhNW8XYE8S9wRzTnf9
+	 NULKehwcQeqp28hnjlnfyq//0D483Rhh2zucx3P4=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q77E296o011206
+	for cypherpunks-outgoing; Tue, 7 Aug 2012 10:02:09 -0400
+Date: Tue, 7 Aug 2012 16:02:06 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: [liberationtech] What I've learned from Cryptocat
+Message-ID: <20120807140206.GL12615@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Tom Ritter <tom@ritter.vg> -----
+
+From: Tom Ritter <tom@ritter.vg>
+Date: Tue, 7 Aug 2012 09:30:52 -0400
+To: Moxie Marlinspike <moxie@thoughtcrime.org>,
+	liberationtech@lists.stanford.edu
+Subject: Re: [liberationtech] What I've learned from Cryptocat
+
+I agree with a lot of the points being raised, including all of
+Moxie's (especially about Google v Riseup) but also Eleanor's
+regarding niche products and irrelevancy.
+
+In particular I want to expand on this bit:
+
+On 6 August 2012 22:29, Moxie Marlinspike <moxie@thoughtcrime.org> wrote:
+> Let's stop using the word "plaintext," because my understanding is that
+> none of the chat services we're speaking of transmit data in the clear.
+>  As I see it, there are currently three possible vectors for attack with
+> "existing" web-based chat services:
+>
+> 1) SSL interception.
+> 2) Server compromise.
+> 3) Server operator.
+>
+> The technology in CryptoCat v1 does not address any of these three
+> vectors, and all of them remain possible.  My position is that it's
+> actually more susceptible to attack via #1 and #2 than existing
+> web-based chat solutions.
+
+I agree with that position wholeheartedly.
+
+Still, possible does not equate to easy.  Cryptocat is the Jackie
+Robinson of Web Crypto Services[0].  And not to fault Nadim, as this
+is a volunteer effort, but there is more it can and should do to make
+it harder for #1 - just as Google and Facebook have done.
+
+ - Cryptocat should use DNSSEC - even if validating resolvers are not
+deployed, it's another piece.  Maybe down the road when a binary
+plugin is developed, it can validate the DNSSEC chain.[1]
+ - It should Pin certificates in Chrome.  As soon as the header is
+supported in any other browser it should use it.  Same with TACK.
+ - It should assert the SSL certificate with both DANE and
+DNSSEC-Stapled Certificates
+ - It should (it does for the record, just saying) use Strict Transport Security
+ - It should (it now does as of Sunday) deploy Content Security Policy
+ - It should do all the other security techniques recommended:
+x-frame-options, X-Content-Type-Options, etc
+ - Where it is possible, plugins should assert the validity of the Code and Keys
+ - Controversial: It should use per-request mutated javascript
+obfuscation to make it more difficult to inline-middle the application
+in realtime[2]
+ - It could experiment with browser enhancements to provide signed
+javascript files and so on
+
+All of those are not too difficult for an individual to try, and it
+makes SSL Interception harder.  It's not any less possible, but it
+raises the bar.  If you think these techniques aren't effective - I
+challenge you to do a live MITM of the gmail interface and have it
+still function seemlessly.  It just flat-out won't work in Chrome of
+course, but even in Firefox - it is not trivial.[4]  That's what I
+mean by being Jackie Robinson - you just have to be 'better'.  Above
+and beyond.
+
+Trying to fix #2 is way, way harder because it's just impractical to
+tell someone "Oh, compile everything from source, run a perfectly
+secure Linux box with PaX and grsecurity, etc etc"  Ideally, that's
+what we'd have.  I suppose the important part is to acknowledge the
+risk of server compromise, and keep the bars approximately equal.  If
+all the above measures were employed, but the server left the way it
+was - then rooting the box is absolutely easier.  Google and Facebook
+have a huge advantage here.
+
+
+[0] If you don't get the reference, Jackie Robinson broke the
+segegration barrier in US baseball - he was spit, cursed, threatened
+with murder, had pitches thrown at his head - and through it all, he
+just played the game steadfastly. There's an urban legend (I'm unsure
+on it's truth) that his contract stated he couldn't complain, even
+when fans spit on him.
+[1] If your arguement is 'I don't trust DNSSEC' my response is 'Me
+neither, but I believe in beaurcracy and turf wars and that it'd be
+more difficult for a government to subvert two PKIs than one.'
+[2] If your arguement against it is "but then I can't audit it" my
+argument is "you don't audit it now." If your argument is still "I
+can't trust the code delivered" my response is "well, since you
+obviously are doing local SSL interception to read the server
+responses, hash the mutated javascript serverside, and send a PGP
+signature along with it so you can do the same and trust it that way".
+[3]
+[3] Heck, maybe that's a way to upgrade web services to thick client
+services - have an optional thick client someone can run that sits as
+a proxy running verification.  Same web interface works with or
+without the tool, but the tool provides run-time verification.
+[4] Javascript obfuscation makes it difficult to rewrite the code; if
+you add code - CSP prevents you from exfiltrating easily; and if you
+exfiltrate to another user in the chat the chatters *should see* this
+other user in the chat they don't trust.
+
+
+> I believe your position is that it improves
+> on vector #3 by virtue of being not-Facebook.  (I'm curious how you
+> measure #3 in comparison to GChat.)
+>
+> If we postulate that CryptoCat does improve vector #3 by virtue of being
+> not-Facebook, it isn't a result of the technology, but simply that we've
+> agreed Nadim has a better monitoring/interception track record than
+> Facebook.  If that's something you think is valuable, it actually seems
+> like it'd potentially be better served by having someone like the EFF or
+> Riseup host a web-based and SSL-protected chat service, without brining
+> any additional cryptography confusion into the mix.  A trust project,
+> not a cryptography project.
+
+Yes, yes, yes.  There is a *tremendous* amount of implicit and
+unmentioned TRUST in the person operating the service or relying on
+the software.  That's why anyone would use RedPhone, TextSecure or
+WhisperCore back when it was closed source.  Because people *trusted*
+Moxie.
+
+If the EFF hosted an e-mail solution I'd be throwing money at them to
+let me sign up.  Because Google is huge and diverse - they are
+obligated to respond to legal threats in most of the countries of the
+world.  Because Google is huge and opaque - I have little faith in
+their ability to notify me/etc in the event of a LE request.  But the
+EFF has both juristiction on their side (arguably they'd have more if
+they were based in, say, Scandenavia) and they have trust.  I trust
+that the EFF will fight harder for me than Google.  And there's
+intimidation factor - a LE agency ought to know if they come the the
+EFF with a request they need to back it up with a supoena or warrant.
+
+I absolutely think of riseup as a trust project.  I would like to see
+many more of them.  Nick Merril's Calyx Institute I think of as a
+Trust Project.  He's trying very hard to remove Trust, and make it a
+cryptography project - but he literally has to build the
+infrastructure for that because it doesn't exist.  (Which is one of
+the reasons you can't actually buy any services from them yet.)   It
+will be *very* interesting to see how Phil Z's and Jon Callas' Silent
+Circle positions itself.  A trust project?  They're aiming to remove
+trust also; but to what extent can they?
+
+Trying to improve upon the trust factor is extraordinarily difficult.
+I think, in the short term, it relies on linking up with a person or
+organization people already trust - and therefore somehow convincing
+them to trust you. And in the long term - devoting your life to being
+a trustworthy individual.  Not something we can solve with
+cryptography - even a thick client.
+
+Anyway, I realize I haven't addressed the issue of 'Should cryptocat
+move to this model or that, shut itself down, add warnings, push
+forward with users, etc'.  But I wanted to raise the point that it can
+do more, today, to make users safers - and if _any_ webapp in this
+sphere wants to push the envelope, it should probably do those things
+first.*  And since people are already using it, these are options to
+improve security besides just shutting it down.
+
+-tom
+
+* None of this is meant to be a slight at Nadim, who has certainly
+earned my respect for both his effort and his results so far.
+_______________________________________________
+liberationtech mailing list
+liberationtech@lists.stanford.edu
+
+Should you need to change your subscription options, please go to:
+
+https://mailman.stanford.edu/mailman/listinfo/liberationtech
+
+If you would like to receive a daily digest, click "yes" (once you click above) next to "would you like to receive list mail batched in a daily digest?"
+
+You will need the user name and password you receive from the list moderator in monthly reminders. You may ask for a reminder here: https://mailman.stanford.edu/mailman/listinfo/liberationtech
+
+Should you need immediate assistance, please contact the list moderator.
+
+Please don't forget to follow us on http://twitter.com/#!/Liberationtech
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

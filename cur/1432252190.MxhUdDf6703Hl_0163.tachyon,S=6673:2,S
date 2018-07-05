@@ -1,0 +1,213 @@
+From owner-cypherpunks@Algebra.COM  Thu Feb  8 00:31:28 2001
+Received: from MIT.EDU (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.69.0.28])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id AAA02861
+	for <kwantam@positron.mit.edu>; Thu, 8 Feb 2001 00:31:27 -0500
+Received: from ak47.algebra.com by MIT.EDU with SMTP
+	id AA09853; Thu, 8 Feb 01 00:33:31 EST
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f182RkR27009
+	for cypherpunks-outgoing; Wed, 7 Feb 2001 20:27:46 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from waste.minder.net (fw.minder.net [216.25.149.98])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f182Rjq26992
+	for <cypherpunks@algebra.com>; Wed, 7 Feb 2001 20:27:45 -0600
+Received: (from cpunks@localhost)
+	by waste.minder.net (8.9.3/8.9.3) id VAA14411
+	for cypherpunks@algebra.com; Wed, 7 Feb 2001 21:27:39 -0500
+Received: from einstein.ssz.com (cpunks@einstein.ssz.com [204.96.2.99])
+	by waste.minder.net (8.9.3/8.9.3) with ESMTP id VAA14400
+	for <cpunks@minder.net>; Wed, 7 Feb 2001 21:27:37 -0500
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id UAA19816
+	for cpunks@minder.net; Wed, 7 Feb 2001 20:34:20 -0600
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id UAA19804
+	for cypherpunks-outgoing; Wed, 7 Feb 2001 20:33:56 -0600
+Received: from localhost (ravage@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) with SMTP id UAA19784;
+	Wed, 7 Feb 2001 20:33:44 -0600
+Date: Wed, 7 Feb 2001 20:33:44 -0600 (CST)
+From: Jim Choate <ravage@einstein.ssz.com>
+To: The Club Inferno <hell@einstein.ssz.com>
+Cc: austin-cpunks@einstein.ssz.com, cypherpunks@einstein.ssz.com,
+        hangar18@einstein.ssz.com
+Old-Subject: CDR: Re: [9fans] Re: So, once I've got the OS up how do I... (fwd)
+Message-Id: <Pine.LNX.3.96.1010207203301.356S-100000@einstein.ssz.com>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Reply-To: cypherpunks@einstein.ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Acceptable-Languages: English, Russian, German, French, Spanish
+Old-Subject: Re: [9fans] Re: So, once I've got the OS up how do I... (fwd)
+Subject:  Re: [9fans] Re: So, once I've got the OS up how do I... (fwd)
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 4066
+Lines: 157
+
+
+
+
+    ____________________________________________________________________
+
+           Before a larger group can see the virtue of an idea, a
+           smaller group must first understand it.
+
+                                           "Stranger Suns"
+                                           George Zebrowski
+
+       The Armadillo Group       ,::////;::-.          James Choate
+       Austin, Tx               /:'///// ``::>/|/      ravage@ssz.com
+       www.ssz.com            .',  ||||    `/( e\      512-451-7087
+                           -====~~mm-'`-```-mm --'-
+    --------------------------------------------------------------------
+
+---------- Forwarded message ----------
+Date: Wed, 7 Feb 2001 21:21:31 -0500
+From: Russ Cox <rsc@plan9.bell-labs.com>
+Reply-To: 9fans@cse.psu.edu
+To: 9fans@cse.psu.edu
+Subject: Re: [9fans] Re: So, once I've got the OS up how do I...
+
+Regarding Plan 9 <-> Unix as far as file systems,
+Plan 9 has an NFS server that Unix systems may
+use to mount Plan 9 file systems.  It works pretty
+well.  We had someone working almost exclusively
+over the NFS server two summers ago.
+
+U9fs is a 9P server that Plan 9 systems may use to
+mount Unix file systems.  It too works pretty well.
+As I type this, I have two such file systems mounted
+in my namespace.  I'm also booting a Plan 9 box
+entirely over an ethernet with a FreeBSD machine
+serving as both file and authentication server.
+I'm using u9fs (rewritten for 9P2000 but pretty much
+the same) for file service and a port of auth.srv for
+authentication.  It works.
+
+Neither is blazingly fast, but that's not the goal.
+They work well for providing interoperability.
+
+The amazing thing is how simple they are.
+
+    1527    3657   27203 u9fs/u9fs.c
+     326     792    6457 9auth/9authsrv.c
+
+The rest is mostly supporting routines pulled in
+from the Plan 9 C library, like doprint and convM2S.
+
+That's a full file server in 1500 lines of code,
+and an authentication server in 300.  The reason this
+works is that 9P is so simple.  If you want to drive the
+point home, put up the rot13fs below (inspired by a
+French intro to Plan 9 that appeared a few years ago;
+I'd credit further except not knowing French, I got
+by reading only the examples).
+
+The whole guts of the filter is right here:
+
+	while(n=sizeof buf, getS(rd, buf, &f, &n) == nil){
+		if(f.type == Ropen)
+			isdir[f.fid] = f.qid.path&CHDIR;
+		if((f.type == Twrite || f.type == Rread) && !isdir[f.fid])
+			rot13(f.data, f.count);
+		n = convS2M(&f, wbuf);
+		write(wr, wbuf, n);
+	}
+
+and that's it.  9P is simple.  Compare this with the hoops
+being jumped through to do encrypted file systems on Unix
+by having fake NFS servers or kernel vnode-layer replacements
+or what-have-you.
+
+Russ
+
+
+#include <u.h>
+#include <libc.h>
+#include <auth.h>
+#include <fcall.h>
+#include <ctype.h>
+
+void
+rot13(char *p, int n)
+{
+	char *ep;
+
+	for(ep=p+n; p<ep; p++)
+		if(isalpha(*p))
+			if(tolower(*p) <= 'm')
+				*p += 13;
+			else
+				*p -= 13;
+}
+
+int isdir[65536];
+void
+filter(int rd, int wr)
+{
+	char buf[MAXMSG+MAXFDATA], wbuf[MAXMSG+MAXFDATA];
+	Fcall f;
+	long n;
+
+	while(n=sizeof buf, getS(rd, buf, &f, &n) == nil){
+		if(f.type == Ropen)
+			isdir[f.fid] = f.qid.path&CHDIR;
+		if((f.type == Twrite || f.type == Rread) && !isdir[f.fid])
+			rot13(f.data, f.count);
+		n = convS2M(&f, wbuf);
+		write(wr, wbuf, n);
+	}
+	postnote(PNGROUP, getpid(), "die");
+}
+
+void
+main(int argc, char **argv)
+{
+	int sfd, p[2];
+
+	rfork(RFNOTEG);
+
+	if(argc != 1+2){
+		fprint(2, "usage: rot13fs service-in mountpoint\n");
+		exits("usage");
+	}
+
+	if((sfd = open(argv[1], ORDWR)) < 0)
+		sysfatal("cannot open %s: %r\n", argv[1]);
+
+	if(pipe(p) < 0)
+		sysfatal("pipe fails: %r\n");
+
+	switch(rfork(RFNAMEG|RFPROC|RFFDG|RFMEM)){
+	case -1:
+		sysfatal("rfork fails: %r\n");
+	case 0:
+		close(p[0]);
+		switch(fork()){
+		case -1:
+			sysfatal("rfork fails: %r\n");
+		case 0:
+			filter(sfd, p[1]);
+			break;
+		default:
+			filter(p[1], sfd);
+			break;
+		}
+		_exits(0);
+	default:
+		close(p[1]);
+		if(amount(p[0], argv[2], MREPL, "") < 0)
+			sysfatal("mount fails: %r\n");
+		exits(0);
+	}
+}
+

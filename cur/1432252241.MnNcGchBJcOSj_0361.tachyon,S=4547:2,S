@@ -1,0 +1,92 @@
+From owner-cypherpunks@jfet.org  Wed Mar 15 12:50:07 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.5/8.13.5/Debian-3) with ESMTP id k2FHnpPB007018
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 15 Mar 2006 12:49:51 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.5/8.13.5/Submit) id k2FHnpIj007017
+	for cypherpunks-outgoing; Wed, 15 Mar 2006 12:49:51 -0500
+Message-Id: <6.2.1.2.0.20060315091933.034f54e8@pop.idiom.com>
+X-Mailer: QUALCOMM Windows Eudora Version 6.2.1.2
+Date: Wed, 15 Mar 2006 09:49:11 -0800
+To: "Tyler Durden" <camera_lumina@hotmail.com>
+From: Bill Stewart <bill.stewart@pobox.com>
+Subject: RE: /. [PGP Creator's Zfone Encrypts VoIP]
+Cc: cypherpunks@jfet.org
+In-Reply-To: <BAY103-F1E3277D8C9A691C1FF15E9BE60@phx.gbl>
+References: <20060315082532.GC25017@leitl.org> 
+  <BAY103-F1E3277D8C9A691C1FF15E9BE60@phx.gbl>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3350
+Lines: 63
+
+At 08:13 AM 3/15/2006, Tyler Durden wrote:
+>This is interesting.
+>Sorry...I'm a working stiff so I haven't kept up with the protocols. Does 
+>SIP in any way force a centralized "switch" paradigm on the VoIP 
+>implementation? My thinking is that it does not, it's more of an interface.
+>Which means that Zfone could be Peer-to-Peer, and I would bet Zimmerman 
+>would have shot for that.
+>Anyone know?
+
+SIP is no longer quite "simple", but it's certainly simpler and more 
+powerful than H.323.
+It looks a lot like an IM system.
+The basic model is client/server, with servers that can proxy requests to 
+other servers,
+where the job of a server is to provide presence service so that
+clients can find each other, and actual media channels are client-to-client.
+(This does mean that you sometimes need to tunnel through NAT and firewalls.)
+Because servers can proxy requests to other servers,
+it's no longer a simple hierarchy model.
+And most SIP clients support direct client-to-client connections -
+as long as you figure out the destination user's address yourself if you 
+don't have a server,
+and don't mind not having a server to tell you who's calling, reject junk 
+callers, etc.
+
+A popular approach is to have an IP PBX that uses SIP functions to
+listen to IP phones or IP video, talk to other IP PBXs,
+and talk to telco SIP servers to reach old telco phones,
+(alternatively to support traditional telco lines using hardware on the PBX),
+and also to talk to other servers like conference bridges,
+voicemail, or voicemail-to-email gateways.
+
+The two main pre-SIP standards our there are H.323, which is a simpler
+client-server model that reuses large amounts of ugly ISDN protocols,
+and Cisco's SCCP (aka "Skinny") which is a simpler pre-H.323 protocol.
+
+There are a number of different SIP server types out there
+- Asterisk IP PBX is a free open-source application that runs on Linux.
+         Most of the development is funded by Digium,
+         a company that sells hardware like telco interface boards for PCs,
+         including T1, single-line telco interfaces, and single-line phone 
+interfaces, etc.
+- VOIP servers built into routers.  Cisco mostly uses Skinny, but they'll 
+do SIP "real soon".
+- Old PBX vendor PBXs with IP boards - mostly H.323, with SIP support emerging.
+- Centralized SIP servers that support sites with IP phones and no servers -
+         This includes routers from Cisco, etc., as well as
+         specialized servers from vendors like Sylantro and Acme Packets.
+         In the pre-SIP world, you generally don't mix site-based servers
+         like Asterisk and centralized servers, because you don't need both,
+         except for things like Cisco SRST failure-mode support in routers,
+         but since SIP supports proxies, you may have a local server
+         that does your basic presence service and centralized servers for 
+voicemail.
+- Some people are playing with Distributed Hash Tables instead of real servers.
+
+As far as encryption goes, SIP does most of its signalling with
+an HTTP-like protocol that you can run over TLS,
+and does media support with RTP (which can be the secure or non-secure 
+versions.)
+Unfortunately, far too many SIP servers don't handle the crypto negotiations,
+not only do they not burn the horsepower to do signalling over TLS,
+they also don't help the clients exchange keys.
+

@@ -1,0 +1,100 @@
+From owner-cypherpunks@Algebra.COM  Thu Jun 13 22:03:03 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.mit.edu (8.11.6/8.9.3) with ESMTP id g5E233g03538
+	for <rsw@jfet.org>; Thu, 13 Jun 2002 22:03:03 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id WAA19133
+	for <rsw@mit.edu>; Thu, 13 Jun 2002 22:00:26 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g5E1a6ft023191
+	for <cypherpunks-outgoing@ak47.algebra.com>; Thu, 13 Jun 2002 20:36:06 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g5E1a6YJ023190
+	for cypherpunks-outgoing; Thu, 13 Jun 2002 20:36:06 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from locust.minder.net (locust.minder.net [66.92.53.74])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g5E1a4ft023175
+	for <cypherpunks@algebra.com>; Thu, 13 Jun 2002 20:36:04 -0500
+Received: from waste.minder.net (daemon@waste [66.92.53.73])
+	by locust.minder.net (8.11.6/8.11.6) with ESMTP id g5E1ZrE02346
+	for <cypherpunks@algebra.com>; Thu, 13 Jun 2002 21:35:53 -0400 (EDT)
+	(envelope-from cpunks@waste.minder.net)
+Received: (from cpunks@localhost)
+	by waste.minder.net (8.11.6/8.11.6) id g5E1Zp521875
+	for cypherpunks@algebra.com; Thu, 13 Jun 2002 21:35:51 -0400
+Received: (from majordom@localhost)
+	by waste.minder.net (8.11.6/8.11.6) id g5E1Zjb21857
+	for cypherpunks-outgoing; Thu, 13 Jun 2002 21:35:45 -0400
+Received: from locust.minder.net (locust.minder.net [66.92.53.74])
+	by waste.minder.net (8.11.6/8.11.6) with ESMTP id g5E1Ziu21853
+	for <cypherpunks@minder.net>; Thu, 13 Jun 2002 21:35:44 -0400
+Received: from zayda.com (celery.zayda.com [208.186.180.200])
+	by locust.minder.net (8.11.6/8.11.6) with ESMTP id g5E1ZhE02332
+	for <cypherpunks@minder.net>; Thu, 13 Jun 2002 21:35:43 -0400 (EDT)
+	(envelope-from jason@lunkwill.org)
+Received: from localhost (jason@localhost)
+	by zayda.com (8.11.6/8.11.6) with ESMTP id g5E1ZfV18429
+	for <cypherpunks@minder.net>; Fri, 14 Jun 2002 01:35:41 GMT
+Date: Fri, 14 Jun 2002 01:35:41 +0000 (UTC)
+From: Jason Holt <jason@lunkwill.org>
+X-X-Sender: jason@zayda.com
+To: cypherpunks@minder.net
+Old-Subject: Safe RSA variant?
+Message-ID: <Pine.LNX.4.44.0206140102120.26951-100000@zayda.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Old-Subject:  Safe RSA variant?
+Subject:   Safe RSA variant?
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+X-spam: 0 
+Status: O
+Content-Length: 1541
+Lines: 40
+
+
+
+Well, I got such a good response from my last technical question that I'll try
+again :)
+
+If it's actually secure, it'll go really well with my credential system.
+
+Trent generates primes p,q.  He publishes n=pq and some random value g.
+
+Trent calculates a and a' such that aa' = 1 % (p-1)(q-1) and a' is prime.  He
+sends Alice a' and g^a%n.  a' is her secret exponent and g^a%n her public
+value.
+
+Bob can establish a shared secret with Alice if Alice got a' from Trent.  He
+picks a random r and sends her g^ar%n.  She raises it to a' to compute the
+shared secret g^r%n.
+
+So the important questions are:
+
+* Given g^a%n and a', can Alice derive (p-1)(q-1)?  If so, she'd be able to
+take over Trent's job.
+
+* Given g^k%n and k' for lots of different k, can we derive (p-1)(q-1) or
+otherwise imitate Trent's ability to give out (g^k%n, k') pairs?
+
+So IOW the goal is for Bob to be able to send Alice a message iff she knows a
+secret from Trent.  And if Alice's secret is compromised, only messages sent
+to (or possibly from)  Alice become vulnerable.
+
+A friend of mine pointed out that Alice can trivially compute another working
+pair of keys from her own: g^-a and -a'. And if the a' keys weren't prime,
+Alice and Bob could factor them and generate other keypairs. Both of those
+seem manageable, though.
+
+The common modulus attack in which you use g^k and g^k' to get information on
+g (which is public in this case) by calculating rk+sk'=1 caused me problems in
+earlier equations I tried, but doesn't seem to help the attacker here.
+
+					-J
+
+

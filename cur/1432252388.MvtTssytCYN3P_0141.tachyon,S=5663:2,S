@@ -1,0 +1,134 @@
+From owner-cypherpunks@lne.com  Wed Apr 30 12:57:22 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h3UGvIt21827
+	for <rsw@jfet.org>; Wed, 30 Apr 2003 12:57:19 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h3UGaAk6027578
+	for cypherpunks-goingout345; Wed, 30 Apr 2003 09:36:10 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+X-Zen-Trace: 62.3.121.225
+User-Agent: Microsoft Outlook Express Macintosh Edition - 5.01 (1630)
+Date: Wed, 30 Apr 2003 17:36:01 +0100
+Subject: Re: Anonglish (was: Re: Authenticating Meat)
+From: Peter Fairbrother <zenadsl6186@zen.co.uk>
+To: John Kelsey <kelsey.j@ix.netcom.com>,
+   Thomas Shaddack
+  <shaddack@ns.arachne.cz>,
+   "cypherpunks@lne.com" <cypherpunks@lne.com>
+Message-ID: <BAD5BA01.30400%zenadsl6186@zen.co.uk>
+In-Reply-To: <5.2.0.9.0.20030429144202.044964d0@pop.ix.netcom.com>
+Mime-version: 1.0
+Content-type: text/plain; charset="US-ASCII"
+Content-transfer-encoding: 7bit
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 4426
+Lines: 103
+
+John Kelsey wrote:
+
+> At 03:42 PM 4/28/03 +0100, Peter Fairbrother wrote:
+>> If you have perfect compression, and you encrypt a message which has been
+>> compressed, any decryption will look sensible.
+> 
+> You do understand that building this kind of compressor implies passing the
+> Turing test, right?  For the messages to be sensible, they have to have
+> some underlying meaning that makes sense.  This isn't just compression in
+> the sense of fast implementations of statistical models of text....
+
+I do realise that. More, it has to be able to fake the sender, not just a
+random human.
+
+I'm not trying to build that sort of compressor tho' - but see my ps.
+
+
+The compressor I'm beginning to build now does not have to pass a Turing
+test directly. It can only compress a limited subset of possible messages,
+and if that subset is small it's easy to see that it can be done.
+
+Say your possible messages are:
+
+Attack at dawn
+Attack at dusk
+Retreat at dawn
+Retreat at dusk
+
+Assign a number to the verb, and a number to the "time" (not being a
+grammarian I don't know offhand what that part of speech is called). In this
+limited case that's just two bits, so eg "Attack at dawn" compresses as
+0x00.
+
+Now encrypt that 0x00, using eg an XOR with a key of 10, to give ciphertext
+0x10. Decrypting that with key 00 gives message 0x10 - which decompresses to
+"Attack at dusk", a plausible decryption*.
+
+
+There are further considerations when variable sentence structures,
+multi-sentence messages (and lots more things) are considered, of course.
+For instance, longer messages have to be self-consistent, which can be done
+using closeness arrays and best-fit techniques. And doing it on a wider
+scale is harder, and a whole lot of work...
+
+
+
+
+* However, if "Attack at dusk" is an unlikely message because of real-world
+events, eg you have already won the battle, then the decryption loses some
+plausibility...
+
+There are several ways around that. First is to have a "godlike" compressor
+which knows everything in the real world, or at least everything any sender
+is likely to send, so that _all_ possible decryptions are real-world
+plausible, but that's not within my ability to write. It's impossible anyway
+(unless you're God).
+
+Second is to just accept that only a portion of possible decryptions will be
+real world plausible (most, if not all, should be language-plausible and
+self-consistent-plausible). It shouldn't be hard to get a small proportion
+to be rwp.
+
+This is still very useful, as an attacker can't distinguish between a
+brute-forced set of real-world plausible decryptions (a subset of all
+possible decryptions, which should be large enough to contain many examples
+of contradictory decryptions), and a purportedly real decryption can be
+challenged by producing a different real-world plausible decryption, or
+preferably ten thousand of them.
+
+Having a fake key that decrypts to a rwp decryption can be done, if the fake
+key is prearranged before the message is sent. Useful when lots of messages
+are encrypted with the same key. If you can check the decryption first, you
+can also afterwards select a key that will give a rwpd.
+
+
+Third is to try and get almost all decryptions to be rwp, using complex
+techniques (!) and the fact that the set of messages that can be sent is
+limited. For instance, if it was limited as in my example above and you
+wanted to tell someone that you couldn't go on a promised date this evening,
+you would send "retreat at dusk". This is a very contrived example, of
+course.
+
+Unfortunately you still can't give a randomly-chosen-afterwards key which
+will _always_ give a rwpd, which would be _very_ nice to do.
+
+I'm investigating a few possible ways to do that, perhaps just to do it
+effectively without 100% of possible decryptions being rwp, but I haven't
+gotten any results worth repeating yet.
+
+And yes, I do know the theory that says it's impossible. Change the
+conditions a little and the theory might not be applicable any more.
+
+-- 
+Peter Fairbrother
+
+
+ps  I did some experiments a couple of years ago and got (some) rwp
+decryptions in most 60-word messages, and in some 200-word messages. The
+parser used was surprisingly important. Only tried at most a few hundred
+trial decryption/decompressions per message, but I didn't get anyone else to
+check the rwp, so the results may have been a bit subjective.
+
+That was not super-perfect tho', just an attempt to approach perfect. 
+

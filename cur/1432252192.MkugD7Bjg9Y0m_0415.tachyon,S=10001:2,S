@@ -1,0 +1,201 @@
+From owner-cypherpunks@al-qaeda.net  Thu Apr 30 07:57:29 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id n3UBuiKQ019338
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 30 Apr 2009 07:56:44 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id n3UBuitR019337
+	for cypherpunks-outgoing; Thu, 30 Apr 2009 07:56:44 -0400
+Date: Thu, 30 Apr 2009 13:56:38 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: info@postbiota.org, cypherpunks@al-qaeda.net,
+        Cryptography
+  List <cryptography@metzdowd.com>
+Subject: [tahoe-dev] SHA-1 broken! (was: Request for hash-dependency in
+  Tahoe security.)
+Message-ID: <20090430115638.GX10925@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 8914
+Lines: 173
+
+----- Forwarded message from Zooko O'Whielacronx <zooko@zooko.com> -----
+
+From: Zooko O'Whielacronx <zooko@zooko.com>
+Date: Wed, 29 Apr 2009 15:59:05 -0600
+To: nejucomo@gmail.com, tahoe-dev@allmydata.org
+Subject: [tahoe-dev] SHA-1 broken! (was: Request for hash-dependency in
+	Tahoe security.)
+X-Mailer: Apple Mail (2.753.1)
+Reply-To: tahoe-dev@allmydata.org
+
+On Apr 29, 2009, at 11:51 AM, Nathan wrote:
+
+> http://eurocrypt2009rump.cr.yp.to/837a0a8086fa6ca714249409ddfae43d.pdf
+
+Wow!  These slides say that they discovered a way to find collisions  
+in SHA-1 at a cost of only 2^52 computations.  If this turns out to  
+be right (and the authors are respected cryptographers -- the kind of  
+people who really hate to be wrong about something like this) then it  
+is very exciting!  SHA-1 was already known to be vulnerable to attack  
+by a moderately well-funded organization such as a national security  
+agency, national military, corporation, or organized criminal group.   
+Now it turns out that finding SHA-1 collisions is in the reach of a  
+dedicated hobbyist or an eccentric genius [1].  Let's put a rough  
+number on it.  I might be a little bit off, but you can build a  
+COPACOBANA machine for about $10,000 [2], and it can brute-force a 56- 
+bit DES key in about six and a half days.  2^52 SHA-1 operations  
+should take roughly the same amount of time and money.  As another  
+example I guess that distributed computation engines [3] and botnets  
+[4] might be able to generate a SHA-1 collision in seconds.
+
+Plus of course the amplifying effects of birthday attacks and rainbow  
+tables and so on mean that the longer you keep your COPACOBANA or  
+your botnet generating SHA-1 collisions, the more SHA-1 users around  
+the world become vulnerable to you. So basically, if these slides are  
+right then relying on SHA-1 collision-resistance has been revealed as  
+a major vulnerability!
+
+Almost all hash functions in civilian, open use are either MD5 or  
+SHA-1.  For example, decentralized revision control tools such as  
+monotone, git, and hg rely on SHA-1.  Interesting times!
+
+As Shawn already correctly pointed out (and as Nathan probably  
+already knew), Tahoe doesn't use SHA-1, so we're not affected by this  
+new discovery.  Tahoe-LAFS uses SHA-256 (in the "double-hashing" mode  
+suggested by Ferguson and Schneier and named "SHA-256d").  We also  
+add our own tagging and salting prefix to avoid certain problems.  We  
+aren't currently vulnerable to hash collision attacks, and we plan  
+never to get into that position (about which more below).
+
+
+Nonetheless, it would be a very good exercise to spell out what sorts  
+of problems could result if attackers could violate what sorts of  
+properties of the hash function(s) used in Tahoe.  The basic uses of  
+secure hashes in Tahoe are for integrity-checking of immutable files  
+and for digital signatures on mutable files and directories.
+
+If an attacker could generate two different inputs which yielded the  
+same hash output (that is, to find a "hash collision"), then they  
+could give you a single immutable file cap that produced two (or  
+more) different files when you used it to download the file.  We  
+believe that nobody is currently able to do that, so currently if  
+someone gives you an immutable file cap, you can rely on there being  
+at most one file which can be downloaded using that cap.
+
+For mutable files it is even safer.  If an attacker could find an  
+input which yielded the same output as someone *else*'s input (that  
+is, to find a "second pre-image"), then that attacker could write  
+changes to a mutable file or directory that they were not authorized  
+to write to.  Finding a second pre-image is probably much harder than  
+finding a collision -- for example nobody has yet figured out how to  
+find a second pre-image in SHA-1.  That's why I say it is even  
+safer.  You already assume that the person who can write to a mutable  
+file can make it so that two or more different file contents would be  
+downloaded from using the same mutable-file read cap, but for  
+immutable files we hold them to a higher standard and prevent even  
+the original uploader of the immutable file from being able to make  
+more than one file that matches the immutable-file read cap.
+
+There are a lot more details of how Tahoe uses hash functions that I  
+would be happy to work out when I have time, but those are the most  
+important ones, and the immutable file caps are the most likely to  
+turn out to be vulnerable.  (Although, as I've said, even the  
+immutable file caps are extremely unlikely to be vulnerable.)
+
+
+(Hm, this puts an interesting twist on Vincent and Nathan's idea of  
+layering Mercurial-or-Bazaar on top of Tahoe.  Tahoe uses stronger  
+cryptography (and also more flexible cryptography, by the way), so if  
+you have uploaded your Mercurial repository to Tahoe then even when  
+SHA-1 turns out to be weak (as it has), you can still rely on the  
+integrity of your repository.)
+
+
+> ps: For the case of Merkel Trees, are any security guarantees
+> preserved in the face of hash collision attacks?
+
+Sure -- a Merkle Tree has collision-resistance if the underlying hash  
+has collision-resistance, and a Merkle Tree has second-preimage- 
+resistance if the underlying hash has second-preimage resistance.  So  
+if the underlying has doesn't have collision-resistance but does have  
+second-preimage-resistance (as we currently suspect that SHA-1  
+might), then your Merkle Tree would stil have second-preimage- 
+resistance.  Also a Merkle Tree might be stronger than its underlying  
+hash function in a few ways, even if the underlying hash is somewhat  
+weak.
+
+
+> d. For an existing grid how feasible is an upgrade to a new hash
+> format which preserves all data?
+
+It is certainly possible to preserve all the data.
+
+The obvious way is to download your files and re-upload them in the  
+new format.  I suspect that will probably end up being the best way,  
+too.  I would like to emphasize that it is extremely unlikely that  
+anyone will need to do this due to a weakness in the hashing  
+algorithm in Tahoe in a hurry.  The people who are suffering from the  
+collisions in MD5 and SHA-1 are suffering, not because MD5 or SHA-1  
+were suddenly revealed to be insecure, but because they ignored the  
+warning messages from cryptographers for many years.  (I'm a tad  
+irritated about this, since "I tried to tell them" [5] and "They  
+wouldn't listen!" [6].)
+
+By the time that SHA-256 (plus our tagging and salting) is vulnerable  
+to collisions, which could be anywhere from five years to a hundred  
+years from now, we will have already upgraded Tahoe to use a stronger  
+hash function (SHA-3 or a SHA-3 candidate) and gracefully upgraded  
+pre-existing files.
+
+
+Now the actual details of securely upgrading extant files to new  
+integrity check mechanisms could be interesting.  We've thought a bit  
+about how to facilitate future graceful upgrades and this will no  
+doubt prompt us to think about it some more.  The stickiest bits are  
+in the capability itself.  Let's put it this way: suppose you upload  
+a file to a Tahoe grid today and get an immutable read cap in  
+return.  Then suppose a few years from now someone does some  
+unspecified operation which adds stronger hashes to the file as it  
+exists out there on the servers.  Now, how do you as the holder of  
+the original immutable read cap know that those new stronger hashes  
+are correct?  You don't, because your read-cap wasn't generated from  
+those new stronger hashes.  This isn't a weakness in the Tahoe  
+capability-oriented design, it's more of a fundamental problem which  
+is just thrown into sharper light by the cap design.  You can, of  
+course, choose to delegate your decision about whether or not the  
+file is correct to someone else (using Tahoe as well as using any  
+other scheme), but if you want to actually have certainty *yourself*  
+that the file is correct using the new hashes, then you're going to  
+have to do some sort of download and computation on the file  
+yourself, using the new hash algorithm.
+
+
+Regards,
+
+Zooko
+
+[1] http://www.toad.com/gnu
+[2] http://en.wikipedia.org/wiki/Custom_hardware_attack
+[3] http://en.wikipedia.org/wiki/List_of_distributed_computing_projects
+[4] http://en.wikipedia.org/wiki/Bot_nets
+[5] http://www.gelato.unsw.edu.au/archives/git/0506/5273.html
+[6] http://www.gelato.unsw.edu.au/archives/git/0506/5299.html
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@allmydata.org
+http://allmydata.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

@@ -1,0 +1,187 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u56CKImf011754;
+	Mon, 6 Jun 2016 08:20:18 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=GQFlNZ25;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-io0-f196.google.com (mail-io0-f196.google.com
+ [209.85.223.196])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u56CIese011724
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Mon, 6 Jun 2016 08:18:42 -0400
+Received: by mail-io0-f196.google.com with SMTP id f128so7370669iof.3
+ for <cypherpunks@cpunks.org>; Mon, 06 Jun 2016 05:18:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
+ bh=RbVvQslc3TPURiDPKC3u7RYYfted6uV1xI5x6bXdZSw=;
+ b=GQFlNZ25SC+J3q2E8WJag+aUkCaXxXzochtQZiHMztQr2JgPaIz33QgQnPr0W3qco6
+ Y7or1xW2TIVK1buPh8XDZXXwzpxj2Lw5O29eXc4nbBxaOL4iRtLYAVeqpa3JtpcRi8ul
+ d8BOQ5zyupn8J9E6ByAgXK4ci5fozbfU6QL0VvQ990L3Bzs8MB2r6Hv3m3Ivvgu/PaGs
+ 0jB66I2qr4PbXik7ft1hOfdX43JjXoyM+QGpS9a1s7DemtHul+H6Eds8yYE1sPDyqi9r
+ ITfJ29MHf+PQGTdBhmyKkuN+taxy9tVkImR94SPHMWNBHBthXLXeKZ5ODK6A8KS31/xZ
+ bq1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+ :message-id:subject:to;
+ bh=RbVvQslc3TPURiDPKC3u7RYYfted6uV1xI5x6bXdZSw=;
+ b=Rv5UYAKkVxUAYHTHZhPop4irj52icSN7Z7ORtGYVV1l80l8SfWQ/XZbLASRzGQVB+K
+ TIwRp82iw36MaAqwMEwyQRK2X553tUIKFZ59xIAFi6IcH1eOE4UZnKS0Z/aFKxoDFSwD
+ XL9F2phSOpi/YQRzTIOiJ7pyuA76+0jCGZB9abmZInQZzVrGan4tml/TcatkxVYLNb0U
+ aIbU+MdfqTspaGqe5VQdwvCOAav/kJrHwgRq9Y+mGo5bRPQMmjD99ozOpprKfxMziSBu
+ 02Oaerct1k86fyxN31jTO+D7XToBQzp77daMx6LobVOCfMDqTvQaXrJwOgwgpJsRE4af
+ zMWw==
+X-Gm-Message-State: ALyK8tLptunlkagbF42wvF6BEO8rxrPO5L2G/shxWQw/bdfLpvxgVJNHyd+SufFu5Ixm8TWu4DkL2fl4ekp1hQ==
+X-Received: by 10.107.128.73 with SMTP id b70mr2860288iod.87.1465215515111;
+ Mon, 06 Jun 2016 05:18:35 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.50.222.225 with HTTP; Mon, 6 Jun 2016 05:18:05 -0700 (PDT)
+In-Reply-To: <CAEm6KbKBC5=oBMjHVQXbx=aiqCQkEBzBZuYZGS_OBi-f_nR5Hw@mail.gmail.com>
+References: <1041661465068162@web3m.yandex.ru>
+ <CAEm6KbKp-=kGH-TUEma6M7AvnQACq+SfcfwnUmgmjWuU7ukufg@mail.gmail.com>
+ <CAEm6KbKXp9p5pS0mjYMYAW4nQCJp_doR0Zutbn75kdoqd25cpQ@mail.gmail.com>
+ <CAEm6KbLa9-3DhH3772s6w9if69P25d02sg70pAm9Y0=MtYfPQg@mail.gmail.com>
+ <CAG2tMp6fS3dTmPAMvz4XKy0LJ5tX9=3Vf4U0EavsDxzWjyLU6g@mail.gmail.com>
+ <CAEm6Kb+H9GyAd-7GdF9JXWmsxBnZTJo64pJFi5sGVn6_EF_RLQ@mail.gmail.com>
+ <CAEm6KbKBC5=oBMjHVQXbx=aiqCQkEBzBZuYZGS_OBi-f_nR5Hw@mail.gmail.com>
+From: =?UTF-8?B?0JDQu9C10LrRgdCw0L3QtNGA?= <afalex169@gmail.com>
+Date: Mon, 6 Jun 2016 15:18:05 +0300
+Message-ID: <CAEm6KbJEti2FYKxfW50GtAh6ceHGTYfZbRxTKdC93pBsuw9m=Q@mail.gmail.com>
+Subject: Re: [private] Re: [tor-talk] http://jacobappelbaum.net/
+To: CypherPunks <cypherpunks@cpunks.org>, tor-talk@lists.torproject.org
+Content-Type: multipart/alternative; boundary=001a113f91504c36f505349b12c5
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 119
+
+--001a113f91504c36f505349b12c5
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+Unambiguous and comprehensive response from Jacob Appelbaum himself to all
+this dirty slander toward him!
+If this kind of response "does not enough" for you, people, - just go fuck
+yourself.
+
+http://www.twitlonger.com/show/n_1soorlp
+
+Jacob Appelbaum =C2=B7 @ioerror
+6th Jun 2016 from TwitLonger
+Berlin, June 6, 2016
+
+In the past few days, a calculated and targeted attack has been launched to
+spread vicious and spurious allegations against me. Given the way these
+accusations have been handled, I had little choice but to resign from my
+position as an advocate at the Tor Project and devote my full attention to
+completing my doctoral work on cryptography at the Technical University of
+Eindhoven.
+
+Vague rumors and smear campaigns against me are nothing new. As a longtime
+public advocate for free speech and a secure internet, there have been
+plenty of attempts to undermine my work over the years.
+
+Now, however, these unsubstantiated and unfounded attacks have become so
+aggressive that I feel it=E2=80=99s necessary to set the record straight. N=
+ot only
+have I been the target of a fake website in my name that has falsely
+accused me of serious crimes, but I have also received death threats
+(including a Twitter handle entitled =E2=80=98TimeToDieJake=E2=80=99).
+
+I think it=E2=80=99s extremely damaging to the community that these
+character-assassination tactics are being deployed, especially given their
+ugly history of being used against fellow members of the LGBT community. It
+pains me to watch the community to which I=E2=80=99ve dedicated so much of =
+my life
+engage in such self-destructive behavior. Nonetheless, I am prepared to use
+legal channels, if necessary, to defend my reputation from these libelous
+accusations.
+
+I want to be clear: the accusations of criminal sexual misconduct against
+me are entirely false.
+
+Inevitably, there may have been moments in my professional or private life
+when I may have inadvertently hurt or offended others=E2=80=99 feelings. Wh=
+enever I
+was aware of these instances, I have, and will continue to, apologize to
+the friends and colleagues in question and to continually learn how to be a
+better person. Though the damage to my reputation caused by these
+allegations alone is impossible to undo, I nonetheless take the concerns of
+the Tor community seriously. To dispel any further rumors, to the best of
+my knowledge, the Tor network is not =E2=80=98compromised.=E2=80=99
+
+I=E2=80=99ve dedicated my life as a journalist, activist, and longtime memb=
+er of
+the Tor Project to advocating for the transparency of public processes and
+to speaking out about the necessity of privacy, security, and anonymity.
+These are ideals that I will continue to uphold, despite the vicious
+campaign that is currently being waged against me.
+
+Jacob Appelbaum =C2=B7 @ioerror
+
+--001a113f91504c36f505349b12c5
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Unambiguous and comprehensive response from Jacob Appelbau=
+m himself to all this dirty slander toward him! <br>If this kind of respons=
+e &quot;does not enough&quot; for you, people, - just go fuck yourself.<br>=
+<br><a href=3D"http://www.twitlonger.com/show/n_1soorlp" target=3D"_blank">=
+http://www.twitlonger.com/show/n_1soorlp</a><br><br>Jacob Appelbaum =C2=B7 =
+@ioerror<br>6th Jun 2016 from TwitLonger<br>Berlin, June 6, 2016<br><br>In
+ the past few days, a calculated and targeted attack has been launched=20
+to spread vicious and spurious allegations against me. Given the way=20
+these accusations have been handled, I had little choice but to resign=20
+from my position as an advocate at the Tor Project and devote my full=20
+attention to completing my doctoral work on cryptography at the=20
+Technical University of Eindhoven.<br><br>Vague rumors and smear=20
+campaigns against me are nothing new. As a longtime public advocate for=20
+free speech and a secure internet, there have been plenty of attempts to
+ undermine my work over the years.<br><br>Now, however, these=20
+unsubstantiated and unfounded attacks have become so aggressive that I=20
+feel it=E2=80=99s necessary to set the record straight. Not only have I bee=
+n the
+ target of a fake website in my name that has falsely accused me of=20
+serious crimes, but I have also received death threats (including a=20
+Twitter handle entitled =E2=80=98TimeToDieJake=E2=80=99).<br><br>I think it=
+=E2=80=99s extremely=20
+damaging to the community that these character-assassination tactics are
+ being deployed, especially given their ugly history of being used=20
+against fellow members of the LGBT community. It pains me to watch the=20
+community to which I=E2=80=99ve dedicated so much of my life engage in such=
+=20
+self-destructive behavior. Nonetheless, I am prepared to use legal=20
+channels, if necessary, to defend my reputation from these libelous=20
+accusations.<br><br>I want to be clear: the accusations of criminal sexual =
+misconduct against me are entirely false.<br><br>Inevitably,
+ there may have been moments in my professional or private life when I=20
+may have inadvertently hurt or offended others=E2=80=99 feelings. Whenever =
+I was
+ aware of these instances, I have, and will continue to, apologize to=20
+the friends and colleagues in question and to continually learn how to=20
+be a better person. Though the damage to my reputation caused by these=20
+allegations alone is impossible to undo, I nonetheless take the concerns
+ of the Tor community seriously. To dispel any further rumors, to the=20
+best of my knowledge, the Tor network is not =E2=80=98compromised.=E2=80=99=
+<br><br>I=E2=80=99ve=20
+dedicated my life as a journalist, activist, and longtime member of the=20
+Tor Project to advocating for the transparency of public processes and=20
+to speaking out about the necessity of privacy, security, and anonymity.
+ These are ideals that I will continue to uphold, despite the vicious=20
+campaign that is currently being waged against me.<br><br>Jacob Appelbaum =
+=C2=B7 @ioerror</div>
+
+--001a113f91504c36f505349b12c5--
+

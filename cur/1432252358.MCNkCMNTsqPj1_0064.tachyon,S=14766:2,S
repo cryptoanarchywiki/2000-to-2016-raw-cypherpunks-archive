@@ -1,0 +1,310 @@
+From cypherpunks-bounces@cpunks.org  Wed Aug 21 08:31:59 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r7LCVsvr001399;
+	Wed, 21 Aug 2013 08:31:54 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r7LCVnl8001395
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Wed, 21 Aug 2013 08:31:51 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 11919543E43; Wed, 21 Aug 2013 14:31:49 +0200 (CEST)
+Date: Wed, 21 Aug 2013 14:31:48 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: [tor-talk] Tor Weekly News =?utf-8?B?4oCU?= =?utf-8?Q?_August=2C?=
+ 21st 2013
+Message-ID: <20130821123148.GH29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 12956
+Lines: 270
+
+----- Forwarded message from Lunar <lunar@torproject.org> -----
+
+Date: Wed, 21 Aug 2013 14:29:40 +0200
+From: Lunar <lunar@torproject.org>
+To: tor-talk@lists.torproject.org, tor-news@lists.torproject.org
+Subject: [tor-talk] Tor Weekly News — August, 21st 2013
+User-Agent: Mutt/1.5.21 (2010-09-15)
+Reply-To: tor-talk@lists.torproject.org
+
+========================================================================
+Tor Weekly News                                        August 21st, 2013
+========================================================================
+
+Welcome to the eighth issue of Tor Weekly News, the weekly newsletter
+that covers what is happening in the great Tor community.
+
+Future of pluggable transports integration
+------------------------------------------
+
+While David Fifield was busy updating the Pluggable Transports Bundle to
+match the “classic” bundle version 0.2.4.16-beta-1 [1], several
+discussions took place on how to better integrate pluggable transports
+in the future.
+
+bastik opened #9444 [2], pointing out that “currently TBB with Pluggable
+Transports are build separately, thus lagging behind”. Having two
+separate bundles is also a long standing usability issue, as often users
+have tried to add “obfs” bridges to their normal TBB [3].
+
+Mike Perry is fully aware of the issue and stated in the discussion that
+his “long term goal is to try to cram all of the pluggable transports
+into The One True Bundle.”
+
+This will require modifications to the new “Tor Launcher” component of
+the TBB 3.x series in order to allow users to select the bridges and
+pluggable transports they wish to use. Compromises might be needed on
+how users should input bridges. BridgeDB recently stopped having the
+“bridge” keyword in front of the addresses it replies [4] with as
+Vidalia would not understand it. Mike Perry was thinking in exactly the
+opposite direction: “take bridge lines directly from bridgedb […]
+verifying only that they start with ‘bridge’”. Maybe the transition
+could be easier if Florian Stinglmayr’s patch to Vidalia [5] was merged
+so that current bundles would ignore the “bridge” keyword when entering
+bridges [6].
+
+In any case, Mike wants to solve these issues “before we release as
+beta/stable, to minimize user confusion.”
+
+Another tricky part of the “One True Bundle” solution is the bundle
+size, making it harder to circumvent download restrictions through
+email [7]. But, as Mike said, “even if they don’t, we’ll probably have
+to find some other solution anyway for gettor, because the intersection
+of gettor users and PT users is probably high.”
+
+   [1] https://www.torproject.org/docs/pluggable-transports.html.en
+   [2] https://bugs.torproject.org/9444
+   [3] https://bugs.torproject.org/9156
+   [4] https://gitweb.torproject.org/user/isis/bridgedb.git/commit/792cfd9
+   [5] https://github.com/n0la/vidalia/tree/master-bug/6724
+   [6] https://bugs.torproject.org/6724
+   [7] https://www.torproject.org/projects/gettor.html
+
+Extended ORPort land in tor 0.2.5
+---------------------------------
+
+After more than a year and a half in the making, the Extended ORPort
+mechanism [8] has been merged by Nick Mathewson into the tor master
+branch [9]. This will allow pluggable transport proxies to exchange
+arbitrary operational information and metadata with tor clients and
+bridges.
+
+Such plumbing was needed in order to make some pluggable transports
+easier to use or to allow Tor to gather more data about the state of
+the transports used.
+
+obfsproxy has supported this new communication channel [10] for a
+little while and was only waiting for tor to catch up. George
+Kadianakis thus asked obfsbridge operators to upgrade their tor to git
+master to enable client statistics [11].
+
+Once they do, their bridges will send statistics on users per transport
+to the bridge authority, and they will be published on
+metrics.torproject.org [12]. This helps track deployment of pluggable
+transports in the future.
+
+   [8] https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/196-transport-control-ports.txt
+   [9] https://gitweb.torproject.org/tor.git/commit/74262f15
+  [10] https://gitweb.torproject.org/pluggable-transports/obfsproxy.git/blob/HEAD:/obfsproxy/network/extended_orport.py
+  [11] https://lists.torproject.org/pipermail/tor-relays/2013-August/002477.html
+  [12] https://metrics.torproject.org/users.html?graph=userstats-bridge-transport&transport=obfs3#userstats-bridge-transport
+
+A new implementation for the web side of check.torproject.org
+-------------------------------------------------------------
+
+Arlo Breault wrote a new implementation for the web component of
+check.torproject.org in the Go programming language [13], in response
+to Roger Dingledine’s appeal: “Check could really use some love. Any
+volunteers please?”. [14,15]
+
+There is already a ticket to replace the check.torproject.org servers
+with Arlo’s Go version [16]. Andrew Lewman stated again that “As for
+check.tpo website, it shouldn’t exist at all”, as it is an architectural
+issue to “have the entire tor browser userbase hit a single website to
+learn ’Tor or not’”. Until all clients are changed to stop using check,
+deploying a new code base would only make sense if it was at least able
+to handle “500 requests per second on really busy times”. More
+benchmarks are probably needed with Arlo’s implementation.
+
+On another front, tup, the initial author of TorDNSEL [17], has
+resurfaced to offer [18] to update the code to work with newer Haskell
+environments after many years of silence!
+
+  [13] https://github.com/arlolra/check/
+  [14] https://lists.torproject.org/pipermail/tor-talk/2013-August/029306.html
+  [15] https://bugs.torproject.org/9529
+  [16] https://gitweb.torproject.org/tordnsel.git/commit/99d490
+  [17] https://bugs.torproject.org/9204#comment:14
+
+Tor exit crowdfunding
+---------------------
+
+Moritz Bartl from torservers.net [18] posted an update [19] on their
+ongoing crowdfunding campaign to support Tor exit bandwidth. The fund
+just went over €3000, and there are still a few days left!
+
+For more information, and ways to contribute, please visit the Indiegogo
+page [20].
+
+  [18] https://www.torservers.net/
+  [19] https://lists.torproject.org/pipermail/tor-talk/2013-August/029431.html
+  [20] http://www.indiegogo.com/projects/tor-anti-censorship-and-anonymity-infrastructure/
+
+A Flattr-like incentive for Tor relays?
+---------------------------------------
+
+While torservers.net is presently collecting euros, George Kadianakis
+asked for comments from the Tor community about “a practical crowdfunded
+Flattr-like incentive scheme for Tor relays”, dubbed Flattor [21].
+
+George’s proposal is meant to solve “one of the problems of scaling Tor
+to tens of millions of users”, that “Tor’s bandwidth capacity is
+finite”.  He observes that “lately the bandwidth coming out of
+Tor-friendly organizations (like torservers.net, universities, etc.)
+seems to increase” and is worried that “Tor might end up looking like
+the Bitcoin network — where a number of organizations (mining pools)
+drive the network.”
+
+What George would like to see is incentives for contributing to the
+network.  After studying schemes proposed in the past, all deemed “hard
+to implement and deploy”, George proposes a simple approach: users can
+opt to spend a fixed amount of bitcoins to support the Tor network, and
+their donation will be divided according to the bandwidth of each relay.
+Obviously, relay operators who wish to receive such contributions would
+need to publish a bitcoin address, probably in the “contact” field.
+
+There might be some concerns with such scheme, or any monetary
+incentives scheme, as George summarized: “If relay operators start
+getting money for their bandwidth, we might end up with relay operators
+that are just in for the money.  It might then be easier for a
+three-letter org to persuade those relay operators to snoop on their
+users (by giving them double the money they are currently getting).”
+
+Moritz Bartl commented [22] that the idea was already quite close to
+torservers.net current plan, to the extent that donations
+were distributed “across all participating organizations based on […]
+advertised bandwidth and a country-specific factor.” Moritz also pointed
+out that similar discussions had already happened in the past when a
+sponsor wished to fund faster exit relays [23].
+
+George concluded his mail by saying that he is “not even sure if such an
+incentive scheme is a good idea, but posting bad ideas to mailing lists
+is what the Internet is for, right?”
+
+Feel free to join the discussion, or hack wildly.
+
+  [21] https://lists.torproject.org/pipermail/tor-talk/2013-August/029419.html
+  [22] https://lists.torproject.org/pipermail/tor-talk/2013-August/029421.html
+  [23] https://blog.torproject.org/blog/turning-funding-more-exit-relays
+
+Miscellaneous news
+------------------
+
+The new release of Orbot 12.0.3 comes with a shiny new icon and
+graphics, bugfixes, and Tor 0.2.4.16-rc. You can download the update via
+Google Play [24] or straight from Guardian Project’s website [25].
+
+  [24] https://play.google.com/store/apps/details?id=org.torproject.android
+  [25] https://guardianproject.info/releases/orbot-latest.apk
+
+Andrew Lewman has published the financial reports of the Tor Project for
+the year 2012 [26].
+
+  [26] https://blog.torproject.org/blog/transparency-openness-and-our-2012-financial-docs
+
+Arturo has sent his report for July 2013 [27].
+
+  [27] https://lists.torproject.org/pipermail/tor-reports/2013-August/000313.html
+
+Runa Sandvik reported on her trip to Black Hat & DEF CON [28]. She
+managed to fill “the Penn & Teller theater (~1500 people)” for a
+talk [29] about “the safety of the Tor network which focused on network
+diversity, relay operators, and misbehaving relays.” The former Tor GSoC
+student Brandon Wiley also gave an update [30] on Dust — “an Internet
+protocol designed to resist a number of attacks currently in active use
+to censor Internet communication.” [31]
+
+  [28] https://lists.torproject.org/pipermail/tor-reports/2013-August/000312.html
+  [29] https://www.defcon.org/html/defcon-21/dc-21-speakers.html#Sandvik
+  [30] https://www.defcon.org/html/defcon-21/dc-21-speakers.html#Wiley
+  [31] https://github.com/blanu/Dust/
+
+Karsten Loesing has made progress on “experimenting with a client and
+private bridge connected over uTP” [32]. The connection can be
+established, but strange timing issues remain to be solved.
+
+  [32] https://trac.torproject.org/projects/tor/ticket/9166#comment:23
+
+George Kadianakis has sent two new proposals to improve hidden service
+identity key security [33] and prevent address enumeration [34]. TWN
+will cover these proposals in detail once the draft deployment strategy
+is published. Feel free to help refine the proposals in the meantime!
+
+  [33] https://lists.torproject.org/pipermail/tor-dev/2013-August/005279.html
+  [34] https://lists.torproject.org/pipermail/tor-dev/2013-August/005280.html
+
+Help Desk Roundup
+-----------------
+
+Users experience confusion when trying to update the Tor Browser Bundle.
+Users are not always aware that the Tor Browser Bundle does not have an
+autoupdate function. Some users will download the latest release from
+the Tor Project website, then ask “Ok, what do I do now?”. We recommend
+closing the browser, then deleting one’s current Tor Browser folder
+before unpacking the new download.
+
+One person asked for help while using the Pirate Browser.
+Torrent-sharing website The Pirate Bay released the Pirate Browser this
+week as a fork of the Tor Browser Bundle. The Pirate Browser is not
+endorsed or recommended by the Tor Project. It is unclear what the
+advantages are compared to using the Tor Browser Bundle and no source
+code is available.
+
+
+
+This issue of Tor Weekly News has been assembled by Lunar, dope457,
+malaparte, mttp, Karsten Loesing, and harmony.
+
+Want to continue reading TWN? Please help us create this newsletter.
+We still need more volunteers to watch the Tor community and report
+important news. Please see the project page [35], write down your
+name and subscribe to the team mailing-list [36] if you want to
+get involved!
+
+  [35] https://trac.torproject.org/projects/tor/wiki/TorWeeklyNews
+  [36] https://lists.torproject.org/cgi-bin/mailman/listinfo/news-team
+
+
+
+-- 
+tor-talk mailing list - tor-talk@lists.torproject.org
+To unsusbscribe or change other settings go to
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-talk
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

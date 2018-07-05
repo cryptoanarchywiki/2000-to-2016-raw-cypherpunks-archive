@@ -1,0 +1,82 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t83BRZTU003560;
+	Thu, 3 Sep 2015 07:27:42 -0400
+Received: from cannabis.dataforce.net (cannabis.dataforce.net [195.42.160.49])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id
+ t83BRUsk003556
+ for <cypherpunks@cpunks.org>; Thu, 3 Sep 2015 07:27:32 -0400
+Received: by cannabis.dataforce.net (Postfix, from userid 12794)
+ id 942C54A1934; Thu,  3 Sep 2015 14:27:29 +0300 (MSK)
+Date: Thu, 3 Sep 2015 14:27:21 +0300
+From: Georgi Guninski <guninski@guninski.com>
+To: cypherpunks@cpunks.org
+Subject: Possible crypto backdoor in RFC-2631 Diffie-Hellman Key Agreement
+ Method
+Message-ID: <20150903112721.GA2732@sivokote.iziade.m$>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+header: best read with a sniffer
+User-Agent: Mutt/1.5.20 (2009-06-14)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 47
+
+Possible crypto backdoor in RFC-2631 Diffie-Hellman Key Agreement Method
+
+I am n00b at crypto so this might not make any sense.
+
+In DH, if one can select group parameters (g,q,p) he can break both parties
+private very fast time IMHO.
+
+The RFC:  https://tools.ietf.org/html/rfc2631
+
+The main problem appears:
+https://tools.ietf.org/html/rfc2631#section-2.2.2
+
+2.2.2.  Group Parameter Validation
+   The ASN.1 for DH keys in [PKIX] includes elements j and validation-
+   Parms which MAY be used by recipients of a key to verify that the
+   group parameters were correctly generated. Two checks are possible:
+
+     1. Verify that p=qj + 1. This demonstrates that the parameters meet
+        the X9.42 parameter criteria.
+     2. Verify that when the p,q generation procedure of [FIPS-186]
+        Appendix 2 is followed with seed 'seed', that p is found when
+        'counter' = pgenCounter.
+
+
+The main problem appears MAY.
+
+As I read it, implementation MAY NOT verify it.
+
+Sketch of the attack:
+
+Chose $q$ product of small primes $p_i$.
+
+Solve the discrete logarithm modulo $p_i$ for the public keys.
+
+Apply the Chinese remainder theorem to get the privates keys.
+
+(This is well known method for DL and for this reason
+the group order must be prime [160 bits ;)]).
+
+Would be interested how implementations implement this MAY.
+
+Let me know if there is better list for this.
+
+-- 
+georgi
+

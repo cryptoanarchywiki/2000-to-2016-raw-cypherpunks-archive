@@ -1,0 +1,74 @@
+From owner-cypherpunks@al-qaeda.net  Mon Mar 19 03:33:39 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q2J7UL4s014925
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 19 Mar 2012 03:30:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1332142221;
+	bh=3gnYAkPsh+t0RuhnnXQ9J5pNwZXSyD4BCPq14koADnw=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=484TpOPMNItVZi/+KyqZLrKAyLh/+auvKxwtkpGFg1jfiqjULzcWSxe1Y8Zk5O3oz
+	 KaPVYFbhw47ABrvr/Rz2unMPBAN3NcSxz/2i+fWooxfATx2AzCSlxUww8lwl2GXTef
+	 044h1IEQKWYUp24hEDjW8pWKk7n7vMjrBKCoD8N4=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q2J7ULPF014924
+	for cypherpunks-outgoing; Mon, 19 Mar 2012 03:30:21 -0400
+Date: Mon, 19 Mar 2012 08:30:17 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: Re: [tahoe-dev] keeping private grids private
+Message-ID: <20120319073017.GZ9891@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2094
+Lines: 42
+
+----- Forwarded message from Vladimir Arseniev <vladimira@aport.ru> -----
+
+From: Vladimir Arseniev <vladimira@aport.ru>
+Date: Mon, 19 Mar 2012 01:15:41 +0400
+To: tahoe-dev@tahoe-lafs.org
+Subject: Re: [tahoe-dev] keeping private grids private
+User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US;
+	rv:1.9.2.27) Gecko/20120216 Thunderbird/3.1.19
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+Thanks for your responses, Markus and Brian. Running the grid on a VPN
+is still the best option, it seems (with firewall rules to block non-VPN
+traffic). Only VPN clients can see the introducer, and connect to other
+nodes on the VPN. But there are vulnerabilities.
+
+We've been using OpenVPN's commercial Access Server, which is presumably
+well secured. However, the setup is vulnerable to attackers with
+physical access to the server. We've mitigated the risk by encrypting
+the server's credential databases, but determined attackers can read
+passphrases from memory. We've tried running the server locally, and
+forwarding the access port to a VPS, but connections (through commercial
+VPNs) haven't been reliable enough, and latencies are huge. Still, we do
+control the introducer, and could readily move our grid to a new VPN, if
+necessary.
+
+OpenVPN's default star topology is also problematic, and creating mesh
+networks seems complicated. We've looked at CloudVPN, but nodes can be
+cloned, and there's no mechanism for refusing connections. Access
+control depends on firewall rules, and using a public DHCP server with
+static mapping and static ARP. That may be the way to go, however, if
+the OpenVPN server bottleneck becomes an issue.
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+http://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

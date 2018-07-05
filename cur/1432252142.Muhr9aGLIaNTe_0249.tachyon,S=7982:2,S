@@ -1,0 +1,185 @@
+From owner-cypherpunks@jfet.org  Sat Jun 17 08:22:10 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.6/8.13.6/Debian-1) with ESMTP id k5HCLWEf013193
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sat, 17 Jun 2006 08:21:33 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.6/8.13.6/Submit) id k5HCLW82013192
+	for cypherpunks-outgoing; Sat, 17 Jun 2006 08:21:32 -0400
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;         s=beta;
+  d=gmail.com;        
+  h=received:message-id:date:from:to:subject:mime-version:content-type:content-transfer-encoding:content-disposition;
+  b=l3YD2vzeY1DkPKEMV8Mndg/Q7wiLMmmveSaH/rSmgLTuzbQ7fo0ECxMIYcws0RiIwvt8c/OiNrXH5F0AXKvV4jEaOd5i6s1G621JXgpOcA2XDNB95J8I9NXKuvvwqRvXO/KM9Y3B+CT2cZBXSWvHvxuxZJBb7D+ZzWbHhDU5sFw=
+Message-ID: <4ef5fec60606170521p5c3ccbax47fde9b998fe52fa@mail.gmail.com>
+Date: Sat, 17 Jun 2006 05:21:29 -0700
+From: coderman <coderman@gmail.com>
+To: cypherpunks@jfet.org, peertech@googlegroups.com
+Subject: user centric network endpoint based session
+  authentication/privacy
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 6563
+Lines: 155
+
+trying to get some feedback for working documentation / design before
+our next published iteration expected on july 4th.
+
+please feel free to provide public comments or suggest related
+projects/research/code to me directly or on list.
+
+
+throwing down the gauntlet:
+---
+using various authentication and key management methods at the TCP
+session level associated with a specific IP/port endpoint pair for
+access to network services[1][2][3][4][5]* is a relic from decades
+past and is not only inefficient and inflexible but actively
+detrimental to good usable security due to the baggage and complexity
+inherent in these methods.[6][7][8]
+
+access to network services should be provided on top of a network
+endpoint local to the two domains requesting and providing services
+respectively, with user centric authentication for initialization of
+the secure IPv4/IPv6 tunnel session to which services are bound and
+revocation performed by terminating this session and the ability to
+reestablish it.
+
+revocable delegation is implemented by proxy of traffic between peers
+to the delegated domain and irrevocable delegation implemented by
+sharing authentication credentials for the desired endpoint service(s)
+with the trusted peer for direct communication without proxy.
+---
+
+* i listed three distributed capability based protocols not as a
+slight, but to point out that a capability / POLA / least privilege
+approach to building and providing services at the OS and application
+layers is the only way truly good security can be realized.  i would
+like to see the implementation / protocol specific parts of
+communication privacy pulled out of such projects so they can focus on
+and implement what they are designed for and most effective at. this
+is a long term vision as the effort to transition to wide scale
+capability based security is significant.[9]
+
+in a sense this is simply a way to exchange "the capability to
+communicate with me privately" and then utilize the services made
+available to your peers when this capability is exercised.
+
+
+FAQ
+-------
+Q: why delegate authentication and privacy to a network IPv4/IPv6
+endpoint layer?
+- this allows a flexible and intuitive method for implementing privacy
+and authentication of digital communication between peers.  the
+existing tools and concepts associated with Virtual Private Networks
+can be employed in a decentralized and user centric manner while
+existing applications and services can use the strong authentication
+and session management available by binding to the desired endpoint
+address.
+
+"sharing the authentication and privacy bootstrap" makes sense for
+everyone. more reasons?
+
+- it allows you to limit any unauthenticated attacks against
+application / private services to the VPN layer itself (OpenVPN port,
+IPsec stack, etc), thus keeping applications more vulnerable to attack
+(rich web services, new apps, etc) inside an authenticated boundary.
+NOTE: this should not be interpreted as the usual "perimeter security"
+model which is flawed.  when each peer communicates directly you have
+effectively deperimeterized the hosts on the network.
+
+- it meshes well with a virtual machine approach to isolating domains
+where each VM instance can have it's own network endpoint tied to
+distinct authenticated sessions.
+
+- it allows pet names to be given to distinct addresses bound to peer
+identity (using the SHA2-256 digest of peer public key to generate a
+feed::/8 address for example, which can be given a petname[10] in
+/etc/hosts like feed:7ba3:c779:e5f5:cc1a:8bc7:5fe1:ed08
+public.peertech.org or 172.16.27.53 devwiki)
+
+- traffic shaping, bandwidth monitoring, IDS and other techniques can
+be applied to distinct authenticated sessions using the desired IP
+address in a straightforward manner.  this can be particularly
+difficult to do when an application uses ephemeral / dynamic ports but
+is simple with distinct endpoints.
+
+
+Q: what about passwords?
+- it is assumed that this style of security would utilize full disk
+encryption or a key manager (like the browser site login remember
+feature) to manage strong authentication material associated with a
+user's identity.  passwords are too weak for good network
+authentication.
+
+
+Q: what would the key distribution for this kind of identity
+management look like?
+- some examples:
+A. Strongly authenticated propinquitous capability exchange:
+  First two peers exchange public keys (self signed OpenVPN
+certificates) and endpoint locators in person.
+  Second they both connect over wireless / LAN directly using OpenVPN
+to establish an authenticated and private network between them.
+
+B. Strongly authenticated transitive introduction:
+  Using a secure session pair created via strong auth, send the public
+key of each peer to be introduced to each other.
+  Each peer attempts directly connecting using the endpoint
+identifiers for each other obtained from the mutually trusted peer.
+
+C. Opportunistically authenticated capability exchange:
+  Petition public / untrusted introducer with nickname or other
+identifier for endpoint discovery (coderman.dyndns.org for example).
+  Connect to peer and exchange and save keys (openssh style).
+  Keys may be verified in the future or reset if problems are encountered.
+
+
+Q: This sounds way too complicated; what can support this kind of connectivity:
+- while difficult this is feasible and straightforward.  existing
+tools like OpenVPN, OpenSSH 3.4+, IPsec, PPTP, and others can all be
+integrated in a suitable fashion using everything from UDP, TCP to
+ICMP and even covert DNS tunnels or 802.11 injection for transport.
+
+the key will be making key management and user interaction simple
+enough for the appropriate threat models.
+
+
+
+references:
+1. "HTTPS protocol"
+  - http://en.wikipedia.org/wiki/Https
+
+2. "STARTTLS protocols"
+  - http://www.ietf.org/rfc/rfc2595.txt
+
+3. "Lessons from E-speak"
+  -  http://www.hpl.hp.com/personal/Alan_Karp/espeak/espeak_articles/lessons.pdf
+
+4. "httpsy protocol"
+  - http://www.waterken.com/dev/YURL/httpsy/
+
+5. "CapTP protocol"
+  - http://www.erights.org/elib/distrib/captp/index.html
+
+6. "Security: Problem Solved?"
+  - http://acmqueue.com/modules.php?name=Content&pa=showpage&pid=311&page=4
+
+7. "Why johnny can't encrypt"
+  - http://www.google.com/search?q=%22why+johnny+can%27t+encrypt%22
+
+8. "Why Phishing Works"
+  - http://www.google.com/search?q=%22Why+Phishing+Works%22
+
+9. "Capability Myths Demolished"
+  - http://citeseer.ist.psu.edu/miller03capability.html
+
+10. "Introduction to Petname Systems"
+  - http://www.skyhunter.com/marcs/petnames/IntroPetNames.html
+

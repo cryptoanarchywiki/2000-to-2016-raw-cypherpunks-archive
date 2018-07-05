@@ -1,0 +1,165 @@
+From owner-cypherpunks@al-qaeda.net  Wed Aug 22 11:45:14 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q7MFcwBL006726
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 22 Aug 2012 11:38:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1345649938;
+	bh=csNQe4/xAC0EWSoqDvSGFH+5mXUWmwxXXZWPB6MkJj4=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=Oc528XKobIiz/e5Itizrzh04qWmJKwmqGz3OXXeMgvrpwa9i61azeq+4DAIxsxyXI
+	 7di8dq71oKQK7uADVd3WOA1MC7xBeLQsDt6KRWIOV4yEVj6nFEp1op/77dUpDADSAr
+	 4ptvmnj+qxLbL9fXB5Hyv9jZFhrukrFZXXFNhoXo=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q7MFcwN1006725
+	for cypherpunks-outgoing; Wed, 22 Aug 2012 11:38:58 -0400
+Date: Wed, 22 Aug 2012 17:38:53 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: [tahoe-dev] Tahoe-LAFS Weekly Call notes
+Message-ID: <20120822153853.GM12615@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4837
+Lines: 131
+
+----- Forwarded message from Zooko Wilcox-O'Hearn <zooko@zooko.com> -----
+
+From: Zooko Wilcox-O'Hearn <zooko@zooko.com>
+Date: Tue, 21 Aug 2012 16:08:25 -0600
+To: tahoe-dev <tahoe-dev@tahoe-lafs.org>
+Subject: [tahoe-dev] Tahoe-LAFS Weekly Call notes
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+Folks:
+
+We had another Tahoe-LAFS Weekly Call. Here are my notes, which are
+patchy and could be inaccurate. You could check this publicly editable
+notepad for updates from the other attendees of the call.
+
+http://titanpad.com/qnudyEsEoR
+
+In attendance: Brian, David-Sarah, Zooko
+
+
+
+About leasedb schema and Python code:
+
+b" Use ascii-encoded or binary blobs in the leasedb (sqlite db)?
+
+b" Use ascii-encoded or binary strings to hold things like shareids
+inside the Python interpreter?
+
+
+
+About accounting:
+
+Server admin should be able to see aggregate usage per account.
+
+
+We have read-only admin WUIs because we don't yet have a good
+technology to authorize the administrator to access a WUI without
+exposing the same access to CSRF attacks. (Brian has a prototype
+solution in his "toolbed" project.)
+
+Use cases of sharing:
+
+b" Club
+b" For-profit service (e.g. Least Authority)
+
+Individual pairwise storage relationships:
+
+b" Social (as long as there is visibility and control, Bob doesn't need
+to feel like he needs something explicit specific in exchange)
+b" Money
+b" Tit for Tat
+b" 3-way: Bob is running a server, Alice is running a client. She is
+also, separately running a server (or hiring someone else to run a
+server that Bob can use). So, Bob wants to let Alice's client use his
+server because he knows that she is responsible for that other server
+that he can use.
+
+Somewhere along the line there is going to be a graph of who likes
+whom -- who has accepted storage obligations for whom.
+
+Eventually Brian wants to provide tools at *least* to visualize, and
+ideally to manage, this network of social relationships.
+
+People could, perhaps configure their node to give anybody storage
+space as long as that person is giving you at least X% as much storage
+space (Tit for Tat).
+
+
+
+The three messages are:
+
+1. I will accept shares from this other person.
+2. I'm willing to send shares to this other person.
+3. I'm working for this other person (as a storage server).
+
+
+Next week:
+
+b" Try some alternate tech such as Google Hangouts or Skype? POTS
+quality is bad enough to interfere with communication.
+b" More about accounting relationship management -- present the
+higher-altitude picture of the roadmap from Brian's mind.
+
+The short-term decision that we have to make is whether to have one
+key or two keys -- a separate key for the client and for the server.
+
+
+
+After David-Sarah rang off for dinner, Zooko made the following
+proposal to Brian as a "baby step". Zooko's motivation is that this
+would be simple to understand (especially for non-Brian people), and
+useful (e.g. to volunteergrid2 folks), and hopefully
+forward-compatible with the better "invitation protocol" design that
+Brian has in mind.
+
+Baby Step Proposal:
+
+There is a file named "clients.txt" which is edited by a human and is
+treated as read-only by the Tahoe-LAFS storage server (and is ignored
+entirely by Tahoe-LAFS the storage client). It is a text file with one
+record per line. Each record is a complete ascii-encoded public key
+followed by an optional whitespace and pet name.
+
+If your client's public key appears in the server's "clients.txt"
+file, then your storage usage gets accounted for and displayed to the
+storage server owner with his petname for you. If your client's public
+key does not appear in that clients.txt, then your storage usage goes
+into the "open, anonymous" accounting bucket (or else maybe gets
+tracked under your public key?).
+
+Or, the storage server operator can turn on the mode where if your
+client's public key does not appear in his "clients.txt" file, then it
+refuses to let you store data there at all.
+
+There is an analogous file named "servers.txt" which is read but not
+written by Tahoe-LAFS storage clients and is ignored entirely by
+Tahoe-LAFS storage servers. This file contains a list of public keys
+and optional petnames for storage servers. In "backwards compatibility
+mode", it tracks which of those servers you store how much data with.
+In "strict mode", it refuses to store data with storage servers that
+don't have public keys in that file.
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

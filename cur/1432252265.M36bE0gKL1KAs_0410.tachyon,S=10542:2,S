@@ -1,0 +1,246 @@
+From cypherpunks-bounces@cpunks.org  Mon Oct  7 02:07:47 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9765fJm017495;
+	Mon, 7 Oct 2013 02:05:45 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9765bpO017491
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Mon, 7 Oct 2013 02:05:40 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id CD9D0543E51; Mon,  7 Oct 2013 08:05:36 +0200 (CEST)
+Date: Mon, 7 Oct 2013 08:05:36 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: [zfs] [Review] 4185 New hash algorithm support
+Message-ID: <20131007060536.GW10405@leitl.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature"; boundary="kxcZgGvCZroCEnpe"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 8764
+Lines: 207
+
+
+--kxcZgGvCZroCEnpe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+----- Forwarded message from Saso Kiselkov <skiselkov.ml@gmail.com> -----
+
+Date: Mon, 07 Oct 2013 00:47:52 +0100
+=46rom: Saso Kiselkov <skiselkov.ml@gmail.com>
+To: illumos-zfs <zfs@lists.illumos.org>
+Subject: [zfs] [Review] 4185 New hash algorithm support
+Message-ID: <5251F6A8.2040305@gmail.com>
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:17.0) Gecko/201=
+30801 Thunderbird/17.0.8
+Reply-To: zfs@lists.illumos.org
+
+Please review what frankly has become a bit of a large-ish feature:
+http://cr.illumos.org/~webrev/skiselkov/new_hashes/
+
+This webrev implements new hash algorithms for ZFS with much improved
+performance. There are three algorithms included:
+
+ * SHA-512/256: truncated version of SHA-512 per FIPS 180-4. Uses
+	all existing code from the sha2 module (with new H(0) consts),
+	but the native 64-bit arithmetic used in SHA-512 provides a
+	~50% performance boost relative to SHA-256 on 64-bit hardware.
+
+ * Skein-512: 80% faster than SHA-256 in optimized C implementation,
+	and a very high security margin (Skein was a finalist in SHA-3).
+	Also includes a KCF SW provider.
+
+ * Edon-R-512: 350% faster than SHA-256 in optimized C implementation.
+	Security margin lower than Skein.
+
+To address any security concerns associated with using new algorithms
+this patch also implements salted checksum support. We store a random
+256-bit secret key (the salt) in the MOS and use it to pre-seed the hash
+algorithms (Skein and Edon-R use this, SHA-512/256 is just a straight
+hash). Any attacker thus cannot simply mount a collision attack on the
+algorithm, since they can't completely control the input.
+
+ATM I didn't implement support for booting off of pools with salted
+checksums, thus root pools are limited to sha256 and the new sha512 (new
+GRUB stage2 needed for sha512 support, obviously). It's possible, but I
+see fairly little reason in doing so (is anybody running dedup on their
+rpool and running into hash performance limitations?).
+
+For performance and correctness testing I've included a set of tiny test
+suites in usr/src/common/crypto/{edonr/skein/sha2}/test. Simply cd into
+the test subdirectory in a shell with your build environment set up and
+type 'make'. See attached file for an example of the output.
+
+To those who will inevitably ask about Keccak/SHA-3, here are my reasons
+why I didn't integrate it (in decreasing order of significance):
+
+ * Keccak's software performance is worse than SHA-2.
+ * There's no hardware support for Keccak and there likely never
+   will be, as SHA-3 !=3D Keccak.
+ * SHA-3 has yet to be standardized, and there are even some questions
+   around that, be they tinfoil hat material or otherwise:
+   http://tiny.cc/schneier_sha-3
+ * To be sure, at some point in the future there will be HW support for
+   SHA-3 (which may or may not be faster than Edon-R in SW), but seeing
+   as how HW vendors are easily backdoored, I'm not convinced we should
+   put a lot of trust in their work: http://tiny.cc/hw_trojans_becker13
+
+Cheers,
+--=20
+Saso
+
+
+root@illumos-build:...gate.git/usr/src/common/crypto# for TEST in edonr ske=
+in sha2; do ( cd $TEST/test ; make ); done                     =20
+Building 32-bit test...                                   =20
+Running 32-bit test...
+Running algorithm correctness tests:
+Edon-R-224   Message: test_msg0 Result: OK
+Edon-R-224   Message: test_msg1 Result: OK
+Edon-R-256   Message: test_msg0 Result: OK
+Edon-R-256   Message: test_msg1 Result: OK
+Edon-R-384   Message: test_msg0 Result: OK
+Edon-R-384   Message: test_msg2 Result: OK
+Edon-R-512   Message: test_msg0 Result: OK
+Edon-R-512   Message: test_msg2 Result: OK
+Running performance tests (hashing 1024 MiB of data):
+Edon-R-256   2604591 us (6.05 CPB)
+Edon-R-512   4227055 us (9.81 CPB)
+Building 64-bit test...
+Running 64-bit test...
+Running algorithm correctness tests:
+Edon-R-224   Message: test_msg0 Result: OK
+Edon-R-224   Message: test_msg1 Result: OK
+Edon-R-256   Message: test_msg0 Result: OK
+Edon-R-256   Message: test_msg1 Result: OK
+Edon-R-384   Message: test_msg0 Result: OK
+Edon-R-384   Message: test_msg2 Result: OK
+Edon-R-512   Message: test_msg0 Result: OK
+Edon-R-512   Message: test_msg2 Result: OK
+Running performance tests (hashing 1024 MiB of data):
+Edon-R-256   2002762 us (4.65 CPB)
+Edon-R-512   1006284 us (2.34 CPB)
+Building 32-bit test...
+Running 32-bit test...
+Running algorithm correctness tests:
+Skein_256/256   Message: test_msg0      Result: OK
+Skein_256/256   Message: test_msg1      Result: OK
+Skein_256/256   Message: test_msg2      Result: OK
+Skein_512/512   Message: test_msg0      Result: OK
+Skein_512/512   Message: test_msg2      Result: OK
+Skein_512/512   Message: test_msg3      Result: OK
+Skein1024/1024  Message: test_msg0      Result: OK
+Skein1024/1024  Message: test_msg3      Result: OK
+Skein1024/1024  Message: test_msg4      Result: OK
+Running performance tests (hashing 1024 MiB of data):
+Skein_256/256   14110264 us (32.76 CPB)
+Skein_512/512   12465191 us (28.94 CPB)
+Skein1024/1024  16864123 us (39.15 CPB)
+Building 64-bit test...
+Running 64-bit test...
+Running algorithm correctness tests:
+Skein_256/256   Message: test_msg0      Result: OK
+Skein_256/256   Message: test_msg1      Result: OK
+Skein_256/256   Message: test_msg2      Result: OK
+Skein_512/512   Message: test_msg0      Result: OK
+Skein_512/512   Message: test_msg2      Result: OK
+Skein_512/512   Message: test_msg3      Result: OK
+Skein1024/1024  Message: test_msg0      Result: OK
+Skein1024/1024  Message: test_msg3      Result: OK
+Skein1024/1024  Message: test_msg4      Result: OK
+Running performance tests (hashing 1024 MiB of data):
+Skein_256/256   3328342 us (7.73 CPB)
+Skein_512/512   2549537 us (5.92 CPB)
+Skein1024/1024  3547695 us (8.24 CPB)
+Building 32-bit test...
+Running 32-bit test...
+Running algorithm correctness tests:
+SHA256      Message: test_msg0  Result: OK
+SHA256      Message: test_msg1  Result: OK
+SHA384      Message: test_msg0  Result: OK
+SHA384      Message: test_msg2  Result: OK
+SHA512      Message: test_msg0  Result: OK
+SHA512      Message: test_msg2  Result: OK
+SHA512_224  Message: test_msg0  Result: OK
+SHA512_224  Message: test_msg2  Result: OK
+SHA512_256  Message: test_msg0  Result: OK
+SHA512_256  Message: test_msg2  Result: OK
+Running performance tests (hashing 1024 MiB of data):
+SHA256      6745601 us (15.66 CPB)
+SHA512      19033518 us (44.19 CPB)
+Building 64-bit test...
+Running 64-bit test...
+Running algorithm correctness tests:
+SHA256      Message: test_msg0  Result: OK
+SHA256      Message: test_msg1  Result: OK
+SHA384      Message: test_msg0  Result: OK
+SHA384      Message: test_msg2  Result: OK
+SHA512      Message: test_msg0  Result: OK
+SHA512      Message: test_msg2  Result: OK
+SHA512_224  Message: test_msg0  Result: OK
+SHA512_224  Message: test_msg2  Result: OK
+SHA512_256  Message: test_msg0  Result: OK
+SHA512_256  Message: test_msg2  Result: OK
+Running performance tests (hashing 1024 MiB of data):
+SHA256      4551774 us (10.57 CPB)
+SHA512      3029591 us (7.03 CPB)
+
+-------------------------------------------
+illumos-zfs
+Archives: https://www.listbox.com/member/archive/182191/=3Dnow
+RSS Feed: https://www.listbox.com/member/archive/rss/182191/22842876-6fe17e=
+6f
+Modify Your Subscription: https://www.listbox.com/member/?member_id=3D22842=
+876&id_secret=3D22842876-a25d3366
+Powered by Listbox: http://www.listbox.com
+
+
+----- End forwarded message -----
+--=20
+Eugen* Leitl <a href=3D"http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+
+--kxcZgGvCZroCEnpe
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSUk8wAAoJEPRuNImsiU7FXVgP+wV4zAq31VuzMqnL5W/iyCNy
+2wq+GbrX9ghJk9aI+jKbD/0tQfMUgoeD6/Lb1Poh72DXJyxMxE95pb1OXSsYOyAk
++QjMQIqjToY1nbkWaQT8L5NknGrzGnEdmacDSVJzHc1t9lhzWHqMcq1ruKO7RNGJ
+5gFEfa6z9TBJyvZurEjT322l9PiL4W2w+nU0TAMZ7qd6g0DPIT8Q0oFmxMcSxvYo
+/SNVnAulH/FECbze6a2thveldkl1EOHytZq3F64+Q+AHGu8Uf8+5NoTChmnhX7ce
+f+jvSI5Mm7XtU4IAK5z+Jge3OYyiRw9ts2qIgI4BwbR0/Er/PiemtLmCPMs12PTT
+j2Y8sS73SKbPLinSYqLBXOFWOU0FUhCMYXhGaY8cI1oAogPjTxhChGSaE3fxy8uh
+zlHNmsq1/WnePA98ovvfvp/ijSPCeRiLKORdLLulHzhX0fRlQdMJ23EXi5kVBlRv
+HNaWX1kgDKdnn0ejYfgKjcsqRLHxHHh2dv0I7LhzKHMqEW411xKuOyLSpcrersJw
+936d7W0ZLLL6MRE/jFE2ZDKJwyncHYvZT4UGCbRtt5zoyzeMVnqCM6DdBXRAaG4w
+htuVYKdwyiuPoyRU7EIGOzaFv4jSL4NhbMttqa4iHf47EQ+2KAKjqnJ7wvirWHwD
+McvCY/tc9h+O+mWpxQaB
+=7gns
+-----END PGP SIGNATURE-----
+
+--kxcZgGvCZroCEnpe--
+

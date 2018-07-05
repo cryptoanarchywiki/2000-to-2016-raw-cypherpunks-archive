@@ -1,0 +1,139 @@
+From owner-cypherpunks@al-qaeda.net  Tue Sep 18 10:00:55 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q8IDvYMF027682
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 18 Sep 2012 09:57:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1347976654;
+	bh=1/Eyw2J7PnbxFhFmVgHu7XxvtlS6LVcFsiJ1q5BoSqc=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=ysfMspAAmJlytp5FOJM28RFH294o4FmX66YN9yB2G1baeXBrnGIbSnY87VKHMwEjU
+	 isIVuZdtBkTZfsInUy5eWBgiZOyi5q4rhJ9QWq+8LaAkLsEZuY5gsGOAS5lxENK9kB
+	 g47Pp+C2+7VEKV7gFC3Mj+0bpUA6j7bMkKenWej0=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q8IDvYC1027681
+	for cypherpunks-outgoing; Tue, 18 Sep 2012 09:57:34 -0400
+Date: Tue, 18 Sep 2012 15:57:30 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, zs-p2p@googlegroups.com
+Subject: Re: [tor-talk] almost success  toward complete tor enforcement,
+  	need little help now
+Message-ID: <20120918135730.GD9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4031
+Lines: 106
+
+----- Forwarded message from adrelanos <adrelanos@riseup.net> -----
+
+From: adrelanos <adrelanos@riseup.net>
+Date: Tue, 18 Sep 2012 13:32:43 +0000
+To: tor-talk@lists.torproject.org
+Subject: Re: [tor-talk] almost success  toward complete tor enforcement,
+	need little help now
+Reply-To: tor-talk@lists.torproject.org
+
+Raviji:
+> https://cryptoanarchy.org/wiki/Build_your_own_livething
+
+That's a bit insufficient and some points clearly outdated, see below.
+
+> 
+> obfsproxy issue
+> =================
+> 
+> I have installed tor,pdnsd,ttdnsd,obfsproxy,polipo,vidalia
+
+You don't need pdnsd,ttdnsd,polipo. Vidalia is a nice optional graphical
+user interface.
+
+> I have already collected the obfs IP address from a running tor bundle and then placed all those
+> at /etc/tor/torrc. tor is running with obfs.
+> 
+> [Q] How can I check online that obfs is functional ? https://check.torproject.org/ simply shows
+> tor is running, but no obfs related information.
+
+Someone else has to answer here.
+
+> polipo and firewall
+> =====================
+> 
+> Browsers configured to use polopo ( tor as parent) and the online check is successful (https://check.torproject.org/)
+> 
+> [Q] Is polipo really fast ? I hardly see any advantage comparing direct tor connection with out polipo.
+
+You're on the wrong path. Don't use polipo / Firefox etc. anymore,
+unless you want to stay out from all other Tor users. Use Tor Browser.
+Details:
+https://trac.torproject.org/projects/tor/wiki/doc/TorifyHOWTO/WebBrowsers
+
+> [Q] What is the iptables rule to redirect all 80 and 443 traffic through polipo 8118 port ? Then no configuration is
+> required at browser level.
+
+You don't need iptables for that. Tor is running on a Gateway. Tor
+Browser without Tor/Vidalia started (patched startup script) is running
+on another machine. (Which we call Workstation.)
+
+Tor Button SOCKS Host: gateway IP, port: reserve one SocksPort in torrc
+on Gateway exclusively for Tor Browser. Add some extra SocksPorts for
+other applications. (stream isolation)
+
+> DNS and firewall
+> =================
+> 
+> I am using pdnsd (caching DNS proxy server) and ttdnsd ( udp to tcp converter )
+
+You don't need ttdnsd. I recommend using one SocksPorts per most, if not
+all applications. If you still want some remaining traffic fallback you
+can use Tor's excellent Dns- and TransPorts.
+
+> 
+> [Q] How can I enforce all udp to go through local DNS port and which one 53 or 8853 ?
+
+For a "fetch remaining DNS traffic and route through Tor iptables rule"
+have a look at
+https://github.com/adrelanos/Whonix/blob/master/whonix_gateway/usr/local/bin/whonix_firewall
+and search for "dns".
+
+> 
+> iptables to route all traffic and blocked all non tor
+> ======================================================
+> 
+> LAN and lo (localhost) don't need to go through tor
+
+You probable mess up there figuring out what is lan traffic for real and
+what not. I strongly recommend the Tor-only box to have no local lan
+traffic.
+
+> port 80/443 should go through poliop port 8118,
+> all dns query should go through local 53 ( or 8853 ? ) port
+
+Like said before, forget about that plan. Don't use polipo.
+
+> And the rest of the traffic should go through tor 9050 port, anything left should be dropped.
+> The example iptables given at tails site is not working for me. Could anyone kindly give such a
+> rule sets please ?
+
+You can do it with virtual machines and/or physical isolation.
+
+https://sourceforge.net/p/whonix/wiki/Home/
+https://github.com/adrelanos/Whonix/
+https://github.com/adrelanos/Whonix/blob/master/whonix_gateway/usr/local/bin/whonix_firewall
+_______________________________________________
+tor-talk mailing list
+tor-talk@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-talk
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

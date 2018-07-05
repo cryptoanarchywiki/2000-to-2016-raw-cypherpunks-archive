@@ -1,0 +1,112 @@
+From cypherpunks-bounces@cpunks.org  Mon Jan 13 20:32:13 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0E1VcJR019342;
+	Mon, 13 Jan 2014 20:31:43 -0500
+Authentication-Results: antiproton.jfet.org; dkim=fail
+	reason="verification failed; insecure key"
+	header.d=gmail.com header.i=@gmail.com header.b=Ny79aeJQ;
+	dkim-adsp=none (insecure policy); dkim-atps=neutral
+Received: from mail-qe0-f44.google.com (mail-qe0-f44.google.com
+ [209.85.128.44])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0E1VYGw019338
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Mon, 13 Jan 2014 20:31:36 -0500
+Received: by mail-qe0-f44.google.com with SMTP id df13so2790066qeb.31
+ for <cypherpunks@cpunks.org>; Mon, 13 Jan 2014 17:31:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:date:message-id:subject:from:to:content-type
+ :content-transfer-encoding;
+ bh=SN+qXSf7MFow2WBz8+ttrfXnKFBMfk12/+R6O2cymBs=;
+ b=Ny79aeJQmvYkrMCgrun9zBErpyu89zRwNpGFqnj4PMEadpYH/cmuf/h0SPnzuL1gwf
+ exQAR1x0EOm3X9NWVnkqPks8Oik3vGw+xqqPCS+6B8IlAuxWhqXdUH9Mc110f7sX8sXJ
+ M4Z5UOkM5y3dFDcAgFg0qOOSvcw35C8OZdjVK3CxzjTQfjGhwIxpjb9JZolkBCXyTVd6
+ a8KIlY+gsyNSmJv+yEt38sJEx3FH63VY8cnJ6e0GCSDcGsl6hjX4MfpTlxjpuZ2jl4R5
+ 9iFdM9c1MYbx2FIn7FaHu7jL24M4WqA/uqnXMhtNYp4EcWFY70naji7sCgavVSD6Va2e
+ nqzA==
+MIME-Version: 1.0
+X-Received: by 10.224.88.70 with SMTP id z6mr45740622qal.14.1389663086858;
+ Mon, 13 Jan 2014 17:31:26 -0800 (PST)
+Received: by 10.96.94.68 with HTTP; Mon, 13 Jan 2014 17:31:26 -0800 (PST)
+Date: Mon, 13 Jan 2014 17:31:26 -0800
+Message-ID: <CAJVRA1QVfvbB9CnZBqK6GhS158woNz0quyVvPKCLvS5gq4w-eg@mail.gmail.com>
+Subject: fuzzing at scale
+From: coderman <coderman@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by antiproton.jfet.org id
+ s0E1VYGw019338
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+or, "keeping the 0day hopper full of candidates to weaponize"
+ (you red or blue team? ;)
+
+
+http://googleonlinesecurity.blogspot.com/2014/01/ffmpeg-and-thousand-fixes.html
+"""
+FFmpeg and a thousand fixes
+Friday, January 10, 2014 9:06 AM
+Posted by Mateusz Jurczyk and Gynvael Coldwind, Information Security Engineers
+
+At Google, security is a top priority - not only for our own products,
+but across the entire Internet. That’s why members of the Google
+Security Team and other Googlers frequently perform audits of software
+and report the resulting findings to the respective vendors or
+maintainers, as shown in the official “Vulnerabilities - Application
+Security” list. We also try to employ the extensive computing power of
+our data centers in order to solve some of the security challenges by
+performing large-scale automated testing, commonly known as fuzzing.
+
+One internal fuzzing effort we have been running continuously for the
+past two years is the testing process of FFmpeg, a large
+cross-platform solution to record, convert and stream audio and video
+written in C. It is used in multiple applications and software
+libraries such as Google Chrome, MPlayer, VLC or xine. We started
+relatively small by making use of trivial mutation algorithms, some
+500 cores and input media samples gathered from readily available
+sources such as the samples.mplayerhq.hu sample base and FFmpeg FATE
+regression testing suite. Later on, we grew to more complex and
+effective mutation methods, 2000 cores and an input corpus supported
+by sample files improving the overall code coverage.
+
+Following more than two years of work, we are happy to announce that
+the FFmpeg project has incorporated more than a thousand fixes to bugs
+(including some security issues) that we have discovered in the
+project so far:
+
+$ git log | grep Jurczyk | grep -c Coldwind
+1120
+
+... we have carried out several dozen fuzzing iterations (each
+typically resulting in less crashes than the previous ones) over the
+last two years, identifying bugs of a number of different classes:
+
+NULL pointer dereferences,
+Invalid pointer arithmetic leading to SIGSEGV due to unmapped memory access,
+Out-of-bounds reads and writes to stack, heap and static-based arrays,
+Invalid free() calls,
+Double free() calls over the same pointer,
+Division errors,
+Assertion failures,
+Use of uninitialized memory.
+
+We have simultaneously worked with the developers of Libav, an
+independent fork of FFmpeg, in order to have both projects represent
+an equal, high level of robustness and security posture. Today, Libav
+is at 413 fixes and the library is slowly but surely catching up with
+FFmpeg.
+"""
+

@@ -1,0 +1,120 @@
+From owner-cypherpunks@al-qaeda.net  Tue May 15 02:19:58 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q4F6HGmN008161
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 15 May 2012 02:17:16 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q4F6HGvW008160
+	for cypherpunks-outgoing; Tue, 15 May 2012 02:17:16 -0400
+Date: Tue, 15 May 2012 08:17:13 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: [p2p-hackers] Pirate Pay
+Message-ID: <20120515061713.GD17120@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Raphael Manfredi <Raphael_Manfredi@pobox.com> -----
+
+From: Raphael Manfredi <Raphael_Manfredi@pobox.com>
+Date: Mon, 14 May 2012 17:04:16 +0000 (UTC)
+To: p2p-hackers@lists.zooko.com
+Subject: Re: [p2p-hackers] Pirate Pay
+Organization: Home, Grenoble, France
+X-Mailer: newsgate 1.0 at tours.ram.loc
+Reply-To: theory and practice of decentralized computer networks <p2p-hackers@lists.zooko.com>
+
+Quoting "Vijay K. Gurbani" <vkg@bell-labs.com> from ml.p2p.hackers:
+:This looks like Pirate Pay is injecting multiple sybils into the
+:DHT with node-IDs close to the info-hash of the file, thus making
+:the sybils responsible for the file.  This assures that all queries
+:are sent to the sybils, allowing the sybils to sent out false
+:information to the other peers.
+
+See:
+
+	"Efficient DHT attack mitigation through peers's ID distribution" by
+	Thibault Cholez et al., published in June 2010.
+
+This is a protection that can be added to every DHT nodes and which will
+significantly increase the cost of widespread Sybil attacks.
+
+This DHT protection algorithm has been implemented in gtk-gnutella, with
+a few enhancements of mine (transmitted back to the author of the above
+article).
+
+Here's my summary of the article, as C comments within gtk-gnutella:
+
+	/* 
+	 * The idea is that Sybil attacks will necessarily change the statistical
+	 * distribution of the KUIDs surrounding the target.  By comparing the
+	 * actual KUID prefix distribution with the theoretical one, we can detect
+	 * that something is unusual.
+	 *
+	 * The divergence between the theoretical distribution of prefixes and
+	 * the actual one is measured by computing the Kullback-Leibler divergence
+	 * (K-L divergence for short).
+	 *
+	 * The measured distribution of prefixes sharing "i" leading bits with the
+	 * target is M(i).  For instance, if 6 nodes from the 20 closest share
+	 * 13 bits with the target, M(13) = 6/ 20 = 0.3.
+	 *
+	 * The prefix length b_min at which we start looking is the theoretical
+	 * k-ball furthest threshold, which dht_get_kball_furthest() gives us.
+	 * It is computed as:
+	 *
+	 *    b_min = E[log2(estimated_DHT_size / KDA_K)]
+	 *
+	 * with E[x] being the integer part of x.
+	 *
+	 * The maximum prefix length we consider, b_max, is computed as:
+	 *
+	 *    b_max = b_min + KDA_C
+	 *
+	 * where KDA_C is the "closeness factor", an arbitrary amount of extra
+	 * bits we allow to have in common with the key before looking suspicious.
+	 *
+	 * Starting at b_min, the theoretical distribution of prefixes, T(i) is
+	 * computed as:
+	 *
+	 *	  T(i) = 1 / 2^(i - b_min + 1)
+	 *
+	 * So if b_min is 13, T(13) = 1/ 2, T(14) = 1/2^2, T(15) = 1/2^3, etc...
+	 * Up to T(b_max) = 1 / 2^(KDA_C + 1).
+	 *
+	 * The K-L divergence of T from M is given by:
+	 *
+	 *    Dkl(M|T) = SUM(M(i) * log2(M(i) / T(i))
+	 *            i = b_min to b_max
+	 *
+	 * Intuitively, the larger M(i)/T(i), the larger the divergence added
+	 * by the i-bit prefix.  Given that an attack will focus on getting close
+	 * to the KUID target, T(i) will get smaller and smaller as "i" increases
+	 * and a large M(i) will indicate a potential attack.
+	 *
+	 * Since Dkl is a summation, we can determine which prefix length
+	 * contributes the most towards the divergence and therefore remove these
+	 * nodes from the path as a counter-measure.
+	 *
+	 * The beauty of that protection is that the more efficient the Sybil
+	 * attack is designed to be, the more we'll spot it and defeat it!
+	 */
+
+Raphael
+_______________________________________________
+p2p-hackers mailing list
+p2p-hackers@lists.zooko.com
+http://lists.zooko.com/mailman/listinfo/p2p-hackers
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

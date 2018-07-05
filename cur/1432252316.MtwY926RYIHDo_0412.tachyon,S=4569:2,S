@@ -1,0 +1,94 @@
+From owner-cypherpunks@al-qaeda.net  Thu Sep 17 15:08:38 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id n8HJ7EUQ028896
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 17 Sep 2009 15:07:15 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id n8HJ7E8s028895
+	for cypherpunks-outgoing; Thu, 17 Sep 2009 15:07:14 -0400
+Date: Thu, 17 Sep 2009 21:07:11 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: [tahoe-dev] Bringing Tahoe ideas to HTTP
+Message-ID: <20090917190711.GG9828@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Brian Warner <warner@lothar.com> -----
+
+From: Brian Warner <warner@lothar.com>
+Date: Thu, 17 Sep 2009 01:23:11 -0700
+To: tahoe-dev@allmydata.org
+CC: cryptography@metzdowd.com
+Subject: Re: [tahoe-dev] Bringing Tahoe ideas to HTTP
+User-Agent: Thunderbird 2.0.0.17 (Macintosh/20080914)
+
+Zooko Wilcox-O'Hearn wrote:
+> began with him mentioning a specific use case that he cares about and
+> sees how to improve: authentication of Mozilla plugins.
+
+To be specific, the itch that I was looking to scratch was the
+authentication of Firefox updates. In some slides from the last
+BlackHat, I was dismayed to learn that the firefox update process
+depends utterly upon SSL and the assorted Certificate Authorities to
+validate https URLs that land on a mozilla.org server. The actual update
+bundles that are fetched from those https URLs are not validated at all.
+
+This causes two problems. The first is that any failure of the SSL or CA
+path will allow an attacker to subvert the update process and take over
+the browser. The slides I looked through showed one easy attack (the
+ASN.1 pascal-vs-C-string bug) which has since been fixed. But we've seen
+lots of failures at this level, and there are dozens of CAs in the TCB:
+a compromise of any one of them would break everything (some are still
+using MD5). Since firefox checks in daily to find out about new updates,
+there are lots of opportunities to mount this attack.
+
+The second is that it limits Mozilla's mirroring possibilities. I think
+that they currently have to hand out private keys to their mirrors,
+something like a cert that designates the server as mirror1.mozilla.org,
+so they must be very cautious about who runs each mirror. Their mirrors
+must all be running SSL, and a compromise of any of those mirrors could
+jeopardize the whole update path. I think that they could have far more
+mirrors (and be better able to accomodate the tens of millions of
+firefox users) if they didn't have this limitation.
+
+Having an end-to-end method to validate the update bundles would fix
+both of these problems. Updates could even be acquired via other means
+(sneakernet, local mirror, etc) and validated by the browser
+individually before unpacking+installation. Plugins could conceivably
+used something similar, but I think the basic browser update path is a
+valuable one that's easier to reason about.
+
+>From what I can tell, the Sparkle update framework (for OS-X)[1] is
+doing something like what I want for firefox: the Sparkle-enabled
+application will only accept update bundles which are signed by a DSA
+privkey that matches a pubkey embedded in the app. It'd be nice if
+Firefox could do the same. And if Firefox were to establish a
+quietly-backwards-compatible convention (i.e. the hash-mark trick) for
+strong URL-based authentication of HTTP resources, then other
+applications could start using it too, and a significant class of
+current web security problems (like the mixed-content one where an HTTPS
+page loads a javascript library via HTTP) could be fixed.
+
+cheers,
+ -Brian
+
+[1]:
+http://sparkle.andymatuschak.org/documentation/pmwiki.php/Documentation/BasicSetup
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

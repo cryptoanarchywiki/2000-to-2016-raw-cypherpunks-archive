@@ -1,0 +1,135 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u5L0eXfi030599;
+	Mon, 20 Jun 2016 20:40:37 -0400
+Received: from nschwmtas06p.mx.bigpond.com (nschwmtas06p.mx.bigpond.com
+ [61.9.189.152])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u5L0eToE030595
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Mon, 20 Jun 2016 20:40:31 -0400
+Received: from nschwcmgw06p ([61.9.190.166]) by nschwmtas06p.mx.bigpond.com
+ with ESMTP
+ id <20160621004021.GOHL2062.nschwmtas06p.mx.bigpond.com@nschwcmgw06p>;
+ Tue, 21 Jun 2016 00:40:21 +0000
+Received: from x220a02 ([137.147.175.188])
+ by nschwcmgw06p with BigPond Outbound
+ id 9CgJ1t00z44FfmH01CgLqr; Tue, 21 Jun 2016 00:40:21 +0000
+X-Authority-Analysis: v=2.1 cv=O+TEx0JW c=1 sm=1 tr=0
+ a=52EYGeUEBCm3b2pEBxJeDw==:117 a=52EYGeUEBCm3b2pEBxJeDw==:17
+ a=L9H7d07YOLsA:10 a=9cW_t1CCXrUA:10 a=s5jvgZ67dGcA:10 a=kj9zAlcOel0A:10
+ a=pD_ry4oyNxEA:10 a=eJl-NKKuX-rHkQjucxAA:9 a=CjuIK1q_8ugA:10
+Received: by x220a02 (Postfix, from userid 1000)
+ id 5503026003F; Tue, 21 Jun 2016 10:38:29 +1000 (AEST)
+Date: Tue, 21 Jun 2016 10:38:29 +1000
+From: Zenaan Harkness <zen@freedbms.net>
+To: tor-talk@lists.torproject.org
+Subject: Re: [tor-talk] Question for those who say "Tor is pwned"
+Message-ID: <20160621003829.GI4433@x220-a02>
+References: <82802cd6-e80a-5fdc-4b17-6d89fac1dfe7@cajuntechie.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <82802cd6-e80a-5fdc-4b17-6d89fac1dfe7@cajuntechie.org>
+Cc: CypherPunks <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 88
+
+> I see a lot of people talking about how Tor is pwned by the US
+> Government and is insecure 'by design'. I'm assuming that they know
+> this from a thorough analysis of the source code, which I freely admit
+> I haven't done. So, since you guys actually have taken the time to
+> audit the source and find the vulnerabilities that would allow Tor to
+> be so easily pwned, could you explain it to me and, preferable, post
+> relevant sections (or links to sections) of the source you're basing
+> your statements on?
+
+It's foundation design issues. And hardware level network issues.
+
+The code is generally (in the public conversation anyway) assumed to be
+"best effort, bugs fixed relatively soon after they arise".
+
+
+> I'd really like to investigate these vulnerabilities myself but the
+> code is too massive for one person to realistically audit by
+> themselves so links would be very helpful.
+
+Again, you will need more nuance than "has the code been audited" if you
+really want a relevant answer.
+
+There's a lot of research out there, and also logic and discussions which
+are straightforward to follow.
+
+
+Next, once you've done some investigation, you start to come across a few
+interesting factoids of note such as:
+
+- lack of network chaff is a fundamental limitation, and problem for
+  privacy (for those who need it) given current known data collection
+  capabilities of the "five eyes" - all network meta data, and there is
+  evident (I'm not about to search the lists, but you only need to search
+  2.5 years (the time I've been watching)) resistent within "Tor project
+  proper" to making this particular fundamental improvement happen;
+  - arguments are put such as "oh there are no studies proving the
+  benefits of network chaff" and the obvious "we don't have a budget for
+  that (yet) but we encourage contributions"
+
+- persistent push back against bittorrent over Tor, including threatening
+  offlist email attacks against those who suggest as much;
+  BT over Tor would provide some chaff, simply by increase of volume,
+  load, unpredictability of end clients, for example.
+
+- just watching TBB's behaviour has been interesting - some days, when I
+  open up say 5 tabs for 5 different news websites using the "open all
+  bookmarks from this folder as tabs" function, they all essentially start
+  to load simultaneously, but other days/times, each tab loads distinctly
+  sequentially, which to my mind is a dead giveaway that my current
+  on-ramp is part of some sort of profiling (read 'deanonymising')
+
+- configurable latency randomization is another technical improvement
+  which has been bandied around for years, and sounds easy to my
+  programmer mind in practice, but has yet to see anything like the light
+  of day
+
+
+There is ample room for an alternate dev team. Unfortunately, the US DoD
+are the ones providing almost all the funding, so they get to continue to
+control Tor development. If you are a big funder, start a whole new dev
+team, in a -completely separate jurisdiction (if that's possible). I know
+of an apparently well intentioned and productive man who may be close to
+ideal to set up and lead such a team :)
+
+
+Also, fundamentally we need a physical layer network which individual
+humans in their homes and offices, actually control - that is, shift the
+entire network to a "dark fibre" concept, where suburbs have random
+connections to one another, neighbours connect to one another with
+ethernet, wireless and more.
+
+If you don't own it, you don't control it.
+
+If you don't control it, it --will-- be used against you.
+
+This is a long term (say 20 year) plan, but it's the only long term option
+if we want to achieve anything resembling a genuine network of the people
+which honours privacy and anonymity of communication.
+
+
+By virtue of our capacity and existence and by the blessing of our
+cognizance of these things, we humans are with the right to anonymous and
+private communication.
+
+We have the right. I encourage you to work towards a world where many can
+live the right.
+

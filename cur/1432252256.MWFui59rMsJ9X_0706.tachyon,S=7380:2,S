@@ -1,0 +1,167 @@
+From owner-cypherpunks@jfet.org  Thu Mar  2 15:08:02 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.5/8.13.5/Debian-3) with ESMTP id k22K7viu005276
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 2 Mar 2006 15:07:57 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.5/8.13.5/Submit) id k22K7vJa005275
+	for cypherpunks-outgoing; Thu, 2 Mar 2006 15:07:57 -0500
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;         s=beta;
+  d=gmail.com;        
+  h=received:message-id:date:from:to:subject:mime-version:content-type:content-transfer-encoding:content-disposition;
+  b=n35Hc/NcedcZ2o2EcLUMdKSXDTOGbWce1r0OqRkwh7kVJ0hT1e1lyzMdiR/UWe4nLLsh//ZJ4ljT4/WaODTpHIOmEPqfVScUiHjcecjo8pB4mFloheOKswfyTVgCMY2tbLyBmx3GrQWX+AI3Ygt3Q0KKf3dyN9wluq6Xwpp8hE8=
+Message-ID: <4ef5fec60603021207y2b14d40btdffa4aab7bc8c36c@mail.gmail.com>
+Date: Thu, 2 Mar 2006 12:07:55 -0800
+From: coderman <coderman@gmail.com>
+To: cypherpunks@jfet.org
+Subject: Usable encryption facilitates intuitive policy, rather than
+  explicit per item encipher/decipher, sign/validate hassles
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by proton.jfet.org
+  id k22K7uLr005231
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5862
+Lines: 135
+
+"I habitually send most of my email securely, but I don't think about
+it. My robots take care of it for me. I tune policies, I don't encrypt
+messages." - Jon
+
+if you have to wrap the major key formats and uses into a single
+bundle, so that a pre-generated user identity which contained keys in
+formats applicable to any application the user might employ, what
+would this bundle/list look like?
+
+[let's avoid trust models and specifics of key utilization for a
+higher level OS/application discussion.  for now i want to focus on
+just what set of common types would serve the usual OS/application
+needs in some form so that a single user/resource identity can be
+created for use with lots of different "robots" further down the line
+/ as needed. note that in many cases some of these keys would never be
+used depending on the trust model employed and the applications
+utilized.]
+
+currently i'm aware of the following covering most bases but i know
+i'm missing some:
+
+- nonce/guid -> 512 bits of entropy from /dev/random (NOTE: when is
+BSD going to turn /dev/random back into a true entropy source rather
+than the deceptive alias for /dev/urandom?)
+
+- gpg key pair ->  DSA and Elgamal, gpg --gen-key ...
+
+- gpg key -> RSA sign only, gpg --gen-key ...
+
+- shared encryption secret -> 256 bits of entropy from /dev/random
+
+- shared auth secret -> 256 bits of entropy from /dev/random
+
+- openssl root CA key -> openssl req -x509 -new -keyout ca.key -out ca.crt ...
+
+- openssl dh parameters -> openssl dhparam ...
+
+- openssl entity key (signed by root CA) -> openssl req ... && openssl ca ...
+
+- ssh rsa key: ssh-keygen -t rsa ...
+
+- ssh dsa key: ssh-keygen -t dsa ...
+
+- ssh moduli: ssh-keygen -G ... && ssh-keygen -T ...
+
+- off the record user state: otrl_userstate_create();
+
+
+what else would you add to this list?
+
+
+
+---cut---
+http://www.mail-archive.com/cryptography@metzdowd.com/msg05822.html
+
+Re: NPR : E-Mail Encryption Rare in Everyday Use
+
+Jon Callas
+Tue, 28 Feb 2006 11:45:54 -0800
+I have to chime in on a number of points. I'll try to keep commercial
+plugs to a minimum.
+
+* An awful lot of this discussion is some combination of outdated and
+true but irrelevant. For example, it is true that usability of all
+computers is not what it could be. But a lot of what has cruised by
+here is similar to someone saying, "Yes, usability is atrocious --
+here, look at this screenshot of Windows 3.1." Someone else pipes up,
+"You think that's bad, let me show you this example from the Xerox
+Alto. What*ever* were they thinking?" And then someone else says,
+"Yeah, and if you think that's bad, look at what 'ls' did in Unix V6!"
+Then when someone else says, "Y'know, I'm using the latest version of
+Firefox, and it's actually pretty good" the next message says, "But
+what about the Y2K issues, and what happens when in 2038?" I swear,
+guys, this thread is the crypto version of the Monty Python "Luxury"
+sketch.
+
+* Whitten and Tygar is a great paper, but it was written ages ago on
+software that was released in 1997. Things aren't perfect now, but
+let's talk about what's out there now. Even at the time, one of
+Whitten's main points is how hard it is to apply usability to
+security, because of how odd it is. As a very quick example, in most
+forms of user design, you let exploration take a prominent place. But
+it doesn't work in security because you can't click undo when you do
+something you didn't intend.
+
+* There are new generations of crypto software out there. I produce
+the PGP products, and PGP Desktop and PGP Universal are automatic
+systems that look up certs use them, automatically encrypt, and even
+does both OpenPGP and S/MIME.
+
+They're not perfect, and lead to other amusing issues. For example, an
+hour ago, I was coordinating with someone that I'm meeting at a
+conference. I got a reply saying, "I'm at the airport and can't
+decrypt your message from my phone." I hadn't realized that I *had*
+encrypted my message, because my system and my colleague's system had
+been doing things for us.
+
+I habitually send most of my email securely, but I don't think about
+it. My robots take care of it for me. I tune policies, I don't encrypt
+messages.
+
+If you don't want to use my products, as Ben Laurie pointed out,
+there's a very nice plugin for Thunderbird called Enigmail that makes
+doing crypto painless.
+
+* There are also new generations of keyservers out there that work on
+the issues of the old servers to trim defunct keys, and manage other
+issues. I have out there the PGP Global Directory. Think of it as a
+mash-up of a keyserver along with Robot CA concepts and user
+management goodness adapted from modern mailing list servers like
+Mailman.
+
+* A number of us are also re-thinking other concepts such as using
+short-lived certificates based on the "freshness" model to constrain
+lifecycle management issues.
+
+* There are many challenges remaining. Heck, the fact that people here
+apparently have not updated their knowledge any time this century is
+part of the problem. But let me tell you that email encryption is
+growing, and growing strongly. However, most of the successes are not
+happening where you see them. They're happening in business, where
+communities of partners decide they need to do secure email, and then
+they do. This is another place where things have changed radically. A
+decade ago, we thought that security would be a grass-roots phenomenon
+where end-users and consumers would push security into those stodgy
+businesses. What's happening now is the exact opposite -- savvy
+businesses are putting together sophisticated security systems, and
+that's slowly starting to get end-users to wake up.
+
+I'd be happy to discuss at length where things are getting better,
+where they aren't, and where some issues have been shuffled around.
+But we do need to talk about what's going on now, not ten years ago.
+
+        Jon
+---end-cut---
+

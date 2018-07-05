@@ -1,0 +1,68 @@
+From owner-cypherpunks@Algebra.COM  Fri Aug 30 03:26:40 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7U7Qd129643
+	for <rsw@opamp.org>; Fri, 30 Aug 2002 03:26:39 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id DAA14872
+	for <rsw@mit.edu>; Fri, 30 Aug 2002 03:26:38 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7U5aVHf000492
+	for <cypherpunks-outgoing@ak47.algebra.com>; Fri, 30 Aug 2002 00:36:31 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g7U5aVpr000491
+	for cypherpunks-outgoing; Fri, 30 Aug 2002 00:36:31 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7U5aOHf000474
+	for <cypherpunks@ak47.algebra.com>; Fri, 30 Aug 2002 00:36:26 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7U5aMpL020469
+	for cypherpunks@ak47.algebra.com; Thu, 29 Aug 2002 22:36:22 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7U5ZTIa020461
+	for cypherpunks-goingout345; Thu, 29 Aug 2002 22:35:29 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Fri, 30 Aug 2002 17:35:07 +1200 (NZST)
+Message-ID: <200208300535.RAA05478@ruru.cs.auckland.ac.nz>
+From: pgut001@cs.auckland.ac.nz (Peter Gutmann)
+To: cryptography@wasabisystems.com, cypherpunks@lne.com, nobody@dizum.com
+Old-Subject: Re: Cryptographic privacy protection in TCPA
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Re: Cryptographic privacy protection in TCPA
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 1262
+Lines: 24
+
+
+Nomen Nescio <nobody@dizum.com> writes:
+
+>If a key is misused, i.e. "scraped" out of the TPM and used to create a
+>virtualized, rule-breaking software TPM, it can be revoked.  This means that
+>all the TPMs that share that one key lose the use of that key. But it doesn't
+>matter much, because they each have many more they can use. Since it is
+>expected that only a small percentage of TPMs will ever need their keys
+>revoked, most TPMs should always have plenty of keys to use.
+
+I designed something along these lines some years ago as a way of building a
+fault-tolerant key management system.  The idea is that you create a pile of
+keys, and these vote on key updates.  If a key is compromised, you sign its
+replacement with a quorum of non-compromised keys, and replace the bad key.
+You also periodically roll over keys as a preventive measure, limiting
+exposure due to compromises.  No need for a PKI or anything else complex like
+that, it's all automatic and transparent.
+
+There can be slight problems if a device stays offline long enough that enough
+keys have been rolled over to make reaching a quorum impossible, which was an
+issue when I designed the thing but rather unlikely now.  I can dig up the
+exact details in case anyone's interested.
+
+Peter.
+

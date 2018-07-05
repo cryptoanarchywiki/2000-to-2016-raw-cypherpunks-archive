@@ -1,0 +1,66 @@
+From owner-cypherpunks@al-qaeda.net  Thu Jul  8 16:56:30 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i68LuSNf016120
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Thu, 8 Jul 2004 16:56:28 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i68LuSua016119
+	for cypherpunks-outgoing; Thu, 8 Jul 2004 16:56:28 -0500
+Date: Thu, 8 Jul 2004 21:50:44 +0000
+From: Justin <justin-cypherpunks@soze.net>
+To: Cypherpunks <cypherpunks@al-qaeda.net>
+Subject: Re: Querying SSL/TLS capabilities of SMTP servers
+Message-ID: <20040708215044.GA20069@arion.soze.net>
+References: <0407081735340.-1275484700@somehost.domainz.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <0407081735340.-1275484700@somehost.domainz.com>
+X-PGP-Fingerprint: 9AE2 9FC3 D98B 9AE2 EE83  15CC 9C7D 1925 4568 5243
+X-Hashcash: 0:040708:cypherpunks@al-qaeda.net:599420049ead94362f5c24bb
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 975
+Lines: 38
+
+On 2004-07-08T17:50:57+0200, Thomas Shaddack wrote:
+> I cobbled up together a small bash shell script that does this. It lists 
+> the MX records for a domain, and then tries to connect to each of them, 
+> issue an EHLO command, disconnect, then list the output of the server, 
+...
+
+Or, in perl... though I wonder if there's a way to get capabilities with
+Net::SMTP.  Might make this cleaner.
+
+
+#!/usr/bin/perl
+
+use IO::Socket;
+use Net::DNS;
+
+for ($i = 0; $i <= $#ARGV; $i++) {
+    my @mx = mx($ARGV[$i]);
+    foreach $record (@mx) {
+	my $hastls = 0;
+	my $mhost = IO::Socket::INET->new (
+ 		Proto => "tcp",
+		PeerAddr => $record->exchange,
+		PeerPort => "25",
+		Timeout => "10"
+	);
+	print $mhost "EHLO I-love-my-country.whitehouse.gov\n";
+	print $mhost "QUIT\n";
+	while (<$mhost>) {
+	    if (/STARTTLS/) {
+		$hastls = 1;
+		last;
+	    }
+	}
+	print "$ARGV[$i] " . $record->preference . " " . $record->exchange;
+	print $hastls ? " adv-tls\n" : " no-tls\n";
+	close $mhost;
+    }
+}
+

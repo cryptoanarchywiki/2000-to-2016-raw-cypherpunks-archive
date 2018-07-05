@@ -1,0 +1,123 @@
+From owner-cypherpunks@al-qaeda.net  Wed Nov 28 05:18:07 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id qASAEjrC027515
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 28 Nov 2012 05:14:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1354097685;
+	bh=F6wlNt76OtNCe6nQBwczM2FzingmgQZzVtkam7QPoo0=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=pFYP3/V9R071AWhdv8FFYIcpt9NwQCeNC3JVvT0pvzm/8j1sEFqeh0bIjqdZ6jHSC
+	 5RYmKKXZg1QwVuDtoQLVb5aBLkCqkHADiYnKT8BoGMuoIS63IhNTBlp/4wRS/fsFXE
+	 vZ7rrZ0WbpEh3WMbHZfDv5aXKGsTXwLIedLoggoY=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id qASAEjQP027514
+	for cypherpunks-outgoing; Wed, 28 Nov 2012 05:14:45 -0500
+Date: Wed, 28 Nov 2012 11:14:41 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: [tahoe-dev] notes from the LAFS Weekly Dev Chat for 2012-11-01
+Message-ID: <20121128101441.GI9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3318
+Lines: 91
+
+----- Forwarded message from Zooko Wilcox-O'Hearn <zooko@zooko.com> -----
+
+From: Zooko Wilcox-O'Hearn <zooko@zooko.com>
+Date: Wed, 28 Nov 2012 03:00:12 -0700
+To: tahoe-dev <tahoe-dev@tahoe-lafs.org>
+Subject: [tahoe-dev] notes from the LAFS Weekly Dev Chat for 2012-11-01
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+Folks:
+
+I apparently never posted these notes from the LAFS Weekly Dev Chat of
+November 1. I'm sorry about that. I was probably planning to flesh
+them out with more context and explanation, but I haven't done that,
+either. So, here's a dump of my notes.
+
+Regards,
+
+Zooko
+
+=== 2012-11-01 ===
+
+#1679
+
+* we don't have consensus on the long-term strategy for caching of
+filenodes; options:
+  * aggressively cache filenodes, make downloaders be indefatiguable,
+so that they never cease their labors unless cancelled
+  * aggressively cache filenodes, make downloaders get a fresh burst
+of energy whenever a new use of the downloader is begun
+  * don't cache filenodes of any kind, implement a separate
+mutable-write-serializer (which looks a lot like a cache)
+  * cache mutables but not immutables
+* but we do have consensus on what to do right now:
+  * we're going to write a unit test for the patch attached to #1679
+and commit it to trunk; That means Tahoe-LAFS v1.10.0 will cache
+mutables but not immutables.
+
+#1240
+
+* tests of corruption both before and after servermap-construction
+don't apply to some parts of the data
+* document which are which and why we test some of them both before
+and after servermap-construction; Andrew will write, Brian will
+review.
+
+#1832
+
+* indefinite (or long-term) but cancellable leases
+* we discussed two protocols that could implement #1832:
+  * the one shown on the initial description of #1832
+  * one in which the client builds a manifest and delivers it to the
+server in one (potentially big) message
+* if I have multiple clients, they could have separate accounts
+* but how to get aggregated accounting information
+
+concurrent garbage collection
+
+notification so you can add leases
+
+in the leasedb schema, indefinite leases are indicated by having an
+expiration time of null
+
+encrypted timestamps
+
+add a storage api which says "give me back something which the server
+will recognize as a timestamp", and another api which says "you are
+allowed to clobber everything that hasn't been created or renewed
+since $THIS_TIMESTAMP"
+
+should each lease renewal method come with an explicit
+$THIS_TIMESTAMP, or should it be able to do an explicit "when you
+receive this message"; the latter would unnecessarily require
+limited-time-leases to do a round trip first.
+
+we'll need separate account ids on separate leases to prevent one user
+from clobbering
+
+add a requested-duration to lease-renewal methods; if we don't have a
+negotiation protocol for that, maybe make it server-side-config for
+now. (#1003)
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

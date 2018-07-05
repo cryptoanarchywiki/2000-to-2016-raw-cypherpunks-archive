@@ -1,0 +1,488 @@
+From rswatjfet.org+caf_=rsw=jfet.org@gmail.com  Mon Jul  7 13:47:26 2014
+Return-Path: <rswatjfet.org+caf_=rsw=jfet.org@gmail.com>
+Received: from mail-pd0-f170.google.com (mail-pd0-f170.google.com [209.85.192.170])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id s67HlO9c014856
+	(version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+	for <rsw@jfet.org>; Mon, 7 Jul 2014 13:47:26 -0400
+Received: by mail-pd0-f170.google.com with SMTP id z10so5762681pdj.29
+        for <rsw@jfet.org>; Mon, 07 Jul 2014 10:47:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20130820;
+        h=x-original-authentication-results:delivered-to:date:subject:to
+         :message-id:in-reply-to:references:mime-version:content-type:cc
+         :precedence:list-id:list-unsubscribe:list-archive:list-post
+         :list-help:list-subscribe:errors-to:sender:from;
+        bh=/KoXWNwHwNd7E3tHVKdNkTeeuqCflWDiSoKKNcTgYl4=;
+        b=kOmliPJiXsXRUl/a80n2mxmUXonNI1d5V+o71VOPGKUb3K7DIejgTQmyGUbiNdzm6+
+         4uSSto5lVX50lDhGRtCwCPWXjdRm9FPq1kIvvHRJ7CuRrfe7lKZ5I6llvG3ky9iTU+3J
+         M+LJPZCGwa2F0J+NG+ZB/z0KOZ7ok8cECRCMoQYAgcbFdyEW7zShuiPAi1apsBF0EYhw
+         pwgMvhHujxMDqZNhg71XkSSeBJEMWz3KVtNRhapRcAmiMnPmEML/ipfTZeNSE6mRa4/f
+         M4U2cCazQGeuK5dUgmnY2mEF3oj3vBphG/ltE7F7Xd4ggoGF5Krw58PC5S/tKFNzQTrV
+         xrmA==
+X-Original-Authentication-Results: mx.google.com;       spf=neutral (google.com: 209.141.47.85 is neither permitted nor denied by domain of rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net) smtp.mail=rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net
+X-Received: by 10.68.194.229 with SMTP id hz5mr19650705pbc.91.1404755238935;
+        Mon, 07 Jul 2014 10:47:18 -0700 (PDT)
+X-Forwarded-To: rsw@jfet.org
+X-Forwarded-For: rswatjfet.org@gmail.com rsw@jfet.org
+Delivered-To: rswatjfet.org@gmail.com
+Received: by 10.70.25.164 with SMTP id d4csp283612pdg;
+        Mon, 7 Jul 2014 10:47:18 -0700 (PDT)
+X-Received: by 10.66.197.131 with SMTP id iu3mr4680998pac.102.1404755237837;
+        Mon, 07 Jul 2014 10:47:17 -0700 (PDT)
+Received: from localhost (antiproton.jfet.org. [209.141.47.85])
+        by mx.google.com with ESMTPS id bt6si5101537pdb.486.2014.07.07.10.47.17
+        for <rswATjfet.org@gmail.com>
+        (version=TLSv1.2 cipher=RC4-SHA bits=128/128);
+        Mon, 07 Jul 2014 10:47:17 -0700 (PDT)
+Received-SPF: neutral (google.com: 209.141.47.85 is neither permitted nor denied by domain of rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net) client-ip=209.141.47.85;
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 209.141.47.85 is neither permitted nor denied by domain of rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net) smtp.mail=rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id s67HiMwg014834;
+	Mon, 7 Jul 2014 13:44:28 -0400
+Received: from smtp-tls.etu.univ-nantes.fr
+ (smtptlsetu1-loi.cpub.univ-nantes.fr [193.52.103.132])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id s67HiJHU014830
+ for <cypherpunks@cpunks.org>; Mon, 7 Jul 2014 13:44:21 -0400
+Received: from localhost (localhost [127.0.0.1])
+ by smtp-tls.etu.univ-nantes.fr (Postfix) with ESMTP id 2C0C04000A5;
+ Mon,  7 Jul 2014 19:44:10 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at smtptlsetu1-lmb.cpub.univ-nantes.fr
+Received: from smtp-tls.etu.univ-nantes.fr ([127.0.0.1])
+ by localhost (smtptlsetu1-loi.cpub.univ-nantes.fr [127.0.0.1]) (amavisd-new,
+ port 10024)
+ with LMTP id TH9kuu6XreBm; Mon,  7 Jul 2014 19:44:10 +0200 (CEST)
+Received: from [192.168.1.4] (77-173-104-232.ip.telfort.nl [77.173.104.232])
+ (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+ (No client certificate requested)
+ by smtp-tls.etu.univ-nantes.fr (Postfix) with ESMTPSA id 73D3440009F;
+ Mon,  7 Jul 2014 19:44:09 +0200 (CEST)
+Date: Mon, 07 Jul 2014 19:44:07 +0200
+Subject: Re: Tox.im
+To: =?iso-8859-4?q?D=E0vis_Mos=E0ns?= <davispuh@gmail.com>
+Message-Id: <1404755047.15776.0@smtp.etu.univ-nantes.fr>
+In-Reply-To: <CAOE4rSxSzF19Wz7XXWCppRievQ_YOEVBz8Fr8e+MG88Oyb=fAw@mail.gmail.com>
+References: <53B84037.7030406@cathalgarvey.me> <1905994.9AY2VPz29W@lapuntu>
+ <CAOE4rSxB9nGesxWOsUBnBVHe7D5kf4yxr7_ivoSWoC5+sPQShg@mail.gmail.com>
+ <40141628.DH0kgvvaSQ@lapuntu>
+ <CAOE4rSzrHSsJa8AE99sQXDnJMOmsWX1YMugurzxh6cdYuwgLgw@mail.gmail.com>
+ <1404717084.15115.0@smtp.etu.univ-nantes.fr>
+ <CAOE4rSxSzF19Wz7XXWCppRievQ_YOEVBz8Fr8e+MG88Oyb=fAw@mail.gmail.com>
+X-Mailer: geary/0.6.1
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="=-Mkp7VTHoo0SCCdwBaz+y"
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.16
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+From: edhelas <edhelas@movim.eu>
+X-Gspam-Loop: antiproton.jfet.org
+Status: O
+Content-Length: 21584
+Lines: 394
+
+--=-Mkp7VTHoo0SCCdwBaz+y
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+
+Hi Davis,
+
+Thank you very much for this awesome feedback, having constructives=20
+criticizes like this helps me a lot :) I'll try to explain my choices=20
+for some of them.
+
+I agree with your first comment, there's clearly a lack of=20
+communication. But, I'm currently working on the 0.8 release and on a=20
+fundraising (on Kickstarter) before the end of summer. I'll create a=20
+thread on Reddit and talk about it theses next couple of weeks ;)
+
+For the video, I don't have skills to do a nice looking one. But if you=20
+have tips, do not hesitate to share them with me.
+
+For PHP, the choice was made a couple of years ago and the aim was to=20
+install Movim on quite all the servers (I love Ruby on Rails but=20
+deploying a RoR application can be quite difficult for some=20
+administrators). We also tried to built Movim on top of differents PHP=20
+frameworks (Zend, Symfony and more recently Laravel).
+The thing is that Movim works in a really special way (the connexion is=20
+kept open with the XMPP server using BOSH threw long polling requests=20
+so I have to do session synchronisation en prevent session-lock=E2=80=A6 al=
+l=20
+in PHP) so it cannot be ported easily on a "classical MVC" framework.=20
+We also use our own internal widget system with event handling (when a=20
+specific XMPP stanza is handled).
+
+I'll take a look at the sanitizer.rb file and try to find a proper way=20
+to sanitize the strings, maybe use an external library for that ;)
+
+Having a public/ folder is also planned for the 1.0 version but I need=20
+to refactor a couple of stuffs in the app to make it works properly.
+
+I'm also using the PSR standard (http://www.php-fig.org/) especially=20
+for the library loading (using composer) and the logger. I've already=20
+moved parts of Movim to independant libraries to modularize the project=20
+;)
+
+I'm trying to move from Bazaar to Git but I mave a couple of issues=20
+when I convert the commit-history tree. Also I'm looking for a proper=20
+way to handle the internationalisation (Launchpad has a ship-in system=20
+for that).
+
+We are also one of the most advanced XMPP client, with a really nice=20
+implementation of the standard (all the currently implemented XEP are=20
+listed here : http://wiki.movim.eu/en:dev:protocol_implementations).=20
+I'm working with the XMPP Standard Fundation to standardise and improve=20
+the XMPP protocol.
+
+Thanks again !
+
+edhelas
+
+On lun., juil. 7, 2014 at 7:18 , D=C4=81vis Mos=C4=81ns <davispuh@gmail.com=
+>=20
+wrote:
+> 2014-07-07 10:11 GMT+03:00 edhelas <edhelas@movim.eu>:
+>> Hi everyone,
+>>=20
+>> I'm working on the Movim project since 2008, our aim is to create a=20
+>> full social network on top of the XMPP protocol. As I see again, the=20
+>> guys of the Tox project are trying to reinvent the wheel=E2=80=A6 again.=
+=20
+>> Now, to do IM, we have Skype, BBM, Line, WhatsApp, MSN, QQ, AIM,=20
+>> ICQ, IRC, XMPP, Facebook Messenger=E2=80=A6
+>>=20
+>> Same for the social networks as Davis said (PumpIO, TentIO=E2=80=A6)
+>>=20
+>> I really think that we need to focus on an existent standard and=20
+>> improve it, and for me XMPP seem to be the perfect protocol for all=20
+>> theses things :
+>> - Standard IM + chatroom
+>> - Video/Audio conferencing (with Jingle, we are using it with WebRTC=20
+>> on Movim)
+>> - Pubsub (for newsfeeds, blogging)
+>> - Geolocation
+>> - Vcard4 support
+>> - SASL2 authentication
+>> - OTR support
+>> - Full encryption between the servers (https://xmpp.net/list.php)
+>> - and so on=E2=80=A6
+>>=20
+>> XMPP can do a lot more than just IM, it's a full=20
+>> social-communication protocol it just need to be implemented, tested=20
+>> and debugged :)
+>>=20
+>> Tim
+>>=20
+>> On lun., juil. 7, 2014 at 6:00 , D=C4=81vis Mos=C4=81ns <davispuh@gmail.=
+com>=20
+>> wrote:
+>>> 2014-07-06 23:28 GMT+03:00 rysiek <rysiek@hackerspace.pl>:
+>>>> Dnia niedziela, 6 lipca 2014 22:25:59 piszesz:
+>>>> > hmm, I wonder are there any such open protocol specification=20
+>>>> created? I
+>>>> > know about XMPP, but nothing more...
+>>>>=20
+>>>> Well, there's the Diaspora protocol:
+>>>> https://wiki.diasporafoundation.org/Federation_protocol_overview
+>>>>=20
+>>>> And... StatusNet/OStatus, PumpIO, TentIO, ActivityStreams,=20
+>>>> BuddyCloud (XMPP-
+>>>> based, I guess), and quite a few others I don't really remember.=20
+>>>> Some of them
+>>>> are related, all are incompatible. And all the devs are showing=20
+>>>> strong
+>>>> symptoms of the NIH syndrome.
+>>>>=20
+>>>> Which is absurd.
+>>>>=20
+>>>> --
+>>>> Pozdr
+>>>> rysiek
+>>>=20
+>>> that indeed is stupid and so no one have solved it yet... for=20
+>>> social network or basically any IM/chat/etc to be usable it must=20
+>>> have majority of people (eg. your friends) users there, otherwise=20
+>>> without people they are totally useless so currently we're stuck=20
+>>> with no-so-great applications/protocols only because everyone=20
+>>> already are on them like Facebook and Skype. On that mailing list=20
+>>> there were discussion about a polyglot protocol/application which=20
+>>> could support all networks so users wouldn't be forced to migrate=20
+>>> which I think is essential because a lot of people won't bother.=20
+>>> There was mention to Sockethub which seems quite cool, only for a=20
+>>> bit different use case I would say.
+>>> Another thing I would like to mention is BitlBee it is a gateway=20
+>>> between various IM/chat networks and IRC so you can chat with=20
+>>> friends on Facebook using your favorite IRC client, or post a tweet=20
+>>> on your Twitter and use various other protocols. It even supports=20
+>>> OTR.
+>>>=20
+> okay so I've quickly reviewed Movim, idea is really good and it seems=20
+> to be nice, but I haven't yet tried to run it, will do that someday.=20
+> It looks like you haven't really marketed it good enough because this=20
+> is first time I hear about it despite it being an somewhat old=20
+> project. For example Tox is pretty new but it's already quite popular=20
+> and I keep hearing about it every few months. I would suggest to post=20
+> more on various social sites, forums and just let people know it=20
+> exists (eg. post to Reddit) Another thing I would suggest is add a=20
+> video to website of example usage so people could see how it is=20
+> actually used, explain various features and such as users might not=20
+> immediately discover some features.
+>=20
+> Now I'll tell a few things, but that's only my personal opinion and=20
+> most likely a lot of people won't agree with it. So anyway firstly=20
+> I'm not a fan of PHP, it's just generally awful language (see=20
+> http://phpsadness.com/ and look at PHP src :D), I know it because=20
+> I've been writing it for like 7+ years but now 2-3 years I'm PHP-less=20
+> and happy about it :) Next it looks like you aren't using any PHP=20
+> framework but self-developed one which gives you more work than is=20
+> needed and obviously it's less battletested. But overall code itself=20
+> is nice and pretty, correctly uses MVC pattern. Bad things are that=20
+> you don't have separate public directory for frontend and anyone can=20
+> access PHP files directly, view templates for example=20
+> (https://pod.movim.eu/app/views/admin.tpl) it's not a big deal, but=20
+> still not good idea (running version https://pod.movim.eu/VERSION).=20
+> Then in some places HTML tags and entities are used directly rather=20
+> than proper Unicode which isn't a good idea and it means that string=20
+> isn't later escaped and if it gets mixed together with user-input or=20
+> translation strings there's a place for XSS. The worse thing probably=20
+> is that sanitization is based on regexp blacklists/filters, I'm=20
+> talking about StringHelper.php, I didn't look how it's actually used,=20
+> but still even without trying I'm pretty sure it would be possible to=20
+> find XSS there, why? because Rails framework over 5 years have had=20
+> ~20 XSS vulnerabilities and it's extremely good framework used by=20
+> dozens of projects and reviewed regularly, and it's even based on=20
+> whitelists, but still uses regexps for that which isn't good and I=20
+> wonder why no one does proper SGML parsing which they should. Just=20
+> take a look at sanitizer.rb to see how non-trivial it is. Anyway the=20
+> whole idea of sanitization is wrong, you should just escape all text=20
+> and don't try to guess which tags you should render. I suggest any=20
+> web developer to read OWASP from A to Z it's a must for any web=20
+> developer. Then there's `?>` PHP end tags used at end of various=20
+> files which are useless and can introduce problems like famous=20
+> "headers already sent" warning. So seems that's about it with my=20
+> quick look, but I might have forgotten to mention some things.=20
+> Another thing I don't like is that AGPL is used, I really dislike all=20
+> GPL family, but that's just me and I rather prefer copyfree so if=20
+> there's similar projects then I'll rather contribute to MIT than any=20
+> GPL variant :P And I'm not a fan of Bazaar nor LaunchPad but that's=20
+> not the worst thing (someone should ban CVS and SVN :D)
+>=20
+> So to sum up about Movim, good parts:
+> Good idea
+> Quite decent code, MVC used correctly
+> Localization support
+> Pretty website
+> Open Source
+> Active development
+> SCM is used
+> and bad:
+>=20
+> Not enough known, marketed
+> PHP is used
+> No PHP framework used but self-developed one
+> Some questionable and potentially vulnerable code in some places
+> Scripts and files accessible directly
+> Not my favorite (un)license
+>=20
+> But yeah keep it up and continue developing it ;) I might use it some=20
+> day...
+>=20
+=
+
+--=-Mkp7VTHoo0SCCdwBaz+y
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+
+
+Hi Davis,<div><br></div><div>Thank you very much for this awesome feedback,=
+ having constructives criticizes like this helps me a lot :) I'll try to ex=
+plain my choices for some of them.</div><div><br></div><div>I agree with yo=
+ur first comment, there's clearly a lack of communication. But, I'm current=
+ly working on the 0.8 release and on a fundraising (on Kickstarter) before =
+the end of summer. I'll create a thread on Reddit and talk about it theses =
+next couple of weeks ;)</div><div><br></div><div>For the video, I don't hav=
+e skills to do a nice looking one. But if you have tips, do not hesitate to=
+ share them with me.</div><div><br></div><div>For PHP, the choice was made =
+a couple of years ago and the aim was to install Movim on quite all the ser=
+vers (I love Ruby on Rails but deploying a RoR application can be quite dif=
+ficult for some administrators). We also tried to built Movim on top of dif=
+ferents PHP frameworks (Zend, Symfony and more recently Laravel).&nbsp;</di=
+v><div>The thing is that Movim works in a really special way (the connexion=
+ is kept open with the XMPP server using BOSH threw long polling requests s=
+o I have to do session synchronisation en prevent session-lock=E2=80=A6 all=
+ in PHP) so it cannot be ported easily on a "classical MVC" framework. We a=
+lso use our own internal widget system with event handling (when a specific=
+ XMPP stanza is handled).</div><div><br></div><div>I'll take a look at the =
+sanitizer.rb file and try to find a proper way to sanitize the strings, may=
+be use an external library for that ;)</div><div><br></div><div>Having a pu=
+blic/ folder is also planned for the 1.0 version but I need to refactor a c=
+ouple of stuffs in the app to make it works properly.</div><div><br></div><=
+div>I'm also using the PSR standard (<a href=3D"http://www.php-fig.org/">ht=
+tp://www.php-fig.org/</a>) especially for the library loading (using compos=
+er) and the logger. I've already moved parts of Movim to independant librar=
+ies to modularize the project ;)</div><div><br></div><div>I'm trying to mov=
+e from Bazaar to Git but I mave a couple of issues when I convert the commi=
+t-history tree. Also I'm looking for a proper way to handle the internation=
+alisation (Launchpad has a ship-in system for that). &nbsp;</div><div><br><=
+/div><div>We are also one of the most advanced XMPP client, with a really n=
+ice implementation of the standard (all the currently implemented XEP are l=
+isted here : <a href=3D"http://wiki.movim.eu/en:dev:protocol_implementation=
+s">http://wiki.movim.eu/en:dev:protocol_implementations</a>). I'm working w=
+ith the XMPP Standard Fundation to standardise and improve the XMPP protoco=
+l.<br><br>Thanks again !&nbsp;</div><div><br></div><div>edhelas<br><br>On l=
+un., juil. 7, 2014 at 7:18 , D=C4=81vis Mos=C4=81ns &lt;davispuh@gmail.com&=
+gt; wrote:<br>
+<blockquote type=3D"cite"><div dir=3D"ltr"><div><div class=3D"gmail_extra">=
+<div class=3D"gmail_quote">2014-07-07 10:11 GMT+03:00 edhelas <span dir=3D"=
+ltr">&lt;<a href=3D"mailto:edhelas@movim.eu" target=3D"_blank">edhelas@movi=
+m.eu</a>&gt;</span>:<br><blockquote class=3D"gmail_quote" style=3D"margin:0=
+px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
+
+
+<div>Hi everyone,</div><div><br></div><div>I'm working on the Movim project=
+ since 2008, our aim is to create a full social network on top of the XMPP =
+protocol. As I see again, the guys of the Tox project are trying to reinven=
+t the wheel=E2=80=A6 again. Now, to do IM, we have Skype, BBM, Line, WhatsA=
+pp, MSN, QQ, AIM, ICQ, IRC, XMPP, Facebook Messenger=E2=80=A6</div>
+<div><br></div><div>Same for the social networks as Davis said (PumpIO, Ten=
+tIO=E2=80=A6)</div><div><br></div><div>I really think that we need to focus=
+ on an existent standard and improve it, and for me XMPP seem to be the per=
+fect protocol for all theses things :</div>
+<div>- Standard IM + chatroom</div><div>- Video/Audio conferencing (with Ji=
+ngle, we are using it with WebRTC on Movim)</div><div>- Pubsub (for newsfee=
+ds, blogging)</div><div>- Geolocation</div><div>- Vcard4 support</div><div>
+- SASL2 authentication</div><div>- OTR support</div><div>- Full encryption =
+between the servers (<a href=3D"https://xmpp.net/list.php" target=3D"_blank=
+">https://xmpp.net/list.php</a>)</div><div>- and so on=E2=80=A6</div><div><=
+br></div>
+<div>XMPP can do a lot more than just IM, it's a full social-communication =
+protocol it just need to be implemented, tested and debugged :)</div><div><=
+br></div><div>Tim</div><div class=3D""><div class=3D"h5"><br>On lun., juil.=
+ 7, 2014 at 6:00 , D=C4=81vis Mos=C4=81ns &lt;<a href=3D"mailto:davispuh@gm=
+ail.com" target=3D"_blank">davispuh@gmail.com</a>&gt; wrote:<br>
+
+<blockquote type=3D"cite"><div dir=3D"ltr"><div><div class=3D"gmail_extra">=
+2014-07-06 23:28 GMT+03:00 rysiek <span dir=3D"ltr">&lt;<a href=3D"mailto:r=
+ysiek@hackerspace.pl" target=3D"_blank">rysiek@hackerspace.pl</a>&gt;</span=
+>:<br><div class=3D"gmail_quote">
+<blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-=
+left:1px solid rgb(204,204,204);padding-left:1ex">
+Dnia niedziela, 6 lipca 2014 22:25:59 piszesz:<br>
+<div>&gt; hmm, I wonder are there any such open protocol specification crea=
+ted? I<br>
+&gt; know about XMPP, but nothing more...<br>
+<br>
+</div>Well, there's the Diaspora protocol:<br>
+<a href=3D"https://wiki.diasporafoundation.org/Federation_protocol_overview=
+" target=3D"_blank">https://wiki.diasporafoundation.org/Federation_protocol=
+_overview</a><br>
+<br>
+And... StatusNet/OStatus, PumpIO, TentIO, ActivityStreams, BuddyCloud (XMPP=
+-<br>
+based, I guess), and quite a few others I don't really remember. Some of th=
+em<br>
+are related, all are incompatible. And all the devs are showing strong<br>
+symptoms of the NIH syndrome.<br>
+<br>
+Which is absurd.<br>
+<span><font color=3D"#888888"><br>
+--<br>
+Pozdr<br>
+rysiek</font></span></blockquote></div><br>that indeed is stupid and so no =
+one have solved it yet... for social=20
+network or basically any IM/chat/etc to be usable it must have majority=20
+of people (eg. your friends) users there, otherwise without people they=20
+are totally useless so currently we're stuck with no-so-great=20
+applications/protocols only because everyone already are on them like=20
+Facebook and Skype. On that mailing list there were discussion about a<span=
+> polyglot protocol/application </span><span><span>which
+ could support all networks so users wouldn't be forced to migrate which
+ I think is essential because a lot of people won't bother. There was=20
+mention to</span> <a href=3D"http://sockethub.org/" target=3D"_blank">Socke=
+thub </a>which seems quite cool, only for a bit different use case I would =
+say.<br>Another thing I would like to mention is <a href=3D"http://bitlbee.=
+org" target=3D"_blank">BitlBee</a>
+ it is a gateway between various IM/chat networks and IRC so you can=20
+chat with friends on Facebook using your favorite IRC client, or post a=20
+tweet on your Twitter and use various other protocols. It even supports=20
+OTR.</span><br><br></div></div></div>
+</blockquote></div></div></blockquote></div>okay so I've quickly reviewed M=
+ovim, idea is really good and it seems to
+ be nice, but I haven't yet tried to run it, will do that someday. It=20
+looks like you haven't really marketed it good enough because this is=20
+first time I hear about it despite it being an somewhat old project. For
+ example Tox is pretty new but it's already quite popular and I keep=20
+hearing about it every few months. I would suggest to post more on=20
+various social sites, forums and just let people know it exists (eg. post t=
+o Reddit) Another thing I would suggest is add a video to=20
+website of example usage so people could see how it is actually used, expla=
+in various features and such as users might not immediately discover some f=
+eatures.<br><br>Now I'll tell a few things, but that's only my personal opi=
+nion and=20
+most likely a lot of people won't agree with it. So anyway firstly I'm=20
+not a fan of PHP, it's just generally awful language (see <a href=3D"http:/=
+/phpsadness.com/">http://phpsadness.com/</a>
+ and look at PHP src :D), I know it because I've been writing it for=20
+like 7+ years but now 2-3 years I'm PHP-less and happy about it :)=20
+Next it looks like you aren't using any PHP framework but self-developed
+ one which gives you more work than is needed and obviously it's less battl=
+etested. But overall code itself is nice and pretty, correctly uses MVC pat=
+tern. Bad things are that you don't have separate public directory for fron=
+tend and anyone can access PHP files directly, view templates for example (=
+<a href=3D"https://pod.movim.eu/app/views/admin.tpl">https://pod.movim.eu/a=
+pp/views/admin.tpl</a>) it's not a big deal, but still not good idea (runni=
+ng version <a href=3D"https://pod.movim.eu/VERSION">https://pod.movim.eu/VE=
+RSION</a>). Then in some places HTML tags and entities are used directly ra=
+ther than proper Unicode which isn't a good idea and it means that string i=
+sn't later escaped and if it gets mixed together with user-input or transla=
+tion strings there's a place for XSS. The worse thing probably is that sani=
+tization is based on regexp blacklists/filters, I'm talking about <span><sp=
+an class=3D"">StringHelper.php, I didn't look how it's actually used, but s=
+till even w</span></span>ithout trying I'm pretty sure it would be possible=
+ to find XSS there, why? because Rails framework over 5 years have had ~20 =
+XSS vulnerabilities and it's extremely good framework used by dozens of pro=
+jects and reviewed regularly, and it's even based on whitelists, but still =
+uses regexps for that which isn't good and I wonder why no one does proper =
+SGML parsing which they should. Just take a look at <a href=3D"https://gith=
+ub.com/rails/rails/blob/master/actionview/lib/action_view/vendor/html-scann=
+er/html/sanitizer.rb#L72">sanitizer.rb</a> to see how non-trivial it is. An=
+yway the whole idea of sanitization is wrong, you should just escape all te=
+xt and don't try to guess which tags you should render. I suggest any web d=
+eveloper to read <a href=3D"https://www.owasp.org">OWASP</a> from A to Z it=
+'s a must for any web developer. Then there's `?&gt;` PHP end tags used at =
+end of various files which are useless and can introduce problems like famo=
+us "headers already sent" warning. So seems that's about it with my quick l=
+ook, but I might have forgotten to mention some things. Another thing I don=
+'t like is that AGPL is used, I really dislike all GPL family, but that's j=
+ust me and I rather prefer <a href=3D"http://copyfree.org">copyfree</a> so =
+if there's similar projects then I'll rather contribute to MIT than any GPL=
+ variant :P And I'm not a fan of Bazaar nor LaunchPad but that's not the wo=
+rst thing (someone should ban CVS and SVN :D)<br>
+<br></div><div class=3D"gmail_extra">So to sum up about Movim, good parts:<=
+br><ul><li>Good idea<br></li><li>Quite decent code, MVC used correctly<br><=
+/li><li>Localization support</li><li>Pretty website<br></li><li>Open Source=
+</li>
+<li>Active development</li><li>SCM is used<br></li></ul><p>and bad:</p><ul>=
+<li>Not enough known, marketed<br></li><li>PHP is used</li><li>No PHP frame=
+work used but self-developed one<br></li><li>Some questionable and potentia=
+lly vulnerable code in some places<br>
+</li><li>Scripts and files accessible directly<br></li><li>Not my favorite =
+(un)license</li></ul></div><div class=3D"gmail_extra"><br></div><div class=
+=3D"gmail_extra">But yeah keep it up and continue developing it ;) I might =
+use it some day...<br>
+</div><div class=3D"gmail_extra"><br></div></div></div>
+</blockquote></div>=
+
+--=-Mkp7VTHoo0SCCdwBaz+y--
+

@@ -1,0 +1,52 @@
+From owner-cypherpunks@lne.com  Fri May 23 15:03:45 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h4NJ3hZ17851
+	for <rsw@jfet.org>; Fri, 23 May 2003 15:03:43 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h4NIiPwA009929
+	for cypherpunks-goingout345; Fri, 23 May 2003 11:44:25 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Message-ID: <005401c3215b$523e21d0$c71121c2@exchange.sharpuk.co.uk>
+From: "Dave Howe" <DaveHowe@gmx.co.uk>
+To: "Email List: Cypherpunks" <cypherpunks@lne.com>
+References: <20030523163024.GB28656@afflictions.org> 
+  <017c01c3214c$714f0120$c71121c2@exchange.sharpuk.co.uk>
+  <20030523171706.GE28656@afflictions.org>
+Subject: Re: RSA/DSA questions
+Date: Fri, 23 May 2003 19:44:17 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook Express 6.00.2800.1106
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 1495
+Lines: 23
+
+Damian Gerow wrote:
+>     "For this reason we now believe PuTTY's DSA implementation is
+>     probably OK. However, if you have the choice, we still recommend
+>     you use RSA instead."
+Indeed so - but saying that (in their opinion) RSA IS implimented better and
+more securely in puTTY than DSA can hardly be the same as saying DSA should
+be avoided. As I understand it, the problem with DSA is that it is *very*
+dependent on the random number being random (collisions leading to
+weaknesses) - and everyone knows that windows is bad at RNG. What (as I
+understand it) the new putty scheme does is use the secret key to obfusc the
+random value a little - hashing it with both the private key and the hash of
+the message being signed - hoping to pull enough entropy out of those two to
+reduce the possibility of discovery of the random value due to it being
+limited to a subset of the "range" it should have. obviously, this approach
+won't produce gold from straw - you still have a limited set of possible
+values - but it should distribute them evenly across the range in a
+key-dependent manner, so that knowlege of the limited possible values would
+have to be per-key or involve knowledge of the private key (which is a
+game-over scenario anyhow)
+so my understanding of the above warning is that the games puTTY plays with
+the keyspace is *probably* enough to fix the lousy randomness of the windows
+platform - but they recommend that you use RSA where the randomness of a
+prng is not an issue.
+

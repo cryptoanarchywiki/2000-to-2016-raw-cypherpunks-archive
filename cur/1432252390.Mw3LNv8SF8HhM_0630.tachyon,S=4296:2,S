@@ -1,0 +1,114 @@
+From owner-cypherpunks@al-qaeda.net  Wed Feb 16 11:48:47 2005
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.3/8.13.3/Debian-6) with ESMTP id j1GHldPx027065
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Wed, 16 Feb 2005 11:47:39 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.3/8.13.3/Submit) id j1GHld1Q027061
+	for cypherpunks-outgoing; Wed, 16 Feb 2005 11:47:39 -0600
+Mime-Version: 1.0
+X-Sender: rah@localhost
+Message-Id: <p06110431be39319c268f@[68.167.57.91]>
+Date: Wed, 16 Feb 2005 12:33:49 -0500
+To: cypherpunks@al-qaeda.net
+From: "R.A. Hettinga" <rah@shipwright.com>
+Subject: Re: SHA1 broken?
+Content-Type: text/plain; charset="us-ascii"
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3342
+Lines: 89
+
+--- begin forwarded text
+
+
+Date: Wed, 16 Feb 2005 11:13:23 -0500 (EST)
+From: Atom Smasher <atom@smasher.org>
+OpenPGP: id=0xB88D52E4D9F57808; algo=1 (RSA); size=4096;
+	url=http://atom.smasher.org/pgp.txt
+To: gnupg-users@gnupg.org
+Subject: Re: SHA1 broken?
+Sender: gnupg-users-bounces@gnupg.org
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
+
+On Wed, 16 Feb 2005, David Shaw wrote:
+
+> In terms of GnuPG: it's up to you whether you want to switch hashes or
+> not.  GnuPG supports all of the SHA-2 hashes, so they are at least
+> available.  Be careful you don't run up against compatibility problems:
+> PGP doesn't support 384 or 512, and only recently started supporting
+> 256.  GnuPG before 1.2.2 (2003-05-01), doesn't have any of the new
+> hashes.  Finally, if you have a DSA signing key (most people do) you are
+> required to use either SHA-1 or RIPEMD/160.  RSA signing keys can use
+> any hash.
+====================
+
+there's more to it than that. openPGP specifies SHA-1 (and nothing else)
+as the hash used to generate key fingerprints, and is what key IDs are
+derived from.
+
+a real threat if this can be extended into a practical attack is
+substituting a key with a *different* key having the same ID and
+fingerprint. it would be difficult for average users (and impossible for
+the current openPGP infrastructure) to tell bob's key from mallory's key
+that claims to be bob's.
+
+it can also be used (if the attack becomes practical) to forge key
+signatures. mallory can create a bogus key and "sign" it with anyone's
+real key. this would turn the web of trust into dust.
+
+the openPGP spec seemed to have assumed that SHA-1 just wouldn't fail.
+ever. this was the same mistake made in the original version of pgp that
+relied on md5. the spec needs to allow a choice of hash algorithms for
+fingerprints and key IDs, or else we'll play this game every time someone
+breaks a strong hash algorithm.
+
+
+- --
+         ...atom
+
+  _________________________________________
+  PGP key - http://atom.smasher.org/pgp.txt
+  762A 3B98 A3C3 96C9 C6B7 582A B88D 52E4 D9F5 7808
+  -------------------------------------------------
+
+ 	"Any sufficiently advanced technology
+ 	 is indistinguishable from magic."
+ 		-- Arthur C. Clarke
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.0 (FreeBSD)
+Comment: What is this gibberish?
+Comment: http://atom.smasher.org/links/#digital_signatures
+
+iQEcBAEBCAAGBQJCE3EoAAoJEAx/d+cTpVcinwsIAKnjw1AqwY0guPtdxMagoZC2
+Rv7mCZt3QnpH4uEaWNLh5R3VImVwOBevW9VdYm+UdMwdmodD79Bc0MyPOaHDuUiP
+okmo0PigWIht2vGWK7F6xLtUwLUlGyuAWO5w8g/hNCt0ftdb1jUam0wQtqnTTarM
+B1kyTWU0sHsjyloSh0umQ8kC0nt9nNhLIasp84oIo+D3b0r6yKIWjMS7dHr1hIbx
+2gXBdVw01HJng/BtF/THfZwAD2IE+OLNPg4Q6v6QnVf3BGBBPSiiD2mXrizuknA8
+RevXGYgBc4plOWOlDmx2ydbRqFHe5obGMGFCk4muFh8veFhPbFxCKvfBwsawi+U=
+=f0+g
+-----END PGP SIGNATURE-----
+
+_______________________________________________
+Gnupg-users mailing list
+Gnupg-users@gnupg.org
+http://lists.gnupg.org/mailman/listinfo/gnupg-users
+
+--- end forwarded text
+
+
+-- 
+-----------------
+R. A. Hettinga <mailto: rah@ibuc.com>
+The Internet Bearer Underwriting Corporation <http://www.ibuc.com/>
+44 Farquhar Street, Boston, MA 02131 USA
+"... however it may deserve respect for its usefulness and antiquity,
+[predicting the end of the world] has not been found agreeable to
+experience." -- Edward Gibbon, 'Decline and Fall of the Roman Empire'
+

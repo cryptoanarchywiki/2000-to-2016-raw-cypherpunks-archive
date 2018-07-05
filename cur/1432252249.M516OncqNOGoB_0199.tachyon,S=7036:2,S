@@ -1,0 +1,143 @@
+From owner-cypherpunks@Algebra.COM  Thu Nov 21 17:05:36 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id gALM5XJ24603
+	for <rsw@opamp.org>; Thu, 21 Nov 2002 17:05:33 -0500
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id RAA14638
+	for <rsw@mit.edu>; Thu, 21 Nov 2002 17:05:33 -0500 (EST)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id gALJQqnN008115
+	for <cypherpunks-outgoing@ak47.algebra.com>; Thu, 21 Nov 2002 13:26:52 -0600
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id gALJQq8P008114
+	for cypherpunks-outgoing; Thu, 21 Nov 2002 13:26:52 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id gALJQgnN008091
+	for <cypherpunks@ak47.algebra.com>; Thu, 21 Nov 2002 13:26:43 -0600
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id gALJQexo002979
+	for cypherpunks@ak47.algebra.com; Thu, 21 Nov 2002 11:26:40 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id gALJNle8002968
+	for cypherpunks-goingout345; Thu, 21 Nov 2002 11:23:47 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Message-Id: <200211211923.gALJNguK002961@slack.lne.com>
+From: attila <attila@stalphonsos.com>
+Old-Subject: Grammar-based privacy/crypto
+To: cypherpunks@lne.com
+Cc: zenadsl6186@zen.co.uk
+X-Mailer: flail 0.1.27 - http://www.flail.org
+Date: Thu, 21 Nov 2002 14:24:50 EST
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+X-Spam-Status: No, hits=-2.5 required=10.0
+	tests=EMAIL_ATTRIBUTION,PGP_SIGNATURE,QUOTED_EMAIL_TEXT,
+	      SPAM_PHRASE_02_03,X_AUTH_WARNING,X_LOOP
+	version=2.43
+Subject:  Grammar-based privacy/crypto
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 4709
+Lines: 93
+
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+I have not been much for posting on the list until now (nothing much
+other than opinions to add, and there seem to be plenty of those to
+go around already), but Mr. Fairbrother's post demanded a response.
+
+Peter Fairbrother wrote:
+
+> I am developing a form of deniable encryption (as part of m-o-o-t) that
+> works slightly differently and does not involve message-size increases - in
+> fact it it decreases message size.
+> ...
+> The main implementation problems I have are coding time and that the only
+> parser that works well enough is proprietary. If anyone else is working on
+> something similar I would like to know. I'm probably not a cypherpunk, more
+> a privacy avocate, but I do write code.
+> ...
+
+I am working on what I intend to be an industrial-strength,
+open-source grammar-based generation toolkit, which might fit the bill
+for the kind of thing he posted about (using grammars for privacy
+applications).  I'm only concerned with generation right now
+and not parsing, but going in the other direction is on my list of
+desired features.  Unfortunately, I have a real day job and am trying
+to get *something* good enough done in time to submit to CodeCon
+(which deadline is coming up soon, I think).  The goals of the toolkit
+are to be highly reusable/usable in many contexts, high performance,
+and extremely flexible.
+
+I would be interested in knowing what kinds of features you envision
+being useful from a toolkit such as this for your purposes.  The toolkit
+I'm building is in the form of a plain old library written in ANSI C,
+with as few environmental dependencies as possible.  There are two
+main data structures: grammars (gram_t *), and grammar generators
+(gram_gen_t *).  Grammars can be constructed by API calls or by handing
+a file or string containing eBNF to a function that knows how to turn
+eBNF into a gram_t.  Grammar generators are built from grammars, and
+can have different generation strategies associated with them (random,
+breadth first, depth first).  Generation itself happens by means of
+callbacks associated with terminals in the underlying grammar, so
+the grammar can really be about anything, not just text (e.g. you could
+write callbacks to generate musical tones, raw network traffic, geometric
+shapes ala shape grammars (http://www.shapegrammar.org/) etc.).
+
+I'm much fuzzier on how I would like the eventual parsing side of
+the house to work, but I'm experienced enough in this subject generally
+to build what I need when I finally figure out how I want it to
+work exactly.  In an ideal world, you hand a gram_t to a third API
+that creates an acceptor for the grammar that is similarly insulated
+from how the actual raw tokens are presented (same kind of callback-driven
+fu I do for generators in the lexical analysis side of the house),
+but I was also thinking it would be really cool to do some sort of
+code generator instead (or use antlr or byacc or something).
+
+One principle that I intend to follow is to make it easy to use
+this toolkit to build up libraries of primitives that can be joined
+together, so that common uses can be accomodated with as little
+code on the part of the user as possible.  For instance, although
+there is nothing specific in the core with regard to generating
+text (like e-mail), this is an obvious common usage (if only for
+debugging), so there will be primitives in the library that make
+it easy to "wire up" your grammar and get it to spit out text (I
+was thinking of some XML-based config language that you could use
+to associate dynamically-loaded primitives from some .so or .dll
+by name with terminals, etc.).
+
+If any of this jibes with the kind of things you're thinking about,
+I'd appreciate hearing from you; although I have a head full of ideas
+on what I'd like to do with it, it's always helpful to hear from
+people with other perspectives who are thinking about similar
+things.  I find myself often working in a vacuum, late at night,
+with nothing to go on but my own feeling of what is useful.  Perhaps
+it's time to delurk.  In any event, if anyone besides Mr. Fairbrother
+has any ideas, opinions or encouragement, it would be most welcome
+(and yes, I am aware of Disappearing Cryptography - it was, along with
+shape grammars, the source of much of my inspiration).
+
+Pax,
+						--A
+- -- 
+attila % member, st.Alphonsos collective % unix,tcp/ip,security,hard bits
+attila@stalphonsos.com % gpg key http://stalphonsos.com/~attila/gpgkey.txt
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.0.6 (OpenBSD)
+Comment: For info see http://www.gnupg.org
+
+iD8DBQE93TMCr88iLU/8u5wRArHRAJ9/thKhVhBUNdSRkopkDMYC0T3Z5gCgg2Dt
+AzHMmk+zVzJeE72cGa1Eyl8=
+=4TEf
+-----END PGP SIGNATURE-----
+

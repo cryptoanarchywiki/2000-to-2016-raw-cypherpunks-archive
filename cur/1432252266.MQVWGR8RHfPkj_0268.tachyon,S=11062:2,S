@@ -1,0 +1,216 @@
+From owner-cypherpunks@al-qaeda.net  Sun Apr 10 18:26:37 2005
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.4/8.13.4/Debian-1) with ESMTP id j3ANQABD016468
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Sun, 10 Apr 2005 18:26:10 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.4/8.13.4/Submit) id j3ANQA5P016467
+	for cypherpunks-outgoing; Sun, 10 Apr 2005 18:26:10 -0500
+From: Anonymous <cripto@ecn.org>
+Comments: This message did not originate from the Sender address above. 
+  It was remailed automatically by anonymizing remailer software. 
+  Please report problems or inappropriate use to the 	remailer
+  administrator at <cripto_abuse@ecn.org>.
+To: cypherpunks@al-qaeda.net
+Subject: DTV Content Protection
+Message-ID: <d71624829d48dabc20fb1522f3d91bda@ecn.org>
+Date: Mon, 11 Apr 2005 01:25:17 +0200 (CEST)
+X-Virus-Scanned: by amavisd-new at ecn.org
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 9898
+Lines: 189
+
+DTV Content Protection
+
+Two content protection systems are in use to protect digital television
+(DTV) signals on the wires of American home video systems: HDCP and DTCP.
+HDCP is used for the most common digital cable connection to HD monitors,
+HDMI, which is a variant of DVI.  DTCP is used for digital connections
+to video equipment, especially digital VCRs.  It was originally designed
+for Firewire (aka iLink, aka IEEE-1394) but has been extended to USB-2
+and Bluetooth, with IP in the works.  Apparently monitors with both HDMI
+and Firewire connections would have to implement both.
+
+HDCP is described at http://www.digital-cp.com/ and DTCP at
+http://www.dtcp.com/.  The full DTCP spec is still secret unless you
+are a licensee and the site has only limited information.
+
+The two systems are very different cryptographically.  HDCP uses a
+56-bit keyed stream cipher based on LFSRs.  DTCP uses block ciphers,
+either a 56-bit key proprietary block cipher from Hitachi called M6,
+or AES with 128-bit keys.  M6 is the default that all devices must
+implement.  M6 uses an odd chaining mode called "converted CBC" which
+seems to chain the ciphertext into the next block's key material rather
+than the plaintext, possibly with an abbreviated key schedule.
+
+SKDH
+
+Here I want to focus on the key agreement protocol.  Both systems use a
+similar approach which has never been formally presented or documented.
+For convenience I will call it SKDH, for Symmetric Key Diffie Hellman.
+SKDH has some properties of Diffie Hellman key exchange, but it uses
+simple addition operations rather than public key functions.  It also has
+some properties of identity-based encryption, in that there is a master
+key center that issues the private keys to each device.  However it
+is not secure against collusion by users who know their private keys,
+so would not be suitable for a true IBE system.
+
+DTCP has two key agreement protocols. There is a full protocol which is
+EC-DH (elliptic curve Diffie Hellman) and is mandatory for "copy never"
+content, ie. pay per view content.  It also specifies a restricted
+protocol which is acceptable for "copy once" and "copy no more" content,
+that uses the SKDH technique described below.  This will be much cheaper
+to implement for manufacturers and is probably used by typical recording
+devices.
+
+DHCP has just one key agreement protocol and it is of this new type
+as well.
+
+SKDH key agreement has not been published but it is presumed that it
+works as follows.  There is a secret matrix which is known only to
+the agency that issues keys.  Let us call this the Master Matrix, MM.
+The system is based on matrix algebra as follows:
+
+Pub1 * MM * Pub2 = shared key.
+
+Pub1 and Pub2 are vectors of 1's and 0's which are the "public keys"
+of the two devices, called "key selection vectors" or KSVs.  Each device
+is issued such a vector, along with its private keys, which are defined
+as follows:
+
+Priv1 = Pub1 * MM
+
+Priv2 = MM * Pub2
+
+Priv1 and Priv2 are vectors of numbers whose size depends on the values
+in MM.  Details for the two known implementations are described below.
+
+By associativity, we have:
+
+Pub1 * MM * Pub2 = Priv1 * Pub2 = Pub1 * Priv1 = shared key.
+
+The two parties do a key exchange by giving each other their KSVs,
+the public Pub1 and Pub2 values.  Each one then multiples the vector
+of 1's and 0's they received from the other side times their vector of
+Priv values.  This amounts to simply adding the Priv values selected
+by the 1's received from the other side.  Because of the relationship
+between the public and private values, this insures that both sides
+receive the same shared key.
+
+The analogy to Diffie Hellman which motivated the name SKDH should now
+be clear.  Each side receives a public value from the other, combines
+it with its own private data, and creates a shared secret.
+
+In HDCP, the MM matrix is 40 by 40, and entries are 56 bits long.  In
+DTCP, the MM matrix is 12 by 12, and entries are 64 bits long.
+
+The weakness of this system is that if the the private key vectors are
+published, they leak information about the MM matrix.  In principle as
+few as 40 private/public key pairs could fully reveal MM in the case of
+HDCP, and as few as 12 in the case of DTCP.  This makes the cryptographic
+scheme unsuitable for any widespread identity based encryption scheme;
+it will only work in a closed system like these, where manufacturers
+must take great pains to keep their private keys secret.
+
+Attacks on HDCP
+
+Several attacks have been published and unpublished on HDCP.  The most
+famous is from Niels Ferguson, who has announced an attack but will not
+publish it for the reasons described at
+http://www.macfergus.com/niels/dmca/cia.html.  According to Ferguson:
+
+"HDCP is fatally flawed. My results show that an experienced IT person
+can recover the HDCP master key in about 2 weeks using four computers
+and 50 HDCP displays. Once you know the master key, you can decrypt any
+movie, impersonate any HDCP device, and even create new HDCP devices
+that will work with the 'official' ones. This is really, really bad
+news for a security system. If this master key is ever published, HDCP
+will provide no protection whatsoever. The flaws in HDCP are not hard
+to find. As I like to say: 'I was just reading it and it broke.'"
+
+Keith Irwin has published four (actually five) attacks on HDCP at
+http://www.angelfire.com/realm/keithirwin/HDCPAttacks.html.  His last one
+is perhaps along the lines that Ferguson envisioned, and I will say more
+about it below.
+
+Similar concepts are presented in
+http://apache.dataloss.nl/~fred/www.nunce.org/hdcp/hdcp111901.htm by
+Scott Crosby, Ian Goldberg, Robert Johnson, Dawn Song and David Wagner.
+This paper assumes (unlike Irwin) that attackers have access to the
+private keys of chosen devices.  This is a questionable assumption as
+it will take very expensive laboratory equipment to extract sensitive
+key material from today's protected chips.
+
+Irwin's fifth attack is presented in an addendum.  It involves presenting
+random KSVs to a display and using a birthday trick to find the "shared
+key" values relatively quickly, which could lead to a break in about
+a month.  However Irwin is more pessimistic about the number of displays
+and assumes that 74 will be needed to have a good chance of spanning the
+whole matrix.  If 50 properly chosen displays are enough then Irwin's
+attack would be pretty close to Ferguson's two week time frame.
+
+All of these attacks focus on finding the master secret MM value; once
+that is found, the security of the system collapses.  Given a KSV it is
+immediately possible to deduce the corresponding private key if you know
+the MM.  Although both HDCP and DTCP have mechanisms for revocations of
+cracked keys, a total break like this cannot be rescued by revocation.
+
+Attacks on DTCP
+
+DTCP seems not have gotten as much attention from cryptographers, in
+part because the details are secret.  But its restricted authentication
+handshake uses the same SKDH algorithm as HDCP.  DTCP requires the two
+sides to have certificates, but it appears that the receiver of the
+data does not check them, so Irwin's random-KSV birthday attack should
+still work.  It may take a little longer due to the key size being 64
+rather than 56 bits, but this will be somewhat compensated by the fact
+that the matrix size is 12 rather than 40.
+
+The time will depend crucially on how quickly a handshake can be
+completed with a device, and the DTCP spec is somewhat vague about this.
+It's possible that the handshake could be much faster, and then the attack
+could complete even more quickly than HDCP.  Since DTCP has only a 12 bit
+public key there are only 2^12 possibilities, so these keys will not be
+distinct between different devices, but rather will be common across a
+model or even across a manufacturer.  This could make it harder to find
+12-15 devices with different keys that will span the MM matrix.
+
+The M6 cipher used in DTCP is actually a family of ciphers, and some of
+them are attacked in http://www.schneier.com/paper-mod3.html by John
+Kelsey, Bruce Schneier and David Wagner.  However that attack depends
+crucially on the use of addition in a certain phase of the algorithm, and
+M6 is also documented to use XOR there in some variants.  The specific
+version of M6 used in DTCP is not known, and even if the attackable
+version is used it's not clear if this would weaken the cipher enough
+to make it the weakest link in the chain.
+
+Summary
+
+Both HDCP and DTCP use cryptographic mechanisms for which published
+attacks have existed for several years, yet deployment proceeds unabated.
+Almost all new HDTV equipment in the U.S. implements one or both of
+these cryptographic protocols.  As discussed above, if enough private
+keys leak or are scraped out, or if Irwin's attack works, the security
+of these systems will collapse.
+
+DTCP has a fallback in is its certificate protected, EC-DH based
+full authentication mode, using AES-128 to avoid any weaknesses in M6.
+It would take years though before existing equipment could be obsoleted
+by ceasing to support the restricted authentication mode that uses SKDH.
+HDCP has no fallback and it would be necessary to redesign the handshake,
+again with a several year lag time for deployment of the updated system.
+
+It will be interesting to see whether these theoretical attacks can
+be successfully mounted now that HDTV equipment is widely available.
+As the cost continues to drop over the next couple of years it should
+soon be practical for hobbyists to begin experimenting with Irwin's
+attack and start collecting KSV + private key pairs.  DTCP would be an
+even more attractive target as it would allow easy computer recording
+of protected data via Firewire, USB2, or IP.  However its reliance on
+the much-maligned principle of security through obscurity (keeping the
+details secret) may in practice give it a greater degree of protection.
+

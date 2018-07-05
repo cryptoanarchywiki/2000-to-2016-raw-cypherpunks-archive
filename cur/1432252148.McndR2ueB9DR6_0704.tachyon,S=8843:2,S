@@ -1,0 +1,193 @@
+From owner-cypherpunks@al-qaeda.net  Tue Feb 22 02:41:50 2011
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-5+lenny1) with ESMTP id p1M7cjk5006064
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 22 Feb 2011 02:38:45 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id p1M7cjbJ006063
+	for cypherpunks-outgoing; Tue, 22 Feb 2011 02:38:45 -0500
+Date: Tue, 22 Feb 2011 08:38:42 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: Re: [p2p-hackers] P2P file storage systems
+Message-ID: <20110222073842.GM23560@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 7843
+Lines: 168
+
+----- Forwarded message from Zooko O'Whielacronx <zooko@zooko.com> -----
+
+From: Zooko O'Whielacronx <zooko@zooko.com>
+Date: Mon, 21 Feb 2011 15:04:55 -0700
+To: theory and practice of decentralized computer networks <p2p-hackers@lists.zooko.com>
+Subject: Re: [p2p-hackers] P2P file storage systems
+Reply-To: theory and practice of decentralized computer networks <p2p-hackers@lists.zooko.com>
+
+Dear Michael Militzer:
+
+Thanks for your ideas about secure P2P storage, and thanks for your
+interest in Tahoe-LAFS in particular.
+
+Here are a couple of quick responses. I'm an architect and developer
+of Tahoe-LAFS.
+
+On Sun, Feb 20, 2011 at 7:45 AM, Michael Militzer <michael@xvid.org> wrote:
+>
+> While I don't agree that we should really drop erasure
+> coding, I however like your approach to keep things simple.
+
+I also like that about Octavia. I'd like to see Octavia developed and
+used more so I can learn more about the consequences of its
+trade-offs.
+
+Since it is so simple it should be relatively easy for a volunteer to
+implement it or to contribute part of an implementation of it.
+Somebody out there do that! :-)
+
+> Also today
+> indeed bandwidth should be the more precious resource in a P2P system
+> compared to storage, which is available in abundance to the home user.
+> So a simple replication strategy might not be so bad after all...
+
+Replication costs more bandwidth on upload than erasure coding does
+(for a similar degree of fault-tolerance) as well as costing more
+storage.
+
+> If I understood it right, Tahoe clients simply keep a connection with each
+> storage node in a storage cluster.
+
+That's right, We have kicked around some ideas about how to do a more
+scalable-DHT-like routing instead of keeping a connection open from
+each client to each server, but even if we had such a thing Tahoe-LAFS
+grids would still be comprised exclusively of servers whose owners
+gave you some reason to believe that they were reliable. Scalable
+routing a la DHT wouldn't be sufficient to allow you to safely rely on
+strangers for storage, for various reasons that you touched on next:
+
+> So if the DHT is deployed on untrusted nodes we need to care about things
+> like admission control, sybil attack, routing and index poisening, eclipse
+> attack and so on.
+
+Hm, but then you say something that I don't quite follow:
+
+> - It may need further modification to be safely usable in a network
+> comprised of untrusted nodes (sybils, DHT robustness against denial of
+> service attacks, ...)
+
+I think the word "trust" often causes confusion, because it bundles
+together a lot of concepts into one word. I find that rephrasing
+things in terms of "reliance" often makes things clearer.
+
+So: Tahoe-LAFS users absolutely do *not* rely on the storage servers
+for confidentiality and integrity. Confidentiality and integrity are
+guaranteed by the user's client software, using math (cryptography).
+Even if *all* of the storage servers that you are using turn out to be
+controlled by a single malicious entity who will stop at nothing to
+harm you, this doesn't threaten the confidentiality of the data in
+your files nor its integrity.
+
+But, Tahoe-LAFS users *do* rely on the storage servers for the
+longevity and availability of their data. If the malicious entity that
+controls all the servers decides to delete all of the ciphertext that
+they are holding for you, then no mathematical magic will help you get
+the data back. :-)
+
+That is why Tahoe-LAFS users typically limit the set of storage
+servers that they will entrust their ciphertext. They choose only
+servers which are operated by friends of theirs, or by a company that
+they pay for service, or servers operated by members of a group that
+has collectively agreed to trade storage for storage with each other.
+
+I wrote more on this topic in a letter to the tahoe-dev mailing list last night:
+
+   "BitTorrent for storage" is a bad idea
+http://tahoe-lafs.org/pipermail/tahoe-dev/2011-February/006150.html
+
+
+> - To guarantee persistence in a P2P network of untrusted and unreliable
+> nodes Tahoe's information dispersal strategy needs be adapted. The degree
+> of redundancy must be increased (n/k) but just as well the number of
+> erasure coded fragments (k) too for storage efficiency.
+
+Why do you think these parameters would need to be changed?
+
+> I don't know if
+> this is practically doable within Tahoe's current structure (galois-field
+> based Reed-Solomon coding is slow with large k and n) or what other side
+> effects this may have (size of the Merkle trees?).
+
+It is plenty efficient for k and n up to about 256. It is also
+probably efficient enough for k and n up to about 2^16, although I'm
+skeptical that anyone actually needs k and n that size.
+
+There is a Merkle Tree in Tahoe-LAFS which is computed over the
+identifiers of the n shares, so that Merkle Tree would grow in size as
+n grew. However that is a small cost that probably wouldn't need much
+if any optimization.
+
+> - Censorship-resistance obviously also depends on availability and data
+> persistence guarantees. If directed (or undirected) denial of service
+> attacks are possible on the DHT, the system cannot said to be censorship-
+> resistant.
+
+Hm, so if I understand correctly, Tahoe-LAFS currently doesn't have
+*scalability* in terms of the number of servers, but it does have
+nearly optimal *censorship resistance* at a given scale. For example,
+suppose there are 200 servers which are all joined in the conspiracy
+to host a repository of Free and Open Source Software, and some evil
+attacker is expending resources attempting to disrupt that hosting or
+deny users access to it. If those 200 servers are organized into a
+traditional scalable DHT like Chord, then a client would have
+approximately a logarithmic number of connections to servers, say to
+perhaps eight of them. An attacker who wants to deny that client
+access to the Free and Open Source software repository would have to
+take down only eight servers or prevent the client from establishing
+working connections to them, right? Whereas with a full bipartite
+graph topology like Tahoe-LAFS the attacker would have to take down or
+deny access to a substantial constant fraction of all 200 of them
+(depending on the ratio of k to n).
+
+(Note: is assuming that the erasure coding parameter n is turned up to
+200, which is already supported in Tahoe-LAFS -- you can configure it
+in the tahoe.cfg configuration file.)
+
+(Note: this is about attacking the storage layer, not the introduction
+layer. Those are separate in Tahoe-LAFS and while the latter does need
+some work, it is probably easier to defend the introduction layer than
+the storage layer since introducers are stateless and have minimal
+ability to do damage if they act maliciously. Multiple redundant
+introducers were implemented by MO Faruque Sarker as part of the
+Google Summer of Code 2010 but it hasn't been merged into trunk yet.
+You can help! We need code-review, testing, documentation, etc.
+http://tahoe-lafs.org/trac/tahoe-lafs/ticket/68 :-) )
+
+> And there are other, less-obvious censorship risks too: If a third-party
+> can force specific node owners (e.g. by court order) to shut down their
+> storage nodes then certain data can become unavailable in the system.
+
+You may be interested in Tahoe-LAFS-over-Tor and Tahoe-LAFS-over-i2p.
+:-) I'm sure both of those projects would be grateful for bug reports,
+patches, etc.
+
+Regards,
+
+Zooko
+_______________________________________________
+p2p-hackers mailing list
+p2p-hackers@lists.zooko.com
+http://lists.zooko.com/mailman/listinfo/p2p-hackers
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

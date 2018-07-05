@@ -1,0 +1,83 @@
+From owner-cypherpunks@jfet.org  Fri Mar 24 01:46:45 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.5/8.13.5/Debian-3) with ESMTP id k2O6jMj1018917
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 24 Mar 2006 01:45:22 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.5/8.13.5/Submit) id k2O6jLRk018914
+	for cypherpunks-outgoing; Fri, 24 Mar 2006 01:45:21 -0500
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;         s=beta;
+  d=gmail.com;        
+  h=received:message-id:date:from:to:subject:mime-version:content-type:content-transfer-encoding:content-disposition;
+  b=cM/Acd5wc4X+EP9quXy4T2JP1Ho/zqqyJyiNkoOgIsYCIao205hu0tZ+FW6vq/538G6ImQ+E7KUzBlWtNG6vWuDBCrt6yT0Ni6+9OgCfu/20Hmo3rdzyLFIGwhT2bjSIkhcIqDuJfjow+3Iitr3Td5CFPUZWhMajfqHMYbp35+4=
+Message-ID: <4ef5fec60603232245w2c2736ffw9a91c3cae9c0b64d@mail.gmail.com>
+Date: Thu, 23 Mar 2006 22:45:19 -0800
+From: coderman <coderman@gmail.com>
+To: cypherpunks@jfet.org
+Subject: entropy status / benchmarks [was test an iso]
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by proton.jfet.org
+  id k2O6jKJw018867
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2113
+Lines: 52
+
+On 3/16/06, coderman <coderman@gmail.com> wrote:
+> ...
+> - does entropy mgmt on VIA hardware work? (c5test/c5keys/c5net)
+
+for those with VIA/Intel/AMD hw entropy device support and a running
+mtrngd you can get current status via '/etc/rc.d/rcS.mtrngd status'. 
+logs are in /var/log/mtrngd/.
+
+i'd be interesting in knowing run times for large amounts of entropy
+gathered and mixed to /dev/random (gigabytes if it remains stable for
+that long).  particularly for the Intel and AMD hw devices which i do
+not currently have at my disposal for testing.
+
+status output is similar to the following; sizes are in Bytes,
+times/stats are in microseconds (not milli):
+
+[Fri Mar 24 08:46:14-459926] Current MTRNGD Status:
+  bad fips blocks ......: 13080
+   monobit failures ___: 3359
+   poker run failures _: 542707
+   bit run failures  __: 1104377
+   long run failures __: 9687
+   cont run failures __: 35
+  good fips blocks .....: 41614750
+  hwrng read bytes .....: 104069575000
+ entropy add bytes ....: 104036872320
+  random writeable cnt .: 541858710
+  hw entropy read stats ....:    min: 2479       avg:  3359      max:
+22788      total: 139833561751
+  rng fips check stats .....:    min: 904        avg:  919       max:
+6464       total: 38267989605
+  random recv starve stats .:    min: 3416       avg:  4305      max:
+24018      total: 179159453561
+
+
+you can stress /dev/random via 'bench-rng /dev/random 1024 1000000' or
+simply 'cat /dev/random > /dev/null'.
+
+uptime would be helpful.  note that i accidentally left "forgiving
+fips check" set in the rcS.mtrngd script; this can be turned off for a
+better real world test.  the forgiving option does not fail blocks
+with poker or bit runs.  monobit, long, and continuous runs are always
+critical and the block is discarded.
+
+the FIPS check block size is 1500 bytes.  see
+http://csrc.nist.gov/fips/fips1401.htm for more info.
+
+by default entropy density is at 80% so take that into consideration
+when calculating available /dev/random throughput.  ex:
+
+entropy add bytes ....: 104036872320  x  0.80 == 83,229,497,856 Bytes
+of actual entropy added to /dev/random pool.
+

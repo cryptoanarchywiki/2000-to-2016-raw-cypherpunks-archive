@@ -1,0 +1,92 @@
+From owner-cypherpunks@al-qaeda.net  Sat Jun 11 14:03:05 2011
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id p5BHuxf3012679
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sat, 11 Jun 2011 13:56:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1307815019;
+	bh=YbTICzTZCtOKRotDsMM9iKzxIat2qNP+nsb7zs7cuc4=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=LltpRNLPJvB3dFGj7hB93LU8B4VPNr06nm8t6/qeEpzxB5TA1V3Rvtyn+jhIiAEyC
+	 a8/Ik/sF6ZSfhPC6kt/vTxISr0/JL9d/8+l/n9YT3CQtFbipMhX1vufUyff5HP3khS
+	 6iOhJ5ZEfaFALzNWcTfcYqJIqM9XPinnPvdWROwE=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id p5BHuxkK012678
+	for cypherpunks-outgoing; Sat, 11 Jun 2011 13:56:59 -0400
+Date: Sat, 11 Jun 2011 19:56:56 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: scalable flooding information distribution
+Message-ID: <20110611175656.GF11019@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3010
+Lines: 60
+
+----- Forwarded message from Kragen Javier Sitaker <kragen@canonical.org> -----
+
+From: Kragen Javier Sitaker <kragen@canonical.org>
+Date: Sat, 11 Jun 2011 13:48:25 -0400
+To: Zooko O'Whielacronx <zooko@zooko.com>
+Cc: kragen-discuss@canonical.org
+Subject: Re: scalable flooding information distribution
+User-Agent: Mutt/1.5.20 (2009-06-14)
+
+On Sat, Jun 11, 2011 at 07:59:43AM -0600, Zooko O'Whielacronx wrote:
+> Possibly related:
+> 
+> http://tahoe-lafs.org/trac/tahoe-lafs/ticket/68#comment:11
+> 
+> The description refers to other Tahoe-LAFS terminology, but basically
+> the proposal amounts to using the Chord structure for broadcast
+> instead of routing.
+
+I see.  If I understand correctly, the algorithm you've described is the
+standard hypercube broadcast algorithm; if you have 2^N nodes, one for each
+node identifier (which I know is not the usual case for Chord!) then the
+fingers are exactly the links in the hypercube, and the algorithm is simply
+that at timestep i, all nodes that already have the message transmit a copy to
+the node whose address differs from their own by 2^i.
+
+You've generalized this implicitly by using Chord as the basis, so that the 2^N
+node identifiers are distributed among a smaller number M of physical nodes,
+and you can skip the first N-lg(M) timesteps.
+
+Unfortunately, this is just a particularly low-latency way to implement
+flooding, (in the simple hypercube case, at least, it's provably optimal) and
+still suffers from flooding's limit on scalability.  While Moore's Law has made
+that limit relevant for a progressively diminishing number of applications,
+there will always be applications for which it is relevant.
+
+In the case where each node only cares about a subset of possible
+announcements, and the subset is easily identifiable by a key, you can
+distribute asynchronous announcements in a manner more efficient than flooding
+by using the Chord topology, and a cache-invalidation protocol: when you fetch
+a key-value pair from a node, the node sends the current value immediately, and
+later, if possible, an asynchronous notification that the previous value is no
+longer valid, which prompts you to refetch it.  You also poll periodically in
+case the asynchronous notification failed to get sent --- perhaps the node ran
+out of space for addresses to notify of invalidations, or crashed, or went
+offline, or couldn't reach you; or perhaps your IP address changed.
+
+If the value is something like "the last day's worth of announcements on
+channel 328f" or "the last 128 announcements on..." then you have a workable,
+though clearly not optimal, system for distributing events.
+
+Kragen
+-- 
+To unsubscribe: http://lists.canonical.org/mailman/listinfo/kragen-discuss
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

@@ -1,0 +1,131 @@
+From owner-cypherpunks@al-qaeda.net  Wed Feb 29 11:04:48 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q1TG1ICf017875
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 29 Feb 2012 11:01:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1330531278;
+	bh=CAM/DG5ML0ZYd9QU5EFRf/LRCPJxGzvEe9NJ/Y7Y2Rk=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=nW3LIVnqn5HDC1MqZxoCjati4VUkGipHlI/Q8/Z/rT7nnAai8ADwyzQOCPT9LKhu2
+	 Grbp2p9Vc/ykSb1j+9SHLmFSL99lKmk/2WkMWmfO1er2s/9jUIhAZ11DlWpNOypcwo
+	 7lZvNtDTsUgy+sh8HoxG/krCYMvjlEH904wCE8rQ=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q1TG1Iww017874
+	for cypherpunks-outgoing; Wed, 29 Feb 2012 11:01:18 -0500
+Date: Wed, 29 Feb 2012 17:01:14 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: [tor-talk] on the topic of tor's weaknesses
+Message-ID: <20120229160114.GK7343@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4785
+Lines: 99
+
+----- Forwarded message from Paul Syverson <syverson@itd.nrl.navy.mil> -----
+
+From: Paul Syverson <syverson@itd.nrl.navy.mil>
+Date: Wed, 29 Feb 2012 09:48:15 -0500
+To: tor-talk@lists.torproject.org
+Subject: Re: [tor-talk] on the topic of tor's weaknesses
+User-Agent: Mutt/1.5.17 (2007-11-01)
+Reply-To: tor-talk@lists.torproject.org
+
+On Wed, Feb 29, 2012 at 05:17:34AM -0500, grarpamp wrote:
+> > The main problem, besides the overhead, is that padding doesn't work
+> > if an adversary can do something as trivial as very briefly delaying
+> > It is too easy for an adversary to put a traffic signature on a
+> > circuit in one place, and look for it elsewhere. If he owns, e.g., the
+> > first node and any of the last node, the link to the destination, or
+> > the destination it won't matter what kind of padding is done. There's
+> > lots of published work showing this in various ways. Some already
+> > alluded to in this thread. If nothing else the adversary can just kill
+> > the connection at the first node and see which connection exiting the
+> > network dies.
+> 
+> Doesn't this mean bad news for users of hidden services,
+
+Maybe. The important thing is to understand what security is provided
+and what is not. Then you can make an informed decision about whether
+or not it's bad news.
+
+> and to a
+> lesser extent clearnet services (since they're not as 'illegal' and thus
+> maybe lesser hot targets for snagging users). IE:
+> 
+> Sting runs a HS and an entry. Thus Sting has full packets, timing,
+> cleartext and logs of anyone that builds: clientA <> entry <---> HS
+> 
+> There may even be these additional structures to the left of clientA's
+> entry, for which the role of entry may switch to relay or exit, but for
+> which entry may be still able to discriminate among on its left...
+> clientB
+> clientC <> relay
+> clientD [...] <> relay <> relay [...]
+> 
+> It may take a while for a clientA to use said entry but when they do it seems
+> it would be quite easy to time/count correlate or munge the HS traffic of
+> clientA. And only require two nodes (hs, entry) and no GPA taps to do so.
+> 
+> Can such an entry know when it's being used as an entry by
+> whatever appears to it's left? I think that is what I describe
+> relies on.
+
+The short but incomplete answer is yes. Generally, what you are
+describing we experimentally verified on the live Tor network back in
+2005.  See "Locating Hidden Servers" by Lasse Overlier and myself.
+Available at 
+http://freehaven.net/anonbib/ 
+or
+http://www.onion-router.net/Publications.html
+
+These sorts of attacks are what motivated us to introduce guard nodes,
+also described in that paper.  We all knew, and had seen analyzed in
+earlier work by Wright et al., that onion routing circuits were
+subject to predecessor attacks, and that what Wright et al. had called
+helper nodes would, well help.  What Lasse and I showed was that the
+public Tor network as of 2005 was subject to such attacks working very
+quickly (minutes) using very limited resources. You could generally
+find a hidden server within minutes using just a single hostile Tor
+relay (no cooperation from evil web server required). We wanted to
+show what you could do with a single relay, which limited us to hidden
+server circuits. If you owned at least two relays, you could attack
+arbitrary Tor circuits. This was confirmed in simulation on PlanetLab
+shortly after by Bauer et al.  ("Low-Resource Routing Attacks Against
+Tor", also available at anonbib).
+
+Entry guards don't change the asymptotic threat of such attacks, they
+just move it around. Since you could be screwed so quickly and easily
+by building random circuits, Tor was changed so that you pick just a
+few relays as your entry guards. If one of them is evil, it will see
+the entry side of (a large fraction of) your circuits and will be able
+to associate you with your destination whenever you go to a hostile
+destination or use a hostile exit. What Lasse and I showed was that
+you weren't really much worse off from this than when choosing
+circuits with random entry relays. And if none of your guards is evil,
+an adversary can never de-anonymize you in this way. (Never say
+"never". ;>) Cf. the experiments and discussion of layered guards in
+"Locating Hidden Servers", and our subsequent research on building
+trust into path selection.)
+
+aloha,
+Paul
+_______________________________________________
+tor-talk mailing list
+tor-talk@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-talk
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

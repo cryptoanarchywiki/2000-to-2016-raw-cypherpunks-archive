@@ -1,0 +1,77 @@
+From owner-cypherpunks@jfet.org  Thu Dec  1 03:11:50 2005
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.5/8.13.5/Debian-3) with ESMTP id jB18826D002134
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 1 Dec 2005 03:08:02 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.5/8.13.5/Submit) id jB1882Sc002133
+	for cypherpunks-outgoing; Thu, 1 Dec 2005 03:08:02 -0500
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;         s=beta;
+  d=gmail.com;        
+  h=received:message-id:date:from:to:subject:mime-version:content-type:content-transfer-encoding:content-disposition;
+  b=aazf/gw2cBdpFI+wxgCpRaXaR68heuhHUVMNPNvtTcyVMdi89Eq8qBs5kjVgOYQ1aNlfBjWlKeuZlULQrHnB/fhk9rpDnTtUOn3kAD/bprQm0xhl/XxUpzi6t7DFvfWf6wu4gMB6R32d7gLB1NffXkVgj+dNbkLNj0iAzGk/b1g=
+Message-ID: <d4f1333a0512010008o7ab73dbbx4608efbef9c064d8@mail.gmail.com>
+Date: Thu, 1 Dec 2005 02:08:00 -0600
+From: "Travis H." <solinym@gmail.com>
+To: cryptography@metzdowd.com, cypherpunks@jfet.org
+Subject: security modifications to current PCs
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by proton.jfet.org
+  id jB1881Mq002096
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2396
+Lines: 46
+
+Hey,
+
+I've been reading through the TCPA documents and thinking a bit about
+changes that might give higher assurance to an ordinary PC, or at
+least a PC with only minor changes.
+
+Specifically, one of the things I've always been mulling over is a
+secure boot sequence.  Basically, like the TCPA, I want a sequence
+where each stage decrypts and validates the next one so that a user
+doesn't have to worry about modifications to the bootup state. 
+Basically, I've been thinking about rewriting the BIOS (perhaps with
+large portions in FORTH a la openfirmware*) such that instead of
+prompting the user for a password which is compared to a stored copy
+(that can be erased by removing the battery), it instead prompts the
+user for a passphrase that is used to decrypt and authenticate the MBR
+(boot block) and possibly the first-stage boot loader.  The boot
+loader in turn decrypts and authenticates the kernel and any
+associated crud it needs (perhaps supporting the multiboot spec), and
+the kernel and crud are smart enough to decrypt and authenticate the
+root partition, and away we go.
+
+[*] http://www.openfirmware.org/
+
+Similarly, I wouldn't mind seeing a PCI card or something that is
+designed for securely storing crypto keys (from DMA among other
+things) and performing crypto operations.  These parts of the TCPA are
+okay.  I don't see the need to curtain memory, as I'm comfortable with
+the "ring 0 can do anything" property.
+
+Additionally, it would be nice to have a "trusted path" to the OS,
+whereby a certain key sequence triggers a direct input path to a
+program, or the user is assured of what program he/she is talking to.
+http://www.dwheeler.com/secure-programs/Secure-Programs-HOWTO/trusted-path.html
+
+Is it possible to implement most block ciphers in FPGAs?  It'd be nice
+to have a bus-mastering crypto co-processor device to do, say, disk
+encryption without requiring CPU help, but I want to be able to update
+it to new algorithms as new attacks against the cipher appear.  I use
+some disk encryption stuff on a dual processor machine and it's still
+slow.  The load climbs to 10 or 12 all too easily, then stuff becomes
+unresponsive (perhaps because swap is one of the things I'm
+encrypting).
+--
+http://www.lightconsulting.com/~travis/  -><-
+"We already have enough fast, insecure systems." -- Schneier & Ferguson
+GPG fingerprint: 50A1 15C5 A9DE 23B9 ED98 C93E 38E9 204A 94C2 641B
+

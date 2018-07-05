@@ -1,0 +1,3529 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t95GTl26010567;
+	Mon, 5 Oct 2015 12:29:48 -0400
+Authentication-Results: antiproton.jfet.org; dkim=fail
+	reason="verification failed; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=fT/4ujt3;
+	dkim-adsp=none (unprotected policy); dkim-atps=neutral
+Received: from mail-lb0-f177.google.com (mail-lb0-f177.google.com
+ [209.85.217.177])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t95GTgW3010506
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Mon, 5 Oct 2015 12:29:44 -0400
+Received: by lbwr8 with SMTP id r8so61068435lbw.2
+ for <cypherpunks@cpunks.org>; Mon, 05 Oct 2015 09:29:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :content-type:content-transfer-encoding;
+ bh=yVhxh5u/RXQ8P6SkdZdWrLpCF3FZp/wb6t08OfX+ZUc=;
+ b=fT/4ujt3qnXwCiHdYn2RAIIU5QQAyxY+4otPfQTktHSli/ekfX3id0z7cZiNImYUmj
+ FVdlfymoNiCAx5pOb3iQKuIu7VYFDTNxTRCimg+GW82x4Ishapdc+fuhFLy0U/gI+HL6
+ PKBv1I1JbZ4E66NDMJQKLY6bclOuS82guvKePhTgFc8gg0TTJBRuIoiKH+FXUZXCny8z
+ x+cjLgG03kCy0eoEW/MEmAOPpoJrYfKQPptic58xKOjBQ5RnqbzM2zFTrMa8PBH45ZEp
+ JZvi638lUsfrTxIcCw6/HHE5iiQltKauqqrvKU0ieyFju4ri8B2B9RkZzZHvumK5b5BD
+ x8+w==
+MIME-Version: 1.0
+X-Received: by 10.112.138.70 with SMTP id qo6mr12117912lbb.101.1444062576677; 
+ Mon, 05 Oct 2015 09:29:36 -0700 (PDT)
+Received: by 10.25.145.142 with HTTP; Mon, 5 Oct 2015 09:29:36 -0700 (PDT)
+In-Reply-To: <CAJVRA1RsgoKvADCcRz76vj1xjT+EQDB96tw7-sgg_pf+BGzA=A@mail.gmail.com>
+References: <CAJVRA1SaJpNaPQx=s_7VVM==ony2sH0aUG3w11cjNX6escSm8w@mail.gmail.com>
+ <CAJVRA1TUfu40206TOzK2kBsgCvbgBYYXmyKZ3E5n4KQuoEtZyg@mail.gmail.com>
+ <CAJVRA1QtgMky_hsDLsmFwiXcxE528bZaDOQsjTqqj4tR-dbGBQ@mail.gmail.com>
+ <CAJVRA1RwoyoRs-REWnhGd8cHZM6EJvcziTUDXbU5A6TMigOT6A@mail.gmail.com>
+ <CAJVRA1Rwaq1fvE8p-s1JwOANvMc7X2E75bx5eNd4KGJapt6Nuw@mail.gmail.com>
+ <CAJVRA1TU5Frg3WOJk+3ZFEH0QAFya5xZnwzCfCUE+hL1NhKUFg@mail.gmail.com>
+ <CAJVRA1Q0SDo9Fj3KAU9vA3cxR2=7pwcdpO3Ex=yi6g2WtRAg6A@mail.gmail.com>
+ <CAJVRA1Srrb08Z9XvG+rYq30p2E_MnhJA6ynOLpdT--6gCvwiyQ@mail.gmail.com>
+ <CAJVRA1RXD2dr16TJZK-MPcJm7nR0Ov=Dp9i5Anf5hKNFs2hq7w@mail.gmail.com>
+ <CAJVRA1S97DSPk0NBjgon1LS4HHuGtq_03dqFppUnWq+t61a41A@mail.gmail.com>
+ <CAJVRA1SyW_wOUcFUo6STbiePO8HmLV9LgF-PCgugvuPRD_tKWA@mail.gmail.com>
+ <CAJVRA1QaYYF=hoSQiSd4SHNUj-W6hjEJDhy1KxR9CfFKDgNkew@mail.gmail.com>
+ <CAJVRA1TvZxj_qz6_xK8h13LOD-5mE6iNvT9dnThf4ue0_=kY3Q@mail.gmail.com>
+ <CAJVRA1RbeuzfiVAOqaZ15p8kr67jxcBoNMOrJkt3K86_=FuVXw@mail.gmail.com>
+ <000701d0bcb7$94118e80$bc34ab80$@co.uk>
+ <CAJVRA1SE1O-PqmkV8vX=q5j_xs-YFOpH=OLxSvwaT8BBvadQmA@mail.gmail.com>
+ <CAJVRA1TwM3Re8Tz6NPxp_CeY5C4K3QN+Ceo5VbW3JKMbBABv9g@mail.gmail.com>
+ <CAJVRA1SbqTrEbUJ84rLFWdu6+psY5uUzu-ZsVfyUwoSaMRcGdQ@mail.gmail.com>
+ <CAJVRA1RDN6HsLCbF_wsK+zARO9PaEn80R9FSGnWgGVF4XkbbpQ@mail.gmail.com>
+ <CAJVRA1Rt2gKvgnM0MCiqf2Q4vJ8wWxm=KabcQXeBYSqn4zRvKg@mail.gmail.com>
+ <CAJVRA1Q95CKTVahkfQeH_pwaGDcgJ-4OL2=9o5ckQrZLG8HeUA@mail.gmail.com>
+ <CAJVRA1SyX65OE9-7DQ1hP1fGWHxY8rvCqFXhKPu4Oy4o6wt0gg@mail.gmail.com>
+ <CAJVRA1SgoLtLFS9AFf_d043AGDVbKp4djDtijDR+zfCRJ8twTA@mail.gmail.com>
+ <CAJVRA1SvN5ML7TQnOUqz78PhYv8aefz=k8-4fPOwv2uHUVF3_w@mail.gmail.com>
+ <CAJVRA1Ry2EV7qaFHmZJ9cjm8-waCNBCzenO9BpqW+YKChEHX7w@mail.gmail.com>
+ <CAJVRA1S5juVmB6Ouy0JWbdeJdj9yz0W6tKQDY2q_zi+AC461EA@mail.gmail.com>
+ <CAJVRA1SYO0ia4VGLwFwZFowkD75YR61MC1TNc1wzHbZtmhy1_w@mail.gmail.com>
+ <CAJVRA1SqWMVy6m6KuiJWQQG_6XPWoB+86-p45PWKvfn8wg_jeA@mail.gmail.com>
+ <CAJVRA1RWaiCZtig6+Seyk-UN9M3h9+2iZ0Otnqb6n=AFcRAeRw@mail.gmail.com>
+ <CAJVRA1QzHeh=rs0hRf0sugLZdbXvAhK+2Yte5Tbt_Tnv5Tf8mg@mail.gmail.com>
+ <CAJVRA1SdAW+36Z8yYTdSFTtz8S8U5aiELv5NiuXg5Rg-vaFYew@mail.gmail.com>
+ <CAJVRA1Svk488ax6sd4oy52rfM_u_E1EuzhUAQt6cQ2Jy5yRx5g@mail.gmail.com>
+ <CAJVRA1S4=X5P6hKnZu224GjseL5ws1vRm6Gk4gJ+DG06oLjaDA@mail.gmail.com>
+ <CAJVRA1RsgoKvADCcRz76vj1xjT+EQDB96tw7-sgg_pf+BGzA=A@mail.gmail.com>
+Date: Mon, 5 Oct 2015 09:29:36 -0700
+Message-ID: <CAJVRA1TOMYnBh0-B=uh6n2HsOsFdY+SKVG-=XqKi6WPNro++PA@mail.gmail.com>
+Subject: Re: FOIPA adventures
+From: coderman <coderman@gmail.com>
+To: cryptome@freelists.org, cpunks <cypherpunks@cpunks.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by antiproton.jfet.org id
+ t95GTgW3010506
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 3442
+
+On 10/5/15, coderman <coderman@gmail.com> wrote:
+> honestly didn't think i'd get a useful reply to this one:
+> " [regarding SCIFs]
+
+...
+
+https://muckrock.s3.amazonaws.com/foia_files/2015/09/29/F15-0117_Peck.PDF
+
+NATIONAL RECONNAISSANCE OFFICE
+14675 Lee Road
+Chantilly, VA 20151-1715
+
+28 September 2015
+Mr. Martin Peck
+MuckRock
+DEPT MR 21368
+PO Box 55819
+Boston, MA 02205-5819
+Re: NRO Case #F15-0117
+Dear Mr. Peck:
+This is in response to your request dated 19 September 2015, received
+in the National Reconnaissance Office (NRO) on 21 September 2015. Pursuant
+to the Freedom of Information Act, you are requesting "Records associated
+with self inspection of classified materials handling pursuant to Executive
+Order (E.O.) 13526 and E.O. 13587 for the last ten (10) years."
+We have accepted your request, and it is being processed in accordance
+with the FOIA, 5 U.S.C. Â§ 552, as amended. As an interim release in
+response to your request, we are providing to you thirty-nine pages of
+responsive information that has previously been released in part to another
+requester. These pages are being released in part to you, as well.
+Information that is denied is withheld pursuant to FOIA exemption (b)(3),
+which is the basis for withholding information exempt from disclosure by
+statute. The relevant withholding statute is 10 U.S.C. Â§ 424, which
+provides (except as required by the President or for information provided to
+Congress), that no provision of law shall be construed to require the
+disclosure of the organization or any function of the NRO; the number of
+persons employed by or assigned or detailed to the NRO; or the name or
+official title, occupational series, grade, or salary of any such person.
+Since it is unlikely we will be able to provide a complete response
+within the 20 working days stipulated by the Act, you have the right to
+consider this a denial and may appeal on this basis to the NRO Appeal Review
+Panel, 14675 Lee Road, Chantilly, VA 20151-1715 after the initial 20 working
+day period has elapsed. It would seem more reasonable, however, to allow us
+sufficient time to continue processing your request and respond as soon as
+we can. Unless we hear from you otherwise, we will assume that you agree
+and will continue processing your FOIA request on this basis. You will have
+the right to appeal any denial of records after you receive a final response
+to your request.
+The FOIA authorizes federal agencies to assess fees for record
+services. Based upon the information provided, you have been placed in the
+"other" category of requesters, which means you are responsible for the cost
+of search time exceeding two hours ($44.00/hour) and reproduction fees ($.15
+per page) exceeding 100 pages. We will notify you if it appears that we will
+
+meet or exceed our $25.00 minimum billing threshold in processing your
+request. Additional information about fees can be found on our website at
+www.nro.gov .
+If you have any questions, please call the Requester Services Center
+at 703 - 227-9326, and reference the case number F15-0117.
+
+atricia B. Cameresi
+Chief, Information Review
+and Release Group
+Enclosure: Responsive information for 2012 & 2013
+
+UNCLASSIFIED NRO APPROVED FOR RELEASE
+
+28 August 2014
+NATIONAL RECONNAISSANCE OFFICE
+14675 Lee Road
+Chantilly, VA 20151-1715
+
+MEMORANDUM FOR OFFICE OF THE UNDER SECRETARY OF DEFENSE FOR
+INTELLIGENCE SECURITY POLICY AND OVERSIGHT DIRECTORATE
+SUBJECT: Annual Self - Inspection Report
+REFERENCES: OUSD(I) Memorandum, Annual Senior Agency Official
+Self - Inspection Program Report for Classified
+National Security Information, 8 July 2013
+The National Reconnaissance Office (NRO) is providing the
+attached Self - Inspection Report as requested in reference.
+oint of contact for questions concerning this submission is
+
+A. Jamieson Burnett
+Director, Office of Security
+and Counterintelligence
+Attachment:
+NRO Annual Self-Inspection Report for 2013
+
+UNCLASSIFIED
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+Enclosure 2
+AGENCY ANNUAL SELF-INSPECTION PROGRAM DATA: FY 2013
+(Submissions must be unclassified.)
+
+PART A: identifying Information
+1. Enter the agency name.
+
+1. National
+
+Reconnaissance Office (NRO)
+
+2. Enter the date of this report.
+3. Enter the name, title, address, phone, fax, and e-mail address of the
+Senior
+Agency Official (SAO) (as defined in E.O. 13526, section 5.4(d)) responsible
+for this report.
+
+2 . 30
+3.
+
+4. Enter the name, title, phone, fax, and e-mail address of the
+individual or
+office responsible for conducting self-inspections and reporting findings.
+
+4.
+
+5. Enter the name, title, phone, fax, and e-mail address for the
+point-ofcontact responsible for answering questions regarding this
+report.
+
+5
+
+September 2013
+
+Mr. Frank Calvelli
+Principal De suty Director, NRO
+Room (b)(3) 10 US(
+14675 Lee Road, Chantilly, VA 20151
+
+A. Jamieson Burnett
+Director, Office of Security and
+Counterintelli .ence,
+(b)(3) 10 USC 44 Finn=
+(b)(3) 10 USC 424
+
+Chief Securit and Counterintelli ence Policy
+.
+
+Staff,
+
+(b)(3) 10 USC 424
+
+Fax (b)(3)
+
+10 USC 424
+
+(b)(3) 10 USC 424
+
+PART B: Classified National Security Information (CNSI) Program Profile
+Information
+6. Has your agency been designated/delegated as an original
+classification authority (OCA)?
+7. Does your agency perform original classification activity?
+8. Does your agency perform derivative classification activity?
+9. Does your agency have an approved declassification guide and declassify CNSI?
+
+6.
+
+7.
+8.
+9
+
+â–  No
+_I Yes â–  No
+Yes â–  No
+â‘ Yes â–  No
+â‘
+
+Yes
+
+â‘
+
+PART C: Description of the Program
+A description of the agency's self-inspection program to include
+activities assessed, program areas covered, and methodology
+utilized. The
+description must demonstrate how the self-inspection program provides
+the SAO with information necessary to
+assess the effectiveness of the CNSI
+
+program within individual agency activities and the agency as a whole.
+
+Responsibility
+10. How is the SAO involved in the self-inspection program? (Describe
+his or her involvement with the self-inspection program.)
+
+The Director of Security and Counterintelligence (D/OS&CI) advises the
+Senior Agency Official (SAO) when
+events warrant. The NRO Integrated Security Assessment Program (ISAP)
+results are also reported to the SAO
+thru the annual Management Control Plan Statement of Assurance (MCPSOA).
+11. How is the self-inspection program structured to provide the SAO
+with information necessary to assess the agency's CNSI program in
+order to
+fulfill his or her responsibilities under section 5.4(d) of E.O. 13526?
+
+The DOS&CI receives periodic reports on the program and advises the
+SAO when the DOS&CI believes events
+warrant advising the SAO. The NRO ISAP results are also reported to
+the SAO thru the annual MCPSOA.
+12. Whom has the SAO designated to assist in directing and
+administering the self-inspection program? Who conducts the
+self-inspections?
+(If the SAO conducts the self-inspections, which may be the case in
+smaller agencies, indicate this.)
+
+The DOS&CI is provided a Letter of Instruction by the Director, NRO
+which assigns his responsibilities.
+
+Approach
+
+(b)(3) 10 USC 424
+
+13. What means and methods are employed in conducting self-inspections?
+(For example: interviews, surveys, data calls, checklists, analysis, etc.)
+
+NRO self-inspections are part of the NRO ISAP. Because contractors
+make upillif the total NRO workforce
+and have the overwhelming number of Sensitive Compartmented
+Information Facilities (SCIFs), ISAP is a
+collaborative
+between Government and industry to identify and address security
+vulnerabilities, provide
+, . ,
+, process
+â€¢
+ri â€¢
+INFORMATION SECURITY OVERSIGHT OFFICE
+
+AUTHORIZED FOR LOCAL REPRODUCTION
+32 CFR 2001 E.O. 13526
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+14. If your agency performs different types of inspections (e.g.,
+component self-inspections, command inspections, compliance reviews,
+etc.),
+describe each of them and explain how they are used. If not, indicate NA.
+
+NA
+
+15. Do your agency's self-inspections evaluate adherence to the
+principles and requirements of E.O. 13526 and its implementing
+directive and the
+effectiveness of agency programs covering the following areas? (Select
+all that apply.)
+Original classification
+Cl Security violations
+[ 1 Safeguarding
+__I Management and oversight
+Derivative classification
+â–  Declassification
+11 Security education and training
+16. Do your self-inspections include a review of relevant security
+directives and instructions?
+16. â–  Yes 7 No
+17. Do your self-inspections include interviews with producers (where
+applicable) and users of classified information?
+17. H Yes â–  No
+Approach: Representative Sample
+(If your agency does not classify information, indicate NA.)
+18. Do your self-inspections include reviews of representative samples
+of original and derivative classification
+18.
+Yes â–  No â–  NA
+actions to evaluate the appropriateness of classification and the
+proper application of document markings?
+19. Do these reviews encompass all agency activities that generate
+classified information?
+19. â–  Yes
+No â–  NA
+â‘
+
+20. Describe below how the agency identifies activities and offices
+whose documents are to be included in the sample of classification
+actions.
+(Indicate if NA.)
+
+Based on the 291 site self-assessments submitted, the ISAP Manager,
+Program Security Officers (PSOs) and
+stakeholders discuss findings and formulate recommendations for a
+formal assessment, if required. OS&CI
+
+talePhnlrle.re rPrirpcAnt the tr. inr (IC R,- rr clirp.rtnratFâ€¢c and
+nrnrrram ref-St-.F. cv rnrift, etafFc int...II
+-IA.11a but nett
+21. Do the reviews include a sampling of various types of classified
+information in document and electronic
+21. â€” Yes â–  No â–  NA
+formats?
+
+22. How do you ensure that the materials reviewed provide a
+representative sample of the agency's classified information?
+(Indicate if NA.)
+
+Documents are selected for review in cooperation with site personnel
+who are familiar with the type of materials
+produced by the site. However, contractors are not required to count
+classified pages produced because of the
+additional costs that would be incurred by the NRO, so the documents
+reviewed may not be a representative
+1
+
+n-11
+
+1
+
+.
+
+11
+
+1
+
+.
+
+A
+
+. .1
+
+lrat-1,-IL
+
+1 !11 1!1
+
+I.
+
+â€¢.
+
+nn
+
+1
+
+nn
+
+â€¢
+
+11
+
+1
+
+.
+
+.1
+
+23. How do you determine that the sample is proportionally sufficient
+to enable a credible assessment of your agency's classified product?
+(Indicate if NA.)
+
+We do not attempt to do this as it would increase costs to the NRO (as
+explained in item 22 above).
+24. Who conducts the review of the classified product? (Indicate if NA.)
+
+PSOs and Classification Management Officers (CMOs).
+25. Are the personnel who conduct the reviews knowledgeable of the
+classification and marking requirements of
+E.O. 13526 and its implementing directive?
+26. Do they have access to pertinent security classification guides?
+(Indicate if NA.)
+27. Have appropriate personnel been designated to correct
+misclassification actions? (Indicate if NA.)
+If so, identify below.
+
+â–  No â–  NA
+â‘ Yes â–  No â–  NA
+
+25. D Yes
+26.
+
+27. El Yes
+
+â–  No â–  NA
+
+Frequency
+28. How frequently are self-inspections conducted?
+
+Annually.
+29. Describe the factors that were considered in establishing this time period?
+
+The time period is defined in the NRO Security Manual (NSM).
+
+INFORMATION SECURITY OVERSIGHT OFFICE
+
+AUTHORIZED FOR LOCAL REPRODUCTION
+32 CFR 2001 E.O. 13526
+
+Enclosure 2
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+Coverage
+30. How do you determine what offices, activities, divisions, etc.,
+are covered by your self-inspection program?
+
+assessed?
+
+What agency activities are
+
+Self-assessments are to be completed on each contractor SCIF. All
+contractor activities are assessed.
+31. How is the self-inspection program structured to assess individual
+agency activities and the agency as a whole?
+
+Contractor SCIF locations far outnumber government SCIF locations in
+the NRO. Government locations are
+relatively few in number and have professional government security
+officers assigned who can monitor
+safeguarding and classified information production and correct errors
+as they occur. We chose to concentrate on
+.
+
+1
+
+rni
+
+1
+
+.. â€¢
+
+Special Access Programs (SAP)
+(If your agency does not have the authority to create SAPs, indicate NA.)
+32. If your agency has any special access programs, are
+self-inspections of the SAP programs conducted annually?
+33. Do the self-inspections confirm that the agency head or principal
+deputy has reviewed each special access
+program annually to determine if it continues to meet the requirements
+of E.O. 13526?
+34. Do the self-inspections determine if officers and employees are
+aware of the prohibitions and sanctions for
+creating or continuing a special access program contrary to the
+requirements of E.O. 13526?
+
+32.
+33.
+34â€¢
+
+â–  No â–  NA
+â€”I Yes III No â–  NA
+Yes III No â–  NA
+
+â‘
+
+Yes
+
+â‘
+
+Reporting
+35. What is the format for documenting self-inspections in your agency?
+
+Self-assessments are documented using the self-assessment review tool
+in the NSM, Appendix B. For formal
+assessments, an out-briefing is provided to site security staff and
+other site senior management identifying
+ori
+
+iritu nrnorrarn c 1 'nor:wet.
+
+nhcanratinna and am,
+
+36. Who receives the reports?
+
+cAri
+
+1 rift! "ha et nr nti ni.c " fl I c nrafArPrl di Irina the frorm it
+
+The OS&CI ISAP Manager.
+37. Who compiles/analyzes the reports?
+
+The ISAP Manager and the responsible PSO analyze the report.
+38. How are the findings analyzed to determine if there are problems
+of a systemic nature?
+
+The ISAP Manager provides to the sponsoring Government Program
+Security Officer (GPSO) for review and
+subsequent action.
+39. How and when are the results of the self-inspections reported to the SAO?
+
+The DOS&CI determines when results warrant informing the SAO.
+
+40. How is it determined if corrective actions are required?
+
+The Government PSO and security stakeholder(s) reviews determine if
+corrective actions are required.
+41. Who takes the corrective actions?
+
+The assessed site.
+42. How are the findings from your agency's self-inspection program
+distilled for the annual report to the Director of ISOO?
+
+The OS&CI Security Policy Staff (SPS) tasks the ISAP Manager to
+distill the findings and provide them to SPS
+for inclusion in the annual report.
+43. Has the SAO formally endorsed this self-inspection report?
+IN FORMATION SECURITY OVERSIGHT OFFICE
+
+43.
+
+â–  Yes
+
+â‘
+
+No
+
+AUTHORIZED FOR LOCAL REPRODUCTION
+32 CFR 2001 E.O. 13526
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+PART D: A summary of the findings of your agency's self-inspection program
+The summary should present specific, concise findings from your
+self-inspection program for each of the required program areas below.
+It is not a
+description of the requirements of the agency's CNSI program. Rather,
+the summary outlines the essential self-inspection findings based on
+the
+compilation and/or distillation of the information contained in the
+agency's internal self-inspection reports, checklists, etc. In large
+agencies where
+findings are drawn from multiple agency offices and activities, the
+findings that are reported here may be the most significant or most
+frequently
+occurring.
+44. Original Classification:
+
+OCAs are senior officers and mainly exercise their authority through
+the signing of classification guides for
+information unique to their activity. While OCA decisions get
+implemented through the classification guide,
+written documentation of individual OCA decisions is difficult or
+impossible to locate. OCA's were not using
+the appropriate OCA classification block but a derivative block. OS&CI
+Policy Branch will issue clear
+instructions for all classification guides to contain the appropriate
+OCA classification block.
+45. Derivative Classification:
+
+NRO activities result in complicated Power Point slide briefings with
+complex tables, diagrams, and text boxes
+describing engineering and R&D activities. Under reduced manning from
+sequestration and budget cuts which
+have resulted in a loss of over 1,000 man-years of experience across
+the NRO, derivative classifiers struggle to
+get all derivative markings accurate after they have compiled
+difficult subject matter on compressed time lines
+under stressful conditions. It is admirable that individuals perform
+as well as they do.
+46. Declassification:
+
+Not included in self-inspection.
+
+47. Safeguarding:
+
+Regular conduct of exercises provides vital feedback to the physical
+security program. Exercises identify areas
+for corrective measures, enhancements, validates current tactics
+techniques and procedures (TTP) and the
+adoption/employment of new TTP to meet a dynamic threat environment.
+Regular inspections/audits are
+essential to ensuring status and validity of issued IC badges and
+conformity to physical security requirements.
+Risk assessments/physical security assessments provide a helpful
+"outside" perspective to site security offices.
+48. Security Violations:
+
+The ISAP program is the formal mechanism by which we corroborate
+self-inspections. Included in these formal
+reviews is an assessment of the respective security violation program
+and trends. In addition, each component
+Security team evaluates Security incidents and violations by tracking
+them according to general broad categories.
+During this past FY, the majority (63%) of incidents/violations were
+related to categories within personnel
+electronic devices in SCIFs. Other categories that have multiple
+occurrences indicating potential trends are data
+49. Security Education and Training:
+
+100% of personnel assigned to the NRO are required to complete an SCI
+indoctrination briefing to include
+signing a Non-Disclosure Agreement. E.O. 13526 is called out
+specifically so that personnel fully understand
+their responsibilities and requirements to protect classified
+information. This message is repeated by the release
+of awareness videos and reminders throughout the year; to include
+presentations, written materials, and training.
+Specifically, OS&CI incorporates classification management questions
+within the Annual Security Refresher
+50. Management and Oversight:
+
+Government oversight of NRO-sponsored SCIFs is achieved in a multi
+faceted manner. Program Security
+Officers, Physical/Technical, and Computer Security Officers review
+self-assessment results and participate in
+on-site reviews. Some program findings for FY 13 were identified in
+the following areas:
+â€¢ Standard Operating Procedures (SOPs) require more detail and more
+frequent revision to stay up-to-date with
+security requirements.
+
+INFORMATION SECURITY OVERSIGHT OFFICE
+
+AUTHORIZED FOR LOCAL REPRODUCTION
+32 CFR 2001 E.O. 13526
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+PART E: An assessment of the findings of your agency's self-inspection program
+The assessment
+
+discerns what the findings mean. The assessment is an evaluation of
+the state of each element of your agency's CNSI program
+based on an analysis of the specific, concise findings of the
+self-inspection program. It reports what you have determined the
+findings indicate about
+the state of your agency's CNSI program.
+The assessment should inform the SAO and other decision makers of
+significant issues that impact the CNSI program. It should be used to
+determine
+how security programs can be improved, whether the agency regulation
+or other policies and procedures must be updated, and if necessary
+resources
+are committed to the effective implementation of the CNSI program. The
+assessment should report trends that were identified during the
+reporting
+period across the agency or in particular activities, as well as
+trends detected by making comparisons with earlier reporting periods.
+It can be used to
+support assertions about the successes and strengths of an agency's program.
+51. Original Classification:
+
+While OCA's produce timely and sufficient Classification Guides,
+decisions are not normally documented
+outside the guide by a separate source document. OCAs are not using an
+OCA style classification block but this
+will be corrected soon when specific detailed policy is issued by
+Security Policy.
+52. Derivative Classification:
+
+Derivative classifiers are still wrestling with proper portion marking
+and classification of complex power point
+slide presentations and other documents concerning difficult subject
+matter and formats. To try and stem this
+tide, we are adding more classification management questions to our
+ASR. Dwindling budgets, reduced
+manpower, and "greening" (reducing) of salaries has reduced longevity,
+increased turnover, and reduced portion
+marking proficiency.
+53. Declassification:
+
+Not included in self-inspection.
+
+54. Safeguarding:
+
+Awareness and education programs are vital to ensuring the workforce
+maintains awareness of security policy
+and procedures. Regular and aperiodic exercises, inspections, and
+audits provide crucial inputs that are
+indispensable to ensuring that the physical security program is
+current and effective. Key challenges are
+maintaining adequate funding to replace aging, malfunctioning, and
+obsolete security equipment and training and
+education for new personnel. The NRO has an organization-level process
+for the Assessment and Authorization
+55. Security Violations:
+
+The NSM detail the NRO process for reporting and investigating
+security incidents, infractions and violations.
+Appropriate and prompt corrective actions were taken to mitigate the
+severity of the infraction/violation, and to
+sanction the offender via management, counterintelligence, and
+personnel security processes. Infractions and
+violations are centrally tracked in the Security Log (the NRO
+incident/violation database). This database is
+managed by the Program Security Officers in each directorate and
+office, and enables the PSO to automatically
+56. Security Education and Training:
+
+OS&CI works closely with PSOs, Counterintelligence personnel, and the
+Integrated Self Assessment Program
+to determine any trends or specific areas that need an additional
+educational awareness campaign. Security
+communications are then targeted, utilizing large scale efforts, per a
+topic area and audience for best impact
+results. The NRO is adding additional classification management
+questions to the Annual Security Refresher to
+better satisfy the derivative classification training requirement.
+OCAs complete yearly training provided by
+57. Management and Oversight:
+
+The NRO has a very mature Security management and oversight program.
+Over the past FY, much greater
+emphasis has been placed on ensuring all sites and facilities
+accomplished the self-assessments and submited the
+findings to the Government within the mandated time requirements. This
+improved management oversight has
+made an impact. Our self-inspection program coupled with security
+officer visits, and formal team assessments
+provide managers a report card on the health of our security programs.
+When negative trends are identified,
+INFORMATION SECURITY OVERSIGHT OFFICE
+
+AUTHORIZED FOR LOCAL REPRODUCTION
+
+32 CFR 2001 E.O. 13526
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+PART F: Focus Questions
+Answer the questions below. If the response identifies a deficiency,
+it should be explained in Part D, Summary of Findings, under the
+relevant
+program area, and should be addressed in Part H, Corrective Actions.
+Training for Original Classification Authorities
+Original classification authorities are required to receive training
+in proper classification and declassification each calendar year.
+(Section 1.3(d) of
+E.O. 13526 and Â§ 2001.70(c) of 32 C.F.R. Part 2001) (Indicate NA
+ifyour agency does not have original classification authority)
+58. Does agency policy require training for original classifiers?
+58.
+Yes â–  No â–  NA
+59. Has the agency validated that this training has been received?
+59. I Yes â–  No â–  NA
+â‘
+
+100
+
+60. What percentage of the original classification authorities at your
+agency has received this training?
+
+60.
+
+61. Have any waivers to this requirement been granted?
+
+61. III Yes
+
+Actual
+
+â–  Estimated
+No â–  NA
+
+Persons who Apply Derivative Classification Markings
+Persons who apply derivative classification markings are required to
+receive training in the proper application of the derivative
+classification
+principles of E.O. 13526, prior to derivatively classifying
+information and at least once every two years thereafter. (Section
+2.1(d) of E.O. 13526 and
+Â§ 2001.70(d) of 32 C.F.R. Part 2001) (Indicate NA if your agency does
+not have any personnel who derivatively classify information)
+62. Does agency policy require training for derivative classifiers?
+62. â€¢ Yes Ill No III NA
+63. Has the agency validated that this training has been received?
+63.
+Yes â–  No â–  NA
+64. What percentage of the derivative classifiers at your agency has
+received this training?
+
+64.
+
+â–
+
+100
+Actual
+
+Estimated
+
+65. â–  Yes i No
+Initial Training
+All cleared agency personnel are required to receive initial training
+on basic security policies, principles, practices, and criminal,
+civil, and
+administrative penalties. (0 2001.70(6) of 32 C.F.R. Part 2001)
+66. Does agency policy require initial training?
+66. â‘ Yes â–  No
+65. Have any waivers to this requirement been granted?
+
+67. Has the agency validated that this training has been received?
+
+67.
+
+â‘
+
+68. What percentage of cleared personnel at your agency has received
+this training?
+
+68.
+
+100
+
+70. Has the agency validated that this training has been received?
+
+70.
+
+71. What percentage of the cleared employees at your agency has
+received this training?
+
+71. 100
+Actual
+
+Yes
+
+â–  NA
+
+â–  No
+
+LI Actual â€¢ Estimated
+Annual Refresher Training
+Agencies are required to provide annual refresher training to all
+employees who create, process, or handle classified information. (Â§
+2001.70() of
+32 C.F.R. Part 2001)
+69. Does agency policy require annual refresher training?
+69.
+Yes â–  No
+â‘
+
+rl Yes â–  No
+
+â–  Estimated
+Identification of Derivative Classifiers on Derivatively Classified Documents
+Derivative classifiers must be identified by name and position, or by
+personal identifier on each classified document. (Section 2.1(b)(1) of
+E.O.
+13526 and Â§ 2001.22(b) of 32 C.F.R. Part 2001) (Indicate NA ifyour
+agency does not derivatively classify information.)
+72. Does your agency's review of classification actions evaluate if
+this requirement is being met`'
+72.
+Yes â–  No â–  NA
+73. What percentage of the documents sampled meet this requirement?
+
+73 .
+
+74. What was the number of documents reviewed for this requirement?
+
+74.
+
+87
+166,130 pages
+
+List of Sources on Documents Derivatively Classified from Multiple Sources
+A list of sources must be included on or attached to each derivatively
+classified document that is classified based on more than one source
+document
+or classification guide. (Â§ 2001.22c(l)(ii) of 32 C.F.R. Part 2001)
+75. Does your agency's review of classification actions evaluate if
+this requirement is being met?
+75. â€¢ Yes â–  No â–  NA
+76. What percentage of the documents sampled meet this requirement?
+76. 88
+77. What was the number of documents reviewed for this requirement?
+
+INFORMATION SECURITY OVERSIGHT OFFICE
+
+7 7.
+
+166,130 pages
+
+AUTHORIZED FOR LOCAL REPRODUCTION
+32 CFR 2001 E.O. 13526
+
+Enclosure 2
+a ca alai
+
+The
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+mauct nvatuations
+
+performance contract or other rating system of original classification
+authorities, security managers, and other personnel whose duties
+significantly involve the creation or handling of classified
+information must include a critical element to be evaluated relating
+to designation and
+management of classified information. (Section 5.4(d)(7) of E.O. 13526 )
+
+78. Does agency policy require this critical element in the
+performance evaluations of personnel in the
+categories required by E.O. 13526?
+79. Has the agency validated that this critical element is included in
+the performance evaluations of
+personnel in the categories requited by E.O. 13526?
+80. What percentage of such personnel at your agency has this element
+in their performance
+evaluations?
+
+OCA Delegations
+
+â–  Yes No
+79.â–  Yes 0 No
+78.
+
+â‘
+
+80. 50%
+Actual
+
+â€¢
+
+Estimated
+
+OCA delegations shall be reported or made available by name or
+position to the Director of the Information Security Oversight Office.
+(Section
+I .3(c)(5) of E.O. /3526). This can be accomplished by an initial
+submission followed by updates on a frequency determined by the Â£40,
+but at least
+annually. 02001.11 (c) and Â§2001.90(a) of 32 C.F.R. Part 2001)
+
+81. Have there been any changes in the delegations, by name and
+position, of original classification
+authority in your agency since delegations were reported to ISOO in 2010.
+82. Have all delegations been limited to the minimum required based on
+a demonstrable and
+continuing need to exercise this authority?
+83. If changes have been made, have they been reported, by name or
+position, to ISOO?
+
+81.
+82.
+
+83.
+
+â–  Yes
+
+No
+
+â–
+
+NA
+
+Yes MI No I. NA
+
+â–  Yes â–  No
+
+NA
+
+Classification Challenges
+An agency head or SAO shall establish procedures under which
+authorized holders of information. including authorized holders
+outside the
+classifying agency, are encouraged and expected to challenge the
+classification of information that they believe is improperly
+classified or
+unclassified. (Section 1.8(b) of E.O. 13526) Classification challenges
+must be covered in the trainingfor original classification authorities
+and
+persons who apply derivative classification markings. 02001.7 1
+and (Â§2001.71(d) of 32 C.F.R. Part 2001)
+
+84. Has your agency established procedures under which the
+classification of information can be
+challenged in accordance with section 1.8(b) of E.O. 13526 and
+Â§2001.14 of 32 C.F.R. Part 2001?
+85. Does your agency's training for OCAS and for personnel who apply
+derivative classification
+markings cover classification challenges?
+86. Does your agency's training for all other cleared personnel cover
+classification challenges?
+
+84â€¢
+
+Yes
+
+85.
+
+â–  Yes
+
+86. III Yes
+PART G: Findings of the Annual Review of Agency's Original and
+Derivative Classification Actions
+
+â–  No â–  NA
+â‘
+
+â‘
+
+No â–  NA
+No
+
+In this section provide specific information with regard to the
+findings of the annual review of the agency's original and derivative
+classification
+actions to include the volume of classified materials reviewed and the
+number and type of discrepancies identified.
+
+87. Indicate the volume of classified materials reviewed
+during the annual review of agency's original and derivative
+classification actions. (If your agency does not classify information,
+indicate NA.)
+87. 166,130 pages
+88. Indicate the number of discrepancies found during the annual
+review of classification actions for each category below. For
+additional
+information on marking, consult the ISOO marking guide.
+88 (a) Over-classification: Information does not meet the standards
+for classification.
+88 (a) 28,798
+88 (b) Overgraded/Undergraded: Information classified at a
+higher/lower level than appropriate.
+88
+(b) 42,779
+88 (c) Declassification: Improper or incomplete declassification
+instructions or no declassification instructions.
+88 (c) 24,043
+88 (d) Duration: a shorter duration of classification would be appropriate.
+88 (d) 13,889
+88(e) Unauthorized classifier: A classification action was taken by
+someone not authorized to do so.
+88(e)
+0
+88 (f) "Classified By" line: A document does not identify the OCA or
+derivative classifier by name and position
+or by personal identifier.
+88 (f) 22,368
+88 (g) "Reason" line: an originally classified document does not cite
+a reason from section 1.4 of E.O. 13526.
+88
+(g) 0
+88 (h) "Derived From" line: A document fails to cite, or cites
+improperly, the classification source. The line
+should include type of document, date of document, subject, and
+office/agency of origin.
+88 017,096
+88 (i) Multiple sources: A document cites "Multiple Sources" as the
+basis for classification, but a list of these
+sources is not included on or attached to the document.
+88 (i) 19,190
+88(j) Marking: A document lacks overall classification markings or has
+improper overall classification markings.
+88 (j) 34,141
+88 (k) Portion Marking: The document lacks some or all of the required
+portion markings.
+88 (k) 59,937
+88(1) Instructions from a classification guide are not properly applied.
+88 (1) 17,070
+88 (m) Other:
+.
+88 (m) 0
+
+INFORMATION SECURITY OVERSIGHT OFFICE
+
+AUTHORIZED FOR LOCAL REPRODUCTION
+32 CFR 2001 E.O. 13526
+
+Enclosure 2
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+â€¢
+__ __..._ ..-..-...
+89. Describe actions that have been taken or are
+planned to correct identified program deficiencies, marking
+discrepancies, or misclassification
+actions, and to deter their reoccurrence.
+
+OS&CI Policy Branch will issue written instructions that all
+Classification Guides and original classification
+decisions will use an OCA style classification block.
+We plan to issue NRO-wide, monthly, short written educational
+reminders of the most error-prone mistakes
+reported in item 88 which will also include the proper way to classify
+and mark materials.
+
+PART I: Best Practices
+Best practices are those actions or activities that
+
+make your self-inspection program and/or CNSI program more effective
+or efficient. They set your
+program apart through innovation or by exceeding the minimum program
+requirements. These are practices that may be utilized or emulated by
+
+other agencies.
+
+90. Describe best practices that were identified during the self-inspection.
+
+One contractor site developed a database that allows self-assessments
+to be completed by each program area at
+that site. The database can apply filtering and reporting
+capabilities, thereby allowing managers to focus
+resources on a wide-range of security-related disciplines. This type
+of approach and comprehensive tool
+development had not been previously seen by the ISAP Program.
+
+PART J: Explanatory Comments
+Use this space to elaborate on any section of this form. If more space
+is needed, provide as an attachment to this fonn. Provide explanations
+for any
+significant changes in trends/numbers from the previous year's report.
+
+Item 16. All security directives and instructions are issued by the
+DOS&CI and are reviewed and updated
+annually but not as part of the self-inspection. All directives and
+instructions are maintained on-line and are
+accessible to all government employees and contractors.
+(b)(3) 10 USC 424
+Item 27. All government and contractor PSOs and CMOs (about ' '
+'ndividuals) are authorized to correct
+incorrect classification, incorrect use of SCI control channels, anâ€¢
+incorrect dissemination restrictions.
+Item 68. CIA personnel (including CIA contractors with Agency Data
+Network or staff-like access) at the NRO
+are required to take the CIA "2013 Derivative Classifier Training" by
+their parent agency. All other government
+and contractors at the NRO take their training through the Annual
+Security Refresher briefing.
+Item 78. The NRO is comprised of government individuals from various
+agencies. Parent agencies set the rules
+for their performance contract or rating system which cannot be
+altered by the NRO. The percentage given
+represents the percentage of individuals from agencies that require a
+security performance evaluation statement.
+
+For !SOO Use Only
+ISOO Analyst:
+Date QC:
+Analyst Initials:
+
+AUTHORIZED FOR LOCAL REPRODUCTION
+32 CFR 2001 E.O. 13526
+
+UNCLASSIFIED
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+NATIONAL RECONNAISSANCE OFFICE
+14675 Lee Road
+Chantilly, VA 20151-1 71 5
+
+12 October 2012
+MEMORANDUM FOR OFFICE OF THE UNDER SECRETARY OF DEFENSE FOR
+INTELLIGENCE SECURITY DIRECTORATE
+
+SUBJECT: Annual Self-Inspection Report
+REFERENCES:
+
+(a) OUSD(I) Memorandum, Annual Senior Agency Official
+(SAO) Self-Inspection Program Report for Classified
+National Security Information, 2 October 2012
+(b) Memorandum of Agreement between the Secretary of
+Defense and the Director of National Intelligence
+concerning the National Reconnaissance Office,
+21 September 2010
+(c) DoDI 5200.01, DoD Information Security Program and
+Protection of Sensitive Compartmented Information,
+9 October 2008
+
+The National Reconnaissance Office (NRO) is providing the
+attached Self-Inspection Report as requested in reference (a). In
+accordance with Director, National Reconnaissance Office authorities
+in reference (b) and (c) it should be noted that the NRO does not
+administer a standard DoD Information Security Program based on DoDM
+5200.01-V1 thru V3 and, therefore, some of the items in the attached
+checklist are not applicable and have been noted as such.
+My point of contact for questions concerning this submission is
+(b)(3) 10 USG 44-
+
+. Jamieson Burnett
+irector, Office of Security
+and Counterintelligence
+Attachment:
+NRO Annual Self - Inspection Report for 2012
+
+UNCLASSIFIED
+
+UNCLASSIFIED
+INFORMATION SECURITY PROGRAM SELF-INSPECTION CHECKLIST
+TITLE/SUBJECT/ACMATWFUNCRONAL AREA
+
+Information Security Program Self-Inspection Checklist
+NO.
+
+STEM
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+National Reconnaissance Office
+045 R
+
+DATE
+
+Security Manager
+
+11 October
+2012
+
+EO 13526 CLASSIFIED NATIONAL SECURITY INFORMATION AND IMPLEMENTING DIRECTIVE
+
+REQUIREMENTS
+PART 1. DESCRIPTION OF SELF-INSPECTION PROGRAM: A description of the
+DoD Components self-
+
+inspection program should include activities assessed, program areas
+covered, and methodology
+utilized. The description must demonstrate how the self-inspection
+program provides the senior
+agency official with the information necessary to assess the
+effectiveness of the classified national
+security information program within the individual Component
+activities and the Component as a
+whole. It should include the following:
+1. Responsibility for the program:
+(1) Whom does the senior agency official designate to assist in
+directing and administering the self-inspection
+program?
+Answer . The Director of Security and Counterintelligence (DOS&CI) is
+provided a Letter of Instruction by the
+Director, NRO which assigns his responsibilities.
+(2) How is the program structured to provide the senior agency
+official with the information necessary to assess the
+
+agency's classified national security information program?
+
+Answer: The DOS&CI advises the Senior Agency Official (SAO) when the
+DOS&CI believes events warrant
+advising the SAO. The NRO Integrated Security Assessment Program
+(ISAP) results are also reported to the SAO
+thru the annual Management Control Plan Statement of Assurance (MCPSOA).
+
+(b)(3) 10 USC 424
+
+(3) Who conducts the self-inspections?
+
+Answer: NRO self-inspections are part of the NRO ISAP. Because
+contractors make upgAof the total NRO
+workforce and have the overwhelming number of Sensitive Compartmented
+Information Facilities (SCIFs), ISAP is
+a collaborative process between Government and industry to identifi ,
+and address security vulnerabilities, provide
+datfornlysi,findings
+e tmcuriyseand.Th
+may lead to identification and
+definition of risk mitigation practices, and enable sharing of best
+security practices across government and
+industry. The primary purpose of the ISAP is to ensure the proper
+safeguarding of classified information through a
+single comprehensive review by various components of the Office of
+Security and Counterintelligence (OS&CI).
+ISAP integrates reviews utilizing program security, classification
+management, transportation and transmission of
+classified information, physical and technical accreditation,
+information systems security, personnel security, and
+Counterintelligence (CI) perspectives. The integrated assessment
+evaluates implementation of and ensures
+compliance with, established security policies, procedures, and plans
+at all NRO government and contractor
+location&
+Site personnel conduct/document security self-assessments per
+requirements stated in the NRO Security Manual
+(NSM). Security Officers will conduct self-assessments of their SCIFs
+at least annually. For the reporting period
+there were 343 site self-assessments. The ISAP Manager or designee
+reviews the site assessments and enters a
+copy into an NRO database listing each NRO sponsored facility.
+Based on the self-assessments, the ISAP Manager, Program Security
+Officers (PSOs) and stakeholders discuss
+findings and formulate recommendations for a formal assessment, if
+required OS&CI stakeholders represent the
+major OS&CI divisions and program office security staffs, including,
+but not limited to, PSOs, Physical/Technical
+Certification Officers, and Security Certification Officers.
+Stakeholders will develop and provide ISAP candidates
+to the ISAP Selection Board. Each ISAP recommendation shall contain
+detailed factors used to formulate the
+recommendation. Recommendation for site visits is then provided to the
+selection board Sites are selected based
+on ring proximity, resources, budgetary constraints, time since last
+assessment, and random sampling. A team
+composition is proposed for each site visit and a Lead PSO is selected
+The Assessment Team will, at a minimum,
+consist of a Government PSO and an OS&Cl/Facilities and Information
+Security Division (F&ISD) representative.
+Additional team members will be added as needed based on site size,
+mission, facility risk, and subject areas being
+assessed. An out-briefing is provided to site security site - and
+other site senior management identfying security
+program successes, observations, and any security "best practices"
+discovered during the formal assessment. The
+results are then loaded into the facility database that contains
+information from all previous visits with any problem
+areas or "best practices" noted. A final report requiring corrective
+actionsto be taken within 90 days of the date of
+
+UNCLASSIFIED
+1
+
+UNCLASSIFIED
+INFORMATION SECURITY PROGRAM SELF-INSPECTION CHECKLIST
+TITLESUBJECT/ACTIVITY/FUNCT1 ONAL AREA
+
+Information Security Program Self-Inspection Checklist
+NO.
+
+I
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+National Reconnaissance Office
+OPR
+
+DATE
+
+Security Manager
+
+11 October
+2012
+
+ITEM
+
+report is issued by the DOS&CI. The assessed site is required to
+provide follow-up reports of corrective action to
+the responsible PSO and the ISAP Manager every 90 days until all
+corrective actions are complete. The
+responsible PSO monitors all mitigation actions. Reports of corrective
+action are loaded into the NRO facilities
+database for historical purposes. For the reporting period, 16 formal
+team assessments were performed An
+additional 9 formal specific-issue reviews were conducted There were
+an additional 1,491 visits by OS&CI
+stakeholders to contractor SCIFs.
+
+(4) How is the senior agency official involved in the program?
+Answer: The DOS&CI keeps the SAO advised of trends and issues
+developed by the ISAP. The NRO ISAP results
+are also reported to the SAO thru the annual MCPSOA.
+2. Approach:
+
+(1) What means and methods are employed in conducting self-inspections?
+Answer: For formal assessments, the Assessment Team evaluates
+implementation, and ensures compliance with,
+established NRO security policies, procedures, and plans.
+
+(2) Are different types of self-inspections conducted? If so, describe
+each of them.
+Answer: Formal assessments will vary based on the experience of the
+lead PSO and the stakeholders with the
+facility and items noted in the self-evaluation report as well as the
+areas of responsibility of the attending subject
+matter experts. However, the objective for all is to identify and
+address security vulnerabilities, provide data for
+analysis, and identift system security issues and trends.
+
+(3) Do the self-inspections evaluate adherence to the principles and
+requirements of E.O. 13526 and its implementing
+directive and the effectiveness of agency programs covering:
+â€¢ Original classification?
+Answer: Since Original Classification items only apply to 13
+government employees who are Original
+Classification Authorities (OCA) at NRO Headquarters, a formal tasking
+is sent to Program Security Officers
+supporting the OCA to determine the date the OCA received their annual
+briefing and the number of original
+classification decisions they made during the reporting period.
+Experience has shown that not all of the OCAs
+make individual OCA decisions every year but most require their
+authority to sign classification guides for
+their area of responsibility. For the reporting period there, nine OCA
+decisions were made.
+
+â€¢
+
+Derivative classification?
+Answer: Included. In NRO Implementing Instructions released on 31 May
+2011, derivative classifiers were
+instructed to include in the classification block a personal
+identification number rather than their name to
+protect their identity and association with the NRO. This
+"Classification ID (CLID)" number exists in the
+NRO Access Database so the specific individual with that number can
+always be identyled Employees of other
+agencies, who already have an ID number assigned by their parent
+agency, will use that number instead
+Headquarters NRO derivative classifiers have their PSO available for
+questions regarding classification and
+marking and to review their derivatively classified documents for
+format and accuracy of classffication and
+marking. Available on the OS&CI website are the Order, Information
+Security Oversight Office (IS00)
+Implementing Directive and Marking booklet, videos and documents that
+explain the correct way to classify
+and mark documents, the Controlled Access Program Coordination Office
+(CAPCO) register and manual, over
+120 Frequently Asked Questions with answers that are posted about
+portion marking a Security Policy hotline
+that will answer their questions in real-time, and numerous other
+experts who are available to answer their
+questions. Once the document is distributed, they face additional
+scrutiny from any security or classification
+management officer who reads it or from subject matter experts who
+point out classification and marking
+errors to security officers.
+The ISAP team visiting a site will review a sample of derivatively
+classified documents to point out errors in
+classification and marking, omissions of required information, and to
+make suggestions for improvement.
+
+â€¢
+
+Declassification?
+Answer: The NRO has a formal declassification program which restricts
+to one office the authority to officially
+declassify NRO information and release it to the public, and which is
+not included in the self-inspection
+program. The results of this program are reported in the SF 311 report
+provided to USD(I) in October 2012.
+The NRO Declassification Guide (known as the Review and Redaction
+Guide) is updated and approved by the
+
+UNCLASSIFIED
+2
+
+UNCLASSIFIED
+INFORMATION SECURITY PROGRAM SELF-INSPECTION CHECKLIST
+TITLE/SUEWECT/AC71VITY/FUNCT1ONAL AREA
+
+Information Security Program Self-Inspection Checklist
+NO.
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+National Reconnaissance Office
+OPR
+
+DATE
+
+Security Manager
+
+1 1 October
+2012
+
+ITEM
+
+DNRO each year. It is currently undergoing review by the Interagency
+and is expected to be approved by the end of 2012.
+
+â€¢
+
+Security Classification Appeals Panel
+
+Safeguarding?
+Answer: Included
+
+â€¢
+
+Security violations?
+Answer: Included
+
+â€¢
+
+Security education and training?
+Answer: Included
+
+â€¢
+
+Management and oversight?
+
+Answer: Included
+(4) Do the self-inspections include a review of relevant security
+directives and instructions, as well as interviews with
+producers and users of classified information?
+Answer: All directives and instructions are issued by the DOS&Cl and
+are reviewed and updated annually. All
+directives and instructions are maintained on-line and are accessible
+to all government employees and contractors.
+(5) Do the self-inspections include reviews of representative samples
+of your Component's original and derivative
+classification actions?
+â€¢ Do these reviews encompass all Component activities that generate
+classified information?
+Answer: There are hundreds of individual activities that can generate
+classified information. While the annual
+self-assessment questionnaire covers 343 of these activities, the ISAP
+formal assessment inspects only a small
+percentage of these activities yearly. However, the Program Security
+Officers, Contractor Program Security
+Officers, and Classification Specialists review hundreds of classified
+documents yearly and provide direction to
+originators to correct those that are improperly marked.
+o How do you identify the activities to which this applies?
+Answer: Site personnel conduct/document security self-assessments per
+requirements stated in the NSM
+â€¢ Do the reviews include a sampling of various types of classified
+information in document and electronic
+formats?
+o How do you ensure that the materials reviewed provide a
+representative sample of the Component's
+classified information?
+Answer: Documents are selected for review in cooperation with site
+personnel who are familiar with the type
+of materials produced by the site. However, contractors are not
+required to count classified pages produced
+because of the additional costs that would be incurred by the NRO, so
+the documents reviewed may not be a
+representative sample.
+o How do you determine that the sample is proportionally sufficient to
+enable a credible assessment of your
+Component's classified product?
+Answer: We do not attempt to do this as it would increase costs to the
+NRO (as explained above).
+â€¢ Who conducts the review of the classified products?
+o Are they knowledgeable of the classification and marking
+requirements of E.O. 13526 and its
+implementing directive?
+Answer: Yes
+o Do they have access to pertinent security classification guides?
+Answer: Yes
+â€¢ Have appropriate personnel been designated to correct
+misclassification actions? If so, identify.
+Answer: All Program Security Officers and Classification Managemeni
+Specialists are authorized to correct
+misclassification, incorrect use of SCI channels, and incorrect
+dissemination restrictions.
+3.
+
+Frequency:
+(1) How frequently are self-inspections conducted?
+Answer: Annually.
+(2) What factors were considered in establishing this time period?
+Answer: Time period is defined in the NSM.
+UNCLASSIFIED
+3
+
+UNCLASSIFIED
+INFORMATION SECURITY PROGRAM SELF-INSPECTION CHECKLIST
+TITLE/SUBJECT/ACTIVITY/FUNCTIONAL AREA
+
+Information Security Program Self-Inspection Checklist
+NO.
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+National Reconnaissance Office
+CPR
+
+DATE
+
+Security Manager
+
+11 October
+2012
+
+ITEM
+
+4. Coverage:
+(1) How do you determine what program elements and Component
+activities are covered by your self-inspection
+program?
+Answer: Self-assessments are to be completed on each contractor SCIF.
+
+(2) What Component activities are assessed?
+
+Answer: All contractor activities are assessed.
+
+(3) How is the program structured to assess individual Component
+activities and the Component as a whole?
+Answer: Contractor locations far outnumber government locations in the
+NRO. Government locations are
+relatively few in number and have professional government security
+officers assigned who can monitor
+safeguarding and classified information production and correct errors
+as they occur. We chose to concentrate on
+contractorfacilities which are visited relatively infrequently. The
+conditions at contractor locations are not directly
+applicable to government locations.
+
+(4) If your Component has any special access programs (SAP), are
+self-inspections of the SAP programs conducted
+annually?
+Answer: Most SAPs are reviewed as part of the ISAP program. The ISAP
+formal assessment team has PSOs
+assigned that are briefed for most SAPs. In addition. the NRO conducts
+special annual reviews (in some cases.
+semi-annual) of the entire Sensitive Activities portfolio.
+
+o
+
+o
+
+Do the self-inspections confirm that the Component head or principal
+deputy has reviewed each special access
+program annually to determine if it continues to meet the requirements
+of E.O. 13526?
+Answer: The NRO's entire Sensitive Activities portfolio is reviewed
+and briefed annually to the DNI's Senior
+Review Group (SRG) who then reports to Congress.
+
+Do the self-inspections determine if officers and employees are aware
+of the prohibitions and sanctions for
+creating or continuing a special access program contrary to the
+requirements of E.O. 13526?
+Answer: Yes. In keeping with E.O. 13526, all Sensitive Activities'
+compartments that are established
+terminated, or transitioned (to another program or lower
+classification) require NRO Special Activities
+Management Board review and approval, followed by notification to the
+DNI's Senior Review
+Group/Controlled Access Program Oversight Committee.
+
+5. Reporting:
+
+(1) What format for documenting self-inspections in your Component?
+Answer: Self assessments are documented using the self-assessment
+review tool in the NSM, Appendix B. For
+formal assessments, an out-briefing is provided to site security staff
+and other site senior management identi&ing
+security program successes, observations, and any security "best
+practices" discovered during the formal
+assessment. The results are then loaded into the facility database
+that contains information from all previous visits
+with any problem areas or "best practices" noted A final report
+requiring corrective actions to be taken within 90
+days of the date of report is issued by the DOS&CI. The assessed site
+is required to provide follow-up reports of
+corrective action to the responsible PSO and the ISAP Manager every 90
+days until all corrective actions are
+complete. The responsible PSO monitors all mitigation actions. Reports
+of corrective action are loaded into the
+NRO facilities database for historical purposes.
+
+(2) Who receives the reports?
+Answer: The OS&CI ISAP Manager.
+
+(3) Who compiles/analyzes the reports?
+Answer: The ISAP Manager and the responsible PSO analyze the report.
+(4)
+
+How are the findings analyzed to determine if there are problems of a
+systemic nature?
+
+Answer: The ISAP Manager provides to the sponsoring Government Program
+Security Officer (GPSO) for review
+and subsequent action.
+(5) How and when are the results of the self-inspections reported to
+the senior agency official?
+Answer: The DOS&CI determines when results warrant informing the SAO.
+
+(6) How is it determined if corrective actions are required?
+Answer: The GPSO and security stalceholder(s) review.
+
+UNCLASSIFIED
+4
+
+UNCLASSIFIED
+INFORMATION SECURITY PROGRAM SELF-INSPECTION CHECKLIST
+TITLE/SUBJECTIACTIVITY/FUNCTIONAL AREA
+
+National Reconnaissance Office
+OPR
+
+Information Security Program Self Inspection Checklist
+
+NO.
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+Security
+ITEM
+
+DATE
+
+Manager
+
+11 October
+2012
+
+I I
+
+(7) Who takes the corrective actions?
+Answer: The assessed site.
+
+(8) How are the findings from your Component's self-inspection program
+distilled for the annual report to the Director
+o f ISOO?
+Answer: The OS&CI Security Policy Staff (SPS) tasks the ISAP Manager
+to distill the findings and provide them to
+SPS for inclusion in the annual report.
+Self-Inspection Program Description here: Description include in
+italics under questions above.
+PART 2. ASSESSMENT & SUMMARY:
+ASSESSMENT
+
+The assessment is an evaluation of the state of each element of your componenVs
+classified national security information program based on an analysis
+of the findings of the selfinspection program. It should consider if
+the program element is being effectively implemented in
+accordance with the Order and Directive and DoD 5200.01-M. It should
+consider whether the
+findings indicate that the regulation or other policies or procedures
+may need to be updated, and
+it should take into account other program information such as the
+Standard Form 311, "Agency
+Security Classification Management Program Data." If a particular
+element does not apply to a
+component (e.g., original classification authority) the report should
+explain this.
+â€¢ Original classification
+Rating: Satisfactory
+â€¢ Derivative classification
+Rating: Document creation: Satisfactory Training: Deficient due to cost
+â€¢ Declassification
+Rating: Satisfactory
+â€¢ Safeguarding
+Rating: Satisfactory
+â€¢ Security violations:
+Rating: Satisfactory
+â€¢ Security education and training
+Rating: Satisfactory except for Derivative Classifier training which
+is not required due to cost
+â€¢ Management and oversight
+Rating: Satisfactory
+SUMMARY: The summary should report the findings from the
+self-inspection program within each
+of the program areas. This information should support the assessment.
+â€¢ Original classification
+Rating: Satisfactory
+â€¢ Derivative classification
+Rating: Document creation: Satisfactory Training: Deficient due to cost
+â€¢ Declassification
+Rating: Satisfactory
+â€¢ Safeguarding
+Rating: Satisfactory
+â€¢ Security violations
+Rating: Satisfactory
+â€¢ Security education and training
+Rating: Satisfactory except for Derivative Classifier training which
+is not required due to cost
+â€¢ Management and oversight
+Rating: Satisfactory
+Assessment & Summary here: included in italics under headings above.
+
+UNCLASSIFIED
+5
+
+UNCLASSIFIED
+INFORMATION SECURITY PROGRAM SELF-INSPECTION CHECKLIST
+TITLE/SUBJECT/ACT1VITYIFU KnONAL AREA
+
+Information Security
+
+NO.
+
+Program Self-Inspection Checklist
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+National Reconnaissance Office
+OPR
+
+DATE
+
+Security Manager
+
+11 October
+201 2
+
+ITEM
+
+PART 3. FOCUS QUESTIONS:
+FOCUS QUESTIONS: Answer the following focus questions.
+(1) Training for original classification authorities. (This applies
+only to Components
+
+with original classification authority).
+(1) Original classification authorities are required to receive
+training in proper classification and declassification each
+calendar year (5200.01-V?). What percentage of the original
+classification authorities at your Component has
+received this training?
+
+(2) Have any waivers to this requirement been granted?
+Answer: 100% of NRO OCAs have received training. No waivers have been granted.
+FOCUS QUESTIONS: Answer the following focus questions.
+
+(2) Training for persons who apply derivative classification markings.
+(1) Persons who apply derivative classification markings are required
+to receive training in the proper application of the
+derivative classification principles of the E0 13526 prior to
+derivatively classifying information and at least once
+every two years thereafter. What percentage of the derivative
+classifiers at your Component has received this
+training?
+(2) Have waivers to this requirement been granted?
+Answer: Percentage unknown. The DSS and CAPCO Derivative Classifier
+training is available through the
+NRO computer network; however, NRO has not made this training
+mandatory because of the cost of two
+hours of direct labor charged by each contractor. No waivers have been granted.
+FOCUS QUESTIONS: Answer the following focus questions.
+
+(3) Initial training.
+(1) All cleared agency personnel are required to receive initial
+training on basic security policies, principles, practices,
+and criminal, civil, and administrative penalties. What percentage of
+these personnel at your Component has
+received this training?
+Answer: 100% of new employees have received initial training.
+FOCUS QUESTIONS: Answer the following focus questions.
+
+(4) Refresher training.
+(1) Components are required to provide annual refresher training to
+all employees who create, process, or handle
+classified information. What percentage of these employees at your
+Component has received this training?
+Answer: 100% of employees have received refresher training.
+FOCUS QUESTIONS: Answer the following focus questions.
+
+(5) Identity of persons who apply derivative classification markings.
+(1) Derivative classifiers must be identified by name and position, or
+by personal identifier on each classified
+document. What percentage of the documents sampled meet this
+requirement? (Also, indicate the number of
+documents reviewed for this requirement.)
+Answer: NRO personnel are directed to use a personal identifier. 100%
+of documents have met this
+requirement. The number of documents reviewed is unknown.
+FOCUS QUESTIONS: Answer the following focus questions.
+
+(6) List of multiple sources.
+(1) A list of sources must be included on or attached to each
+derivatively classified document that is classified based on
+more than one source document or classification guide. What percentage
+of the documents sampled meet this
+requirement? (Also, indicate the number of documents reviewed for this
+requirement.)
+Answer: 100% of documents have met this requirement. The number of
+documents reviewed is unknown.
+
+UNCLASSIFIED
+6
+
+UNCLASSIFIED
+INFORMATION SECURITY PROGRAM SELF-INSPECTION CHECKLIST
+T1 TLEPAIBJECT/ACT1VITY1FUNCTIONAL AREA
+
+Information Security Program Self-Inspection Checklist
+NO.
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+National Reconnaissance Office
+OPR
+
+DATE
+
+Security Manager
+
+11 October
+2012
+
+ITEM
+
+FOCUS QUESTIONS: Answer the following focus questions.
+
+(7) Performance evaluations.
+(1) The performance contract or other rating system of original
+classification authorities, security managers, and other
+personnel whose duties significantly involve the creation or handling
+of classified information must include a
+critical element to be evaluated relating to designation and
+management of classified information. What percentage
+of such personnel at your Component has this element in their
+performance contracts?
+
+Answer: The NRO is comprised of government individuals from various
+agencies. Parent agencies set the
+rules for their performance contract or rating system. Based on the
+rules for each parent agency,
+approximately 40% have this element in their performance contract
+PART 4. DISCREPANCIES: Specific information with regard to the
+findings of the annual review of
+
+the Component's original and derivative classification actions to
+include the volume of classified
+materials reviewed and the number and type of discrepancies identified.
+1. "Discrepancies" are instances when the classification and/or
+marking requirements of the Order, Directive and Agency
+regulation are not met. Among these are:
+(1) Overclassification: information does not meet the standards for
+classification.
+(2) Overgraded/Undergraded: Information classified at a higher/lower
+level than appropriate.
+(3) Declassification: Improper or incomplete declassification
+instructions or no declassification instructions.
+(4) Duration: A shorter duration of classification would be appropriate.
+(5) Unauthorized classifier: A classification action taken by someone
+not authorized to do so.
+(6) "Classified By" line: A document does not identify the OCA or
+derivative classifier by name and position or by
+personal identifier.
+(7) "Reason" line: An originally classified document does not cite a
+reason from section 1.4 of the Order.
+(8) "Derived From" line: A document fails to cite, or cites
+improperly, the classification source. The line should
+include type of document, date of document, subject, and office/agency
+of origin.
+(9) Multiple sources: A document cites "Multiple Sources" as the basis
+for classification, but list of these sources is
+not included on or attached to the document.
+(l0)Marking: A document lacks overall classification markings or has
+improper overall classification markings.
+(I 1 ) Portion Marking: The document lacks required portion markings.
+(12) Instructions from a classification guide are not properly applied.
+For additional information on marking, consult the l)oDM 5200.01-V2.
+List identified program deficiencies here. Also list actions taken or
+are planned to correct identified program
+deficiencies, marking discrepancies, or misclassification actions, and
+to deter their reoccurrence:
+Answer: Improper application of portion marking. Individuals will
+receive additional training and review of
+their documents by security officers.
+PART 5. BEST PRACTICES: List best practices that were identified
+during self inspections here:
+- Comprehensive security database developed which reflects final
+adjudication and investigation of security incidents
+- SCIF decertification process assembled consisting of:
+-- SCIF decertification checklist
+-- Sanitization steps for offices
+-- SCIF decertification roles and responsibilities
+- The self-assessments, methodology, and supporting application is a
+model for other industry sites
+- Comprehensive Open/Close procedures
+- Plexiglas inspection window and inspection ports for checking
+penetration of perimeter by HVAC, wiring, etc.
+-
+
+DoD SELF INSPECTION PROGRAM REQUIREMENTS: This portion of the
+checklist meets specific
+-
+
+requirements for a standard DoD Information Security Program based on
+the DoDM 5200.01-V1 thru
+V3. Please answer the following questions below.
+NO.PROGRAM MANAGEMENT (EO 13526 REQUIREMENTS)
+I YES I NO I N/A
+
+UNCLASSIFIED
+7
+
+UNCLASSIFIED
+INFORMATION SECURITY PROGRAM SELF-INSPECTION CHECKLIST
+TITLE/SUBJECT/ACTIVITY/FUNCTIONAL AREA
+
+1.
+
+2.
+
+3.
+
+4.
+
+5.
+
+6.
+
+7.
+
+8.
+
+9.
+
+10.
+
+IL
+
+National Reconnaissance Office
+OPR
+
+Information Security Program Self-Inspection Checklist
+NO.
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+Security Manager
+ITEM
+
+Has the head of each activity in the Component appointed a security
+manager to manage and implement the activity's information security
+program which implements the provisions of DoDM 5200.01-M? (DoDM
+5200.01-M, Vol 1, End 2, para 8.b & 9.a)
+Does the Component Head develop and implement, through the security
+manager, security instructions necessary for program implementation?
+(DoDM 5200.01-M, Vol 1, Encl 2, para 9.d)
+Are sufficient resources and personnel committed to implement the
+classified national security information security program? (DOOM 5200.01-M,
+Vol 1, Encl 2, para 6.d)
+Are OCAs delegated classification authorities in writing? (DoDM 5200.01-M, Vol
+1, Encl 4, para 5.c)
+Has the security manager attended the required training? Note: Training and
+education shall be provided before, concurrent with, or not later than six
+months following appointment. (DoDM 5200.01-M, Vol 3, End 5, paras 4.a and
+10)
+Does the security manager conduct security inspections (self-inspections)?
+(DoDM 5200.01-M, Vol 1, Encl 2, para 7.d)
+â€¢ Is the Component Head informed of the results of such inspection?
+Does the security manager establish, implement and maintain an effective
+security education program as required by DoDM 5200.01-M, Volume 3,
+Enclosure 5, to include initial orientation and continuing/refresher training
+for assigned members? (DoDM 5200.01-M, Vol 1, End 2, para 7.g & 9.f; Vol 1,
+Encl 3, Para 6.c; and Vol 3, Encl 5, para 7 & 8)
+â€¢ Do security managers document all security-related training? (DoDM
+5200.01-M, Vol 3, End 5, para 11)
+Are procedures established to prevent unauthorized access to classified
+information? (DOOM 5200.01-M, Vol 1, End 2, para 7.e)
+â€¢ Note: Examples include implementing visitor controls, restricting
+combinations to cleared members, establishing end-of-day security
+checks, etc)
+Are emergency plans developed for the protection, removal, or destruction
+of classified material in case of fire, natural disaster, civil disturbance, or
+terrorist activities to minimize the risk of compromise? (DOOM 5200.01-M, Vol
+1, Encl 2, para 9.d)
+Are procedures established for ensuring that all persons handling classified
+material are properly cleared and have a need-to-know? (DOOM 5200.01-M,
+Vol 1, End 3, para 11.a)
+Does the security manager maintain a continuity handbook?
+
+DATE
+
+11 October
+2012
+
+x
+
+x
+
+x
+
+x
+x
+
+x
+x
+x
+
+x
+x
+x
+
+x
+
+x
+
+x
+
+ORIGINAL CLASSIFICATION (EO 13526 REQUIREMENTS)
+
+12.
+
+Are Original Classification Authorities (OCAs) trained on the process and
+requirements for original classification (DOOM 5200.01-M, Vol 1, Encl
+4, para 6),
+to include?
+
+x
+
+Applicable standards and categories for classification? (D0DM 5200.01-m,
+
+x
+
+UNCLASSIFIED
+8
+
+UNCLASSIFIED
+INFORMATION SECURITY PROGRAM SELF-INSPECTION CHECKLIST
+ITTLE/SUBJECT/ACTIVITYTUNCTIONAL AREA
+
+Information Security Program Self-Inspection Checklist
+NO.
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+National Reconnaissance Office
+OPR
+
+DATE
+
+Security Manager
+
+11 October
+2012
+
+ITEM
+
+1, Encl 4, para 1)
+Levels of classification and damage criteria associated with each one?
+(DoDM 5200.01-M, Vol 1, Encl 4, para 3)
+â€¢ Avoidance of over - classification? (DoDM 5200.01-M, Vol 1, End 4, para 6.f)
+â€¢ Classification prohibitions and limitations? (DoDM 5200.01-M, Vol 1, Encl 4,
+para 2)
+â€¢ Required markings, including those for dissemination and handling?
+(DoDM 5200.01-M, Vol 1, Encl 4, para 6.h; Vol 2, Ends 3 & 4)
+â€¢ Determination of declassification instructions? (DoDM 5200.01-M, Vol 1,
+Encl 4, para 13.a)
+â€¢ Delegations of OCA responsibilities? (DoDM 5200.01-M, Vol 1, Encl 4, para 5
+& 5.c)
+â€¢ Classification challenges? (DoDM 5200.01-M, Vol 1, Encl 4, para 22)
+13. Have OCAs prepared, as appropriate, classification guides to facilitate the
+proper and uniform derivative classification of information? (DoDM 5200.01,
+Vol 1, Encl 4, para 6.h; Vo11, Encl 6, para 1)
+14.
+Do the guides meet the requirements of section 2.2 of E.O. 13526 and section
+2001.15 of title 32, Code of Federal Regulations (CFR)?
+Vol
+
+â€¢
+
+X
+
+X
+X
+x
+x
+X
+x
+
+X
+
+DERIVATIVE CLASSIFICATION (EO 13526 REQUIREMENTS)
+15.
+
+Are persons who apply derivative classification markings trained on the
+process and requirements for derivative classification (DoDM 5200.01-M, Vol 1,
+Encl 4, para 11 & 12), to include?
+â€¢ Identity of derivative classifier? (DoDM 5200.01-M, Vol 2, End 3, para 7 &
+8.c. (1)(a))
+â€¢ Use of source documents, including classification guides? (DoDM
+5200.01M, Vol 2, Encl 3, para 8.c.(1)(b), 8.c.(2) & 8.c.(3))
+â€¢ Declassification instructions? (DoDM 5200.01-M, Vol 2, Encl 3,
+para 8.c.(1)(d),
+8.c.(4)-(9) & 9)
+â€¢ Proper application of markings? See Classification Markings/Document
+Review section below. (DoDM 5200.01-M, Vol 2, Encl 3 & 4)
+â€¢ Classification challenges (DoDM 5200.01-M, Vol 1, Encl 4, para 22)
+
+x
+x
+X
+X
+X
+
+CLASSIFICATION MARKINGS/DOCUMENT REVIEW (EO 13526 REQUIREMENTS)
+
+16.
+
+Reviews of original and derivative classification actions shall be conducted in
+accordance with section 2001.60(c)(2) of title 32, CFR, and should evaluate the
+classification and marking of documents to include: (DOOM 5200.01-M, Vol 1,
+Encl 2, para 7.d)
+â€¢ Have the standards of classification been met? (DoDM 5200.01, Vol 1, Encl
+4, para 1 & 2)
+â€¢ Could damage to the national security be reasonably expected in the
+event of unauthorized disclosure? (DoDM 5200.01, Vol 1, Encl 4, para 3)
+â€¢ Have the requirements for original classification of Part 1 of E.0.13526 or
+for derivative classification in Part 2 of E.O. 13526 been met?
+â€¢ Have the required markings been applied in accordance with E.O. 13526
+and Subpart C of title 32, CFR? (DOOM 5200.01-M, Vol 2, para 3)
+
+UNCLASSIFIED
+9
+
+x
+
+X
+
+x
+x
+X
+
+1
+
+UNCLASSIFIED
+INFORMATION SECURITY PROGRAM SELF-INSPECTION CHECKLIST
+11TLEISUBJECTIACTIVITY/FUNcnONAL AREA
+
+Information Security Program Self-Inspection Checklist
+NO.
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+National Reconnaissance Office
+OPR
+
+DATE
+
+Security Manager
+
+11 October
+2012
+
+ITEM
+
+â€¢
+â€¢
+
+â€¢
+
+Overall classification level (DoDM 5200.01-M, Vol 2, Encl 3, para 5)
+"Reason for Classification" line (originally classified documents only)
+(DoDM 5200.01-M, Vol 2, Encl 3, para 3.b.(1)(b) & 3.b.(4))
+The Agency, Office or Origin, and Date (DoDM 5200.01-M, Vol 2, Encl 3, para
+7)
+
+â€¢
+â€¢
+
+17.
+
+18.
+
+19.
+
+20.
+
+21.
+
+22.
+
+23.
+
+24.
+
+A "Derived From" line (DOOM 5200.01-M, Vol 2, Encl 3, para 8.c.(1)(b))
+A "Classified By" line (DoDM 5200.01-M, Vol 2, Encl 3, para 8.b.(1)(a) &
+8.c.(1)(a))
+â€¢ identification of the sources of classification (DoDM 5200.01-M, Vol 2, End
+3, para 8.c.(1)(b), 8.c(2), & 8.c.(3))
+â€¢ "Declassify On" line (DoDM 5200.01-M,Vol 2, Encl 3, para 8.c.(d))
+â€¢ Downgrading instructions, if required (DoDM 5200.01-M, Vol 2, Encl 3, para
+8.a.(4))
+â€¢ Page and Portion Markings (DoDM 5200.01-M, Vol 2, Encl 3, para 5 & 6)
+â€¢ Have any unauthorized or invalid markings been applied to documents?
+Are Agency personnel who conduct reviews of the agency's original and
+derivative classification actions trained on the classification and marking
+requirements of E.O. 13526, part 2001 of title 32, CFR, and DoDM 5200.01; and
+do they have access to pertinent security classification guides?
+Are "subjects" or "titles" of classified documents marked with the
+appropriate symbol (TS), (S), (C), or (U) following and to the left of
+the title or
+subject? (DoDM 5200.01-M, Vol 2, Encl 3. Para 6.e.(2) & 14)
+Is each section, part, paragraph, or similar portion of a classified document
+marked to show the highest level of classification of information it contains,
+or that it is unclassified? Portion of text shall be marked with the
+appropriate abbreviations (TS, S, C, or U). (DOOM 5200.01-M, Vol 2, Encl 3, para
+6)
+Are portions within documents containing Restricted Data and Formerly
+Restricted Data marked with the abbreviation "RD" or "FRO" (e.g. S//RD or
+TS//FRD)? (DoDM 5200.01-M, Vol 2, Encl 4, para 8.a & 8.b)
+Are portions within documents containing foreign government or North
+Atlantic Treaty Organization (NATO) information marked with the foreign
+classification or NATO and the appropriate classification level (e.g. //GBR S or
+//NATO C)? (DoDM 5200.01-M, Vol 2, Encl 4, para 4)
+Is the abbreviation "FOUO" used to designate unclassified portions that
+contain information that may be exempt from mandatory release to the
+public under the Freedom of Information Act (FOIA)? (DoDM 5200.01-M, Vol 2,
+Encl 4, para 10.b & Vol 4, End 3, para 2.c)
+Are charts, graphs, photographs, illustrations, figures, and similar items
+within classified documents marked to show their classification? (DoDM
+5200.01-M, Vol 2, Encl 3, para 6.a & 18)
+Are the markings placed within the chart, graph, photograph, illustration,
+figure, etc. or next to the item? (DoDM 5200.01-M, Vol 2, End 3, para 6.e.(3) &
+18)
+
+UNCLASSIFIED
+10
+
+..
+
+x
+X
+X
+
+x
+x
+x
+x
+x
+x
+X
+
+x
+
+x
+
+x
+
+x
+
+x
+
+x
+
+x
+
+UNCLASSIFIED
+INFORMATION SECURITY PROGRAM SELF-INSPECTION CHECKLIST
+TITLE /SUBJECT/ACTIVITWFUNCTI ONAL AREA
+
+Information Security Program Self-Inspection Checklist
+NO.
+
+25.
+
+26.
+
+27.
+
+28.
+
+29.
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+National Reconnaissance Office
+OPR
+
+Security Manager
+
+ITEM
+
+Is the highest classification level placed on the top and bottom of each page
+containing classified information or marked "unclassified"? (This is called the
+"banner line")
+â€¢ Do the markings stand out from the balance of the information on the
+page (must be readily visible)? (DoDM 5200.01-M, Vol 2, Encl 3, para 5)
+Are TRANSMITTAL documents properly marked to include either its highest
+classification or a notation "Unclassified when separated from classified
+enclosures"? (DoDM 5200.01-M, Vol 2, Encl 3, para 15)
+For ELECTRONIC documents:
+â€¢ Are e-mails, blog entries, bulletin board postings, and other electronic
+documents marked as finished documents, not working papers? (DoDM
+5200.01-M, Vol 2, Enc 3, para 17.a.(2))
+â€¢ Do e-mails include the appropriate banner line, portion markings, and
+classification authority block? Is the subject line portion mark the
+classification of the subject, not the overall classification of the e-mail?
+(DoDM 5200.01-M, Vol 2, Encl 3, para 17.b)
+â€¢ Do classified URLs contain embedded portion marks? (DoDM 5200.01-M,
+Vol 2, Encl 3, para 17.d)
+â€¢ Are briefing slides, including any speaker notes and hidden slides, marked
+as required for text documents? (DoD 5200.01-M, Vol 2,Encl 3, para 16)
+â€¢ Are maps, charts, blueprints, photographs, and other special types of
+materials marked in the same fashion as for documents, to the extent
+feasible? (DoD 5200.01, Vol 2, Encl 3, para 18)
+Are Files, Folders, and Groups of documents clearly marked on the outside of
+the file or folder (attaching a classified document cover sheet to the front of
+the folder or holder will satisfy this requirement)? (DoDM 5200.01-M, Vol 2,
+Encl 2, para 4.a)
+Are removable storage media (e.g. magnetic tape reels, disk packs, diskettes,
+CD-ROMS, removable hard disks, disk cartridges, tape cassettes, etc.) marked
+with the appropriate Standard Form label (SF 706/707/708/710)? (DoDM
+5200.01-M,Vol 2, Encl 2, para 4.b)
+
+DATE
+
+11 October
+2012
+
+x
+
+X
+
+x
+
+x
+x
+
+x
+x
+x
+
+x
+
+x
+
+DECLASSIFICATION (EO 13526 REQUIREMENTS)
+30.
+
+31.
+
+Is there a records management system to facilitate public release of
+declassified documents?
+Are procedures established for automatic, systematic, discretionary, and
+mandatory declassification review?
+
+x
+x
+
+SAFEGUARDING AND STORAGE (EO 13526 REQUIREMENTS)
+
+32.
+33.
+34.
+
+35.
+
+Is the program designed and maintained to optimize safeguarding of
+classified information?
+Are there control measures to prevent unauthorized access to classified
+information?
+Are personnel aware of procedures for identifying, reporting, and
+processing unauthorized disclosures of classified information?
+Are there procedures to ensure that appropriate management action is
+UNCLASSIFIED
+11
+
+x
+x
+x
+x
+
+1
+
+UNCLASSIFIED
+INFORMATION SECURITY PROGRAM SELF-INSPECTION CHECKLIST
+TITLE/SUBJECT/ACTIVITY/FUNCTIONAL AREA
+
+Information Security Program Self-Inspection Checklist
+NO.
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+National Reconnaissance Office
+OPR
+
+DATE
+
+Security Manager
+
+11 October
+2012
+
+ITEM
+
+taken to correct identified problems?
+Are there methods for transmitting classified information, preparing it
+correctly for mailing, and for hand carrying or escorting classified material?
+37.
+Is classified information removed from storage kept under constant
+surveillance of authorized persons? (DoDM 5200.01-M, Vol 3, Encl 2, para 8)
+38.
+Are cover sheets placed on all documents removed from storage? (DoDM
+5200.01-M, Vol 3, End 2, para 8)
+39.
+Are end-of-day security checks established for areas that process or store
+classified information to ensure the area is secure at the close of each
+working day? (DOOM 5200.01-M, Vol 3, Encl 2, para 9)
+40.
+Is the SF 701, Activity Security Checklist, used to record end-of-day checks?
+(DoDM 5200.01-M, Vol 3, Encl 2, para 9)
+41.
+is the SF 702, Security Container Check Sheet, used to record the closing of
+each vault, secure room, or container used for storage of classified material?
+(DoDM 5200.01-M, Vol 3, Encl 2, para 9)
+42.
+Is the SF 700, Security Container Information, properly completed and
+posted inside the LOCKING drawer of the security container, or inside the
+door of vault and similar facilities? (DoDM 5200.01-M, Vol 3, Encl 3, para 10)
+43.
+Are storage containers (safes) that may have been used to store classified
+information inspected by properly cleared personnel before removal from
+protected areas or before unauthorized persons are allowed access to them?
+(DoDM 5200.01-M, Vol 3, Encl 3, para 13)
+44â€¢
+Are combinations to security containers changed at the required intervals?
+(DoDM 5200.01-M, Vol 3, Encl 3, para 11.b)
+45.
+If written records of the combination are maintained, are they marked and
+protected at the highest classification of the material stored therein? (DOOM
+5200.01-M, Vol 3, Encl 3, para 11.a)
+â€¢ Is the combination stored in a security container other than
+the one for
+which it is being used?
+46.
+Are entrances to secure rooms or areas under visual control at all times
+during duty hours to prevent unauthorized access or equipped with electric,
+mechanical or electromechanical access control devices to limit access
+during duty hours? (DoDM 5200.01-M, Vol 3, Encl 3, para 12.a)
+47.
+Does each vault or container bear an external marking for identification
+purpose? NOTE: The level of classification stored therein must NOT be
+marked on the outside of the container(s). (DoDM 5200.01-M, Vol 3, Encl 3,
+Para 9)
+48.
+is Top Secret material stored only in a GSA approved security container (safe)
+having one of the following supplemental controls: (DOOM 5200.01-M, Vol 3,
+Encl 3, para 3.a)
+â€¢ Guard or duty personnel cleared to the Secret level inspect the security
+container once every two hours
+â€¢ An Intrusion Detection System (alarm system) meeting requirements of
+para 2 of the Appendix to Encl 3 of DoDM 5200.01-M, Vol 3.
+36.
+
+UNCLASSIFIED
+12
+
+x
+x
+
+x
+
+x
+x
+
+x
+
+x
+
+x
+x
+
+x
+x
+
+x
+
+x
+
+x
+x
+
+UNCLASSIFIED
+INFORMATION SECURITY PROGRAM SELF-INSPECTION CHECKLIST
+TITLE/SUBJECT/ACTIVITY/FUNCTIONAL ARE A
+
+Information Security Program Self-Inspection Checklist
+NO.
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+National Reconnaissance Office
+OPR
+
+DATE
+
+Security Manager
+
+11 October
+2012
+
+ITEM
+
+â€¢
+
+49.
+
+so.
+51.
+
+52.
+
+53.
+
+3,
+54.
+
+Combination lock meeting Federal Specification FF-L-2740 (X0-7) with
+security-in-depth
+Is Secret material stored in a GSA approved security container (safe) without
+supplemental controls or in the same manner as Top Secret? (NOTE:
+Approved containers will have a certification label on the container itself)
+(DOOM 5200.01-M, Vol 3, Encl 3, para 3.b)
+Is Confidential material stored in a GSA approved security container? (DoDM
+5200.01-M,Vol 3, End 3, para 3.c)
+Are security container repairs (e.g. drilled because of a forgotten
+combination) done in accordance with FED-STD 809? (DoDM 5200.01-M, Vol 3,
+Encl 3, para 14)
+Is equipment (e.g. copiers, facsimile machines, AIS equipment and
+peripherals, electronic typewriters and word processing systems) used for
+processing classified information protected from unauthorized access?
+(DoDM 5200.01-M, Vol 3, Encl 2, para 14.a)
+Do appropriately cleared and technically knowledgeable personnel inspect
+the equipment and media used for processing classified information before
+the equipment is removed from the protected areas? (DoDM 5200.01-M, Vol
+Encl 2, para 14.d)
+Are GSA approved field safes and special purpose one and two drawer
+lightweight security containers securely fastened to the structure or under
+sufficient surveillance to prevent their theft? (DoDM 5200.01-M, Vol 3, End 3,
+para 6.a)
+
+x
+x
+
+x
+x
+
+X
+
+x
+
+x
+
+TELECOMMUNICATIONS, AUTOMATION INFORMATION SYSTEMS, AND NETWORK
+SECURITY MO 13526 REQUIREMENTS)
+55.
+
+56.
+
+Consistent with section 4.1(f) of E.O. 13526 and section 2001.50 of title 32,
+CFR, have uniform procedures been established to ensure that automated
+information systems that collect, create, communicate, compute,
+disseminate, process or store classified or controlled unclassified
+information are protected in accordance with applicable DoD policy
+issuances?
+Have procedures been established and implemented to:
+â€¢ Prevent access by unauthorized persons;
+â€¢ Ensure the integrity of the information;
+â€¢
+TO the maximum extent practicable, use:
+1) Common information technology standards, protocols, and
+interfaces that maximize the availability of, and access to, the
+information in a form and manner that facilitates its authorized use;
+and
+2) Standardized electronic formats to maximize the accessibility of
+information to persons who meet the criteria set forth in section
+4.1(a) of E.O. 13526.
+
+UNCLASSIFIED
+13
+
+x
+
+x
+x
+
+x
+
+UNCLASSIFIED
+INFORMATION SECURITY PROGRAM SELF-INSPECTION CHECKLIST
+TULE/SUBJECT/ACTIVITY/FUNCTIONAL AREA
+
+Information Security Program Self-Inspection Checklist
+NO.
+
+57.
+
+58.
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+National Reconnaissance Office
+OPR
+
+DATE
+
+Security Manager
+
+11 October
+2012
+
+ITEM
+
+Have procedures been established to ensure that unclassified copiers
+connected to the Internet are not used for classified reproduction? (DoDM
+5200.01-M, Vol 3, Encl 7, para 10)
+â€¢ Are modems, telecommunications capabilities and network
+connections disabled on copiers approved for classified
+reproductions? (DoDM 5200.01-M, Vol 3, Encl 7, para 10)
+â€¢ Are classified hard drives removed from classified reproduction
+equipment prior to maintenance? (DOOM 5200.01-M, Vol 3, End 7, para
+10)
+Are cameras and microphones disabled on all hardware used for classified
+processing, in classified spaces, or connected to networks in classified
+spaces? (DoDM 5200.01-M, Vol 3, Encl 7, para 10)
+
+x
+
+x
+
+x
+
+X
+
+REPRODUCTION OF CLASSIFIED MATERIAL (EO 13526 REQUIREMENTS)
+59.
+
+Are procedures established to oversee and control the reproduction of
+classified material? (DoDM 5200.01-M, Vol 3, Encl 2, para 5.b )
+60. Are personnel, who reproduce classified, aware of the risks
+involved with the
+specific reproduction equipment and the appropriate countermeasures they
+are required to take? (DoDM 5200.01-M, Vol 3, Encl 2, para 5.b.(2))
+61.
+Are waste products generated during reproduction properly protected and
+disposed of? (DoDM 5200.01-M, Vol 3, Encl 2, para 5.b.(6))
+62.
+Is reproduction equipment specifically designated for the reproduction of
+classified material? (DoDM 5200.01-M, Vol 3, End 2, para 5.b.(7))
+63.
+[Optional] Are RULES POSTED on or near the designated equipment
+authorized for the reproduction of classified? (DoDM 5200.01-M, Vol 3, Encl 2,
+para 15)
+64.
+[Optional) Are NOTICES prohibiting reproduction of classified POSTED on
+equipment used only for the reproduction of unclassified material? (DoDM
+5200.01-M, vol 3, Encl 2, para 15)
+
+â–
+65.
+
+66.
+
+x
+x
+
+x
+X
+x
+
+x
+
+DISPOSITION AND DESTRUCTION OF CLASSIFIED MATERIAL (EO 13526
+REQUIREMENTS)
+
+Has each activity with classified holdings set aside at least one "Clean-Out"
+day each year when specific attention and effort is focused on disposition of
+unneeded classified material? (DoDM 5200.01-M, VoI3, Encl 3, para 17.b)
+Is classified materials properly destroyed by approved methods? (DOOM
+5200.01-M, Vol 3, Encl 3, para 17 &18)
+
+x
+
+x
+
+TRANSMISSION AND TRANSPORTATION OF CLASSIFIED INFORMATION (EO 13526
+REQUIREMENTS)
+67.
+
+Whenever classified information is transmitted outside of the activity is it
+enclosed in two opaque sealed envelopes or similar wrappings or containers
+durable enough to properly protect the material from accidental exposure
+and facilitate detection of tampering? (DOOM 5200.01-M, Vol 3, Encl 4, para 9)
+â€¢ NOTE: When classified material is hand-carried outside an activity, a
+locked briefcase may serve as the outer wrapper.
+
+UNCLASSIFIED
+14
+
+x
+
+UNCLASSIFIED
+INFORMATION SECURITY PROGRAM SELF-INSPECTION CHECKLIST
+11TLEISUBJECTIACTNITY/FUNCTIONAL AREA
+
+National Reconnaissance Office
+OPR
+
+Information Security Program Self-Inspection Checklist
+NO.
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+Security Manager
+
+DATE
+
+11 October
+2012
+
+ITEM
+
+68.
+
+Is the outer wrapper addressed to an official government activity or to a
+DOD contractor with a facility clearance and appropriate storage capability
+with a complete return address of the sender? (DoDM 5200.01-M, Vol 3, Encl
+4, para 9.a.(1))
+69.
+Is the inner wrapper or container marked with the following information:
+sender's and receiving activity's address and highest classification level of
+the contents (including where appropriate, any special markings)? (DoDM
+5200.01-M, Vol 3, End 4, para 9.a.(2))
+â€¢ NOTE: The inner envelope may have an "attention line" with a person's
+name.
+70.
+Are procedures established to limit the hand carrying of classified
+information to only when other means of transmission or transportation
+cannot be used? (DoDM 5200.01-M, Vol 3, End 4, para 11.a)
+71.
+Are hand-carrying officials briefed on and have they acknowledged their
+responsibilities for protecting classified information? (DoDM 5200.01-M, Vol
+3, Encl 4, para 11.c)
+72.
+Are courier officials provided a written statement authorizing such hand
+carrying transmission? (DOOM 5200.01-M, Vol 3, Encl 4, para 12)
+â€¢ [Optional] Does the activity list all classified carried or escorted by
+traveling personnel? (DoDM 5200.01-M, VoI3, Encl 4, para 11)
+â€¢ [Optional] Does the activity keep this list until all material reaches the
+recipient's activity? (DoDM 5200.01-M, Vol 3, End 4, para 11)
+73.
+When "Confidential" classified information is sent U.S. Postal Service "First
+Class" mail between DOD Components within the United States, is the outer
+envelope or wrapper endorsed "POSTMASTER: RETURN SERVICE REQUESTED"?
+(DOOM 5200.01-M, Vol 3, Encl 4, para 5.d 1
+74.
+Do recipients of First Class mail bearing the "Postmaster" notice protect it as
+Confidential material?
+
+x
+
+x
+
+x
+
+x
+
+x
+X
+x
+x
+
+x
+
+SECURITY EDUCATION (E0 13526 REQUIREMENTS)
+75.
+
+76.
+77.
+78.
+
+79.
+
+80.
+
+,
+
+Has the Component Senior Agency Official established a Security Education
+program? (DoDM 5200.01-M,Vol 1, Encl 2, para 7.g ) Has the activity security
+manager implemented the security education and training program within
+the activity? (DoDM 5200.01, Vol 1, Encl 2, para 9.f)
+Have all personnel been trained on policies for classification, safeguarding
+and declassification?
+Do all personnel who perform derivative classification receive training every
+2 years? (DoDM 5200.01-M, Vol 3, Encl 5, para 7.c)
+All original classification authorities (OCA) must receive training in proper
+classification and declassification at least once a calendar year. (DoDM
+5200.01-M Volt, Encl 4, para 5.d and Vol 3, Encl 5, para 5)
+Does this training program include an "Initial Orientation" for all assigned
+personnel who are cleared for access to classified information? (DoDM
+5200.01-M, Vol 3, End 5, para 3)
+Does this orientation include the: (DOOM 5200.01-M, Vol 3, End 5, para 3)
+
+UNCLASSIFIED
+15
+
+x
+
+x
+x
+x
+
+x
+
+.
+
+UNCLASSIFIED
+INFORMATION SECURITY PROGRAM SELF-INSPECTION CHECKLIST
+
+TITLE/SUBJECT/ACTIVITYIRJ NicnomAL AREA
+
+Information Security Program Self-Inspection Checklist
+NO.
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+National Reconnaissance Office
+OP R
+
+DATE
+
+Security Manager
+
+11 October
+2012
+
+ITEM
+
+â€¢
+â€¢
+â€¢
+
+â–
+
+x
+x
+x
+
+x
+â€¢
+x
+x
+x
+x
+x
+x
+x
+x
+
+x
+x
+
+x
+
+SECURITY INCIDENTS AND VIOLATIONS TO INCLUDE COMPROMISES MO 13526
+REQUIREMENTS)
+
+88.
+
+Are assigned members trained on of their responsibilities to report security
+violations concerning classified information? (DOOM 5200.01-M, Vol 3, End 6,
+para 3.b)
+89
+Are there procedures to conduct an inquiry/investigation of a loss, possible
+compromise, or unauthorized disclosure of classified information? (DoDM
+5200.01-M, Vol 3, Encl 6, para 6)
+-
+
+UNCLASSIFIED
+16
+
+x
+
+x
+
+7
+
+Roles and responsibilities of assigned members and key personnel?
+Elements of safeguarding classified information?
+Elements of classifying and declassifying information?
+81 .
+Is additional training provided for members who: (DOOM 5200.01-M, Vol 3,
+End 5, para 4.b & c)
+â€¢ Are members of deployable organizations, to provide enhanced security
+training to meet the needs of the operational environment?
+â€¢ Will be traveling to foreign countries?
+â€¢ Will be escorting, hand carrying, or serving as a courier for classified
+material?
+â€¢ Will use automated information systems to store, process, or transmit
+classified?
+â€¢ Will have access to information requiring special control or safeguarding
+measures?
+â€¢ Will be using Foreign Government Information or work in coalition or
+bilateral environments?
+â€¢ Submit information to OCAs for original classification decisions?
+82. Is Refresher training provided at least annually to assigned members? (DOOM
+5200.01-M, Vol 3, Encl 5, para 7.a)
+83.
+Is Refresher training tailored to the mission needs and address policies,
+principles and procedures covered in initial training? (DoDM 5200.01-M, Vol 3,
+End 5, para 7.a)
+84. Does Refresher training address concerns identified during
+Component SelfInspections? (DOOM 5200.01-M, Vol 3, End 5, para 7.a)
+85.
+Are procedures established to ensure cleared employees who leave the
+organization or whose clearance Is terminated receives a termination
+briefing? (DoDM 5200.01-M, Vol 3, End 5, para 9)
+86.
+Are records maintained to show the names of members who participated in
+"Initial" and "Refresher" training? (DoDM 5200.01-M,Vol3, Encl 5, para 11 )
+87.
+Do training programs for "Uncleared" members include: (DoDM 5200.01-M,
+Vol 3, Encl 5, para 3)
+â€¢ The nature and importance of classified information?
+â€¢ Actions to take if they discover classified information unprotected?
+â€¢ The need to report suspected contact with a foreign intelligence
+collector?
+
+UNCLASSIFIED
+INFORMATION SECURITY PROGRAM SELF-INSPECTION CHECKLIST
+IITLE/SUBJECT/ACTIVITY/FUNCTIONAL AREA
+
+90.
+
+91.
+92.
+
+National Reconnaissance Office
+OPR
+
+Information Security Program Self-Inspection Checklist
+NO.
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+Security Manager
+
+DATE
+
+11 October
+2012
+
+ITEM
+
+Are appropriate and prompt corrective actions taken when a violation or
+infraction occurs? (DoD 5200.01-M, Vol 3, Encl 6)
+Are inquiries and/or investigations promptly conducted to ascertain the facts
+surrounding reported incidents? (DoDM 5200.01-M, VoI3, Encl 6, para 6)
+Are individuals who commit violations or infractions subject to appropriate
+sanctions? (DOOM 5200.01-M, Vol1, Encl 3, para 17 and VoI3, Encl 6, para 8.b &
+14)
+
+UNCLASSIFIED
+17
+
+x
+X
+x
+
+UNCLASSIFIED
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+NRO Explanation of N/A Responses on 2012 Information Security Program
+Self-inspection Checklist
+Item
+1.
+
+Comment
+The DNRO appoints the DOS&CI as responsible for NRO security. The
+DOS&CI appoints a
+Government Program Security Officer (GPSO) as the head of each
+Directorate or Office activity
+who implements the provisions of the NRO Security Program. For each
+contractor, an NRO
+Contractor Program Security Officer (NCPSO) is nominated by the
+contractor and approved by
+the DOS&CI. The NCPSO is a senior Contractor PSO responsible and
+accountable for the
+security oversight of all NRO program activities at their company or
+corporation.
+
+2.
+
+All security instructions are signed by the DOS&CI
+
+5.
+
+Equivalent training is provided
+
+6.
+
+Security evaluations and self-inspections are centrally managed under
+the DOS&CI. The DOS&CI
+is informed of the results of such inspections.
+
+7.
+
+Security-related training will be documented in the Personnel Security
+File or in a listing of all
+personnel who completed the training
+
+9. Yes, in areas where political instability, terrorism, host country
+attitude, or criminal activity
+suggests the possibility that a SCIF may be overrun by hostile forces.
+11. If the security manager has a COOP mission, essential materials
+are in place at the alternate
+location.
+12. The NRO cannot approve OCAs so we cannot delegate OCA responsibilities.
+16. The NRO does not use Downgrading markings.
+21. NRO personnel do not have the authority to create NATO information.
+28. Most SCIFs are open storage and do not require the use of cover sheets.
+38. Most SCIFs are open storage and do not require the use of cover sheets.
+40. SF 701 may be used or locally designed forms may be used
+41. SF 702 may be used or locally designed forms may be used
+45. Yes, at the SCI level, except for SAR where the holder does not
+have access to the SAR
+compartment nor the physical area housing the container.
+
+UNCLASSIFIED
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+UNCLASSIFIED
+Please note: The best way to view the report "Agency Annual
+Self-Inspection Program Data: FY 2013" (attached to this
+explanation) is in softcopy because several of the expandable
+fields have text that is hidden when viewed in hardcopy. The
+full text of entries that exceed the viewable space of
+expandable fields is included below for ease of reading,
+however, only the softcopy form will be submitted to OUSD(I).
+3. Enter the name, title, address, phone, fax, and e-mail address
+of the Senior Agency Official (SAO) (as defined in E.O. 13526,
+section 5.4(d)) responsible for this report.
+Mr. Frank Calvelli
+Principal Deputy Director, NRO
+Room
+14675 Lee Road, Chantilly, VA 20151
+(b)(3) 10 USC 424
+
+FAX
+
+(b)(3) 10 USC 424
+
+(b)(3) 10 USC 424
+
+13. What means and methods are employed in conducting self inspections?
+(For example: interviews, surveys, data calls, checklists, analysis, etc.)
+-
+
+NRO self-inspections are part of the NRO ISAP. Because
+of the total NRO workforce and have the
+contractors make up
+overwhelming number of Sensitive Compartmented Information
+Facilities (SCIFs), ISAP is a collaborative process between
+Government and industry to identify and address security
+vulnerabilities, provide data for analysis, and identify system
+security issues and trends. Site personnel conduct/document
+security self-assessments, per requirements stated in the NRO
+Security Manual (NSM) at least annually. The ISAP Manager or
+designee reviews the site assessments and enters a copy into an
+NRO database listing each NRO sponsored facility. Based on the
+self-assessments, the ISAP Manager, Program Security Officers
+(PSOs) and stakeholders discuss findings and formulate
+recommendations for a formal assessment, if required. OS&CI
+stakeholders represent the major OS&CI directorates and program
+office security staffs, including, but not limited to, PSOs,
+1
+
+UNCLASSIFIED
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+UNCLASSIFIED
+Physical/Technical Certification Officers and Security
+Certification Officers. Stakeholders develop and provide ISAP
+candidates to the ISAP Selection Board. Each ISAP
+recommendation shall contain detailed factors used to formulate
+the recommendation. Recommendation for site visits is then
+provided to the selection board. Sites are selected based on
+risk, proximity, resources, budgetary constraints, time since
+last assessment, and random sampling. A team composition is
+proposed for each site visit and a Lead PSO is selected. The
+Assessment Team will, at a minimum, consist of a Government PSO
+and an OS&Cl/Facilities and Information Security Division
+(F&ISD) representative. Additional team members will be added
+as needed based on site size, mission, facility risk, and
+subject areas being assessed. After the on-site assessment, an
+out-briefing is provided to site security staff and other site
+senior management identifying security program successes,
+observations, and any security "best practices" discovered
+during the formal assessment. The results are loaded into the
+facility database that contains information from all previous
+visits with any problem areas or "best practices" noted. A
+final report requiring corrective actions to be taken within 90
+days of the date of the report is issued by the D/OS&CI. The
+assessed site is required to provide follow-up reports of
+corrective action to the responsible PSO and the ISAP Manager
+every 90 days until all corrective actions are complete. The
+responsible PSO monitors all mitigation actions. Reports of
+corrective action are loaded into the NRO facilities database
+for historical purposes. For the reporting period, 291 selfassessments
+were received and 10 formal team assessments were
+performed. No additional formal specific-issue reviews were
+conducted. There were an additional 742 visits by OS&CI
+stakeholders to contractor SCIFs. In addition, a data call was
+conducted with all PSOs and CMOs in NRO Headquarters to answer
+items 87 and 88.
+20. Describe below how the agency identifies activities and
+offices whose documents are to be included in the sample of
+classification actions. (Indicate if NA.)
+Based on the 291 site self-assessments submitted, the ISAP
+Manager, Program Security Officers (PSOs) and stakeholders
+discuss findings and formulate recommendations for a formal
+2
+
+UNCLASSIFIED
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+UNCLASSIFIED
+assessment, if required. OS&CI stakeholders represent the major
+OS&CI directorates and program office security staffs,
+including, but not limited to, PSOs, Physical/Technical
+Certification Officers and Security Certification Officers.
+Stakeholders develop and provide ISAP candidates to the ISAP
+Selection Board. Each ISAP recommendation shall contain
+detailed factors used to formulate the recommendation.
+Recommendation for site visits is then provided to the selection
+board. Sites are selected based on risk, proximity, resources,
+budgetary constraints, time since last assessment, and random
+sampling. A team composition is proposed for each site visit
+and a Lead PSO is selected.
+Additionally, several types of documents at NRO headquarters are
+reviewed annually by CMOs and PSOs for proper classification and
+marking. A data call was conducted with all PSOs and CMOs in
+NRO Headquarters to answer items 87 and 88.
+22. How do you ensure that the materials reviewed provide a
+representative sample of the agency's classified information?
+(Indicate if NA.)
+Documents are selected for review in cooperation with site
+personnel who are familiar with the type of materials produced
+by the site. However, contractors are not required to count
+classified pages produced because of the additional costs that
+would be incurred by the NRO, so the documents reviewed may not
+be a representative sample. The data call conducted with NRO
+Headquarters PSOs and CMOs for item 87 and 88 represents all
+documents they reviewed during FY 2013.
+31. How is the self-inspection program structured to assess
+individual agency activities and the agency as a whole?
+Contractor SCIF locations far outnumber government SCIF
+locations in the NRO. Government locations are relatively few
+in number and have professional government security officers
+assigned who can monitor safeguarding and classified information
+production and correct errors as they occur. We chose to
+concentrate on contractor facilities which are visited
+relatively infrequently. The conditions at contractor locations
+are not directly applicable to government locations.
+
+3
+
+UNCLASSIFIED
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+UNCLASSIFIED
+35. What is the format for documenting self-inspections in your
+agency?
+Self-assessments are documented using the self-assessment review
+tool in the NSM, Appendix B. For formal assessments, an outbriefing is
+provided to site security staff and other site
+senior management identifying security program successes,
+observations, and any security "best practices" discovered
+during the formal assessment. The results are then loaded into
+the facility database that contains information from all
+previous visits with any problem areas or "best practices"
+noted. A final report requiring corrective actions to be taken
+within 90 days of the date of report is issued by the D/OS&CI.
+The assessed site is required to provide follow-up reports of
+corrective action to the responsible PSO and the ISAP Manager
+every 90 days until all corrective actions are complete. The
+responsible PSO monitors all mitigation actions. Reports of
+corrective action are loaded into the NRO facilities database
+for historical purposes.
+47. Safeguarding:
+Regular conduct of exercises provides vital feedback to the
+physical security program. Exercises identify areas for
+corrective measures, enhancements, validate current tactics,
+techniques and procedures (TTP) and the adoption/employment of
+new TTP to meet a dynamic threat environment. Regular
+inspections/audits are essential to ensuring status and validity
+of issued IC badges and conformity to physical security
+requirements. Risk assessments/physical security assessments
+provide a helpful "outside" perspective to site security
+offices. NRO government and contractor personnel work in SCIFs
+equipped with secure telephones, FAX, and teleconferencing
+equipment, badges and badge readers, guard forces in several
+locations, document shredders and other features to ensure
+compromises of classified information do not occur. While the
+insider threat is always a possibility, we take every precaution
+to prevent security incidents from occurring. The NRO applies
+uniform procedures established by the Intelligence Community
+Directive (ICD)-503 family of policy and guidance for
+Information Technology Systems Security Risk Management and
+Assessment and Authorization (A&A) activities.
+4
+
+UNCLASSIFIED
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+UNCLASSIFIED
+48. Security Violations:
+The ISAP program is the formal mechanism by which we corroborate
+self - inspections. Included in these formal reviews is an
+assessment of the respective security violation program and
+trends. In addition, each component Security team evaluates
+Security incidents and violations by tracking them according to
+general broad categories. During this past FY, the majority
+(63%) of incidents/violations were related to categories within
+personnel electronic devices in SCIFs. Other categories that
+have multiple occurrences indicating potential trends are data
+spills (9%) and inadvertent removal of classified information
+(12%). Personal cell phones and prohibited electronic devices
+are not allowed in SCIFs. While we have installed lockers
+outside SCIFs to secure cell phones, entry of prohibited
+electronic devices into SCIFs is still a problem. Visitor
+attendance to NRO conferences/facilities result in numerous cell
+phones being brought into the conference even by individuals
+with security duties who should know better.
+49. Security Education and Training:
+100% of personnel assigned to the NRO are required to complete
+an SCI indoctrination briefing to include signing a NonDisclosure
+Agreement. E.O. 13526 is called out specifically so
+that personnel fully understand their responsibilities and
+requirements to protect classified information. This message is
+repeated by the release of awareness videos and reminders
+throughout the year; to include presentations, written
+materials, and training. Specifically, OS&CI incorporates
+classification management questions within the Annual Security
+Refresher (ASR) web-based training (WBT). In 2014 ASR will
+include additional Derivative Classification questions. With as
+many contractors as the NRO employs, training can be a major
+expense. Every contractor and government employee with a secure
+computer account is required to take the Annual Security
+Refresher training otherwise they lose their computer
+connection. There are numerous additional courses and
+specialized security training available on-line even though
+sequestration has reduced training manpower overall to include
+elimination of the Information Management Branch which ran the
+OS&CI web site and security-specific applications.
+5
+
+UNCLASSIFIED
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+UNCLASSIFIED
+
+50. Management and Oversight:
+Government oversight of NRO-sponsored SCIFs is achieved in a
+multi-faceted manner. Program Security Officers,
+Physical/Technical, and Computer Security Officers review
+selfassessment results and participate in on-site reviews. Some
+program findings for FY 13 were identified in the following
+areas:
+â€¢ Standard Operating Procedures (SOPs) require more detail and
+more frequent revision to stay up-to-date with security
+requirements.
+â€¢ Foreign travel and contact reporting were not always
+accomplished using the mandated NRO Counterintelligence Network
+(CINet).
+â€¢ There are undocumented information systems within facilities.
+â€¢ Not all employees with AIS privileged user type access have
+been identified and tracked.
+â€¢ Facility alarm test records are not always maintained for the
+required time period.
+â€¢ Red/Black cabling is not labeled for identification.
+54. Safeguarding:
+Awareness and education programs are vital to ensuring the
+workforce maintains awareness of security policy and procedures.
+Regular and aperiodic exercises, inspections, and audits provide
+crucial inputs that are indispensable to ensuring that the
+physical security program is current and effective. Key
+challenges are maintaining adequate funding to replace aging,
+malfunctioning, and obsolete security equipment and training and
+education for new personnel. The NRO has an organization-level
+process for the Assessment and Authorization (A&A) of
+Information Systems and a Directive 51-1, "Information
+Technology, Information Assurance, and Information Management
+Architecture and Strategy for Certification and Accreditation"
+to ensure automated information systems that collect, create,
+communicate, compute, disseminate, process or store classified
+information are protected in accordance with applicable national
+policy issuances.
+6
+
+UNCLASSIFIED
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+UNCLASSIFIED
+
+55. Security Violations:
+The NSM details the NRO process for reporting and investigating
+security incidents, infractions and violations. Appropriate and
+prompt corrective actions were taken to.mitigate the severity of
+the infraction/violation, and to sanction the offender via
+management, counterintelligence, and personnel security
+processes. Infractions and violations are centrally tracked in
+the Security Log (the NRO incident/violation database). This
+database is managed by the Program Security Officers in each
+directorate and office, and enables the PSO to automatically
+notify Counterintelligence Division and Personnel Security
+Division, via a system generated e-mail, of
+infractions/violations that require immediate CI and/or
+personnel security attention. The database also enables both
+OS&CI management as well as individual PSOs to track and analyze
+trends linked to the various categories of security
+infractions/violations.
+56. Security Education and Training:
+OS&CI works closely with PSOs, Counterintelligence personnel,
+and the Integrated Self Assessment Program to determine any
+trends or specific areas that need an additional educational
+awareness campaign. Security communications are then targeted,
+utilizing large scale efforts, per a topic area and audience for
+best impact results. The NRO is adding additional
+classification management questions to the Annual Security
+Refresher to better satisfy the derivative classification
+training requirement. OCAs complete yearly training provided by
+NRO/OS&Cl/Policy Branch with direct knowledge of current CAPCO
+guidelines.
+57. Management and Oversight:
+The NRO has a very mature Security management and oversight
+program. Over the past FY, much greater emphasis has been
+placed on ensuring all sites and facilities accomplished the
+self-assessments and submited the findings to the Government
+within the mandated time requirements. This improved management
+oversight has made an impact. Our self-inspection program
+coupled with security officer visits, and formal team
+7
+
+UNCLASSIFIED
+
+NRO APPROVED FOR RELEASE
+28 August 2014
+
+UNCLASSIFIED
+assessments provide managers a report card on the health of our
+security programs. When negative trends are identified,
+managers from across industry and the Government develop
+corrective action plans to reverse the trends and ensure
+security requirements are met. Impacts are being felt to
+overall security programs due to reductions in security
+resources. While security requirements are increasing,
+especially in the area of information systems management,
+resources are being reduced. Additionally, some sites assessed
+have made decisions not to fully comply with a security
+requirement because of resource constraints.
+
+8
+
+UNCLASSIFIED
+

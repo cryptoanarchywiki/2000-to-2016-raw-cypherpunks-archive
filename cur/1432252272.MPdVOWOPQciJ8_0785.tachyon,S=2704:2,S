@@ -1,0 +1,55 @@
+From owner-cypherpunks@lne.com  Fri Oct 24 00:34:24 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p3/8.11.6-03-31-03) with ESMTP id h9O4YMR28829
+	for <rsw@jfet.org>; Fri, 24 Oct 2003 00:34:22 -0400
+Received: from slack.lne.com (slack.lne.com [127.0.0.1])
+	by slack.lne.com (8.12.10/8.12.10) with ESMTP id h9O4M6g9026337
+	(version=TLSv1/SSLv3 cipher=EDH-DSS-DES-CBC3-SHA bits=168 verify=NO)
+	for <cypherpunks-goingout345@slack.lne.com>; Thu, 23 Oct 2003 21:22:06 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.10/8.12.10/Submit) id h9O4M60T026336
+	for cypherpunks-goingout345; Thu, 23 Oct 2003 21:22:06 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Fri, 24 Oct 2003 17:23:14 +1300
+Message-Id: <200310240423.h9O4NE628648@cs.auckland.ac.nz>
+From: pgut001@cs.auckland.ac.nz (Peter Gutmann)
+To: cypherpunks@lne.com, shamrock@cypherpunks.to
+Subject: RE: C3 Nehemia C5P with better hardware RNG and AES support
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 1506
+Lines: 29
+
+"Lucky Green" <shamrock@cypherpunks.to> writes:
+>Peter wrote:
+>> In case anyone's interested, there's a cpu die photo at
+>> http://www.sandpile.org/impl/pics/centaur/c5xl/die_013_c5p.jpg
+>> showing the amount of real estate consumed by the crypto functions
+>> (it's the bottom centre, a bit hard to read the label).
+>
+>I fail to understand why VIA bothered adding AES support into the CPU. When
+>was AES last the bottleneck on a general-purpose CPU? 
+
+Apart from the obvious "what cool thing can we fit in -> <- this much spare
+die space?", the obvious target is SOHO routers/firewall boxes.  My spies tell
+me that it's already being used in a number of products like this, and the
+addition of AES will help the process.  Hardware SHA-1 in the next rev makes
+it even better, since you can now do IPsec and SSL tunneling purely in
+hardware (and then you lose it all again in the crappy Rhine II NIC, but
+that's another story).
+
+>The bottleneck tends to be modular exponentiations, yet VIA failed to include
+>a modular exponentiation engine. Strange.
+
+Not for SOHO use it isn't, the initial handshake overhead is negligible
+compared to the constant link encryption overhead.  The alternative is to do
+the crypto externally, for which you're paying for an expensive and power-
+hungry crypto core capable of doing a zillion DH/RSA ops/sec that gets used
+once every few hours.  The alternative is to load or load your standard
+firewall firmware into a Nehemiah and offload all the crypto and RNG stuff.
+
+Peter.
+

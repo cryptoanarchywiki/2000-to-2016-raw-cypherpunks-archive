@@ -1,0 +1,134 @@
+From owner-cypherpunks@al-qaeda.net  Sat Mar 31 04:57:38 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q2V8rkFu011931
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sat, 31 Mar 2012 04:53:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1333184027;
+	bh=KV4IKf3XmxAQnjhNFWbX99zsVmlmyq9CsnL1PNXBpHA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Sender;
+	b=Df/UTJnQ55gLiMCuPRMwCJXECqJlZszRbSR/jd0iFbqf/7RlXLVGzJFIZvSvfoERO
+	 n6RseG+flm8sifa+uaBdhI5O1wMvOJjy84U0lTlkdqb5Lryoudkc4stXSMB86FIkVl
+	 izMBioxduBqDmGyIJS+mNadurOnuJjmoo2C6SHWM=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q2V8rkdg011930
+	for cypherpunks-outgoing; Sat, 31 Mar 2012 04:53:46 -0400
+Date: Sat, 31 Mar 2012 10:53:42 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: doctrinezero@googlegroups.com
+Cc: cypherpunks@al-qaeda.net, tt@postbiota.org, info@postbiota.org
+Subject: Re: [tahoe-dev] erasure coding makes files more fragile, not
+  less
+Message-ID: <20120331085342.GU14482@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+It seems the VG2 could use quite a lot of helpers.
+
+----- Forwarded message from Shawn Willden <shawn@willden.org> -----
+
+From: Shawn Willden <shawn@willden.org>
+Date: Fri, 30 Mar 2012 17:33:58 -0400
+To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+Subject: Re: [tahoe-dev] erasure coding makes files more fragile, not less
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+On Mar 28, 2012 1:22 PM, "Eugen Leitl" <eugen@leitl.org> wrote:
+>
+> On Wed, Mar 28, 2012 at 09:00:56AM -0400, Shawn Willden wrote:
+>
+> > The arguments make are the basis for the approach I (successfully)
+pushed
+> > when we started the VG2 grid:  We demand high uptime from individual
+>
+> Can you please tell more about the VG2 grid? I clean missed it.
+
+(Sorry I'm slow to respond -- I'm vacationing with my family and often have
+better things to do than read email :-) ).
+
+Volunteer Grid 2 is a Tahoe grid composed of volunteers all over the world.
+Learning from some problems that the first volunteer grid had, I suggested
+to early members that VG2 establish some clear and somewhat restrictive
+policies in order to ensure that the grid was useful for system backups.
+
+Two specific backup-driven requirements we had were high
+reliability/availability and relatively high capacity.  To that end, we
+established a 95% nominal up time requirement and a 500 GB minimum node
+capacity requirement.  We also avoid co-located nodes and disallow usage of
+more than min(storage_provided, 1 TB).  The limit on usage is to avoid
+having one user deploy, say, 10 TB and then try to consume that much from
+the grid, swamping the rest of the servers.
+
+> > servers because the math of erasure coding works against you when the
+> > individual nodes are unreliable, and we ban co-located servers and
+prefer
+> > to minimize the number of servers owned and administered by a single
+person
+> > in order to ensure greater independence.
+> >
+> > How has that worked out?  Well, it's definitely constrained the growth
+rate
+> > of the grid.  We're two years in and still haven't reached 20 nodes.
+ And
+>
+> It doesn't surprise me at all, since I've never heard a single squeak
+> about it in the usual channels. (And I'm moderately well-informed
+> in such matters).
+
+I'm surprised.   It was definitely announced here when it was created, and
+discussed occasionally since.
+
+> > although our nodes have relatively high reliability, I'm not sure we've
+> > actually reached the 95% uptime target -- my node, for example, was down
+> > for over a month while I moved, and we recently had a couple of outages
+> > caused by security breaches.
+> >
+> > However, we do now have 15 solid, high-capacity, relatively available
+(90%,
+> > at least) nodes that are widely dispersed geographically (one in Russia,
+> > six in four countries in Europe, seven in six states in the US; not sure
+> > about the other).  So it's pretty good -- though we do need more nodes.
+>
+> How large is the total storage capacity? What about introducer nodes, is
+> there just one?
+
+Total storage capacity, as reported by the stats gatherer, is around 14 TB.
+ That's disk used (~6 TB) plus disk available (~8 TB).  As near as I can
+tell by eyeballing the graph and summing my estimates is that consumption
+grows by about 40 GB per day.  We have a helper but it's lightly used.
+ Only one introducer.  The node on the slowest network connection has about
+1 Mbps of bandwidth, two or three nodes are on gigabit links, most are 6-50
+Mbps, IIRC.  Hardware is similarly varied, with the low end being a small
+NAS box, the high end being some fairly powerful servers in data centers,
+and everything in between including some virtual servers.
+
+Upload performance, as measured from my machine (which has a 50 Mbps up,
+100 Mbps down connection), averages about about 300 KBps, before erasure
+coding, so with my settings I get around 100 KBps net upload rate.  I
+haven't done any download tests recently, but in the past they've been
+approximately the same as upload speeds, but without the erasure coding
+penalty.
+
+-- 
+
+Shawn
+
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+http://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

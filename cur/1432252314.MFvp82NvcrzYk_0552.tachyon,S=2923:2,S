@@ -1,0 +1,104 @@
+From owner-cypherpunks@jfet.org  Mon Jul 16 15:10:42 2007
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.13.8/8.13.8/Debian-3) with ESMTP id l6GJ9qjL013436
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 16 Jul 2007 15:09:52 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.8/8.13.8/Submit) id l6GJ9qYU013435
+	for cypherpunks-outgoing; Mon, 16 Jul 2007 15:09:52 -0400
+Mime-Version: 1.0
+Message-Id: <p0624088dc2c170bdf7d6@[68.167.57.91]>
+Date: Mon, 16 Jul 2007 15:00:40 -0400
+To: "Philodox Clips List" <clips@philodox.com>, cypherpunks@jfet.org,
+        dgcchat@dgcchat.com
+From: "R.A. Hettinga" <rah@shipwright.com>
+Subject: [freedmoney-svn] r247 - trunk/src/cash
+Content-Type: text/plain; charset="us-ascii"
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 1924
+Lines: 79
+
+--- begin forwarded text
+
+
+To: freedmoney-svn@freedmoney.org
+From: FreeDMoney SVN <rachel@freedmoney.org>
+Date: Mon, 16 Jul 2007 18:12:18 +0100
+Subject: [freedmoney-svn] r247 - trunk/src/cash
+Reply-To: freedmoney-dev@freedmoney.org
+Sender: freedmoney-svn-bounces@freedmoney.org
+
+Author: rachel
+Date: 2007-07-16 18:12:17 +0100 (Mon, 16 Jul 2007)
+New Revision: 247
+
+Modified:
+   trunk/src/cash/init.cxx
+Log:
+create directories before opening database
+
+
+Modified: trunk/src/cash/init.cxx
+===================================================================
+--- trunk/src/cash/init.cxx	2007-07-16 16:21:03 UTC (rev 246)
++++ trunk/src/cash/init.cxx	2007-07-16 17:12:17 UTC (rev 247)
+@@ -194,6 +194,18 @@
+     int count=0;
+
+     Db_Sqlite3 db;
++
++    // Create directories
++
++    if (!areDirsCreated())
++        {
++        std::cout << "Creating Dirs" << endl;
++        if (!create_dirs())
++            {
++            throw runtime_error("Cannot create Dirs");
++            }
++        }
++
+     db.open();
+
+     //
+@@ -246,17 +258,6 @@
+         db.Exec(sql);
+         }
+
+-    // Create directories
+-
+-    if (!areDirsCreated())
+-        {
+-        std::cout << "Creating Dirs" << endl;
+-        if (!create_dirs())
+-            {
+-            throw runtime_error("Cannot create Dirs");
+-            }
+-        }
+-
+     count=0;
+
+     // read issuer details from DB
+
+
+_______________________________________________
+freedmoney-svn mailing list
+freedmoney-svn@freedmoney.org
+http://www.freedmoney.org/mailman/listinfo/freedmoney-svn
+
+--- end forwarded text
+
+
+-- 
+-----------------
+R. A. Hettinga <mailto: rah@ibuc.com>
+The Internet Bearer Underwriting Corporation <http://www.ibuc.com/>
+44 Farquhar Street, Boston, MA 02131 USA
+"... however it may deserve respect for its usefulness and antiquity,
+[predicting the end of the world] has not been found agreeable to
+experience." -- Edward Gibbon, 'Decline and Fall of the Roman Empire'
+

@@ -1,0 +1,111 @@
+From owner-cypherpunks@Algebra.COM  Wed Sep 19 17:41:19 2001
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.mit.edu (8.11.6/8.9.3) with ESMTP id f8JLfJI32113
+	for <kwantam@positron.mit.edu>; Wed, 19 Sep 2001 17:41:19 -0400
+Received: from ak47.algebra.com (ak47.algebra.com [208.233.99.160])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id RAA26924
+	for <rsw@mit.edu>; Wed, 19 Sep 2001 17:34:58 -0400 (EDT)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f8JLMuq24182
+	for cypherpunks-outgoing; Wed, 19 Sep 2001 16:22:56 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from einstein.ssz.com (cpunks@einstein.ssz.com [204.96.2.99])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f8JLMsp24168
+	for <cypherpunks@algebra.com>; Wed, 19 Sep 2001 16:22:54 -0500
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id QAA32125
+	for cypherpunks@algebra.com; Wed, 19 Sep 2001 16:27:58 -0500
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id QAA32109
+	for cypherpunks-outgoing; Wed, 19 Sep 2001 16:27:48 -0500
+Received: from localhost (ravage@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) with SMTP id QAA32104
+	for <cypherpunks@einstein.ssz.com>; Wed, 19 Sep 2001 16:27:46 -0500
+Date: Wed, 19 Sep 2001 16:27:46 -0500 (CDT)
+From: Jim Choate <ravage@ssz.com>
+To: cypherpunks@einstein.ssz.com
+Old-Subject: CDR: Re: chip-level randomness?  (fwd)
+Message-ID: <Pine.LNX.3.96.1010919162740.15904Z-100000@einstein.ssz.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Reply-To: cypherpunks@ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Acceptable-Languages: English, Russian, German, French, Spanish
+Subject:  Re: chip-level randomness?  (fwd)
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+X-spam: 0 
+Status: O
+Content-Length: 3019
+Lines: 61
+
+
+
+---------- Forwarded message ----------
+Date: Wed, 19 Sep 2001 13:50:53 -0700
+From: John Gilmore <gnu@toad.com>
+To: Pawel Krawczyk <kravietz@aba.krakow.pl>
+Cc: Bram Cohen <bram@gawth.com>, cryptography@wasabisystems.com,
+    gnu@toad.com, tytso@mit.edu
+Subject: Re: chip-level randomness? 
+
+The real-RNG in the Intel chip generates something like 75 kbits/sec
+of processed random bits.  These are merely wasted if nobody reads them
+before it generates 75kbits more in the next second.
+
+I suggest that if application programs don't read all of these bits
+out of /dev/intel-rng (or whatever it's called), and the kernel
+/dev/random pool isn't fully charged with entropy, then the real-RNG
+driver should feed some of the excess random bits into the /dev/random
+pool periodically.  When and how it siphons off bits from the RNG is a
+separate issue; but can we agree that feeding otherwise-wasted bits
+into a depleted /dev/random would be a good idea?
+
+A better way to structure this might be for /dev/intel-rng to register
+with /dev/random as a source of entropy that /dev/random can call upon
+if it depletes its pool.  /dev/random would then be making decisions
+about when to stir more entropy into the pool (either in response to a
+read on /dev/random, or to "read ahead" to increase the available pool
+in between such reads).  Thus, when demand on /dev/random is high, it
+would become one of the "application programs" that would compete to
+read from /dev/intel-rng.  Since /dev/random is the defined interface
+for arbitrary applications to get unpredictable bits out of the
+kernel, I would expect that in general, /dev/random is likely to be
+the MAJOR consumer of /dev/intel-rng bits.
+
+(Linux IPSEC uses /dev/random or /dev/urandom for keying material.  It
+can easily consume many thousands of random bits per second in doing
+IKE's Diffie-Hellman to set up dozens of tunnels.  Today this "surge
+demand" occurs at boot time when setting up preconfigured tunnels -- a
+particularly bad time since the system hasn't been collecting entropy
+for very long.  /dev/intel-rng's high-spead stream can significantly
+improve the quality of this keying material, by replenishing the entropy
+pool almost as fast IPSEC consumes it.  Over time, IPSEC's
+long-term demand for random bits will increase, since opportunistic
+encryption allows many more tunnels to be created, with much less
+effort per tunnel by the system administrator.)
+
+Also, the PRNG in /dev/random and /dev/urandom may someday be broken
+by analytical techniques.  The more diverse sources of true or
+apparent randomness that we can feed into it, the less likely it is
+that a successful theoretical attack on the PRNG will be practically
+successful.  If even a single entropy source of sufficiently high
+speed is feeding it, even a compromised PRNG may well be unbreakable.
+
+	John
+
+
+
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

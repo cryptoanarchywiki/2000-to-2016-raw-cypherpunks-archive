@@ -1,0 +1,50 @@
+From owner-cypherpunks@lne.com  Mon Apr 21 18:29:28 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h3LMTRt19930
+	for <rsw@jfet.org>; Mon, 21 Apr 2003 18:29:27 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h3LMH8mB002495
+	for cypherpunks-goingout345; Mon, 21 Apr 2003 15:17:08 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Tue, 22 Apr 2003 00:16:48 +0200 (CEST)
+From: Thomas Shaddack <shaddack@ns.arachne.cz>
+X-X-Sender: <shad@Zeta>
+To: cypherpunks <cypherpunks@lne.com>
+Subject: Patches for SpeakFreely 7.5/Linux for handling of encryption
+  keys
+Message-ID: <Pine.LNX.4.33.0304220014550.31651-100000@Zeta>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 1104
+Lines: 24
+
+In Linux version, the encryption keys are supplied to the sfspeaker and
+sfmike processes as commandline parameters.
+
+This is fundamentally insecure, as the keys are then available for
+every user and process that can do "ps -ef" or has /proc access.
+
+Also, it would be beneficial for many settings if the program could read
+the keys from an external file. Then the key can be protected on the level
+of the filesystem, or even by complete hardware removal when not used (eg,
+storing the keys on a smartcard, removable USB drive, or a floppy). They
+also can be easier automatically distributed, eg. by scp.
+
+I wrote some modifications for version 7.5, which solves both problems.
+If the key value begins with @, it's interpreted as a file name. After
+reading the key value, the parameters accessible via /proc and ps are
+overwritten in memory and destroyed. The patches are tested for only the
+IDEA encryption, but the code is identical for the other options.
+
+The patches for sfmike and sfspeaker are available from
+<http://213.246.91.154/patches/speakfreely/>.
+
+Enjoy. :)
+
+    Shaddack, the Mad Scientist
+

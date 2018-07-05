@@ -1,0 +1,119 @@
+From owner-cypherpunks@al-qaeda.net  Sun Dec  4 05:54:35 2011
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id pB4Am1iV015273
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sun, 4 Dec 2011 05:48:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1322995681;
+	bh=092323GSw0T+JjoE93MDoYYXJ4y8WVngCS9VFsXmYTo=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=YyEJzLXhQjr3XnFDzx5nZvxV78EJDikNKz+0D9PEClCBDAMEjg+OXDaajgKOwsMOR
+	 LySbG3o8beAYgIBYTKQ7VdD+rtG3FSIB7mpyPUjuaWl8znPXnszqhj2poxibinN3Vk
+	 4R9Mrdb8vYxb50DV5NKKpkvgtQ6gce9jK1xpnlac=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id pB4Am1jv015272
+	for cypherpunks-outgoing; Sun, 4 Dec 2011 05:48:01 -0500
+Date: Sun, 4 Dec 2011 11:47:57 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Re: [cryptography] really sub-CAs for MitM deep packet
+  inspectors? 	(Re: Auditable CAs)
+Message-ID: <20111204104757.GD31847@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4316
+Lines: 86
+
+I will cease forwarding this thread as it just increases 
+the local noise. Anyone who's interested can subscribe to the list
+directly.
+
+Feel free to point me towards other relevant lists, I will subscribe
+there and digest relevant threads to here.
+
+----- Forwarded message from Ondrej Mikle <ondrej.mikle@nic.cz> -----
+
+From: Ondrej Mikle <ondrej.mikle@nic.cz>
+Date: Sun, 04 Dec 2011 09:18:06 +0100
+To: cryptography@randombit.net
+Subject: Re: [cryptography] really sub-CAs for MitM deep packet inspectors?
+	(Re: Auditable CAs)
+User-Agent: Mozilla/5.0 (X11; U; Linux x86_64; en-US;
+	rv:1.9.2.15) Gecko/20110409 Lightning/1.0b2 Thunderbird/3.1.9
+
+This thread is amazing. I've known just a fractions/hints of the practices
+described here. Few comments/questions inline/below.
+
+On 12/04/11 07:37, Lucky Green wrote:
+> Concur. The standard sub-CA contracts contain a right to audit the
+> number of certs issued, like any enterprise-wide software license
+> agreement does include a right to audit used seats. Not once in over 30
+> years have I seen such an audit performed. There is no reason to audit:
+> when you buy a sub-CA, the public CA's rep will work out a contract that
+> gives you the right to use as many certs and more as you conceivably
+> could use given the application to which you plan to put the sub-CAs.
+> Keeping count of actual certs issued would only add cost to both the
+> sub-CA customer and the root CA provider. There is simply no business
+> case for auditing the number of certs issued.
+
+On 12/02/11 11:02, Peter Gutmann wrote:
+> It's not just a claim, I've seen them too.  For example I have a cert issued
+> for google.com from such a MITM proxy.  I was asked by the contributor not to
+> reveal any details on it because it contains the name and other info on the
+> intermediate CA that issued it, but it's a cert for google.com used for deep
+> packet inspection on a MITM proxy.  I also have a bunch of certs from private-
+> label CAs that chain directly up to big-name public CAs, there's no technical
+> measure I can see in them anywhere that would prevent them from issuing certs
+> under any name.
+
+How do MitM boxes react when they MitM connection to a server with self-signed
+cert (or cert issued by an obsure CA not trusted by MitM box)? Do the boxes send
+to client also an auto-generated self-signed cert that generates warning or
+"re-sign" it so that client sees valid chain?
+
+MitM-re-signing an unverifiable chain of server to a chain that's trusted at the
+MitM-ed client would be hilarious, allowing to MitM a MitM box (though this
+would be an easily avoidable mistake to make).
+
+Given the state of security/auditing of "private sub-CAs" as described, was
+there ever a report of a breach (e.g. stolen key, fraudulently issued certs)?
+
+<blatant_CA_bashing>
+While chasing data from my scans around, I checked history of few CAs. Most
+oddly hilarious "trusted" CA is probably SAIC (Science Applications
+International Corporation). Reason: SAIC led the development of Trailblazer
+Project for NSA (in my book this tops much-too-obvious CAs of other TLA agencies).
+Also, Network Solutions, L.L.C (also a CA) was owned by SAIC at some time.
+Later, Network Solutions did not acquire exactly "good guy" reputation.
+Don't get me wrong: I'm not claiming either of the mentioned CAs did anything
+egregious subverting CA-trust placed in them. I have no intention to single them
+out as "shady", additional search would turn up many more CAs.
+</blatant_CA_bashing>
+
+
+Hypothetical question: assume enough people get educated how to spot the MitM
+box at work/airport/hotel. Let's say few of them post the MitM chains publicly
+which point to a big issuing CA. It was said (by Peter I think) that nothing
+would likely happen to big issuing CAs (too-big-to-fail). Would the MitM-ing
+sub-CAs take the fall? (lose license and invested funds)
+
+
+Ondrej
+_______________________________________________
+cryptography mailing list
+cryptography@randombit.net
+http://lists.randombit.net/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

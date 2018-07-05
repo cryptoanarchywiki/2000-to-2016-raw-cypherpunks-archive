@@ -1,0 +1,127 @@
+From owner-cypherpunks@al-qaeda.net  Sat Nov 27 01:57:54 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.1/8.13.1/Debian-17) with ESMTP id iAR7ugjv010698
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Sat, 27 Nov 2004 01:56:42 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.1/8.13.1/Submit) id iAR7ug7D010697
+	for cypherpunks-outgoing; Sat, 27 Nov 2004 01:56:42 -0600
+Date: Sat, 27 Nov 2004 08:52:00 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: RE: [p2p-hackers] Why UDP and not TCP? (fwd from
+  travis@redswoosh.net)
+Message-ID: <20041127075200.GX1457@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.4i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+X-Keywords:                  
+X-UID: 13786
+Status: O
+Content-Length: 3787
+Lines: 97
+
+----- Forwarded message from Travis Kalanick <travis@redswoosh.net> -----
+
+From: "Travis Kalanick" <travis@redswoosh.net>
+Date: Fri, 26 Nov 2004 18:14:16 -0800
+To: "'Peer-to-peer development.'" <p2p-hackers@zgp.org>
+Subject: RE: [p2p-hackers] Why UDP and not TCP?
+X-Mailer: Microsoft Office Outlook, Build 11.0.5510
+Reply-To: travis@redswoosh.net,
+	"Peer-to-peer development." <p2p-hackers@zgp.org>
+
+David,
+
+The main reason P2P is moving toward reliable-flow-controlled-UDP is that
+UDP allows for widely available straight forward techniques to route around
+NATs in NAT-to-NAT file delivery scenarios.
+
+I believe this was covered in the thread, but it may be such common
+knowledge by now that we only refer to it implicitly.
+
+Mangling TCP to implement similar traversal techniques is a substantially
+more difficult task.  Though not impossible at all, it's a tricky bit of
+hacking you'll need to do to make it work.
+
+Travis
+
+-----Original Message-----
+From: p2p-hackers-bounces@zgp.org [mailto:p2p-hackers-bounces@zgp.org] On
+Behalf Of David Barrett
+Sent: Friday, November 26, 2004 5:45 PM
+To: P2P Hackers
+Subject: [p2p-hackers] Why UDP and not TCP?
+
+We've had a long-ranging discussion on how to overcome UDP's inherently
+unreliable nature, but I'm confused: what overwhelming benefits do you see
+to UDP that can't be found in TCP?
+
+Elsewhere, I've heard the general arguments:
+
+1) UDP is faster (ie, lower latency)
+2) UDP is more efficient (ie, lower bandwidth)
+3) UDP is easier (ie, no TCP shutdown issues)
+4) UDP is more scalable (ie, no inbound connection limits)
+
+However, it seems these arguments are only really true if in the
+application: (from http://www.atlasindia.com/multicast.htm)
+
+- Messages require no acknowledgement
+- Messages between hosts are sporadic or irregular
+- Reliability is implemented at the process level.
+
+Reliable file transfer (the impetus for our discussion, I think) doesn't
+seem to be a good match for the above criteria.  Indeed, it would seem to me
+that in this situation:
+
+1) Latency is less important than throughput
+2) TCP/UDP are similarly efficient because the payload will likely dwarf any
+packet overhead
+3) A custom reliability layer in software is harder than a standardized,
+worldwide, off-the-shelf reliability layer implemented in hardware
+4) The user will run out of bandwidth faster than simultaneous TCP inbound
+connections.
+
+At least, that's what my view tells me.  What am I missing?  Is there
+another angle to the UDP/TCP protocol selection that I'm not seeing?  I've
+seen mention of congestion -- does UDP somehow help resolve this?
+Alternatively, do you find yourself forced to use UDP against your will?
+
+I really don't want to start a religious war, but I would like to know what
+holes exist in my reasoning above.  Thanks!
+
+-david
+
+_______________________________________________
+p2p-hackers mailing list
+p2p-hackers@zgp.org
+http://zgp.org/mailman/listinfo/p2p-hackers
+_______________________________________________
+Here is a web page listing P2P Conferences:
+http://www.neurogrid.net/twiki/bin/view/Main/PeerToPeerConferences
+
+_______________________________________________
+p2p-hackers mailing list
+p2p-hackers@zgp.org
+http://zgp.org/mailman/listinfo/p2p-hackers
+_______________________________________________
+Here is a web page listing P2P Conferences:
+http://www.neurogrid.net/twiki/bin/view/Main/PeerToPeerConferences
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a>
+______________________________________________________________
+ICBM: 48.07078, 11.61144            http://www.leitl.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+http://moleculardevices.org         http://nanomachines.net
+
+[demime 1.01d removed an attachment of type application/pgp-signature]
+

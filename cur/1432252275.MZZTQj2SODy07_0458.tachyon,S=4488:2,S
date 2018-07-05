@@ -1,0 +1,98 @@
+From owner-cypherpunks-outgoing@EINSTEIN.ssz.com  Mon Nov 20 11:03:33 2000
+Received: from MIT.EDU (SOUTH-STATION-ANNEX.MIT.EDU [18.72.1.2])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id LAA28344
+	for <kwantam@positron.mit.edu>; Mon, 20 Nov 2000 11:03:32 -0500
+Received: from einstein.ssz.com by MIT.EDU with SMTP
+	id AA02328; Mon, 20 Nov 00 11:02:57 EST
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id KAA00847
+	for cypherpunks-outgoing; Mon, 20 Nov 2000 10:01:02 -0600
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id JAA00136
+	for cypherpunks@ssz.com; Mon, 20 Nov 2000 09:49:50 -0600
+Received: from mail.virtual-estates.net (root@video-collage.com [160.79.196.177])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id JAA32751
+	for <cpunks@ssz.com>; Mon, 20 Nov 2000 09:48:56 -0600
+Received: (from cpunks@localhost)
+	by mail.virtual-estates.net (8.9.3+3.2W/8.9.1) id OAA02568;
+	Sun, 19 Nov 2000 14:15:58 -0500 (EST)
+X-Authentication-Warning: video-collage.com: Processed from queue /var/spool/mqueue-majordomo
+X-Authentication-Warning: video-collage.com: Processed by cpunks with -C /usr/local/majordomo/sendmail.cf
+Received: from marine.sonic.net (marine.sonic.net [208.201.224.37])
+	by mail.virtual-estates.net (8.9.3+3.2W/8.9.3) with SMTP id OAA02558
+	for <cypherpunks@algebra.com>; Sun, 19 Nov 2000 14:15:56 -0500 (EST)
+X-Relay-Ip: 208.201.224.37
+Received: (qmail 25899 invoked from network); 19 Nov 2000 19:15:40 -0000
+Received: from prop.sonic.net (208.201.224.193)
+  by marine.sonic.net with SMTP; 19 Nov 2000 19:15:40 -0000
+Received: from sonic.net (bolt [208.201.224.36])
+	by prop.sonic.net (8.11.0/8.8.5) with ESMTP id eAJJFeh01476;
+	Sun, 19 Nov 2000 11:15:40 -0800
+X-Envelope-Info: <bear@bolt.sonic.net>
+Received: from localhost (bear@localhost) by sonic.net (8.11.0/8.7.3) with ESMTP id eAJJFRM12438; Sun, 19 Nov 2000 11:15:27 -0800
+Date: Sun, 19 Nov 2000 11:15:27 -0800 (PST)
+From: Ray Dillinger <bear@sonic.net>
+To: cryptography@c2.net
+Cc: cypherpunks@algebra.com
+Old-Subject: Key-Address correspondence in networks?
+Message-Id: <Pine.LNX.4.21.0011191046240.7899-100000@bolt.sonic.net>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Subject: CDR: Key-Address correspondence in networks?
+Sender: owner-cypherpunks@EINSTEIN.ssz.com
+Precedence: bulk
+Reply-To: cypherpunks@EINSTEIN.ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Language: English, Russian, German
+Status: O
+Content-Length: 1969
+Lines: 45
+
+
+I want to run this idea past some knowledgeable people and see if 
+it looks like a good idea.... 
+
+In an application which passes encrypted messages from one host to 
+another, it is desirable to have the message differently encrypted 
+at each 'hop' along the way (to defeat traffic analysis).  But, this 
+link-to-link encryption requires keeping track of an enormous number 
+of keys, and that introduces complexity which a cracker could use 
+to get into the system.  
+
+Bluntly, after reviewing PKI and x.509 certs, I don't think that 
+there is a sufficient reason to trust that the machine I'm talking 
+to is actually the machine its cert claims it to be.
+
+The proposal is to use longer keys for each machine, and have the 
+IP address of each machine be part of its key.  (or in another 
+network environment, assign it an "address" which happens to *be* 
+its key...)  
+
+
+That way, you can instantly spot at least one class of bogus 
+requests and constrict the possibilities for an attacker.  
+(ie, "if the key presented does not match the address it's 
+presented for, refuse no matter what DNS or the key database 
+say about the name-to-key correspondence and the name-to-entity 
+correspondence".)  
+
+Note, these keys are for asymmetric encryption - probably elliptic-
+curve or RSA.  The IP address will be on the public-key side.  The 
+actual packets will be encrypted under a symmetric algorithm, with 
+the key for the packet encrypted under the asymmetric algorithm and 
+transmitted with it. 
+
+My questions: 
+   1)  Is using a longer key just paranoia in this case, or is there 
+       an actual weakness in constricting the choice of public key
+       that makes the private key easier to derive?  
+
+   2)  Is there a reasonable class of attacks and spoofs that this 
+       protects against?
+
+   3)  If so, does this protection make the system noticeably harder 
+       to break? (ie, does it protect against what would otherwise be 
+       the easiest attacks?)
+

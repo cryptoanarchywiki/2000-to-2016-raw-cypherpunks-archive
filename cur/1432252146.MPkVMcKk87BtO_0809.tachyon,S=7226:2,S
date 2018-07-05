@@ -1,0 +1,137 @@
+From owner-cypherpunks@lne.com  Tue Apr 22 20:23:02 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h3N0Mxt26128
+	for <rsw@jfet.org>; Tue, 22 Apr 2003 20:22:59 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h3N0FpZu012059
+	for cypherpunks-goingout345; Tue, 22 Apr 2003 17:15:51 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+X-envelope-info: <bill.stewart@pobox.com>
+Message-Id: <5.1.1.6.2.20030422144939.02c848c8@idiom.com>
+X-Sender: wcs@idiom.com
+X-Mailer: QUALCOMM Windows Eudora Version 5.1.1
+Date: Tue, 22 Apr 2003 16:12:34 -0700
+To: cypherpunks@lne.com
+From: Bill Stewart <bill.stewart@pobox.com>
+Subject: Re: Internet dies if GPS dies?   Nah.
+In-Reply-To: <3EA3751E.F351B335@cdc.gov>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 6130
+Lines: 109
+
+Variola quoted and commented:
+ > > [If GPS dies] "Internet activity would slow to a crawl, because many
+ > >   backbone operators rely on precise GPS time stamps to route data. "
+ > > http://www.wired.com/wired/archive/11.05/start.html?pg=6
+ > Sounds like bullshit to me, data clocks should be able to run without
+ > being fully synched externally, constantly.
+
+There are at least three interesting GPS failure modes
+- Whole system fails at once
+- Whole system becomes less accurate
+- Local areas get jammed
+The article's talking about a failure mode where the satellites
+gradually wear out over a couple of years and nobody replaces them.
+ From a telco perspective, this is annoying, because GPS is cheaper
+and better than what we used to do before we adopted it about 5 years ago,
+and we've got a few hundred billion dollars less ready cash then we did then,
+and the people who really knew synchronization well have mostly retired
+or moved to dotcoms, but we could always hire enough of them back to do the job
+for a lot less money than it would take to redesign GPS,
+on the off-chance that we haven't replaced enough of the old phone 
+infrastructure with VOIP
+for it to simply Not Matter by then.  It's not like this is Air Traffic 
+Control.
+
+[Summary:  If you blew GPS out of the sky without warning,
+major telco synchronization would degrade a bit but not much,
+voice calls would be more likely to get noise, but not much,
+internet connections might have a fractional percent more TCP retransmits,
+and a random number of things that didn't have other timing sources would break
+until people fixed them.  Cell phone systems are the big telecom uncertainty,
+and of course Air Traffic Control, nuclear missiles, and similar apps.]
+
+As Tyler said, SONET synchronization is a complex topic,
+and telco synchronization is more complex than that.
+There are two basically separate problems
+- timestamping / NTP Network Time Protocol, used by lots of Internet stuff,
+	because ISPs sometimes need to know what time it is.
+- synchronization used in synchronous telco transmission media,
+	which doesn't care about time of day, just about phase.
+	ISPs care about this because they don't like lots of dropped bits,
+	but it takes a lot of dropped bits to really bother TCP.
+
+Everybody uses GPS for everything these days, because they _can_,
+but high-end GPS equipment is about 5 orders of magnitude more accurate
+than the most demanding NTP things ISPs use it for,
+and cheap GPS equipment usually gets you millisecond precision,
+which is about 3 orders of magnitude more than most things care about,
+and most of them don't care very much.  WWV radio clocks were Really Just Fine,
+and ISPs who needed better clocking could build decent NTP systems.
+
+Routers don't care much about phase, because each T1 or fiber interface
+usually gets timing from the transmission line independently.
+
+Voice transmission equipment cares more about phase,
+because it uses Time Division Multiplexing to switch the voice bits,
+so a whole voice switch runs on the same clock source -
+it it's talking to somebody else whose clock is different and
+drifts by more than the line buffers can fix, it drops a frame of bits
+or adds a frame of 0s, which will cause brief noise on voice calls
+or trash one or two data packets.  Telcos care about this because they
+not only care about voice quality, they have SLAs with customers
+for the number of errored seconds per day/month/etc.
+that cost money that cost money if they don't meet them,
+but it takes a lot to get down to cell-phone-in-traffic quality.
+
+Telecom sync equipment is categorized in different strata,
+and normally a box will have a clock that accepts timing from outside
+and has a Stratum-N-quality holdover clock inside that's guided by the feed.
+There are lots of different ways to measure the accuracies of these things.
+A Stratum 1 clock is whatever master timing source you're using,
+and a Stratum 2 clock is supposed to be able to hold its own for about 5 days
+before the first slip and not do more than a slip every couple hours after 
+that.
+A Stratum 3 clock can slip about 10/hour the first day and 132/hour 
+free-running.
+SONET needs somewhere between Stratum 3 and Stratum 4 to stay connected.
+The best timing feeds between buildings run on copper T1s, not fiber.
+GPS is Stratum 1 quality, as long as you've got a good holdover clock,
+typically Stratum 2 quality for telco offices.
+
+A decade ago, a main AT&T, MCI, or Sprint office would have
+a feed from a Stratum 1 source, and a Stratum 2 clock of its own,
+and would feed a bunch of smaller offices which had their own clocks.
+MCI and Sprint tended to use Loran for some of their timing sources;
+AT&T used really expensive clocks in main offices, and had more offices.
+An important concept for AT&T is the Building Integrated Timing Source -
+there's a master clock for each building that feeds all the hardware.
+Most of the other professional telcos do something similar;
+I'm not sure if all the upstart newcomers do.
+Since then, most AT&T offices have their own GPS clock,
+except a few percent with Bad Radio Magic or building issues
+which get fed by other nearby offices.
+I'm not sure how local telcos get their timing - presumably a similar
+combination of GPS, local clocks, and feeds.  They have more small offices
+which are closer together, but also the clocks keep getting cheaper.
+
+Cellular systems are the main telco case I don't understand;
+some of the newer systems care much more about timing,
+but the application that needs the most precision is 911 location,
+because that needs to triangulate between multiple offices
+as opposed to just handing off calls at the optimum time to avoid drops.
+It's possible that something could go wrong here,
+but I'd guess that cell towers are also more likely to be fed by copper T1s,
+which would give them excellent sync if they need it.
+(GPS is also useful for finding the precise location of a tower,
+which phone-locator ICBM-delivery apps care about,
+but you only need to do that once; the things don't move except in 
+earthquakes.)
+at least with some of the newer systems, but I'd be surprised.
+

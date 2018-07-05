@@ -1,0 +1,53 @@
+From owner-cypherpunks@al-qaeda.net  Tue Mar 22 11:43:19 2005
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.3/8.13.3/Debian-9) with ESMTP id j2MHhDoo006631
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Tue, 22 Mar 2005 11:43:13 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.3/8.13.3/Submit) id j2MHhD0h006629
+	for cypherpunks-outgoing; Tue, 22 Mar 2005 11:43:13 -0600
+Date: Tue, 22 Mar 2005 10:42:04 -0700
+From: Jack Lloyd <lloyd@randombit.net>
+To: "cypherpunks@al-qaeda.net" <cypherpunks@al-qaeda.net>
+Subject: Re: FW: on FPGAs vs ASICs
+Message-ID: <20050322174204.GA4156@randombit.net>
+Mail-Followup-To: "cypherpunks@al-qaeda.net" <cypherpunks@al-qaeda.net>
+References: <423F841F.67E5A187@cdc.gov>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <423F841F.67E5A187@cdc.gov>
+X-PGP-Fingerprint: 3F69 2E64 6D92 3BBE E7AE 9258 5C0F 96E8 4EC1 6D6B
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 1328
+Lines: 25
+
+On Mon, Mar 21, 2005 at 06:34:07PM -0800, Major Variola (ret) wrote:
+
+> Tangentially, I should note that there are "modes of encryption" which can be
+> scaled infinitely with parallel hardware; they use interleaved blocks so each
+> chip sees every Nth block of the real stream.  So high clock rates are not
+> required to crypt.
+
+Counter mode works this way, and is a fairly common mode in any case.
+
+> It seems that hashing can be parallelized that way too, run a hash-chip on
+> every Nth bit, and hash those partial results.  Both ends have to agree on
+> the N-way division (as with the infinitely scalable crypto) but that's all.
+
+Depending on the interconnect it would probably be faster to do it in blocks of
+8-64k, doing it a bit at a time would eat your standard PCI bus alive.
+
+There are message authentication modes which can scale 'infinitely' (assuming a
+sufficiently long message), and don't depend on the number of functional units,
+so for example I could generate a MAC using my regular single core CPU and you
+could verify it on a machine with N functional units with a cooresponding
+speedup of N (modulo some fixed per-message overhead) without us having to
+agree on anything in advance. For example there is the MAC used in Rogoway's
+OCB. Unfortunately most (all?) of these algorithms have been patented.
+
+-Jack
+

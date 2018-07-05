@@ -1,0 +1,99 @@
+From owner-cypherpunks@al-qaeda.net  Tue Nov 27 01:18:56 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id qAR6FX7g003401
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 27 Nov 2012 01:15:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1353996933;
+	bh=BQmZa7wShRskbOijrzlWuR5ZC12CEnF67uzJCZVOeq0=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=3462juX/hbtbPYJF99oMZUvrYpGE4Cxk1HiaCfLO+walfksh/tVYCJmUH6uKhih7Z
+	 2oU9qB3BpsZ1bohMYC025d/fmZLEyrn5Typp6WLWqvt6onvJGaOX64uP4uYEXXpM+s
+	 SkgmdmTMsxYJvBPUyo0scGhz8F3yn/jPaYgmPHMY=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id qAR6FXqX003400
+	for cypherpunks-outgoing; Tue, 27 Nov 2012 01:15:33 -0500
+Date: Tue, 27 Nov 2012 07:15:29 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, serval-project-developers@googlegroups.com
+Subject: Re: Adding GPS location to IPv6 header
+Message-ID: <20121127061529.GG9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3101
+Lines: 67
+
+----- Forwarded message from William Herrin <bill@herrin.us> -----
+
+From: William Herrin <bill@herrin.us>
+Date: Mon, 26 Nov 2012 18:45:23 -0500
+To: Harald Koch <chk@pobox.com>
+Cc: NANOG list <nanog@nanog.org>
+Subject: Re: Adding GPS location to IPv6 header
+
+On Mon, Nov 26, 2012 at 5:46 PM, Harald Koch <chk@pobox.com> wrote:
+> On 26 November 2012 17:36, William Herrin <bill@herrin.us> wrote:
+>> Suppose you have a large single-owner mesh network, such as a folks
+>> walking around with cell phones. If you want them to have a stable
+>> layer 3 address (and you do) then you're handling what amounts to /128
+>> routes for tens of millions of devices. If you can guarantee that any
+>> packet *to* that address also contains a rough geographic location
+>> then you can discard any routes internally once they're more than a
+>> short geographic distance from the origin and route on the geography
+>> until you're close enough to find a specific /128 route. Tens of
+>> millions of routes is no problem if no single router needs to know
+>> more than a few thousand of them.
+>>
+>> By putting geographic location at layer 3, you're also handling it end
+>> to end which means you don't need a stateful border device to track
+>> the current location of all of those /128 routes. The device itself
+>> doesn't need to add location if it doesn't have the data; it's good
+>> enough for the receiving tower to attach a rough location.
+
+> This also naively assumes that wireless network topology correlates with
+> geographic location. Any radio engineer (or cell phone user) can explain
+> why that doesn't work.
+
+No. It assumes that the /128 route propagates far enough that every
+router (read: radio tower) operated by the service provider within the
+rough geographic locality has that route so that wherever the packet
+lands in the general area, it can make its way to the origin router
+currently talking to the device. It makes no assumptions about the
+particular path or paths between those two routers which could be
+terrestrial radio, satellite, wired or even a VPN across who knows
+what Internet path. It does set a requirement on the network
+architecture that at least one such path must exist: network
+partitions appear deadly to this architecture.
+
+
+I'm not saying this is a good idea. I'm just saying it's a legitimate
+topic for research and investigation which, if it shows any promise,
+would support the addition of a geolocation option header to IPv6's
+layer 3. By contrast, Ammar's other rationale for why to put it there
+(common interest at layer 7) aren't legitimate reasons for adding data
+to layer 3.
+
+Regards,
+Bill Herrin
+
+
+
+
+-- 
+William D. Herrin ................ herrin@dirtside.com  bill@herrin.us
+3005 Crane Dr. ...................... Web: <http://bill.herrin.us/>
+Falls Church, VA 22042-3004
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

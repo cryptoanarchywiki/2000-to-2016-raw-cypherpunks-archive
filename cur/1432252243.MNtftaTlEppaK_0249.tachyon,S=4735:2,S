@@ -1,0 +1,95 @@
+From rsw@jfet.org  Wed May 28 17:24:11 2003
+Return-Path: <rsw@jfet.org>
+Received: from neurosis.jim.sh (NEUROSIS.MIT.EDU [18.243.0.82])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h4SLOAq01633
+	for <rsw@opamp.org>; Wed, 28 May 2003 17:24:10 -0400
+Received: (from rsw@localhost)
+	by neurosis.jim.sh (8.11.4cr/8.11.4) id h4T1Ukl02762
+	for rsw@opamp.org; Wed, 28 May 2003 21:30:46 -0400
+Resent-From: Riad Wahby <rsw@jfet.org>
+Resent-Message-Id: <200305290130.h4T1Ukl02762@neurosis.jim.sh>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by neurosis.jim.sh (8.11.4cr/8.11.4) with ESMTP id h4SJh8f31764
+	for <rsw@jfet.org>; Wed, 28 May 2003 15:43:08 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h4SJYHme012346
+	for cypherpunks-goingout345; Wed, 28 May 2003 12:34:17 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Message-Id: <5.2.0.9.0.20030527154159.04531df0@pop.ix.netcom.com>
+X-Sender: kelsey.j@pop.ix.netcom.com
+X-Mailer: QUALCOMM Windows Eudora Version 5.2.0.9
+Date: Tue, 27 May 2003 15:53:33 -0400
+To: "Dave Howe" <DaveHowe@gmx.co.uk>,
+   "Email List: Cypherpunks"
+  <cypherpunks@lne.com>
+From: John Kelsey <kelsey.j@ix.netcom.com>
+Subject: Re: RSA/DSA questions
+In-Reply-To: <005401c3215b$523e21d0$c71121c2@exchange.sharpuk.co.uk>
+References: <20030523163024.GB28656@afflictions.org>
+  <017c01c3214c$714f0120$c71121c2@exchange.sharpuk.co.uk>
+  <20030523171706.GE28656@afflictions.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Resent-Date: Wed, 28 May 2003 21:30:46 -0400
+Resent-To: rsw@opamp.org
+Status: O
+Content-Length: 2961
+Lines: 53
+
+At 07:44 PM 5/23/03 +0100, Dave Howe wrote:
+...
+>Indeed so - but saying that (in their opinion) RSA IS implimented better and
+>more securely in puTTY than DSA can hardly be the same as saying DSA should
+>be avoided. As I understand it, the problem with DSA is that it is *very*
+>dependent on the random number being random (collisions leading to
+>weaknesses) - and everyone knows that windows is bad at RNG. What (as I
+>understand it) the new putty scheme does is use the secret key to obfusc the
+>random value a little - hashing it with both the private key and the hash of
+>the message being signed - hoping to pull enough entropy out of those two to
+>reduce the possibility of discovery of the random value due to it being
+>limited to a subset of the "range" it should have. obviously, this approach
+>won't produce gold from straw - you still have a limited set of possible
+>values - but it should distribute them evenly across the range in a
+>key-dependent manner, so that knowlege of the limited possible values would
+>have to be per-key or involve knowledge of the private key (which is a
+>game-over scenario anyhow)
+
+If you're willing to make some plausible assumptions about SHA1, you can do 
+this with a lot of confidence.  SHA1(secret_key || hash(message)) is 
+deterministic, but an attacker who doesn't know secret_key cannot 
+distinguish it from random, and so can't predict it.  Conditioned on the 
+attacker's knowledge and computing resources, the random number generated 
+in this way is uniformly distributed.
+
+This depends on an (IMO) unprovable assumption about SHA1: that the 
+expected work needed to predict its output is approximately bounded by the 
+lower of 2^{160} or the expected work needed to guess its input.
+
+FIPS186 (the document that specifies DSA) proposes a cryptographic 
+pseudorandom number generator for use with DSA.  That PRNG depends on 
+more-or-less the same property, though it only uses SHA1's compression 
+function.
+
+There was a Eurocrypt article describing this kind of idea a couple of 
+years back, though I think they did something a little more mathematically 
+clean than relying on SHA1 directly.  (I'm away from my books, so you'll 
+have to look it up yourself if you're interested.)
+
+>so my understanding of the above warning is that the games puTTY plays with
+>the keyspace is *probably* enough to fix the lousy randomness of the windows
+>platform - but they recommend that you use RSA where the randomness of a
+>prng is not an issue.
+
+RSA doesn't need randomness in generating signatures, though if you're 
+generating the keypair on the same device, you really need to have some 
+confidence in your random numbers, or you'll shoot yourself in the 
+foot.  And if you want to blind RSA to prevent timing and some power 
+analysis attacks, you'll need to have a source of random or cryptographic 
+pseudorandom numbers.
+
+--John Kelsey, kelsey.j@ix.netcom.com
+PGP: FA48 3237 9AD5 30AC EEDD  BBC8 2A80 6948 4CAA F259
+

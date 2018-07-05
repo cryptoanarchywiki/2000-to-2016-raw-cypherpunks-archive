@@ -1,0 +1,182 @@
+From cypherpunks-bounces@cpunks.org  Mon Sep  9 06:04:28 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r89A2FN1011777;
+	Mon, 9 Sep 2013 06:02:15 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r899wnhv011669
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Mon, 9 Sep 2013 05:58:51 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 68163541F9C; Mon,  9 Sep 2013 11:58:49 +0200 (CEST)
+Date: Mon, 9 Sep 2013 11:58:49 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: Re: [cryptography] urandom vs random
+Message-ID: <20130909095849.GH10405@leitl.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature"; boundary="NZtAI5QFBF0GmLcW"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 5383
+Lines: 143
+
+
+--NZtAI5QFBF0GmLcW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+----- Forwarded message from coderman <coderman@gmail.com> -----
+
+Date: Sun, 8 Sep 2013 22:35:02 -0700
+=46rom: coderman <coderman@gmail.com>
+To: David Johnston <dj@deadhat.com>
+Cc: Discussion of cryptography and related <cryptography@randombit.net>
+Subject: Re: [cryptography] urandom vs random
+
+On Sun, Sep 8, 2013 at 9:57 PM, David Johnston <dj@deadhat.com> wrote:
+> ...
+> I've argued in private (and now here) that a large entropy pool is a natu=
+ral
+> response to entropy famine and uneven supply, just like a large grain dep=
+ot
+> guards against food shortages and uneven supply.
+
+this is a good analogy :)
+
+
+> ... The natural size for the state
+> shrinks to the block size of the crypto function being used for entropy
+> extraction
+
+for best effective performance, it seems memory bus(es) constrains the
+optimal transmission unit size.
+4k extended instructions providing more throughput than repeated
+instructions at 512bit chunks.
+
+the worst case scenarios, you're passing entropy directly into AES
+native instructions, and/or onward to PCIe lanes...
+
+
+> This is one of the things that drove the design decisions in the RdRand
+> DRNG. With 2.5Gbps of 95% entropic data, there is no value in stirring the
+> data into a huge pool (E.G. like Linux)
+
+you keep coming back to this assumption that RDRAND is entirely
+trusted and always available.
+
+consider adding additional entropy sources like USB keys, scavengers
+like Dakarand or Haveged, and so forth.
+
+conversely to your argument, there is no harm in aggressively mixing a
+large pool with a high rate hardware entropy source. if you are one of
+the worst case scenarios, like seeding an entire new volume for full
+disk encryption with entropy, then you can manage accordingly and cut
+out the OS level, kernel pool middle man, system call boundary, and
+other overhead accordingly.
+
+
+> A consequence of Linux having a big pool is that the stirring algorithm is
+> expensive because it has to operate over a many bits.
+
+but not effectively expensive!
+
+again, i find very few the situations in which my modern processor is
+unable to keep a properly refilled aggressively reseeded /dev/random
+up to any demanded rate of consumption for high speed network
+services, common client side uses, most key generation, and so forth.
+
+if you are one of the worst case scenarios, like seeding an entire new
+volume for full disk encryption with entropy, then you can manage
+accordingly and cut out the OS level, kernel pool middle man, system
+call boundary, and other overhead
+
+
+> When I count my raw data in bits per second, rather than gigabits per
+> second, I am of course going to use them efficiently and mix up a large p=
+ot
+> of state, so I can get maximum utility. With the RdRand DRNG, the bus is =
+the
+> limiting factor, not the supply or the pool size.
+
+fair enough, but consider the inverse, particularly for a skeptical
+audience knowing what we do now:
+
+why not mix aggressively with multiple sources if you have the CPU budget?
+
+why not provide access to the raw, un-mixed, un-encrypted,
+un-whitened, un-obfuscated state of the raw entropy bits for those so
+inclined to use it in such a manner?
+
+
+efforts to drive RDRAND into direct use instead of the kernel entropy
+pool in the linux kernel,
+
+efforts to steadfast refuse access to the raw entropy stream,
+
+are thus viewed with elements of suspicion and provide an air of lack
+of credibility.
+
+
+even with all of these concerns, i have publicly said and will
+continue to assert, using RDRAND is better than nothing. the current
+state of entropy on most operating systems and especially virtual
+machine environments on these operating systems, is very poor.
+
+it is just a shame this resource cannot be used to greater utility and
+confidence, as would be provided, were raw access be available.
+
+
+best regards,
+_______________________________________________
+cryptography mailing list
+cryptography@randombit.net
+http://lists.randombit.net/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+--=20
+Eugen* Leitl <a href=3D"http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+
+--NZtAI5QFBF0GmLcW
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSLZvZAAoJEPRuNImsiU7FivoP+gOl8ZcTxhQag7Zd1z/uC0f1
+9Vyz4f2vUaIjRDj+cK1Fv0/hm4nYoHA3ZQprIV2D6NgbVTH0rDXQxrl3FpXHAMbM
+VXhMrLCxX6lWyVA8BnoatjH80GGmygcYpWVVDiCu1muu0Im1LYdhBHD7CKzj0Alk
+SktyskOctCgmH3Znf4EtWzpAsi04fpYkdicwIZ2aSwA2rsy09zy7dLmWTnYNkNBv
+X3fPHgxr5U2lXWsN9+ThCdgtN4qo4/NGabz5TX3nV1VTqayTBcFJ28D0FQglZaiq
+PMX+S7TQvuGzN5y6AJ24UCQXsLvFF9cu1QZRC5Js0CUCxK94zwerR0NMaIyd7vu2
+TH/hq0dB52QrBgK372DxD2sBouQuP/YIoOPd7f4bx3MAPBaRisKbe41iCiDWr5+C
+SBinNdp+daMDsRNhOiaJTUEsRIroDs0o4rQ6ebaGWoEGMirVPD2oAJZjBUps+fXW
+jq+Ya6NqdnJztpz/63g9uXk0PfVEciMhMCcqnz14CHoESjWqTd0beAGSDyUeay4r
+wm8ShXxBId5TiDxMzMdu/0Lx+GwZOPTyiihKJ+kUMO4SdCrwmANitnuShSvRwRr7
+azCV3SIwMVWjmbO2YNfvD5QT/QlS2RZfqceUD6r2582c1ptluAlpKY3rPf5FAuIo
+FEOn2It84AqcsVGwvYij
+=9+qG
+-----END PGP SIGNATURE-----
+
+--NZtAI5QFBF0GmLcW--
+

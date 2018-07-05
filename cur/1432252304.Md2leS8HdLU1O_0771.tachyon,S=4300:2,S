@@ -1,0 +1,98 @@
+From owner-cypherpunks@al-qaeda.net  Tue Aug 17 14:14:06 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i7HJE5fV002714
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Tue, 17 Aug 2004 14:14:05 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i7HJE5VM002713
+	for cypherpunks-outgoing; Tue, 17 Aug 2004 14:14:05 -0500
+Mime-Version: 1.0
+X-Sender: rah@bullae.ibuc.com
+Message-Id: <p0611043ebd4807ed02fe@[66.149.49.5]>
+Date: Tue, 17 Aug 2004 15:07:48 -0400
+To: cypherpunks@al-qaeda.net
+From: "R. A. Hettinga" <rah@shipwright.com>
+Subject: Re: HMAC?
+Content-Type: text/plain; charset="us-ascii"
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3353
+Lines: 73
+
+--- begin forwarded text
+
+
+Delivered-To: cryptography@metzdowd.com
+To: cryptography@metzdowd.com, perry@piermont.com
+Subject: Re: HMAC?
+Date: Mon, 16 Aug 2004 23:04:10 -0700 (PDT)
+From: hal@finney.org ("Hal Finney")
+Sender: owner-cryptography@metzdowd.com
+
+My guess is that HMAC is not vulnerable.  The basic structure of HMAC is
+
+	Hash (key1 ||  Hash(key2 || Msg))
+
+The attacker does not know the key(s) and is allowed to request MACs
+on chosen messages; then he must produce a valid MAC on a new message.
+
+The initial paper from Wang eg al announcing the results is unusual in
+that it merely exhibits the collisions, while providing no information
+whatsoever about how they were obtained.  They are simply presented as
+a fait accompli, astonishing in their very existence.  It reminds me
+of the story of how Cole demonstrated that the 67th Mersenne number was
+nonprime, by silently walking to the backboard and patiently working out
+the value of 2^67 - 1, and then the product of its two factors, by hand.
+
+The nature of the exhibited hash collisions is that they are values which
+differ in only a very few bits: 6 bits out of 1024 for the MD5 collisions;
+4 bits out of 512 for the MD4.  Obviously it's not the case that for
+most strings, you can toggle these 4 or 6 bits and produce a collision!
+Instead, the authors must have some technique to create very special
+strings which allow the changes made by these few bits to cancel each
+other out.
+
+If the attacker could find two messages such that there was an inner hash
+collision, Hash(key2 || Msg1)  ==  Hash(key2 || Msg2), he could break
+HMAC.  He'd get a MAC on Msg1 and then he could use that same MAC on Msg2.
+
+But it seems impossible to find a collision like this without knowing
+key2.  These hash functions are highly nonlinear and the choice of Msg1
+and Msg2 would be completely dependent on key2.  Change 1 bit of key2
+and half the bits of Msg1 and Msg2 would very probably have to change.
+
+If the attacker knew key2, it sounds like the new attacks would likely
+work to find an inner collision.  But without knowing that, there would
+be no way to choose Msg1 and Msg2.
+
+Given the special form of the colliding values, it appears that the
+new technique does not solve hash inversion, or finding collisions
+with arbitrary bit differentials.  The one possibility that I could
+imagine for a threat to HMAC is their comment that the attack on MD4
+(for which collisions were already known) is so easy that it can be done
+by hand calculation.  Maybe that would suggest that given the proper
+differentials, a non-negligible fraction of randomly chosen values would
+collide.  Then conceivably you could get lucky and find a collision
+without even knowing key2.  But that seems like a very remote possibility.
+
+Hal Finney
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+
+--- end forwarded text
+
+
+-- 
+-----------------
+R. A. Hettinga <mailto: rah@ibuc.com>
+The Internet Bearer Underwriting Corporation <http://www.ibuc.com/>
+44 Farquhar Street, Boston, MA 02131 USA
+"... however it may deserve respect for its usefulness and antiquity,
+[predicting the end of the world] has not been found agreeable to
+experience." -- Edward Gibbon, 'Decline and Fall of the Roman Empire'
+

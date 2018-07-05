@@ -1,0 +1,218 @@
+From owner-cypherpunks@Algebra.COM  Sat Aug 17 01:14:45 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7H5Eiw18510
+	for <rsw@opamp.org>; Sat, 17 Aug 2002 01:14:44 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id BAA08171
+	for <rsw@mit.edu>; Sat, 17 Aug 2002 01:14:43 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7GNEHkV007379
+	for <cypherpunks-outgoing@ak47.algebra.com>; Fri, 16 Aug 2002 18:14:18 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g7GNEHBG007378
+	for cypherpunks-outgoing; Fri, 16 Aug 2002 18:14:17 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7GNEBkV007360
+	for <cypherpunks@ak47.algebra.com>; Fri, 16 Aug 2002 18:14:13 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7GNE8ER031908
+	for cypherpunks@ak47.algebra.com; Fri, 16 Aug 2002 16:14:08 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7GNA05N031891
+	for cypherpunks-goingout345; Fri, 16 Aug 2002 16:10:00 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Fri, 16 Aug 2002 15:56:09 -0700
+From: AARG! Anonymous <remailer@aarg.net>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@aarg.net>.
+To: cypherpunks@lne.com, cryptography@wasabisystems.com
+Old-Subject: Cryptographic privacy protection in TCPA
+Message-ID: <0b9f4829b10ce20154d1cca436a26860@aarg.net>
+X-DCC-meer-Metrics: inbound0.mv.meer.net 1011; Body=1 Fuz1=1 Fuz2=1
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Cryptographic privacy protection in TCPA
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 10137
+Lines: 169
+
+
+Here are some more thoughts on how cryptography could be used to
+enhance user privacy in a system like TCPA.  Even if the TCPA group
+is not receptive to these proposals, it would be useful to have an
+understanding of the security issues.  And the same issues arise in
+many other kinds of systems which use certificates with some degree
+of anonymity, so the discussion is relevant even beyond TCPA.
+
+The basic requirement is that users have a certificate on a long-term key
+which proves they are part of the system, but they don't want to show that
+cert or that key for most of their interactions, due to privacy concerns.
+They want to have their identity protected, while still being able to
+prove that they do have the appropriate cert.  In the case of TCPA the
+key is locked into the TPM chip, the "endorsement key"; and the cert
+is called the "endorsement certificate", expected to be issued by the
+chip manufacturer.  Let us call the originating cert issuer the CA in
+this document, and the long-term cert the "permanent certificate".
+
+A secondary requirement is for some kind of revocation in the case
+of misuse.  For TCPA this would mean cracking the TPM and extracting
+its key.  I can see two situations where this might lead to revocation.
+The first is a "global" crack, where the extracted TPM key is published
+on the net, so that everyone can falsely claim to be part of the TCPA
+system.  That's a pretty obvious case where the key must be revoked for
+the system to have any integrity at all.  The second case is a "local"
+crack, where a user has extracted his TPM key but keeps it secret, using
+it to cheat the TCPA protocols.  This would be much harder to detect,
+and perhaps equally significantly, much harder to prove.  Nevertheless,
+some way of responding to this situation is a desirable security feature.
+
+The TCPA solution is to use one or more Privacy CAs.  You supply your
+permanent cert and a new short-term "identity" key; the Privacy CA
+validates the cert and then signs your key, giving you a new cert on the
+identity key.  For routine use on the net, you show your identity cert
+and use your identity key; your permanent key and cert are never shown
+except to the Privacy CA.
+
+This means that the Privacy CA has the power to revoke your anonymity;
+and worse, he (or more precisely, his key) has the power to create bogus
+identities.  On the plus side, the Privacy CA can check a revocation list
+and not issue a new identity cert of the permanent key has been revoked.
+And if someone has done a local crack and the evidence is strong enough,
+the Privacy CA can revoke his anonymity and allow his permanent key to
+be revoked.
+
+Let us now consider some cryptographic alternatives.  The first is to
+use Chaum blinding for the Privacy CA interaction.  As before, the user
+supplies his permanent cert to prove that he is a legitimate part of
+the system, but instead of providing an identity key to be certified,
+he supplies it in blinded form.  The Privacy CA signs this blinded key,
+the user strips the blinding, and he is left with a cert from the Privacy
+CA on his identity key.  He uses this as in the previous example, showing
+his privacy cert and using his privacy key.
+
+In this system, the Privacy CA no longer has the power to revoke your
+anonymity, because he only saw a blinded version of your identity key.
+However, the Privacy CA retains the power to create bogus identities,
+so the security risk is still there.  If there has been a global crack,
+and a permanent key has been revoked, the Privacy CA can check the
+revocation list and prevent that user from acquiring new identities,
+so revocation works for global cracks.  However, for local cracks,
+where there is suspicious behavior, there is no way to track down the
+permanent key associated with the cheater.  All his interactions are
+done with an identity key which is unlinkable.  So there is no way to
+respond to local cracks and revoke the keys.
+
+Actually, in this system the Privacy CA is not really protecting
+anyone's privacy, because it doesn't see any identities.  There is no
+need for multiple Privacy CAs and it would make more sense to merge
+the Privacy CA and the original CA that issues the permanent certs.
+That way there would be only one agency with the power to forge keys,
+which would improve accountability and auditability.
+
+One problem with revocation in both of these systems, especially the one
+with Chaum blinding, is that existing identity certs (from before the
+fraud was detected) may still be usable.  It is probably necessary to
+have identity certs be valid for only a limited time so that users with
+revoked keys are not able to continue to use their old identity certs.
+
+Brands credentials provide a more flexible and powerful approach than
+Chaum blinding which can potentially provide improvements.  The basic
+setup is the same: users would go to a Privacy CA and show their
+permanent cert, getting a new cert on an identity key which they would
+use on the net.  The difference is that Brands provides for "restrictive
+blinding".  This allows the Privacy CA to issue a cert on a key which
+would be unlinkable to the permanent key under normal circumstances,
+but perhaps linkability could be established in some cases.
+
+It's not entirely clear how this technology could best be exploited to
+solve the problems.  One possibility, for example, would be to encode
+information about the permanent key in the restrictive blinding.
+This would allow users to use their identity keys freely; but upon
+request they could prove things about their associated permanent keys.
+They could, for example, reveal the permanent key value associated with
+their identity key, and do so unforgeably.  Or they could prove that their
+permanent key is not on a given list of revoked keys.  Similar logical
+operations are possible including partial revelation of the permanent
+key information.
+
+However it does not appear possible to solve the case of a local crack
+using this technology.  In that case it is unlikely that they would
+respond favorably to a request to reveal the permanent key associated with
+their identity, so that it could be revoked.  Brands' technology would
+allow them to do so in a convincing manner, but they would not cooperate.
+
+In the end it's not clear how much Brands certificates really add over
+the basic Chaum blinding in this application.  With the specific usage
+described above, they have the same basic security properties as in
+the case of Chaum blinding, except potentially for being able to prove
+that an identity cert is not associated with a revoked permanent key.
+Perhaps some other approach using his technology would be more successful.
+
+One other cryptographic method that might be relevant is the group
+signature.  This allows someone to sign with a key where he does not
+reveal his signing key, but he proves that it is part of some group.
+In the relevant variants, the group is defined as the set of keys
+which has been certified by a "group membership key".  This approach
+can therefore dispense with the Privacy CA entirely, and with blinding.
+Instead, the permanent key itself is used for signing on the net, but
+via a group signature which does not reveal the key value.  Instead,
+the group signature protocol proves that the key exists and that it has
+been certified by the CA.
+
+The main problem with the group signature approach is handling revocation.
+In the case of a global crack, where someone has published his permanent
+key, at a minimum it is necessary to create a revocation list for those
+keys.  This means that the group signature protocol must be extended
+to not only prove that a key exists and has been certified, but also
+that the key is not on the list of revoked keys - and to do this without
+revealing the key itself.  That's a pretty complicated requirement which
+is pushing the state of the art.  There is a paper being presented at
+Crypto 02 which claims to offer the first group signature scheme with
+efficient revocation.
+
+Group signatures also offer an optional mechanism which can deal
+with local cracks.  The original group signature concept included the
+concept of a "revocation manager" who could link signatures to keys -
+that is, there is one trusted party who can tell which key issued a
+given signature.  In most of the modern variants, this is accomplished
+by creating, as part of the group signature, an encrypted blob which
+holds the user's permanent key, where that blob can be encrypted to any
+specified key.  The only one who can tell who made the signature is the
+key holder that the blob is encrypted to.
+
+If this mechanism is used, we can bring back the Privacy CA, who
+now functions as the party who can link signatures to permanent keys.
+When someone uses a group signature to participate in a TCPA network, he
+would optionally specify a Privacy CA who could reveal his permanent key.
+This would allow for a multiplicity of Privacy CAs with different policies
+about when and how they would reveal idenities, similar to the original
+(non-cryptographic) TCPA concept.  Then it would be up to the recipients
+of the signature to judge whether they trusted that Privacy CA to unmask
+rogues upon sufficient evidence.
+
+The main advantage of this scheme over the non-cryptographic TCPA method
+is, first, that the Privacy CA is optional - users don't have to reveal
+their identity to anyone if they don't want; and second, that the Privacy
+CA no longer has the power to forge identities and disrupt the system.
+This strengthens the overall security of the system.
+
+Summing up, none of the alternatives presented here is ideal.  The current
+scheme is among the worst, as it provides the weakest privacy protection
+and allows the Privacy CAs to break the security of the entire system.
+The Chaum and Brands blinding methods strengthen privacy at the cost of
+reducing the ability to respond to local cracks, where the user extracts
+his TPM key but keeps it to himself.  Group signatures provide good
+privacy protection and can optionally respond to local cracks, but they
+are cutting edge cryptography and are generally less efficient than the
+other methods.
+

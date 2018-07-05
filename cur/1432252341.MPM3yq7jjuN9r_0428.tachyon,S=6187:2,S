@@ -1,0 +1,135 @@
+From owner-cypherpunks@al-qaeda.net  Sun Apr 11 17:48:53 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: (from majordomo@localhost)
+	by POSITRON.MIT.EDU (8.11.6p3/8.11.6-03-31-03) id i3BLmoI23663
+	for cypherpunks-outgoing; Sun, 11 Apr 2004 17:48:50 -0400
+X-Authentication-Warning: positron.mit.edu: majordomo set sender to owner-cypherpunks@al-qaeda.net using -f
+Message-ID: <4079BBF3.4030501@sunder.net>
+Date: Sun, 11 Apr 2004 17:43:15 -0400
+From: sunder <sunder@sunder.net>
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.6)
+  Gecko/20040113
+X-Accept-Language: en-us, en
+MIME-Version: 1.0
+To: Jim Dixon <jdd@dixons.org>
+CC: cypherpunks@al-qaeda.net
+Subject: Re: Hierarchy, Force Monopoly, and Geodesic Societies
+References: <20040411192616.D96639-100000@localhost>
+In-Reply-To: <20040411192616.D96639-100000@localhost>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5125
+Lines: 107
+
+Jim Dixon wrote:
+
+> The term is used because most or all trees in the region where the English
+> language originated are shaped just like that: they have a single trunk
+> which forks into branches which may themselves fork and so on.  These
+> branches do not connect back to one another.
+
+I believe the real issue here is one of being able to stretch your mind 
+into seeing things from different points of view.  This is the reason I 
+brought in the quasi-mystical quote about the sphere whose center is 
+everywhere.
+
+To see if you'd be able to go beyond your already rich knowledge and gain 
+new benefit from another way of looking at it.  (IMHO, it's important to be 
+able to change POV's at will, it keeps you flexible and able to learn new 
+ways of dealing with data by conversion.)
+
+
+In real life, the roots of a tree resemble it's branches buried 
+underground, in an almost mirror image.  A tree that terminates where the 
+trunk meets the ground would fall.  The only real tree resembling this, is 
+one where logger's saw was applied. :)  So we're already not discussing a 
+real tree.
+
+The idealized mathematical definition of a tree doesn't quite a real tree 
+any more than do B-Trees, B+/-Trees, nor red/black trees, or our debated 
+friend, the internet.
+
+> The Internet doesn't resemble a tree at all.  It is characterized by many
+> cross-connections, which form cycles.  These are introduced deliberately
+> by network engineers, because tree-like networks are unreliable.  
+
+Of course. It's called redundancy and its goal is to eliminate as many 
+single points of failure as possible.  But from the point of view of one 
+node talking to another, these aren't considered, I'll explain why.
+
+Firstly, don't confuse cycles with redundancy for high availability.  These 
+are two different things.
+
+Let's explain why we have multiple connections and what types of these you 
+can expect.  There are two common types of multiple connections:
+
+A) Two links to the same ISP:  In terms of redundancy for the purposes of 
+being fault tolerant, only one of the multiple links is ever used.  With 
+most ISP's, when you negotiate a contract for a backup connection, it's 
+with the understanding that you'll only use it when the main one goes down.
+
+B) You have multiple connections to different ISP's (possibly with peering 
+contracts, etc.)  In this case when a node at your location tries to 
+contact some other node on the internet, it's traffic doesn't go over ALL 
+of your connections - it takes only a single path.  [Ok, if your routers 
+are correcting for an outage, then perhaps you'll see different paths being 
+taken, but this is just the routing tables/routers settling or converging.]
+
+If both case A and case B, a single node in your location will see the 
+entire internet as a tree with the root of that tree being the default 
+gateway.  (i.e. go back to doing traceroutes.)  In the case of a 
+multi-homed machine, or machine that participates in routing, it itself 
+becomes the root of the tree.
+
+There are other cases but those are rare, and likely flawed.
+
+
+Now on to cycles and the whole reason for this debate:
+
+The whole point of many/most routing algorithms is to GET RID OF cycles. 
+After you've done this, you're left with a tree.
+
+Loops/cycles are so anathema to the workings of tcp/ip, that one of the 
+fields in IP packets has been added to help eliminate: the TTL.  The only 
+reason for a TTL value is to prevent packets that are going around in 
+circles from congesting all the routers involved in the loop.  (Only later 
+did traceroute exploit this into helping provide you with a map of where 
+your packets went.)
+
+This is why EIGRP, RIP, etc. use various mechanisms to explicitly prevent 
+routing loops (and BGP to aggregate routes.)  Routing loops are damage, 
+they are by definition not desirable.
+
+At the data link layer (switches/hubs), this is why you want to use the 
+Spanning Tree Protocol.  Notice that name: Spanning *TREE* Protocol.  After 
+STP is done, you're left with a data link layer ->TREE< - not a cyclical 
+graf.  STP is even more important for LAN's than on the internet since 
+there's no TTL on ethernet frames:  a single broadcast, were it to be 
+allowed to loop, could saturate your switches to the point of killing your LAN!
+
+
+What all this says to me is that a cycle is a circle, and that failover/ 
+parallel links should be collapsed (and are by routing protocols) to a 
+single link.
+
+Once you eliminate cycles, and you do so in real life, you go back to a 
+tree.  You only see the alternate paths used when failover or routing 
+errors occur.
+
+
+Yes, I agree with you, if your POV is "The Big Picture" above from space, 
+which includes all links, even the unused redundant ones, it's certainly 
+not a tree.
+
+At the same time, I also disagree with you.  If your POV is a single host, 
+it sees the internet as a tree.  In fact, one of the properties of trees is 
+that you "pick up" any leaf node and designate it as the root.  (Doesn't 
+work too well on a B+Tree when you're trying to do searches,  but, the 
+result is still a tree - not balanced any longer, but a tree.)
+
+:)
+

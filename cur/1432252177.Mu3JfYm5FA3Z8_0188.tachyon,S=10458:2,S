@@ -1,0 +1,197 @@
+From owner-cypherpunks@Algebra.COM  Sat Aug 17 04:25:24 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7H8POm19067
+	for <rsw@opamp.org>; Sat, 17 Aug 2002 04:25:24 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id EAA08482
+	for <rsw@mit.edu>; Sat, 17 Aug 2002 04:25:24 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7H2RvkV005837
+	for <cypherpunks-outgoing@ak47.algebra.com>; Fri, 16 Aug 2002 21:27:57 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g7H2Rvca005836
+	for cypherpunks-outgoing; Fri, 16 Aug 2002 21:27:57 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7H2RrkV005816
+	for <cypherpunks@ak47.algebra.com>; Fri, 16 Aug 2002 21:27:54 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7H2Rqjo000566
+	for cypherpunks@ak47.algebra.com; Fri, 16 Aug 2002 19:27:52 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7H2Qj1s000553
+	for cypherpunks-goingout345; Fri, 16 Aug 2002 19:26:45 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+X-Authentication-Warning: eskimo.com: eresrch owned process doing -bs
+Date: Fri, 16 Aug 2002 19:15:13 -0700 (PDT)
+From: Mike Rosing <eresrch@eskimo.com>
+To: cypherpunks@lne.com
+Old-Subject: Re: Cryptographic privacy protection in TCPA
+In-Reply-To: <0b9f4829b10ce20154d1cca436a26860@aarg.net>
+Message-ID: <Pine.GSU.4.44.0208161836500.28699-100000@eskimo.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-DCC-meer-Metrics: inbound0.mv.meer.net 1035; Body=1 Fuz1=1 Fuz2=1
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Re: Cryptographic privacy protection in TCPA
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 8067
+Lines: 148
+
+
+On Fri, 16 Aug 2002, AARG! Anonymous wrote:
+
+> Here are some more thoughts on how cryptography could be used to
+> enhance user privacy in a system like TCPA.  Even if the TCPA group
+> is not receptive to these proposals, it would be useful to have an
+> understanding of the security issues.  And the same issues arise in
+> many other kinds of systems which use certificates with some degree
+> of anonymity, so the discussion is relevant even beyond TCPA.
+
+OK, I'm going to discuss it from a philosophical perspective.
+i.e. I'm just having fun with this.
+
+> The basic requirement is that users have a certificate on a long-term key
+> which proves they are part of the system, but they don't want to show that
+> cert or that key for most of their interactions, due to privacy concerns.
+> They want to have their identity protected, while still being able to
+> prove that they do have the appropriate cert.  In the case of TCPA the
+> key is locked into the TPM chip, the "endorsement key"; and the cert
+> is called the "endorsement certificate", expected to be issued by the
+> chip manufacturer.  Let us call the originating cert issuer the CA in
+> this document, and the long-term cert the "permanent certificate".
+
+I don't like the idea that users *must* have a "certificate".  Why
+can't each person develop their own personal levels of trust and
+associate it with their own public key?  Using multiple channels,
+people can prove their key is their word.  If any company wants to
+associate a certificate with a customer, that can have lots of meanings
+to lots of other people.  I don't see the usefullness of a "permanent
+certificate".  Human interaction over electronic media has to deal
+with monkeys, because that's what humans are :-)
+
+> A secondary requirement is for some kind of revocation in the case
+> of misuse.  For TCPA this would mean cracking the TPM and extracting
+> its key.  I can see two situations where this might lead to revocation.
+> The first is a "global" crack, where the extracted TPM key is published
+> on the net, so that everyone can falsely claim to be part of the TCPA
+> system.  That's a pretty obvious case where the key must be revoked for
+> the system to have any integrity at all.  The second case is a "local"
+> crack, where a user has extracted his TPM key but keeps it secret, using
+> it to cheat the TCPA protocols.  This would be much harder to detect,
+> and perhaps equally significantly, much harder to prove.  Nevertheless,
+> some way of responding to this situation is a desirable security feature.
+
+Ouch, that doesn't sound too robust.
+
+> The TCPA solution is to use one or more Privacy CAs.  You supply your
+> permanent cert and a new short-term "identity" key; the Privacy CA
+> validates the cert and then signs your key, giving you a new cert on the
+> identity key.  For routine use on the net, you show your identity cert
+> and use your identity key; your permanent key and cert are never shown
+> except to the Privacy CA.
+>
+> This means that the Privacy CA has the power to revoke your anonymity;
+> and worse, he (or more precisely, his key) has the power to create bogus
+> identities.  On the plus side, the Privacy CA can check a revocation list
+> and not issue a new identity cert of the permanent key has been revoked.
+> And if someone has done a local crack and the evidence is strong enough,
+> the Privacy CA can revoke his anonymity and allow his permanent key to
+> be revoked.
+
+The CA has a bit too much power if you ask me.  Those are some really
+good reasons not to like the idea of a "permanent certificate" ruled
+by one (nasty?) person.
+
+[...]
+> Actually, in this system the Privacy CA is not really protecting
+> anyone's privacy, because it doesn't see any identities.  There is no
+> need for multiple Privacy CAs and it would make more sense to merge
+> the Privacy CA and the original CA that issues the permanent certs.
+> That way there would be only one agency with the power to forge keys,
+> which would improve accountability and auditability.
+
+I really, REALLY, *REALLY*, don't like the idea of one entity having
+the ability to create or destroy any persons ability to use their
+computer at whim.  You are suggesting that one person (or small group)
+has the power to create (or not) and revoke (or not!) any and all TPM's!
+
+I don't know how to describe my astoundment at the lack of comprehension
+of history.
+
+[...]
+> It's not entirely clear how this technology could best be exploited to
+> solve the problems.  One possibility, for example, would be to encode
+> information about the permanent key in the restrictive blinding.
+> This would allow users to use their identity keys freely; but upon
+> request they could prove things about their associated permanent keys.
+> They could, for example, reveal the permanent key value associated with
+> their identity key, and do so unforgeably.  Or they could prove that their
+> permanent key is not on a given list of revoked keys.  Similar logical
+> operations are possible including partial revelation of the permanent
+> key information.
+
+There's no problem if we just extend our normal concepts of trust between
+humans on a face to face level onto the net.  Person to person, peer to
+peer, face to face.  It's all the same thing, and using the technology
+to make it happen the same way it happens in the street is going to be
+the ultimate success story.  Nobody controls everything, but some people
+have some control of some resources.  People who attempt to rule the
+whole world usually burn out sooner or later :-)
+
+[...]
+> The main problem with the group signature approach is handling revocation.
+> In the case of a global crack, where someone has published his permanent
+> key, at a minimum it is necessary to create a revocation list for those
+> keys.  This means that the group signature protocol must be extended
+> to not only prove that a key exists and has been certified, but also
+> that the key is not on the list of revoked keys - and to do this without
+> revealing the key itself.  That's a pretty complicated requirement which
+> is pushing the state of the art.  There is a paper being presented at
+> Crypto 02 which claims to offer the first group signature scheme with
+> efficient revocation.
+
+How about everybody on their block signs each other's keys, and when
+one monkey misbehaves, the other ones toss 'em out of the troop.
+A Web of trust is kind of like a group signature.
+
+[...]
+> Summing up, none of the alternatives presented here is ideal.  The current
+> scheme is among the worst, as it provides the weakest privacy protection
+> and allows the Privacy CAs to break the security of the entire system.
+> The Chaum and Brands blinding methods strengthen privacy at the cost of
+> reducing the ability to respond to local cracks, where the user extracts
+> his TPM key but keeps it to himself.  Group signatures provide good
+> privacy protection and can optionally respond to local cracks, but they
+> are cutting edge cryptography and are generally less efficient than the
+> other methods.
+
+If a company wants control of their hardware, they should put their own
+private keys in each machine.  They can use that with each persons
+public key and create a reasonably secure system for their business.  They
+don't need a privacy CA, and they can prove to any other firm that the
+person with the box on their premisis *must* be from the right place.
+
+If TCPA is going to fly as a real business it can't just be for DRM.
+If copyright owners want people to buy their stuff, they'll have to sell
+"copyright owners certificate" which can be based on the customer's key.
+Again, nobody needs a privacy CA.
+
+There is no valid argument for centralized control *of anything*.
+TCPA is a valid concept in and of itself.  It's way too dangerous
+a weapon if forced down people's throats the wrong way.  So the TCPA guys
+should sell their boxes as useful tools to lots of big corporations,
+and forget about the "content industry".  There's a lot more money to
+be made solving real problems for real people.
+
+Patience, persistence, truth,
+Dr. mike
+

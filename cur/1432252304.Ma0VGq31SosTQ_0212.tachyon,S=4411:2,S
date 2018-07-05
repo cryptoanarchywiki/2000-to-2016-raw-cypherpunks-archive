@@ -1,0 +1,96 @@
+From owner-cypherpunks@Algebra.COM  Tue Jul 23 13:13:23 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g6NHDMe04956
+	for <rsw@opamp.org>; Tue, 23 Jul 2002 13:13:22 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id RAA05924
+	for <rsw@mit.edu>; Tue, 23 Jul 2002 17:17:26 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g6NJPt3x025771
+	for <cypherpunks-outgoing@ak47.algebra.com>; Tue, 23 Jul 2002 14:25:55 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g6NJPtA8025770
+	for cypherpunks-outgoing; Tue, 23 Jul 2002 14:25:55 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (dns.lne.com [209.157.136.81] (may be forged))
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g6NJPp3x025754
+	for <cypherpunks@ak47.algebra.com>; Tue, 23 Jul 2002 14:25:52 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id g6NJPod14783
+	for cypherpunks@ak47.algebra.com; Tue, 23 Jul 2002 12:25:50 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id g6NJOkS14769
+	for cypherpunks-goingout345; Tue, 23 Jul 2002 12:24:46 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Tue, 23 Jul 2002 20:24:26 +0100
+From: Adam Back <adam@cypherspace.org>
+To: Jason Holt <jason@lunkwill.org>
+Cc: cypherpunks@lne.com, Adam Back <adam@cypherspace.org>
+Old-Subject: Re: Tunneling through hostile proxy
+Message-ID: <20020723202426.A179288@exeter.ac.uk>
+References: <Pine.LNX.4.44.0207231800070.13165-100000@zayda.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <Pine.LNX.4.44.0207231800070.13165-100000@zayda.com>; from
+  jason@lunkwill.org on Tue, Jul 23, 2002 at 06:11:04PM +0000
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Re: Tunneling through hostile proxy
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 1912
+Lines: 44
+
+
+On Tue, Jul 23, 2002 at 06:11:04PM +0000, Jason Holt wrote:
+> 	The default behavior for an SSL proxy is to pass the encrypted bytes
+> back and forth, allowing you to connect all the way to the other server.  
+
+This isn't just the default behavior; it's the only defined behavior
+right?
+
+> However, it is possible for the proxy to have its own CA which has
+> been added to your browser.  Then it acts as a man in the middle and
+> pretends to be the remote host to you, and vice versa.  In that
+> case, it works as you describe, watching the data during its interim
+> decryption.
+
+While it's _possible_ to do this, I've never heard of a server hosted
+application that advertises that it's doing this.  I would think it
+would be quite hard to get a CA to issue you a certificate if this is
+what you intended to do with it (act as a general MITM on SSL
+connections you proxy).
+
+There have been applications which do this locally eg. a no longer
+shipped product called SafePassage by c2.net, and achilles a SSL
+debugger both of which are local proxies and both of which ask the
+user to install a certificate allowing this when they are installed.
+The installed certificate is self-signed however, and not issued by a
+CA, as it is only valid for that user machine anyway, the user won't
+want to buy a cert to authenticate information to their own machine,
+it would be less secure to do so, and the user won't want to pay for
+this certificate.
+
+> 	Typically, the proxy would give you generic certificates (like
+> "*.com"), 
+
+Is there any software actually doing this?  (I know wild card certs
+are available, but would think a wild card cert on .com would be a
+very dangerous thing for a CA to issue, and you'd hope browsers would
+be smart enough to reject such certs).
+
+> but it could conceivably generate a certificate for each site you
+> visit ("secure.yahoo.com", etc.).  
+
+This is what SafePassage et al do.
+
+Adam
+

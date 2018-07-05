@@ -1,0 +1,90 @@
+From owner-cypherpunks@lne.com  Fri Nov 21 20:46:20 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p3/8.11.6-03-31-03) with ESMTP id hAM1kIq16903
+	for <rsw@jfet.org>; Fri, 21 Nov 2003 20:46:18 -0500
+Received: from slack.lne.com (slack.lne.com [127.0.0.1])
+	by slack.lne.com (8.12.10/8.12.10) with ESMTP id hAM1SJJ7027233
+	(version=TLSv1/SSLv3 cipher=EDH-DSS-DES-CBC3-SHA bits=168 verify=NO)
+	for <cypherpunks-goingout345@slack.lne.com>; Fri, 21 Nov 2003 17:28:19 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.10/8.12.10/Submit) id hAM1SJrX027232
+	for cypherpunks-goingout345; Fri, 21 Nov 2003 17:28:19 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+X-Authentication-Warning: slack.lne.com: ericm set sender to
+  pbaker@verisign.com using -f
+Message-ID: <2A1D4C86842EE14CA9BC80474919782E01113200@mou1wnexm02.vcorp.ad.vrsn.com>
+From: "Hallam-Baker, Phillip" <pbaker@verisign.com>
+To: cypherpunks@lne.com
+X-Orig-To: "'Steve Schear'" <s.schear@comcast.net>
+Cc: cypherpunks@lne.com, asrg@ietf.org
+Subject: RE: [Asrg] Re: [Politech] Congress finally poised to vote on
+  anti -spam bill [sp]
+Date: Fri, 21 Nov 2003 16:20:34 -0800
+MIME-Version: 1.0
+X-Mailer: Internet Mail Service (5.5.2653.19)
+Content-Type: text/plain; charset="iso-8859-1"
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2330
+Lines: 56
+
+We need to consider the technical workings of the do-not-spam list and the
+requirements that we would like the FTC to meet.
+
+I propose as a minimum:
+
+1) Allow individual subscribers to list their email addresses with the
+service.
+2) Permit mail sender to quickly determine whether a given email is on the
+list
+3) Be distributable in a form that does not permit use as a mailing list.
+4) Permit the storage of attributes in association with each listing,
+minimally the date of subscription.
+
+In addition we might add:
+
+5) Allow domain name owners to list their domains.
+6) Provide for authentication of listing requests
+
+
+These requirements can be met using completely generic and to my knowledge
+unencumbered technology. For the purposes of avoiding patent encumberabces I
+disclose the following - I published note on the basic idea of using a one
+way hash to conceal an email address on a do not spam list in 1995, I also
+implemented the scheme at that time. The idea is not entirely novel, hash
+databases have been used for at least twenty years, there may also be
+similar ideas in the cryptography litterature.
+
+My proposal would be to use a message authentication function such as
+HMAC-SHA1 with a  key such as SHA1 ("FTC Do Not Spam List") to create a
+unique digest function for the purpose. There is a security consideration
+here, use of a digest such as SHA1(email) might lead to chosen protocol
+attacks.
+
+To add an individual email address "alice@example.com" to the list we
+calculate HMAC ("alice@example.com") to create the key. A domain may be
+represented by the string "example.com".
+
+To determine whether the address "bob@example.com" is on the list it is
+necessary to test for both the specific email address and the domain.
+
+[This can be made to meet arbitrarily complex requirements]
+
+
+The list is distributed as a set of key/value pairs. Sorting the list
+according to the key values allows rapid lookups by means of binary search,
+or since the hash function is guaranteed homogenous using ranged search
+using the hash value as an estimator for the index position. It is not
+necessary to distribute the list sorted.
+
+There are also a few tricks that can be used to reduce the usefulness of
+such a list for address validation.
+
+This same concept can be used to conceal the filter terms used in
+cersorware.
+
+		Phill
+

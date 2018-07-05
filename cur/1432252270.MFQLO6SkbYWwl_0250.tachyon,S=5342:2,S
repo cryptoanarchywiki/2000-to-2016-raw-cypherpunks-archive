@@ -1,0 +1,104 @@
+From cypherpunks-bounces@cpunks.org  Thu Sep  5 21:26:26 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r861Pjlo018746;
+	Thu, 5 Sep 2013 21:25:50 -0400
+Received: from straum.hexapodia.org (straum.hexapodia.org [66.109.99.53])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r861PhO9018742
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 5 Sep 2013 21:25:44 -0400
+Received: by straum.hexapodia.org (Postfix, from userid 22448)
+ id A8AA34305; Thu,  5 Sep 2013 18:25:42 -0700 (PDT)
+Date: Thu, 5 Sep 2013 18:25:42 -0700
+From: Andy Isaacson <adi@hexapodia.org>
+To: cpunks <cypherpunks@cpunks.org>,
+        Discussion of cryptography and related <cryptography@randombit.net>
+Subject: what has the NSA broken?
+Message-ID: <20130906012542.GA15464@hexapodia.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.5.20 (2009-06-14)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 3517
+Lines: 64
+
+Tinfoil hat time ...
+
+http://www.theguardian.com/world/2013/sep/05/nsa-gchq-encryption-codes-security
+
+With today's disclosures, the question turns to -- what has the NSA
+broken?  Unfortunately the journalists bowed to pressure from the
+espionage-industrial complex and decided not to publish specific
+details of what's broken; and the Snowden documents don't include all
+the compartmentalized details anyways.  So all we can do is speculate
+based on what is already known and the high level overview provided.
+
+I don't believe that NSA has a complete AES break.  Call me foolish if
+you must, but it's just not consistent with what we know so far.  I
+believe that a correctly implemented, truly randomly keyed AES-256-CBC
+or -CTR cipher is robust against cryptanalysis.  It seems just barely
+possible that AES-128 has a complete break, since I suspect NSA can do
+2^80 work on 2^60 bytes if it gives them decrypts of all the AES-128
+they can sniff.
+
+However, virtually nobody properly keys their ciphers with physical
+entropy.  I suspect that correlated key PRNG attacks are almost
+certainly a significant part of the NSA/GCHQ crypto break.  Many
+deployed systems expose a significant amount of correlated output of
+/dev/urandom or the in-process PRNG.  Given a global passive adversary
+and serveral TFLOPs of built-to-spec supercomputers [1], this seems like
+an obvious place for a hidden advance.
+
+Also, retrieving key material from endpoints is a high return activity.
+Nearly nobody uses PFS ciphersuites, many HTTPS privatekeys are used for
+multiple years, and a single 1 KiB leak of key material is sufficient to
+decrypt all traffic under that key.  (You don't even need the whole key,
+just half the bits are plenty to reconstruct RSA keys using attacks in
+the open literature.)  Insiders copying privatekey files after hours,
+DRAM remanence after "hardware failure" in SSL offload boxes, bugdoors
+leaking key bits in subtly biased entropy from crypto accelerator
+hardware, on-disk encrypted keys decrypted due to low entropy
+passphrases, etc.  Any key stored on a US-based VPS is obviously
+compromised.  (Doubly so if your VPS is linode.)  Radio emissions from
+colocated boxes are a nearly completely unexplored area of research.
+Server-class IPMI baseboard coprocesssors have undisclosed access to
+host RAM at runtime, and often unaudited access via provider
+management-plane Ethernets.  If I had to get the keys out deniably, I'd
+be scanning RAM for high entropy key schedules and leaking key bits in
+the timing of heartbeat messages.
+
+It seems fairly likely that NSA is at least a decade ahead of academic
+RSA factoring.  I've heard second-hand stories of $10M machines of
+custom ASICs built to attack RSA before 2005, and third-hand stories of
+machines far weirder than that.  RSA-1024 I'd treat as dead, RSA-2048 is
+probably robust enough that if NSA have an attack it would be too
+valuable to risk exposing under anything but an existential threat
+scenario.
+
+Non-AES legacy/proprietary ciphers are probably toast.  People switching
+to RC4, stahp!  A5/2, lulz.  Maybe GOST and twofish and Salsa20 are
+secure; I've met djb and all my checks for NSA minders came up negative.
+
+[1] Cray is still in business, building 10,000 CPU with attached FPGA
+    and 1µs interconnect megaclusters for "undisclosed government
+    customers".  The systems listed as "Government" in the latest top500
+    list are just the tip of the iceberg; larger systems are built and
+    installed without any public disclosure.
+
+-andy
+

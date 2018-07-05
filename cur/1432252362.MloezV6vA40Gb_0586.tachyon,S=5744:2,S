@@ -1,0 +1,126 @@
+From owner-cypherpunks@al-qaeda.net  Sun Oct 19 10:15:48 2008
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id m9JEF3EM021346
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sun, 19 Oct 2008 10:15:03 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id m9JEF3Hq021345
+	for cypherpunks-outgoing; Sun, 19 Oct 2008 10:15:03 -0400
+Date: Sun, 19 Oct 2008 16:14:59 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Re: German data rentention law
+Message-ID: <20081019141459.GA11968@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4785
+Lines: 101
+
+----- Forwarded message from Roger Dingledine <arma@mit.edu> -----
+
+From: Roger Dingledine <arma@mit.edu>
+Date: Sat, 18 Oct 2008 16:13:53 -0400
+To: or-talk@freehaven.net
+Subject: Re: German data rentention law
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Reply-To: or-talk@freehaven.net
+
+On Sat, Oct 18, 2008 at 10:49:08AM +0200, Karsten N. wrote:
+> Together with the JonDos GmbH (JAP) the GPF try to get a legal
+> non-logging solution for tor, but the result is open and we are late.
+
+The JonDos folks are nice people, but they seem to be taking the approach
+"let's work with law enforcement to comply with what they wanted the law
+to include." I would rather take the approach "let's figure out how we
+can keep Tor users and relay operators as safe as possible even if ISPs
+in Germany start logging things."
+
+Talking with law enforcement is generally a good idea, but asking them
+for clarification and then believing that's the law may not be such a
+good idea.
+
+> II. part: suggestion of a technical solution
+> 
+> May be, tor can use geoip and divide the world in a logging area and a
+> non-logging area. If the target host is inside the logging area
+> (Germany), the exit node has to be outside. Otherwise a german node
+> can be an exit too.
+
+In my opinion we really have to look at the endpoints of the Tor circuit,
+which is where Tor is most vulnerable (via end-to-end correlation
+attacks): we are worried about A) an attacker who can watch the Tor user,
+or its network connection, or its entry relay; and B) an attacker who
+can watch the destination site, or its network connection, or the exit
+relay. From that perspective, an attacker who can watch the website
+doesn't really care where the exit relay is -- he's already got that
+half of the conversation, and if he can combine it with knowing something
+about the beginning of the circuit, he wins.
+
+Consider instead my proposal from last week on or-dev:
+https://blog.torproject.org/blog/tor%2C-germany%2C-and-data-retention
+
+The basic proposal there is:
+1) Never assign the Guard flag to Tor relays in Germany.
+2) Maybe, consider starting circuits unpredictably before we want to
+attach a stream to them (we already mostly do that, since we build
+circuits preemptively), and closing circuits unpredictably after we are
+done using them. The idea there is to make the TCP connection logs at
+ISPs not correlate with when a given Tor stream started or stopped. I say
+"maybe" because it's far from clear that all ISPs will be forced to log
+TCP connection start and stop timestamps.
+
+Note that this strategy is designed to make it safe to have Tor relays
+running at *ISPs* that log. Even if no German Tor relays log, data
+retention poses a serious risk to Tor users if enough ISPs are logging
+connections.
+
+There will be no such thing as a Tor relay that logs. (If you wish to
+run a Tor relay that logs all its connections in a way that's useful
+to attackers, please do us the favor of shutting it off instead. If you
+find a way to keep logs that are absolutely useless but that you think
+will keep the police from hassling you, please talk to us first.)
+
+> Because not all clients will update to a new version very quickly,
+
+Idea #1 above solves this issue: we can take the Guard flag away at the
+authorities, so only the directory authorities need to upgrade.
+
+> Otherwise, all german nodes have to switch to middle man.
+
+Even if all German Tor relays became non-exit relays, we would still have
+the worry that a user visited a German website using a German *entry*
+point. According to our research if an attacker manages to get data from
+both sides, this appears sufficient for linking the user to the website.
+
+So no, I think that is not a sufficient fix. :)
+
+In any case, I don't want to reach conclusions like "therefore all
+German nodes have to stop providing exit service." The law is vague --
+so let's fight the law, through lawsuits and other mechanisms, not try
+to guess what it might mean and obey that guess.
+
+There *will* be people in Germany who continue to run their Tor relay
+(exit or not) and do not log anything. So we need to figure out how to
+make successful test cases from the organizations that have the resources
+and inclination to defend themselves. (This does mean, though, that
+if you're running an exit relay in Germany and you're not comfortable
+fighting this law, then you should consider becoming a non-exit in
+January until things get more clear.)
+
+There will be much more discussion at 25C3 I hope!
+
+--Roger
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

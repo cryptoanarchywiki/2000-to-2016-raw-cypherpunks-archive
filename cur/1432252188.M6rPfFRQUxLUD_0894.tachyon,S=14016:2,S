@@ -1,0 +1,250 @@
+From owner-cypherpunks@Algebra.COM  Tue Sep 17 17:45:10 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g8HLj9309391
+	for <rsw@opamp.org>; Tue, 17 Sep 2002 17:45:09 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id RAA19971
+	for <rsw@mit.edu>; Tue, 17 Sep 2002 17:45:05 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g8HL6J84032008
+	for <cypherpunks-outgoing@ak47.algebra.com>; Tue, 17 Sep 2002 16:06:19 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g8HL6Jet032007
+	for cypherpunks-outgoing; Tue, 17 Sep 2002 16:06:19 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g8HL6C84031972
+	for <cypherpunks@ak47.algebra.com>; Tue, 17 Sep 2002 16:06:13 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g8HL6BWk000746
+	for cypherpunks@ak47.algebra.com; Tue, 17 Sep 2002 14:06:11 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g8HL5lrS000734
+	for cypherpunks-goingout345; Tue, 17 Sep 2002 14:05:47 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Tue, 17 Sep 2002 14:05:27 -0700
+From: AARG! Anonymous <remailer@aarg.net>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@aarg.net>.
+To: niels@ferguson.net, cryptography@wasabisystems.com, cypherpunks@lne.com
+Old-Subject: Re: Cryptogram: Palladium Only for DRM
+Message-ID: <d3651b192530baa82d8ab5070bfb4769@aarg.net>
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Re: Cryptogram: Palladium Only for DRM
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 11616
+Lines: 202
+
+
+Niels Ferguson wrote:
+
+> At 16:04 16/09/02 -0700, AARG! Anonymous wrote:
+> >Nothing done purely in software will be as effective as what can be done
+> >when you have secure hardware as the foundation.  I discuss this in more
+> >detail below.
+>
+> But I am not suggesting to do it purely in software. Read the Intel manuals
+> for their CPUs. There are loads of CPU features for process separation,
+> securing the operating system, etc. The hardware is all there!
+
+> Maybe I have to explain the obvious. On boot you boot first to a secure
+> kernel, much like the Pd kernel but running on the main CPU. This kernel
+> then creates a virtual machine to run the existing Windows in, much like
+> VMware does. The virus is caught inside this virtual machine. All you need
+> to do is make sure the virtual machine cannot write to the part of the disk
+> that contains your security kernel. 
+
+Thanks for the explanation.  Essentially you can create a virtualized
+Palladium, where you emulate the functionality of the secure hardware.
+The kernel normally has access to all of memory, for example, but you can
+virtualize the MMU as VmWare does, so that some memory is inaccessible
+even to the kernel, while the kernel can still run pretty much the same.
+Similarly your virtualizing software could comput a hash of code that
+loads into this secure area and even mimic the Palladium functionality
+to seal and unseal data based on that hash.  All this would be done at
+a level which was inaccessible to ordinary Windows code, so it would be
+basically as secure as Palladium is with hardware.
+
+The one thing that you don't get with this method is secure attestation.
+There is no way your software can prove to a remote system that it is
+running a particular piece of code, as is possible with Pd hardware.
+However I believe you see this as not a security problem, since in your
+view the only use for such functionality is for DRM.
+
+I do think there are some issues with this approach to creating a
+secure system, even independent of the attestation issue.  One is
+performance.  According to a presentation by the VMWare chief scientist [1],
+VMWare sees slowdowns of from 8 to 30 percent on CPU-bound processes, with
+graphics-intensive applications even worse, perhaps a factor of 2 slower.
+Maybe Windows could do better than this, but users aren't going to be
+happy about giving up 10 percent or more of their CPU performance.
+
+Also, Palladium hardware provides protection against DMA devices:
+"Even PCI DMA can't read or write memory which has been reserved to a
+nub's or TA's use (including the nub's or TA's code). This memory is
+completely inaccessible and can only be accessed indirectly through
+API calls. The chipset on the motherboard is modified to enforces this
+sort of restriction." [2]  It's conceivable that without this hardware
+protection, a virus could exploit a security flaw in an external device
+and get access to the secure memory provided by a virtualized Palladium.
+
+But these are not necessarily major problems.  Generally I now agree
+with your comments, and those of others, that the security benefits of
+Palladium - except for secure remote attestation - can be provided using
+existing and standard PC hardware, and that the software changes necessary
+are much like what would be necessary for the current Palladium design,
+plus the work to provide VMWare-type functionality.
+
+However that still leaves the issue of remote attestation...
+
+> Who are you protecting against? If the system protects the interests of the
+> user, then you don't need to protect the system from the user. The security
+> chip is only useful if you try to take control away from the user.
+
+This is a simplistic view.  There are many situations in which it is in
+the interests of the user to be able to prove to third parties that he
+is unable to commit certain actions.  A simple example is possession
+of a third-party cryptographic certificate.  The only reason that is
+valuable is because the user can't create it himself.  Any time someone
+shows a cert, they are giving up some control in order to get something.
+They can't modify that certificate without rendering it useless.  They are
+limited in what they can do with it.  But it is these very limitations
+that make the cert valuable.
+
+But let me cut to the chase and provide some examples where remote
+attestation, allowing the user to prove that he is running a particular
+program and that it is unmolested, is useful.  These will hopefully
+encourage you to modify your belief that "The 'secure chip' in Pd is
+only needed for DRM. All other claimed benefits of Pd can be achieved
+using existing hardware. To me this is an objectively verifyable truth."
+I don't think any of these examples could be solved with software plus
+existing hardware alone.
+
+The first example is a secure online game client.  Rampant cheating in the
+online gaming industry is a major problem which has gotten much attention
+in the past few months.  Players can load hacks to let them see through
+walls, automate targetting and fire control, and employ other methods that
+give them an overwhelming advantage.  The game industry is big business
+and is growing rapidly.  Unless they can get a handle on this problem it
+could hurt the success of the industry.  Remote attestation will allow
+game servers to be confident that users are playing on a level playing
+field, without the hacked and modified clients that allow cheating.
+
+Another example is a P2P file sharing network client.  Faced with the
+threat from these file sharing networks, content industries are attacking
+them in various ways, including flooding them with bogus queries and
+lying about file hashes and contents.  Also, some users are switching
+to clients that give them unfair priority, at the expense of the rest
+of the network.  Recently a Salon article [3] reported that Gnutella
+developers are considering methods to check client integrity in order to
+avoid these problems.  But this is not really possible today, especially
+with open source clients.  What they need is secure attestation.  That way
+they can be confident that client software is using the protocol fairly
+and appropriately.  Of course, the Gnutella developers have no idea that
+the evil bogeyman of Palladium could actually help them out - no one
+in the security field is willing to say anything favorable about the
+technology.  This conspiracy of silence is what I am trying to overcome.
+
+Online distributed computations can also benefit.  Recently there was a
+comment on cypherpunks that pointed out that the RC5 keysearch effort
+has gone through 85% of the key space without success, raising the
+possibility that it somehow skipped the key.  This particular search has
+gone on for almost five years, and all that work may come to nothing!
+Being able to check that users are running valid clients will eliminate
+one possible source of problems in these efforts.  Remote attestation
+will be an easy way to improve the chances that if someone says that
+the key is not in a particular region, it really isn't.
+
+Turning to banking and e-commerce, there are many cases where it is not
+enough to be running a secure client; you must also be able to prove
+that you are doing so.  According to Perry Metzger's earlier message,
+if a user is defrauded in a banking transaction due to a virus, he
+is supposed to be protected.  It's not clear who has to pay him back,
+but let's suppose it is the bank.  Now the bank has a very real economic
+interest in making sure that its clients are using the approved software.
+If there is third-party software out there, the bank can't be sure of its
+reliability and security.  Secure attestation can improve the security
+of the entire system by making sure that third-party clients are not
+allowed to participate in transactions.  The bank has control over its
+liability and its risk.
+
+The same reasoning applies to credit card purchases.  If you've got a
+virtual-Palladium-based secure system, that's great; you're protected
+against a virus somehow getting your card number and using it.
+But actually it is the banks who eat the charges when cards are misused,
+at least in the U.S.  It could make a great deal of sense for acceptors
+of credit cards to be able to check what software the user is running,
+make sure it is a secure system and that it is an approved client.
+This will give users incentives to move to secure systems, which will
+benefit everyone as the amount of fraud decreases.
+
+Secure attestation could even provide a way for commercial companies to
+prove to customers that they are running particular accounting software
+to hold data on their customers.  Eventually, accounting software could
+be developed which is oriented around protecting the privacy of consumer
+data; for example, it could prevent wholesale exporting of the database
+into some format that could be easily copied or transferred.  User agents
+could refuse to upload their personal data unless the company can prove
+that it is running one of these privacy-protecting software packages.
+
+Adam Back (who opposes Palladium) described several other possible
+applications all of which rely on secure attestation [4].  He listed:
+
+:      - general Application Service Providers (ASPs) that you don't have to
+:      trust to read your data
+:
+:      - less traceable peer-to-peer applications
+:
+:      - DRM applications that make a general purpose computer secure against
+:      BORA (Break Once Run Anywhere), though of course not secure against
+:      ROCA (Rip Once Copy Everywhere) -- which will surely continue to
+:      happen with ripping shifting to hardware hackers.
+:
+:      - general purpose unreadable sandboxes to run general purpose
+:      CPU-for-rent computing farms for hire, where the sender knows you
+:      can't read his code, you can't read his input data, or his output
+:      data, or tamper with the computation.
+:
+:      - file-sharing while robustly hiding knowledge and traceability of
+:      content even to the node serving it -- previously research question,
+:      now easy coding problem with efficient
+:
+:      - anonymous remailers where you have more assurance that a given node
+:      is not logging and analysing the traffic being mixed by it
+
+Of course, one of these is indeed DRM, and no one (least of all Microsoft)
+denies that DRM will be facilitated by Palladium or that it was one
+of the motivations for creating the technology.  But the rest are all
+different, and hopefully they provide further evidence that Palladium,
+in its full form, is good for more than DRM.  In particular, the idea of
+CPU-for-rent farms has been stymied for years because of concerns about
+sensitive corporate data.  Secure attestation could be a breakthrough that
+will put the incredible power of idle machines to productive economic use,
+for tremendous benefits to society.
+
+The virtualized Palladium can't do any of the applications above, as
+far as I can see.  These are all benefits of Palladium which rely on
+the secure hardware chip, and they go far beyond DRM.  Many of these
+applications actually serve to enhance the user's security and privacy.
+
+I understand you aren't going to reply, but hopefully in your own mind
+you will see that there are far more benefits to the full version of
+Palladium, including its security chip, than just DRM.
+
+===
+
+[1] http://www.hotchips.org/pubs/hc99/hc11_pdf/hc99.s6.1.Rosenblum.pdf
+[2] http://vitanuova.loyalty.org/2002-07-05.html
+[3] http://www.salon.com/tech/feature/2002/08/08/gnutella_developers/print.html
+[4] http://www.mail-archive.com/cryptography@wasabisystems.com/msg02526.html
+

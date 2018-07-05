@@ -1,0 +1,65 @@
+From owner-cypherpunks@lne.com  Sat Nov 22 09:37:45 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p3/8.11.6-03-31-03) with ESMTP id hAMEbhq19757
+	for <rsw@jfet.org>; Sat, 22 Nov 2003 09:37:43 -0500
+Received: from slack.lne.com (slack.lne.com [127.0.0.1])
+	by slack.lne.com (8.12.10/8.12.10) with ESMTP id hAMEOw6Y001608
+	(version=TLSv1/SSLv3 cipher=EDH-DSS-DES-CBC3-SHA bits=168 verify=NO)
+	for <cypherpunks-goingout345@slack.lne.com>; Sat, 22 Nov 2003 06:24:58 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.10/8.12.10/Submit) id hAMEOw1a001607
+	for cypherpunks-goingout345; Sat, 22 Nov 2003 06:24:58 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Sat, 22 Nov 2003 15:24:48 +0100 (CET)
+From: Thomas Shaddack <shaddack@ns.arachne.cz>
+To: cypherpunks <cypherpunks@lne.com>
+Subject: Re: Idea: GPG signatures within HTML - problem with inline
+  objects
+In-Reply-To: <0311221436180.-1216855884@somehost.domainz.com>
+Message-ID: <0311221455380.0@somehost.domainz.com>
+References: <0311221436180.-1216855884@somehost.domainz.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 1103
+Lines: 34
+
+There is a problem with images and other inline objects. There is a
+solution, too.
+
+The objects included into the document can get their hash calculated and
+included in their tag; eg,
+<IMG SRC="image.jpg" HASH="SHA1:4e1243bd22c66e76c2ba9eddc1f91394e57f9f83">
+The tag has to be in the signed part of the document, so the hash can't be
+tampered with.
+
+Full digital signatures should be possible as well, eg.
+
+<IMG SRC="image.jpg" SIGNATURE="http://where.is.the/signature.asc">
+
+or
+
+<IMG SRC="image.jpg" SIGNATURE="identifier">
+some HTML code here
+<SIGNATURE TYPE="gpg" NAME="identifier"><!--
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v0.9.11 (GNU/Linux)
+Comment: For info see http://www.gnupg.org
+
+iD8DBQA31UOQaLeriVdUjc0RAjhBAJ4u1k5ex8+ZAtYi737GFXPOiBc51gCfU5+8
+is2rD6L/6fIOWttfh5CYUW0=
+=WOv2
+-----END PGP SIGNATURE-----
+--></SIGNATURE>
+
+This way doesn't depend on the part of the document being signed, as the
+signature can't be effectively tampered with undetected anyway.
+
+
+Same scheme could be used in <A HREF> tags, allowing automated checking of
+signatures or hashes of downloaded binary files.
+

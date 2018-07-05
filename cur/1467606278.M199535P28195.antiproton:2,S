@@ -1,0 +1,360 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u644Nlg5028177;
+	Mon, 4 Jul 2016 00:23:50 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=YiFPY63U;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-vk0-f49.google.com (mail-vk0-f49.google.com
+ [209.85.213.49])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u644Niue028173
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Mon, 4 Jul 2016 00:23:45 -0400
+Received: by mail-vk0-f49.google.com with SMTP id m127so158398058vkb.3
+ for <cypherpunks@cpunks.org>; Sun, 03 Jul 2016 21:23:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to;
+ bh=BSXIM1TzmpH70sF2JNWVDVL04WTdfTKkHuLZIIYod+g=;
+ b=YiFPY63U2Y/AvRfkwzlevvnW5WAIkv53NdoqU+ZcAHSOghkcb5rx8espMtqACKVhzb
+ 3kPyCLnB8a25DHuHvBpPFuEKTDcy0LEh/3+HesI1s8cr94a1jjxFR99ZgJYQKA8s9Avb
+ YgOoj8zur7Daay5mu0Xx2CWtkwufgY4Q/CYY0QgLrrP/sVQFmcYW0BxjJdMsfUeaknS0
+ gIx243Xk3HOevKKGG8tmuzm69YlN8y8nN1pJJ4a2EeItdoR9XLYAXSW7wYlXeqz7Z9rF
+ O3VPYaskNW5D2e2zQFoxJeON3daKTvGB5hJ3EBJQHjL/BLc+IuYTvk63W49xwdz79nnv
+ GZSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to;
+ bh=BSXIM1TzmpH70sF2JNWVDVL04WTdfTKkHuLZIIYod+g=;
+ b=hIvNYqvXalhiSM63JYeEGYn24fJ/+I92On76/lVk6RvOX7INGlQVdGOxptGTwv1yXk
+ Jzz4P5sPwujxB++xU4cRg3R/OQgwFLzN2zcuCJStBU1jrtfFdRPphI2rZCLK5y00DxmC
+ wxBku2ESrJhl/7UXeLgc9RXbArvd/zRom7k3Zf0spuqnIbKVdJccrWtt0lMcj83TfG8x
+ ydT1gnwHRVXN5mH1PhyHfcfWlcJcdtJMqvej8fuZBo2VTKHj29fDlrCoLQo8AedK/+VO
+ he95QWRLq6uMTVFIgzsKX08bCsCH6AikWUrC2L3mcqm6Xj6jQBaEIzjgPlUz4v2qrVJD
+ 2EbQ==
+X-Gm-Message-State: ALyK8tIr08oZr37vgm/ZFf598SG03m3Qp5qSqON4CtbmOND0Cszk1Joo+nKjw/TXYpQsYBns45Voj3hyKwj7lw==
+MIME-Version: 1.0
+X-Received: by 10.31.193.4 with SMTP id r4mr4179770vkf.4.1467606217446; Sun,
+ 03 Jul 2016 21:23:37 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Sun, 3 Jul 2016 21:23:36 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Sun, 3 Jul 2016 21:23:36 -0700 (PDT)
+In-Reply-To: <5779bb44.489d370a.25971.0877@mx.google.com>
+References: <20160628084946.GB3088@x220-a02> <20160701231029.GU11626@x220-a02>
+ <CAG2tMp6+TrCbx6OUZr1HCywAFu84yBBRLqgA+0=PCYek2tP_7A@mail.gmail.com>
+ <20160702010005.GB5207@x220-a02>
+ <CAG2tMp4qEsSm7-_EuAOjzEPKE+Ybh8GT_nXAh0XARvyMDCa=bg@mail.gmail.com>
+ <5778112d.8e63370a.7ac2f.ffff816d@mx.google.com>
+ <CAG2tMp7omFpzYRLWNLDVHXy1jE2PY7XdWDHoe1=iypTu_B=VZw@mail.gmail.com>
+ <CAG2tMp78EY+MuhD2XeUcr2px+F7qayhN=yUpvJQn06gOUi4BCw@mail.gmail.com>
+ <CAG2tMp4rSLMT3yq_XhjS1deCACW1UG8QY5TG1u_=-LULHWSVkg@mail.gmail.com>
+ <577960d5.8d38c80a.6ba10.ffff8609@mx.google.com>
+ <CAG2tMp4OcN4MFN-G_P3bf7jZNwEJu18eTZgUWKzM3Bk8RM6P3Q@mail.gmail.com>
+ <5779949e.564e370a.24a9.575b@mx.google.com>
+ <CAG2tMp6j=aFJDCVbmvBx0ON+qB_HGOZ7L_6jc8C-BKZ_VnvBAw@mail.gmail.com>
+ <5779bb44.489d370a.25971.0877@mx.google.com>
+Date: Mon, 4 Jul 2016 01:23:36 -0300
+Message-ID: <CAG2tMp65HBKTz-jspMBshj0FrNQuE-ZBxYo-SK74U06bpvAeew@mail.gmail.com>
+Subject: Re: TSA Thugs: TSA Agents Beat And Jail Disabled Teen With Brain
+ Cancer
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=001a114dbdb642de190536c7b357
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 284
+
+--001a114dbdb642de190536c7b357
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+On Jul 3, 2016 10:33 PM, "juan" <juan.g71@gmail.com> wrote:
+>
+>         You don't know anything about me, apart from the political
+comments I've made here. Same thing for quinn. All we know about him is
+that he's a totalitarian american shitbag. Whatever your personal
+connection to him is, (if any) it's irrelevant here.
+
+Why are you so sure about it, my dear Juan?  You never will know exactly
+what I know, hihi...  Nobody can know _exactly_ what another person knows.
+Never forget it, my dear.  :-)
+
+>         It is absurd for you to conclude that I'm a 'good' person and
+that quinn is a 'good' person too, since we represent completely opposed
+views of what 'good' means.
+>
+>         Is this so hard to grasp?
+
+My dear Juan, I am talking about MY subjetive impressions about persons in
+general.  Why can't you accept that I don't think exactly what you want I
+think?  :(((
+
+Is it so offensive for you if I have my own opinion and it is different
+than yours?  Why are you trying to impose me your opinion like a dictator?
+:(((
+
+Please, you say to be an 'anarchist', so be coherent.  You say I am a
+'retard', but I am an honest retard and you are not being honest, if you
+really are an anarchist.
+
+I didn't try to impose you my opinion.  I simply told you what I think
+about you, and people, and about countries, wars, whatever...  I never said
+my words are an 'absolute truth' or that I never will be wrong...
+
+>         'Religious' liars are not good persons. Lying is not good.
+
+Hey!  Don't you respect a person's beliefs?  Why do you think a religious
+person is a liar?  :P
+
+Not necessarily.  Even using Math or Physics, nobody can prove the
+existence or not of a God (or Gods, or Godess, or Godesses, whatever).  If
+God exists, it is not a lie.
+
+There are several religions and holy books, but there is not an
+unambiguous, definitive interpretation of God, Juan.  Sincerely?  I don't
+trust religions and holy books, but I tried to study lots and lots of
+possibilities when younger.  Reviews?  Always is about love.  Trying to be
+a good person and avoiding to be a bad person is enough.
+
+(I am not talking about being a 'saint' or something similar.  Just
+avoiding to be a son of a b=C2=A1tch is enough and God and/or the people wi=
+ll
+sincerely appreciate your efforts!  :-)
+
+I know, infinitely subjetive points of view, different backgrounds and ways
+of being, etc, etc...  Part of world's beauty is how different can be the
+persons.  Some people explode cities using nuclear weapons, some people try
+to build a whole new world...  :-)
+
+>         OK. "Good" means nothing to you.
+
+Oh, good!  hihi...  :-)
+
+>         Tell me Cecilia, is it OK for governments to exist? You know, the
+'good' utopian governments that do stuff that you think is 'good', like, I
+don't know 'free' schooling for poor children.
+
+You already know what I think about governments.  I don't support them.
+
+>         If I recall correctly you said you are not an anarchist, but I'm
+making sure...before pointing out that you are in no position to call me
+'aggressive' or 'intolerant'.
+
+Only limited and/or stupid people respect labels.  A person is much more
+than empty labels.  Persons are their acts, their thoughts, their words,
+not the labels they like to use in society.
+
+If you want to use the "anarchist" label, the problem is yours, not mine.
+I hate governments, but I really think it is very limited to say "Oh, I am
+anarchist".
+
+Instead just talking about being a proud anarchist in lists, mimimi
+mimimi, do something real to destroy governments.  "Talking is cheap, show
+me the code", do you remember?  I am doing my part instead consider myself
+an anarchist.
+
+I only make jokes using 'vegan' and 'veggie' labels to explain that I don't
+eat meat and I don't like to kill animals, because the people really have
+serious problems to understand my reasons and it is easier to use a stupid
+already knowed label than spending time explaining all my actions.  Nobody
+seems to care enough to see my acts, they just want to know my labels and
+judge them.
+
+Sorry, if I need to say "Oh, Juan, I am anarchist" to be accepted for you,
+we never will be friends.  See my actions and who I am instead trying to
+impose your opinion with offenses.  :P
+
+>         What am I wrong about?
+
+Uff...  God, I didn't say you are wrong.  It was an hypothesis.  Please,
+think instead being so defensive.
+
+>         OK - and the relevance here is? Or was that just one more random
+and irrelevant thought?
+
+I was answering to your comment, Juan.  Please, read again what you wrote
+before.  My thoughts are so 'irrelevant' as yours.  Or do you *really*
+think that everything you wrote is relevant for someone?  Sorry, the world
+doesn't work this way!  :-)
+
+Believe me, nobody says only 'relevant' things.  First of all, because
+'relevance' is pretty subjective.  An important thing for me not
+necessarily will be relevant for me, and vice versa.
+
+>         The ones who are saying it are the americans.
+>
+>         So tell me again about how good countries are and how much
+respect they deserve?
+
+Uff...  Juan, did you really read what I wrote before?  I am too lazy to
+repeat everything again!  :(((
+
+Sorry, I will stop to spend your time and also mine, Juan.  Believe me, we
+both will be banned again if we make an infinite discussion here and I
+certainly will win in the end.
+
+I am not saying that I am right.  I am just saying I will win at the end.
+Remember:  I can do the same things that you, and wearing high heels, make
+up and dress.  And I am much more 'troll' and 'hard headed' than you can be
+in this life and in all next lives, if they exist, hihi!  :D
+
+I can be more boring and repetitive than you, my dear Juan, and I am
+Brazilian.  Our national motto is "I am Brazilian and I never give up"
+("Eu sou brasileiro/a e n=C3=A3o desisto nunca"), hahaha!!!  ;D
+
+Have a lovely night and sweet dreams, my dear!  Try the serotonin and
+endorphins thing!  Your body will thank you!  <3
+
+Cecilia
+
+PS:  -  You are a _without fuck=C2=A1ng_ boring and grumpy old sir, but I s=
+till
+like you, Juan.  A bit less, but I still would give you a cupua=C3=A7u
+popsicle!  You can't stop my affection, la la la...  My feelings are mine,
+not yours, hahaha!!  #singing  #lalala  ;D
+
+Yep, I know I am a _with fuck=C2=A1ng_ boring and grumpy old lady!  #ProudT=
+roll
+:))))
+
+--001a114dbdb642de190536c7b357
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p>On Jul 3, 2016 10:33 PM, &quot;juan&quot; &lt;<a href=3D"mailto:juan.g71=
+@gmail.com">juan.g71@gmail.com</a>&gt; wrote:<br>
+&gt;<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 You don&#39;t know anything about me, apar=
+t from the political comments I&#39;ve made here. Same thing for quinn. All=
+ we know about him is that he&#39;s a totalitarian american shitbag. Whatev=
+er your personal connection to him is, (if any) it&#39;s irrelevant here.</=
+p>
+<p>Why are you so sure about it, my dear Juan?=C2=A0 You never will know ex=
+actly what I know, hihi...=C2=A0 Nobody can know _exactly_ what another per=
+son knows.=C2=A0 Never forget it, my dear.=C2=A0 :-)</p>
+<p>&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 It is absurd for you to conclude that I=
+&#39;m a &#39;good&#39; person and that quinn is a &#39;good&#39; person to=
+o, since we represent completely opposed views of what &#39;good&#39; means=
+.<br>
+&gt;<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 Is this so hard to grasp?</p>
+<p>My dear Juan, I am talking about MY subjetive impressions about persons =
+in general.=C2=A0 Why can&#39;t you accept that I don&#39;t think exactly w=
+hat you want I think?=C2=A0 :(((</p>
+<p>Is it so offensive for you if I have my own opinion and it is different =
+than yours?=C2=A0 Why are you trying to impose me your opinion like a dicta=
+tor?=C2=A0 :(((</p>
+<p>Please, you say to be an &#39;anarchist&#39;, so be coherent.=C2=A0 You =
+say I am a &#39;retard&#39;, but I am an honest retard and you are not bein=
+g honest, if you really are an anarchist.=C2=A0 </p>
+<p>I didn&#39;t try to impose you my opinion.=C2=A0 I simply told you what =
+I think about you, and people, and about countries, wars, whatever...=C2=A0=
+ I never said my words are an &#39;absolute truth&#39; or that I never will=
+ be wrong...</p>
+<p>&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;Religious&#39; liars are not good =
+persons. Lying is not good.</p>
+<p>Hey!=C2=A0 Don&#39;t you respect a person&#39;s beliefs?=C2=A0 Why do yo=
+u think a religious person is a liar?=C2=A0 :P</p>
+<p>Not necessarily.=C2=A0 Even using Math or Physics, nobody can prove the =
+existence or not of a God (or Gods, or Godess, or Godesses, whatever).=C2=
+=A0 If God exists, it is not a lie.=C2=A0 </p>
+<p>There are several religions and holy books, but there is not an unambigu=
+ous, definitive=C2=A0interpretation of God, Juan.=C2=A0 Sincerely?=C2=A0 I =
+don&#39;t trust religions and holy books, but I tried to study lots and lot=
+s of possibilities when younger.=C2=A0 Reviews?=C2=A0 Always is about love.=
+=C2=A0 Trying to be a good person and avoiding to be a bad person is enough=
+.=C2=A0 </p>
+<p>(I am not talking about being a &#39;saint&#39; or something similar.=C2=
+=A0 Just avoiding to be a son of a b=C2=A1tch is enough and God and/or the =
+people will sincerely appreciate your efforts!=C2=A0 :-)</p>
+<p>I know, infinitely subjetive points of view, different backgrounds and w=
+ays of being, etc, etc...=C2=A0 Part of world&#39;s beauty is how different=
+ can be the persons.=C2=A0 Some people explode cities using nuclear weapons=
+, some people try to build a whole new world...=C2=A0 :-)<br></p>
+<p>&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 OK. &quot;Good&quot; means nothing to y=
+ou.</p>
+<p>Oh, good!=C2=A0 hihi...=C2=A0 :-)</p>
+<p>&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 Tell me Cecilia, is it OK for governmen=
+ts to exist? You know, the &#39;good&#39; utopian governments that do stuff=
+ that you think is &#39;good&#39;, like, I don&#39;t know &#39;free&#39; sc=
+hooling for poor children.</p>
+<p>You already know what I think about governments.=C2=A0 I don&#39;t suppo=
+rt them.<br></p>
+<p>&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 If I recall correctly you said you are =
+not an anarchist, but=C2=A0I&#39;m making sure...before pointing out that y=
+ou are in no position to call me &#39;aggressive&#39; or &#39;intolerant&#3=
+9;.</p>
+<p>Only limited and/or stupid people respect labels.=C2=A0 A person is much=
+ more than empty labels.=C2=A0 Persons are their acts, their thoughts, thei=
+r words, not the labels they like to use in society.</p>
+<p>If you want to use the &quot;anarchist&quot; label, the problem is yours=
+, not mine.=C2=A0 I hate governments, but I really think it is very limited=
+ to say &quot;Oh, I am anarchist&quot;.</p>
+<p>Instead just talking about being a proud anarchist in lists, mimimi=C2=
+=A0 mimimi, do something real to destroy governments.=C2=A0 &quot;Talking i=
+s cheap, show me the code&quot;, do you remember?=C2=A0 I am doing my part =
+instead consider myself an anarchist.=C2=A0 </p>
+<p>I only make jokes using &#39;vegan&#39; and &#39;veggie&#39; labels to e=
+xplain that I don&#39;t eat meat and I don&#39;t like to kill animals, beca=
+use the people really have serious problems to understand my reasons and it=
+ is easier to use a stupid already knowed label than spending time explaini=
+ng all my actions.=C2=A0 Nobody seems to care enough to see my acts, they j=
+ust want to know my labels and judge them.</p>
+<p>Sorry, if I need to say &quot;Oh, Juan, I am anarchist&quot; to be accep=
+ted for you, we never will be friends.=C2=A0 See my actions and who I am in=
+stead trying to impose your opinion with offenses.=C2=A0 :P</p>
+<p>&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 What am I wrong about?</p>
+<p>Uff...=C2=A0 God, I didn&#39;t say you are wrong.=C2=A0 It was an hypoth=
+esis.=C2=A0 Please, think instead being so defensive.</p>
+<p>&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 OK - and the relevance here is? Or was =
+that just one more random and irrelevant thought?</p>
+<p>I was answering to your comment, Juan.=C2=A0 Please, read again what you=
+ wrote before.=C2=A0 My thoughts are so &#39;irrelevant&#39; as yours.=C2=
+=A0 Or do you *really* think that everything you wrote is relevant for some=
+one?=C2=A0 Sorry, the world doesn&#39;t work this way!=C2=A0 :-)</p>
+<p>Believe me, nobody says only &#39;relevant&#39; things.=C2=A0 First of a=
+ll, because &#39;relevance&#39; is pretty subjective.=C2=A0 An important th=
+ing for me not necessarily will be relevant for me, and vice versa.</p>
+<p>&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 The ones who are saying it are the amer=
+icans.<br>
+&gt;<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 So tell me again about how good countries =
+are and how much respect they deserve?</p>
+<p>Uff...=C2=A0 Juan, did you really read what I wrote before?=C2=A0 I am t=
+oo lazy to repeat everything again!=C2=A0 :(((</p>
+<p>Sorry, I will stop to spend your time and also mine, Juan.=C2=A0 Believe=
+ me, we both will be banned again if we make an infinite discussion here an=
+d I certainly will win in the end.</p>
+<p>I am not saying that I am right.=C2=A0 I am just saying I will win at th=
+e end.=C2=A0 Remember:=C2=A0 I can do the same things that you, and wearing=
+ high heels, make up and dress.=C2=A0 And I am much more &#39;troll&#39; an=
+d &#39;hard headed&#39; than you can be in this life and in all next lives,=
+ if they exist, hihi!=C2=A0 :D</p>
+<p>I can be more boring and repetitive than you, my dear Juan, and I am Bra=
+zilian.=C2=A0 Our national motto is &quot;I am Brazilian and I never give u=
+p&quot;=C2=A0 (&quot;Eu sou brasileiro/a e n=C3=A3o desisto nunca&quot;), h=
+ahaha!!!=C2=A0 ;D</p>
+<p>Have a lovely night and sweet dreams, my dear!=C2=A0 Try the serotonin a=
+nd endorphins thing!=C2=A0 Your body will thank you!=C2=A0 &lt;3</p>
+<p>Cecilia</p>
+<p>PS:=C2=A0 -=C2=A0 You are a _without fuck=C2=A1ng_ boring and grumpy old=
+ sir, but I still like you, Juan.=C2=A0 A bit less, but I still would give =
+you a cupua=C3=A7u popsicle!=C2=A0 You can&#39;t stop my affection, la la l=
+a...=C2=A0 My feelings are mine, not yours, hahaha!!=C2=A0 #singing=C2=A0 #=
+lalala=C2=A0 ;D</p>
+<p>Yep, I know I am a _with fuck=C2=A1ng_ boring and grumpy old lady!=C2=A0=
+ #ProudTroll=C2=A0 :))))</p>
+
+--001a114dbdb642de190536c7b357--
+

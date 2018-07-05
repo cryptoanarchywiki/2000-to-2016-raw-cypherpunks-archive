@@ -1,0 +1,762 @@
+From owner-cypherpunks@Algebra.COM  Fri Aug  9 05:38:38 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g799cX922877
+	for <rsw@opamp.org>; Fri, 9 Aug 2002 05:38:38 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id FAA14385
+	for <rsw@mit.edu>; Fri, 9 Aug 2002 05:38:33 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g793s8J1002551
+	for <cypherpunks-outgoing@ak47.algebra.com>; Thu, 8 Aug 2002 22:54:08 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g793s85M002550
+	for cypherpunks-outgoing; Thu, 8 Aug 2002 22:54:08 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g793rwJ1002519
+	for <cypherpunks@ak47.algebra.com>; Thu, 8 Aug 2002 22:53:59 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g793rvV9002287
+	for cypherpunks@ak47.algebra.com; Thu, 8 Aug 2002 20:53:57 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g793rCqA002280
+	for cypherpunks-goingout345; Thu, 8 Aug 2002 20:53:12 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+From: Anonymous User <anonymous@remailer.havenco.com>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@remailer.havenco.com>.
+To: cypherpunks@lne.com, coderpunks@toad.com
+Old-Subject: Signing as one member of a set of keys
+Message-ID: <a94a5a43e9e06e9c46d5c87b87831f6b@remailer.havenco.com>
+Date: Fri,  9 Aug 2002 03:52:56 +0000 (UTC)
+X-Loop: cypherpunks@lne.com
+X-spam: 40 
+Subject:  Signing as one member of a set of keys
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 19524
+Lines: 714
+
+
+This program can be used by anonymous contributors to release partial
+information about their identity - they can show that they are someone
+from a list of PGP key holders, without revealing which member of the
+list they are.  Maybe it can help in the recent controvery over the
+identity of anonymous posters.  It's a fairly low-level program that
+should be wrapped in a nicer UI.  I'll send a couple of perl scripts
+later that make it easier to use.
+
+===
+
+/* Implementation of ring signatures from
+ * http://theory.lcs.mit.edu/~rivest/RivestShamirTauman-HowToLeakASecret.pdf
+ * by Rivest, Shamir and Tauman
+ *
+ * This creates and verifies a signature such that it was produced from
+ * one of a fixed set of RSA keys.
+ *
+ * It requires the openssl library to build, which is available from
+ * www.openssl.org.
+ *
+ * This program takes a PGP public key ring file which holds a set of
+ * old-style RSA public keys.  It creates and verifies signatures which
+ * are such that they were issued by one of the keys in that file, but
+ * there is no way to tell which one did it.  In this way the signer can
+ * leak partial information about his identity - that he is one member
+ * of a selected set of signers.
+ *
+ * To sign, the signer must also give a PGP secret key file which holds
+ * one key (actually the program ignores any keys past the first).
+ * That key should be the secret part of one of the keys in the public
+ * key file.  Also, it should be set to have no passphrase - it is too
+ * complicated for a simple program like this to try to untangle PGP
+ * passphrases.  So set your key to have no passphrase, then run this
+ * program, then set it back.
+ *
+ * The program outputs the signature in the form of a list of big numbers,
+ * base64 encoded.  There will be as many numbers as there were keys in
+ * the public key file.  So signatures are quite large in this scheme,
+ * proportional to the number of keys in the group that the signature
+ * comes from.  They are also proportional to the largest key in the
+ * group, so all else being equal try not to include really big keys if
+ * you care about size.
+ *
+ * The signature is not appended to the text being signed, it is just
+ * output separately.  The signer can combine them manually with some kind
+ * of cut marks so that the recipient can separate out the signature from
+ * the file being signed.  Some perl scripts that do this are supposed
+ * to be distributed with the program.  (That is what is used to verify
+ * the signature in this file itself.)
+ *
+ * The recipient must use the same PGP public key file that the signer
+ * used.  So that may have to be sent along as well.  He runs the program
+ * with the PGP file and the file to be verified, and sends the signature
+ * data into stdin (using the "<" character).  The program will print
+ * whether the signature is good or not.
+ *
+ * This program was written in just a couple of evenings so it is
+ * a little rough.  This is version 0.9 or so - at least it works.
+ * It has only been tested on my Linux system.
+ *
+ * The program is released into the public domain.  See the end for
+ * authorship information.
+ */
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "openssl/bn.h"
+#include "openssl/rsa.h"
+#include "openssl/sha.h"
+#include "openssl/evp.h"
+
+/* Cipher block size; we use Blowfish */
+#define CIPHERBLOCK 8
+
+typedef unsigned char uchar;
+
+enum {
+	ERR_OK = 0,
+	ERR_BADPKT=-100,
+	ERR_EOF,
+	ERR_SECNOTFOUND,
+	ERR_BADSIG,
+};
+
+
+/************************** PGP FILE PARSING ***************************/
+
+/* Read the N and E values from a PGP public key packet */
+int
+rdpgppub( BIGNUM *n, BIGNUM *e, unsigned *bytesused, uchar *buf, unsigned len )
+{
+	int nbits, nlen, ebits, elen;
+	unsigned o=2;
+
+	if (len < 10)
+		return ERR_BADPKT;
+	if (buf[0] == 4)					/* Check version 4, 3, or 2 */
+		o = 0;
+	else if (buf[0] != 2 && buf[0] != 3) /* V2&3 have 2 extra bytes */
+		return ERR_BADPKT;
+	if (buf[5+o] != 1)					/* Check alg - 1 is RSA */
+		return ERR_BADPKT;
+	nbits = (buf[6+o] << 8) | buf[7+o];	/* Read modulus */
+	nlen = (nbits + 7)/8;
+	if (len < 10+o+nlen)
+		return ERR_BADPKT;
+	BN_bin2bn(buf+o+8, nlen, n);
+	ebits = (buf[8+o+nlen] << 8) | buf[9+o+nlen];	/* Read exponent */
+	elen = (ebits + 7)/8;
+	if (len < 10+o+nlen+elen)
+		return ERR_BADPKT;
+	BN_bin2bn(buf+10+o+nlen, elen, e);
+	if (bytesused)
+		*bytesused = 10+o+nlen+elen;
+	return ERR_OK;
+}
+
+/* Read the N, E, D values from a PGP secret key packet with no passphrase */
+int
+rdpgpsec( BIGNUM *n, BIGNUM *e, BIGNUM *d, uchar *buf, unsigned len )
+{
+	int err;
+	int nbits, nlen, ebits, elen, dbits, dlen;
+	unsigned o;
+
+	if ((err = rdpgppub(n, e, &o, buf, len)) < 0)
+		return err;
+	if (len < o+3)
+		return ERR_BADPKT;
+	if (buf[o] != 0)					/* Check that packet is unencrypted */
+		return ERR_BADPKT;
+	dbits = (buf[o+1] << 8) | buf[o+2];	/* Read private exponent */
+	dlen = (dbits + 7)/8;
+	if (len < o+3+dlen)
+		return ERR_BADPKT;
+	BN_bin2bn(buf+o+3, dlen, d);
+	return ERR_OK;
+}
+
+/* Read the next PGP packet into malloc'd memory */
+int
+getpgppkt( uchar **pbuf, unsigned *plen, int *type, FILE *f )
+{
+	int c, c1;
+	uchar *buf;
+	unsigned len;
+	int llen;
+	uchar lbuf[4];
+
+	c = fgetc(f);
+	if (c == EOF)
+		return ERR_EOF;
+	if ((c & 0xc0) == 0x80) {
+		/* Old PGP packet */
+		*type = (c >> 2) & 0xf;
+		llen = c & 0x3;
+		if (llen++==3)
+			return ERR_BADPKT;
+rdllen:
+		if (llen==3)
+			llen=4;
+		memset (lbuf, 0, 4);
+		if (fread(lbuf+4-llen, 1, llen, f) != llen)
+			return ERR_BADPKT;
+		len = (lbuf[0]<<24) | (lbuf[1]<<16) | (lbuf[2]<<8) | lbuf[3];
+	} else if ((c & 0xc0) == 0xc0) {
+		/* New PGP packet */
+		*type = c & 0x3f;
+		c = fgetc(f);
+		if (c == EOF)
+			return ERR_BADPKT;
+		if (c == 0xff) {
+			llen = 4;
+			goto rdllen;
+		}
+		if (c >= 0xe0)
+			return ERR_BADPKT;
+		if (c >= 0xc0) {
+			/* Two byte length */
+			c1 = fgetc(f);
+			if (c1 == EOF)
+				return ERR_BADPKT;
+			len = (c<<8) + c1 - 0xc000 + 0xc0;
+		} else {
+			/* One byte length */
+			len = c;
+		}
+	} else {
+		/* Non PGP packet */
+		return ERR_BADPKT;
+	}
+	buf = malloc(len);
+	if (buf==NULL)
+		return ERR_BADPKT;
+	if (fread(buf, 1, len, f) != len)
+		return ERR_BADPKT;
+	*pbuf = buf;
+	*plen = len;
+	return ERR_OK;
+}
+
+
+/* Read a PGP key ring and create arrays of all the n, e values */
+int
+rdpgppubring(BIGNUM ***n_arr_ptr, BIGNUM ***e_arr_ptr, int *nkeys_ptr, FILE *f)
+{
+	int err = ERR_OK;
+	uchar *buf;
+	unsigned len;
+	int type;
+	int nkeys = 0;
+	BIGNUM **n_arr = NULL;
+	BIGNUM **e_arr = NULL;
+	BIGNUM *n, *e;
+
+	n_arr = malloc(sizeof(BIGNUM *));
+	e_arr = malloc(sizeof(BIGNUM *));
+
+	while (err == ERR_OK)
+	{
+		err = getpgppkt (&buf, &len, &type, f);
+		if (err != ERR_OK)
+			break;
+		if (type == 6)			/* public key packet */
+		{
+			n = BN_new();
+			e = BN_new();
+			err = rdpgppub(n, e, NULL, buf, len);
+			if (err != ERR_OK)
+				break;
+			++nkeys;
+			n_arr = realloc(n_arr, sizeof(BIGNUM *) * nkeys);
+			e_arr = realloc(e_arr, sizeof(BIGNUM *) * nkeys);
+			n_arr[nkeys-1] = n;
+			e_arr[nkeys-1] = e;
+		}
+		free (buf);
+	}
+	if (err != ERR_EOF)
+		return err;
+	err = ERR_OK;
+
+	*n_arr_ptr = n_arr;
+	*e_arr_ptr = e_arr;
+	*nkeys_ptr = nkeys;
+
+	return err;
+}
+
+/* Read a PGP secret key file and find the corresponding value in the
+ * array of public key values.  Return the d value and the index in the
+ * public key array.
+ */
+int
+rdpgpsecring(BIGNUM *d, int *secindex, BIGNUM **n_arr, BIGNUM **e_arr,
+	int nkeys, FILE *f)
+{
+	int err = ERR_OK;
+	BIGNUM *n, *e;
+	uchar *buf;
+	unsigned len;
+	int i;
+	int type;
+
+	err = getpgppkt (&buf, &len, &type, f);
+	if (err != ERR_OK)
+		return err;
+	if (type != 5)					/* Secret key packet */
+		return ERR_BADPKT;
+	n = BN_new();
+	e = BN_new();
+	err = rdpgpsec(n, e, d, buf, len);
+	if (err != ERR_OK)
+		return err;
+	for (i=0; i<nkeys; i++)			/* Find corresponding public key */
+	{
+		if (BN_cmp (n, n_arr[i]) == 0  &&  BN_cmp (e, e_arr[i]) == 0)
+			break;
+	}
+	if (i == nkeys)
+		return ERR_SECNOTFOUND;
+	*secindex = i;
+	return ERR_OK;
+}
+
+
+
+/************************** UTILITY FUNCTIONS ***************************/
+
+
+/* Sort the n and e arrays by increasing n */
+int
+sortkeys (BIGNUM **n, BIGNUM **e, int nkeys)
+{
+	int i, j;
+	BIGNUM *t;
+
+	/* Do a bubble sort as the number of keys is not usually very large */
+	for (i=0; i<nkeys-1; i++)
+	{
+		for (j=i+1; j<nkeys; j++)
+		{
+			if (BN_cmp( n[i], n[j] ) > 0)
+			{
+				t = n[i]; n[i] = n[j]; n[j] = t;
+				t = e[i]; e[i] = e[j]; e[j] = t;
+			}
+		}
+	}
+	return ERR_OK;
+}
+
+
+/* Hash the file.  Should have opened it in ASCII mode so that we have
+ * standard Unix line endings (newlines only).
+ */
+int
+hashfile( uchar md[5], FILE *f )
+{
+	char buf[1024];
+	SHA_CTX sha;
+
+	SHA_Init(&sha);
+
+	for ( ; ; )
+	{
+		if (fgets (buf, sizeof(buf), f) == NULL)
+			break;
+		SHA_Update(&sha, buf, strlen(buf));
+	}
+	SHA_Final (md, &sha);
+	return ERR_OK;
+}
+
+
+/* Do an RSA enc/dec, where the input/output value may be larger
+ * than n.  In fact, val should be much larger than n or this may fail
+ * to keep val within the desired range.
+ * To decrypt pass d in place of e.
+ */
+int
+rsaencdec( BIGNUM *rslt, BIGNUM *val, BIGNUM *n, BIGNUM *e, BN_CTX *ctx )
+{
+	BIGNUM *rem = BN_new();
+	BIGNUM *newrem = BN_new();
+
+	BN_div (NULL, rem, val, n, ctx);
+	BN_mod_exp (newrem, rem, e, n, ctx);
+	BN_sub (rslt, val, rem);
+	BN_add (rslt, rslt, newrem);
+	BN_free (rem);
+	BN_free (newrem);
+}
+
+
+
+/************************** SIG CREATE/VERIFY ***************************/
+
+
+/* Verify a signature.  sigs holds the per-key signature values,
+ * hashval is the hash of the data which was signed, valbytes is the
+ * length of the values we work with, several bytes longer than the longest
+ * modulus, and n_arr and e_arr are the RSA public key values, of whic
+ * there are nkeys of them.  (There are also nkeys of sigs.)
+ */
+int
+checksig( BIGNUM **sigs, uchar *hashval, int hashvalbytes, int valbytes,
+	BIGNUM **n_arr, BIGNUM **e_arr, int nkeys, BN_CTX *ctx )
+{
+	BIGNUM *val = BN_new();
+	uchar ivec[CIPHERBLOCK];
+	BF_KEY bf;
+	uchar *sigbuf;
+	uchar *xorbuf;
+	int vallen;
+	int i, j;
+
+	/* Key cipher with the hash value */
+	BF_set_key (&bf, hashvalbytes, hashval);
+
+	/* Init xorbuf to 0's */
+	xorbuf = malloc(valbytes);
+	memset (xorbuf, 0, valbytes);
+
+	sigbuf = malloc(valbytes);
+
+	for (i=0; i<nkeys; i++)
+	{
+		rsaencdec (val, sigs[i], n_arr[i], e_arr[i], ctx);
+		vallen = BN_num_bytes(val);
+		if (vallen > valbytes) {
+			fprintf (stderr, "Bad signature created by signer\n");
+			exit (3);
+		}
+		/* XOR into buffer */
+		memset (sigbuf, 0, valbytes);
+		BN_bn2bin (val, sigbuf+valbytes-vallen);
+		for (j=0; j<valbytes; j++)
+			xorbuf[j] ^= sigbuf[j];
+		memset (ivec, 0, sizeof(ivec));
+		BF_cbc_encrypt (xorbuf, xorbuf, valbytes, &bf, ivec, BF_ENCRYPT);
+	}
+	BN_free (val);
+
+	/* xorbuf should be all 0's for the sig to verify */
+	for (j=0; j<valbytes; j++)
+		if (xorbuf[j] != 0)
+			break;
+
+	free (xorbuf);
+	free (sigbuf);
+
+	if (j < valbytes)
+		return ERR_BADSIG;
+
+	return ERR_OK;
+}
+
+
+/* Create a signature.  psigarray is the returned array of bignums,
+ * of which there are nkeys.  hashval is the hash of the data being
+ * signed.  d is the RSA private key value for the key at position
+ * secindex.  valbytes is the size of the values we are working with,
+ * several bytes greater than the length of the longest modulus.
+ * And n_arr and e_arr are the RSA public key values, of which there
+ * are nkeys.
+ */
+int
+createsig( BIGNUM ***psigarray, uchar *hashval, int hashvalbytes, BIGNUM *d,
+	int secindex, int valbytes, BIGNUM **n_arr, BIGNUM **e_arr, int nkeys,
+	BN_CTX *ctx )
+{
+	BIGNUM *val = BN_new();
+	BIGNUM *bigval = BN_new();
+	BIGNUM **sigs;
+	BF_KEY bf;
+	uchar ivec[CIPHERBLOCK];
+	uchar *sigbuf;
+	uchar *lxorbuf;
+	uchar *rxorbuf;
+	int vallen;
+	int i, j;
+
+	/* Key cipher with the hash value */
+	BF_set_key (&bf, hashvalbytes, hashval);
+
+	BN_lshift (bigval, BN_value_one(), valbytes*8);
+
+	/* Init two xorbufs we will make meet in the middle */
+	rxorbuf = malloc(valbytes);
+	memset (rxorbuf, 0, valbytes);
+	lxorbuf = malloc(valbytes);
+	memset (lxorbuf, 0, valbytes);
+	memset (ivec, 0, sizeof(ivec));
+
+	/* Start the MITM process on the left xorbuf */
+	BF_cbc_encrypt (lxorbuf, lxorbuf, valbytes, &bf, ivec, BF_DECRYPT);
+
+	sigbuf = malloc(valbytes);
+	sigs = (BIGNUM **)malloc(nkeys * sizeof(BIGNUM *));
+
+	for (i=0; i<secindex; i++)
+	{
+		/* For other keys do a fake value */
+		sigs[i] = BN_new();
+		BN_rand_range (sigs[i], bigval);
+		rsaencdec (val, sigs[i], n_arr[i], e_arr[i], ctx);
+		/* Infinitisimal chance that vallen > valbytes with random val */
+		vallen = BN_num_bytes(val);
+		/* XOR into right xor buf and encrypt */
+		memset (sigbuf, 0, valbytes);
+		BN_bn2bin (val, sigbuf+valbytes-vallen);
+		for (j=0; j<valbytes; j++)
+			rxorbuf[j] ^= sigbuf[j];
+		memset (ivec, 0, sizeof(ivec));
+		BF_cbc_encrypt (rxorbuf, rxorbuf, valbytes, &bf, ivec, BF_ENCRYPT);
+	}
+
+	for (i=nkeys-1; i>secindex; i--)
+	{
+		/* For other keys do a fake value */
+		sigs[i] = BN_new();
+		BN_rand_range (sigs[i], bigval);
+		rsaencdec (val, sigs[i], n_arr[i], e_arr[i], ctx);
+		/* Infinitisimal chance that vallen > valbytes with random val */
+		vallen = BN_num_bytes(val);
+		/* XOR into left xor buf and decrypt */
+		memset (sigbuf, 0, valbytes);
+		BN_bn2bin (val, sigbuf+valbytes-vallen);
+		for (j=0; j<valbytes; j++)
+			lxorbuf[j] ^= sigbuf[j];
+		memset (ivec, 0, sizeof(ivec));
+		BF_cbc_encrypt (lxorbuf, lxorbuf, valbytes, &bf, ivec, BF_DECRYPT);
+	}
+
+	/* XOR the two buffers to get the value we must RSA sign */
+	for (j=0; j<valbytes; j++)
+		lxorbuf[j] ^= rxorbuf[j];
+
+	/* Get val as the value we need to do the RSA signature to */
+	sigs[secindex] = BN_new();
+	BN_bin2bn (lxorbuf, valbytes, val);
+	rsaencdec (sigs[secindex], val, n_arr[secindex], d, ctx);
+	BN_free (val);
+	BN_free (bigval);
+	free (sigbuf);
+	free (lxorbuf);
+	free (rxorbuf);
+	*psigarray = sigs;
+	return ERR_OK;
+}
+
+
+
+/*************************** USER INTERFACE ****************************/
+
+static char *prog;
+
+void
+userr()
+{
+	fprintf (stderr, "Usage:\n"
+		"To sign (signature data to stdout):\n"
+		"   %s -s textfile pubkeyfile seckeyfile\n"
+		"To verify a signature (signature data from stdin):\n"
+		"   %s -v textfile pubkeyfile\n", prog, prog);
+	exit (1);
+}
+
+int
+main (int ac, char **av)
+{
+	FILE *fpub, *fsec, *fdata;
+	BN_CTX *ctx;
+	BIGNUM *d;
+	BIGNUM **n_arr;
+	BIGNUM **e_arr;
+	BIGNUM **sigarray;
+	uchar md[SHA_DIGEST_LENGTH];
+	int secindex;
+	int valbytes;
+	int nkeys;
+	int i;
+	int dosign;
+	int err;
+
+	ctx = BN_CTX_new();
+	d = BN_new();
+
+	prog = av[0];
+	if (ac < 2)
+		userr();
+	if (strcmp( av[1], "-s" ) == 0)
+		dosign = 1;
+	else if (strcmp( av[1], "-v" ) == 0)
+		dosign = 0;
+	else
+		userr();
+
+	if (ac < (dosign ? 5 : 4) )
+		userr();
+	fdata = fopen (av[2], "r");	/* text mode */
+	if (fdata==NULL)
+		userr();
+	fpub = fopen (av[3], "rb");
+	if (fpub==NULL)
+		userr();
+	if (dosign)
+	{
+		fsec = fopen (av[4], "rb");
+		if (fsec==NULL)
+			userr();
+	}
+	err = rdpgppubring(&n_arr, &e_arr, &nkeys, fpub);
+	if (err != ERR_OK)
+		goto error;
+	fclose (fpub);
+	sortkeys (n_arr, e_arr, nkeys);
+	if (dosign)
+	{
+		err = rdpgpsecring(d, &secindex, n_arr, e_arr, nkeys, fsec);
+		if (err != ERR_OK)
+			goto error;
+		fclose (fsec);
+	}
+
+	/* For our values we use 2^128 times the largest n; mult of CIPHERBLOCK */
+	valbytes = BN_num_bytes (n_arr[nkeys-1]) + 16;
+	valbytes = ((valbytes+CIPHERBLOCK-1)/CIPHERBLOCK)*CIPHERBLOCK;
+
+	/* Hash the file to sign/verify */
+	err = hashfile (md, fdata);
+
+	if (dosign)
+	{
+		BIO *bio, *b64;
+		uchar *sigbuf;
+
+		err = createsig (&sigarray, md, sizeof(md), d, secindex, valbytes,
+					n_arr, e_arr, nkeys, ctx);
+		if (err != ERR_OK)
+			goto error;
+
+		b64 = BIO_new(BIO_f_base64());
+		bio = BIO_new_fp(stdout, BIO_NOCLOSE);
+		bio = BIO_push(b64, bio);
+		sigbuf = (uchar *)malloc(valbytes);
+		for (i=0; i<nkeys; i++)
+		{
+			memset (sigbuf, 0, valbytes);
+			BN_bn2bin(sigarray[i], sigbuf+valbytes-BN_num_bytes(sigarray[i]));
+			BIO_write(bio, sigbuf, valbytes);
+		}
+		BIO_flush(bio);
+		BIO_free_all(bio);
+		free (sigbuf);
+	} else {
+		/* Read sig data from stdin */
+		BIO *bio, *b64;
+		uchar *sigbuf;
+		int inlen;
+
+		b64 = BIO_new(BIO_f_base64());
+		bio = BIO_new_fp(stdin, BIO_NOCLOSE);
+		bio = BIO_push(b64, bio);
+
+		sigarray = (BIGNUM **)malloc(nkeys * sizeof(BIGNUM *));
+		sigbuf = (uchar *)malloc(valbytes);
+		for (i=0; i<nkeys; i++)
+		{
+			if ((inlen = BIO_read(bio, sigbuf, valbytes)) < valbytes)
+				userr();
+			sigarray[i] = BN_bin2bn (sigbuf, valbytes, NULL);
+		}
+		free (sigbuf);
+		BIO_free_all(bio);
+
+		err = checksig (sigarray, md, sizeof(md), valbytes, n_arr, e_arr,
+			nkeys, ctx);
+		if (err == ERR_OK)
+		{
+			printf ("Good signature\n");
+		} else if (err = ERR_BADSIG) {
+			printf ("ERROR: Bad signature\n");
+			exit (2);
+		} else {
+			goto error;
+		}
+	}
+
+error:
+	if (err != ERR_OK)
+	{
+		fprintf (stderr, "Error %d\n", err);
+		exit (1);
+	}
+	exit (0);
+}
+
+/*
+  Signature block!  Who wrote this program?  Someone from the keys below.
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: 2.6.2
+
+mQCNAisbwocAAAED/jitkUnDwPdZk1Rdr0YNT7h7OHd9zbJbTZEQgdEs5LxQ1h4t
+S+fCbgM6zxfMvCWqWPendS3ikEStq1PMGQKtt0b0/4BafB6dO1ljSBp+UWkw86FL
+BmCcQkED0CmQOFAEy2p2SURvdO4tExerfUgf+oYQg99v03mvYlVkk3dax7hlAAUR
+tBBsb2tpQG9ic2N1cmEuY29ttChMYW5jZSBNLiBDb3R0cmVsbCA8bG9raUBuYXRl
+bHkudWNzZC5lZHU+tDhMYW5jZSBNLiBDb3R0cmVsbCAoYXQgaG9tZSkgPGxjb3R0
+cmVsbEBwb3BtYWlsLnVjc2QuZWR1PpkAjQMxav4LAAABBADJkZ8ZP83waDvuf/Lx
+4UB7KFSkm9IKKht2FpW5ztHG22EmCuarCYhSB+R7dzIAN4Wx9UcdS3x724ozuoNm
+bQboiSsSKO41efGcn5zbzFKlLU+Im5utXJ1QtYlbjx6PjnfZiajVAIpgwiekwP7I
+PxL6V0i4jYlln3dGUYkxK0j29QAFEbQjSWFuIEdvbGRiZXJnIDxpYW5nQGNzLmJl
+cmtlbGV5LmVkdT60IUlhbiBHb2xkYmVyZyA8aWFuQGN5cGhlcnB1bmtzLmNhPrQk
+SWFuIEdvbGRiZXJnIDxpYW5AemVyb2tub3dsZWRnZS5jb20+mQCNAi0xHTIAAAEE
+AKeIU9S010e1AxYy2R379ptHunqM0kRMgWnOwfCnVets8jThr7B87pzFNVj6kBs8
+F9TKQdk62JR5Kiq2rVODFSLmN2JThnhfDu/tAYAz8fJsWkxGn5IhcjxkQpfb2LDs
+4EBJgWhI9HxIfCvhSkFdrFe9JBfm0KKB5sGoFIWXVYodAAUTtCFQcjBkdWN0IEN5
+cGhlciA8YWx0LnNlY3VyaXR5LnBncD6ZAI0CL7SNAQAAAQQAruhfQV42dxod9rW/
+5XtIxS+ICbyoHyitYbTO+Nrhm1KsdWD88zCmlSHji3kRED2WW1EF0e7fT5hKHxrV
+1i3Vc4PzeeSfOP2uG2kUA+rLLCUtWE1Vjc9UvIxtQvDbtoQAZz5K0WqsOhRDT6P1
+BT9gf8jJU32sFonKGwgMRScZrzUABRG0KEJlbiBMYXVyaWUgPGJlbkBnb256by5i
+ZW4uYWxncm91cC5jby51az60HEJlbiBMYXVyaWUgPGJlbkBjcnlwdGl4Lm9yZz60
+HkJlbiBMYXVyaWUgPGJlbkBhbGdyb3VwLmNvLnVrPpkAjQIqrDZMAAABBADCljOd
+puRFotKHCuLtXAtjz8h0+rWr5PTwt0weVwWA3oH93bJXUaZ4yY9a/mjtPBRTvkCx
+CPcLQar39Tzz+Yi1+7A9riFZSR9eDD7clbY5vWSm/CTLQlu+NOOQYLRwQvckN1e7
+1zVeYzOnRNqHJx+ACP6QRaxiyTyoEwOvWCFMNwAFEbQmSGFsIEZpbm5leSA8NzQw
+NzYuMTA0MUBjb21wdXNlcnZlLmNvbT6ZAI0DMxu7SwAAAQQApJs0Xcl4sIUngK32
+4f1sQ9H7GGctVkjxynj5b3or0rhiI2u/OowQCj7VwnCdoM/Itqz6HUiVRO8D+eHz
+XQRpAXKoeEgxzMN45iNvgneU0/VsN49bCDCM7JPHau2cMm4xWhQUA6s59CxhR+Y2
+cMWxLpwcXDJ//+YoNZtIfcgAK9EABRG0HkVyaWMgWW91bmcgPGVheUBjcnlwdHNv
+ZnQuY29tPpkAjQIty/OuAAABBACkXvI/UFKi+Dw0ErJYkykNMk5HSy/ARQZu3NN0
+QvTpeTz/So/0bZ7HcRTE7Vu8JDME6WNYxdtx0fseeC6zqYvIoOhxJol1VVrjQckY
+0jIM/I765zDNP7SDgjwIDTMYgDVFqq3rTxFgmRPbC28pZCa6zneeGSslwU8Pw+wC
++7uKsQAFEbQhQ29saW4gUGx1bWIgPGNvbGluQG55eC5jcy5kdS5lZHU+
+=/CJG
+-----END PGP PUBLIC KEY BLOCK-----
+
+  ++multisig v1.0
+pEsBwalpBRxWyJR8tkYm6qR27UW9IT6Vg8SlOHIsEkk04RJvoSy0cy4ISFCq6vDX
+5ub6c+MYi/UoyR6tI7oqpMu1abcXWm2DkfDiCsD6jQddVkiiYdG7Bih8JWdWmp5l
+AgzqUoz14671/ezmWSrPNsTNKV96+ZLEanZsqfkpQcnZpLkWVpJzQFe0VgDQ64b2
++e2efrbknLFq0FTdX7Sh3qzAfzNYYgADmeOxDoTm9sb6T0fULf1P7mjiN2LZXuEW
+m/8QvksaQi9KGa/0xN2m0heNtS1cfsTa+NJz8XYyG/tnMy7+mvI3c3lrnz+6Dpyp
+pbNwaX+12VcqtfNec9faoq8RJgFxmSO/ZfMOGM8cFBQ75ZOaoBJP5ObHZ/63FFh5
+Wh5GzwJjQs0vLwpM3iF6G+IixEqAQYisUdCopP1wXCLgltDM6l7jRlXxNDj0AXQ1
+eQJolo32vemcy8Z8GAn5tpQHmJwpdzZpboWRQY53pD4mVnEMN4GBC1mhbbI2z+Oh
+lPglqmmy3p4D+psNU1rlNv6yH/L0PgcuW7taVpbopjl4HLuJdWcKHJlXish3D/jb
+eoQ856fYFZ/omGiO9x1D0BsnGFLZVWob4OIZRzO/Pc49VIhFy5NsV2zuozStId89
+[...]
+ */
+

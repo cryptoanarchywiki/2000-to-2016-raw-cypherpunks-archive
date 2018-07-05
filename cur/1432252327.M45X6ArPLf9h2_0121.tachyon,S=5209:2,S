@@ -1,0 +1,108 @@
+From owner-cypherpunks@al-qaeda.net  Wed Aug 19 16:18:23 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id n7JKHv1c020943
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 19 Aug 2009 16:17:57 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id n7JKHvbq020942
+	for cypherpunks-outgoing; Wed, 19 Aug 2009 16:17:57 -0400
+Date: Wed, 19 Aug 2009 22:17:51 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: Tahoe-LAFS key management, part 2: Tahoe-LAFS is like encrypted
+  git
+Message-ID: <20090819201751.GW4508@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Zooko Wilcox-O'Hearn <zooko@zooko.com> -----
+
+From: Zooko Wilcox-O'Hearn <zooko@zooko.com>
+Date: Wed, 19 Aug 2009 09:28:45 -0600
+To: tahoe-dev@allmydata.org
+Cc: Cryptography List <cryptography@metzdowd.com>
+Subject: Tahoe-LAFS key management, part 2: Tahoe-LAFS is like encrypted git
+X-Mailer: Apple Mail (2.753.1)
+
+Okay, in today's installment I'll reply to my friend Kris Nuttycombe,  
+who read yesterday's installment and then asked how the storage  
+service provider could provide access to the files without being able  
+to see their filehandles and thus decrypt them.
+
+I replied that the handle could be stored in another file on the  
+server, and therefore encrypted so that the server couldn't see it.   
+You could imagine taking a bunch of these handles -- capabilities to  
+read an immutable file -- and putting them into a new file and  
+uploading to the Tahoe-LAFS grid.  Uploading it would encrypt it and  
+give you a capability to that new file.  The storage service provider  
+wouldn't be able to read the contents of that file, so it wouldn't be  
+able to read the files that it references.  This forms a  
+"Cryptographic Hash Function Directed Acyclic Graph" structure, which  
+should be familiar to many readers as the underlying structure in git  
+[*].  Git uses this same technique of combining identification and  
+integrity-checking into one handle.
+
+>From this perspective, Tahoe-LAFS can be seen as "like git, and use  
+the handle for encryption in addition to integrity-checking and  
+identification".
+
+(There are many other differences.  For starters git has a high- 
+performance compression scheme and it has a decentralized revision  
+control tool built on top.  Tahoe-LAFS has erasure-coding and a  
+distributed key-value store for a backend.)
+
+Okay, the bus is arriving at work.
+
+Oh, so then Kris asked "But what about the root of that tree?".  The  
+answer is that the capability to the root of that tree is not stored  
+on the servers.  It is held by the client, and never transmitted to  
+the storage servers.  It turns out that storage servers don't need  
+the capability to the file in order to serve up the ciphertext.   
+(Technically, they *do* need an identifier, and ideally they would  
+also have the integrity-checking part so that they could perform  
+integrity checks on the file contents (in addition to clients  
+performing that integrity check for themselves).  So the capability  
+gets split into its component parts during the download protocol,  
+when the client sends the identification and integrity-checking bits  
+to the server but not the decryption key, and receives the ciphertext  
+in reply.)
+
+Therefore the next layer up, whether another program or a human user,  
+needs to manage this single capability to the root of a tree.  Here  
+the abstraction-piercing problem of availability versus  
+confidentiality remains in force, and different programs and  
+different human users have different ways to manage their caps.  I  
+personally keep mine in my bookmarks in my web browser.  This is  
+risky -- they could be stolen by malicious Javascript (probably) or I  
+might accidentally leak them in an HTTP Referer header.  But it is  
+very convenient.  For the files in question I value that convenience  
+more than an extra degree of safety.  I know of other people who keep  
+their Tahoe-LAFS caps more securely, on Unix filesystems, on  
+encrypted USB keys, etc..
+
+Regards,
+
+Zooko
+
+[*] Linus Torvalds got the idea of a Cryptographic Hash Function  
+Directed Acyclic Graph structure from an earlier distributed revision  
+control tool named Monotone.  He didn't go out of his way to give  
+credit to Monotone, and many people mistakenly think that he invented  
+the idea.
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

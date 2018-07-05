@@ -1,0 +1,190 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u15JqYUo023446;
+	Fri, 5 Feb 2016 14:52:34 -0500
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=v9FECAOA;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-io0-f179.google.com (mail-io0-f179.google.com
+ [209.85.223.179])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u15JqVko023442
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Fri, 5 Feb 2016 14:52:32 -0500
+Received: by mail-io0-f179.google.com with SMTP id d63so140128693ioj.2
+ for <cypherpunks@cpunks.org>; Fri, 05 Feb 2016 11:52:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+ :cc:content-type;
+ bh=fD2SNX3HnNXOpK6D/cT8uy0c6RxXK4wKPvDG4nvFO30=;
+ b=v9FECAOAEC4HPAM71phGRMAUrM1f0smhcIOm0+EVsNBrtJmAr1Meg0RTF+w3Tp7gZx
+ QwAssYsMxC9K3nOTdxvkcFu12IFHPt6F5hgy6+G7kpfQSTcvyyCWD8rFjFH/N/yjlcsA
+ 8EuBobguYI2ljVkJSkHQp6URS3va4BTJKF2h5b1Fm62tnmuCV1MgQnfKJFLNIjbUSsWl
+ Ioiujm3Lic0+nslmuJQ5quPmdJ34P+4rTwl3Y3RrnhS+CG5EBDCI7wG9ewR4JrQMTv2U
+ tPZjSvMG4oyhplejbAP2Q7y2QlyvZwePWgIgaWTif6S/b3ip3HC/kceMrzRj3Wm0WI4W
+ B3cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+ :message-id:subject:to:cc:content-type;
+ bh=fD2SNX3HnNXOpK6D/cT8uy0c6RxXK4wKPvDG4nvFO30=;
+ b=NtoI1fqvkl5ILTRPqVMSpcBM6DC9kI7v3OUmu8/lN8zW4rIHBekdDz6TE7W7Ci3laQ
+ ytrnnGNqxdEazrSqUlSyL6F2S2jD2TqX2Uc/2+A9br6ElzBs0RmV5rJZ8qal0n62AbNC
+ jNRBEfZ5zLZiqY8UIBIkfQBkYd04Z78DQsNM9WM3Kpuw0C2+DrypesZxrGddvBkw6YOD
+ wSXmTxuAJr4NacJT7qakd5qRv8d3XhBKH+EnJPJU0F+7hMTSDGxC+ZmJ3sTDmgwuAiEh
+ u+hcwRSMD/u3j3LqjNXuGZuuuC0YCq/j+tKuuA7l4HMVOBOkraprRIvHrgekEWe/MrZO
+ EJYw==
+X-Gm-Message-State: AG10YOSD7otAzF9HpC6smec5Vf9ubxMrXmAxK3yzI1//oeOTJOIL7IalmW9DQUuX7ny1xcTkNKq3UdkoD7OKOw==
+X-Received: by 10.107.41.206 with SMTP id p197mr16871846iop.80.1454701946112; 
+ Fri, 05 Feb 2016 11:52:26 -0800 (PST)
+MIME-Version: 1.0
+Received: by 10.107.145.70 with HTTP; Fri, 5 Feb 2016 11:52:06 -0800 (PST)
+In-Reply-To: <56b4f3ba.d4f28c0a.1c75a.fffff056@mx.google.com>
+References: <CANFTA0-poVPP2nHwFmZOUc8VKq=P4oup5jGED_AfsE7tA-f4Lg@mail.gmail.com>
+ <CAGRDzQWgxiLZHRKTZkVjv99moFaLaQBa4U0ZzPfGyrE-L8nbnQ@mail.gmail.com>
+ <CAHKdp-kG+4Pkr9CL952akYVLig4z2dbfZFSecV00YM_7OmvwJg@mail.gmail.com>
+ <CAGRDzQUM1OUx239JCv=Ho8GqXo2AzV93yuObLCBLkkxAaZTxig@mail.gmail.com>
+ <CAGRDzQWM8aX-HvBJJ9oXLjn6tjWHKAu2VcyhoB2HdgWu0Zs3bg@mail.gmail.com>
+ <CAHKdp-m7G5RFTUhxOfUjYL5MqPdpt84gwUuYDb0tQSX_=Nx0ZA@mail.gmail.com>
+ <56b4f3ba.d4f28c0a.1c75a.fffff056@mx.google.com>
+From: Cari Machet <carimachet@gmail.com>
+Date: Fri, 5 Feb 2016 20:52:06 +0100
+Message-ID: <CAGRDzQWAgK+wsTafWkGcqbfHNcc1g8RZ-ACkDxjDcDG-xi8DnQ@mail.gmail.com>
+Subject: Re: The Intercept steps up after catching a reporter faking data and
+ sources
+To: juan <juan.g71@gmail.com>
+Content-Type: multipart/alternative; boundary=001a1141ed18c093e4052b0b302c
+Cc: cpunks <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 119
+
+--001a1141ed18c093e4052b0b302c
+Content-Type: text/plain; charset=UTF-8
+
+basically sean wrote paternally to me that i am a lonely capitalist hater
+
+good/evil binaries ... lalalala i am a bad little girl that doesnt
+understand good and evil (religious ideation of sean)
+
+he/they didnt have time to look at the shit i wrote ... but i seem to have
+passion ... hehe blee blah blow
+
+++++
+
+sean doesnt understand political structure ... willfully blind... also
+doesnt understand ethics in journalism ... not making stories to make cash
+...not making states in order to make cash, etc
+
+ethics are not about good and bad ... ethics are about alignment with
+intelligence
+
+On Fri, Feb 5, 2016 at 8:09 PM, juan <juan.g71@gmail.com> wrote:
+
+> On Fri, 05 Feb 2016 18:10:54 +0000
+> Sean Lynch <seanl@literati.org> wrote:
+>
+> > Just so nobody thinks I asked a question and then dropped off the
+> > thread,
+>
+>         that's exactly what you did.
+>
+>
+>
+> I replied privately to Cari.
+> >
+> > On Thu, Feb 4, 2016, 07:28 Cari Machet <carimachet@gmail.com> wrote:
+> >
+> > > more proofs:
+> >
+>
+
+
+
+-- 
+Cari Machet
+NYC 646-436-7795
+carimachet@gmail.com
+AIM carismachet
+Syria +963-099 277 3243
+Amman +962 077 636 9407
+Berlin +49 152 11779219
+Reykjavik +354 894 8650
+Twitter: @carimachet <https://twitter.com/carimachet>
+
+7035 690E 5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187
+
+Ruh-roh, this is now necessary: This email is intended only for the
+addressee(s) and may contain confidential information. If you are not the
+intended recipient, you are hereby notified that any use of this
+information, dissemination, distribution, or copying of this email without
+permission is strictly prohibited.
+
+--001a1141ed18c093e4052b0b302c
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">basically sean wrote paternally to me that i am a lonely c=
+apitalist hater=C2=A0<div><br></div><div>good/evil binaries ... lalalala i =
+am a bad little girl that doesnt understand good and evil (religious ideati=
+on of sean)</div><div><br></div><div>he/they didnt have time to look at the=
+ shit i wrote ... but i seem to have passion ... hehe blee blah blow=C2=A0<=
+/div><div><br></div><div>++++</div><div><br></div><div>sean doesnt understa=
+nd political structure ... willfully blind... also doesnt understand ethics=
+ in journalism ... not making stories to make cash ...not making states in =
+order to make cash, etc</div><div><br></div><div>ethics are not about good =
+and bad ... ethics are about alignment with intelligence=C2=A0</div><img sr=
+c=3D"http://t.sidekickopen35.com/e1t/o/5/f18dQhb0S7ks8dDMPbW2n0x6l2B9gXrN7s=
+Kj6v5dfb6W5vwkZs7fZjrnW2BpKgF2zlZNzW8v-hnY1k1H6H0?si=3D5459291358625792&amp=
+;pi=3D77183f7f-c899-4f57-a54c-83867d84b36d" style=3D"display:none!important=
+" height=3D"1" width=3D"1"></div><div class=3D"gmail_extra"><br><div class=
+=3D"gmail_quote">On Fri, Feb 5, 2016 at 8:09 PM, juan <span dir=3D"ltr">&lt=
+;<a href=3D"mailto:juan.g71@gmail.com" target=3D"_blank">juan.g71@gmail.com=
+</a>&gt;</span> wrote:<br><blockquote class=3D"gmail_quote" style=3D"margin=
+:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"><span class=3D"">O=
+n Fri, 05 Feb 2016 18:10:54 +0000<br>
+Sean Lynch &lt;<a href=3D"mailto:seanl@literati.org">seanl@literati.org</a>=
+&gt; wrote:<br>
+<br>
+&gt; Just so nobody thinks I asked a question and then dropped off the<br>
+&gt; thread,<br>
+<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 that&#39;s exactly what you did.<br>
+<div class=3D"HOEnZb"><div class=3D"h5"><br>
+<br>
+<br>
+I replied privately to Cari.<br>
+&gt;<br>
+&gt; On Thu, Feb 4, 2016, 07:28 Cari Machet &lt;<a href=3D"mailto:carimache=
+t@gmail.com">carimachet@gmail.com</a>&gt; wrote:<br>
+&gt;<br>
+&gt; &gt; more proofs:<br>
+&gt;<br>
+</div></div></blockquote></div><br><br clear=3D"all"><div><br></div>-- <br>=
+<div class=3D"gmail_signature"><div dir=3D"ltr"><div>Cari Machet<br>NYC 646=
+-436-7795<br><a href=3D"mailto:carimachet@gmail.com" target=3D"_blank">cari=
+machet@gmail.com</a><br>AIM carismachet<br>Syria +963-099 277 3243<br>Amman=
+ +962 077 636 9407<br>Berlin +49 152 11779219 <br>Reykjavik +354 894 8650<b=
+r>Twitter: @carimachet &lt;<a href=3D"https://twitter.com/carimachet" targe=
+t=3D"_blank">https://twitter.com/carimachet</a>&gt;<br><br></div>7035 690E =
+5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187<br><div><br>Ruh-roh, this is now ne=
+cessary: This email is intended only for the <br>addressee(s) and may conta=
+in confidential information. If you are not the <br>intended recipient, you=
+ are hereby notified that any use of this <br>information, dissemination, d=
+istribution, or copying of this email without <br>permission is strictly pr=
+ohibited.<br><br><br></div></div></div>
+</div>
+
+--001a1141ed18c093e4052b0b302c--
+

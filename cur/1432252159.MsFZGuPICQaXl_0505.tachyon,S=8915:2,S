@@ -1,0 +1,178 @@
+From owner-cypherpunks@Algebra.COM  Fri Aug  2 00:36:36 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g724aaB30365
+	for <rsw@opamp.org>; Fri, 2 Aug 2002 00:36:36 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id AAA28403
+	for <rsw@mit.edu>; Fri, 2 Aug 2002 00:36:35 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g724FqOX023580
+	for <cypherpunks-outgoing@ak47.algebra.com>; Thu, 1 Aug 2002 23:15:52 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g724Fqn6023579
+	for cypherpunks-outgoing; Thu, 1 Aug 2002 23:15:52 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g724FjOX023560
+	for <cypherpunks@ak47.algebra.com>; Thu, 1 Aug 2002 23:15:46 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g724Fh5T017026
+	for cypherpunks@ak47.algebra.com; Thu, 1 Aug 2002 21:15:43 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g724FNeO017019
+	for cypherpunks-goingout345; Thu, 1 Aug 2002 21:15:23 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Thu, 1 Aug 2002 21:15:09 -0700
+From: AARG! Anonymous <remailer@aarg.net>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@aarg.net>.
+To: decoy@iki.fi, cypherpunks@lne.com, cryptography@wasabisystems.com
+Old-Subject: RE: Challenge to David Wagner on TCPA
+Message-ID: <c1204b70c4c0c736c78db6294c2bba75@aarg.net>
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  RE: Challenge to David Wagner on TCPA
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 6522
+Lines: 130
+
+
+Sampo Syreeni writes:
+
+> On 2002-08-01, AARG!Anonymous uttered to ptrei@rsasecurity.com,...:
+>
+> >It does this by taking hashes of the software before transferring
+> >control to it, and storing those hashes in its internal secure
+> >registers.
+>
+> So, is there some sort of guarantee that the transfer of control won't be
+> stopped by a check against cryptographic signature within the executable
+> itself, in the future? That sort of thing would be trivial to enforce via
+> licencing terms, after all, and would allow for the introduction of a
+> strictly limited set of operating systems to which control would be
+> transferred.
+
+TCPA apparently does not have "licensing terms" per se.  They say,
+in their FAQ, http://www.trustedcomputing.org/docs/Website_TCPA%20FAQ_0703021.pdf,
+"The TCPA spec is currently set up as a 'just publish' IP model."
+So there are no licensing terms to enforce, and no guarantees that
+people won't do bad things outside the scope of the spec.  Of course,
+you realize that the same thing is true with PCs today, right?  There are
+few guarantees in this life.
+
+If you think about it, TCPA doesn't actually facilitate the kind of
+crypto-signature-checking you are talking about.  You don't need all
+this fancy hardware and secure hashes to do that.  Your worrisome
+signature checking would be applied on the software which *hasn't
+yet been loaded*, right?  All the TCPA hardware will give you is a
+secure hash on the software which has already loaded before you ran.
+That doesn't help you; in fact your code can pretty well predict the
+value of this, given that it is running.  Think about this carefully,
+it is a complicated point but you can get it if you take your time.
+
+In short, to implement a system where only signed code can run, TCPA is
+not necessary and not particularly helpful.
+
+
+> I'm having a lot of trouble seeing the benefit in TCPA
+> without such extra measures, given that open source software would likely
+> evolve which circumvented any protection offered by the more open ended
+> architecture you now describe.
+
+I don't follow what you are getting at with the open source.  Realize that
+when you boot a different OS, the TCPA attestation features will allow
+third parties to detect this.  So your open source OS cannot masquerade
+as a different one and fool a third party server into downloading data
+to your software.  And likewise, data which was sealed (encrypted)
+under a secure OS cannot be unsealed once a different OS boots, because
+the sealing/unsealing is all done on-chip, and the chip uses the secure
+hash registers to check if the unsealing is allowed.
+
+
+> >Then, when the data is decrypted and "unsealed", the hash is compared to
+> >that which is in the TPM registers now.  This can make it so that data
+> >which is encrypted when software system X boots can only be decrypted
+> >when that same software boots.
+>
+> Again, such values would be RE'd and reported by any sane open source OS
+> to the circuitry, giving access to whatever data there is. If this is
+> prevented, one can bootstrap an absolutely secure platform where whatever
+> the content provider says is the Law, including a one where every piece of
+> runnable OS software actually enforces the kind of control over
+> permissible signatures Peter is so worried about. Where's the guarantee
+> that this won't happen, one day?
+
+Not sure I follow this here... the sealed data cannot be reported by an
+open source OS because the secret keys never leave the chip without being
+themselves encrypted.  As for your second proposal, you are suggesting
+that you could write an OS which would only run signed applications?
+And run it on a TCPA platform?  Sure, I guess you could.  But you wouldn't
+need TCPA features to do it.  See the comments above: any OS today could
+be modified to only run apps that were signed with some special key.
+You shouldn't blame TCPA for this.
+
+
+> >In answer to your question, then, for most purposes, there is no signing
+> >key that your TPM chip trusts, so the issue is moot.
+>
+> At the hardware level, yes.
+
+TCPA is a hardware spec.  Peter was asking about TCPA, and I gave him the
+answer.  You can hypothesize all the facist software you want, but you
+shouldn't blame these fantasies on TCPA.
+
+> At the software one, it probably won't be,
+> even in the presence of the above considerations. After you install your
+> next Windows version, you will be tightly locked in with whatever M$
+> throws at you in their DLL's,
+
+Doesn't Microsoft already sign their system DLLs in NT?
+
+> and as I pointed out, there's absolutely no
+> guarantee Linux et al. might well be shut out by extra features, in the
+> future. In the end what we get is an architecture, which may not embody
+> Peter's concerns right now, but which is built from the ground up to bring
+> them into being, later.
+
+Again, you are being entirely hypothetical here.  Please describe exactly
+how either attestation or secure storage would assist in creating a boot
+loader that would refuse to run Linux, or whatever other horrible disaster
+you envision.
+
+
+> More generally, as long as we have computers which allow data to be
+> addressed as code and vice versa, the ability to control use of data will
+> necessarily entail ability to control use of code.
+
+Look, I have describe in detail how it works, and you're just giving
+these meaningless slogans.  TCPA lets you prove to other people what
+code you are running; it lets you seal data such that it can only be
+unsealed by the same code which sealed it.  How does this relate to
+your little saying?  The ability to encrypt data means... the ability
+to encrypt code?  So what?
+
+> So, either we will get
+> systems where circumventing copyright controls is trivial or ones where
+> you cannot compile your own code. All the rest is just meaningless syntax.
+> In that light I bet you can guess why people are worried about TCPA and
+> its ilk.
+
+Nonsense, there is no need to stop people from compiling their own
+code in order to protect data!  The steps are simple: trusted app runs,
+connects to server; proves it is trusted via TCPA attestation; server
+downloads data to trusted app based on attestation; trusted app seals
+data.  User reboots into open source OS, can't access data because it
+is sealed; can't fool server because of attestation.  He can write all
+the code he wants and it won't change this logic.  TCPA does not depend
+on stopping people from running their own code; it depends on verifying
+what code is running, and tying it to the crypto.  That's all.
+

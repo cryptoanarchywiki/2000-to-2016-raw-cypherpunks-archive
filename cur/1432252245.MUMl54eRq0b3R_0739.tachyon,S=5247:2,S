@@ -1,0 +1,117 @@
+From owner-cypherpunks@Algebra.COM  Sun Jul  1 12:49:01 2001
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id MAA21003
+	for <kwantam@positron.mit.edu>; Sun, 1 Jul 2001 12:49:01 -0400
+Received: from ak47.algebra.com (root@ak47.algebra.com [208.233.99.160])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id MAA20184
+	for <rsw@mit.edu>; Sun, 1 Jul 2001 12:47:14 -0400 (EDT)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f61Ghhg09187
+	for cypherpunks-outgoing; Sun, 1 Jul 2001 11:43:43 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from einstein.ssz.com (cpunks@einstein.ssz.com [204.96.2.99])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f61Ghgx09171
+	for <cypherpunks@algebra.com>; Sun, 1 Jul 2001 11:43:42 -0500
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id LAA05050
+	for cypherpunks@algebra.com; Sun, 1 Jul 2001 11:53:05 -0500
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id LAA05025
+	for cypherpunks-outgoing; Sun, 1 Jul 2001 11:51:32 -0500
+Received: from localhost (ravage@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) with SMTP id LAA05021;
+	Sun, 1 Jul 2001 11:51:30 -0500
+Date: Sun, 1 Jul 2001 11:51:30 -0500 (CDT)
+From: Jim Choate <ravage@einstein.ssz.com>
+To: cypherpunks@einstein.ssz.com
+cc: sci-tech@einstein.ssz.com, The Club Inferno <hell@einstein.ssz.com>
+Old-Subject: CDR: Re: Zero Knowledge Identity Proofs (fwd)
+Message-ID: <Pine.LNX.3.96.1010701115108.24279S-100000@einstein.ssz.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Reply-To: cypherpunks@einstein.ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Acceptable-Languages: English, Russian, German, French, Spanish
+Subject:  Re: Zero Knowledge Identity Proofs (fwd)
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 2980
+Lines: 68
+
+
+
+---------- Forwarded message ----------
+Date: Tue, 26 Jun 2001 16:00:26 -0700
+From: Marc Branchaud <marcnarc@rsasecurity.com>
+To: cryptography@wasabisystems.com
+Subject: Re: Zero Knowledge Identity Proofs
+
+
+Well, I can't be sure that I'm not misunderstanding something either.  For
+the most part, I agree with Dimitrios that challenges with proof of origin
+are part of the solution to Mafia Fraud attacks.  My main point is that I
+don't think simply signing the challenge is enough.
+
+Let me try to restate things symbolically.  Nominally, in the naive case,
+Dave would present Alice with a challenge, X, and Alice would transform &
+return the challenge: X'.  This, as we know, is vulnerable to the Mafia
+Fraud.
+
+What I believe Dimitrios is proposing is for Dave to present both the
+challenge and a signature on the challenge: {X, S_dave(X)}.  Then, Alice
+would verify that the signature corresponds to the person she thinks she's
+talking to, and if so she can return the transformed challenge X'.
+
+I'm essentially contending that Dave needs to verify that Alice did indeed
+see the challenge & signature he presented.  Consider Mafia Fraud against the
+above scenario.  Dave presents {X, S_dave(X)} to Carol, who forwards it to
+Bob.  Now, Bob can re-sign the challenge himself, and present {X, S_bob(X)}
+to Alice.  Alice will happily verify that the challenge comes from Bob, and
+return X' to Bob, who then passes it to Carol & then on to Dave.   The fraud
+is successful, because Dave can't tell that Alice saw Bob's signature on the
+challenge and not his own.
+
+So the X' that Alice computes must be a function f(X, S_dave(X)) on both the
+challenge and the signature.  (If, in the naive case, X'=S_alice(X), then to
+truly prevent the fraud we need X'=S_alice(X,S_dave(X)).)  Now the fraud
+fails because Alice would compute X'=f(X, S_bob(X)), and so Dave (not Alice)
+would detect the fraud.
+
+So it's not enough for Dave to simply sign the challenge & for Alice to
+verify that signature.  Alice must prove to Dave that she saw his signature
+and not somebody else's.
+
+BTW, without giving it any thought, I believe this scheme is safe against
+replay attacks (because Dave generates a new challenge every time).  Does
+anybody have any thoughts about that?
+
+		Marc
+
+
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+
+
+ --
+    ____________________________________________________________________
+
+            Whereof one cannot speak, thereof one must be silent.
+
+                                      Ludwig Wittgenstein
+
+       The Armadillo Group       ,::////;::-.          James Choate
+       Austin, Tx               /:'///// ``::>/|/      ravage@ssz.com
+       www.ssz.com            .',  ||||    `/( e\      512-451-7087
+                           -====~~mm-'`-```-mm --'-
+    --------------------------------------------------------------------
+

@@ -1,0 +1,201 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u640opPD026694;
+	Sun, 3 Jul 2016 20:50:54 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=pq0G3VOV;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-vk0-f47.google.com (mail-vk0-f47.google.com
+ [209.85.213.47])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u640om9Y026690
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Sun, 3 Jul 2016 20:50:50 -0400
+Received: by mail-vk0-f47.google.com with SMTP id m127so154943600vkb.3
+ for <cypherpunks@cpunks.org>; Sun, 03 Jul 2016 17:50:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to;
+ bh=dFbXltUiE2CWolWnYypmu1uoJJlcGRaAHwduSq6MhBg=;
+ b=pq0G3VOVgtwVhqxoGG5X8o/UDuX9sVaFUhJsNIPIaN8vycmEprVjygROjt7ssSnQyX
+ jpZ/f9SWeJtn8ROlposHtMFRPmmgEonuPwtyS4VKdP6rpMKnCQMAfwpEXjCYoJoa71P1
+ OspcPK12far/WcDO+OMQ19EnpmD9MWL6fX8lkRWQfE1XVaT6ey1zfOtCH9/tHRrpgMuC
+ SvodprokXDtEUb9BMv50e+JyQpMO3sPDQ8oRysjC7rClX3YEyPGxrGFg4VppDv5nNOR0
+ XZJhMSaXKuDuTS6mIyTEk0BpbzNABbLeJLf7YAF3Re9b9czeq8V2DNYGrIDhOy5cg1dh
+ WgmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to;
+ bh=dFbXltUiE2CWolWnYypmu1uoJJlcGRaAHwduSq6MhBg=;
+ b=YJ52mvEgqd4OzLJZPv+VdXJAxLmQpawbvgEmrBh4waGMgfT2aORlJc2XXbOqkPZVDH
+ xZPh7TYH1vBDd4LasD/fdnNQpN8C8rLS1cpJazJ9ijoJ1AmuFprm/Mn3SSth6DcmXai8
+ 46o9J6/bcTV6H9KXT+ME4992AUcIciYqPGLxQjxEiuwnAIEUUVUkPlD56GTuDjsvr4vD
+ y4H8CKJCKpz1SydrMwB9ii75Bh4U10suyI9b2Y0QDcKf+XZFNyC4Sia5MLQez9AajwRn
+ 1bQ12oR691gu5S/mWZP7IfK6SJ5xMFtOIsjzQKvsW3cTb3hAqcHYdr6OKIZWrqhZGcbg
+ 3PWA==
+X-Gm-Message-State: ALyK8tImcFuNgP3lBQCkbJtYj6e3tOCCuksS04dh5LmLkrtSwaUVL8SR+2iyWcieFSkJpgn3XJkKzkxv2jnhyA==
+MIME-Version: 1.0
+X-Received: by 10.31.161.81 with SMTP id k78mr4077643vke.122.1467593442174;
+ Sun, 03 Jul 2016 17:50:42 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Sun, 3 Jul 2016 17:50:41 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Sun, 3 Jul 2016 17:50:41 -0700 (PDT)
+In-Reply-To: <5779949e.564e370a.24a9.575b@mx.google.com>
+References: <20160628084946.GB3088@x220-a02> <20160701231029.GU11626@x220-a02>
+ <CAG2tMp6+TrCbx6OUZr1HCywAFu84yBBRLqgA+0=PCYek2tP_7A@mail.gmail.com>
+ <20160702010005.GB5207@x220-a02>
+ <CAG2tMp4qEsSm7-_EuAOjzEPKE+Ybh8GT_nXAh0XARvyMDCa=bg@mail.gmail.com>
+ <5778112d.8e63370a.7ac2f.ffff816d@mx.google.com>
+ <CAG2tMp7omFpzYRLWNLDVHXy1jE2PY7XdWDHoe1=iypTu_B=VZw@mail.gmail.com>
+ <CAG2tMp78EY+MuhD2XeUcr2px+F7qayhN=yUpvJQn06gOUi4BCw@mail.gmail.com>
+ <CAG2tMp4rSLMT3yq_XhjS1deCACW1UG8QY5TG1u_=-LULHWSVkg@mail.gmail.com>
+ <577960d5.8d38c80a.6ba10.ffff8609@mx.google.com>
+ <CAG2tMp4OcN4MFN-G_P3bf7jZNwEJu18eTZgUWKzM3Bk8RM6P3Q@mail.gmail.com>
+ <5779949e.564e370a.24a9.575b@mx.google.com>
+Date: Sun, 3 Jul 2016 21:50:41 -0300
+Message-ID: <CAG2tMp6j=aFJDCVbmvBx0ON+qB_HGOZ7L_6jc8C-BKZ_VnvBAw@mail.gmail.com>
+Subject: Re: TSA Thugs: TSA Agents Beat And Jail Disabled Teen With Brain
+ Cancer
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=001a1143fa9ccbb0230536c4b9de
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 127
+
+--001a1143fa9ccbb0230536c4b9de
+Content-Type: text/plain; charset=UTF-8
+
+On Jul 3, 2016 7:51 PM, "juan" <juan.g71@gmail.com> wrote:
+>
+>         My position is radically different to that of quinn and his mob
+and yet you think we are both 'likeable'? Your opinions here are absurd.
+
+Juan, you and Quinn are not my friends, but I appreciate both.  Certainly
+not enough to invite you to visit my house or to borrow money and books,
+but I like you both.  :)
+
+A fool example, I have friends who believe in God in a blind way and also
+extremely Atheists friends.  They are good persons and I sincerely respect
+all of them.  They have different personal beliefs, but they all have good
+character and are intelligent.
+
+>         Not to mention, again, that you think that a totalitarian piece
+of shit like quinn is a good guy. Since you believe that, your moral
+judgements are a bad joke...which shows what you really stand for.
+
+He is a good person.  Too moralist and intollerant for being my friend, but
+he is a good person.
+
+You are a good person, but very aggressive in some moments and pretty
+intollerant too.
+
+Uff...  Juan, you seem to know more about me than myself to judge me so bad
+in all the moments.  Please, what do I really stand for?
+
+>         Fine. I'm not tolerant either. I don't tolerate stupidity and
+evil intentions or acts. As to being 'open minded', again, I'm certainly
+not open minded to stupidity. Being 'open minded' to stupidity is hardly a
+virtue.
+
+Juan, if I show you some truth and you don't like it, you simply will say
+it is stupidity because you are too proud and hard headed for admissing
+when are wrong.
+
+> >  [Cecilia]  Sorry if you felt offended with my words.  I don't support
+any kind of 'nazis'.  Radical people are extremely boring.
+>
+>         Not sure who you are calling radical? The nazis? The problem with
+the nazis were not that they were radicals. Or that they were 'boring'...
+
+I was not talking about nazism, only about extremely radical people:
+feminazis, vegan nazis, econazis, etc.  Sorry, at least for me, radical
+people are always boring and/or annoing.
+
+>         I don't think your explanation changes anything. You want to
+ignore this particular poll because it doesn't paint the americunts in a
+good light. But the poll is completely consistent with americunt 'culture'.
+If anything the real numbers are prolly higher.
+
+Juan, it hurts me a lot because it is a pool about my family's death, not
+because "doesn't paint the americans in a good light".  It would hurt me
+the same if it was a pool about French people opinion, if it was a pool
+about Chinese people opinion...  The problem is thinking about people
+saying that it was correct to use nuclear weapons to kill people.
+
+And, please, always remember that laws, sausages and researches are not
+made in a beautiful way.  I don't trust in all researchers that I've
+knowed.  I already saw some serious frauds in works and books.
+
+--001a1143fa9ccbb0230536c4b9de
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p>On Jul 3, 2016 7:51 PM, &quot;juan&quot; &lt;<a href=3D"mailto:juan.g71@=
+gmail.com">juan.g71@gmail.com</a>&gt; wrote:<br>
+&gt;<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 My position is radically different to that=
+ of quinn and his mob and yet you think we are both &#39;likeable&#39;? You=
+r opinions here are absurd.</p>
+<p>Juan, you and Quinn are not my friends, but I appreciate both.=C2=A0 Cer=
+tainly not enough to invite you to visit my house or to borrow money and bo=
+oks, but I like you both.=C2=A0 :) </p>
+<p>A fool example, I have friends who believe in God in a blind way and als=
+o extremely Atheists friends.=C2=A0 They are good persons and I sincerely r=
+espect all of them.=C2=A0 They have different personal beliefs, but they al=
+l have good character and are intelligent.</p>
+<p>&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 Not to mention, again, that you think t=
+hat a totalitarian piece of shit like quinn is a good guy. Since you believ=
+e that, your=C2=A0moral judgements are a bad joke...which shows what you re=
+ally stand for.</p>
+<p>He is a good person.=C2=A0 Too moralist and intollerant for being my fri=
+end, but he is a good person.=C2=A0 </p>
+<p>You are a good person, but very aggressive in some moments and pretty in=
+tollerant too.</p>
+<p>Uff...=C2=A0 Juan, you seem to know more about me than myself to judge m=
+e so bad in all the moments.=C2=A0 Please, what do I really stand for?</p>
+<p>&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 Fine. I&#39;m not tolerant either. I do=
+n&#39;t tolerate stupidity and evil intentions or acts. As to being &#39;op=
+en minded&#39;, again, I&#39;m=C2=A0certainly not open minded to stupidity.=
+ Being &#39;open minded&#39; to stupidity is hardly a virtue.</p>
+<p>Juan, if I show you some truth and you don&#39;t like it, you simply wil=
+l say it is stupidity because you are too proud and hard headed for admissi=
+ng when are wrong.</p>
+<p>&gt; &gt;=C2=A0 [Cecilia]=C2=A0 Sorry if you felt offended with my words=
+.=C2=A0 I don&#39;t support any kind of &#39;nazis&#39;.=C2=A0 Radical peop=
+le are extremely boring.<br>
+&gt;<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 Not sure who you are calling radical? The =
+nazis? The problem with the nazis were not that they were radicals. Or that=
+ they were &#39;boring&#39;...</p>
+<p>I was not talking about nazism, only about extremely radical people:=C2=
+=A0 feminazis, vegan nazis, econazis, etc.=C2=A0 Sorry, at least for me, ra=
+dical people are always boring and/or annoing.</p>
+<p>&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 I don&#39;t think your explanation chan=
+ges anything. You want to ignore this particular poll because it doesn&#39;=
+t paint the americunts in a good light. But the poll is completely consiste=
+nt with americunt &#39;culture&#39;. If anything the real numbers are proll=
+y higher.</p>
+<p>Juan, it hurts me a lot because it is a pool about my family&#39;s death=
+, not because &quot;doesn&#39;t paint the americans in a good light&quot;.=
+=C2=A0 It would hurt me the same if it was a pool about French people opini=
+on, if it was a pool about Chinese people opinion...=C2=A0 The problem is t=
+hinking about people saying that it was correct to use nuclear weapons to k=
+ill people.</p>
+<p>And, please, always remember that laws, sausages and researches are not =
+made in a beautiful way.=C2=A0 I don&#39;t trust in all researchers that I&=
+#39;ve knowed.=C2=A0 I already saw some serious frauds in works and books.<=
+/p>
+
+--001a1143fa9ccbb0230536c4b9de--
+

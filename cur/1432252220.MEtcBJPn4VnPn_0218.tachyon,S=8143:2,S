@@ -1,0 +1,197 @@
+From owner-cypherpunks@al-qaeda.net  Sat Dec  1 07:24:04 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id qB1CKpOf025983
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sat, 1 Dec 2012 07:20:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1354364451;
+	bh=ROy5lqvubUgVTiI7oAoddyhnTc7Hakz0UA60L8wGTqU=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=AV0H0LUzV4L9pi9QBt9NHPYXwkiHzV6w4NRPFVUxrZhDjbJGkOQoAJhq0XLjuheh7
+	 L6TX1nVi3XkYyRf26Qt/myCSDlPXcyKjXQ5j6P60fKTphAcAq+lqJYYEGyDU+EmJua
+	 vj1z3t7N4cY9VZfu2mYU20fAzwCl5mAdMU2zWGMg=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id qB1CKp1m025982
+	for cypherpunks-outgoing; Sat, 1 Dec 2012 07:20:51 -0500
+Date: Sat, 1 Dec 2012 13:20:47 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: Re: Some notes toward a fully distributed, serverless 
+  socnet/communications network using CouchDB.
+Message-ID: <20121201122047.GX9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 6639
+Lines: 162
+
+----- Forwarded message from Bryce Lynch <virtualadept@gmail.com> -----
+
+From: Bryce Lynch <virtualadept@gmail.com>
+Date: Fri, 30 Nov 2012 18:58:53 -0500
+To: doctrinezero@googlegroups.com, zs-p2p@googlegroups.com
+Subject: Re: Some notes toward a fully distributed, serverless
+	socnet/communications network using CouchDB.
+Reply-To: zs-p2p@googlegroups.com
+
+More notes.  I do my best thinking when I'm stuck in traffic, it seems.
+Again, this will need discussion, and at this point with people who've
+built CouchApps and can actually speak to how they do or do not work, and
+under what circumstances.  I'm also probably missing some important stuff.
+
+-----
+
+problem: addressing
+
+practically everybody is behind at least one NATting firewall these days
+
+IP addresses are dynamic, so you can't count on a buddy being reachable at
+the same IP for very long
+
+having the Network25 app post its current IP address somewhere (a field on
+a blog, to a mailing list, Tweet) or get a dynamic DNS hostname every time
+isn't really workable.  in fact, it outs the user in obvious ways, and not
+everyone is okay with that
+
+another problem: Port forwarding.  there are some solutions to this, but
+not all of them work well, work at all, or are suitable.  multiple layers
+of NAT make this solution suck.
+
+solution used by TorChat, which would probably work for us: Tor hidden
+service addresses
+
+TorChat creates a unique hidden service address for you when you set it
+up.  when you add people to your buddy list, it stores <public key>.onion
+in the list, and it's up to you to set an alias ("qwertyuiopasdfgh.onion"
+== "Bryce A. Lynch") on it
+
+Network25 should be able to do the same thing
+
+the Zero State is talking about using Tor for general communications in the
+future, anyway, this would be a perfect time to start
+
+When the Network25 socnet software starts up, it looks to see if Tor is
+running, if it has any hidden services configured, and if any of those
+services correspond to a unique port that Network25 uses
+
+shell/batch scripts FTW
+
+if not found, it tells the Tor daemon to create a hidden service
+descriptor, copies the public key/.onion hostname into the user's Network25
+profile, and announces it to that person's friends so they know where to
+find zir and can start synching databases
+
+the name of the hidden service is then added to a field in your profile
+document, so when people friend you on the network they know how to reach
+you:
+public profile document (gets replicated)
+{
+_id: "Bryce A. Lynch",
+_interests: ["long walks on the beach", "moonlit nights", "massively
+distributed systems", "tor", "writing stuff about CouchApps in Tomboy"],
+_friends: ["friend", "friend", ...],
+_publickey: "<public key>",
+_toraddress: "qwertyuiopasdfgh.onion",
+...
+}
+
+this means that CouchDB (configured to use Tor rather than IP address/ports
+combos) knows how to reach your copy of the socnet software and sync its
+copies of users' databases (profile, timeline, forums/communities/mailing
+lists/distribution lists/news feeds)
+
+this also helps authenticate users, in the same way that hidden services
+are authenticated (there is a corresponding private key which is never
+shared by Tor).  if the public key (.onion) and private key (on your box)
+don't match, then the service isn't trusted
+
+because database creation in CouchDB is cheap, there is no reason why there
+can't be multiple databases in every user's profile
+b" user profile
+b" shared public forum (anologous to the Doctrine Zero mailing list)
+b" specific forums (public or not) (anologous to zs-p2p, zs-arg mailing
+lists)
+b" personal blog
+b" blogs specific to the projects the user is working on (which themselves
+can have multiple people posting to them, because they're distributed)
+b" private blogs/chat forums for specific people
+b" blog/news feed/private messages from everyone the user has friended in
+Network25
+b database: amon_zero_public_feed
+b database: amon_zero_private_messages
+b database: amon_zero_philosophical_pontification
+b database: bryce_a_lynch_public_feed
+b database: bryce_a_lynch_project_byzantium
+b database: bryce_a_lynch_3d_printing
+b database: bryce_a_lynch_private_messages
+b database: zs_med_discussion
+b database: zs_arg_plot
+
+restricted databases are only replicated by members that are part of that
+project or group
+
+a list of authorized users and their corresponding public keys are part of
+the database for every forum
+
+a majority of people in a private forum have to vote to include that person?
+
+all messages are encrypted to the public keys of everyone authorized to
+participate in that form/replicate that database
+
+private databases are only replicated by people they're shared with, i.e.,
+a personal chat feed for one other person is only in two places in the
+Network25 socnet, your machine and theirs
+
+consider making private databases purgeable, i.e., either or both people
+can have their copy of the socnet software dump the database so that there
+is no record of the discussion on either side
+
+this is where PKE or OTR would come into play - even if the database were
+recovered somehow, it should be difficult for the attacker to figure out
+what the cyphertext is
+
+I don't know how easy, or how safe implementing crypto at the level of a
+CouchApp is.
+
+all of us are going to have running copies of the Tor Browser Bundle, and
+all of us are going to have copies of the CouchDB stack and Network25 app,
+so it would be possible to use a crypto.cat-like plugin for the TBB which
+implements the encryption/decryption/acquisition of a buddy's public
+key/addition of key to the user's profile database
+
+how much disk space will this take up?  I don't know yet.
+
+will CouchDB contact other nodes over Tor?  I don't know yet.  have to test
+it out.
+
+encryption/decryption of data before it enters/leaves the CouchApp?  good
+question.  I don't have enough experience yet with CouchApps to say, but
+would love to talk to someone who does
+
+-- 
+The Doctor [412/724/301/703] [ZS (MED)]
+https://drwho.virtadpt.net/
+"I am everywhere."
+
+-- 
+You received this message because you are subscribed to the Google Groups "ZS-P2P" group.
+To post to this group, send email to zs-p2p@googlegroups.com.
+To unsubscribe from this group, send email to zs-p2p+unsubscribe@googlegroups.com.
+For more options, visit https://groups.google.com/groups/opt_out.
+
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

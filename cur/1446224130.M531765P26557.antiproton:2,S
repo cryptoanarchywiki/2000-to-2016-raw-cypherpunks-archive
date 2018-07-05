@@ -1,0 +1,153 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t9UGt5Bm026539;
+	Fri, 30 Oct 2015 12:55:07 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=literati_org.20150623.gappssmtp.com header.i=@literati_org.20150623.gappssmtp.com
+	header.b=xXWMvkoE; dkim-adsp=none (unprotected policy);
+	dkim-atps=neutral
+Received: from mail-io0-f171.google.com (mail-io0-f171.google.com
+ [209.85.223.171])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t9UGt1m5026535
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Fri, 30 Oct 2015 12:55:03 -0400
+Received: by iofz202 with SMTP id z202so85846636iof.2
+ for <cypherpunks@cpunks.org>; Fri, 30 Oct 2015 09:54:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=literati_org.20150623.gappssmtp.com; s=20150623;
+ h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+ :content-type; bh=JcGVXtLnmqL+iIHOAmnB+lH4g0hUdVgipW2oL7CBYSk=;
+ b=xXWMvkoE5U3zojE0cAzUaj/ePcPoNIhshdg2Mt/EvL2QOwxeWZ1NPDSkWirNUkkexc
+ JbC2HBTIqMLEqM7ccgdVm8RymGq9QgzLf+NbPr2RrnjEf8W4X08xQBZQiX6zCsiyioy0
+ s1DibTCfOLrECdEDw5OUaA4bkgdB/x2bsmUOjVl2QNsaNxv19UT2nvuQf8y2rn+6Aqho
+ hGFjBIBIp80vTJql0Bdq6zaDTINgvwlGC8dF4iN++6J1nLrMAw7WiuXWnIJcHIupLZAI
+ xrrcwZUwByJ56G1mD0y57iaaCwdA7pAKKxTJozB8PJZsWZ0fauJHPX5mXrwlE2cVrSLR
+ +5qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+ :message-id:subject:to:content-type;
+ bh=JcGVXtLnmqL+iIHOAmnB+lH4g0hUdVgipW2oL7CBYSk=;
+ b=URN+RLMn4w5t/yKg0oAlqinaDftuECYYkOTaJVDWkVad9xt9TRmFflYD74x4YGXClR
+ F0qRzBvIaQYz8Azd05qu3CB6fUqWytYGYWCNV3PJY/8Tk4wKKEDQUxqc4nxVE2zhuWTk
+ vBMyd6m4hfSF+iiRBr076fgtnVmxZ7cHgBWdA/c2vxAmfw+f+dWgxCLDUM9ITYCJVa1a
+ ayPdvpqtyxMT/4iwpBn2rSvGDm7wk83UxIaFjMFDt0ffPTGZMZ51HGbaTD2iX6s/vglA
+ AykT2vpRDkfpYkSFirW6kq/AOccDPJ5/TuAMSjyaByp+B+icLUTZh7DxS34G5k+9xu2Z
+ pI3g==
+X-Gm-Message-State: ALoCoQmPr81C+BNlH9XSNxEWIQ+6V4qWduvJ/vDMaHd8DHeWSemeQ9VL/aE57yF1EdJ9UYLuw0FP
+X-Received: by 10.107.16.38 with SMTP id y38mr10671941ioi.73.1446224096279;
+ Fri, 30 Oct 2015 09:54:56 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAHWD2rJNTxt2+=0rPkkc+323pTn-njkvJVgUE624LShu2xg1Eg@mail.gmail.com>
+ <150b0aeef50.276e.4d489027c0c4d0c1b1ca03a1f48f1ffb@misanthropia.org>
+ <20151028231728.1A96CC00019@frontend1.nyi.internal>
+ <CAOsGNSThwv=c9K4v4HkD27PD+wY9+XykyTNOWs=7FOwPpxctZw@mail.gmail.com>
+ <150b1290920.276e.4d489027c0c4d0c1b1ca03a1f48f1ffb@misanthropia.org>
+ <20151029013945.C7D9FC00012@frontend1.nyi.internal>
+ <CAHWD2rLJ0RgxcGZi=mKD=OfYYtCy1j9sfbzDKOVZuuX5EPCnJg@mail.gmail.com>
+ <5632417A.3070402@riseup.net>
+ <CAHWD2rL0jH=Kb=UiRArACMh49Wj_m+w8ZXWLtyVu8eU=Ruu+Cw@mail.gmail.com>
+ <20151029173517.02E5CC00016@frontend1.nyi.internal>
+ <CAHWD2rL2hoh9-=htyYbuN1OM0qviQB+zsJzjk4Bj66naP0Rpbw@mail.gmail.com>
+ <20151029182639.A6B60C00013@frontend1.nyi.internal>
+ <CAOsGNSQwQO5n8aDXsdeYqtNEtucej0GaG=2s8aiPcWGtdQUE6Q@mail.gmail.com>
+In-Reply-To: <CAOsGNSQwQO5n8aDXsdeYqtNEtucej0GaG=2s8aiPcWGtdQUE6Q@mail.gmail.com>
+From: Sean Lynch <seanl@literati.org>
+Date: Fri, 30 Oct 2015 16:54:46 +0000
+Message-ID: <CAHKdp-kr39fYxC_K15OrXd0EmEnMFW+pYGKg6Y_1+Xedn7gDtA@mail.gmail.com>
+Subject: Re: Shiny stuff and designer societies (addenda)
+To: Zenaan Harkness <zen@freedbms.net>, cypherpunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=001a113f1e2e86557c05235549c2
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 78
+
+--001a113f1e2e86557c05235549c2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Oct 29, 2015 at 5:34 PM Zenaan Harkness <zen@freedbms.net> wrote:
+
+> On 10/29/15, Shelley <shelley@misanthropia.org> wrote:
+> > On October 29, 2015 11:17:05 AM Lodewijk andr=C3=A9 de la porte <l@odew=
+ijk.nl
+> >
+> > wrote:
+> >> I'm sorry, but there's only so much one will do with disregard of self=
+.
+> >
+> > That speaks volumes of your character.
+>
+> I read Lodewijk's comment as a generalised statement on the current
+> predominant nature of 'Western' (perhaps all) people. As in "how
+> things are" not "how I am and how I want the world to be".
+>
+> Character attack is sometimes not be in the interests of constructive
+> dialogue.
+>
+> Inspiration for a 'better' world is a good thing. Resignation over the
+> current world is a common thing. Finding a point of compassion in our
+> conversations with each other is something I have failed at too many
+> times.
+>
+
+David C. Rose's "Moral Foundation of Economic Behavior" cites some pretty
+convincing evidence that individualist moralities (perhaps what people here
+are callign "Western") are inherently superior to collectivist. Of course,
+I was already biased in that direction when I picked up the book, so I'd be
+interested to hear what someone who is already fairly sympathetic to
+collectivism thinks.
+
+--001a113f1e2e86557c05235549c2
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div class=3D"gmail_quote"><div dir=3D"ltr">On Thu, Oct 29=
+, 2015 at 5:34 PM Zenaan Harkness &lt;<a href=3D"mailto:zen@freedbms.net">z=
+en@freedbms.net</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" s=
+tyle=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">On 1=
+0/29/15, Shelley &lt;<a href=3D"mailto:shelley@misanthropia.org" target=3D"=
+_blank">shelley@misanthropia.org</a>&gt; wrote:<br>
+&gt; On October 29, 2015 11:17:05 AM Lodewijk andr=C3=A9 de la porte &lt;<a=
+ href=3D"mailto:l@odewijk.nl" target=3D"_blank">l@odewijk.nl</a>&gt;<br>
+&gt; wrote:<br>
+&gt;&gt; I&#39;m sorry, but there&#39;s only so much one will do with disre=
+gard of self.<br>
+&gt;<br>
+&gt; That speaks volumes of your character.<br>
+<br>
+I read Lodewijk&#39;s comment as a generalised statement on the current<br>
+predominant nature of &#39;Western&#39; (perhaps all) people. As in &quot;h=
+ow<br>
+things are&quot; not &quot;how I am and how I want the world to be&quot;.<b=
+r>
+<br>
+Character attack is sometimes not be in the interests of constructive dialo=
+gue.<br>
+<br>
+Inspiration for a &#39;better&#39; world is a good thing. Resignation over =
+the<br>
+current world is a common thing. Finding a point of compassion in our<br>
+conversations with each other is something I have failed at too many<br>
+times.<br></blockquote><div><br></div><div>David C. Rose&#39;s &quot;Moral =
+Foundation of Economic Behavior&quot; cites some pretty convincing evidence=
+ that individualist moralities (perhaps what people here are callign &quot;=
+Western&quot;) are inherently superior to collectivist. Of course, I was al=
+ready biased in that direction when I picked up the book, so I&#39;d be int=
+erested to hear what someone who is already fairly sympathetic to collectiv=
+ism thinks.</div></div></div>
+
+--001a113f1e2e86557c05235549c2--
+

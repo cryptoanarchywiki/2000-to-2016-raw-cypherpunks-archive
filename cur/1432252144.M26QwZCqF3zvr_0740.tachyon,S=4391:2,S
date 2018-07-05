@@ -1,0 +1,99 @@
+From owner-cypherpunks@jfet.org  Wed Mar 29 03:48:04 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.5/8.13.5/Debian-3) with ESMTP id k2T8lYrZ007792
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 29 Mar 2006 03:47:35 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.5/8.13.5/Submit) id k2T8lY2L007791
+	for cypherpunks-outgoing; Wed, 29 Mar 2006 03:47:34 -0500
+Date: Wed, 29 Mar 2006 10:47:16 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@jfet.org
+Subject: [arma@mit.edu: Tor 0.1.1.17-rc is out]
+Message-ID: <20060329084716.GF25017@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.5.11+cvs20060126
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3318
+Lines: 72
+
+----- Forwarded message from Roger Dingledine <arma@mit.edu> -----
+
+From: Roger Dingledine <arma@mit.edu>
+Date: Tue, 28 Mar 2006 20:11:36 -0500
+To: or-talk@freehaven.net
+Subject: Tor 0.1.1.17-rc is out
+User-Agent: Mutt/1.5.9i
+Reply-To: or-talk@freehaven.net
+
+This is the third release candidate for the 0.1.1.x series.
+
+It fixes several major bugs for clients and servers. It also adds
+a fourth authoritative directory server (finally).
+
+http://tor.eff.org/download.html
+
+Changes in version 0.1.1.17-rc - 2006-03-28
+  o Major fixes:
+    - Clients and servers since 0.1.1.10-alpha have been expiring
+      connections whenever they are idle for 5 minutes and they *do*
+      have circuits on them. Oops. With this new version, clients will
+      discard their previous entry guard choices and avoid choosing
+      entry guards running these flawed versions.
+    - Fix memory leak when uncompressing concatenated zlib streams. This
+      was causing substantial leaks over time on Tor servers.
+    - The v1 directory was including servers as much as 48 hours old,
+      because that's how the new routerlist->routers works. Now only
+      include them if they're 20 hours old or less.
+
+  o Minor fixes:
+    - Resume building on irix64, netbsd 2.0, etc.
+    - On non-gcc compilers (e.g. solaris), use "-g -O" instead of
+      "-Wall -g -O2".
+    - Stop writing the "router.desc" file, ever. Nothing uses it anymore,
+      and it is confusing some users.
+    - Mirrors stop caching the v1 directory so often.
+    - Make the max number of old descriptors that a cache will hold
+      rise with the number of directory authorities, so we can scale.
+    - Change our win32 uname() hack to be more forgiving about what
+      win32 versions it thinks it's found.
+
+  o New features:
+    - Add lefkada.eecs.harvard.edu as a fourth authoritative directory
+      server.
+    - When the controller's *setconf commands fail, collect an error
+      message in a string and hand it back to the controller.
+    - Make the v2 dir's "Fast" flag based on relative capacity, just
+      like "Stable" is based on median uptime. Name everything in the
+      top 7/8 Fast, and only the top 1/2 gets to be a Guard.
+    - Log server fingerprint on startup, so new server operators don't
+      have to go hunting around their filesystem for it.
+    - Return a robots.txt on our dirport to discourage google indexing.
+    - Let the controller ask for GETINFO dir/status/foo so it can ask
+      directly rather than connecting to the dir port. Only works when
+      dirport is set for now.
+
+  o New config options rather than constants in the code:
+    - SocksTimeout: How long do we let a socks connection wait
+      unattached before we fail it?
+    - CircuitBuildTimeout: Cull non-open circuits that were born
+      at least this many seconds ago.
+    - CircuitIdleTimeout: Cull open clean circuits that were born
+      at least this many seconds ago.
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820            http://www.ativel.com
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+
+[demime 1.01d removed an attachment of type application/pgp-signature which had a name of signature.asc]
+

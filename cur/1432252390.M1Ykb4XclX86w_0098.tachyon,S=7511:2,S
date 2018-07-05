@@ -1,0 +1,169 @@
+From owner-cypherpunks-outgoing@ssz.com  Tue Oct 31 23:11:43 2000
+Received: from MIT.EDU (SOUTH-STATION-ANNEX.MIT.EDU [18.72.1.2])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id XAA26116
+	for <kwantam@positron.mit.edu>; Tue, 31 Oct 2000 23:11:43 -0500
+Received: from einstein.ssz.com by MIT.EDU with SMTP
+	id AA07159; Tue, 31 Oct 00 23:11:21 EST
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id WAA06449
+	for cypherpunks-outgoing; Tue, 31 Oct 2000 22:18:02 -0600
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id WAA06439
+	for cypherpunks@ssz.com; Tue, 31 Oct 2000 22:18:00 -0600
+Received: from mail.virtual-estates.net (cpunks@video-collage.com [160.79.196.177])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id WAA06416
+	for <cpunks@ssz.com>; Tue, 31 Oct 2000 22:17:56 -0600
+Received: (from cpunks@localhost)
+	by mail.virtual-estates.net (8.9.3+3.2W/8.9.1) id XAA05028;
+	Tue, 31 Oct 2000 23:04:48 -0500 (EST)
+X-Authentication-Warning: video-collage.com: Processed from queue /var/spool/mqueue-majordomo
+X-Authentication-Warning: video-collage.com: Processed by cpunks with -C /usr/local/majordomo/sendmail.cf
+Received: from r00t.besiex.org (IDENT:adam@r00t.besiex.org [208.222.215.145])
+	by mail.virtual-estates.net (8.9.3+3.2W/8.9.3) with ESMTP id XAA05018
+	for <cypherpunks@algebra.com>; Tue, 31 Oct 2000 23:04:47 -0500 (EST)
+X-Relay-Ip: 208.222.215.145
+Received: (from adam@localhost)
+	by r00t.besiex.org (8.8.7/8.8.7) id XAA16826;
+	Tue, 31 Oct 2000 23:08:49 -0500
+Date: Tue, 31 Oct 2000 23:08:49 -0500
+Message-Id: <200011010408.XAA16826@r00t.besiex.org>
+From: Adam Back <adam@cypherspace.org>
+To: cypherpunks@cyberpass.net
+Cc: cypherpunks@algebra.com
+Old-Subject: ZKS "Smart Privacy Policies"
+Subject: CDR: ZKS "Smart Privacy Policies"
+Sender: owner-cypherpunks@ssz.com
+Precedence: bulk
+Reply-To: cypherpunks@ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Language: English, Russian, German
+Status: O
+Content-Length: 5484
+Lines: 123
+
+
+[Sent this once from a dud address trying to work around a mail
+problem -- apologies for duplicates]
+
+cypherpunk agent X wrote:
+> Here we get to the meat of the issue... the
+> item that NAI tried to force down our throats...Corporate Key Escrow..
+> this time via key splitting... Shades of the NSA Key!!
+> 
+> Sick em Adam!!
+
+This is referring to me right -- as I was involved in the big fight
+about NAI's corporate message key escrow proposal?
+
+Disclaimer: note I work for ZKS now, below are my personal opinions.
+
+It's not key escrow, and it's not building tools for key escrow.
+
+Greg wrote:
+> ZKS has been pretty aggressively and conspicuously hiring wild-eyed
+> cypherpunk types, who won't necessarily inspire a lot of confidence
+> or trust in accoutant and risk-manager types.
+
+Yeah but the company's goal should be to satisfy users that there is a
+reason to trust the solution, and ZKS has brand recognition for
+building "trust no-one" (or at least distributed trust) solutions.
+
+Tim wrote:
+> [...]
+>By building precisely the tools they and other governments would need 
+>to implement such a system, you are making such a system more likely 
+>to happen.
+
+I agree with this argument.  I wrote up some GAK-resistant design
+principles during the NAI/PGP key escrow argument
+(http://www.cypherspace.org/~adam/grdesign/), in an attempt to get
+people thinking about the social implications of protocols they write
+-- and to show that actually crypto protocols are not neutral -- a
+protocol could even be deliberately designed to frustrate later
+imposition of GAK -- for example end-to-end forward secrecy.  Not
+suprisingly trying to frustrate GAK typically increases the security
+of your protocol, because the GAK aspect is a kind of attack, which
+could be perpetrated by others.  This is one of the conclusions of the
+11 cryptographers report on the risks of key escrow
+(http://www.cdt.org/crypto/risks98/).
+
+Here's my personal take on the design of privacy systems.  It's
+basically an elaboration of "trust no-one", and "write code not laws"
+(aka cypherpunks write code).
+
+The desired trust model for privacy in order of preferred solution:
+
+- best: don't reveal the information in the first place -- critically
+  rexamine whether is it necessary to reveal the personal data in the
+  first place
+
+- if it is necessary to do some processing on data, examine the users
+  processing and storing their own profile (client side applications)
+
+- try to operate pseudonymously (persistent anonymous)
+
+- if you can't do that at least split the data up (think reply-blocks)
+  -- this is what the "split-key" thing is talking about (more on this
+  below).
+
+- if possible make the protocols publicly auditable (as in time-stamp
+  servers where if a server lies the users get a signed transcript
+  proving it cheated).
+
+- if you can't do that have ombudsmen and traditional auditing of
+  processes.
+
+- government laws come into it in the sense that some governments have
+  or are starting to try to regulate companies handling of data.  The
+  UK Data Protection Act would be one example, where companies are
+  supposed to forget data.  We've discussed in the past the demerits
+  of government laws wrt "forgetting" data -- if there is a business
+  need for the data, the data service will move off shore.  Still
+  some companies will try to comply.
+
+- only lastly rely on contract law.  Even with contract law it's
+  problematic -- you're asking the company to forget something.  For
+  contract law, even though private contracting is a nice way to
+  approach it, in practice it may be pretty hard to prove the company
+  broke a contract, and anyway it's always better to prevent than
+  detect and then argue it out in court.
+
+It's all a bit vague to talk about this stuff without some concrete
+example -- the above is talking loosely about areas where the user
+would currently be asked to reveal some info to a company.  There are
+other applications one could apply crypto to.
+
+Also bear in mind that currently often the situation is no privacy at
+all -- data mining, sharing, reselling data against claimed privacy
+policies, weak non-technical "privacy seals", etc.  Technical steps to
+ensure the user doesn't have to trust the company privacy policy is a
+good thing -- if the privacy policy is implemented in the form of
+cryptographic prevention.  If they have the code and the protocols and
+they can see that they aren't trusting the company because the data
+doesn't leave their own computer, or is given pseudonymously through a
+mix net is a good thing.  Even if nothing else technical is possible,
+and they have to trust a few third parties not to collude and there is
+no way to conduct the business without revealing the info to someone,
+that's an improvement, as previously they would have trusted the
+company alone.
+
+Hence the subject line -- using crypto to make cryptographic
+prevention is analogous to Nick Szabo's "Smart Contracts".
+(http://www.best.com/~szabo/smart.contracts.2.html)
+
+
+Now specifically about "key-splitting" -- the press release includes
+that one odd semi-technical snippet kind of out-of-context and
+ambiguously.
+
+The context is a system which is pretty much a reply-block.  So as
+Adam Shostack says: it's not key splitting, it's multiple layered
+encryption -- the onion skin analogy.  But as I say IMO it's
+imbalanced and ambiguous to mention that one technical approach
+without explaining at all, and without mentioning any of numerous
+other approaches.
+
+Adam
+

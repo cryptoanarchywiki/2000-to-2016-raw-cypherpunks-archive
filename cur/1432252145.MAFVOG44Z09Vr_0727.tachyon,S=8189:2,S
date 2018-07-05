@@ -1,0 +1,166 @@
+From owner-cypherpunks@al-qaeda.net  Wed Jul  7 03:18:28 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i678HTLv023017
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Wed, 7 Jul 2004 03:17:29 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i678HT4j023016
+	for cypherpunks-outgoing; Wed, 7 Jul 2004 03:17:29 -0500
+Message-Id: <6.0.3.0.0.20040706223732.044b3030@pop.idiom.com>
+X-Sender: wcs@pop.idiom.com
+X-Mailer: QUALCOMM Windows Eudora Version 6.0.3.0
+Date: Wed, 07 Jul 2004 01:11:58 -0700
+To: hal@finney.org ("Hal Finney")
+From: Bill Stewart <bill.stewart@pobox.com>
+Subject: Re: Email tapping by ISPs, forwarder addresses, and crypto  
+  proxies
+Cc: cypherpunks@al-qaeda.net
+In-Reply-To: <20040706214743.5D26657E2A@finney.org>
+References: <20040706214743.5D26657E2A@finney.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 6970
+Lines: 136
+
+At 02:47 PM 7/6/2004, Hal Finney wrote:
+>Thomas Shaddack writes:
+> > There are various email forwarding services, which are nothing more than a
+> > SMTP server with pairs of recipient@forwarder.com --
+> > recipient@hiscurrentisp.com.
+>
+>Right, mostly for use as disposable email addresses.
+>I've used spamgourmet to good effect, myself.
+
+They're also marketed as permanent addresses you can keep when
+you change ISPs, for example pobox.com was one of the first ones.
+Unfortunately, as far as I know, none of the forwarders let you
+forward mail from recipient+tag@forwarder.com to recipient+tag@currentISP.com,
+which means that they don't support tag-based spam protection.
+
+When I want disposable addresses, I either use free providers,
+or I use tagged addresses at free / cheap providers like fastmail.fm.
+
+>One thing I haven't understood in all the commentary is whether law
+>enforcment still needs a warrant to access emails stored in this way.
+>Apparently the ISP can read them without any notice or liability, but
+>what about the police?
+
+Councilman currently only affects the First Circuit (the Northeast),
+and it was only the three-judge-panel version of the Appeals Court,
+so he could appeal it to the full court before going to the Supremes.
+
+My reading of the opinions is that the two majority judges totally
+failed to grasp the technology, while the dissenting judge got it,
+so even if the opinion stands, it's very narrow in scope -
+but it's a strong reminder that the current laws don't protect
+stored email very well, and that if judges aren't technical enough
+to understand it when it's laid out in front of their faces,
+they're certainly not going to be sufficiently uncooperative
+when police try to get warrants or subpoenas (or at least it
+probably won't be hard for police to find a cooperative judge.)
+Also, in the Steve Jackson Games case, the courts and Feds got away
+with declaring that the ECPA didn't apply to mail that had arrived
+in mailboxes, only to mail that was in transit.
+
+It's not clear that ISPs in general can read mail without any
+notice or liability - just that the obvious readings of the law
+that Councilman sued them under don't currently work in the 1st Circuit.
+He might have tried various business-related torts successfully,
+but the wiretapping laws looked like a slam-dunk.
+But that doesn't usually work against police, just businesses.
+
+Police reading mail like this really is a different case -
+they either need some kind of court papers to hand the ISP
+(though these days the Patriot Act seems to be used to justify
+almost anything and place a gag order on the activity,
+and a subpoena is easier to get than a warrant),
+or they need some bogus justification that the ISP has to
+obey "administrative requests" that aren't court-issued,
+or they need to wiretap the bits legally.
+
+>Also, what if you run your own mail spool, so the email is never stored
+>at the ISP, it just passes through the routers controlled by the ISP
+>(just like it passed through a dozen other routers on the internet).
+>Does this give the ISP (and all the other router owners) the right to
+>read your email?  I don't think so, it seems like that would definitely
+>cross over the line from "mail in storage" to "mail in transit".
+
+One scary thing about Councilman was that it happened in a case
+where the government was vaguely neutral and responsible for protecting
+the citizen's privacy - when the prosecutors are _trying_ to get
+outrageously twisted anti-privacy rulings they're more likely to win.
+
+In particular, does a message count as "in transit" if you're
+only hauling IP packets around with parts of the message
+rather than the whole message, or does each part count as "in storage"
+when it's gotten to a router that has to queue it before
+forwarding it on to the next hop?  Or if the whole message
+is queued in your ISP's sendmail queue because you've got an MX there?
+
+What about _outgoing_ mail queued at your ISP,
+who's being a good anti-spammer and forcing you to use
+their mail transfer agent instead of sending directly to the destination?
+
+> > There can be an easy enhancement for such forwarder service; GnuPG proxy.
+
+There are several different threat models to think about -
+- Greedy ISP reading your mail for their own purposes
+- ISP responding to court-ordered wiretapping
+- ISP collaborating enthusiastically with police
+- Police wiretapping without court orders
+- All of the above, but for stored mailboxes, not in-transit
+- All of the above, but for traffic analysis / headers, not content
+
+Mail-handling services don't prevent any of the in-transit threats,
+but they can eliminate most of the threats to stored mailboxes,
+and they do let you move your vulnerability to a different jurisdiction,
+which can potentially reduce the likelihood that they'll wiretap you there.
+For instance, if you're using your local cable modem company
+for mailbox services, and you annoy your local police,
+they may try to tap you, but police in Anguilla will probably
+only try to tap you if you've gotten the US Feds or MI5/MI6 annoyed.
+Police in Sealand might not respond to wiretaps at all,
+but any unencrypted mail going there would have been watched closely.
+Spooks in the UK proper might wiretap you as a favor to the US spooks,
+and data privacy laws might or might not apply if you're a non-subject.
+
+Google's Gmail is an interesting case.
+Unlike Councilman's ISP, who were sneaky greedy wiretapping bums,
+Google tells you that they'll grep your mail for advertising material,
+and tells you how much of that they'll leak to the advertisers
+and makes you some promises not to leak more.
+The data's just sitting there waiting for a subpoena,
+and there's not much point in having it all encrypted because
+the cool features of Gmail aren't much use on cyphertext.
+
+> > For added benefit, the
+> > forwarder should support SMTP/TLS (STARTTLS) extension, so the connections
+> > from security-minded owners of their own mailservers would be protected.
+>
+>STARTTLS support at the proxy should pretty much go without saying these
+>days, so you might as well do it, but if you're already PGP encrypting
+>then it's not adding that much security.  Well, maybe it does, but you're
+>talking about a different threat.
+
+STARTTLS is helpful because it can protect mail from the sender's ISP.
+Almost by definition, that's unencrypted mail, because otherwise
+you wouldn't be so worried about it getting tapped.
+
+>I think it's a great idea.  Of course as you say there is still the
+>problem that the forwarding server could read your email, so you have
+>only moved the threat from the ISP to another operator.  The difference
+>I suppose is that the forwarder would be selling privacy services, hence
+>different ones would compete to get a good reputation.  Any cheating might
+>be detected by insider whistle blowers or perhaps some kind of audit.
+
+It might.  Unless of course the service is really run by narcs.
+
+
+----
+Bill Stewart  bill.stewart@pobox.com 
+

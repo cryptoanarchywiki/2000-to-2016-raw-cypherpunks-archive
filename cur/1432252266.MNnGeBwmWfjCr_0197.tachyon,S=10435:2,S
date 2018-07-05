@@ -1,0 +1,186 @@
+From owner-cypherpunks@al-qaeda.net  Fri Feb  4 18:33:10 2005
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (majordomo@localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.3/8.13.3/Debian-4) with ESMTP id j150Wd3f015687
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Fri, 4 Feb 2005 18:32:39 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.3/8.13.3/Submit) id j150WdEW015686
+	for cypherpunks-outgoing; Fri, 4 Feb 2005 18:32:39 -0600
+From: Anonymous <cripto@ecn.org>
+Comments: This message did not originate from the Sender address above. 
+  It was remailed automatically by anonymizing remailer software. 
+  Please report problems or inappropriate use to the 	remailer
+  administrator at <cripto_abuse@ecn.org>.
+To: cypherpunks@al-qaeda.net, cryptography@metzdowd.com
+Subject: Re: Dell to Add Security Chip to PCs
+Message-ID: <78e62348a8c929c48fb814eccbe472b8@ecn.org>
+Date: Sat,  5 Feb 2005 01:15:24 +0100 (CET)
+X-Virus-Scanned: by amavisd-new at ecn.org
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 9223
+Lines: 159
+
+As far as the question of malware exploiting TC, it's difficult to
+evaulate without knowing more details about how the technology ends up
+being used.
+
+First there was TCPA, which is now called TCG.  Microsoft spun off their
+own version called Palladium, then NGSCB.  But then Microsoft withdrew
+NGSCB, and at this point I have no idea whether they will ever offer a
+new approach.
+
+Microsoft offered four concepts for its vision, but only two of
+them are in the current TCG: Sealed Storage and Remote Attestation.
+Microsoft's additional features are Trusted I/O and Process Isolation.
+It's possible that TCG may incorporate these eventually, because without
+them the security offered by TC is much more limited.
+
+Microsoft's vision for application development under NGSCB involved
+splitting programs into two parts, which they called the left hand side
+(LHS) and right hand side (RHS).  The LHS was the legacy program, which
+had access to the entire Windows API.  It would be responsible for user
+interface, I/O, and any non-secure features.  The RHS was the new stuff;
+it would run in a special partitioned memory that could not be accessed
+even by the OS.  However the RHS would not have access to the full
+Windows API, and instead would only get very limited OS support from a
+mini-kernel called the Nexus.  The goal was to publish the source of the
+Nexus for review and to have it be simple and clean enough to be secure.
+
+Applications would do their security stuff in the RHS modules, which
+were called Nexus Computing Agents (NCAs).  These could use the other TPM
+features.  They could encrypt data such that only that NCA could decyrpt
+it; and they could attest to a remote server or peer about exactly what
+NCA was running.  NCAs would also have some kind of secure I/O channel
+to input and display devices.  An NCA would be immune to molestation by
+virus and malware unless the virus got into the NCA itself, which would
+be hard because they were supposed to be relatively small and simple.
+Infections elsewhere in the program, in the OS, or in other NCAs would
+not propagate to an NCA.
+
+Microsoft's design was sophisticated and (IMO) elegant, and goes far
+beyond anything the clumsy, design-by-committee TCG has come up with yet.
+Yet NGSCB failed even before it was released.  Experience from early
+beta testers was uniformly negative, according to press reports, and the
+project was pulled for a redesign.  Nothing has been heard of it for a
+year now.
+
+The problem was apparently that this LHS/RHS design was unacceptable to
+developers, introducing complexity and requiring a substantial rewrite
+of existing applications.  The RHS Nexus API was so primitive that it was
+hard to do anything useful there, while LHS functionality was completely
+unprotected and received no benefits from the new technology.
+
+So that's where we stand.  Given this uncertainty, it is hard to credit
+those who claim that TC will be a golden opportunity for malware.
+Nobody really knows what the architecture of TC will be by the time
+it is released.  In this respect, Bruce Schneier's comments were the
+most accurate and prescient.  Over two years ago he advised adopting a
+wait and see attitude, and predicted exactly the kind of revamping and
+redesign which is currently underway.
+
+But for the purposes of analysis, let's suppose that Microsoft's original
+vision were intact, and that NGSCB with the four features were actually
+being deployed.  How might Dan Kaminsky's scenario of an infected
+Microsoft Word work out in detail?
+
+First we need to consider how the LHS/RHS split might work for a word
+processor.  Most functions are not security related and will be in
+the LHS.  Let's imagine a security function.  Suppose a company wants
+to have certain documents to always be saved encrypted, and only to be
+exchanged (in encrypted form) with other employees also running the secure
+Word program.  Nobody would be able to get access to the data except via
+this special program.  This could be useful for company-confidental docs.
+
+So we will have an NCA on the RHS which can, under the guidance of
+some policy, save documents in encrypted form and locked to the NCA.
+No other software will be able to decrypt them because of the Sealed
+Storage function of the TPM.  NCA's can exchange documents with matching
+NCAs on other computers, using Remote Attestation to verify that the
+remote system is running the right software, and to set up a secure comm
+channel between the NCAs.  No other software, not even the LHS of Word,
+could decrypt the data being exchanged between the NCAs.  And the NCAs
+run in secure memory, so that even in an infected computer there will
+be no way for the malware to get access to the sensitive data.
+
+So how does Kaminsky's attack work?  He proposes to give some bogus
+data to the NCA and infect it.  Now, here's the problem.  The NCA is
+a relative small and simple program.  It's not going to have the full
+capabilities of the rest of Word.  It has a clean interface and a clean
+API to program to.  Everything about the system is designed so that
+secure NCAs will be relatively easy to write.
+
+The goal here is to reduce the target size.  Presently the target is the
+entire Windows kernel, device drivers, services and all the other things
+which run as Administrator.  NCAs and the Nexus will be a much smaller
+target, without the burdens of legacy code which make it so hard to
+secure a system the size of Windows.  (Of course this same "clean piece
+of paper" approach to design is what caused NGSCB to be rejected, but we
+are ignoring that for now in this thought experiment.)  This gives us
+reason to expect that NCAs and the Nexus will be much harder for virus
+writers to hit than the big, fat, juicy target of Windows itself.
+
+But no software is perfect, so let's suppose that some NCAs do have bugs
+and can be infected.  Kaminsky is right that these agents would then be
+immune to memory-based AV scanners.  Even though the scanners run with
+full privileges, they can't see NCA memory.  So this does give a virus
+a place to hide.  But what can the virus do?  Remember, NCAs do not
+have access to the full Windows API.  They have a much simpler and more
+primitive API in the form of the Nexus, and it's primarily oriented around
+doing crypto operations.  So a virus can come in and do some crypto.
+Big whoop.
+
+It's important to understand that architecturally, it's not like you break
+into a "trusted code layer" and can then do whatever you want.  NCAs are
+still protected from one another.  The Nexus is protected from NCAs.
+The only single point of failure is the Nexus itself, but as I said it
+is designed as a micro kernel set up for open review.  This is the one
+piece of code they would focus most intently on making bulletproof.
+
+The other problem with breaking into an NCA is that if it changes the
+memory footprint of the agent, the agent will lose access to its own
+sealed storage.  The sealed data is locked to the hash of the agent, so
+if the agent's code is altered, unsealing will no longer be possible.
+The virus can't even get access to the sensitive documents the NCA
+was protecting.
+
+Based on these considerations, attacking NCAs does not seem to be a
+productive avenue for malware writers.  The other possibility is for virus
+writers to do as they do now, ignore the RHS and just go after Windows.
+As Steve Bellovin points out, they can still delete files, send out
+copies of themselves, and wreak other havoc.  What good is TC against
+this threat?
+
+The benefit of TC is that data which is secured by NCAs would be immune
+to discovery and disclosure by malware which broke into the rest of
+the machine.  This could include financial account numbers, passwords,
+records and other important documents.  We have already seen viruses
+which scan disks for things that look like credit card and account
+numbers, and probably these will increase in the future.  Just being
+able to have a secure, hardware protected vault for hiding this data
+will be an important step forward for security.
+
+Other kinds of applications will also benefit from immunity to malware.
+Any network application can use remote attestation to make sure that
+its servers, clients or peers are running intact, in secured and
+isolated memory, on a TC enabled system.  One example which has been
+proposed is secure election software.  It would be crazy to think about
+Internet voting with today's PCs, but running a voting client as an NCA
+would enable safe voting even on a malware infected PC.  Another idea,
+which should be near and dear to the cypherpunk heart, is a TC secured
+remailer network.  Each remailer could verify that the others in the net
+were running unmolested, and even remailer operators would be unable to
+monitor traffic passing through their systems.
+
+TC will not stop the malware threat, but it aims to bypass it, by letting
+designers create a new generation of applications which each runs securely
+in its own world.  This would stop the worst feature of today's systems,
+that a failure in one part of the PC makes the whole thing insecure.
+That will be a major step forward for the security and usability of the
+next generation of computers.
+
+If the technology is allowed to exist, that is.
+

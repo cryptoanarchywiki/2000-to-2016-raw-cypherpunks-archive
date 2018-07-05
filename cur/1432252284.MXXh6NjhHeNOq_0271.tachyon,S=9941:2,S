@@ -1,0 +1,174 @@
+From owner-cypherpunks@al-qaeda.net  Sun Feb 26 09:42:55 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q1QEbXmA011424
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sun, 26 Feb 2012 09:37:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1330267054;
+	bh=sdGsWYeeislUeIKAXvwXXUA3BqMzOjxbyBPnHLX0UEg=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=LLOvHgJ3SaxRFRArDijiXpNS7rGAftb6VX5bZ/tgNqogrgVCk34pMOV1Qku/EqP3Y
+	 6hzyanHxNaYzC7AO5XIYyM/WNAZB41TBJGvqIUedkh2TQ/5GG0BhaRK2ZwC892WECZ
+	 JL8eqzKv1DzmJlf6AMazAD/IgRQql+QWs2wCkNxU=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q1QEbX37011423
+	for cypherpunks-outgoing; Sun, 26 Feb 2012 09:37:33 -0500
+Date: Sun, 26 Feb 2012 15:37:30 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: [cryptography] Diginotar summary
+Message-ID: <20120226143730.GF7343@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 8581
+Lines: 142
+
+----- Forwarded message from Peter Gutmann <pgut001@cs.auckland.ac.nz> -----
+
+From: Peter Gutmann <pgut001@cs.auckland.ac.nz>
+Date: Mon, 27 Feb 2012 02:52:06 +1300
+To: cryptography@randombit.net
+Subject: [cryptography] Diginotar summary
+
+The following is an attempt to gather all the information on the Diginotar
+meltdown in one place.  There's references to external sources ("[REF...]")
+and cross-links ("!!!!!!") which aren't present in the text, but apart from
+that it should be pretty complete.  I've posted it here in case anyone finds
+it useful, and if there's anything I've missed or that's incorrect, please let
+me know.
+
+Peter.
+
+-- Snip --
+
+A far more serious CA compromise occurred a few months later.  The problem was
+first noticed when Iranian users of Google's chrome browser, which contains
+hardcoded knowledge of the certificates that are expected from Google sites (a
+technique known as "certificate pinning"), started getting warnings that the
+sites were serving unexpected certificates [REF: 1a, 1b].  This problem, which
+ultimately affected up to 300,000 users [REF: 1d] was caused by certificates
+for a whole range of major sites being replaced by new ones from a Dutch
+trusted root CA called Diginotar (the suggestion to check for suspicious
+certificate issuance for high-value sites dating from the last CA compromise
+had been ignored).
+
+This CA, which already had a long history of compromises by different hacker
+groups in different countries going back over two years [REF: 2d], was
+compromised in the current breach in around June 2011 [REF: 2f] with 283 rogue
+certificates issued on 10 July and another 124 issued on 18 July
+[REF: 2e].  Diginotar finally realised that there was a problem on 19 July
+[REF: 2b], possibly after the attacker(s) left a note on Diginotar's site
+informing them of this [REF: 2a][XREF: 2d] since they hadn't been aware of the
+previous several years' worth of breaches.  In response to this the CA then
+tried to revoke the rogue certificates and thought that they'd succeeded, but
+an independent check carried out at that point couldn't find any evidence of
+this, with the investigator concluding that "I'd love to see the
+\\\*dozens\\\* of revocations [...] but I simply cannot find them" [REF: 2e].
+In the meantime more rogue certificates were being issued, and Diginotar again
+tried to revoke them [REF: 2c], again without much apparent effect (despite
+the hacker activity at Diginotar ceasing on 22 July, new rogue certificates
+were still being discovered as late as September [REF: 2f]).
+
+The Dignotar breach was a fairly serious one since the attacker(s) were able
+to issue not only generic web-server certificates but also high-value EV
+certificates, European Qualified Certificates (these are discussed in
+"!!!!!!!!X.509 in Practice" on page !!!!!), and Dutch government (PKIoverheid)
+certificates.  The latter group included certificates for use by Dutch
+notaries, which could be used to notarise high-value transactions like house
+sales, after which they were transferred to an automated central government
+registry.  While the Dutch government initially believed Diginotar when they
+said that they'd got the situation under control [REF: 6c], a claim that was
+backed up by an audit by the Dutch CERT GovCERT, a second evaluation by
+security company Fox-IT [REF: 4a], combined with the appearance of further
+rogue certificates as well as OCSP responder queries for even further
+yet-to-be-discovered certificates, including high-value Qualified Certificates
+and PKIoverheid certificates [REF: 2f] indicated that the problem hadn't
+actually been fixed.
+
+After an all-night crisis meeting, the Dutch government discontinued all use
+of Diginotar certificates [REF: 6a], leaving all government sites that had
+used Diginotar with invalid certificates until they could buy new ones from
+other CAs [REF: 6a].  In all a total of 58,000 certificates had to be
+replaced, a problem so massive that the Dutch government went so far as to ask
+browser vendors to postpone taking any action because of the disruption that
+it would cause.  The replacement process itself required extensive
+coordination with users "to prevent the total collapse of all M2M
+[machine-to-machine] communication" [REF: 6e].  Shortly afterwards the Dutch
+government took over the administration of Diginotar [REF: 6b], prevented them
+from issuing further high-value certificates like Qualified Certificates, and
+had them revoke all (known) existing ones [REF: 6f].
+
+A catastrophe on this scale was something that even the browser vendors
+couldn't ignore.  Diginotar had issued a vanishingly small number of
+general-purpose public certificates (its cash cow was the highly lucrative
+business of selling to the Dutch government and government users, not to the
+general public), totalling a mere 700-odd certificates [REF: 3a], of which
+only 29 featured in the Alexa top million sites, all of them in the
+Netherlands [REF: 3b].  Up against this were at least 531 known rogue
+certificates (and an unknown number of further ones that hadn't been
+discovered), including 124 that were issued after Diginotar detected the
+compromise, indicating that there were further compromised systems or that the
+supposedly re-secured systems remained compromised [REF: 3c].
+
+As with previous CA compromises, the browser vendors had to resort to
+hardcoding blacklists into the browsers because the standard PKI revocation
+mechanisms didn't work [REF: 5a, 5b, 5c].  Browsers either hardcoded in
+hundreds of certificates (at least the ones that they knew about) [REF: 5d],
+or blacklisted the issuing CA's certificates [REF: 5a] (this continuing
+inability to deal with invalid certificates later led one observer to comment
+that "revocation only works when you don't need it" [REF: 4b]).
+
+Not long afterwards, realising that they were sitting on a bottomless well of
+liability, Diginotar's parent company Vasco wound the company up [REF: 7a].
+
+In response to this disaster, and with an eye on moves by the Dutch government
+to make breach disclosure notification mandatory [REF: 6d], when the Dutch
+telco KPN discovered that the web site that it used to issue its certificates
+had been compromised for up to four years (!!), it immediately suspended
+certificate issuance and notified the government [REF: 8b, 8c].  A later study
+of certificate revocations among global CAs that was carried out in response
+to the Diginotar catastrophe indicated that as many as fourteen commercial CAs
+had been compromised at one time or another [REF: 8a].  There's no evidence
+that any of these CAs notified their users or anyone who relied on the
+certificates that they issued of the existence of any problem.
+
+While earlier CA compromises had received fairly extensive coverage within the
+technical community, Diginotar was novel in that it gained attention outside
+the field as well.  For example an attendee at a law conference in the US
+reported that Diginotar was a topic of discussion among non-technical lawyers
+there, indicating that in the future more attention may need to be paid to
+liability issues when working with PKI.
+
+In the meantime a likely attacker came forward: the same one who had
+compromised Comodo some months earlier [REF: X.a, X.b].  The attacker
+authenticated the claim by using one of the fraudulent certificates to code-
+sign Windows Calculator [REF: X.c], something that only the genuine attacker
+(or at least someone with access to their private keys) would have been able
+to do.  The attacker further claimed to control four more CAs, including
+fairly complete access to GlobalSign [REF: X.e] (GlobalSign acknowledged that
+their server was compromised but denied that there was any further damage
+[REF: X.f]), and a partial breach of StartCom that was prevented by additional
+controls that the CA had in place [REF: X.d].  Debate over whether it really
+was a lone Iranian hacker, the Iranian government (performing a
+man-in-the-middle attack on huge numbers of Iranian users would be well beyond
+the capabilities of an individual hacker), or the Bavarian Illuminati, will no
+doubt continue for some time.
+
+_______________________________________________
+cryptography mailing list
+cryptography@randombit.net
+http://lists.randombit.net/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

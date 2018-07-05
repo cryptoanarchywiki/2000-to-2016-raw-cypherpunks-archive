@@ -1,0 +1,86 @@
+From owner-cypherpunks@lne.com  Sun Nov  2 12:45:42 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p3/8.11.6-03-31-03) with ESMTP id hA2HjfR10225
+	for <rsw@jfet.org>; Sun, 2 Nov 2003 12:45:41 -0500
+Received: from slack.lne.com (slack.lne.com [127.0.0.1])
+	by slack.lne.com (8.12.10/8.12.10) with ESMTP id hA2HSAQe021072
+	(version=TLSv1/SSLv3 cipher=EDH-DSS-DES-CBC3-SHA bits=168 verify=NO)
+	for <cypherpunks-goingout345@slack.lne.com>; Sun, 2 Nov 2003 09:28:10 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.10/8.12.10/Submit) id hA2HSAqd021071
+	for cypherpunks-goingout345; Sun, 2 Nov 2003 09:28:10 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Sun, 2 Nov 2003 09:26:56 -0800
+From: Adam Back <adam@cypherspace.org>
+To: "James A. Donald" <jamesd@echeque.com>
+Cc: cypherpunks@lne.com, Adam Back <adam@cypherspace.org>
+Subject: Re: ECC and blinding.
+Message-ID: <20031102172656.GA18017@dual.cypherspace.org>
+References: <4cbaqv8ka0jer4l8934tfjbncu4kjicim4@4ax.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4cbaqv8ka0jer4l8934tfjbncu4kjicim4@4ax.com>
+User-Agent: Mutt/1.4.1i
+X-Authentication-Info: Submitted using SMTP AUTH at out007.verizon.net
+  from [4.62.18.226] at Sun, 2 Nov 2003 11:28:05 -0600
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 1933
+Lines: 51
+
+Fair enough.  But this is not Chaum's scheme, it is Wagners and it is
+DH based (or ECDH based in your writeup).
+
+You said earlier:
+
+> Simple Chaumian blinding works fine on EC.  
+
+and the above scheme is not Chaumian blinding.  Chaum never invented
+DH blinding, if you read Brands thesis even you'll see that Chaum (who
+was Brands PhD supervisor for some of the time) told Brands to forget
+about trying to do DH based blinding because it's not possible.
+Brands credits Chaum for setting the challenge :-) which led him to
+find ways to do DH based blinding.  (And the private key certificate
+which is a generalisation of DH blinding to multiple attributes and
+selective disclosure of those attributes).
+
+Adam
+
+On Sun, Nov 02, 2003 at 08:16:45AM -0800, James A. Donald wrote:
+> See:"Anonymous Electronic Cash"
+> http://www.echeque.com/Kong/anon_transfer.htm
+> 
+> Lower case letters represent integers, capital letters elliptic
+> curve points.
+> 
+> Let k be the banks secret key.
+> 
+> The bank promises to pay a specific sum of money for any secret
+> of the form ( x, P), such that P = k * H(x) where H is a hash
+> function mapping random integers onto points on an elliptic
+> curve and k is a secret known only to the token issuer
+> 
+> Bob has an existing old used token of this form, and therefore
+> knows that V= k * U even though he does not know k.
+> 
+> Bob invents the random numbers t and q, constructs an elliptic
+> point R = t *U + Hash( q ) and pays the bank to construct T= k
+> * R
+> 
+> He then calculates Q = T- t * V
+> 
+> He now has a new token ( q , Q) of the required form, even
+> though the Bank did not generate Q, has never seen it before,
+> and when it sees it will not recognize it as having any
+> relationship to T or R. 
+> 
+>     --digsig
+>          James A. Donald
+>      6YeGpsZR+nOTh/cGwvITnSR3TdzclVpR0+pr3YYQdkG
+>      ONKujWd8zHpibnZny18642N1+yn2u22b10pYMq9S
+>      4JTKi/HgEDA3K9dghxgfMcU8LPnOgG8ibhebtAfJR
+

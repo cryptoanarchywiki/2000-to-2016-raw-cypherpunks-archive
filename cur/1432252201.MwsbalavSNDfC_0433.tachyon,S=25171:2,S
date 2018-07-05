@@ -1,0 +1,570 @@
+From rswatjfet.org+caf_=rsw=jfet.org@gmail.com  Tue Apr  7 21:43:02 2015
+Return-Path: <rswatjfet.org+caf_=rsw=jfet.org@gmail.com>
+Received: from mail-pd0-f182.google.com (mail-pd0-f182.google.com [209.85.192.182])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id t381h0qW017649
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <rsw@jfet.org>; Tue, 7 Apr 2015 21:43:01 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=ZbsyKXZ6;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: by pdea3 with SMTP id a3so97712334pde.3
+        for <rsw@jfet.org>; Tue, 07 Apr 2015 18:42:55 -0700 (PDT)
+X-Received: by 10.68.224.69 with SMTP id ra5mr41055285pbc.161.1428457374942;
+        Tue, 07 Apr 2015 18:42:54 -0700 (PDT)
+X-Forwarded-To: rsw@jfet.org
+X-Forwarded-For: rswatjfet.org@gmail.com rsw@jfet.org
+Delivered-To: rswatjfet.org@gmail.com
+Received: by 10.70.72.137 with SMTP id d9csp4265594pdv;
+        Tue, 7 Apr 2015 18:42:54 -0700 (PDT)
+X-Received: by 10.68.190.73 with SMTP id go9mr41023831pbc.30.1428457373813;
+        Tue, 07 Apr 2015 18:42:53 -0700 (PDT)
+Received: from localhost (antiproton.jfet.org. [209.141.47.85])
+        by mx.google.com with ESMTPS id lr6si14128526pab.66.2015.04.07.18.42.53
+        for <rswATjfet.org@gmail.com>
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 Apr 2015 18:42:53 -0700 (PDT)
+Received-SPF: neutral (google.com: 209.141.47.85 is neither permitted nor denied by domain of rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net) client-ip=209.141.47.85;
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 209.141.47.85 is neither permitted nor denied by domain of rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net) smtp.mail=rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net;
+       dkim=pass header.i=@gmail.com;
+       dmarc=pass (p=NONE dis=NONE) header.from=gmail.com
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id t381gbON017627;
+	Tue, 7 Apr 2015 21:42:38 -0400
+Received: from mail-wi0-f181.google.com (mail-wi0-f181.google.com
+ [209.85.212.181])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id t381gXBT017622
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Tue, 7 Apr 2015 21:42:35 -0400
+Received: by wiun10 with SMTP id n10so39910278wiu.1
+ for <cypherpunks@cpunks.org>; Tue, 07 Apr 2015 18:42:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+ :cc:content-type;
+ bh=Cw766Nrknh0SyZMudPGmxNbBjgRfsILpuhpXFMKmsXc=;
+ b=ZbsyKXZ6u/V2r4SPmXigPPH8DU5ZNccQnffGfHfuxeheMg7+QB0kJ1CIsV0zWBO9lo
+ P0c1nVl10QS4QUznXAlzVEOXUd91J68W9xq+9N8hzGpXI9Fja2+3WbnCLIovio3ZItIo
+ UPOx7WQsq/pn1PrByVBGwsMoNEUG63VARAL/wvO7D4voD1CkCpXSTJFHOD9UJ5aCedsW
+ rgDLqnOGryMcD5A/N49VJ4SkqfV8r4ZSH9ovirkwrsgUgqYSPVsn+SwKcy806H3bY2mp
+ 1cfx5KqWigGFthq0f5klXPyLFjMeAR5cOpo8eOsqRtCG4JGGS/rOPSt+lwHW9KrO0w3y
+ zvKw==
+X-Received: by 10.180.91.11 with SMTP id ca11mr9894656wib.10.1428457347729;
+ Tue, 07 Apr 2015 18:42:27 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.194.9.170 with HTTP; Tue, 7 Apr 2015 18:42:07 -0700 (PDT)
+In-Reply-To: <5524823F.30701@riseup.net>
+References: <op.xwltisiqbgbjo9@work-pc.lan> <55228455.5040500@riseup.net>
+ <BE37C318-5D1E-4468-8947-B25EF1FE40EF@gmail.com>
+ <CAGRDzQWhCiLWPJ7D=Mefskz8_CjkTTv2wHKOokdHX1FeH7phJQ@mail.gmail.com>
+ <5522CECC.9090404@riseup.net> <5522E8E0.2000006@riseup.net>
+ <CAGRDzQVSjZUOiB7_zsX_G2NgLQcZ6wb8aCK1-mHXL3VO4_M0CQ@mail.gmail.com>
+ <5522FA86.4060404@riseup.net>
+ <CAGRDzQW3zQ_=S=FN281=4+T7fdzGP8NXwDwQ=C7rsm3BzJNrKg@mail.gmail.com>
+ <55230869.9080102@riseup.net>
+ <CAGRDzQX-A9d+Jjxd-cjDUBsBW5tYow5=haFGgHPA-a8yG8ohyQ@mail.gmail.com>
+ <E1YfHYz-00010W-DJ@elasmtp-junco.atl.sa.earthlink.net>
+ <552338c8.88c98c0a.37e3.7150@mx.google.com>
+ <CAGRDzQVR_NoFkUSKwNDyXJ6gYOQKtbC1EVkaAtAEkxEKOdY0gw@mail.gmail.com>
+ <55236a73.a218370a.4898.4d60@mx.google.com> <55241246.1070609@riseup.net>
+ <CAGRDzQV8SrjXr41x+xvB5KJyffs6Se4MOY6FZuPhPKkmNvU-Ow@mail.gmail.com>
+ <55243C95.9040601@riseup.net>
+ <CAGRDzQV_Q7o4_6XJjYWnCKiWwoaNODHgzY79XnXAYrnx8D=yvg@mail.gmail.com>
+ <CAGRDzQUimZeuRKxASYB+4OQ=sHUOBOaWNA3Ejgzc+BAhvOgpbA@mail.gmail.com>
+ <5524823F.30701@riseup.net>
+Date: Wed, 8 Apr 2015 03:42:07 +0200
+Message-ID: <CAGRDzQVZunvEWQQ6fZC58K6da9W84sPmmKPyDxGyLTz_zW0JSQ@mail.gmail.com>
+Subject: Re: Greenwald, Scahill step down from The Intercept
+To: Mirimir <mirimir@riseup.net>
+Content-Type: multipart/alternative; boundary=f46d043c7e76c9cd6405132ca4a7
+Cc: cpunks <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+From: Cari Machet <carimachet@gmail.com>
+X-Gspam-Loop: antiproton.jfet.org
+
+--f46d043c7e76c9cd6405132ca4a7
+Content-Type: text/plain; charset=ISO-8859-1
+
+i dont think he is just talking about afghanistan there but you are
+entitled to your opinion
+
+i think his mind was being changed after that about iraq thats what the 2
+paragraphs say to me and it was a progression - he kind of came to on the
+iraq thing but then still backed the invasion anyway
+
+i have seen another quote someone sent me on twitter - as i use to fight
+with glenn on twitter about pierre and shit ... and laura ... i cant find
+it ... i will keep looking - these things were out in the press before this
+book was published
+
+fyi i fought a lot with laura over her unwavering support of wikileaks she
+has a huge blindspot there for sure - it was like talking a kid out of
+their lollipop or going back in time and talking people out of doing human
+sacrifices
+
+i never heard the israelis knew about the attack beforehand ?????????? i
+mean zionists....
+
+saudia arabia is too important for the interests of capitalist fucks
+globally not just because they produce oil but because they have money and
+dont give a fuck about their people in terms of advanced politic > monarchy
+- the fascist capitalist built their infrastructure and maintain it - you
+think that is a few dollawolfs rrrr some change in the coach?
+
+read: confessions of an economic hitman
+
+and you can watch john talk about the shit here:
+
+https://www.youtube.com/watch?v=yTbdnNgqfs8
+
+On Wed, Apr 8, 2015 at 3:19 AM, Mirimir <mirimir@riseup.net> wrote:
+
+> On 04/07/2015 06:55 PM, Cari Machet wrote:
+> > here:
+> >
+> https://extremeliberal.wordpress.com/2013/06/07/glenn-greenwald-supported-president-bush-as-he-signed-the-patriot-act/
+> >
+> > he actually uses the fucking word 'vengeance' ... fuck
+>
+> Yes, he does. But he says that about invading _Afghanistan_, not Iraq.
+> He says that he took W's word on Iraq. That does not reflect well on
+> him, and I'm disappointed that he hasn't acknowledged his error. But so
+> it goes.
+>
+> It it were vengeance the US wanted, they should have invaded Saudi
+> Arabia :) Free oil! They should also have cut off the fucking Israelis,
+> who knew that the attack was immanent.
+>
+> > someone sent this to me on twitter long ago so this isnt anything new i
+> am
+> > pointing out
+> >
+> > On Wed, Apr 8, 2015 at 2:44 AM, Cari Machet <carimachet@gmail.com>
+> wrote:
+> >
+> >> mirimir i would have to dig up the quote where the fuck says that
+> >> basically it is good us is invading to get back at the iraqi's for 9-11
+> >>
+> >> umn the iraqi's had nothing to do with 9-11 and he swallowed that
+> tripe...
+> >> i am sorry but that is just stupid x 5 million
+> >>
+> >> i dont care about his excuses my pet spider even knew it was crap
+> >>
+> >> if you can give him a pass for being 'apathetic' which i wouldnt frame
+> it
+> >> like that then that says a lot about you - its not apathy to support a
+> >> fucking invasion of a people - people that are apathetic are like i dont
+> >> know not oh yay lets do it it is a totally different mindset
+> >>
+> >> and that he is here in daily kos framing out this lie says more to me
+> >> about his lack of character than anything and you of course didnt
+> address
+> >> that part - if the fuck was an actual person he could be like yay i
+> sucked
+> >> but now i know better i changed its so great we get to change our minds
+> in
+> >> our lifetimes and fucking grow but does gleenny do that no he cant face
+> >> himself its pathetic he lives in his ego
+> >>
+> >> ego doesnt want people saying they are wrong ever and its a death echo
+> >> chamber
+> >>
+> >> On Tue, Apr 7, 2015 at 10:22 PM, Mirimir <mirimir@riseup.net> wrote:
+> >>
+> >>> On 04/07/2015 11:50 AM, Cari Machet wrote:
+> >>>> dear mirimir you cannot read
+> >>>>
+> >>>> 'Nonetheless, because of the general faith I had in political and
+> media
+> >>>> institutions, I assumed - since both political parties and media
+> outlets
+> >>>> and journalists from across the ideological spectrum were united in
+> >>> support
+> >>>> of the war - that there must be some valid basis to the claim that
+> >>> Saddam
+> >>>> posed a threat. My basic trust in these institutions neutralized the
+> >>>> objections I had and led me to passively acquiesce to what was being
+> >>> done
+> >>>> ("I believed then that the president was entitled to have his national
+> >>>> security judgment deferred to, and to the extent that I was able to
+> >>> develop
+> >>>> a definitive view, I accepted his judgment that American security
+> really
+> >>>> would be enhanced by the invasion of this sovereign country.").'
+> >>>>
+> >>>> did you read the motherfucking article?
+> >>>
+> >>> Yes, I read the motherfucking article. He says that he was apathetic,
+> >>> and trusted institutions (and even that asshole W). Maybe he needs to
+> do
+> >>> more mea culpas for that, or cut off his left pinkie. But unless you
+> >>> cite some public statement where he actively supported the invasion,
+> >>> rather than just deferred to arguably better-informed opinions, it's no
+> >>> big deal in the current context. In my opinion.
+> >>>
+> >>>> this should tell you how duplicitous he is just like the government
+> >>> says he
+> >>>> didnt do anything - he didnt fuck that bitch - oh he fucked them hard
+> >>> though
+> >>>
+> >>> I'd say rather that he let Uncle Dick finger fuck him, but just a
+> little
+> >>> ;)
+> >>>
+> >>>> also daily kos sucks
+> >>>
+> >>> Yeah, I don't read that shit.
+> >>>
+> >>>> On Tue, Apr 7, 2015 at 7:22 PM, Razer <Rayzer@riseup.net> wrote:
+> >>>>
+> >>>>>
+> >>>>>
+> >>>>> On 04/06/2015 10:29 PM, Juan wrote:
+> >>>>>> Well, everything should have been put in the public domain
+> >>>>>>       from day zero. But Snowden thought that would hurt
+> >>>>>>       the interests of the american nazi state. Or maybe he didn't
+> >>>>>>       want to be killed like a dog. Who knows.
+> >>>>>
+> >>>>> I know. As many people who've attempted to change the Crypto-Fascist
+> >>>>> shithole called "America" have noted, the powers that be ARE TOO
+> STRONG
+> >>>>> to take on... head on.
+> >>>>>
+> >>>>> Snowden has set in motion The 'death of a thousand (intelligence)
+> cuts'
+> >>>>> to weaken the surveillance state enough that the issue can be
+> >>> approached
+> >>>>> at all in some way that MAY change it.
+> >>>>>
+> >>>>> As far as whether Greenwald and co or Snowden's a capitalist, or a
+> >>>>> libertard, a demoncrat or rethuglican (the ONLY diff is who receives
+> >>> the
+> >>>>> booty from our imperial adventurism where brown people die) ...is
+> >>>>> absolutely irrelevant to the end result.
+> >>>>>
+> >>>>>
+> >>>>>
+> >>>>>
+> >>>>
+> >>>>
+> >>>
+> >>
+> >>
+> >>
+> >> --
+> >> Cari Machet
+> >> NYC 646-436-7795
+> >> carimachet@gmail.com
+> >> AIM carismachet
+> >> Syria +963-099 277 3243
+> >> Amman +962 077 636 9407
+> >> Berlin +49 152 11779219
+> >> Reykjavik +354 894 8650
+> >> Twitter: @carimachet <https://twitter.com/carimachet>
+> >>
+> >> 7035 690E 5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187
+> >>
+> >> Ruh-roh, this is now necessary: This email is intended only for the
+> >> addressee(s) and may contain confidential information. If you are not
+> the
+> >> intended recipient, you are hereby notified that any use of this
+> >> information, dissemination, distribution, or copying of this email
+> without
+> >> permission is strictly prohibited.
+> >>
+> >>
+> >>
+> >
+> >
+>
+
+
+
+-- 
+Cari Machet
+NYC 646-436-7795
+carimachet@gmail.com
+AIM carismachet
+Syria +963-099 277 3243
+Amman +962 077 636 9407
+Berlin +49 152 11779219
+Reykjavik +354 894 8650
+Twitter: @carimachet <https://twitter.com/carimachet>
+
+7035 690E 5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187
+
+Ruh-roh, this is now necessary: This email is intended only for the
+addressee(s) and may contain confidential information. If you are not the
+intended recipient, you are hereby notified that any use of this
+information, dissemination, distribution, or copying of this email without
+permission is strictly prohibited.
+
+--f46d043c7e76c9cd6405132ca4a7
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">i dont think he is just talking about afghanistan there bu=
+t you are entitled to your opinion<div><br></div><div>i think his mind was =
+being changed after that about iraq thats what the 2 paragraphs say to me a=
+nd it was a progression - he kind of came to on the iraq thing but then sti=
+ll backed the invasion anyway</div><div><br></div><div>i have seen another =
+quote someone sent me on twitter - as i use to fight with glenn on twitter =
+about pierre and shit ... and laura ... i cant find it ... i will keep look=
+ing - these things were out in the press before this book was published=A0<=
+/div><div><br></div><div>fyi i fought a lot with laura over her unwavering =
+support of wikileaks she has a huge blindspot there for sure - it was like =
+talking a kid out of their lollipop or going back in time and talking peopl=
+e out of doing human sacrifices</div><div><br></div><div>i never heard the =
+israelis knew about the attack beforehand ?????????? i mean zionists....</d=
+iv><div><br></div><div>saudia arabia is too important for the interests of =
+capitalist fucks globally not just because they produce oil but because the=
+y have money and dont give a fuck about their people in terms of advanced p=
+olitic &gt; monarchy - the fascist capitalist built their infrastructure an=
+d maintain it - you think that is a few dollawolfs rrrr some change in the =
+coach?=A0</div><div><br></div><div>read: confessions of an economic hitman<=
+/div><div><br></div><div>and you can watch john talk about the shit here:</=
+div><div><br></div><div><a href=3D"https://www.youtube.com/watch?v=3DyTbdnN=
+gqfs8">https://www.youtube.com/watch?v=3DyTbdnNgqfs8</a><br></div><img src=
+=3D"http://t.signaledue.com/e1t/o/5/f18dQhb0S7ks8dDMPbW2n0x6l2B9gXrN7sKj6v5=
+dfb6W5vwkZs7fZjrnW2BpKgF2zlZNzW8v-hnY1k1H6H0?si=3D5459291358625792&amp;pi=
+=3D1bbf3045-f119-4961-bd11-900c028db018" style=3D"display:none!important" h=
+eight=3D"1" width=3D"1"></div><div class=3D"gmail_extra"><br><div class=3D"=
+gmail_quote">On Wed, Apr 8, 2015 at 3:19 AM, Mirimir <span dir=3D"ltr">&lt;=
+<a href=3D"mailto:mirimir@riseup.net" target=3D"_blank">mirimir@riseup.net<=
+/a>&gt;</span> wrote:<br><blockquote class=3D"gmail_quote" style=3D"margin:=
+0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"><span class=3D"">On=
+ 04/07/2015 06:55 PM, Cari Machet wrote:<br>
+&gt; here:<br>
+&gt; <a href=3D"https://extremeliberal.wordpress.com/2013/06/07/glenn-green=
+wald-supported-president-bush-as-he-signed-the-patriot-act/" target=3D"_bla=
+nk">https://extremeliberal.wordpress.com/2013/06/07/glenn-greenwald-support=
+ed-president-bush-as-he-signed-the-patriot-act/</a><br>
+&gt;<br>
+&gt; he actually uses the fucking word &#39;vengeance&#39; ... fuck<br>
+<br>
+</span>Yes, he does. But he says that about invading _Afghanistan_, not Ira=
+q.<br>
+He says that he took W&#39;s word on Iraq. That does not reflect well on<br=
+>
+him, and I&#39;m disappointed that he hasn&#39;t acknowledged his error. Bu=
+t so<br>
+it goes.<br>
+<br>
+It it were vengeance the US wanted, they should have invaded Saudi<br>
+Arabia :) Free oil! They should also have cut off the fucking Israelis,<br>
+who knew that the attack was immanent.<br>
+<span class=3D"im HOEnZb"><br>
+&gt; someone sent this to me on twitter long ago so this isnt anything new =
+i am<br>
+&gt; pointing out<br>
+&gt;<br>
+</span><div class=3D"HOEnZb"><div class=3D"h5">&gt; On Wed, Apr 8, 2015 at =
+2:44 AM, Cari Machet &lt;<a href=3D"mailto:carimachet@gmail.com">carimachet=
+@gmail.com</a>&gt; wrote:<br>
+&gt;<br>
+&gt;&gt; mirimir i would have to dig up the quote where the fuck says that<=
+br>
+&gt;&gt; basically it is good us is invading to get back at the iraqi&#39;s=
+ for 9-11<br>
+&gt;&gt;<br>
+&gt;&gt; umn the iraqi&#39;s had nothing to do with 9-11 and he swallowed t=
+hat tripe...<br>
+&gt;&gt; i am sorry but that is just stupid x 5 million<br>
+&gt;&gt;<br>
+&gt;&gt; i dont care about his excuses my pet spider even knew it was crap<=
+br>
+&gt;&gt;<br>
+&gt;&gt; if you can give him a pass for being &#39;apathetic&#39; which i w=
+ouldnt frame it<br>
+&gt;&gt; like that then that says a lot about you - its not apathy to suppo=
+rt a<br>
+&gt;&gt; fucking invasion of a people - people that are apathetic are like =
+i dont<br>
+&gt;&gt; know not oh yay lets do it it is a totally different mindset<br>
+&gt;&gt;<br>
+&gt;&gt; and that he is here in daily kos framing out this lie says more to=
+ me<br>
+&gt;&gt; about his lack of character than anything and you of course didnt =
+address<br>
+&gt;&gt; that part - if the fuck was an actual person he could be like yay =
+i sucked<br>
+&gt;&gt; but now i know better i changed its so great we get to change our =
+minds in<br>
+&gt;&gt; our lifetimes and fucking grow but does gleenny do that no he cant=
+ face<br>
+&gt;&gt; himself its pathetic he lives in his ego<br>
+&gt;&gt;<br>
+&gt;&gt; ego doesnt want people saying they are wrong ever and its a death =
+echo<br>
+&gt;&gt; chamber<br>
+&gt;&gt;<br>
+&gt;&gt; On Tue, Apr 7, 2015 at 10:22 PM, Mirimir &lt;<a href=3D"mailto:mir=
+imir@riseup.net">mirimir@riseup.net</a>&gt; wrote:<br>
+&gt;&gt;<br>
+&gt;&gt;&gt; On 04/07/2015 11:50 AM, Cari Machet wrote:<br>
+&gt;&gt;&gt;&gt; dear mirimir you cannot read<br>
+&gt;&gt;&gt;&gt;<br>
+&gt;&gt;&gt;&gt; &#39;Nonetheless, because of the general faith I had in po=
+litical and media<br>
+&gt;&gt;&gt;&gt; institutions, I assumed - since both political parties and=
+ media outlets<br>
+&gt;&gt;&gt;&gt; and journalists from across the ideological spectrum were =
+united in<br>
+&gt;&gt;&gt; support<br>
+&gt;&gt;&gt;&gt; of the war - that there must be some valid basis to the cl=
+aim that<br>
+&gt;&gt;&gt; Saddam<br>
+&gt;&gt;&gt;&gt; posed a threat. My basic trust in these institutions neutr=
+alized the<br>
+&gt;&gt;&gt;&gt; objections I had and led me to passively acquiesce to what=
+ was being<br>
+&gt;&gt;&gt; done<br>
+&gt;&gt;&gt;&gt; (&quot;I believed then that the president was entitled to =
+have his national<br>
+&gt;&gt;&gt;&gt; security judgment deferred to, and to the extent that I wa=
+s able to<br>
+&gt;&gt;&gt; develop<br>
+&gt;&gt;&gt;&gt; a definitive view, I accepted his judgment that American s=
+ecurity really<br>
+&gt;&gt;&gt;&gt; would be enhanced by the invasion of this sovereign countr=
+y.&quot;).&#39;<br>
+&gt;&gt;&gt;&gt;<br>
+&gt;&gt;&gt;&gt; did you read the motherfucking article?<br>
+&gt;&gt;&gt;<br>
+&gt;&gt;&gt; Yes, I read the motherfucking article. He says that he was apa=
+thetic,<br>
+&gt;&gt;&gt; and trusted institutions (and even that asshole W). Maybe he n=
+eeds to do<br>
+&gt;&gt;&gt; more mea culpas for that, or cut off his left pinkie. But unle=
+ss you<br>
+&gt;&gt;&gt; cite some public statement where he actively supported the inv=
+asion,<br>
+&gt;&gt;&gt; rather than just deferred to arguably better-informed opinions=
+, it&#39;s no<br>
+&gt;&gt;&gt; big deal in the current context. In my opinion.<br>
+&gt;&gt;&gt;<br>
+&gt;&gt;&gt;&gt; this should tell you how duplicitous he is just like the g=
+overnment<br>
+&gt;&gt;&gt; says he<br>
+&gt;&gt;&gt;&gt; didnt do anything - he didnt fuck that bitch - oh he fucke=
+d them hard<br>
+&gt;&gt;&gt; though<br>
+&gt;&gt;&gt;<br>
+&gt;&gt;&gt; I&#39;d say rather that he let Uncle Dick finger fuck him, but=
+ just a little<br>
+&gt;&gt;&gt; ;)<br>
+&gt;&gt;&gt;<br>
+&gt;&gt;&gt;&gt; also daily kos sucks<br>
+&gt;&gt;&gt;<br>
+&gt;&gt;&gt; Yeah, I don&#39;t read that shit.<br>
+&gt;&gt;&gt;<br>
+&gt;&gt;&gt;&gt; On Tue, Apr 7, 2015 at 7:22 PM, Razer &lt;<a href=3D"mailt=
+o:Rayzer@riseup.net">Rayzer@riseup.net</a>&gt; wrote:<br>
+&gt;&gt;&gt;&gt;<br>
+&gt;&gt;&gt;&gt;&gt;<br>
+&gt;&gt;&gt;&gt;&gt;<br>
+&gt;&gt;&gt;&gt;&gt; On 04/06/2015 10:29 PM, Juan wrote:<br>
+&gt;&gt;&gt;&gt;&gt;&gt; Well, everything should have been put in the publi=
+c domain<br>
+&gt;&gt;&gt;&gt;&gt;&gt;=A0 =A0 =A0 =A0from day zero. But Snowden thought t=
+hat would hurt<br>
+&gt;&gt;&gt;&gt;&gt;&gt;=A0 =A0 =A0 =A0the interests of the american nazi s=
+tate. Or maybe he didn&#39;t<br>
+&gt;&gt;&gt;&gt;&gt;&gt;=A0 =A0 =A0 =A0want to be killed like a dog. Who kn=
+ows.<br>
+&gt;&gt;&gt;&gt;&gt;<br>
+&gt;&gt;&gt;&gt;&gt; I know. As many people who&#39;ve attempted to change =
+the Crypto-Fascist<br>
+&gt;&gt;&gt;&gt;&gt; shithole called &quot;America&quot; have noted, the po=
+wers that be ARE TOO STRONG<br>
+&gt;&gt;&gt;&gt;&gt; to take on... head on.<br>
+&gt;&gt;&gt;&gt;&gt;<br>
+&gt;&gt;&gt;&gt;&gt; Snowden has set in motion The &#39;death of a thousand=
+ (intelligence) cuts&#39;<br>
+&gt;&gt;&gt;&gt;&gt; to weaken the surveillance state enough that the issue=
+ can be<br>
+&gt;&gt;&gt; approached<br>
+&gt;&gt;&gt;&gt;&gt; at all in some way that MAY change it.<br>
+&gt;&gt;&gt;&gt;&gt;<br>
+&gt;&gt;&gt;&gt;&gt; As far as whether Greenwald and co or Snowden&#39;s a =
+capitalist, or a<br>
+&gt;&gt;&gt;&gt;&gt; libertard, a demoncrat or rethuglican (the ONLY diff i=
+s who receives<br>
+&gt;&gt;&gt; the<br>
+&gt;&gt;&gt;&gt;&gt; booty from our imperial adventurism where brown people=
+ die) ...is<br>
+&gt;&gt;&gt;&gt;&gt; absolutely irrelevant to the end result.<br>
+&gt;&gt;&gt;&gt;&gt;<br>
+&gt;&gt;&gt;&gt;&gt;<br>
+&gt;&gt;&gt;&gt;&gt;<br>
+&gt;&gt;&gt;&gt;&gt;<br>
+&gt;&gt;&gt;&gt;<br>
+&gt;&gt;&gt;&gt;<br>
+&gt;&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt; --<br>
+&gt;&gt; Cari Machet<br>
+&gt;&gt; NYC <a href=3D"tel:646-436-7795" value=3D"+16464367795">646-436-77=
+95</a><br>
+&gt;&gt; <a href=3D"mailto:carimachet@gmail.com">carimachet@gmail.com</a><b=
+r>
+&gt;&gt; AIM carismachet<br>
+&gt;&gt; Syria <a href=3D"tel:%2B963-099%20277%203243" value=3D"+9639927732=
+43">+963-099 277 3243</a><br>
+&gt;&gt; Amman <a href=3D"tel:%2B962%20077%20636%209407" value=3D"+96277636=
+9407">+962 077 636 9407</a><br>
+&gt;&gt; Berlin <a href=3D"tel:%2B49%20152%2011779219" value=3D"+4915211779=
+219">+49 152 11779219</a><br>
+&gt;&gt; Reykjavik <a href=3D"tel:%2B354%20894%208650" value=3D"+3548948650=
+">+354 894 8650</a><br>
+&gt;&gt; Twitter: @carimachet &lt;<a href=3D"https://twitter.com/carimachet=
+" target=3D"_blank">https://twitter.com/carimachet</a>&gt;<br>
+&gt;&gt;<br>
+&gt;&gt; 7035 690E 5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187<br>
+&gt;&gt;<br>
+&gt;&gt; Ruh-roh, this is now necessary: This email is intended only for th=
+e<br>
+&gt;&gt; addressee(s) and may contain confidential information. If you are =
+not the<br>
+&gt;&gt; intended recipient, you are hereby notified that any use of this<b=
+r>
+&gt;&gt; information, dissemination, distribution, or copying of this email=
+ without<br>
+&gt;&gt; permission is strictly prohibited.<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;<br>
+&gt;<br>
+</div></div></blockquote></div><br><br clear=3D"all"><div><br></div>-- <br>=
+<div class=3D"gmail_signature"><div dir=3D"ltr"><div>Cari Machet<br>NYC 646=
+-436-7795<br><a href=3D"mailto:carimachet@gmail.com" target=3D"_blank">cari=
+machet@gmail.com</a><br>AIM carismachet<br>Syria +963-099 277 3243<br>Amman=
+ +962 077 636 9407<br>Berlin +49 152 11779219 <br>Reykjavik +354 894 8650<b=
+r>Twitter: @carimachet &lt;<a href=3D"https://twitter.com/carimachet" targe=
+t=3D"_blank">https://twitter.com/carimachet</a>&gt;<br><br></div>7035 690E =
+5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187<br><div><br>Ruh-roh, this is now ne=
+cessary: This email is intended only for the <br>addressee(s) and may conta=
+in confidential information. If you are not the <br>intended recipient, you=
+ are hereby notified that any use of this <br>information, dissemination, d=
+istribution, or copying of this email without <br>permission is strictly pr=
+ohibited.<br><br><br></div></div></div>
+</div>
+
+--f46d043c7e76c9cd6405132ca4a7--
+

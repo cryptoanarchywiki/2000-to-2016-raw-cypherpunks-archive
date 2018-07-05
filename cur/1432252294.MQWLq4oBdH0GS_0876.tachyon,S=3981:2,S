@@ -1,0 +1,81 @@
+From owner-cypherpunks@lne.com  Sun Jun 29 17:29:42 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h5TLTf622577
+	for <rsw@jfet.org>; Sun, 29 Jun 2003 17:29:41 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h5TLJube015746
+	for cypherpunks-goingout345; Sun, 29 Jun 2003 14:19:56 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Message-Id: <5.1.1.6.2.20030629132842.033e71d0@idiom.com>
+X-Sender: wcs@idiom.com
+X-Mailer: QUALCOMM Windows Eudora Version 5.1.1
+Date: Sun, 29 Jun 2003 14:19:51 -0700
+To: cypherpunks@lne.com, cryptography@metzdowd.com
+From: Bill Stewart <bill.stewart@pobox.com>
+Subject: Re: Attacking networks using DHCP, DNS - probably kills DNSSEC 
+Cc: "Steven M. Bellovin" <smb@research.att.com>
+In-Reply-To: <20030629031545.83BFA7B4D@berkshire.research.att.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2801
+Lines: 53
+
+At 11:15 PM 06/28/2003 -0400, Steven M. Bellovin wrote:
+>In message <5.1.1.6.2.20030628124252.033e5600@idiom.com>, Bill Stewart writes:
+> >This looks like it has the ability to work around DNSSEC.
+> >Somebody trying to verify that they'd correctly reached yahoo.com
+> >would instead verify that they'd correctly reached
+> >yahoo.com.attackersdomain.com, which can provide all the signatures
+> >it needs to make this convincing.
+> >
+> >So if you're depending on DNSSEC to secure your IPSEC connection,
+> >do make sure your DNS server doesn't have a suffix of echelon.nsa.gov...
+>
+>No, that's just not true of DNSsec.  DNSsec doesn't depend on the
+>integrity of the connection to your DNS server;
+>rather, the RRsets are digitally signed.
+>In other words, it works a lot like certificates,
+>with a trust chain going back to a magic root key.
+
+I thought about that, and I think this is an exception,
+because this attack tricks your machine into using the
+trust chain yahoo.com.attackersdomain.com., which it controls,
+instead of the trust chain yahoo.com., which DNSSEC protects adequately.
+So you're getting a trustable answer to the wrong query.
+
+I'm less sure of the implementation issues of the
+"Connection-specific DNS suffix", and I've seen conflicting documentation.
+If the resolver looks up "domain.suffix" before "domain",
+then the attacker's DNS doesn't need to control the DNS access,
+and only needs to provide the attacker's certificates,
+but if the resolver looks up "domain" before "domain.suffix",
+then the attacker also needs to make sure that the lookup of "domain" fails,
+which is most easily done by telling the DHCP client to use
+the attacker's DNS server along with telling it the suffix.
+(That doesn't add any extra work to the attack, but does make it
+a bit easier to trace the attacker after the fact;
+if you're not replacing the attacker's DNS server entry,
+then all you need is a legitimate-looking server for
+"*.attackersdomain.com".  In either case, somebody who can
+pull off this kind of an attack probably uses a compromised machine
+to run the DNS server on anyway.)
+
+>I'm not saying that
+>there can't be problems with that model, but compromised DNS servers
+>(and poisoned DNS caches) are among the major threat models it was
+>designed to deal with.  If nothing else, the existence of caching DNS
+>servers, which are not authoritative for the information they hand out,
+>makes a transmission-based solution pretty useless.
+
+DNSSEC seems to do a pretty thorough job of making sure that
+if you look up the correct domain name, you'll get the correct answer,
+in spite of attackers trying to prevent it.
+But this attack tricks you into looking up the wrong domain name,
+and DNSSEC makes sure that you get the correct answer for the wrong name,
+which isn't the result you want.
+

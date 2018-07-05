@@ -1,0 +1,972 @@
+From cypherpunks-bounces@cpunks.org  Mon Jan 13 19:01:09 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0E015Cq018530;
+	Mon, 13 Jan 2014 19:01:05 -0500
+Authentication-Results: antiproton.jfet.org; dkim=fail
+	reason="verification failed; insecure key"
+	header.d=yahoo.com header.i=@yahoo.com header.b=m2uKGSxa;
+	dkim-adsp=unknown (insecure policy); dkim-atps=neutral
+Received: from nm45-vm1.bullet.mail.bf1.yahoo.com
+ (nm45-vm1.bullet.mail.bf1.yahoo.com [216.109.115.60])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0E012fG018526
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Mon, 13 Jan 2014 19:01:03 -0500
+Received: from [98.139.212.149] by nm45.bullet.mail.bf1.yahoo.com with NNFMP;
+ 14 Jan 2014 00:00:54 -0000
+Received: from [98.139.212.207] by tm6.bullet.mail.bf1.yahoo.com with NNFMP;
+ 14 Jan 2014 00:00:54 -0000
+Received: from [127.0.0.1] by omp1016.mail.bf1.yahoo.com with NNFMP;
+ 14 Jan 2014 00:00:54 -0000
+X-Yahoo-Newman-Property: ymail-3
+X-Yahoo-Newman-Id: 380794.62763.bm@omp1016.mail.bf1.yahoo.com
+Received: (qmail 22346 invoked by uid 60001); 14 Jan 2014 00:00:54 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s1024;
+ t=1389657654; bh=ZbleC8cTwANs+VczHcRkwLIooFrMFBqoaOAji2I9beE=;
+ h=X-YMail-OSG:Received:X-Rocket-MIMEInfo:X-Mailer:Message-ID:Date:From:Reply-To:Subject:To:MIME-Version:Content-Type;
+ b=m2uKGSxazUu8Ncykx4nW3ZQ/95a3+HhVYpeF2EBQu/UUydPh2oApuURPe9WDlQ1qHCdILZlzKHA4IUrDTEnIwnoCFe+x9/uFClWnUWJVcZkvqSHMfEN5U0kOInMtMZT+YA5jvXS2TO1RZiLThGz1n4sIq2KxLoMA/tTa8urk+jk=
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; s=s1024; d=yahoo.com;
+ h=X-YMail-OSG:Received:X-Rocket-MIMEInfo:X-Mailer:Message-ID:Date:From:Reply-To:Subject:To:MIME-Version:Content-Type;
+ b=E1Sa/lB4uf0f0t3HMUzdeeL+dwVRHhRs12EMpx3NreKdhEjiK9ikhNwiM+3m+OHRBgb5IoxWisCrdSKHO6OBLiXrswqsMCSNtU6J9Fvz/K1P2NFLktavLGSxd/u+HNc89Fb4dNrAlGDZSNLW5Byzqfp0rD/4TeMaUhFMmtBvobg=;
+X-YMail-OSG: 8_CX_4kVM1matBc27m.NhR09jbiRcPpBI0DkIc1ghrqk99b
+ v8Y.m2j6H87x9wP2QfeyOZT3rlX6gP75BIIQVso2MB.ur7blfn.BinZpV42y
+ EZYBouVYryAzeZyXglsPo4bjgOrl1pDpD0.BnJWAwtQcBHMp0ZT3IHA_Esqd
+ seIpL3CI0QyiPZHxHD9RzY.furQewXP1T6TS91ks1YTjDMlICS9VBFAc4xlv
+ roGadMPgcNNsLfrItH9DtIyr.F0tTjrevNmpMg6WR3LyBnoQxB2VXEjmNukM
+ NyOk4YcU_n6EOJGU.m7lDKiuIw5nrNl_3xE0Crd6bL6vPaAYENiLz6NShVSu
+ gD1rGw.g6Op8NzhNQRxfAOYiBRA5f2eHVXRoiVrsoAxLpHm1jXUqfKhI_yXg
+ ufKCErEqSeqEzOHSo6x9A0DfnkxBbQHmEs8Xc1xGZMoP65oSoIdLc6c2jYpl
+ NvCusUq0Vx.R.IOIHGo4z6.vQ0ofHB3.7866BUmCkIvg8ybE1N25fpoF0dOK
+ CkyWKEczQJKsHCm2p
+Received: from [24.21.41.211] by web141201.mail.bf1.yahoo.com via HTTP;
+ Mon, 13 Jan 2014 16:00:53 PST
+X-Rocket-MIMEInfo: 002.001,
+ QnJhbmRlbmJ1cmcgdi4gT2hpbyAtIDM5NSBVLlMuIDQ0NCAoMTk2OSkKCgkqIFN5bGxhYnVzIAoJKiBDYXNlIFUuUy4gU3VwcmVtZSBDb3VydApCcmFuZGVuYnVyZyB2LiBPaGlvLCAzOTUgVS5TLiAgNDQ0ICgxOTY5KQpCcmFuZGVuYnVyZyB2LiBPaGlvCk5vLiA0OTIKQXJndWVkIEZlYnJ1YXJ5IDI3LCAxOTY5CkRlY2lkZWQgSnVuZSA5LCAxOTY5CjM5NSBVLlMuIDQ0NApBUFBFQUwgRlJPTSBUSEUgU1VQUkVNRSBDT1VSVCBPRiBPSElPIApTeWxsYWJ1cyAKQXBwZWxsYW50LCBhIEt1IEtsdXggS2xhbiBsZWEBMAEBAQE-
+X-Mailer: YahooMailWebService/0.8.172.614
+Message-ID: <1389657653.1212.YahooMailNeo@web141201.mail.bf1.yahoo.com>
+Date: Mon, 13 Jan 2014 16:00:53 -0800 (PST)
+From: Jim Bell <jamesdbell8@yahoo.com>
+Subject: Supreme Court case:  Brandenburg v. Ohio text:
+To: "cypherpunks@cpunks.org" <cypherpunks@cpunks.org>,
+        John Young <jya@pipeline.com>
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="1105474026-994016929-1389657653=:1212"
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+--1105474026-994016929-1389657653=:1212
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+Brandenburg v. Ohio - 395 U.S. 444 (1969)=0A=0A=09* Syllabus =0A=09* Case U=
+.S. Supreme Court=0ABrandenburg v. Ohio, 395 U.S.  444 (1969)=0ABrandenburg=
+ v. Ohio=0ANo. 492=0AArgued February 27, 1969=0ADecided June 9, 1969=0A395 =
+U.S. 444=0AAPPEAL FROM THE SUPREME COURT OF OHIO =0ASyllabus =0AAppellant, =
+a Ku Klux Klan leader, was convicted under the Ohio Criminal Syndicalism st=
+atute for=0A"advocat[ing] . . . the duty, necessity, or propriety of crime,=
+ =0Asabotage, violence, or unlawful methods of terrorism as a means of =0Aa=
+ccomplishing industrial or political reform"=0Aand for=0A"voluntarily assem=
+bl[ing] with any society, group or assemblage of =0Apersons formed to teach=
+ or advocate the doctrines of criminal =0Asyndicalism."=0ANeither the indic=
+tment nor the trial judge's instructions refined the statute's definition o=
+f the crime in terms of mere advocacy not =0Adistinguished from incitement =
+to imminent lawless action.=0AHeld: Since the statute, by its words and as =
+applied, =0Apurports to punish mere advocacy and to forbid, on pain of crim=
+inal =0Apunishment, assembly with others merely to advocate the described t=
+ype =0Aof action, it falls within the condemnation of the First and Fourtee=
+nth =0AAmendments.  Freedoms of speech and press do not permit a State to =
+=0Aforbid advocacy of the use of force or of law violation except where =0A=
+such advocacy is directed to inciting or producing imminent lawless =0Aacti=
+on and is likely to incite or produce such action. Whitney v. California, 2=
+74 U. S. 357, overruled.=0AReversed.=0APER CURIAM.=0AThe appellant, a leade=
+r of a Ku Klux Klan group, was convicted under =0Athe Ohio Criminal Syndica=
+lism statute for "advocat[ing] . . . the duty, =0Anecessity, or propriety =
+=0APage 395 U. S. 445=0Aof crime, sabotage, violence, or unlawful methods o=
+f terrorism as a =0Ameans of accomplishing industrial or political reform" =
+and for=0A"voluntarily assembl[ing] with any society, group, or assemblage =
+of =0Apersons formed to teach or advocate the doctrines of criminal =0Asynd=
+icalism."=0AOhio Rev.Code Ann. =A7 2923.13.  He was fined $1,000 and senten=
+ced to =0Aone to 10 years' imprisonment.  The appellant challenged the =0Ac=
+onstitutionality of the criminal syndicalism statute under the First =0Aand=
+ Fourteenth Amendments to the United States Constitution, but the =0Ainterm=
+ediate appellate court of Ohio affirmed his conviction without =0Aopinion. =
+ The Supreme Court of Ohio dismissed his appeal sua sponte "for the reason =
+that no substantial constitutional question exists =0Aherein."  It did not =
+file an opinion or explain its conclusions.  Appeal was taken to this Court=
+, and we noted probable jurisdiction. 393 U. S. 94 (196).  We reverse.=0ATh=
+e record shows that a man, identified at trial as the appellant, =0Atelepho=
+ned an announcer-reporter on the staff of a Cincinnati television station a=
+nd invited him to come to a Ku Klux Klan "rally" to be held at a farm in Ha=
+milton County.  With the cooperation of the organizers, the reporter and a =
+cameraman attended the meeting and filmed the events.  =0APortions of the f=
+ilms were later broadcast on the local station and on a national network.=
+=0AThe prosecution's case rested on the films and on testimony =0Aidentifyi=
+ng the appellant as the person who communicated with the =0Areporter and wh=
+o spoke at the rally.  The State also introduced into =0Aevidence several a=
+rticles appearing in the film, including a pistol, a =0Arifle, a shotgun, a=
+mmunition, a Bible, and a red hood worn by the =0Aspeaker in the films.=0AO=
+ne film showed 12 hooded figures, some of whom carried firearms.  =0AThey w=
+ere gathered around a large wooden cross, which they burned.  No =0Aone was=
+ present =0APage 395 U. S. 446=0Aother than the participants and the newsme=
+n who made the film.  Most of the words uttered during the scene were incom=
+prehensible when the film =0Awas projected, but scattered phrases could be =
+understood that were =0Aderogatory of Negroes and, in one instance, of Jews=
+. [Footnote 1]  Another scene on the same film showed the appellant, in Kla=
+n regalia, making a speech.  The speech, in full, was as follows:=0A"This i=
+s an organizers' meeting.  We have had quite a few members =0Ahere today wh=
+ich are -- we have hundreds, hundreds of members throughout the State of Oh=
+io.  I can quote from a newspaper clipping from the =0AColumbus, Ohio, Disp=
+atch, five weeks ago Sunday morning.  The Klan has =0Amore members in the S=
+tate of Ohio than does any other organization.  =0AWe're not a revengent or=
+ganization, but if our President, our Congress, =0Aour Supreme Court, conti=
+nues to suppress the white, Caucasian race, it's possible that there might =
+have to be some revengeance taken."=0A"We are marching on Congress July the=
+ Fourth, four hundred thousand =0Astrong.  From there, we are dividing into=
+ two groups, one group to march on St. Augustine, Florida, the other group =
+to march into Mississippi.  =0AThank you.  "=0APage 395 U. S. 447=0AThe sec=
+ond film showed six hooded figures one of whom, later =0Aidentified as the =
+appellant, repeated a speech very similar to that =0Arecorded on the first =
+film.  The reference to the possibility of =0A"revengeance" was omitted, an=
+d one sentence was added:  "Personally, I =0Abelieve the nigger should be r=
+eturned to Africa, the Jew returned to =0AIsrael."  Though some of the figu=
+res in the films carried weapons, the =0Aspeaker did not.=0AThe Ohio Crimin=
+al Syndicalism Statute was enacted in 1919.  From 1917 to 1920, identical o=
+r quite similar laws were adopted by 20 States and =0Atwo territories.  E. =
+Dowell, A History of Criminal Syndicalism =0ALegislation in the United Stat=
+es 21 (1939).  In 1927, this Court =0Asustained the constitutionality of Ca=
+lifornia's Criminal Syndicalism =0AAct, Cal.Penal Code =A7=A7 11400-11402, =
+the text of which is quite similar =0Ato that of the laws of Ohio. Whitney =
+v. California, 274 U. S. 357 (1927).  The Court upheld the statute on the g=
+round that, without more, "advocating" violent means to effect political an=
+d economic change =0Ainvolves such danger to the security of the State that=
+ the State may =0Aoutlaw it. Cf. Fiske v. Kansas, 274 U. S. 380 (1927).  Bu=
+t Whitney has been thoroughly discredited by later decisions. See Dennis v.=
+ United States, 341 U. S. 494, at 341 U. S. 507 (1951).  These later decisi=
+ons have fashioned the principle that the =0Aconstitutional guarantees of f=
+ree speech and free press do not permit a =0AState to forbid or proscribe a=
+dvocacy of the use of force or of law =0Aviolation except where such advoca=
+cy is directed to inciting or =0Aproducing imminent lawless action and is l=
+ikely to incite or produce =0Asuch action. [Footnote 2]  As we =0APage 395 =
+U. S. 448=0Asaid in Noto v. United States, 367 U. S. 290, 367 U. S. 297-298=
+ (1961),=0A"the mere abstract teaching . . . of the moral propriety or even=
+ =0Amoral necessity for a resort to force and violence is not the same as =
+=0Apreparing a group for violent action and steeling it to such action."=0A=
+See also Herndon v. Lowry, 301 U. S. 242, 301 U. S. 259-261 (1937); Bond v.=
+ Floyd, 385 U. S. 116, 385 U. S. 134 (1966).  A statute which fails to draw=
+ this distinction impermissibly =0Aintrudes upon the freedoms guaranteed by=
+ the First and Fourteenth =0AAmendments.  It sweeps within its condemnation=
+ speech which our =0AConstitution has immunized from governmental control. =
+Cf. Yates v. United States, 354 U. S. 298 (1957); De Jonge v. Oregon, 299 U=
+. S. 353 (1937); Stromberg v. California, 283 U. S. 359 (1931). See also Un=
+ited States v. Robel, 389 U. S. 258 (1967); Keyishian v. Board of Regents, =
+385 U. S. 589 (1967); Elfbrandt v. Russell, 384 U. S. 11 (1966); Aptheker v=
+. Secretary of State, 378 U. S. 500 (1964); Baggett v. Bullitt, 377 U. S. 3=
+60 (1964).=0AMeasured by this test, Ohio's Criminal Syndicalism Act cannot =
+be =0Asustained.  The Act punishes persons who "advocate or teach the duty,=
+ =0Anecessity, or propriety" of violence "as a means of accomplishing =0Ain=
+dustrial or political reform"; or who publish or circulate or display =0Aan=
+y book or paper containing such advocacy; or who "justify" the =0Acommissio=
+n of violent acts "with intent to exemplify, spread or advocate the proprie=
+ty of the doctrines of criminal syndicalism"; or who =0A"voluntarily assemb=
+le" with a group formed "to teach or advocate the =0Adoctrines of criminal =
+syndicalism."  Neither the indictment nor the =0Atrial judge's instructions=
+ to the jury in any way refined the statute's =0Abald definition of the cri=
+me =0APage 395 U. S. 449=0Ain terms of mere advocacy not distinguished from=
+ incitement to imminent lawless action. [Footnote 3]=0AAccordingly, we are =
+here confronted with a statute which, by its own =0Awords and as applied, p=
+urports to punish mere advocacy and to forbid, on pain of criminal punishme=
+nt, assembly with others merely to advocate =0Athe described type of action=
+. [Footnote 4]  Such a statute falls within the condemnation of the First a=
+nd Fourteenth Amendments.  The contrary teaching of Whitney v. California, =
+supra, cannot be supported, and that decision is therefore overruled.=0ARev=
+ersed.=0A[Footnote 1]=0AThe significant portions that could be understood w=
+ere:=0A"How far is the nigger going to -- yeah."=0A"This is what we are goi=
+ng to do to the niggers."=0A"A dirty nigger."=0A"Send the Jews back to Isra=
+el."=0A"Let's give them back to the dark garden."=0A"Save America."=0A"Let'=
+s go back to constitutional betterment."=0A"Bury the niggers."=0A"We intend=
+ to do our part."=0A"Give us our state rights."=0A"Freedom for the whites."=
+=0A"Nigger will have to fight for every inch he gets from now on."=0A[Footn=
+ote 2]=0AIt was on the theory that the Smith Act, 54 Stat. 670, 18 U.S.C. =
+=A7 =0A35, embodied such a principle and that it had been applied only in =
+=0Aconformity with it that this Court sustained the Act's =0Aconstitutional=
+ity. Dennis v. United States, 341 U. S. 494 (1951).  That this was the basi=
+s for Dennis was emphasized in Yates v. United States, 354 U. S. 298, 354 U=
+. S. 320-324 (1957), in which the Court overturned convictions for advocacy=
+ of the =0Aforcible overthrow of the Government under the Smith Act, becaus=
+e the =0Atrial judge's instructions had allowed conviction for mere advocac=
+y, =0Aunrelated to its tendency to produce forcible action.=0A[Footnote 3]=
+=0AThe first count of the indictment charged that appellant=0A"did unlawful=
+ly by word of mouth advocate the necessity, or propriety of crime, violence=
+, or unlawful methods of terrorism as a means of =0Aaccomplishing political=
+ reform. . . ."=0AThe second count charged that appellant "did unlawfully v=
+oluntarily =0Aassemble with a group or assemblage of persons formed to advo=
+cate the =0Adoctrines of criminal syndicalism. . . ."  The trial judge's ch=
+arge =0Amerely followed the language of the indictment.  No construction of=
+ the =0Astatute by the Ohio courts has brought it within constitutionally =
+=0Apermissible limits.  The Ohio Supreme Court has considered the statute =
+=0Ain only one previous case, State v. Kassay, 126 Ohio St. 177, 184 N.E. 5=
+21 (1932), where the constitutionality of the statute was sustained.=0A[Foo=
+tnote 4]=0AStatutes affecting the right of assembly, like those touching on=
+ =0Afreedom of speech, must observe the established distinctions between =
+=0Amere advocacy and incitement to imminent lawless action, for, as Chief =
+=0AJustice Hughes wrote in De Jonge v. Oregon, supra, at 299 U. S. 364:  "T=
+he right of peaceable assembly is a right cognate to those of free speech a=
+nd free press, and is equally fundamental." See also United States v. Cruik=
+shank, 92 U. S. 542, 92 U. S. 552 (1876); Hague v. CIO, 307 U. S. 496, 307 =
+U. S. 513, 307 U. S. 519 (1939); NAACP v. Alabama ex rel. Patterson, 357 U.=
+ S. 449, 357 U. S. 460-461 (1958).=0AMR. JUSTICE BLACK, concurring.=0AI agr=
+ee with the views expressed by MR. JUSTICE DOUGLAS in his =0Aconcurring opi=
+nion in this case that the "clear and present danger" =0Adoctrine should ha=
+ve no place =0APage 395 U. S. 450=0Ain the interpretation of the First Amen=
+dment.  I join the Court's opinion, which, as I understand it, simply cites=
+ Dennis v. United States, 341 U. S. 494 (1951), but does not indicate any a=
+greement on the Court's part with the "clear and present danger" doctrine o=
+n which Dennis purported to rely.=0AMR. JUSTICE DOUGLAS, concurring.=0AWhil=
+e I join the opinion of the Court, I desire to enter a caveat.=0AThe "clear=
+ and present danger" test was adumbrated by Mr. Justice =0AHolmes in a case=
+ arising during World War I -- a war "declared" by the =0ACongress, not by =
+the Chief Executive.  The case was Schenck v. United States, 249 U. S. 47, =
+249 U. S. 52, where the defendant was charged with attempts to cause insubo=
+rdination =0Ain the military and obstruction of enlistment.  The pamphlets =
+that were =0Adistributed urged resistance to the draft, denounced conscript=
+ion, and =0Aimpugned the motives of those backing the war effort.  The Firs=
+t =0AAmendment was tendered as a defense.  Mr. Justice Holmes, in rejecting=
+ =0Athat defense, said:=0A"The question in every case is whether the words =
+used are used in =0Asuch circumstances and are of such a nature as to creat=
+e a clear and =0Apresent danger that they will bring about the substantive =
+evils that =0ACongress has a right to prevent.  It is a question of proximi=
+ty and =0Adegree."=0AFrohwerk v. United States, 249 U. S. 204, also authore=
+d by Mr. Justice Holmes, involved prosecution and =0Apunishment for publica=
+tion of articles very critical of the war effort =0Ain World War I. Schenck=
+ was referred to as a conviction for obstructing security "by words of pers=
+uasion." Id. at 249 U. S. 206.  And the conviction in Frohwerk was sustaine=
+d because "the circulation of the paper was =0APage 395 U. S. 451=0Ain quar=
+ters where a little breath would be enough to kindle a flame." Id. at 249 U=
+. S. 209.=0ADebs v. United States, 249 U. S. 211, was the third of the tril=
+ogy of the 1918 Term.  Debs was convicted of =0Aspeaking in opposition to t=
+he war where his "opposition was so expressed that its natural and intended=
+ effect would be to obstruct recruiting." Id. at 249 U. S. 215.=0A"If that =
+was intended, and if, in all the circumstances, that would =0Abe its probab=
+le effect, it would not be protected by reason of its being part of a gener=
+al program and expressions of a general and =0Aconscientious belief."=0AIbi=
+d.=0AIn the 1919 Term, the Court applied the Schenck doctrine to affirm the=
+ convictions of other dissidents in World War I. Abrams v. United States, 2=
+50 U. S. 616, was one instance.  Mr. Justice Holmes, with whom Mr. Justice =
+Brandeis concurred, dissented.  While adhering to Schenck, he did not think=
+ that, on the facts, a case for overriding the First Amendment had been mad=
+e out:=0A"It is only the present danger of immediate evil or an intent to =
+=0Abring it about that warrants Congress in setting a limit to the =0Aexpre=
+ssion of opinion where private rights are not concerned.  Congress =0Acerta=
+inly cannot forbid all effort to change the mind of the country."=0AId. at =
+250 U. S. 628.=0AAnother instance was Schaefer v. United States, 251 U. S. =
+466, in which Mr. Justice Brandeis, joined by Mr. Justice Holmes, dissented=
+.  A third was Pierce v. United States, 252 U. S. 239, in which, again, Mr.=
+ Justice Brandeis, joined by Mr. Justice Holmes, dissented.=0AThose, then, =
+were the World War I cases that put the gloss of "clear =0Aand present dang=
+er" on the First Amendment.  Whether the war power -- =0Athe greatest level=
+er of them all -- is adequate to sustain that doctrine is debatable. =0APag=
+e 395 U. S. 452=0AThe dissents in Abrams, Schaefer, and Pierce show how eas=
+ily "clear and present danger" is manipulated to crush what Brandeis called=
+ "[t]he fundamental right of free men to strive for =0Abetter conditions th=
+rough new legislation and new institutions" by =0Aargument and discourse (P=
+ierce v. United States, supra, at 252 U. S. 273) even in time of war.  Thou=
+gh I doubt if the "clear and present danger" =0Atest is congenial to the Fi=
+rst Amendment in time of a declared war, I am certain it is not reconcilabl=
+e with the First Amendment in days of =0Apeace.=0AThe Court quite properly =
+overrules Whitney v. California, 274 U. S. 357, which involved advocacy of =
+ideas which the majority of the Court deemed unsound and dangerous.=0AMr. J=
+ustice Holmes, though never formally abandoning the "clear and =0Apresent d=
+anger" test, moved closer to the First Amendment ideal when he =0Asaid in d=
+issent in Gitlow v. New York, 268 U. S. 652, 268 U. S. 673:=0A"Every idea i=
+s an incitement.  It offers itself for belief, and, if =0Abelieved, it is a=
+cted on unless some other belief outweighs it or some =0Afailure of energy =
+stifles the movement at its birth.  The only =0Adifference between the expr=
+ession of an opinion and an incitement in the narrower sense is the speaker=
+'s enthusiasm for the result.  Eloquence =0Amay set fire to reason.  But wh=
+atever may be thought of the redundant =0Adiscourse before us, it had no ch=
+ance of starting a present =0Aconflagration.  If, in the long run, the beli=
+efs expressed in =0Aproletarian dictatorship are destined to be accepted by=
+ the dominant =0Aforces of the community, the only meaning of free speech i=
+s that they =0Ashould be given their chance and have their way."=0AWe have =
+never been faithful to the philosophy of that dissent. =0APage 395 U. S. 45=
+3=0AThe Court, in Herndon v. Lowry, 301 U. S. 242, overturned a conviction =
+for exercising First Amendment rights to incite insurrection because of lac=
+k of evidence of incitement. Id. at 301 U. S. 259-261. And see Hartzel v. U=
+nited States, 322 U. S. 680.  In Bridges v. California, 314 U. S. 252, 314 =
+U. S. 261-263, we approved the "clear and present danger" test in an elabor=
+ate dictum =0Athat tightened it and confined it to a narrow category.  But =
+in Dennis v. United States, 341 U. S. 494, we opened wide the door, distort=
+ing the "clear and present danger" test beyond recognition. [Footnote 2/1]=
+=0AIn that case, the prosecution dubbed an agreement to teach the =0AMarxis=
+t creed a "conspiracy."  The case was submitted to a jury on a =0Acharge th=
+at the jury could not convict unless it found that the =0Adefendants "inten=
+ded to overthrow the Government as speedily as =0Acircumstances would permi=
+t.'" Id. at 341 U. S. 509-511.  The Court sustained convictions under that =
+charge, construing it to mean a determination of=0A""whether the gravity of=
+ the evil,' discounted by its improbability, justifies such invasion of fre=
+e speech as is necessary to avoid the danger." [Footnote 2/2]" =0AId. at 34=
+1 U. S. 510, quoting from United States v. Dennis, 183 F.2d 201, 212.=0AOut=
+ of the "clear and present danger" test came other offspring.  =0AAdvocacy =
+and teaching of forcible overthrow of government as an abstract principle i=
+s immune from prosecution. Yates v. United States, 354 U. S. 298, 354 U. S.=
+ 318.  But an "active" member, who has a guilty knowledge and intent of the=
+ aim to overthrow the Government =0APage 395 U. S. 454=0Aby violence, Noto =
+v. United States, 367 U. S. 290, may be prosecuted. Scales v. United States=
+, 367 U. S. 203, 367 U. S. 228. And the power to investigate, backed by the=
+ powerful sanction of =0Acontempt, includes the power to determine which of=
+ the two categories =0Afits the particular witness. Barenblatt v. United St=
+ates, 360 U. S. 109, 360 U. S. 130. And so the investigator roams at will t=
+hrough all of the beliefs of =0Athe witness, ransacking his conscience and =
+his innermost thoughts.=0AJudge Learned Hand, who wrote for the Court of Ap=
+peals in affirming the judgment in Dennis, coined the "not improbable" test=
+, 183 F.2d 201, 214, which this Court =0Aadopted and which Judge Hand prefe=
+rred over the "clear and present =0Adanger" test.  Indeed, in his book, The=
+ Bill of Rights 59 (1958), in =0Areferring to Holmes' creation of the "clea=
+r and present danger" test, he said, "I cannot help thinking that, for once=
+, Homer nodded."=0AMy own view is quite different.  I see no place in the r=
+egime of the =0AFirst Amendment for any "clear and present danger" test, wh=
+ether strict =0Aand tight, as some would make it, or free-wheeling, as the =
+Court in Dennis rephrased it.=0AWhen one reads the opinions closely and see=
+s when and how the "clear =0Aand present danger" test has been applied, gre=
+at misgivings are aroused. First, the threats were often loud, but always p=
+uny, and made serious =0Aonly by judges so wedded to the status quo that cr=
+itical analysis made them nervous.  Second, the test was so twisted and per=
+verted in Dennis as to make the trial of those teachers of Marxism an all-o=
+ut political =0Atrial which was part and parcel of the cold war that has er=
+oded =0Asubstantial parts of the First Amendment.=0AAction is often a metho=
+d of expression, and within the protection of the First Amendment.=0ASuppos=
+e one tears up his own copy of the Constitution in eloquent protest to a de=
+cision of this Court.  May he be indicted? =0APage 395 U. S. 455=0ASuppose =
+one rips his own Bible to shreds to celebrate his departure =0Afrom one "fa=
+ith" and his embrace of atheism.  May he be indicted?=0ALast Term, the Cour=
+t held in United States v. O'Brien, 391 U. S. 367, 391 U. S. 382, that a re=
+gistrant under Selective Service who burned his draft card in =0Aprotest of=
+ the war in Vietnam could be prosecuted.  The First Amendment =0Awas tender=
+ed as a defense and rejected, the Court saying:=0A"The issuance of certific=
+ates indicating the registration and =0Aeligibility classification of indiv=
+iduals is a legitimate and =0Asubstantial administrative aid in the functio=
+ning of this system.  And =0Alegislation to insure the continuing availabil=
+ity of issued certificates serves a legitimate and substantial purpose in t=
+he system's =0Aadministration."=0A391 U.S. at 391 U. S. 377-378.=0ABut O'Br=
+ien was not prosecuted for not having his draft card =0Aavailable when aske=
+d for by a federal agent.  He was indicted, tried, =0Aand convicted for bur=
+ning the card.  And this Court's affirmance of that conviction was not, wit=
+h all respect, consistent with the First =0AAmendment.=0AThe act of praying=
+ often involves body posture and movement, as well =0Aas utterances.  It is=
+ nonetheless protected by the Free Exercise Clause. Picketing, as we have s=
+aid on numerous occasions, is "free speech =0Aplus." See Bakery Drivers Loc=
+al v. Wohl, 315 U. S. 769, 315 U. S. 775 (DOUGLAS, J., concurring); Giboney=
+ v. Empire Storage Co., 336 U. S. 490, 336 U. S. 501; Hughes v. Superior Co=
+urt, 339 U. S. 460, 339 U. S. 465; Labor Board v. Fruit Packers, 377 U. S. =
+58, 377 U. S. 77 (BLACK, J., concurring), and id. at 377 U. S. 93 (HARLAN, =
+J., dissenting); Cox v. Louisiana, 379 U. S. 559, 379 U. S. 578 (opinion of=
+ BLACK, J.); Food Employees v. Logan Plaza, 391 U. S. 308, 391 U. S. 326 (D=
+OUGLAS, J., concurring).  That means that it can be regulated when it comes=
+ to the "plus" or "action" side of the protest.  It can be =0Aregulated as =
+to =0APage 395 U. S. 456=0Athe number of pickets and the place and hours (s=
+ee Cox v. Louisiana, supra), because traffic and other community problems w=
+ould otherwise suffer.=0ABut none of these considerations is implicated in =
+the symbolic protest of the Vietnam war in the burning of a draft card.=0AO=
+ne's beliefs have long been thought to be sanctuaries which government coul=
+d not invade. Barenblatt is one example of the ease with which that sanctua=
+ry can be violated.  =0AThe lines drawn by the Court between the criminal a=
+ct of being an =0A"active" Communist and the innocent act of being a nomina=
+l or inactive =0ACommunist mark the difference only between deep and abidin=
+g belief and =0Acasual or uncertain belief.  But I think that all matters o=
+f belief are =0Abeyond the reach of subpoenas or the probings of investigat=
+ors.  That is why the invasions of privacy made by investigating committees=
+ were =0Anotoriously unconstitutional.  That is the deep-seated fault in th=
+e =0Ainfamous loyalty security hearings which, since 1947, when President =
+=0ATruman launched them, have processed 20,000,000 men and women.  Those =
+=0Ahearings were primarily concerned with one's thoughts, ideas, beliefs, =
+=0Aand convictions.  They were the most blatant violations of the First =0A=
+Amendment we have ever known.=0AThe line between what is permissible and no=
+t subject to control and =0Awhat may be made impermissible and subject to r=
+egulation is the line =0Abetween ideas and overt acts.=0AThe example usuall=
+y given by those who would punish speech is the case of one who falsely sho=
+uts fire in a crowded theatre.=0AThis is, however, a classic case where spe=
+ech is brigaded with action. See Speiser v. Randall, 357 U. S. 513, 357 U. =
+S. 536-537 (DOUGLAS, J., concurring).  They are indeed inseparable, and a p=
+rosecution can be launched for the overt =0APage 395 U. S. 457=0Aacts actua=
+lly caused.  Apart from rare instances of that kind, speech =0Ais, I think,=
+ immune from prosecution.  Certainly there is no =0Aconstitutional line bet=
+ween advocacy of abstract ideas, as in Yates, and advocacy of political act=
+ion, as in Scales. The quality of advocacy turns on the depth of the convic=
+tion, and =0Agovernment has no power to invade that sanctuary of belief and=
+ =0Aconscience. [Footnote 2/3]=0A[Footnote 2/1]=0ASee McKay, The Preference=
+ For Freedom, 34 N.Y.U.L.Rev. 1182, 1203-1212 (1959).=0A[Footnote 2/2]=0ASe=
+e Feiner v. New York, 340 U. S. 315, where a speaker was arrested for arous=
+ing an audience when the only =0A"clear and present danger" was that the he=
+cklers in the audience would =0Abreak up the meeting.=0A[Footnote 2/3]=0ASe=
+e MR. JUSTICE BLACK, dissenting, in Communications Assn. v. Douds, 339 U. S=
+. 382, 339 U. S. 446, 339 U. S. 449 et seq.=0A-------------------------=0A=
+=0AOfficial Supreme Court caselaw is only found in the print version of the=
+ United States Reports. Justia caselaw is provided for general =0Ainformati=
+onal purposes only, and may not reflect current legal =0Adevelopments, verd=
+icts or settlements. We make no warranties or =0Aguarantees about the accur=
+acy, completeness, or adequacy of the =0Ainformation contained on this site=
+ or information linked to from this =0Asite. Please check official sources.=
+  
+--1105474026-994016929-1389657653=:1212
+Content-Type: text/html; charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+<html><body><div style=3D"color:#000; background-color:#fff; font-family:ti=
+mes new roman, new york, times, serif;font-size:10pt"><div id=3D"content">=
+=0A=09=09=09=09=09=09=09=09<article id=3D"maincontent">=0A=09=09=09=09<h1>B=
+randenburg v. Ohio - 395 U.S. 444 (1969)</h1><br>=0A=0A<ul class=3D"supreme=
+links"><li>=0A=09=09=09<a href=3D"http://supreme.justia.com/cases/federal/u=
+s/395/444/">Syllabus</a>=0A=09=09=09</li><li>=0A=09=09=09Case=09=09=09</li>=
+</ul>=0A<span class=3D"headertext"><h2>U.S. Supreme Court</h2><h3>Brandenbu=
+rg v. Ohio, 395 U.S.  444 (1969)</h3><div><b>Brandenburg v. Ohio</b></div><=
+div><b>No. 492</b></div><div><b>Argued February 27, 1969</b></div><div><b>D=
+ecided June 9, 1969</b></div><div><b>395 U.S. 444</b></div><div><em>APPEAL =
+FROM THE SUPREME COURT OF OHIO=0A</em></div>=0A<div><em><em>Syllabus</em>=
+=0A</em></div>=0A<div>Appellant, a Ku Klux Klan leader, was convicted under=
+ the Ohio Criminal Syndicalism statute for</div>=0A<div>"advocat[ing] . . .=
+ the duty, necessity, or propriety of crime, =0Asabotage, violence, or unla=
+wful methods of terrorism as a means of =0Aaccomplishing industrial or poli=
+tical reform"</div>=0A<div>and for</div>=0A<div>"voluntarily assembl[ing] w=
+ith any society, group or assemblage of =0Apersons formed to teach or advoc=
+ate the doctrines of criminal =0Asyndicalism."</div>=0A<div>Neither the ind=
+ictment nor the trial judge's instructions refined the=0A statute's definit=
+ion of the crime in terms of mere advocacy not =0Adistinguished from incite=
+ment to imminent lawless action.</div>=0A<div><em>Held:</em>  Since the sta=
+tute, by its words and as applied, =0Apurports to punish mere advocacy and =
+to forbid, on pain of criminal =0Apunishment, assembly with others merely t=
+o advocate the described type =0Aof action, it falls within the condemnatio=
+n of the First and Fourteenth =0AAmendments.  Freedoms of speech and press =
+do not permit a State to =0Aforbid advocacy of the use of force or of law v=
+iolation except where =0Asuch advocacy is directed to inciting or producing=
+ imminent lawless =0Aaction and is likely to incite or produce such action.=
+  <em>Whitney v. California,</em> <span class=3D"l-leftover"><a href=3D"htt=
+p://supreme.justia.com/cases/federal/us/274/357/case.html">274 U. S. 357</a=
+></span>, overruled.</div>=0A<div><em>Reversed.</em></div>=0A<div>PER CURIA=
+M.</div>=0A<div>The appellant, a leader of a Ku Klux Klan group, was convic=
+ted under =0Athe Ohio Criminal Syndicalism statute for "advocat[ing] . . . =
+the duty, =0Anecessity, or propriety </div><div><a href=3D"" class=3D"page-=
+number" name=3D"445">Page 395 U. S. 445</a></div><div>=0A of crime, sabotag=
+e, violence, or unlawful methods of terrorism as a =0Ameans of accomplishin=
+g industrial or political reform" and for</div>=0A<div>"voluntarily assembl=
+[ing] with any society, group, or assemblage of =0Apersons formed to teach =
+or advocate the doctrines of criminal =0Asyndicalism."</div>=0A<div>Ohio Re=
+v.Code Ann. =A7 2923.13.  He was fined $1,000 and sentenced to =0Aone to 10=
+ years' imprisonment.  The appellant challenged the =0Aconstitutionality of=
+ the criminal syndicalism statute under the First =0Aand Fourteenth Amendme=
+nts to the United States Constitution, but the =0Aintermediate appellate co=
+urt of Ohio affirmed his conviction without =0Aopinion.  The Supreme Court =
+of Ohio dismissed his appeal <em>sua sponte</em>=0A "for the reason that no=
+ substantial constitutional question exists =0Aherein."  It did not file an=
+ opinion or explain its conclusions.  Appeal=0A was taken to this Court, an=
+d we noted probable jurisdiction.  <span class=3D"l-leftover"><a href=3D"ht=
+tp://supreme.justia.com/cases/federal/us/393/87/case.html#94">393 U. S. 94<=
+/a></span> (196).  We reverse.</div>=0A<div>The record shows that a man, id=
+entified at trial as the appellant, =0Atelephoned an announcer-reporter on =
+the staff of a Cincinnati television=0A station and invited him to come to =
+a Ku Klux Klan "rally" to be held at=0A a farm in Hamilton County.  With th=
+e cooperation of the organizers, the=0A reporter and a cameraman attended t=
+he meeting and filmed the events.  =0APortions of the films were later broa=
+dcast on the local station and on a=0A national network.</div>=0A<div>The p=
+rosecution's case rested on the films and on testimony =0Aidentifying the a=
+ppellant as the person who communicated with the =0Areporter and who spoke =
+at the rally.  The State also introduced into =0Aevidence several articles =
+appearing in the film, including a pistol, a =0Arifle, a shotgun, ammunitio=
+n, a Bible, and a red hood worn by the =0Aspeaker in the films.</div>=0A<di=
+v>One film showed 12 hooded figures, some of whom carried firearms.  =0AThe=
+y were gathered around a large wooden cross, which they burned.  No =0Aone =
+was present </div><div><a href=3D"" class=3D"page-number" name=3D"446">Page=
+ 395 U. S. 446</a></div><div>=0A other than the participants and the newsme=
+n who made the film.  Most of=0A the words uttered during the scene were in=
+comprehensible when the film =0Awas projected, but scattered phrases could =
+be understood that were =0Aderogatory of Negroes and, in one instance, of J=
+ews. [<a href=3D"http://supreme.justia.com/cases/federal/us/395/444/case.ht=
+ml#F1" name=3D"T1">Footnote 1</a>]  Another scene on the same film showed t=
+he appellant, in Klan regalia, making a speech.  The speech, in full, was a=
+s follows:</div>=0A<div>"This is an organizers' meeting.  We have had quite=
+ a few members =0Ahere today which are -- we have hundreds, hundreds of mem=
+bers throughout=0A the State of Ohio.  I can quote from a newspaper clippin=
+g from the =0AColumbus, Ohio, Dispatch, five weeks ago Sunday morning.  The=
+ Klan has =0Amore members in the State of Ohio than does any other organiza=
+tion.  =0AWe're not a revengent organization, but if our President, our Con=
+gress, =0Aour Supreme Court, continues to suppress the white, Caucasian rac=
+e, it's=0A possible that there might have to be some revengeance taken."</d=
+iv>=0A<div>"We are marching on Congress July the Fourth, four hundred thous=
+and =0Astrong.  From there, we are dividing into two groups, one group to m=
+arch=0A on St. Augustine, Florida, the other group to march into Mississipp=
+i.  =0AThank you.  "</div><div><a href=3D"" class=3D"page-number" name=3D"4=
+47">Page 395 U. S. 447</a></div>=0A<div>The second film showed six hooded f=
+igures one of whom, later =0Aidentified as the appellant, repeated a speech=
+ very similar to that =0Arecorded on the first film.  The reference to the =
+possibility of =0A"revengeance" was omitted, and one sentence was added:  "=
+Personally, I =0Abelieve the nigger should be returned to Africa, the Jew r=
+eturned to =0AIsrael."  Though some of the figures in the films carried wea=
+pons, the =0Aspeaker did not.</div>=0A<div>The Ohio Criminal Syndicalism St=
+atute was enacted in 1919.  From 1917=0A to 1920, identical or quite simila=
+r laws were adopted by 20 States and =0Atwo territories.  E. Dowell, A Hist=
+ory of Criminal Syndicalism =0ALegislation in the United States 21 (1939). =
+ In 1927, this Court =0Asustained the constitutionality of California's Cri=
+minal Syndicalism =0AAct, Cal.Penal Code =A7=A7 11400-11402, the text of wh=
+ich is quite similar =0Ato that of the laws of Ohio.  <em>Whitney v. Califo=
+rnia,</em> <span class=3D"l-leftover"><a href=3D"http://supreme.justia.com/=
+cases/federal/us/274/357/case.html">274 U. S. 357</a></span>=0A (1927).  Th=
+e Court upheld the statute on the ground that, without more,=0A "advocating=
+" violent means to effect political and economic change =0Ainvolves such da=
+nger to the security of the State that the State may =0Aoutlaw it.  <em>Cf.=
+ Fiske v. Kansas,</em> <span class=3D"l-leftover"><a href=3D"http://supreme=
+.justia.com/cases/federal/us/274/380/case.html">274 U. S. 380</a></span> (1=
+927).  But <em>Whitney</em> has been thoroughly discredited by later decisi=
+ons.  <em>See Dennis v. United States,</em> <span class=3D"l-leftover"><a h=
+ref=3D"http://supreme.justia.com/cases/federal/us/341/494/case.html">341 U.=
+ S. 494</a></span>, at  <span class=3D"l-normaldigitafter"><a href=3D"http:=
+//supreme.justia.com/cases/federal/us/341/494/case.html#507">341 U. S. 507<=
+/a></span>=0A (1951).  These later decisions have fashioned the principle t=
+hat the =0Aconstitutional guarantees of free speech and free press do not p=
+ermit a =0AState to forbid or proscribe advocacy of the use of force or of =
+law =0Aviolation except where such advocacy is directed to inciting or =0Ap=
+roducing imminent lawless action and is likely to incite or produce =0Asuch=
+ action. [<a href=3D"http://supreme.justia.com/cases/federal/us/395/444/cas=
+e.html#F2" name=3D"T2">Footnote 2</a>]  As we </div><div><a href=3D"" class=
+=3D"page-number" name=3D"448">Page 395 U. S. 448</a></div><div> said in <em=
+>Noto v. United States,</em> <span class=3D"l-leftover"><a href=3D"http://s=
+upreme.justia.com/cases/federal/us/367/290/case.html">367 U. S. 290</a></sp=
+an>,  <span class=3D"l-normaldigitafter"><a href=3D"http://supreme.justia.c=
+om/cases/federal/us/367/290/case.html#297">367 U. S. 297</a></span>-298 (19=
+61),</div>=0A<div>"the mere abstract teaching . . . of the moral propriety =
+or even =0Amoral necessity for a resort to force and violence is not the sa=
+me as =0Apreparing a group for violent action and steeling it to such actio=
+n."</div>=0A<div><em>See also Herndon v. Lowry,</em> <span class=3D"l-lefto=
+ver"><a href=3D"http://supreme.justia.com/cases/federal/us/301/242/case.htm=
+l">301 U. S. 242</a></span>,  <span class=3D"l-normaldigitafter"><a href=3D=
+"http://supreme.justia.com/cases/federal/us/301/242/case.html#259">301 U. S=
+. 259</a></span>-261 (1937); <em>Bond v. Floyd,</em> <span class=3D"l-lefto=
+ver"><a href=3D"http://supreme.justia.com/cases/federal/us/385/116/case.htm=
+l">385 U. S. 116</a></span>,  <span class=3D"l-normaldigitafter"><a href=3D=
+"http://supreme.justia.com/cases/federal/us/385/116/case.html#134">385 U. S=
+. 134</a></span>=0A (1966).  A statute which fails to draw this distinction=
+ impermissibly =0Aintrudes upon the freedoms guaranteed by the First and Fo=
+urteenth =0AAmendments.  It sweeps within its condemnation speech which our=
+ =0AConstitution has immunized from governmental control.  <em>Cf. Yates v.=
+ United States,</em> <span class=3D"l-leftover"><a href=3D"http://supreme.j=
+ustia.com/cases/federal/us/354/298/case.html">354 U. S. 298</a></span> (195=
+7); <em>De Jonge v. Oregon,</em> <span class=3D"l-leftover"><a href=3D"http=
+://supreme.justia.com/cases/federal/us/299/353/case.html">299 U. S. 353</a>=
+</span> (1937); <em>Stromberg v. California,</em> <span class=3D"l-leftover=
+"><a href=3D"http://supreme.justia.com/cases/federal/us/283/359/case.html">=
+283 U. S. 359</a></span> (1931).  <em>See also United States v. Robel,</em>=
+ <span class=3D"l-leftover"><a href=3D"http://supreme.justia.com/cases/fede=
+ral/us/389/258/case.html">389 U. S. 258</a></span> (1967); <em>Keyishian v.=
+ Board of Regents,</em> <span class=3D"l-leftover"><a href=3D"http://suprem=
+e.justia.com/cases/federal/us/385/589/case.html">385 U. S. 589</a></span> (=
+1967); <em>Elfbrandt v. Russell,</em> <span class=3D"l-leftover"><a
+ href=3D"http://supreme.justia.com/cases/federal/us/384/11/case.html">384 U=
+. S. 11</a></span> (1966); <em>Aptheker v. Secretary of State,</em> <span c=
+lass=3D"l-leftover"><a href=3D"http://supreme.justia.com/cases/federal/us/3=
+78/500/case.html">378 U. S. 500</a></span> (1964); <em>Baggett v. Bullitt,<=
+/em> <span class=3D"l-leftover"><a href=3D"http://supreme.justia.com/cases/=
+federal/us/377/360/case.html">377 U. S. 360</a></span> (1964).</div>=0A<div=
+>Measured by this test, Ohio's Criminal Syndicalism Act cannot be =0Asustai=
+ned.  The Act punishes persons who "advocate or teach the duty, =0Anecessit=
+y, or propriety" of violence "as a means of accomplishing =0Aindustrial or =
+political reform"; or who publish or circulate or display =0Aany book or pa=
+per containing such advocacy; or who "justify" the =0Acommission of violent=
+ acts "with intent to exemplify, spread or advocate=0A the propriety of the=
+ doctrines of criminal syndicalism"; or who =0A"voluntarily assemble" with =
+a group formed "to teach or advocate the =0Adoctrines of criminal syndicali=
+sm."  Neither the indictment nor the =0Atrial judge's instructions to the j=
+ury in any way refined the statute's =0Abald definition of the crime </div>=
+<div><a href=3D"" class=3D"page-number" name=3D"449">Page 395 U. S. 449</a>=
+</div><div> in terms of mere advocacy not distinguished from incitement to =
+imminent lawless action. [<a href=3D"http://supreme.justia.com/cases/federa=
+l/us/395/444/case.html#F3" name=3D"T3">Footnote 3</a>]</div>=0A<div>Accordi=
+ngly, we are here confronted with a statute which, by its own =0Awords and =
+as applied, purports to punish mere advocacy and to forbid, on=0A pain of c=
+riminal punishment, assembly with others merely to advocate =0Athe describe=
+d type of action. [<a href=3D"http://supreme.justia.com/cases/federal/us/39=
+5/444/case.html#F4" name=3D"T4">Footnote 4</a>]  Such a statute falls withi=
+n the condemnation of the First and Fourteenth Amendments.  The contrary te=
+aching of <em>Whitney v. California, supra,</em> cannot be supported, and t=
+hat decision is therefore overruled.</div>=0A<div><em>Reversed.</em></div>=
+=0A<div>[<a href=3D"http://supreme.justia.com/cases/federal/us/395/444/case=
+.html#T1" name=3D"F1">Footnote 1</a>]</div>=0A<div>The significant portions=
+ that could be understood were:</div>=0A<div>"How far is the nigger going t=
+o -- yeah."</div>=0A<div>"This is what we are going to do to the niggers."<=
+/div>=0A<div>"A dirty nigger."</div>=0A<div>"Send the Jews back to Israel."=
+</div>=0A<div>"Let's give them back to the dark garden."</div>=0A<div>"Save=
+ America."</div>=0A<div>"Let's go back to constitutional betterment."</div>=
+=0A<div>"Bury the niggers."</div>=0A<div>"We intend to do our part."</div>=
+=0A<div>"Give us our state rights."</div>=0A<div>"Freedom for the whites."<=
+/div>=0A<div>"Nigger will have to fight for every inch he gets from now on.=
+"</div>=0A<div>[<a href=3D"http://supreme.justia.com/cases/federal/us/395/4=
+44/case.html#T2" name=3D"F2">Footnote 2</a>]</div>=0A<div>It was on the the=
+ory that the Smith Act, 54 Stat. 670, 18 U.S.C. =A7 =0A35, embodied such a =
+principle and that it had been applied only in =0Aconformity with it that t=
+his Court sustained the Act's =0Aconstitutionality.  <em>Dennis v. United S=
+tates,</em> <span class=3D"l-leftover"><a href=3D"http://supreme.justia.com=
+/cases/federal/us/341/494/case.html">341 U. S. 494</a></span> (1951).  That=
+ this was the basis for <em>Dennis</em> was emphasized in <em>Yates v. Unit=
+ed States,</em> <span class=3D"l-leftover"><a href=3D"http://supreme.justia=
+.com/cases/federal/us/354/298/case.html">354 U. S. 298</a></span>,  <span c=
+lass=3D"l-normaldigitafter"><a href=3D"http://supreme.justia.com/cases/fede=
+ral/us/354/298/case.html#320">354 U. S. 320</a></span>-324=0A (1957), in wh=
+ich the Court overturned convictions for advocacy of the =0Aforcible overth=
+row of the Government under the Smith Act, because the =0Atrial judge's ins=
+tructions had allowed conviction for mere advocacy, =0Aunrelated to its ten=
+dency to produce forcible action.</div>=0A<div>[<a href=3D"http://supreme.j=
+ustia.com/cases/federal/us/395/444/case.html#T3" name=3D"F3">Footnote 3</a>=
+]</div>=0A<div>The first count of the indictment charged that appellant</di=
+v>=0A<div>"did unlawfully by word of mouth advocate the necessity, or propr=
+iety=0A of crime, violence, or unlawful methods of terrorism as a means of =
+=0Aaccomplishing political reform. . . ."</div>=0A<div>The second count cha=
+rged that appellant "did unlawfully voluntarily =0Aassemble with a group or=
+ assemblage of persons formed to advocate the =0Adoctrines of criminal synd=
+icalism. . . ."  The trial judge's charge =0Amerely followed the language o=
+f the indictment.  No construction of the =0Astatute by the Ohio courts has=
+ brought it within constitutionally =0Apermissible limits.  The Ohio Suprem=
+e Court has considered the statute =0Ain only one previous case, <em>State =
+v. Kassay,</em> 126 Ohio St. 177, 184 N.E. 521 (1932), where the constituti=
+onality of the statute was sustained.</div>=0A<div>[<a href=3D"http://supre=
+me.justia.com/cases/federal/us/395/444/case.html#T4" name=3D"F4">Footnote 4=
+</a>]</div>=0A<div>Statutes affecting the right of assembly, like those tou=
+ching on =0Afreedom of speech, must observe the established distinctions be=
+tween =0Amere advocacy and incitement to imminent lawless action, for, as C=
+hief =0AJustice Hughes wrote in <em>De Jonge v. Oregon, supra,</em> at  <sp=
+an class=3D"l-normaldigitafter"><a href=3D"http://supreme.justia.com/cases/=
+federal/us/299/353/case.html#364">299 U. S. 364</a></span>:  "The right of =
+peaceable assembly is a right cognate to those of free speech and free pres=
+s, and is equally fundamental."  <em>See also United States v. Cruikshank,<=
+/em> <span class=3D"l-leftover"><a href=3D"http://supreme.justia.com/cases/=
+federal/us/92/542/case.html">92 U. S. 542</a></span>,  <span class=3D"l-nor=
+maldigitafter"><a href=3D"http://supreme.justia.com/cases/federal/us/92/542=
+/case.html#552">92 U. S. 552</a></span> (1876); <em>Hague v. CIO,</em> <spa=
+n class=3D"l-leftover"><a href=3D"http://supreme.justia.com/cases/federal/u=
+s/307/496/case.html">307 U. S. 496</a></span>,  <span class=3D"l-normaldigi=
+tafter"><a href=3D"http://supreme.justia.com/cases/federal/us/307/496/case.=
+html#513">307 U. S. 513</a></span>,  <span class=3D"l-normaldigitafter"><a
+ href=3D"http://supreme.justia.com/cases/federal/us/307/496/case.html#519">=
+307 U. S. 519</a></span> (1939); <em>NAACP v. Alabama ex rel. Patterson,</e=
+m> <span class=3D"l-leftover"><a href=3D"http://supreme.justia.com/cases/fe=
+deral/us/357/449/case.html">357 U. S. 449</a></span>,  <span class=3D"l-nor=
+maldigitafter"><a href=3D"http://supreme.justia.com/cases/federal/us/357/44=
+9/case.html#460">357 U. S. 460</a></span>-461 (1958).</div>=0A<div>MR. JUST=
+ICE BLACK, concurring.</div>=0A<div>I agree with the views expressed by MR.=
+ JUSTICE DOUGLAS in his =0Aconcurring opinion in this case that the "clear =
+and present danger" =0Adoctrine should have no place </div><div><a href=3D"=
+" class=3D"page-number" name=3D"450">Page 395 U. S. 450</a></div><div> in t=
+he interpretation of the First Amendment.  I join the Court's opinion, whic=
+h, as I understand it, simply cites <em>Dennis v. United States,</em> <span=
+ class=3D"l-leftover"><a href=3D"http://supreme.justia.com/cases/federal/us=
+/341/494/case.html">341 U. S. 494</a></span> (1951), but does not indicate =
+any agreement on the Court's part with the "clear and present danger" doctr=
+ine on which <em>Dennis</em> purported to rely.</div>=0A<div>MR. JUSTICE DO=
+UGLAS, concurring.</div>=0A<div>While I join the opinion of the Court, I de=
+sire to enter a <em>caveat.</em></div>=0A<div>The "clear and present danger=
+" test was adumbrated by Mr. Justice =0AHolmes in a case arising during Wor=
+ld War I -- a war "declared" by the =0ACongress, not by the Chief Executive=
+.  The case was <em>Schenck v. United States,</em> <span class=3D"l-leftove=
+r"><a href=3D"http://supreme.justia.com/cases/federal/us/249/47/case.html">=
+249 U. S. 47</a></span>,  <span class=3D"l-normaldigitafter"><a href=3D"htt=
+p://supreme.justia.com/cases/federal/us/249/47/case.html#52">249 U. S. 52</=
+a></span>,=0A where the defendant was charged with attempts to cause insubo=
+rdination =0Ain the military and obstruction of enlistment.  The pamphlets =
+that were =0Adistributed urged resistance to the draft, denounced conscript=
+ion, and =0Aimpugned the motives of those backing the war effort.  The Firs=
+t =0AAmendment was tendered as a defense.  Mr. Justice Holmes, in rejecting=
+ =0Athat defense, said:</div>=0A<div>"The question in every case is whether=
+ the words used are used in =0Asuch circumstances and are of such a nature =
+as to create a clear and =0Apresent danger that they will bring about the s=
+ubstantive evils that =0ACongress has a right to prevent.  It is a question=
+ of proximity and =0Adegree."</div>=0A<div><em>Frohwerk v. United States,</=
+em> <span class=3D"l-leftover"><a href=3D"http://supreme.justia.com/cases/f=
+ederal/us/249/204/case.html">249 U. S. 204</a></span>,=0A also authored by =
+Mr. Justice Holmes, involved prosecution and =0Apunishment for publication =
+of articles very critical of the war effort =0Ain World War I.  <em>Schenck=
+</em> was referred to as a conviction for obstructing security "by words of=
+ persuasion."  <em>Id.</em> at  <span class=3D"l-normaldigitafter"><a href=
+=3D"http://supreme.justia.com/cases/federal/us/249/204/case.html#206">249 U=
+. S. 206</a></span>.  And the conviction in <em>Frohwerk</em> was sustained=
+ because "the circulation of the paper was </div><div><a href=3D"" class=3D=
+"page-number" name=3D"451">Page 395 U. S. 451</a></div><div> in quarters wh=
+ere a little breath would be enough to kindle a flame."  <em>Id.</em> at  <=
+span class=3D"l-normaldigitafter"><a href=3D"http://supreme.justia.com/case=
+s/federal/us/249/204/case.html#209">249 U. S. 209</a></span>.</div>=0A<div>=
+<em>Debs v. United States,</em> <span class=3D"l-leftover"><a href=3D"http:=
+//supreme.justia.com/cases/federal/us/249/211/case.html">249 U. S. 211</a><=
+/span>,=0A was the third of the trilogy of the 1918 Term.  Debs was convict=
+ed of =0Aspeaking in opposition to the war where his "opposition was so exp=
+ressed=0A that its natural and intended effect would be to obstruct recruit=
+ing." =0A <em>Id.</em> at  <span class=3D"l-normaldigitafter"><a href=3D"ht=
+tp://supreme.justia.com/cases/federal/us/249/211/case.html#215">249 U. S. 2=
+15</a></span>.</div>=0A<div>"If that was intended, and if, in all the circu=
+mstances, that would =0Abe its probable effect, it would not be protected b=
+y reason of its being=0A part of a general program and expressions of a gen=
+eral and =0Aconscientious belief."</div>=0A<div><em>Ibid.</em></div>=0A<div=
+>In the 1919 Term, the Court applied the <em>Schenck</em> doctrine to affir=
+m the convictions of other dissidents in World War I.  <em>Abrams v. United=
+ States,</em> <span class=3D"l-leftover"><a href=3D"http://supreme.justia.c=
+om/cases/federal/us/250/616/case.html">250 U. S. 616</a></span>, was one in=
+stance.  Mr. Justice Holmes, with whom Mr. Justice Brandeis concurred, diss=
+ented.  While adhering to <em>Schenck,</em> he did not think that, on the f=
+acts, a case for overriding the First Amendment had been made out:</div>=0A=
+<div>"It is only the present danger of immediate evil or an intent to =0Abr=
+ing it about that warrants Congress in setting a limit to the =0Aexpression=
+ of opinion where private rights are not concerned.  Congress =0Acertainly =
+cannot forbid all effort to change the mind of the country."</div>=0A<div><=
+em>Id.</em> at  <span class=3D"l-normaldigitafter"><a href=3D"http://suprem=
+e.justia.com/cases/federal/us/250/616/case.html#628">250 U. S. 628</a></spa=
+n>.</div>=0A<div>Another instance was <em>Schaefer v. United States,</em> <=
+span class=3D"l-leftover"><a href=3D"http://supreme.justia.com/cases/federa=
+l/us/251/466/case.html">251 U. S. 466</a></span>, in which Mr. Justice Bran=
+deis, joined by Mr. Justice Holmes, dissented.  A third was <em>Pierce v. U=
+nited States,</em> <span class=3D"l-leftover"><a href=3D"http://supreme.jus=
+tia.com/cases/federal/us/252/239/case.html">252 U. S. 239</a></span>, in wh=
+ich, again, Mr. Justice Brandeis, joined by Mr. Justice Holmes, dissented.<=
+/div>=0A<div>Those, then, were the World War I cases that put the gloss of =
+"clear =0Aand present danger" on the First Amendment.  Whether the war powe=
+r -- =0Athe greatest leveler of them all -- is adequate to sustain that doc=
+trine=0A is debatable.  </div><div><a href=3D"" class=3D"page-number" name=
+=3D"452">Page 395 U. S. 452</a></div><div> The dissents in <em>Abrams, Scha=
+efer,</em> and <em>Pierce</em>=0A show how easily "clear and present danger=
+" is manipulated to crush what=0A Brandeis called "[t]he fundamental right =
+of free men to strive for =0Abetter conditions through new legislation and =
+new institutions" by =0Aargument and discourse (<em>Pierce v. United States=
+, supra,</em> at  <span class=3D"l-normaldigitafter"><a href=3D"http://supr=
+eme.justia.com/cases/federal/us/252/273/case.html">252 U. S. 273</a></span>=
+)=0A even in time of war.  Though I doubt if the "clear and present danger"=
+ =0Atest is congenial to the First Amendment in time of a declared war, I a=
+m=0A certain it is not reconcilable with the First Amendment in days of =0A=
+peace.</div>=0A<div>The Court quite properly overrules <em>Whitney v. Calif=
+ornia,</em> <span class=3D"l-leftover"><a href=3D"http://supreme.justia.com=
+/cases/federal/us/274/357/case.html">274 U. S. 357</a></span>, which involv=
+ed advocacy of ideas which the majority of the Court deemed unsound and dan=
+gerous.</div>=0A<div>Mr. Justice Holmes, though never formally abandoning t=
+he "clear and =0Apresent danger" test, moved closer to the First Amendment =
+ideal when he =0Asaid in dissent in <em>Gitlow v. New York,</em> <span clas=
+s=3D"l-leftover"><a href=3D"http://supreme.justia.com/cases/federal/us/268/=
+652/case.html">268 U. S. 652</a></span>,  <span class=3D"l-normaldigitafter=
+"><a href=3D"http://supreme.justia.com/cases/federal/us/268/652/case.html#6=
+73">268 U. S. 673</a></span>:</div>=0A<div>"Every idea is an incitement.  I=
+t offers itself for belief, and, if =0Abelieved, it is acted on unless some=
+ other belief outweighs it or some =0Afailure of energy stifles the movemen=
+t at its birth.  The only =0Adifference between the expression of an opinio=
+n and an incitement in the=0A narrower sense is the speaker's enthusiasm fo=
+r the result.  Eloquence =0Amay set fire to reason.  But whatever may be th=
+ought of the redundant =0Adiscourse before us, it had no chance of starting=
+ a present =0Aconflagration.  If, in the long run, the beliefs expressed in=
+ =0Aproletarian dictatorship are destined to be accepted by the dominant =
+=0Aforces of the community, the only meaning of free speech is that they =
+=0Ashould be given their chance and have their way."</div>=0A<div>We have n=
+ever been faithful to the philosophy of that dissent. </div><div><a href=3D=
+"" class=3D"page-number" name=3D"453">Page 395 U. S. 453</a></div>=0A<div>T=
+he Court, in <em>Herndon v. Lowry,</em> <span class=3D"l-leftover"><a href=
+=3D"http://supreme.justia.com/cases/federal/us/301/242/case.html">301 U. S.=
+ 242</a></span>,=0A overturned a conviction for exercising First Amendment =
+rights to incite=0A insurrection because of lack of evidence of incitement.=
+  <em>Id.</em> at  <span class=3D"l-normaldigitafter"><a href=3D"http://sup=
+reme.justia.com/cases/federal/us/301/242/case.html#259">301 U. S. 259</a></=
+span>-261.  <em>And see Hartzel v. United States,</em> <span class=3D"l-lef=
+tover"><a href=3D"http://supreme.justia.com/cases/federal/us/322/680/case.h=
+tml">322 U. S. 680</a></span>.  In <em>Bridges v. California,</em> <span cl=
+ass=3D"l-leftover"><a href=3D"http://supreme.justia.com/cases/federal/us/31=
+4/252/case.html">314 U. S. 252</a></span>,  <span class=3D"l-normaldigitaft=
+er"><a href=3D"http://supreme.justia.com/cases/federal/us/314/252/case.html=
+#261">314 U. S. 261</a></span>-263,=0A we approved the "clear and present d=
+anger" test in an elaborate dictum =0Athat tightened it and confined it to =
+a narrow category.  But in <em>Dennis v. United States,</em> <span class=3D=
+"l-leftover"><a href=3D"http://supreme.justia.com/cases/federal/us/341/494/=
+case.html">341 U. S. 494</a></span>, we opened wide the door, distorting th=
+e "clear and present danger" test beyond recognition. [<a href=3D"http://su=
+preme.justia.com/cases/federal/us/395/444/case.html#F2/1" name=3D"T2/1">Foo=
+tnote 2/1</a>]</div>=0A<div>In that case, the prosecution dubbed an agreeme=
+nt to teach the =0AMarxist creed a "conspiracy."  The case was submitted to=
+ a jury on a =0Acharge that the jury could not convict unless it found that=
+ the =0Adefendants "intended to overthrow the Government as speedily as =0A=
+circumstances would permit.'"  <em>Id.</em> at  <span class=3D"l-normaldigi=
+tafter"><a href=3D"http://supreme.justia.com/cases/federal/us/341/494/case.=
+html#509">341 U. S. 509</a></span>-511.  The Court sustained convictions un=
+der that charge, construing it to mean a determination of</div>=0A<div>""wh=
+ether the gravity of the <em>evil,' discounted by its improbability, justif=
+ies such invasion of free speech as is necessary to avoid the danger." [<a =
+href=3D"http://supreme.justia.com/cases/federal/us/395/444/case.html#F2/2" =
+name=3D"T2/2">Footnote 2/2</a>]" </em></div>=0A<div><em>Id.</em> at  <span =
+class=3D"l-normaldigitafter"><a href=3D"http://supreme.justia.com/cases/fed=
+eral/us/341/494/case.html#510">341 U. S. 510</a></span>, quoting from <em>U=
+nited States v. Dennis,</em> 183 F.2d 201, 212.</div>=0A<div>Out of the "cl=
+ear and present danger" test came other offspring.  =0AAdvocacy and teachin=
+g of forcible overthrow of government as an abstract=0A principle is immune=
+ from prosecution.  <em>Yates v. United States,</em> <span class=3D"l-lefto=
+ver"><a href=3D"http://supreme.justia.com/cases/federal/us/354/298/case.htm=
+l">354 U. S. 298</a></span>,  <span class=3D"l-normaldigitafter"><a href=3D=
+"http://supreme.justia.com/cases/federal/us/354/298/case.html#318">354 U. S=
+. 318</a></span>.  But an "active" member, who has a guilty knowledge and i=
+ntent of the aim to overthrow the Government </div><div><a href=3D"" class=
+=3D"page-number" name=3D"454">Page 395 U. S. 454</a></div><div> by violence=
+, <em>Noto v. United States,</em> <span class=3D"l-leftover"><a href=3D"htt=
+p://supreme.justia.com/cases/federal/us/367/290/case.html">367 U. S. 290</a=
+></span>, may be prosecuted.  <em>Scales v. United States,</em> <span class=
+=3D"l-leftover"><a href=3D"http://supreme.justia.com/cases/federal/us/367/2=
+03/case.html">367 U. S. 203</a></span>,  <span class=3D"l-normaldigitafter"=
+><a
+ href=3D"http://supreme.justia.com/cases/federal/us/367/203/case.html#228">=
+367 U. S. 228</a></span>.=0A  And the power to investigate, backed by the p=
+owerful sanction of =0Acontempt, includes the power to determine which of t=
+he two categories =0Afits the particular witness.  <em>Barenblatt v. United=
+ States,</em> <span class=3D"l-leftover"><a href=3D"http://supreme.justia.c=
+om/cases/federal/us/360/109/case.html">360 U. S. 109</a></span>,  <span cla=
+ss=3D"l-normaldigitafter"><a href=3D"http://supreme.justia.com/cases/federa=
+l/us/360/109/case.html#130">360 U. S. 130</a></span>.=0A  And so the invest=
+igator roams at will through all of the beliefs of =0Athe witness, ransacki=
+ng his conscience and his innermost thoughts.</div>=0A<div>Judge Learned Ha=
+nd, who wrote for the Court of Appeals in affirming the judgment in <em>Den=
+nis,</em>=0A coined the "not improbable" test, 183 F.2d 201, 214, which thi=
+s Court =0Aadopted and which Judge Hand preferred over the "clear and prese=
+nt =0Adanger" test.  Indeed, in his book, The Bill of Rights 59 (1958), in =
+=0Areferring to Holmes' creation of the "clear and present danger" test, he=
+=0A said, "I cannot help thinking that, for once, Homer nodded."</div>=0A<d=
+iv>My own view is quite different.  I see no place in the regime of the =0A=
+First Amendment for any "clear and present danger" test, whether strict =0A=
+and tight, as some would make it, or free-wheeling, as the Court in <em>Den=
+nis</em> rephrased it.</div>=0A<div>When one reads the opinions closely and=
+ sees when and how the "clear =0Aand present danger" test has been applied,=
+ great misgivings are aroused.=0A  First, the threats were often loud, but =
+always puny, and made serious =0Aonly by judges so wedded to the <em>status=
+ quo</em> that critical analysis made them nervous.  Second, the test was s=
+o twisted and perverted in <em>Dennis</em>=0A as to make the trial of those=
+ teachers of Marxism an all-out political =0Atrial which was part and parce=
+l of the cold war that has eroded =0Asubstantial parts of the First Amendme=
+nt.</div>=0A<div>Action is often a method of expression, and within the pro=
+tection of the First Amendment.</div>=0A<div>Suppose one tears up his own c=
+opy of the Constitution in eloquent protest to a decision of this Court.  M=
+ay he be indicted? </div><div><a href=3D"" class=3D"page-number" name=3D"45=
+5">Page 395 U. S. 455</a></div>=0A<div>Suppose one rips his own Bible to sh=
+reds to celebrate his departure =0Afrom one "faith" and his embrace of athe=
+ism.  May he be indicted?</div>=0A<div>Last Term, the Court held in <em>Uni=
+ted States v. O'Brien,</em> <span class=3D"l-leftover"><a href=3D"http://su=
+preme.justia.com/cases/federal/us/391/367/case.html">391 U. S. 367</a></spa=
+n>,  <span class=3D"l-normaldigitafter"><a href=3D"http://supreme.justia.co=
+m/cases/federal/us/391/367/case.html#382">391 U. S. 382</a></span>,=0A that=
+ a registrant under Selective Service who burned his draft card in =0Aprote=
+st of the war in Vietnam could be prosecuted.  The First Amendment =0Awas t=
+endered as a defense and rejected, the Court saying:</div>=0A<div>"The issu=
+ance of certificates indicating the registration and =0Aeligibility classif=
+ication of individuals is a legitimate and =0Asubstantial administrative ai=
+d in the functioning of this system.  And =0Alegislation to insure the cont=
+inuing availability of issued certificates=0A serves a legitimate and subst=
+antial purpose in the system's =0Aadministration."</div>=0A<div>391 U.S. at=
+  <span class=3D"l-normaldigitafter"><a href=3D"http://supreme.justia.com/c=
+ases/federal/us/391/367/case.html#377">391 U. S. 377</a></span>-378.</div>=
+=0A<div>But O'Brien was not prosecuted for not having his draft card =0Aava=
+ilable when asked for by a federal agent.  He was indicted, tried, =0Aand c=
+onvicted for burning the card.  And this Court's affirmance of that=0A conv=
+iction was not, with all respect, consistent with the First =0AAmendment.</=
+div>=0A<div>The act of praying often involves body posture and movement, as=
+ well =0Aas utterances.  It is nonetheless protected by the Free Exercise C=
+lause.=0A  Picketing, as we have said on numerous occasions, is "free speec=
+h =0Aplus."  <em>See Bakery Drivers Local v. Wohl,</em> <span class=3D"l-le=
+ftover"><a href=3D"http://supreme.justia.com/cases/federal/us/315/769/case.=
+html">315 U. S. 769</a></span>,  <span class=3D"l-normaldigitafter"><a href=
+=3D"http://supreme.justia.com/cases/federal/us/315/769/case.html#775">315 U=
+. S. 775</a></span> (DOUGLAS, J., concurring); <em>Giboney v. Empire Storag=
+e Co.,</em> <span class=3D"l-leftover"><a href=3D"http://supreme.justia.com=
+/cases/federal/us/336/490/case.html">336 U. S. 490</a></span>,  <span class=
+=3D"l-normaldigitafter"><a href=3D"http://supreme.justia.com/cases/federal/=
+us/336/490/case.html#501">336 U. S. 501</a></span>; <em>Hughes v. Superior =
+Court,</em> <span class=3D"l-leftover"><a href=3D"http://supreme.justia.com=
+/cases/federal/us/339/460/case.html">339 U. S. 460</a></span>,  <span class=
+=3D"l-normaldigitafter"><a href=3D"http://supreme.justia.com/cases/federal/=
+us/339/460/case.html#465">339 U. S. 465</a></span>; <em>Labor Board v. Frui=
+t Packers,</em> <span
+ class=3D"l-leftover"><a href=3D"http://supreme.justia.com/cases/federal/us=
+/377/58/case.html">377 U. S. 58</a></span>,  <span class=3D"l-normaldigitaf=
+ter"><a href=3D"http://supreme.justia.com/cases/federal/us/377/58/case.html=
+#77">377 U. S. 77</a></span> (BLACK, J., concurring), <em>and id.</em> at  =
+<span class=3D"l-normaldigitafter">377 U. S. 93</span> (HARLAN, J., dissent=
+ing); <em>Cox v. Louisiana,</em> <span class=3D"l-leftover"><a href=3D"http=
+://supreme.justia.com/cases/federal/us/379/559/case.html">379 U. S. 559</a>=
+</span>,  <span class=3D"l-normaldigitafter"><a href=3D"http://supreme.just=
+ia.com/cases/federal/us/379/559/case.html#578">379 U. S. 578</a></span> (op=
+inion of BLACK, J.); <em>Food Employees v. Logan Plaza,</em> <span class=3D=
+"l-leftover"><a href=3D"http://supreme.justia.com/cases/federal/us/391/308/=
+case.html">391 U. S. 308</a></span>,  <span class=3D"l-normaldigitafter"><a=
+ href=3D"http://supreme.justia.com/cases/federal/us/391/308/case.html#326">=
+391 U. S.
+ 326</a></span>=0A (DOUGLAS, J., concurring).  That means that it can be re=
+gulated when it=0A comes to the "plus" or "action" side of the protest.  It=
+ can be =0Aregulated as to </div><div><a href=3D"" class=3D"page-number" na=
+me=3D"456">Page 395 U. S. 456</a></div><div> the number of pickets and the =
+place and hours (<em>see Cox v. Louisiana, supra</em>), because traffic and=
+ other community problems would otherwise suffer.</div>=0A<div>But none of =
+these considerations is implicated in the symbolic protest of the Vietnam w=
+ar in the burning of a draft card.</div>=0A<div>One's beliefs have long bee=
+n thought to be sanctuaries which government could not invade.  <em>Barenbl=
+att</em>=0A is one example of the ease with which that sanctuary can be vio=
+lated.  =0AThe lines drawn by the Court between the criminal act of being a=
+n =0A"active" Communist and the innocent act of being a nominal or inactive=
+ =0ACommunist mark the difference only between deep and abiding belief and =
+=0Acasual or uncertain belief.  But I think that all matters of belief are =
+=0Abeyond the reach of subpoenas or the probings of investigators.  That is=
+=0A why the invasions of privacy made by investigating committees were =0An=
+otoriously unconstitutional.  That is the deep-seated fault in the =0Ainfam=
+ous loyalty security hearings which, since 1947, when President =0ATruman l=
+aunched them, have processed 20,000,000 men and women.  Those =0Ahearings w=
+ere primarily concerned with one's thoughts, ideas, beliefs, =0Aand convict=
+ions.  They were the most blatant violations of the First =0AAmendment we h=
+ave ever known.</div>=0A<div>The line between what is permissible and not s=
+ubject to control and =0Awhat may be made impermissible and subject to regu=
+lation is the line =0Abetween ideas and overt acts.</div>=0A<div>The exampl=
+e usually given by those who would punish speech is the case of one who fal=
+sely shouts fire in a crowded theatre.</div>=0A<div>This is, however, a cla=
+ssic case where speech is brigaded with action.  <em>See Speiser v. Randall=
+,</em> <span class=3D"l-leftover"><a href=3D"http://supreme.justia.com/case=
+s/federal/us/357/513/case.html">357 U. S. 513</a></span>,  <span class=3D"l=
+-normaldigitafter"><a href=3D"http://supreme.justia.com/cases/federal/us/35=
+7/513/case.html#536">357 U. S. 536</a></span>-537 (DOUGLAS, J., concurring)=
+.  They are indeed inseparable, and a prosecution can be launched for the o=
+vert </div><div><a href=3D"" class=3D"page-number" name=3D"457">Page 395 U.=
+ S. 457</a></div><div>=0A acts actually caused.  Apart from rare instances =
+of that kind, speech =0Ais, I think, immune from prosecution.  Certainly th=
+ere is no =0Aconstitutional line between advocacy of abstract ideas, as in =
+<em>Yates,</em> and advocacy of political action, as in <em>Scales.</em>=0A=
+  The quality of advocacy turns on the depth of the conviction, and =0Agove=
+rnment has no power to invade that sanctuary of belief and =0Aconscience. [=
+<a href=3D"http://supreme.justia.com/cases/federal/us/395/444/case.html#F2/=
+3" name=3D"T2/3">Footnote 2/3</a>]</div>=0A<div>[<a href=3D"http://supreme.=
+justia.com/cases/federal/us/395/444/case.html#T2/1" name=3D"F2/1">Footnote =
+2/1</a>]</div>=0A<div><em>See</em> McKay, The Preference For Freedom, 34 N.=
+Y.U.L.Rev. 1182, 1203-1212 (1959).</div>=0A<div>[<a href=3D"http://supreme.=
+justia.com/cases/federal/us/395/444/case.html#T2/2" name=3D"F2/2">Footnote =
+2/2</a>]</div>=0A<div><em>See Feiner v. New York,</em> <span class=3D"l-lef=
+tover"><a href=3D"http://supreme.justia.com/cases/federal/us/340/315/case.h=
+tml">340 U. S. 315</a></span>,=0A where a speaker was arrested for arousing=
+ an audience when the only =0A"clear and present danger" was that the heckl=
+ers in the audience would =0Abreak up the meeting.</div>=0A<div>[<a href=3D=
+"http://supreme.justia.com/cases/federal/us/395/444/case.html#T2/3" name=3D=
+"F2/3">Footnote 2/3</a>]</div>=0A<div><em>See</em> MR. JUSTICE BLACK, disse=
+nting, in <em>Communications Assn. v. Douds,</em> <span class=3D"l-leftover=
+"><a href=3D"http://supreme.justia.com/cases/federal/us/339/382/case.html">=
+339 U. S. 382</a></span>,  <span class=3D"l-normaldigitafter"><a href=3D"ht=
+tp://supreme.justia.com/cases/federal/us/339/382/case.html#446">339 U. S. 4=
+46</a></span>,  <span class=3D"l-normaldigitafter"><a href=3D"http://suprem=
+e.justia.com/cases/federal/us/339/382/case.html#449">339 U. S. 449</a></spa=
+n> <em>et seq.</em></div>=0A=0A<br>-------------------------<br>=0A<div cla=
+ss=3D"disclaimer">=0AOfficial Supreme Court caselaw is only found in the pr=
+int version of the=0A United States Reports. Justia caselaw is provided for=
+ general =0Ainformational purposes only, and may not reflect current legal =
+=0Adevelopments, verdicts or settlements. We make no warranties or =0Aguara=
+ntees about the accuracy, completeness, or adequacy of the =0Ainformation c=
+ontained on this site or information linked to from this =0Asite. Please ch=
+eck official sources.=0A</div>=09=09=09=09</span></article>=09=09=09=09=0A=
+=09=09=09</div></div></body></html>
+--1105474026-994016929-1389657653=:1212--
+

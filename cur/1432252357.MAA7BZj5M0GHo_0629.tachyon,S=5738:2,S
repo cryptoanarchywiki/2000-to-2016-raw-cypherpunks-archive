@@ -1,0 +1,145 @@
+From owner-cypherpunks@al-qaeda.net  Sun Feb 22 17:10:38 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id n1MM9hiW019128
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sun, 22 Feb 2009 17:09:43 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id n1MM9hXo019127
+	for cypherpunks-outgoing; Sun, 22 Feb 2009 17:09:43 -0500
+Message-Id: <2DDB4C4E-31CE-47AF-B0AF-155086347F3A@shipwright.com>
+From: "R.A. Hettinga" <rah@shipwright.com>
+To: Cryptography <cryptography@metzdowd.com>, cypherpunks@al-qaeda.net,
+        gold-silver-crypto@rayservers.com
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed; delsp=yes
+Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Apple Message framework v930.3)
+Subject: SHA-3 Round 1: Buffer Overflows 
+Date: Sun, 22 Feb 2009 17:09:30 -0500
+X-Mailer: Apple Mail (2.930.3)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4579
+Lines: 118
+
+<http://blog.fortify.com/blog/fortify/2009/02/20/SHA-3-Round-1>
+
+
+Off by On
+A Software Security Blog
+Search:
+
+Friday, 20 February 2009
+SHA-3 Round 1: Buffer Overflows
++ Gartner Magic Quadrant for Static Analysis | Main
+NIST is currently holding a competition to choose a design for the
+SHA-3 algorithm (Bruce Schneier has a good description of secure
+hashing algorithms and why this is important). The reference
+implementations of a few of the contestants have bugs in them that
+could cause crashes, performance problems, or security problems if
+they are used in their current state. Based on our bug reports, some
+of those bugs have already been fixed. Here's the full story:
+The main idea behind the competition is to have the cryptographic
+community weed out the less secure algorithms and choose from the
+remainder. A couple of us at Fortify (thanks to Doug Held for his
+help) decided to do our part. We're not hard-core cryptographers, so
+we decided to take a look at the reference implementations.
+This competition is to pick an algorithm, but all of the submissions
+had to include a C implementation, to demonstrate how it works and
+test the speed, which will be a factor in the final choice. We used
+Fortify SCA to audit the 42 projects accepted into Round 1. We were
+impressed with the overall quality of the code, but we did find
+significant issues in a few projects, including buffer overflows in
+two of the projects. We have emailed the submission teams with our
+findings and one team has already corrected their implementation.
+Confirmed issues:
+Implementation
+Buffer Overflow
+Out-of-bounds Read
+Memory Leak
+Null Dereference
+Blender
+1
+0
+0
+0
+Crunch
+0
+0
+0
+4
+FSB
+0
+0
+3
+11
+MD6
+3
+2
+0
+0
+Vortex
+0
+0
+1
+15
+
+One of the projects with buffer issues was MD6, the implementation
+provided Professor Ron Rivest and his team. All of the problems came
+back to the hashval field of the md6_state struct:
+
+      unsigned char hashval[ (md6_c/2)*(md6_w/8) ];
+The buffer size is determined by two constants:
+
+      #define w md6_w     /* # bits in a word                   (64) */
+      #define c md6_c     /* # words in compression output      (16) */
+At several points, this buffer is read or written to using a different
+bound:
+
+      if (z==1) /* save final chaining value in st->hashval */
+           { memcpy( st->hashval, C, md6_c*(w/8) );
+             return MD6_SUCCESS;
+           }
+Further analysis showed that ANSI standard layout rules would make
+incorrect behavior unlikely, but other compilers may have allowed it
+to be exploited. The MD6 team has doubled the size of the vulnerable
+buffer, which eliminated the risk. In this case, Fortify SCA found an
+issue that would have been difficult to catch otherwise.
+The other buffer overflow was found in the Blender implementation,
+from Dr. Colin Bradbury. This issue was a classic typo:
+
+      DataLength sourceDataLength2[3];	// high order parts of data
+length
+      ...
+      if (ss.sourceDataLength < (bcount | databitlen)) // overflow
+           if (++ss.sourceDataLength2[0] == 0) // increment higher
+order count
+                if (++ss.sourceDataLength2[1] == 0) // and the next
+higher order
+                     ++ss.sourceDataLength2[3]; // and the next one,
+etc.
+The developer simply mistyped, using 3 instead of 2 for the array
+access. This issue was probably not caught because it would not be
+exposed without a very large input. The other issues we found were
+memory leaks and null dereferences from memory allocation.
+This just emphasizes what we already knew about C, even the most
+careful, security conscious developer messes up memory management.
+Some of you are saying, so what? These are reference implementations
+and this is only Round 1. There are a few problems with that thought.
+Reference implementations don't disappear, they serve as a starting
+point for future implementations or are used directly. A bug in the
+RSA reference implementation was responsible for vulnerabilities in
+OpenSSL and two seperate SSH implementations. They can also be used to
+design hardware implementations, using buffer sizes to decide how much
+silicon should be used.
+The other consideration is speed, which will be a factor in the choice
+of algorithm. The fix for the MD6 buffer issues was to double the size
+of a buffer, which could degrade the performance. On the other hand,
+memory leaks could slow an implementation. A correct implementation is
+an accurate implementation.
+We will put out a more detailed report on all the results soon.
+Technorati Tags: sha-3 buffer overflow
+Posted by jforsythe at 5:41 PM in crypto
+

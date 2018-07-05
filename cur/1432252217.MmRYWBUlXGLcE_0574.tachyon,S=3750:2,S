@@ -1,0 +1,81 @@
+From owner-cypherpunks@al-qaeda.net  Thu Jun 14 02:26:44 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q5E6O2Tl002897
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 14 Jun 2012 02:24:02 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q5E6O2jY002896
+	for cypherpunks-outgoing; Thu, 14 Jun 2012 02:24:02 -0400
+Date: Thu, 14 Jun 2012 08:23:59 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: Re: [tahoe-dev] Resurrecting Mojo Nation
+Message-ID: <20120614062359.GG17120@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Brian Warner <warner@lothar.com> -----
+
+From: Brian Warner <warner@lothar.com>
+Date: Wed, 13 Jun 2012 13:26:20 -0700
+To: tahoe-dev@tahoe-lafs.org
+Subject: Re: [tahoe-dev] Resurrecting Mojo Nation
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6;
+	rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+On 6/9/12 9:07 PM, Jack Byer wrote:
+
+> Are there any fundamental reason why a system like Mojo Nation
+> couldn't work now that certain capabilities are available that weren't
+> a decade ago?
+
+Oh, one other thought: another challenge of Mojo Nation was that each
+file involved hundreds or thousands of backend blocks, and the overhead
+of finding/tracking/downloading all of them was pretty bad. If I
+remember right, the blocks came in fixed sizes (powers of two, up to
+maybe 1MB), and each included a little bit of data about all segments of
+the file (to avoid the "chunking" reliability problem). The result was
+high alacrity (you had to download the whole file before any part of it
+became readable, so no streaming) and really bad disk IO patterns on
+both upload and download.
+
+The very first simplification we made in the Tahoe design process was to
+use a small number (N=10) of variable-sized shares
+(sharesize=filesize/k), and to locate those shares algorithmically (both
+to decide where to put them, and to find them again during download).
+That means fewer things to keep track of, and nobody trying to actually
+keep track of them all the time.
+
+In a more market-driven scheme, you need to be able to push shares to
+cheap+reliable servers, find them again later, and also find the copies
+that servers have bought from each other. Shares move around on you,
+even when no clients are looking at them. That means more overhead:
+instead of being able to determine offline (permuted ring) where shares
+are likely to be, you have to actually ask everyone. To do this
+efficiently requires log(N) DHT cleverness (where you don't actually ask
+*everybody*), which allows some of them to lie (which they will, because
+they don't want you to discover the competition's cheaper copies).
+
+So the flexible share-placement required by a free storage market
+probably comes at the cost of complexity and share-tracking overhead.
+
+cheers,
+ -Brian
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

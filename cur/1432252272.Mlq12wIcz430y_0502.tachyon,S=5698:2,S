@@ -1,0 +1,126 @@
+From owner-cypherpunks@Algebra.COM  Fri Oct 26 22:16:26 2001
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.mit.edu (8.11.6/8.9.3) with ESMTP id f9R2GPQ12395
+	for <kwantam@positron.mit.edu>; Fri, 26 Oct 2001 22:16:26 -0400
+Received: from ak47.algebra.com (ak47.algebra.com [208.233.99.160])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id WAA20612
+	for <rsw@mit.edu>; Fri, 26 Oct 2001 22:15:52 -0400 (EDT)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f9R1xVe18223
+	for cypherpunks-outgoing; Fri, 26 Oct 2001 20:59:31 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from einstein.ssz.com (cpunks@einstein.ssz.com [204.96.2.99])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f9R1xUr18208
+	for <cypherpunks@algebra.com>; Fri, 26 Oct 2001 20:59:30 -0500
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id VAA11299
+	for cypherpunks@algebra.com; Fri, 26 Oct 2001 21:06:51 -0500
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id VAA11283
+	for cypherpunks-outgoing; Fri, 26 Oct 2001 21:06:39 -0500
+Received: from localhost (ravage@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) with SMTP id VAA11273;
+	Fri, 26 Oct 2001 21:06:33 -0500
+Date: Fri, 26 Oct 2001 21:06:33 -0500 (CDT)
+From: Jim Choate <ravage@ssz.com>
+To: austin-cpunks@einstein.ssz.com
+cc: cypherpunks@einstein.ssz.com, sci-tech@einstein.ssz.com
+Old-Subject: CDR: Re: [9fans] What makes Plan 9 unique? (fwd)
+Message-ID: <Pine.LNX.3.96.1011026210609.337R-100000@einstein.ssz.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Reply-To: cypherpunks@ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Acceptable-Languages: English, Russian, German, French, Spanish
+Subject:  Re: [9fans] What makes Plan 9 unique? (fwd)
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+X-spam: 0 
+Status: O
+Content-Length: 3391
+Lines: 75
+
+
+
+---------- Forwarded message ----------
+Date: Fri, 26 Oct 2001 20:03:13 -0500 (CDT)
+From: Jim Choate <ravage@ssz.com>
+Reply-To: hangar18@ssz.com
+To: hangar18@einstein.ssz.com
+Subject: Hangar 18: Re: [9fans] What makes Plan 9 unique? (fwd)
+
+
+---------- Forwarded message ----------
+Date: Thu, 25 Oct 2001 07:56:49 -0400
+From: Russ Cox <rsc@plan9.bell-labs.com>
+Reply-To: 9fans@cse.psu.edu
+To: 9fans@cse.psu.edu
+Subject: Re: [9fans] What makes Plan 9 unique?
+
+http://www.eecs.harvard.edu/~rsc/plan9.html
+
+Why Plan 9?
+
+Why Plan 9 indeed.  Isn't Plan 9 just another Unix clone?  Who cares?
+
+First, Plan 9 presents a consistent and easy to use interface.  Once
+you've settled in, there are very few surprises here, whereas Windows
+still surprises me once in a while (though, to its credit, not as much
+as older versions did).  After I switched to Linux from Windows 3.1, I
+noticed all manner of inconsistent behavior in Windows 3.1 that Linux
+did not have.  Switching to Plan 9 from Linux highlighted just as much
+in Linux.
+
+One reason Plan 9 can do this is that the Plan 9 group has had the
+luxury of having an entire system, so problems can be fixed and
+features added where they belong, rather than where they can be.  For
+example, there is no tty driver in the kernel.  The window system
+handles the nuances of terminal input.
+
+If Plan 9 were just a really clean Unix clone, it might be worth
+using, or it might not.  The neat things start happening with
+user-level file servers and per-process namespace.  Recall that in
+Unix, /dev/tty refers to the current window's output device, and means
+different things to different processes.  This is a special hack
+enabled by the kernel for a single file.  Plan 9 provides full-blown
+per-process namespaces.  Thus, in Plan 9 /dev/cons also refers to the
+current window's output device, and means different things to
+different processes, but the window system (or telnet daemon, or ssh
+daemon, or whoever) arranges this, and does the same for /dev/mouse,
+/dev/text (the contents of the current window), etc.
+
+Since pieces of file tree can be provided by user-level servers the
+kernel need not know about things like DOS's FAT file system or
+Linux's EXT2 file system or NFS, etc.  Instead, user-level servers
+provide this functionality when desired.  In Plan 9, even FTP is
+provided as a file server: you run ftpfs and the files on the server
+appear in /n/ftp.
+
+We need not stop at physical file systems, though.  Other file servers
+synthesize files that represent other resources.  For example, upas/fs
+presents your mail box as a file tree at /mail/fs/mbox.  This models
+the recursive structure of MIME messages especially well.
+
+As another example, cdfs presents an audio or data CD as a file
+system, one file per track.  If it's a writable CD, copying new files
+into the /mnt/cd/wa or /mnt/cd/wd directories creates new audio or
+data tracks.  Want to fixate the CD as audio or data?  Remove one of
+the directories.
+
+Finally, Plan 9 fits well with a networked environment.  Since files
+or directory trees can be imported from other machines, and all
+resources are files or directory trees, it's easy to share resources.
+Want to use a different machine's sound card?  Import its /dev/audio.
+Want to debug processes that run on another machine?  Import its
+/proc.  Want to use a network interface on another machine?  Import
+its /net.  And so on.
+
+

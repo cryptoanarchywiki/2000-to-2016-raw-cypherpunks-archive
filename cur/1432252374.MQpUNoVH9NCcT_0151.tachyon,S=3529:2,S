@@ -1,0 +1,75 @@
+From owner-cypherpunks@lne.com  Fri May 23 19:42:01 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h4NNfxZ19145
+	for <rsw@jfet.org>; Fri, 23 May 2003 19:41:59 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h4NNTnKm011682
+	for cypherpunks-goingout345; Fri, 23 May 2003 16:29:49 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+X-Originating-IP: [67.112.123.108]
+X-Originating-Email: [ashwood@msn.com]
+Message-ID: <00da01c32182$de52a890$6701a8c0@JOSEPHAS>
+From: "Joseph Ashwood" <ashwood@msn.com>
+To: <cypherpunks@einstein.ssz.com>
+References: <20030523163024.GB28656@afflictions.org>
+Subject: Re: RSA/DSA questions
+Date: Fri, 23 May 2003 16:25:40 -0700
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook Express 6.00.2800.1158
+X-OriginalArrivalTime: 23 May 2003 23:27:02.0867 (UTC)
+  FILETIME=[D0C6F230:01C32182]
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+Approved: LISTMEMBER CPUNK
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2240
+Lines: 42
+
+----- Original Message ----- 
+From: "Damian Gerow" <dgerow@afflictions.org>
+To: <cypherpunks@einstein.ssz.com>
+Sent: Friday, May 23, 2003 9:30 AM
+Subject:  RSA/DSA questions
+
+
+
+It depends on what is meant by RSA signatures, 9796 is effectively dead, RSA
+PKCS 1 v1.5 is certainly no longer competitive securitywise, PSS is
+exceptional, and those are the first 3 that come to mind. Going from this I
+would recommend DSA above 9796, and PKCS #1 v1.5. DSA vs PSS though is
+significantly more complicated. Both DSA and PSS rely on the randomness of
+the RNG (contrary to popular belief Windows is not inherently bad at RNGs
+it's just that it doesn't come with a good one). Collisions in PSS are less
+critical than in DSA (an output collision reveals only that the RNG and hash
+spit out the same values twice), but PSS suffers from IFPs weakness versus
+DLP, this stems from several solid proofs that IFP (integer factoring) can
+be no harder than DLP (integer discrete logarithm), and may be mitigated if
+you believe that DLP and IFP will reduce to the same problem (the current
+algorithms indicate this may in deed be the case), but in the immediate
+future DLP is inherently more difficult than IFP. PSS gains though in that
+without breaking any standard that I'm aware of the modulus can be extended
+indefinitely whereas DSA1 (don't recall DSA2 immediately having such an
+issue, but I don't recall DSA2 specifics immediately) has a standard limit
+of 1024-bit (the maths scales indefinitely though). The other thing to
+consider is speed, since you're using this for SSH, it may be important that
+the server be capable of more connections per time, in which case DSA is the
+clear winner (RSA wins for verification though for a typcial
+implementation).
+
+>From most perspectives the two algorithms simply target different positions,
+neither one is inherently more secure than the other. Personally I have an
+affinity for DSA, but that is a personal preference without any fundamental
+reason. Pointes to the information itself is out of my immediate reach, I
+just upgraded my computer and have yet to completely restore the crypto
+data.
+                Joseph Ashwood
+
+Trust Laboratories
+Changing Software Development
+http://www.trustlaboratories.com
+

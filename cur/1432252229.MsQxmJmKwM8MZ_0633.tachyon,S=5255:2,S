@@ -1,0 +1,96 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Wed Aug 28 17:30:17 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7SLUGp23891
+	for <rsw@opamp.org>; Wed, 28 Aug 2002 17:30:16 -0400
+Received: from lion.ninthwonder.com (lion.ninthwonder.com [151.199.66.147])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id RAA26995
+	for <rsw@mit.edu>; Wed, 28 Aug 2002 17:30:14 -0400 (EDT)
+Received: by lion.ninthwonder.com (Postfix, from userid 96)
+	id A08BD3070C; Wed, 28 Aug 2002 17:28:26 -0400 (EDT)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 553E830706
+	for <cryptography@wasabisystems.com>; Wed, 28 Aug 2002 17:28:25 -0400 (EDT)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id D1C00D97CB; Wed, 28 Aug 2002 17:28:24 -0400 (EDT)
+Received: from mail.zedz.net (outpost.zedz.net [194.109.206.210])
+	by lion.ninthwonder.com (Postfix) with ESMTP id D6C5E30706
+	for <cryptography@wasabisystems.com>; Wed, 28 Aug 2002 17:00:08 -0400 (EDT)
+Received: by mail.zedz.net (PostFix, from userid 1006)
+	id 2400F19187; Wed, 28 Aug 2002 23:00:07 +0200 (CEST)
+From: Nomen Nescio <nobody@dizum.com>
+Comments: This message did not originate from the Sender address above.
+	It was remailed automatically by anonymizing remailer software.
+	Please report problems or inappropriate use to the
+	remailer administrator at <abuse@dizum.com>.
+To: cypherpunks@lne.com, cryptography@wasabisystems.com
+Subject: Re: Cryptographic privacy protection in TCPA
+Message-ID: <393cc95cbb00840ae87b2d7f13da5093@dizum.com>
+Date: Wed, 28 Aug 2002 23:00:07 +0200 (CEST)
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 3324
+Lines: 59
+
+Carl Ellison suggested an alternate way that TCPA could work to allow
+for revoking virtualized TPMs without the privacy problems associated
+with the present systems, and the technical problems of the elaborate
+cryptographic methods.
+
+Consider first the simplest possible method, which is just to put a
+single signature key in each TPM and allow the TPM to use that to sign
+its messages on the net.  This is reliable and allows TPM keys to be
+revoked, but it obviously offers no privacy.  Every usage of a TPM key
+can be correlated as coming from a single system.
+
+TCPA fixed this by adding a trusted third party, the "Identity CA" who
+would be the only one to see the TPM key.  But Carl offers a different
+solution.
+
+Instead of burning only one key into the TPM, burn several.  Maybe even
+a hundred.  And let these keys be shared with other TPMs.  Each TPM has
+many keys, and each key has copies in many TPMs.
+
+Now let the TPMs use their various keys to identify themselves in
+transactions on the net.  Because each key belongs to many different
+TPMs, and the set of TPMs varies for each key, this protects privacy.
+Any given usage of a key can be narrowed down only to a large set of
+TPMs that possess that key.
+
+If a key is misused, i.e. "scraped" out of the TPM and used to create a
+virtualized, rule-breaking software TPM, it can be revoked.  This means
+that all the TPMs that share that one key lose the use of that key.
+But it doesn't matter much, because they each have many more they can use.
+Since it is expected that only a small percentage of TPMs will ever need
+their keys revoked, most TPMs should always have plenty of keys to use.
+
+One problem is that a virtualized TPM which loses one of its keys will
+still have others that it can use.  Eventually those keys will also be
+recognized as being mis-used and be revoked as well.  But it may take
+quite a while before all the keys on its list are exhausted.
+
+To fix this, Carl suggests that the TPM manufacturer keep a list of all
+the public keys that are in each TPM.  Then when a particular TPM has
+some substantial fraction of its keys revoked, that would be a sign that
+the TPM itself had been virtualized and all the rest of the keys could be
+immediately revoked.  The precise threshold for this would depend on the
+details of the system, the number of keys per TPM, the number of TPMs that
+share a key, the percentage of revoked keys, etc.  But it should not be
+necessary to allow each TPM to go through its entire repertoire of keys,
+one at a time, before a virtualized TPM can be removed from the system.
+
+Carl indicated that he suggested this alternative early in the TCPA
+planning process, but it was not accepted.  It does seem that while
+the system has advantages, in some ways it shares the problems of the
+alternatives.  It provides privacy, but not complete privacy, not as
+much as the cryptographic schemes.  And it provides security to the TPM
+issuers, but not complete security, not as much as the Privacy CA method.
+In this way it can be seen as a compromise.  Often, compromise solutions
+are perceived more in terms of their disadvantages than their benefits.
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

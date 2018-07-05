@@ -1,0 +1,83 @@
+From owner-cypherpunks@Algebra.COM  Fri Jun 28 21:38:43 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g5T1cgu12936
+	for <rsw@opamp.org>; Fri, 28 Jun 2002 21:38:42 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id VAA25665
+	for <rsw@mit.edu>; Fri, 28 Jun 2002 21:37:40 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g5SK3Ukf017223
+	for <cypherpunks-outgoing@ak47.algebra.com>; Fri, 28 Jun 2002 15:03:30 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g5SK3UEh017222
+	for cypherpunks-outgoing; Fri, 28 Jun 2002 15:03:30 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (dns.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g5SK3Pkf017197
+	for <cypherpunks@ak47.algebra.com>; Fri, 28 Jun 2002 15:03:26 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id g5SK3MF03928
+	for cypherpunks@ak47.algebra.com; Fri, 28 Jun 2002 13:03:22 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id g5SJUg103776
+	for cypherpunks-goingout; Fri, 28 Jun 2002 12:30:42 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Fri, 28 Jun 2002 13:31:45 -0500
+From: Harmon Seaver <hseaver@cybershamanix.com>
+To: Eugen Leitl <eugen@leitl.org>
+Cc: cypherpunks@lne.com
+Old-Subject: Re: mount filesystem and run a program when hotplugged
+Message-ID: <20020628183145.GB19920@cybershamanix.com>
+References: <Pine.LNX.4.33.0206281723180.8701-100000@hydrogen.leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.33.0206281723180.8701-100000@hydrogen.leitl.org
+  >
+User-Agent: Mutt/1.3.27i
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Re: mount filesystem and run a program when hotplugged
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 1309
+Lines: 31
+
+
+   Never tried it with USB, but use autofs a lot -- look at your
+/etc/auto.master and /etc/auto.misc files. I use
+
+ "crypt        -fstype=reiserfs :/dev/loop0" 
+
+in /etc/auto.misc to automount an encrypted loop device. The user that owns that
+filesystem can just cd to it and it mounts automagically, to others it's not
+even there. That is, there's nothing in the /misc/ dir until I cd into
+/misc/crypt and it self unmounts if you aren't in it for so long, however long
+you set the timeout for. You have to have already run the losetup for the loop
+device, of course, and all that. 
+   Autofs works fine for automounting floppys and pccards as well, don't know
+why it wouldn't work for USB drives. Getting it to run a shell script when
+mounted shouldn't be that hard.
+
+
+On Fri, Jun 28, 2002 at 05:29:17PM +0200, Eugen Leitl wrote:
+> I've bought me a little (32 MBytes) hotpluggable USB flash stick (a
+> TrekStor). It mounts fine, but what I'd like to do is to automount it, and
+> fire up a program (I intend to put my keyring on it) if hotplugged.
+> 
+> The system I'm testing this on is RH 7.3. 
+> 
+> I've been using mount -t vfat /dev/sda /mnt/usbhd to mount it manually and
+> put diverse entries into /etc/fstab, to no avail. Any suggestions?
+
+-- 
+Harmon Seaver	
+CyberShamanix
+http://www.cybershamanix.com
+

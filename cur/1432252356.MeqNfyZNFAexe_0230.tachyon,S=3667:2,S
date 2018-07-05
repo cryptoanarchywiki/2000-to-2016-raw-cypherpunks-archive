@@ -1,0 +1,80 @@
+From owner-cypherpunks@al-qaeda.net  Tue Nov 23 07:11:31 2010
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-5+lenny1) with ESMTP id oANC8P21019165
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 23 Nov 2010 07:08:25 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id oANC8PRg019164
+	for cypherpunks-outgoing; Tue, 23 Nov 2010 07:08:25 -0500
+Date: Tue, 23 Nov 2010 13:08:20 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Presentation at Hack.lu : Reversing the Broacom NetExtreme's 
+  firmware
+Message-ID: <20101123120820.GP9434@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2605
+Lines: 53
+
+(of course, this capability is not new)
+
+http://esec-lab.sogeti.com/dotclear/index.php?post/2010/11/21/Presentation-at-Hack.lu-:-Reversing-the-Broacom-NetExtreme-s-firmware 
+
+Presentation at Hack.lu : Reversing the Broacom NetExtreme's firmware
+
+By guillaume ; Sunday 21 November 2010, 04:28 - Conferences
+
+I was giving a talk in October during last hack.lu session. The presentation
+focuses on the roadmap taken to reverse engineer the Broadcom Ethernet
+NetExtreme firmware family : building a firmware debugger, instrumentation
+tools, to finally develop a customized network card firmware.
+
+NetExtreme family cards are the standard range of PCI Ethernet cards from
+Broadcom. Broadcom released part of their soft specifications (inner
+workings, memory mappings, device register definitions...). However those
+specifications are incomplete and the firmware is distributed as a binary
+blob.
+
+Given publicly available documentation (specifications, Linux open-source
+driver) and free open-source tools, I have built a set of tools to instrument
+the network card firmware. Those tools provided me a way to debug in
+real-time the MIPS CPU of the network card, as well as doing some advanced
+instrumentation on the firmware code (execution flow tracing, memory-accesses
+logging...). I have also reverse engineered the format of the EEPROM where
+firmware code is kept and the bootstrap process of the device leading to
+firmware execution. This way it is possible to develop a custom firmware
+code, flash the device and get execution on the CPU of the network card.
+
+The main interest is developing a rootkit which will be residing inside the
+network card. A network card rootkit offers some very interesting features:
+
+A very stealthy communication end-point over the Ethernet link. It can
+intercept and forge network frames without the operating system knowing about
+it.
+
+A physical system memory access using DMA over the PCI link, leading to OS
+corruption.
+
+No trace of the rootkit on the operating system, as it is being hidden inside
+the NIC.
+
+The network card natively needs to perform DMA accesses, so that network
+frames can be exchanged between the driver and the device. From the firmware
+point of view, everything is operated using special dedicated device
+registers, some of them being non-documented. An attacker would then be able
+to communicate remotely with the rootkit in the network card and get access
+to the underlying operating system thanks to DMA. 
+
+Slides of my presentation are available here.
+
+Here is a little demo of what can be done once you develop your own network
+card firmware:
+

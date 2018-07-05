@@ -1,0 +1,120 @@
+From owner-cypherpunks@al-qaeda.net  Tue Apr 14 10:34:07 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id n3EEX35i003794
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 14 Apr 2009 10:33:03 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id n3EEX3oG003793
+	for cypherpunks-outgoing; Tue, 14 Apr 2009 10:33:03 -0400
+Date: Tue, 14 Apr 2009 16:32:56 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Tor 0.2.1.14-rc is out
+Message-ID: <20090414143256.GJ10925@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4679
+Lines: 95
+
+----- Forwarded message from Roger Dingledine <arma@mit.edu> -----
+
+From: Roger Dingledine <arma@mit.edu>
+Date: Tue, 14 Apr 2009 10:27:46 -0400
+To: or-talk@freehaven.net
+Subject: Tor 0.2.1.14-rc is out
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Reply-To: or-talk@freehaven.net
+
+Tor 0.2.1.14-rc marks the first release candidate for the 0.2.1.x
+series. It begins fixing some major performance problems, and also finally
+addresses the bug that was causing relays on dynamic IP addresses to
+fall out of the directory.
+
+This is a release candidate! That means that we don't know of any
+remaining show-stopping bugs, and this will become the new stable if
+there are no problems. Please test it, and tell us about any problems
+that you find.
+
+https://www.torproject.org/download.html.en
+
+Changes in version 0.2.1.14-rc - 2009-04-12
+  o Major features:
+    - Clients replace entry guards that were chosen more than a few months
+      ago. This change should significantly improve client performance,
+      especially once more people upgrade, since relays that have been
+      a guard for a long time are currently overloaded.
+
+  o Major bugfixes (on 0.2.0):
+    - Finally fix the bug where dynamic-IP relays disappear when their
+      IP address changes: directory mirrors were mistakenly telling
+      them their old address if they asked via begin_dir, so they
+      never got an accurate answer about their new address, so they
+      just vanished after a day. For belt-and-suspenders, relays that
+      don't set Address in their config now avoid using begin_dir for
+      all direct connections. Should fix bugs 827, 883, and 900.
+    - Relays were falling out of the networkstatus consensus for
+      part of a day if they changed their local config but the
+      authorities discarded their new descriptor as "not sufficiently
+      different". Now directory authorities accept a descriptor as changed
+      if bandwidthrate or bandwidthburst changed. Partial fix for bug 962;
+      patch by Sebastian.
+    - Avoid crashing in the presence of certain malformed descriptors.
+      Found by lark, and by automated fuzzing.
+
+  o Minor features:
+    - When generating circuit events with verbose nicknames for
+      controllers, try harder to look up nicknames for routers on a
+      circuit. (Previously, we would look in the router descriptors we had
+      for nicknames, but not in the consensus.) Partial fix for bug 941.
+    - If the bridge config line doesn't specify a port, assume 443.
+      This makes bridge lines a bit smaller and easier for users to
+      understand.
+    - Raise the minimum bandwidth to be a relay from 20000 bytes to 20480
+      bytes (aka 20KB/s), to match our documentation. Also update
+      directory authorities so they always assign the Fast flag to relays
+      with 20KB/s of capacity. Now people running relays won't suddenly
+      find themselves not seeing any use, if the network gets faster
+      on average.
+    - Update to the "April 3 2009" ip-to-country file.
+
+  o Minor bugfixes:
+    - Avoid trying to print raw memory to the logs when we decide to
+      give up on downloading a given relay descriptor. Bugfix on
+      0.2.1.9-alpha.
+    - In tor-resolve, when the Tor client to use is specified by
+      <hostname>:<port>, actually use the specified port rather than
+      defaulting to 9050. Bugfix on 0.2.1.6-alpha.
+    - Make directory usage recording work again. Bugfix on 0.2.1.6-alpha.
+    - When starting with a cache over a few days old, do not leak
+      memory for the obsolete router descriptors in it. Bugfix on
+      0.2.0.33.
+    - Avoid double-free on list of successfully uploaded hidden
+      service discriptors. Fix for bug 948. Bugfix on 0.2.1.6-alpha.
+    - Change memarea_strndup() implementation to work even when
+      duplicating a string at the end of a page. This bug was
+      harmless for now, but could have meant crashes later. Fix by
+      lark. Bugfix on 0.2.1.1-alpha.
+    - Limit uploaded directory documents to be 16M rather than 500K.
+      The directory authorities were refusing v3 consensus votes from
+      other authorities, since the votes are now 504K. Fixes bug 959;
+      bugfix on 0.0.2pre17 (where we raised it from 50K to 500K ;).
+    - Directory authorities should never send a 503 "busy" response to
+      requests for votes or keys. Bugfix on 0.2.0.8-alpha; exposed by
+      bug 959.
+
+
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

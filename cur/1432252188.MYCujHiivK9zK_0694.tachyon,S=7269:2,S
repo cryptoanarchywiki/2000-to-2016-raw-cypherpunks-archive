@@ -1,0 +1,82 @@
+From cypherpunks-bounces@cpunks.org  Sun Sep  8 07:49:50 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r88Bnnhu027942;
+	Sun, 8 Sep 2013 07:49:49 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r88BnjKr027938
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Sun, 8 Sep 2013 07:49:47 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id B3845543E42; Sun,  8 Sep 2013 13:49:44 +0200 (CEST)
+Date: Sun, 8 Sep 2013 13:49:44 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: Re: [Cryptography] XORing plaintext with ciphertext
+Message-ID: <20130908114944.GX29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by antiproton.jfet.org id
+ r88BnjKr027938
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 5393
+Lines: 41
+
+----- Forwarded message from Jerry Leichter <leichter@lrw.com> -----
+
+Date: Sat, 7 Sep 2013 07:25:43 -0400
+From: Jerry Leichter <leichter@lrw.com>
+To: Jon Callas <jon@callas.org>
+Cc: Cryptography List <cryptography@metzdowd.com>, Dave Horsfall <dave@horsfall.org>
+Subject: Re: [Cryptography] XORing plaintext with ciphertext
+X-Mailer: Apple Mail (2.1283)
+
+On Sep 7, 2013, at 4:13 AM, Jon Callas wrote:
+>> Take the plaintext and the ciphertext, and XOR them together.  Does the 
+>> result reveal anything about the key or the painttext?
+> 
+> It better not. That would be a break of amazing simplicity that transcends broken. 
+The question is much more subtle than that, getting deep into how to define a the security of a cipher.
+
+Consider a very simplified and limited, but standard, way you'd want to state a security result:  A Turing machine with an oracle for computing the encryption of any input with any key, when given as input the cyphertext and allowed to run for time T polynomial in the size of the key, has no more than an probability P less than (something depending on the key size) of guessing any given bit of the plaintext.  (OK, I fudged on how you want to state the probability - writing this stuff in English rather than mathematical symbols rapidly becomes unworkable.)  The fundamental piece of that statement is in "given as input..." part:  If the input contains the key itself, then obviously the machine has no problem at all producing the plaintext!  Similarly, of course, if the input contains the plaintext, the machine has an even easier time of it.
+
+You can, and people long ago did, strengthen the requirements.  They allow for probabilistic machines as an obvious first step.  Beyond that, you want semantic security:  Not only shouldn't the attacking machine be unable to get an advantage on any particular bit of plaintext; it shouldn't be able to get an advantage on, say, the XOR of the first two bits.  Ultimately, you want so say that given any boolean function F, the machine's a postiori probability of guessing F(cleartext) should be identical (within some bounds) to its a priori probability of guessing F(cleartext).  Since it's hard to get a handle on the prior probability, another way to say pretty much the same thing is that the probability of a correct guess for F(cleartext) is the same whether the machine is given the ciphertext, or a random sequence of bits.  If you push this a bit further, you get definitions related to indistinguishability:  The machine is simply expected to say "the input is the result of apply
+ ing the cipher to some plaintext" or "the input is random"; it shouldn't even be able to get an advantage on *that* simple question.
+
+This sounds like a very strong security property (and it is) - but it says *nothing at all* about the OP's question!  It can't, because the machine *can't compute the XOR of the plaintext and the ciphertext*.  If we *give* it that information ... we've just given it the plaintext!
+
+I can't, in fact, think of any way to model the OP's question.  The closest I can come is:  If E(K,P) defines a strong cipher (with respect to any of the variety of definitions out there), does E'(K,P) = E(K,P) XOR P *also* define a strong cipher?  One would think the answer is yes, just on general principles: To someone who doesn't know K and P, E(K,P) is "indistinguishable from random noise", so E'(K,P) should be the same.  And yet there remains the problem that it's not a value that can be computed without knowing P, so it doesn't fit into the usual definitional/proof frameworks.  Can anyone point to a proof?
+
+The reason I'm not willing to write this off as "obvious" is an actual failure in a very different circumstance.  There was work done at DEC SRC many years ago on a system that used a fingerprint function to uniquely identify modules.  The fingerprints were long enough to avoid the birthday paradox, and were computed based on the result of a long series of coin tosses whose results were baked into the code.  There was a proof that the fingerprint "looked random".  And yet, fairly soon after the system went into production, collisions started to appear.  They were eventually tracked down to a "merge fingerprints" operation, which took the fingerprints of two modules and produces a fingerprint of the pair by some simple technique like concatenating the inputs and fingerprinting that.  Unfortunately, that operation *violated the assumptions of the theorem*.  The theorem said that the outputs of the fingerprint operation would look random *if chosen "without knowledge" of the coi
+ n tosses*.  But the inputs were outputs of the same algorithm, hence "had knowledge" of the coin tosses.  (And ... I just found the reference to this.  See ftp://ftp.dec.com/pub/dec/SRC/research-reports/SRC-113.pdf, documentation of the Fingerprint interface, page 42.)
+
+                                                        -- Jerry
+
+_______________________________________________
+The cryptography mailing list
+cryptography@metzdowd.com
+http://www.metzdowd.com/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

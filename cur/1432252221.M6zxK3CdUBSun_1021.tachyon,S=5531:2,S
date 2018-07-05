@@ -1,0 +1,112 @@
+From rsw@jfet.org Mon Jan 20 12:48:42 2014
+Date: Mon, 20 Jan 2014 12:48:42 -0500
+From: "Riad S. Wahby" <rsw@jfet.org>
+To: cypherpunks@cpunks.org
+Subject: CDRv2 discussion (was: Re: Al-qaeda.net deprecated)
+Message-ID: <20140120174842.GA1034@antiproton.jfet.org>
+Mail-Followup-To: cypherpunks@cpunks.org
+References: <Pine.LNX.4.64.1401191130250.27039@mx1.mfn.org>
+ <20140119181507.GA22336@antiproton.jfet.org>
+ <Pine.LNX.4.64.1401191330420.27039@mx1.mfn.org>
+ <E1W4zEK-0003c6-QZ@elasmtp-banded.atl.sa.earthlink.net>
+ <1390174697.11793.72791097.3940EAF2@webmail.messagingengine.com>
+ <20140120004239.4E674F6E6@a-pb-sasl-quonix.pobox.com>
+ <Pine.LNX.4.64.1401191948230.27039@mx1.mfn.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.64.1401191948230.27039@mx1.mfn.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+Status: RO
+Content-Length: 4615
+Lines: 88
+
+"J.A. Terranson" <measl@mfn.org> wrote:
+> Great: if we go back to distribution, we can bring all of us back into the 
+> fold.
+
+It was around 2005 that the last few nodes dropped off the old CDR, so
+it's been quite a while since we've been distributed.
+
+I went back through the list archives late last year in search of the
+history of the CDR. While I'm sure others can add more to the skeleton,
+what I found went into the Cypherpunk Wikipedia entry (with references
+to archived emails where possible).
+
+To be honest, I'm not sure distribution is a response to any real
+threat: to the extent that the Cpunks list is of interest, isn't it more
+sensible to keep it alive and monitored than to shut it down? Of course,
+as J.A. points out, there are plenty of other reasons, viz., different
+list policies at different nodes (reply-to:, subject modification,
+sender whitelisting, etc.)---and these create some problems that we'll
+have to address in designing CDRv2.
+
+So let's talk a bit about the CDR architecture.
+
+One obvious issue with the old one is that it was a bit rickety: at its
+heart it was a bandaid fractal built on top of procmail and Majordomo,
+and getting it set up took enough work that most people didn't want to
+do it. To this end, I suggest we build upon mailman this time around:
+the codebase is reasonably well maintained, plenty of people feel
+comfortable hacking in Python, and we automatically get more user
+friendliness in the subscriber and administrative interfaces.
+
+(In principle, an even better way to do this would be to cleanly
+separate the CDR functionality from the list management functionality so
+that individual nodes can decide on their own what list software to run.
+This probably ends up expanding the time cost of the project well in
+excess of the utility it generates, so my vote would be against making
+this a requirement.)
+
+One major question we need to address is the topology of the CDR network
+itself. From an implementation point of view it would be most
+straightforward if every node knew about every other node, but one could
+argue that this is too fragile. If we take that position, we have to
+solve a broadcast repeater problem: when a node receives a message, it
+needs to have some way of deciding what other nodes it forwards messages
+to. Obviously we'd like to do this in a way that doesn't result in a lot
+of useless echoes. (Recognizing that perfect is the enemy of good may be
+the better part of valor here; after all, we don't expect to have more
+than a handful of CDR nodes.)
+
+As before, we want to be able to have independent policies at each node
+at least with respect to:
+    - subject line modification
+    - header mangling (reply-to: etc)
+    - attachments
+    - sender whitelisting
+    - other things I'm forgetting
+As far as I can tell, the ones that will require the most work are
+subject line modification and sender whitelisting.
+
+Mangling the subject line becomes a problem because eventually we end up
+with subjects like "[CDR] Re: [Cpunks] Re: [Cypherpunks] foo", which
+confuses a lot of mail clients. This isn't a problem for monolithic
+mailman setups because mailman knows not to add another prefix to
+outgoing messages that already have one, but the problem becomes more
+difficult when each node potentially has its own (possibly empty)
+prefix. This problem would have a trivial solution in the case that all
+nodes knew the tagging policy at all other nodes, but (as I point out
+above) we may prefer not to require nodes to know all other nodes in the
+CDR. (The fallback solution is the old one: manually construct an
+appropriate filter to demangle subject lines. Yech.)
+
+In the old CDR (possibly after the LNE.com modifications circa 2001),
+nodes had to expose their sender lists (at least to other nodes) to
+allow for member whitelisting. Obviously this is ripe for abuse, and I'd
+prefer to achieve this in a different way if possible. The goal here is
+to make it easy to verify that a given sender is subscribed to *some*
+node but difficult to enumerate all list subscribers. I can see how one
+might think of this as coddling the supposedly savvy and internet-
+hardened subscribers of the list, but I just don't see any reason to
+expose users to more abuse than necessary, especially when solutions to
+this problem have already been described and are nominally right in the
+cpunks wheelhouse!
+
+I have a skeleton architecture in mind that can be beaten into a shape
+capable of addressing the above issues, but as this email is getting
+long and I've doubtless forgotten several other important problems,
+let's discuss a bit more first.
+
+-=rsw
+

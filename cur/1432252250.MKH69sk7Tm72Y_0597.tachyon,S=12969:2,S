@@ -1,0 +1,258 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Mon Aug  5 16:56:42 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g75Kudq05395
+	for <rsw@opamp.org>; Mon, 5 Aug 2002 16:56:40 -0400
+Received: from lion.ninthwonder.com (lion.ninthwonder.com [151.199.66.147])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id QAA20744
+	for <rsw@mit.edu>; Mon, 5 Aug 2002 16:54:02 -0400 (EDT)
+Received: by lion.ninthwonder.com (Postfix, from userid 96)
+	id 274B330715; Mon,  5 Aug 2002 16:51:23 -0400 (EDT)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 4CC1930706
+	for <cryptography@wasabisystems.com>; Mon,  5 Aug 2002 16:51:21 -0400 (EDT)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id DBAFFD97CA; Mon,  5 Aug 2002 16:51:20 -0400 (EDT)
+Received: from mercury.ex.ac.uk (mercury.ex.ac.uk [144.173.6.26])
+	by lion.ninthwonder.com (Postfix) with ESMTP id CB0AE30706
+	for <cryptography@wasabisystems.com>; Mon,  5 Aug 2002 16:46:45 -0400 (EDT)
+Received: from cronus ([144.173.6.20] helo=cronus.ex.ac.uk)
+	by mercury.ex.ac.uk with esmtp (Exim 3.33 #1)
+	id 17bokW-001eru-00; Mon, 05 Aug 2002 21:46:44 +0100
+Date: Mon, 5 Aug 2002 21:46:43 +0100
+From: Adam Back <adam@cypherspace.org>
+To: Cypherpunks <cypherpunks@minder.net>
+Cc: cryptography@wasabisystems.com, Adam Back <adam@cypherspace.org>
+Subject: Re: dangers of TCPA/palladium
+Message-ID: <20020805214643.A544415@exeter.ac.uk>
+References: <cb9b2d664b844a1926a29502365eda9e@aarg.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <cb9b2d664b844a1926a29502365eda9e@aarg.net>; from remailer@aarg.net on Mon, Aug 05, 2002 at 12:10:12AM -0700
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 10896
+Lines: 217
+
+Some comments on selected parts of anonymous post:
+
+1) about claimed "complexity" of cryptographically assured privacy,
+rather than the current "trust me" privacy via the privacy CA "TTP":
+
+Anonymous writes:
+> Adam Back wrote:
+> > 3. Privacy support is broken -- the "privacy" features while clearly
+> > attempts to defuse a re-run at the pentium serial number debacle, have
+> > not really fixed it's problems.  You have to trust the "Trusted Third
+> > Party" privacy CA not to track you and not to collude with other CAs
+> > and software vendors.  There are known solutions to this particular
+> > sub-problem, for example Stefan Brands digital credentials [10], which
+> > can be used to build a cryptographically assured privacy preserving
+> > PKI avoiding the linking problems arising from identity based and
+> > attribute certificates.
+> 
+> I agree that it would be nice to see more flexibility there.  The Chaum
+> blinding patent expires in 2005, so maybe around then we can start seeing
+> privacy CA's that use blind signatures, which solves that problem.
+> The spec is obviously trying hard to protect privacy, it's just that
+> the mechanisms to do it right are extremely complex compared to the
+> straightforward way.
+
+To address privacy with for example Brands digital credentials, the
+underlying cryptography may be harder to understand, or at least less
+familiar, but I don't think using a toolkit based on Brands digital
+credentials would be significantly harder than using an identity or
+attribute based PKI toolkit.  Similar for Chaum's credentials or other
+approach.  
+
+Also I notice you imply patents are a problem.  However, the TCPA
+itself has patents and will of course charge for the hardware.
+Patents it doesn't seem would present a problem for this application,
+where there is non-zero reproduction cost hardware involved.
+
+2) about the "root key" / potential for malicious remote control claim
+that I make (and Ross Anderson I think also makes):
+
+> And nobody's got the root key to my computer.  You make this claim
+> in many places in the document.  What exactly is this "root key" in
+> TCPA terms?  The endorsement key?  It's private part is generated
+> on-chip and never leaves the chip!
+
+The "root key" to your computing environment is the private key of the
+CA that signs the software updates.  You'll recall that in the secure
+boot-strapping process if you choose to boot in the TCPA mode, if
+there are deviations or updates these are fetched and are only
+accepted if certified by the layer owner.  (I presume different layers
+would have updates and certification managed by different vendors
+Eg. hardware vendor / TPM vendor for firmware, OS manufactturer for
+OS, application manufacturer for application software etc, and that
+the secure bootstrap process would accordingly transfer control to the
+respective next layers certification keys in case of need for software
+update.)
+
+The closer to the hardware a software update is the more pervasive the
+control a malicious update could exert.  For example there are
+apparently plans for TPM mediated direct path to input devices
+(esp. keyboard), a malicious update close enough to the hardware could
+subvert this protection.
+
+and more on the "root key" problem:
+
+> > 8. Gives away root control of your machine -- providing potentially
+> > universal remote control of users machines to any government agencies
+> > with access to the TCPA certification master keys
+> 
+> [...] All the TCPA certification master keys do is to certify that a
+> system is TCPA compliant.  They don't have a remote control over
+> your machine!  They are more analogous to Verisign in the X.509
+> world.  Last I checked they hadn't taken over my box.  As far as the
+> field upgrade, it has to be authorized by the owner.
+
+The root key is not the endorsement master keys -- that one just
+allows the TPM vendor to extract rent from the hardware manufacturers
+-- I mean the update certification keys which will I presume be part
+of the software update features described in the secure
+boot-strapping.
+
+You said somewhere in this thread that the user must approve software
+and firmware updates.  However:
+
+- the user will not see the source code for the updates
+
+- the user is not in a position to evaluate the update
+
+- there will be lots of updates (daily, weekly -- look at microsofts
+security bug fix rate), to the extent that the user will blindly click
+ok.
+
+- there is nothing the user can do to determine whether the update he
+gets is also the same one other users of the OS get, vs a key board
+sniffer the FBI or NSA request is inserted, or have copies of the
+software update root keys to insert themselves.
+
+The problem is the centralised control.  The user must at minimum be
+able to choose his own software update certification agents.  We need
+transparency, distributed control, and openness to allow people to use
+third party auditors they trust and have reason to trust to audit and
+endorse updates.
+
+3) about my claim that TCPA is a platform for enforcing policies
+against the users interests:
+
+> > 9. Provides a dangerously tempting target for government power-grabs
+> > -- governments will be very interested to be able to abuse the power
+> > provided by the platform, to gain access to it's keys to be able to
+> > insert remote backdoors, and/or to try to mandate government policy
+> > enforcement modules once such a platform is built.  Think this is
+> > unrealistic?  Recall clipper?  The TCPA is a generic extensible policy
+> > enforcement architecture which can be configured to robustly enforce
+> > policies against the interests of the machine owner.  Clipper,
+> > key-escrow the whole multi-year fight, at some point in the near
+> > future if some of the more egregious TCPA/Palladium framework features
+> > and configuration possibilities becomes widely deployed could be
+> > implemented after the fact, as a TCPA/Palladium policy extentsion
+> > which runs in the hardware assisted code compartment and is
+> > authenticated up to the hardware boot by the secure bootstrapping
+> > process.
+> 
+> I don't agree with your characterization that TCPA enforces policies
+> against the owner's interests.  He has to voluntarily agree to everything,
+> from turning on TCPA, to booting a TCPA compliant program, to running
+> an application which some third party will trust, to accepting data from
+> that third party under agreed-upon conditions.  If at any step he didn't
+> feel that what he was doing was in his interests, he can stop and do
+> something else.
+
+He has no choice due to architectural design decisions, probably
+motivated by economic profit motives in retaining monopoly control of
+the TCPA consortium members.  The control is ceded at the root of the
+secure boot-strapping framework.  After that all user choice is gone,
+all he can do is turn TCPA off.  I'm assuming that over time
+increasing amounts of the OS and applications will simply not function
+without being in TCPA mode, so turning TCPA off will increasingly
+become a non-choice.  
+
+Specifically, you will be able to "choose" not to use the only tools
+that will read formats used by 90+% of the world, and which are only
+available for the Windows platform, and only when in TCPA mode, to
+allow the platform to meet copyright tracking, IP ownership tracking
+or other policy features implemented with the document format.
+
+The danger once we get to this scenario is that as I described above
+TCPA itself becomes "a generic extensible policy enforcement
+architecture which can be configured to robustly enforce policies
+against the interests of the machine owner."  This could be used for
+all kinds of malware policies which would run in the secure code
+compartments, for example:
+
+- clipper / US key escrow implementation as a TCPA policy module
+
+- big brotherish policies for regimes interested in censoring and
+imposing policies on users such as China, Iraq etc
+
+While it may be possible technically to boot in non TCPA mode, or to
+boot an open source OS without the malware, most users will not have
+the technical ability to know when they are at risk and when not and
+what to do to avoid having the government policies enforced upon them.
+
+All kinds of dubious laws in western countries could start to see
+stricter enforcement.  Fair use rights erosion, data retention laws,
+and on; I really think full enforcement of current and soon coming
+laws will make things very unpleasant and greatly erode individual
+rights.
+
+4) about likely future directions for TCPA / Palladium upon which some
+of the complaints are based:
+
+> As far as the concern about changes, I think the smart thing to do is
+> to fight the bad and promote the good.  Definitely we should oppose any
+> proposal to make TCPA non-voluntary, to force people to boot a certain
+> OS, to limit what they can do on their computers.  But presently none
+> of those features are in TCPA.  Rather than saying TCPA is bad because
+> someone could make all these hypothetical changes, it makes more sense
+> to judge TCPA on its own, as a system that emphasizes user choice.
+
+A number of the features which are "not in TCPA" are obvious design
+motivators.  For example online content DRM.  Others are obvious
+things that Microsoft has been aggressively trying to do for years.
+I'm not sure why you suppose they will stop persuing tricks such as
+format compatibility lock-out, hidden changing APIs, using every trick
+in the book.
+
+Similarly I'm not sure why you presume governments will have no
+interest in exerting control on the platform.  Governments are
+certainly not technology leaders, but they sure were persistent in
+trying to persue the whole crypto-tech export legislation,
+clipper/key-escrow and so on.  Also this platform will be used world
+wide.  There are more repressive regimes with much more intrusive
+plans.
+
+5) about voluntary vs involuntary TCPA
+
+> Involuntary TCPA is bad, voluntary is good.  So we should not fight TCPA,
+> we should fight proposals to make it involuntary.
+
+Initial claims of "voluntary" is the standard trick for reducing
+resistant to deployment.  Look at history of various technologies
+relating to privacy and security, or just politics in general.  First
+it's voluntary, then it becomes voluntary in name only (you can choose
+not to, put the "choice" is marginalized to become almost
+meaningless), and finally the last step is to not even pretend it's
+voluntary.
+
+I think it's interesting to explore what can be fixed about TCPA.
+It's putative voluntary / mandatory status is one aspect, true, but
+more interesting ones are to ensure it is open, has distributed user
+configurable control, open access to APIs and non-discriminatory
+licensing with no policy strings attached.
+
+Adam
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

@@ -1,0 +1,153 @@
+From cypherpunks-bounces@cpunks.org  Wed Sep 25 08:18:41 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r8PCIeCS007052;
+	Wed, 25 Sep 2013 08:18:40 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r8PCI96E007046
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Wed, 25 Sep 2013 08:18:11 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 98CDF543E2D; Wed, 25 Sep 2013 14:18:08 +0200 (CEST)
+Date: Wed, 25 Sep 2013 14:18:08 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: [Cryptography] Hardware Trojan Protection
+Message-ID: <20130925121808.GD10405@leitl.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature"; boundary="l8FBOYhuhfKtCvBI"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 4999
+Lines: 114
+
+
+--l8FBOYhuhfKtCvBI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+----- Forwarded message from Bill Frantz <frantz@pwpconsult.com> -----
+
+Date: Tue, 24 Sep 2013 13:36:13 -0700
+=46rom: Bill Frantz <frantz@pwpconsult.com>
+To: cryptography@metzdowd.com
+Subject: [Cryptography] Hardware Trojan Protection
+X-Mailer: Mailsmith 2.3.1 (422)
+
+On 9/22/13 at 6:07 PM, leichter@lrw.com (Jerry Leichter) wrote in
+another thread:
+
+> Still, it raises the question:  If you can't trust your
+> microprocessor chips, what do you do?  One possible answer:  Build
+> yourself a processor out of MSI chips.  We used to do that, not so
+> long ago, and got respectable performance (if not, perhaps, on
+> anything like today's scale).  An MSI chip doesn't have enough
+> intrinsic computation to provide much of a hook for an attack.  Oh,
+> sure, the hardware could be spiked - but to do *what*?  Any given
+> type of MSI chip could go into many different points of many
+> different circuit topologies, and won't see enough of the data to
+> do much anyway.  There may be some interface issues:  This stuff
+> might not be fast enough to deal with modern memory chips.  (How
+> would you attack a memory chip?  Certainly possible if you're make
+> a targeted attack - you can slip in a small processor in the design
+> to do all kinds of nasty things.  But commercial of the shelf
+> memory chips are built right up to the edge of what we can make, so
+> you can't change a
+> ll that much.)
+>=20
+> Some stuff is probably just impossible with this level of
+> technology.  I doubt you can build a Gig-E Ethernet interface
+> without large-scale integration.  You can certainly do the original
+> 10 Mb/sec - after all, people did!  I have no idea if you could get
+> to 100 Mb/sec.
+>=20
+> Do people still make bit-slice chips?  Are they at a low-enough
+> level to not be a plausible attack vector?
+>=20
+> You could certainly build a respectable mail server this way -
+> though it's probably not doing 2048-bit RSA at a usable speed.
+>=20
+> We've been talking about crypto (math) and coding (software).
+> Frankly, I, personally, have no need to worry about someone
+> attacking my hardware, and that's probably true of most people.
+> But it's *not* true of everyone.  So thinking about how to build
+> "harder to attack" hardware is probably worth the effort.
+
+You might get a reasonable level of protection implementing the core
+of the crypto operations in a hardware security module (HSM) using
+Field Programmable Gate Arrays (FPGA) or Complex Programmable Logic
+Device (CPLD). There is an open source set of tools for programming
+these beasts based on Python called MyHDL <www.myhdl.org>. The EFF DES
+cracker may have some useful ideas too.
+
+The largest of these devices are also pressing the current chip
+limits. There isn't a lot of extra space for Trojans. In addition,
+knowing what to look at is somewhat difficult if pin assignments etc
+are changed from chip to chip at random.
+
+As with any system, there are tool chain issues. Open source helps,
+but there is always the Key Thompson attack. The best solution I can
+think of is to audit the output. Look very carefully at the output of
+the tool chain, and at the final piece that loads the configuration
+data into the device.
+
+Cheers - Bill
+
+---------------------------------------------------------------------------
+Bill Frantz        |"Web security is like medicine - trying to do good
+for
+408-356-8506       |an evolved body of kludges" - Mark Miller
+www.pwpconsult.com |
+
+_______________________________________________
+The cryptography mailing list
+cryptography@metzdowd.com
+http://www.metzdowd.com/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+--=20
+Eugen* Leitl <a href=3D"http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+
+--l8FBOYhuhfKtCvBI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSQtSAAAoJEPRuNImsiU7FjnsP/R+IvnzHXCpeDwytqudL5gzQ
+Ta2MS6lWfm1Vn8O0TNaq99TdTTVzsAMMJyVZqmrCisH7ewvDA8YqTj6qQlF2JHyy
+cVPDn0J0KSYJwLpERSgT+eiKRc7szqaeKrkrMmepSePNcPNHBbsshKZY7fkOq4Oj
+XR7+UXJsDR4sAkUTzGczTt8swetZONNkdLBIo3c4I40L881EUV4or5pE5/pdvF5h
+iKMsR9WFIEeftArCKF2F+or7ce/UK76kJfEkXzpTMHChivQDJv6wUTZW3BlSOGuj
+IMQKUYcTHoh1qmij3xw2CglD7YKwFL6Kdrybetj9dQ/LSnQXq43RQZep6YJw+ltt
+TK1hyUzOyn6IFhAhEQ0IZTOM3DuG1bGNgwkJT0IUYZ1ZxBmeD6+eexuaIhKlA7p2
+sL6B9cPXPVuVzpU48qlA9Q74ghK9u8Wm07InPVkB2UsyA0bsOpPkoBhnv5OHgnXR
+7JR+LCqH2Qot9BOjdKsMY1UvsFiqAh4Lj/uTMBqtAY4xxYbT2Phaa5bu6jR/BRNA
+9v1IdvMna+LqbdNMZSZ1JTS0h+1bOkOhnTMVgveLTAhjxF3+IFB4/adICHpsU6Ic
+RM5NH8o6O2p9vN6/rQZ4daxYoNx5vcE1/m1K5jUYUaMWMSEOla/JJd8nK/C7t/JP
+EacDmw/c1HGJXQA9rkvn
+=0HuQ
+-----END PGP SIGNATURE-----
+
+--l8FBOYhuhfKtCvBI--
+

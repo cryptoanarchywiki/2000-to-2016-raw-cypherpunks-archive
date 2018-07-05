@@ -1,0 +1,92 @@
+From cypherpunks-bounces@cpunks.org  Tue Dec 24 05:45:53 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id rBOAjQ3k031711;
+	Tue, 24 Dec 2013 05:45:30 -0500
+Authentication-Results: antiproton.jfet.org; dkim=fail
+	reason="verification failed; insecure key"
+	header.d=gmail.com header.i=@gmail.com header.b=PiEOThbm;
+	dkim-adsp=none (insecure policy); dkim-atps=neutral
+Received: from mail-ob0-f182.google.com (mail-ob0-f182.google.com
+ [209.85.214.182])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id rBOAjNrC031707
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Tue, 24 Dec 2013 05:45:25 -0500
+Received: by mail-ob0-f182.google.com with SMTP id wp4so6521055obc.41
+ for <cypherpunks@cpunks.org>; Tue, 24 Dec 2013 02:45:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :cc:content-type;
+ bh=viaYaXPLe3pK2jTCe/pKrThQDaZAdwBkhkQygnw6Hlc=;
+ b=PiEOThbm4WfleVmRD6shmmOr+AXRQFtD1m4hR3Iwxjx+bwTlinHRbmtcNr+hlCkUZ/
+ gdbezWQ+g2XCk9TuyG57uh8kXLvETpkkdXW23l6ClvFzOy/6tNhZBRfRvkiPHJF4/tBg
+ RGxuFKd3BH7yzrJ+AIcd0Q28B7yPlGJz6qw4D+p31vQyaQTeP/I5G3y18IzHOSxlFt9O
+ 00wuXO3ySb7PeG4G0kymszQFQpKT1o1E2E9me908GtWb6iIQW9TFIccvPdTREbaXxf9G
+ Js+Kmd3+Tcjww8zxlcUn+dRRv7uX1mhYHWJOnOrVYiURRmcEkfjQcaM9Qqaf8WxteskW
+ 2v9Q==
+MIME-Version: 1.0
+X-Received: by 10.182.129.201 with SMTP id ny9mr21898737obb.0.1387881917443;
+ Tue, 24 Dec 2013 02:45:17 -0800 (PST)
+Received: by 10.60.115.42 with HTTP; Tue, 24 Dec 2013 02:45:17 -0800 (PST)
+In-Reply-To: <20131224100911.GB20486@jack>
+References: <CAD2Ti28MwGU_5gLxMUG61En6NT059rWP=Qbk1O74Vc8hTCrLGw@mail.gmail.com>
+ <20131224100911.GB20486@jack>
+Date: Tue, 24 Dec 2013 05:45:17 -0500
+Message-ID: <CAD2Ti2-KxvLW9J_LHXOTSeJNWf7J33RNYcDDPcsmfMCJjwkZ9A@mail.gmail.com>
+Subject: Re: [cryptography] The next gen P2P secure email solution
+From: grarpamp <grarpamp@gmail.com>
+To: danimoth <danimoth@cryptolab.net>
+Content-Type: text/plain; charset=UTF-8
+Cc: cypherpunks@cpunks.org, cryptography@randombit.net,
+        p2p-hackers@zim.maski.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+On Tue, Dec 24, 2013 at 5:09 AM, danimoth <danimoth@cryptolab.net> wrote:
+> A problem which could rise is the 'incentive' for peers to continuosly
+> providing bandwidth and disk space to store messages. I'm a simple dude,
+> with a mailflow of ~5 email per day. Why I should work for you, with
+> your ~10000 mail per day for all your mailing list?
+
+I think this is one of many design choices to be made.
+
+Extra bandwidth is hard to avoid, unless the topology is
+point(sender)-to-point(recipient). Yet with that, there is no effort made
+to hide who is physically talking to who. We want to try to defeat this
+type of analysis, so we can't be simply point-to-point.
+ ie: bittorrent and today's email are point-to-point, no multihop.
+
+Next is storage (mix) vs. latency (tunnels). This seems less clear to
+me when up against analysis. Filling circuits (tunnels) with chaff
+seems interesting. And with deliverey directly to your recipient over
+some tunnel circuit, you don't have to build in complex message redundancy
+protocols (more storage float outstanding) to ensure your message 100%
+gets there when 90% of the nodes go offline taking your stored message
+with them. You also get direct realtime delivery confirmation too.
+
+> Somewhere on this list (or p2p-hackers?) there was a post of mine,
+> regardings an economic incentive between peers, which could be a
+> solution, but as always technical problems arose, like pricing the
+> services and a fair exchange between peers.
+
+The question arises, how does one provide free anonymous transport
+to those anons who simply can't pay because they are anon? How
+do you 'get users' when the mentality is 'for free'? Bittorrent/Tor are
+free and seem to work ok. Though it's also probably not unreasonable
+to suggest (and harder to enforce) that you get 1:1 what resources you
+donate to it. ie: I need to push 1GiB this month, so I need to provision at
+minimum 1+Nx1GiB to do that... 1 for me, Nx1 for the net due to my use
+(where N is some impact ratio inherent in the design of the net, such
+as number hops.)
+

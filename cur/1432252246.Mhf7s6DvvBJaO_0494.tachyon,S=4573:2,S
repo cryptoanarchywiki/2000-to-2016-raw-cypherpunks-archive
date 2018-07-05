@@ -1,0 +1,92 @@
+From owner-cryptography+rsw=mit.edu@metzdowd.com  Mon Jun 30 09:18:21 2003
+Return-Path: <owner-cryptography+rsw=mit.edu@metzdowd.com>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h5UDIL624333
+	for <rsw@opamp.org>; Mon, 30 Jun 2003 09:18:21 -0400
+Received: from red.metdow.com (72.muf123.nycm.n54ny05r18.dsl.att.net [12.103.123.72])
+	by pacific-carrier-annex.mit.edu (8.12.4/8.9.2) with ESMTP id h5UDIKbn024579
+	for <rsw@mit.edu>; Mon, 30 Jun 2003 09:18:20 -0400 (EDT)
+Received: by red.metdow.com (Postfix, from userid 1002)
+	id 2F85A182F7A; Mon, 30 Jun 2003 13:16:26 +0000 (UTC)
+X-Original-To: cryptography@metzdowd.com
+Delivered-To: cryptography@metzdowd.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by red.metdow.com (Postfix) with ESMTP id 7385D182F5C
+	for <cryptography@metzdowd.com>; Mon, 30 Jun 2003 13:16:25 +0000 (UTC)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 11385D97CE; Mon, 30 Jun 2003 09:16:25 -0400 (EDT)
+X-Original-To: cryptography@metzdowd.com
+Received: from eth0.a.smtp.sonic.net (eth0.a.smtp.sonic.net [64.142.16.244])
+	by red.metdow.com (Postfix) with ESMTP id 6514B182F67
+	for <cryptography@metzdowd.com>; Mon, 30 Jun 2003 02:17:21 +0000 (UTC)
+Received: from billstewart.pobox.com (adsl-208-201-253-88.sonic.net [208.201.253.88])
+	by eth0.a.smtp.sonic.net (8.12.9/8.12.7) with ESMTP id h5U2HDhl005148;
+	Sun, 29 Jun 2003 19:17:13 -0700
+Message-Id: <5.1.1.6.2.20030629152707.026516d0@idiom.com>
+X-Sender: wcs@idiom.com
+X-Mailer: QUALCOMM Windows Eudora Version 5.1.1
+Date: Sun, 29 Jun 2003 19:17:18 -0700
+To: cryptography@metzdowd.com
+From: Bill Stewart <bill.stewart@pobox.com>
+Subject: Re: Attacking networks using DHCP, DNS - probably kills DNSSEC
+Cc: cypherpunks@lne.com
+In-Reply-To: <iluof0gh7vy.fsf@latte.josefsson.org>
+References: <5.1.1.6.2.20030629132842.033e71d0@idiom.com>
+ <5.1.1.6.2.20030629132842.033e71d0@idiom.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Sender: owner-cryptography@metzdowd.com
+Precedence: bulk
+Status: O
+Content-Length: 2385
+Lines: 48
+
+At 11:49 PM 06/29/2003 +0200, Simon Josefsson wrote:
+>No, I believe only one of the following situations can occur:
+>
+>* Your laptop see and uses the name "yahoo.com", and the DNS server
+>   translate them into yahoo.com.attackersdomain.com.  If your laptop
+>   knows the DNSSEC root key, the attacker cannot spoof yahoo.com since
+>   it doesn't know the yahoo.com key.  This attack is essentially a
+>   man-in-the-middle attack between you and your recursive DNS server.
+
+That doesn't happen.  (Well, it could, but as you point out,
+it's not a successful attack methodology, because DNSSEC was designed
+to correctly take care of this.)
+
+>* Your laptop see and uses the name "yahoo.com.attackersdomain.com".
+>   You may be able to verify this using your DNSSEC root key, if the
+>   attackersdomain.com people have set up DNSSEC for their spoofed
+>   entries, but unless you are using bad software or judgment, you will
+>   not confuse this for the real "yahoo.com".
+
+The DNS suffix business is designed so that your laptop tries
+to use "yahoo.com.attackersdomain.com", either before "yahoo.com"
+or after unsuccessfully trying "yahoo.com", depending on implementation.
+It may be bad judgement, but it's designed to support intranet sites
+for domains that want their web browsers and email to let you
+refer to "marketing" as opposed to "marketing.webservers.example.com",
+and Netscape-derived browsers support it as well as IE.
+
+>Of course, everything fails if you ALSO get your DNSSEC root key from
+>the DHCP server, but in this case you shouldn't expect to be secure.
+>I wouldn't be surprised if some people suggest pushing the DNSSEC root
+>key via DHCP though, because alas, getting the right key into the
+>laptop in the first place is a difficult problem.
+
+I agree with you and Steve that this would be a Really Bad Idea.
+The only way to make it secure is to use an authenticated DHCP,
+which means you have to put authentication keys in somehow,
+plus you need a reasonable response for handling authentication failures,
+which means you need a user interface as well.
+It's also the wrong scope, since the DNSSEC is global information,
+not connection-oriented information, so it's not really DHCP's job.
+
+
+
+
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+

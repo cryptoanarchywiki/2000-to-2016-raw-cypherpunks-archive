@@ -1,0 +1,204 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u3QN4oFh020497;
+	Tue, 26 Apr 2016 19:04:52 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=PDEUPOZ0;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-io0-f176.google.com (mail-io0-f176.google.com
+ [209.85.223.176])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u3QN4lbJ020493
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Tue, 26 Apr 2016 19:04:49 -0400
+Received: by mail-io0-f176.google.com with SMTP id d62so30956182iof.2
+ for <cypherpunks@cpunks.org>; Tue, 26 Apr 2016 16:04:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+ :cc; bh=4+htFjztQmFIJ2fRtMFQC5epZbJqR8Q/aW1h3RNBgN8=;
+ b=PDEUPOZ0vY31uZttW2PaCjC6B5cy/zD7NwOWRDOiaLNne9IJjnE7egK97rO+HdVsOC
+ JIIILWZFGjBLpI38f9KLHPp3FSVyFD35ympwTX3GduLf/w5jpV9qUsipLHQuqnbHwORy
+ JHDJYQ2mGS3NEANOlPkugOhkW05sddHstdIWTIEeG0S6Xkho5r+ZAHQ4RHj8sV4+gO5i
+ GeHJMJgaHkguD9gyr3WIEO/NFvN7tbZeLBB4YVH9jDIM0kA3jbOKDHFJTDLnsyaMijwO
+ CtVl+HoU5lFchV/pOBz14aIBjF+5/dxW10+XLUAtp7I0RKkdPXPNWAS+3cQgR6pdH7v7
+ jm5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+ :message-id:subject:to:cc;
+ bh=4+htFjztQmFIJ2fRtMFQC5epZbJqR8Q/aW1h3RNBgN8=;
+ b=StmLC+yKDjpu3VocJ26EbuxgcuHIoHGH4isqw43FRQfDjK/JJDGv+4xWBBU6kbNNqV
+ rUMQSCOXl3Pc4xAHbrBRJ8CSfxQ0MX5ZWBgNJ3Z8OIUEcZFjccmn2IPV8x4Va6EGpsu4
+ EN99ZS3dx2GbiFYEz1ICJWtcRnuTdwSnvFTTY4asvtILciFva1BGKzGufrZEAAk5QsqN
+ Yr0WG72w7wPDGYORQpnyrtuxTDFN8Dbe8VybPPqw8Psw/sZOdYwMALQw2EBYLSkG21HH
+ v6GFNLkVu1G03Bk9FmiNlLcLnRtKPLKR//eeeFKPRqCs8xqsuKnb98EoxlhLpTiFycY0
+ 0KQw==
+X-Gm-Message-State: AOPr4FUNKV/Z/OEnFKVSHviKTlwrQofNx3L0q8k/x9V82/8T7ARH2PhSNiRrBx9d9LKJOb96z4o4lQormUOrYw==
+X-Received: by 10.107.47.158 with SMTP id v30mr7626087iov.8.1461711882099;
+ Tue, 26 Apr 2016 16:04:42 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.107.128.18 with HTTP; Tue, 26 Apr 2016 16:04:22 -0700 (PDT)
+In-Reply-To: <571FED6B.3040600@riseup.net>
+References: <20160406124923.GA677@sivokote.iziade.m$>
+ <57053FB4.9070109@riseup.net>
+ <20160420094943.GA1309@sivokote.iziade.m$>
+ <C8643470-3EF6-42EB-BFE4-B7C91EAD46D4@synfin.org>
+ <571D73E8.40400@echeque.com> <20160425121604.GA683@sivokote.iziade.m$>
+ <571e601b.a84d420a.26607.ffffdac2@mx.google.com>
+ <CAOsGNSTAMWfKAxo12DwPbBU1hTO5kimEvqU3WhTGkU3tZfHyPw@mail.gmail.com>
+ <CAOsGNSSdxaEMb8inmedOjppU8Wp7U4VBihG0LG51WZKspr3kMA@mail.gmail.com>
+ <CAD2Ti28-OPEh6=PAQfB_imo8NFyOvG4YiRfajTd9UPBbLYWBMg@mail.gmail.com>
+ <571efc1d.4952620a.d8b33.400a@mx.google.com>
+ <E1av2WM-0006te-2G@elasmtp-mealy.atl.sa.earthlink.net>
+ <571F9ED1.6090906@riseup.net>
+ <E1av6sn-0003Xg-Op@elasmtp-mealy.atl.sa.earthlink.net>
+ <571FAC4A.6010400@nrk.com> <EDD32FC6-B2BB-4F2F-9B5A-818C3AB8A6A9@gmail.com>
+ <CAGRDzQUpNEqXRCzv-R8cVd6z56E_fny_WTD16rgYUYQ5Vrp8ow@mail.gmail.com>
+ <FB7F8C76-6B02-48FE-BE08-08E1633E5A0D@gmail.com> <571FED6B.3040600@riseup.net>
+From: Cari Machet <carimachet@gmail.com>
+Date: Wed, 27 Apr 2016 01:04:22 +0200
+Message-ID: <CAGRDzQWFFQbAf8dXnTmOcw7ZKTX9Cb3JLHMmQAHemDz7RC7Tdw@mail.gmail.com>
+Subject: Re: vintage cpunk
+To: Rayzer <rayzer@riseup.net>
+Content-Type: multipart/alternative; boundary=001a11c15ba07f233a05316b5168
+Cc: cpunks <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 126
+
+--001a11c15ba07f233a05316b5168
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+jerry garcia was not rail thin as i recall and not fucking young
+
+kurt cobain said he would only wear a tye died tshirt if it was made from
+the blood and piss of jerry - hail hail
+
+On Wed, Apr 27, 2016 at 12:36 AM, Rayzer <rayzer@riseup.net> wrote:
+
+>
+>
+> On 04/26/2016 11:57 AM, Robert Hettinga wrote:
+> >> On Apr 26, 2016, at 2:43 PM, Cari Machet <carimachet@gmail.com> wrote:
+> >>
+> >> all fucking rich fucks hate the camping hippies?
+> > Yup. Especially the rich fucks who earned their own money=E2=80=A6 Espe=
+cially
+> the hippies who smell bad. :-)
+> >
+> > Cheers,
+> > RAH
+> >
+> >
+> >
+>
+>
+> I've noted over the years that many software developers 'smell bad'. I
+> think it's the cocaine and alcohol.
+>
+> RR
+>
+> Ps. Most of those "Rich fucks who earned their own money" blew it off
+> just as fast as they earned it on hookers and lamborghinis (because they
+> had no class and didn't understand why they had to wait for delivery on
+> a Maserati) . A LOT of them can be found down on the San Lorenzo levee.
+> Burned out and sucking a bottle of two buck chuck.
+>
+>
+
+
+--=20
+Cari Machet
+NYC 646-436-7795
+carimachet@gmail.com
+AIM carismachet
+Syria +963-099 277 3243
+Amman +962 077 636 9407
+Berlin +49 152 11779219
+Reykjavik +354 894 8650
+Twitter: @carimachet <https://twitter.com/carimachet>
+
+7035 690E 5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187
+
+Ruh-roh, this is now necessary: This email is intended only for the
+addressee(s) and may contain confidential information. If you are not the
+intended recipient, you are hereby notified that any use of this
+information, dissemination, distribution, or copying of this email without
+permission is strictly prohibited.
+
+--001a11c15ba07f233a05316b5168
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">jerry garcia was not rail thin as i recall and not fucking=
+ young<div><br></div><div>kurt cobain said he would only wear a tye died ts=
+hirt if it was made from the blood and piss of jerry - hail hail</div><img =
+src=3D"http://t.sidekickopen04.com/e1t/o/5/f18dQhb0S7ks8dDMPbW2n0x6l2B9gXrN=
+7sKj6v5dfb6W5vwkZs7fZjrnW2BpKgF2zlZNzW8v-hnY1k1H6H0?si=3D5459291358625792&a=
+mp;pi=3D724be055-69d4-454a-b1e4-0b76d2ca5f38" style=3D"display:none!importa=
+nt" height=3D"1" width=3D"1"></div><div class=3D"gmail_extra"><br><div clas=
+s=3D"gmail_quote">On Wed, Apr 27, 2016 at 12:36 AM, Rayzer <span dir=3D"ltr=
+">&lt;<a href=3D"mailto:rayzer@riseup.net" target=3D"_blank">rayzer@riseup.=
+net</a>&gt;</span> wrote:<br><blockquote class=3D"gmail_quote" style=3D"mar=
+gin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"><div class=3D"H=
+OEnZb"><div class=3D"h5"><br>
+<br>
+On 04/26/2016 11:57 AM, Robert Hettinga wrote:<br>
+&gt;&gt; On Apr 26, 2016, at 2:43 PM, Cari Machet &lt;<a href=3D"mailto:car=
+imachet@gmail.com">carimachet@gmail.com</a>&gt; wrote:<br>
+&gt;&gt;<br>
+&gt;&gt; all fucking rich fucks hate the camping hippies?<br>
+&gt; Yup. Especially the rich fucks who earned their own money=E2=80=A6 Esp=
+ecially the hippies who smell bad. :-)<br>
+&gt;<br>
+&gt; Cheers,<br>
+&gt; RAH<br>
+&gt;<br>
+&gt;<br>
+&gt;<br>
+<br>
+<br>
+</div></div>I&#39;ve noted over the years that many software developers &#3=
+9;smell bad&#39;. I<br>
+think it&#39;s the cocaine and alcohol.<br>
+<br>
+RR<br>
+<br>
+Ps. Most of those &quot;Rich fucks who earned their own money&quot; blew it=
+ off<br>
+just as fast as they earned it on hookers and lamborghinis (because they<br=
+>
+had no class and didn&#39;t understand why they had to wait for delivery on=
+<br>
+a Maserati) . A LOT of them can be found down on the San Lorenzo levee.<br>
+Burned out and sucking a bottle of two buck chuck.<br>
+<br>
+</blockquote></div><br><br clear=3D"all"><div><br></div>-- <br><div class=
+=3D"gmail_signature"><div dir=3D"ltr"><div>Cari Machet<br>NYC 646-436-7795<=
+br><a href=3D"mailto:carimachet@gmail.com" target=3D"_blank">carimachet@gma=
+il.com</a><br>AIM carismachet<br>Syria +963-099 277 3243<br>Amman +962 077 =
+636 9407<br>Berlin +49 152 11779219 <br>Reykjavik +354 894 8650<br>Twitter:=
+ @carimachet &lt;<a href=3D"https://twitter.com/carimachet" target=3D"_blan=
+k">https://twitter.com/carimachet</a>&gt;<br><br></div>7035 690E 5E47 41D4 =
+B0E5 B3D1 AF90 49D6 BE09 2187<br><div><br>Ruh-roh, this is now necessary: T=
+his email is intended only for the <br>addressee(s) and may contain confide=
+ntial information. If you are not the <br>intended recipient, you are hereb=
+y notified that any use of this <br>information, dissemination, distributio=
+n, or copying of this email without <br>permission is strictly prohibited.<=
+br><br><br></div></div></div>
+</div>
+
+--001a11c15ba07f233a05316b5168--
+

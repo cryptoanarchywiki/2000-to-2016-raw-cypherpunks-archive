@@ -1,0 +1,141 @@
+Return-path: <cypherpunks-bounces@cpunks.org>
+Envelope-to: rsw@positron.jfet.org
+Delivery-date: Fri, 29 Jul 2016 10:20:45 -0700
+Received: from antiproton.jfet.org ([209.141.47.85])
+	by positron.jfet.org with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.87)
+	(envelope-from <cypherpunks-bounces@cpunks.org>)
+	id 1bTBSn-0007ue-IB
+	for rsw@positron.jfet.org; Fri, 29 Jul 2016 10:20:45 -0700
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u6THCG4x023531;
+	Fri, 29 Jul 2016 13:12:16 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=iLmPx2l4;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-it0-f43.google.com (mail-it0-f43.google.com
+ [209.85.214.43])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u6THCDnh023527
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Fri, 29 Jul 2016 13:12:14 -0400
+Received: by mail-it0-f43.google.com with SMTP id f6so197886535ith.1
+ for <cypherpunks@cpunks.org>; Fri, 29 Jul 2016 10:12:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :cc; bh=AtsGMiweCsSTrjN2mr56dOy/w6/UGRGLApeJNs/Wu8c=;
+ b=iLmPx2l4VtkcXELMv8yVe/sEU1/XtfSm8MBTa/HdEMfaZfoeYE2h3X+nQCr8vT1g4g
+ jXxi2PEpx0/PDg54uxVDEIp7WRl3Tff+D1c4QVJkH+pcMxFeTVnZH2fm8BeSnyoKinpR
+ 5OMvZh23dwfIizfHVjBdbB+7guLopBjIZK/fRuuQZ4Wx7PQVJjW3QNpkLRBYznHQq/dn
+ 1A0aOCPJBzf4nECbS/pulxGx/vBWZ3oE0pbUKPsfvpgBCnPOMvXhTV5xOyIPjlKIyEPR
+ iHAUXlcgh9F0HmEkRwzWybFtHmM9l6phy2m49ICFi+DjB9hAHHitriVQC3IWdE/FSqZR
+ j0tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to:cc;
+ bh=AtsGMiweCsSTrjN2mr56dOy/w6/UGRGLApeJNs/Wu8c=;
+ b=H4dlku7ZQZbMY1dDlAtjsnzVuF70cVhR3gpu4sXI6bU2h1m8UXO8KXHsnSG3BvQfoR
+ gkD3Js8u0bVzdiR6i7QM9v0U5ZQ58yQN4JBkNQbWNrbUV/DUkany0lmeGCogCF5VQDHJ
+ EGa6j76xDOOKIKvMKnmPIZIQlDabfQeW9Wxk7D4/IaCkxr+sriN1i/WpK+1K1SsccW95
+ RLo4k+8yGazrX0rXz08TAbVkaNkf0Z88S+n/fP7o89BMU+QZsK2JOSDpCWnZ30Vle0ny
+ aQmOTrlr7ysxxyNabCNOh8NfKJYZsMmm1QTmvyrp1n3P24GCtUgmsG7q8KSxCQb/Sn6z
+ on6w==
+X-Gm-Message-State: AEkooutwIGTd3Op2wBSDDffAD6VT0cxcqlOJl2be1QR1PnHK7CFJYlBNfT2LCxw/YAaT7NghrEBkV9VOH5QUdA==
+MIME-Version: 1.0
+X-Received: by 10.36.53.83 with SMTP id k80mr45903127ita.59.1469812327451;
+ Fri, 29 Jul 2016 10:12:07 -0700 (PDT)
+Received: by 10.107.170.26 with HTTP; Fri, 29 Jul 2016 10:12:06 -0700 (PDT)
+Received: by 10.107.170.26 with HTTP; Fri, 29 Jul 2016 10:12:06 -0700 (PDT)
+In-Reply-To: <CAGRDzQVBVB_hpVXwGjOYKhh+FpqwipatOG-rEzSDRodGWZfdQQ@mail.gmail.com>
+References: <4579aed2-1c44-553d-d37a-df440042166d@riseup.net>
+ <20160728053952.GN26012@x220-a02>
+ <579a5ad8.7724ed0a.f1ffa.8291@mx.google.com>
+ <20160728210249.GT26012@x220-a02>
+ <CAGRDzQW-NZnsXWcy77+B8jCED5ukdkEM_ANF3tYdhdTV7p4PVQ@mail.gmail.com>
+ <CAD2Ti28oekbZ_JC8azJijrvCOAMX4yKpnz-2JhjnjxSkpr_gyQ@mail.gmail.com>
+ <CAGRDzQU7Bk9zzn+78yybDqtk9-S4kx8orsVs-A=n41DyBoPa+w@mail.gmail.com>
+ <0164087bf8820ef4e6551e45a64b2f12@openmailbox.org>
+ <CAGRDzQVBVB_hpVXwGjOYKhh+FpqwipatOG-rEzSDRodGWZfdQQ@mail.gmail.com>
+Date: Fri, 29 Jul 2016 20:12:06 +0300
+Message-ID: <CAGRDzQWhe-per3+dPrpNuM4wVcPD7aFKq8N_0vdZVky7XipK-w@mail.gmail.com>
+Subject: Re: Deconstructing an Institutional Slander operation: @ioerror et
+ al...
+From: Cari Machet <carimachet@gmail.com>
+To: Spencer <spencerone@openmailbox.org>
+Content-Type: multipart/alternative; boundary=001a114a9622aa37c90538c95932
+Cc: cpunks <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 60
+
+--001a114a9622aa37c90538c95932
+Content-Type: text/plain; charset=UTF-8
+
+If you read the link i sent you would know there is residual power left on
+the device and an internal battery for specific tasks
+
+Also malware can be placed on your device
+
+Its sad that ppl on this list dont know tech
+
+On Jul 29, 2016 7:32 PM, "Spencer" <spencerone@openmailbox.org> wrote:
+
+Hi,
+
+
+> Cari Machet:
+> sim card is detectable without power
+>
+>
+This does not seem physically possible, at least without super villain
+resources.
+
+Wordlife,
+Spencer
+
+--001a114a9622aa37c90538c95932
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p dir=3D"ltr">If you read the link i sent you would know there is residual=
+ power left on the device and an internal battery for specific tasks</p>
+<p dir=3D"ltr">Also malware can be placed on your device </p>
+<p dir=3D"ltr">Its sad that ppl on this list dont know tech </p>
+<div class=3D"gmail_extra"><br><div class=3D"gmail_quote">On Jul 29, 2016 7=
+:32 PM, &quot;Spencer&quot; &lt;<a href=3D"mailto:spencerone@openmailbox.or=
+g">spencerone@openmailbox.org</a>&gt; wrote:<br type=3D"attribution"><block=
+quote class=3D"quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid=
+;padding-left:1ex">Hi,<br>
+<br>
+<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
+x #ccc solid;padding-left:1ex">
+<br>
+Cari Machet:<br>
+sim card is detectable without power<br>
+<br>
+</blockquote>
+<br>
+This does not seem physically possible, at least without super villain reso=
+urces.<br>
+<br>
+Wordlife,<br>
+Spencer<br>
+<br>
+<br>
+<br>
+</blockquote></div><br></div>
+
+--001a114a9622aa37c90538c95932--
+

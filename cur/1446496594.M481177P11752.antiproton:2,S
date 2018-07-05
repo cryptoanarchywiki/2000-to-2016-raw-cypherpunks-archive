@@ -1,0 +1,539 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id tA2KZmvT011729;
+	Mon, 2 Nov 2015 15:35:51 -0500
+Authentication-Results: antiproton.jfet.org; dkim=fail
+	reason="verification failed; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=rT1EdHfn;
+	dkim-adsp=none (unprotected policy); dkim-atps=neutral
+Received: from mail-lf0-f42.google.com (mail-lf0-f42.google.com
+ [209.85.215.42])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id tA2KZiKD011725
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Mon, 2 Nov 2015 15:35:46 -0500
+Received: by lfbf136 with SMTP id f136so52949040lfb.0
+ for <cypherpunks@cpunks.org>; Mon, 02 Nov 2015 12:35:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:sender:in-reply-to:references:from:date:message-id
+ :subject:to:cc:content-type;
+ bh=OJ+ljLMkFTeNLZLVRwDonPqjMwRhM/bsmOuFQ9cEWAU=;
+ b=rT1EdHfnzsL+WQ07YgBYCYpHC3TfdSsbViGjXYxM4LxrbQjV9rDVIwLEP1sQBNVBKZ
+ y5kS5oVCxhiqG+aVvJWJQQ8VXps3j48R0eSKUQAvh+WowfenQQgLpznfD5wa2jnIQ1dC
+ jDToK3sP9RtmCaZdemg1G69iSLpzHBSVIVTc9gMqCJAVHpLXaNqA/S32yo789oKMzY2a
+ S9OJPmvnaIZFwtd4dOPDSFXlnffEfsL42sosY9V4Ou2H+3OrXhrjJ1IKjmUbjcNXUzG6
+ vqwAptyWbBf4GCu+r1ZcCES9Z4LjOd2+3sSL0YZUHW6lHOMu66TPGmUaZDkCYu2tDF12
+ 6YBw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=odewijk_nl.20150623.gappssmtp.com; s=20150623;
+ h=mime-version:sender:in-reply-to:references:from:date:message-id
+ :subject:to:cc:content-type;
+ bh=OJ+ljLMkFTeNLZLVRwDonPqjMwRhM/bsmOuFQ9cEWAU=;
+ b=SzRMd57SOrN5Lmtun9b29lEOVcHU6OhWD1guLShNc7f9Whc77j4Hjqu8LbEyCcygND
+ 8e73Swj3SzE6r3W9iOf4kWk6Hbx50Gr1NhdI2rP2OaHXsS4wnbsnBbfR95Eh1e4PFEa2
+ 4tTNHefsSR3DfBfHHJhDcX+WUjMyv3tC5425BM6u3OrfsdVnToNj9P+2IfJXeh8V11Yk
+ nTMozNVVzltDoKdygs7Did3CriAgjNMM7x8gRUSJP/a5fzN1pQf71uS3OrmhinC9fPQe
+ 3ngqLlEE2TLrOaZpRgpKVENmMoY5+66kPEUS2QrRHi7Jvk4NVpPSqWfK93zIdd7SRCP6
+ CRdQ==
+X-Received: by 10.25.156.5 with SMTP id f5mr7459700lfe.46.1446496537848; Mon,
+ 02 Nov 2015 12:35:37 -0800 (PST)
+MIME-Version: 1.0
+Received: by 10.25.159.76 with HTTP; Mon, 2 Nov 2015 12:35:17 -0800 (PST)
+In-Reply-To: <563691c8.d3828c0a.96ed7.044b@mx.google.com>
+References: <CAHWD2rJNTxt2+=0rPkkc+323pTn-njkvJVgUE624LShu2xg1Eg@mail.gmail.com>
+ <150b0aeef50.276e.4d489027c0c4d0c1b1ca03a1f48f1ffb@misanthropia.org>
+ <20151028231728.1A96CC00019@frontend1.nyi.internal>
+ <CAOsGNSThwv=c9K4v4HkD27PD+wY9+XykyTNOWs=7FOwPpxctZw@mail.gmail.com>
+ <150b1290920.276e.4d489027c0c4d0c1b1ca03a1f48f1ffb@misanthropia.org>
+ <20151029013945.C7D9FC00012@frontend1.nyi.internal>
+ <CAHWD2rLJ0RgxcGZi=mKD=OfYYtCy1j9sfbzDKOVZuuX5EPCnJg@mail.gmail.com>
+ <56327869.361f8c0a.efb1c.692d@mx.google.com>
+ <CAHWD2rLBHnMHYnLZfYWfvvY9vQnxxrTp5Pk88H5mFoXO6+KW7g@mail.gmail.com>
+ <5633e047.b3588c0a.28e5f.1db7@mx.google.com>
+ <CAHWD2r+h3OsK0eAhU50PnRVBv-tULNWqQbYFbkOyqMyeAdOSDQ@mail.gmail.com>
+ <563691c8.d3828c0a.96ed7.044b@mx.google.com>
+From: =?UTF-8?Q?Lodewijk_andr=C3=A9_de_la_porte?= <l@odewijk.nl>
+Date: Mon, 2 Nov 2015 21:35:17 +0100
+X-Google-Sender-Auth: P3ErCsk2j2bGUebGBV_jtvxr2Jg
+Message-ID: <CAHWD2rLSbth8iSSf7zGyswb3n=d5v9u=hJ-Q-TWr7f2Q3mfDCQ@mail.gmail.com>
+Subject: Re: Shiny stuff and designer societies
+To: Juan <juan.g71@gmail.com>
+Content-Type: multipart/alternative; boundary=001a11411e344eb19c052394b87d
+Cc: "cypherpunks@cpunks.org" <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 464
+
+--001a11411e344eb19c052394b87d
+Content-Type: text/plain; charset=UTF-8
+
+2015-11-01 23:34 GMT+01:00 Juan <juan.g71@gmail.com>:
+
+> > Consistently applied and effective justice
+>         The state doesn't provide justice.
+>
+
+Hence I am upset with it.
+
+
+> > I think it's important to create law that's conservative and very
+> > morally and ethically neutral.
+>         OK. At this point you are pretty much some kind of bot.
+
+> I think justice should not depend upon ethics very much at all.
+>         You don't know what justice is.
+>
+
+What, because law is made by criminals, for criminals? idk why you don't
+like law. I guess you'd rather grab a horse, a sack, and a rope, and call
+that justice.
+
+Ethical considerations like animal rights should not encode into strict
+law. Same goes for drugs, sexuality, etc. Because these things are
+difficult and I am not going to hurt people (punish them) for something
+that might be fine, depending on how you look at it.
+
+> >         Abstaining from violence? States are the most violent
+> > >         organizations on the planet.
+> >
+> >
+> > It's a fucking for virginity kind of thing.
+>
+>         Yes, that's your position. A clear contradiction in terms. An
+>         absurdity. Nonsense.
+>
+>         You are supposed to present some kind of rational argument
+>         here. Crass contradictions are just the opposite of rational
+>         argument.
+>
+>         The game is totally and completely over and you lost big time.
+
+
+You know, when I answer with a joke it's probably because I couldn't bother
+to bridge to your level of stupidity. Sorry for letting that out, but
+compare the Wild West to the Roman Empire, compare African tribes to old
+Japan. Structured violence can decrease overall violence.
+
+If that's beyond you, well, I guess that's why 100% consent is not an
+option.
+
+ > > As to the complex arrangements
+
+> >         that can exist in a society, you don't need the state to
+> > >         have them.
+> > >
+> >
+> > True, but we have made it far easier by ways of state.
+>
+>
+>         False.
+>
+
+I explained in detail why this is. If you didn't get the "costs of
+enforcement" argument you're allowed to admit it. Hell, you might try
+providing any argument yourself instead of responding to mine.
+
+(to recap: if it costs 100 bucks to enforce a contract, the contract will
+not at all protect any damage below 100 bucks. Without governance the cost
+of strict enforcement is huge. You may also be in no position at all to
+enforce a contract, like when your adversary is more powerful than you)
+
+> >         It's also debatable why huge organizations are 'valuable'.
+> > Economies of scale is one reason. The other is singular ginormous
+> > efforts. The pyramids are an example, but also the space race, this
+> > boat
+>         What are you talking about. Who gives a fuck about the pyramids
+>         or the space race?
+>
+>         Oh you think people should be sacrificed for your retarded
+>         collective pet projects?
+> > Not just commerce; CERN is awesome!
+>
+>         cern is a useless piece of shit - it's welfare for scammers who
+>         pretend to be 'scientists'.
+>
+
+You're like a redneck piece of shit or something. To call CERN scammers ...
+you must be seriously troubled.
+
+And, actually, yeah, I think humanity is pretty much nothing but little pet
+projects. I think bigger and cooler pet projects are practically all we can
+hope for.
+
+
+> > > > We can produce incentive schemes, to encourage the correct
+> > > > behavior.
+> > >
+> > >         What is the 'correct' behaviour?
+> > >
+> >
+> > For the system's actors to behave as they should, as determined by the
+> > system.
+>
+>
+>         Do you have anything else apart from blatant contradictions and
+>         cicular 'logic'?
+>
+
+I know it's hard to reason with undefined variables, but the system was
+instantiated as "some organization that can generate 'appropriate'
+political decisions", where I marked "appropriate" such that you might
+understand it is an undefined variable, that I cannot fill in just like
+that.
+
+It's not the first time you've failed to grasp my meaning, and responded
+unkindly to the shadows you drew instead.
+
+        "Freedom is not very strongly defined anyway"
+>
+>         More meaningless rambling. Are you high or something?
+>
+
+Nah, I'm fundamental. If you think the word freedom has a good exact
+meaning, well, fuck you for keeping it to yourself.
+
+
+> > Mathematically it makes sense to have competition and free markets.
+>
+>         LMAO. Mathematics is for counting stuff.
+>
+
+Continuing in the same vein as the CERN comment. Sad.
+
+
+> > There you go using criminal as if it means something :)
+>
+>
+>         It means nothing to amoralist nutcases.
+>
+
+Well, at least I don't think I'm the source and means of justice.
+
+
+> > Uhm, the ideal criminal monopoly, to me, would be criminal enough to
+> > ensure it's own existence, and do things I like as well. Like
+> > advancing humanity.
+>
+>         lol...
+>
+>         Shouldn't you learn the ABC and master BASIC LOGICAL THINKING
+>         before trying to 'advance humanity'?
+>
+>         Are you fucking crazy? You can't grasp BASIC LOGIC and yet you
+>         want to 'advance humanity'??
+>
+
+Like, I dunno Juan, I'm really trying here. I thought you were about to
+start explaining what you think, but here you are, spewing meaningless
+offense again.
+
+I mean, I learned some formal logic, you'd say that's a superset of basic
+logic. UKGOV (through cie <http://cie.org.uk/>) even certified me for
+critical thinking which, I think, involved some logic. I mean I got a
+pretty bad grade, but I think it is because I merely skimmed the book the
+day before the exam and dedicated my essay to shitting on the BBC and how
+they're pressured for time in a world with bad journalism and lack specific
+expertise to discuss complex topics, but whatever.
+
+> Rights are defined by government,
+>         Are you completely retarded or what.
+>
+
+Doctors say no, Juan says yes, the mystery continues...
+
+Did you ever go for a mental checkup? Or did you prefer the criminals keep
+their scary tentacles away from you?
+
+
+> >
+> >         You are misunderstanding what natural rights are. Natural
+> > >         rights are a more legalistic description of common sense
+> > >         morality.
+> > >
+> > >         You can probably kill a few random people right now if you
+> > >         want. Say, use a car to run people over. But the fact that
+> > > you *can* kill people means killing people is morally right?
+> > >
+> > >         Same thing with natural rights. The fact that natural rights
+> > >         can be violated doesn't mean they don't exist.
+> > >
+> >
+> > Natural rights are entirely different from rights. It is as you say,
+> > a plea for encoding some specific morality into law. Claiming
+> > something is a natural right seems to imply that it's been a right
+> > since before the politics determined what is and isn't a right. I
+> > think it's pretty meaningless,
+>
+>
+>         Because you are some kind of psycho.
+>
+
+Poor alternative to admitting natural rights are just propagandaspeak for a
+proposed core/basic/minimal morality, and adjusting how you think about
+them.
+
+
+> > > > Ask the mountains thought to have
+> > > > spirits.
+> > >
+> > >         That's a poetic license.
+> >
+> > Can't ignore a mountain's natural rights, man.
+>
+>         Fuck you.
+>
+
+I feel your pain, but please direct your frustration towards the mountain.
+It knows how to help you.
+
+--001a11411e344eb19c052394b87d
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div class=3D"gmail_extra"><div class=3D"gmail_quote">2015=
+-11-01 23:34 GMT+01:00 Juan <span dir=3D"ltr">&lt;<a href=3D"mailto:juan.g7=
+1@gmail.com" target=3D"_blank">juan.g71@gmail.com</a>&gt;</span>:<br><block=
+quote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left-w=
+idth:1px;border-left-color:rgb(204,204,204);border-left-style:solid;padding=
+-left:1ex"><span class=3D"">&gt; Consistently applied and effective justice=
+<br></span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 The state doesn&#39;t provide justic=
+e.<br></blockquote><div><br></div><div>Hence I am upset with it.</div><div>=
+=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0=
+.8ex;border-left-width:1px;border-left-color:rgb(204,204,204);border-left-s=
+tyle:solid;padding-left:1ex"><span class=3D"">
+&gt; I think it&#39;s important to create law that&#39;s conservative and v=
+ery<br>
+&gt; morally and ethically neutral.<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 OK. At this point you are pretty much so=
+me kind of bot.</blockquote><blockquote class=3D"gmail_quote" style=3D"marg=
+in:0px 0px 0px 0.8ex;border-left-width:1px;border-left-color:rgb(204,204,20=
+4);border-left-style:solid;padding-left:1ex"><span class=3D"">&gt; I think =
+justice should not depend upon ethics very much at all.<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 You don&#39;t know what justice is.<br><=
+/blockquote><div><br></div><div>What, because law is made by criminals, for=
+ criminals? idk why you don&#39;t like law. I guess you&#39;d rather grab a=
+ horse, a sack, and a rope, and call that justice.</div><div><br></div><div=
+>Ethical considerations like animal rights should not encode into strict la=
+w. Same goes for drugs, sexuality, etc. Because these things are difficult =
+and I am not going to hurt people (punish them) for something that might be=
+ fine, depending on how you look at it.</div><div><br></div><blockquote cla=
+ss=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left-width:1px;=
+border-left-color:rgb(204,204,204);border-left-style:solid;padding-left:1ex=
+"><span class=3D"">&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0Abstaining fr=
+om violence? States are the most violent<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0organizations on the planet.<br>
+&gt;<br>
+&gt;<br>
+&gt; It&#39;s a fucking for virginity kind of thing.<br>
+<br></span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 Yes, that&#39;s your position. A cle=
+ar contradiction in terms. An<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 absurdity. Nonsense.<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 You are supposed to present some kind of ration=
+al argument<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 here. Crass contradictions are just the opposit=
+e of rational<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 argument.<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 The game is totally and completely over and you=
+ lost big time.</blockquote><div>=C2=A0</div><div>You know, when I answer w=
+ith a joke it&#39;s probably because I couldn&#39;t bother to bridge to you=
+r level of stupidity. Sorry for letting that out, but compare the Wild West=
+ to the Roman Empire, compare African tribes to old Japan. Structured viole=
+nce can decrease overall violence.</div><div><br></div><div>If that&#39;s b=
+eyond you, well, I guess that&#39;s why 100% consent is not an option.</div=
+><div><br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0=
+px 0.8ex;border-left-width:1px;border-left-color:rgb(204,204,204);border-le=
+ft-style:solid;padding-left:1ex">=C2=A0&gt; &gt; As to the complex arrangem=
+ents</blockquote><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px =
+0px 0.8ex;border-left-width:1px;border-left-color:rgb(204,204,204);border-l=
+eft-style:solid;padding-left:1ex"><span class=3D"">
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0that can exist in a society, you=
+ don&#39;t need the state to<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0have them.<br>
+&gt; &gt;<br>
+&gt;<br>
+&gt; True, but we have made it far easier by ways of state.<br>
+<br>
+<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 False.<br></blockquote><div><br></div><d=
+iv>I explained in detail why this is. If you didn&#39;t get the &quot;costs=
+ of enforcement&quot; argument you&#39;re allowed to admit it. Hell, you mi=
+ght try providing any argument yourself instead of responding to mine.</div=
+><div><br></div><div>(to recap: if it costs 100 bucks to enforce a contract=
+, the contract will not at all protect any damage below 100 bucks. Without =
+governance the cost of strict enforcement is huge. You may also be in no po=
+sition at all to enforce a contract, like when your adversary is more power=
+ful than you)=C2=A0</div><div><br></div><blockquote class=3D"gmail_quote" s=
+tyle=3D"margin:0px 0px 0px 0.8ex;border-left-width:1px;border-left-color:rg=
+b(204,204,204);border-left-style:solid;padding-left:1ex"><span class=3D"">&=
+gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0It&#39;s also debatable why huge =
+organizations are &#39;valuable&#39;.<br>
+&gt; Economies of scale is one reason. The other is singular ginormous<br>
+&gt; efforts. The pyramids are an example, but also the space race, this<br=
+>
+&gt; boat<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 What are you talking about. Who gives a =
+fuck about the pyramids<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 or the space race?<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Oh you think people should be sacrificed for yo=
+ur retarded<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 collective pet projects?<span class=3D""><br>
+&gt; Not just commerce; CERN is awesome!<br>
+<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 cern is a useless piece of shit - it&#39=
+;s welfare for scammers who<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 pretend to be &#39;scientists&#39;.<br></blockq=
+uote><div><br></div><div>You&#39;re like a redneck piece of shit or somethi=
+ng. To call CERN scammers ... you must be seriously troubled.</div><div><br=
+></div><div>And, actually, yeah, I think humanity is pretty much nothing bu=
+t little pet projects. I think bigger and cooler pet projects are practical=
+ly all we can hope for.</div><div>=C2=A0</div><blockquote class=3D"gmail_qu=
+ote" style=3D"margin:0px 0px 0px 0.8ex;border-left-width:1px;border-left-co=
+lor:rgb(204,204,204);border-left-style:solid;padding-left:1ex"><span class=
+=3D"">
+&gt; &gt; &gt; We can produce incentive schemes, to encourage the correct<b=
+r>
+&gt; &gt; &gt; behavior.<br>
+&gt; &gt;<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0What is the &#39;correct&#39; be=
+haviour?<br>
+&gt; &gt;<br>
+&gt;<br>
+&gt; For the system&#39;s actors to behave as they should, as determined by=
+ the<br>
+&gt; system.<br>
+<br>
+<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 Do you have anything else apart from bla=
+tant contradictions and<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 cicular &#39;logic&#39;?<br></blockquote><div><=
+br></div><div>I know it&#39;s hard to reason with undefined variables, but =
+the system was instantiated as &quot;some organization that can generate &#=
+39;appropriate&#39; political decisions&quot;, where I marked &quot;appropr=
+iate&quot; such that you might understand it is an undefined variable, that=
+ I cannot fill in just like that.</div><div><br></div><div>It&#39;s not the=
+ first time you&#39;ve failed to grasp my meaning, and responded unkindly t=
+o the shadows you drew instead.<br></div><div><br></div><blockquote class=
+=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left-width:1px;bo=
+rder-left-color:rgb(204,204,204);border-left-style:solid;padding-left:1ex">=
+<span class=3D"">=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;Freedom is not very stro=
+ngly defined anyway&quot;<br>
+<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 More meaningless rambling. Are you high =
+or something?<br></blockquote><div><br></div><div>Nah, I&#39;m fundamental.=
+ If you think the word freedom has a good exact meaning, well, fuck you for=
+ keeping it to yourself.</div><div>=C2=A0</div><blockquote class=3D"gmail_q=
+uote" style=3D"margin:0px 0px 0px 0.8ex;border-left-width:1px;border-left-c=
+olor:rgb(204,204,204);border-left-style:solid;padding-left:1ex"><span class=
+=3D"">&gt; Mathematically it makes sense to have competition and free marke=
+ts.<br>
+<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 LMAO. Mathematics is for counting stuff.=
+<br></blockquote><div><br></div><div>Continuing in the same vein as the CER=
+N comment. Sad.</div><div>=C2=A0</div><blockquote class=3D"gmail_quote" sty=
+le=3D"margin:0px 0px 0px 0.8ex;border-left-width:1px;border-left-color:rgb(=
+204,204,204);border-left-style:solid;padding-left:1ex"><span class=3D"">
+&gt; There you go using criminal as if it means something :)<br>
+<br>
+<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 It means nothing to amoralist nutcases.<=
+br></blockquote><div><br></div><div>Well, at least I don&#39;t think I&#39;=
+m the source and means of justice.</div><div>=C2=A0</div><blockquote class=
+=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left-width:1px;bo=
+rder-left-color:rgb(204,204,204);border-left-style:solid;padding-left:1ex">=
+<span class=3D"">&gt; Uhm, the ideal criminal monopoly, to me, would be cri=
+minal enough to<br>
+&gt; ensure it&#39;s own existence, and do things I like as well. Like<br>
+&gt; advancing humanity.<br>
+<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 lol...<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Shouldn&#39;t you learn the ABC and master BASI=
+C LOGICAL THINKING<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 before trying to &#39;advance humanity&#39;?<br=
+>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Are you fucking crazy? You can&#39;t grasp BASI=
+C LOGIC and yet you<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 want to &#39;advance humanity&#39;??<br></block=
+quote><div><br></div><div>Like, I dunno Juan, I&#39;m really trying here. I=
+ thought you were about to start explaining what you think, but here you ar=
+e, spewing meaningless offense again.</div><div><br></div><div>I mean, I le=
+arned some formal logic, you&#39;d say that&#39;s a superset of basic logic=
+. UKGOV (through <a href=3D"http://cie.org.uk/">cie</a>) even certified me =
+for critical thinking which, I think, involved some logic. I mean I got a p=
+retty bad grade, but I think it is because I merely skimmed the book the da=
+y before the exam and dedicated my essay to shitting on the BBC and how the=
+y&#39;re pressured for time in a world with bad journalism and lack specifi=
+c expertise to discuss complex topics, but whatever.</div><div><br></div><b=
+lockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-le=
+ft-width:1px;border-left-color:rgb(204,204,204);border-left-style:solid;pad=
+ding-left:1ex"><span class=3D"">&gt; Rights are defined by government,<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 Are you completely retarded or what.<br>=
+</blockquote><div><br></div><div>Doctors say no, Juan says yes, the mystery=
+ continues...</div><div><br></div><div>Did you ever go for a mental checkup=
+? Or did you prefer the criminals keep their scary tentacles away from you?=
+</div><div>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0p=
+x 0px 0px 0.8ex;border-left-width:1px;border-left-color:rgb(204,204,204);bo=
+rder-left-style:solid;padding-left:1ex"><span class=3D"">
+&gt;<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0You are misunderstanding what natural=
+ rights are. Natural<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0rights are a more legalistic des=
+cription of common sense<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0morality.<br>
+&gt; &gt;<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0You can probably kill a few rand=
+om people right now if you<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0want. Say, use a car to run peop=
+le over. But the fact that<br>
+&gt; &gt; you *can* kill people means killing people is morally right?<br>
+&gt; &gt;<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0Same thing with natural rights. =
+The fact that natural rights<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0can be violated doesn&#39;t mean=
+ they don&#39;t exist.<br>
+&gt; &gt;<br>
+&gt;<br>
+&gt; Natural rights are entirely different from rights. It is as you say,<b=
+r>
+&gt; a plea for encoding some specific morality into law. Claiming<br>
+&gt; something is a natural right seems to imply that it&#39;s been a right=
+<br>
+&gt; since before the politics determined what is and isn&#39;t a right. I<=
+br>
+&gt; think it&#39;s pretty meaningless,<br>
+<br>
+<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 Because you are some kind of psycho.<br>=
+</blockquote><div><br></div><div>Poor alternative to admitting natural righ=
+ts are just propagandaspeak for a proposed core/basic/minimal morality, and=
+ adjusting how you think about them.</div><div>=C2=A0</div><blockquote clas=
+s=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left-width:1px;b=
+order-left-color:rgb(204,204,204);border-left-style:solid;padding-left:1ex"=
+><span class=3D"">
+&gt; &gt; &gt; Ask the mountains thought to have<br>
+&gt; &gt; &gt; spirits.<br>
+&gt; &gt;<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0That&#39;s a poetic license.<br>
+&gt;<br>
+&gt; Can&#39;t ignore a mountain&#39;s natural rights, man.<br>
+<br>
+</span>=C2=A0 =C2=A0 =C2=A0 =C2=A0 Fuck you.<br></blockquote></div><br>I fe=
+el your pain, but please direct your frustration towards the mountain. It k=
+nows how to help you.</div></div>
+
+--001a11411e344eb19c052394b87d--
+

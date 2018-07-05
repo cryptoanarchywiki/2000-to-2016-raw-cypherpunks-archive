@@ -1,0 +1,109 @@
+From cypherpunks-bounces@cpunks.org  Mon Sep  9 04:28:29 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r898QLMP010506;
+	Mon, 9 Sep 2013 04:26:25 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r898QGdk010502
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Mon, 9 Sep 2013 04:26:18 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 9209D541F9C; Mon,  9 Sep 2013 10:26:15 +0200 (CEST)
+Date: Mon, 9 Sep 2013 10:26:15 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: Re: [cryptography] Random number generation influenced, HW RNG
+Message-ID: <20130909082615.GC10405@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 3165
+Lines: 71
+
+----- Forwarded message from "James A. Donald" <jamesd@echeque.com> -----
+
+Date: Mon, 09 Sep 2013 07:25:11 +1000
+From: "James A. Donald" <jamesd@echeque.com>
+To: Thor Lancelot Simon <tls@panix.com>
+Cc: cryptography@randombit.net
+Subject: Re: [cryptography] Random number generation influenced, HW RNG
+User-Agent: Mozilla/5.0 (Windows NT 5.1; rv:17.0) Gecko/20130801 Thunderbird/17.0.8
+Reply-To: jamesd@echeque.com
+
+On 2013-09-09 1:54 AM, Thor Lancelot Simon wrote:
+> On Sun, Sep 08, 2013 at 03:00:39PM +1000, James A. Donald wrote:
+>> On 2013-09-08 1:25 PM, Thor Lancelot Simon wrote:
+>>> On Sun, Sep 08, 2013 at 08:34:53AM +1000, James A. Donald wrote:
+>>>> Well, since you personally did this, would you care to explain the
+>>>> very strange design decision to whiten the numbers on chip, and not
+>>>> provide direct access to the raw unwhitened output.
+>>> You know as soon as anyone complained about this, they turned around
+>>> and provided access to the unwhitened output in the next major version
+>>> of the same product family, right?
+>> I am not aware of this.  Could you provide further details?
+> http://software.intel.com/en-us/blogs/2012/11/17/the-difference-between-rdrand-and-rdseed
+
+RDSEED provides the output of the /enhanced/ non-deterministic random
+number generator (ENRNG
+
+Which is "enhanced" by being whitened.
+
+And therefore makes it just as impossible to tell if the supposed
+randomness is backdoored as RDRAND does.
+
+What we need is the output of the entropy source.
+
+Supposedly we have a circuit that generates fairly random offwhite
+noise. (The entropy source) This is then AES encrypted (the enhanced
+non deterministic number generator), and the enhanced non
+deterministic random number generator then continuously seeds a pseudo
+random number generator, which provides the output of RDRAND
+
+To tell if there is a backdoor or not, we need the output of the
+entropy source, unenhanced.
+
+If the entropy source is real, it will show its analog characteristics
+leaking into the digital abstraction.  The correlations and anti
+correlations between nearby bits will reflect the analog values of the
+circuit, thus no two chips will show quite the same correlations, and
+the correlations will vary with temperature and overclocking.  These
+analog variations would be compelling evidence that the entropy source
+is the something very like the claimed circuit.
+
+Because RDSEED gives us the encrypted output of the entropy source, we
+cannot tell if the entropy source is a real entropy source, or a
+counter encrypted with the NSA's secret key.
+
+Since the whitening is deterministic, it is potentially reversible,
+but Intel does not appear to be releasing sufficient information to
+reverse it.
+
+
+_______________________________________________
+cryptography mailing list
+cryptography@randombit.net
+http://lists.randombit.net/mailman/listinfo/cryptography
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

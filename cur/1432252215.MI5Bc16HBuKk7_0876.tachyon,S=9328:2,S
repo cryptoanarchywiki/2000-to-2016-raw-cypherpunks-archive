@@ -1,0 +1,178 @@
+From owner-cypherpunks-outgoing@EINSTEIN.ssz.com  Fri Sep  8 05:23:47 2000
+Received: from MIT.EDU (SOUTH-STATION-ANNEX.MIT.EDU [18.72.1.2])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id FAA22634
+	for <kwantam@positron.mit.edu>; Fri, 8 Sep 2000 05:23:47 -0400
+Received: from einstein.ssz.com by MIT.EDU with SMTP
+	id AA26663; Fri, 8 Sep 00 05:23:13 EDT
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id EAA10434
+	for cypherpunks-outgoing; Fri, 8 Sep 2000 04:25:05 -0500
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id EAA10425
+	for cypherpunks@ssz.com; Fri, 8 Sep 2000 04:25:03 -0500
+Received: from mail.virtual-estates.net (cpunks@video-collage.com [160.79.196.177])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id EAA10404
+	for <cpunks@ssz.com>; Fri, 8 Sep 2000 04:24:54 -0500
+Received: (from cpunks@localhost)
+	by mail.virtual-estates.net (8.9.3+3.2W/8.9.1) id FAA18901;
+	Fri, 8 Sep 2000 05:05:39 -0400 (EDT)
+X-Authentication-Warning: video-collage.com: Processed from queue /var/spool/mqueue-majordomo
+X-Authentication-Warning: video-collage.com: Processed by cpunks with -C /usr/local/majordomo/sendmail.cf
+Received: from sirius.infonex.com (sirius.infonex.com [216.34.245.2])
+	by mail.virtual-estates.net (8.9.3+3.2W/8.9.3) with ESMTP id FAA18891
+	for <cypherpunks@algebra.com>; Fri, 8 Sep 2000 05:05:37 -0400 (EDT)
+X-Relay-Ip: 216.34.245.2
+Received: (from cpunks@localhost) by sirius.infonex.com (8.8.8/8.8.8) id CAA27868; Fri, 8 Sep 2000 02:07:31 -0700 (PDT)
+Received: from cyberpass.net (cyberpass.net [216.34.245.3]) by sirius.infonex.com (8.8.8/8.8.8) with ESMTP id CAA27839 for <cpunks@sirius.infonex.com>; Fri, 8 Sep 2000 02:07:22 -0700 (PDT)
+Received: from smile.idiom.com ([209.209.13.26]) by cyberpass.net (8.8.8/8.7.3) with ESMTP id CAA25921 for <cypherpunks@cyberpass.net>; Fri, 8 Sep 2000 02:09:20 -0700 (PDT)
+Received: from billstewart (sji-ca5-110.ix.netcom.com [209.109.234.110])
+	by smile.idiom.com (8.9.1/8.8.5) with SMTP id CAA70015;
+	Fri, 8 Sep 2000 02:07:12 -0700 (PDT)
+Message-Id: <3.0.5.32.20000908020659.00aa9200@idiom.com>
+X-Sender: wcs@idiom.com
+X-Mailer: QUALCOMM Windows Eudora Light Version 3.0.5 (32)
+Date: Fri, 08 Sep 2000 02:06:59 -0700
+To: Asymmetric <all@biosys.net>, cypherpunks@cyberpass.net
+From: Bill Stewart <bill.stewart@pobox.com>
+Old-Subject: Re: StoN, Diffie-Hellman, other junk..
+In-Reply-To: <4.3.2.7.2.20000907202226.00b11c68@mail.megapathdsl.net>
+References: <3.0.5.32.20000907150849.008ca7a0@idiom.com>
+ <4.3.2.7.2.20000907002505.00b2fbf8@mail.megapathdsl.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Subject: CDR: Re: StoN, Diffie-Hellman, other junk..
+Sender: owner-cypherpunks@EINSTEIN.ssz.com
+Precedence: bulk
+Reply-To: cypherpunks@EINSTEIN.ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Language: English, Russian, German
+Status: O
+Content-Length: 6392
+Lines: 123
+
+At 09:20 PM 9/7/00 -0400, Asymmetric wrote:
+>I agree that voice using TCP has the drawbacks that you mentioned, however, 
+>because of the other existing requirements such as CBC and File Transfer, 
+>it is required that you have a reliable connection to get even the basic 
+>functionality of the program to work.  I'd rather have a delay in hearing 
+>the voice messages until the packets have arrived than decrease their 
+>security by using ECB.
+
+You can still do CBC with UDP.  You might want to look at hybrid solutions,
+like basic connectivity and voice connections on UDP and separate TCP
+connections
+for data transfer, though that may be more trouble than it's worth.
+
+...
+>p196, pp2
+>"While CBC mode recovers quickly from bit errors, it doesn't recover at all 
+>from synchronization errors.  If a bit is added or lost from the ciphertext 
+>stream, then all subsequent bits are shifted one bit out of position and 
+>decryption will generate garbage indefinitely."
+>
+>I assume that losing an entire block worth of bits will cause as much havoc 
+>as losing just one bit would.  If that isn't correct, I'd like to hear it..
+
+There are synchronization problems you can recover from and ones you can't.
+You need to stay aligned on the encryption-block barrier, e.g. 64 bits for DES
+or 128 bits for some other algorithms.  If you lose that, you're toast.
+But if you always pad your packets to multiples of the block size,
+you don't have a problem with UDP, since packets either arrive or don't.
+So if you lose a packet, then you've toasted the first 16 bytes of the next,
+but the rest of the packet and the rest of the conversation are ok.  
+With TCP, you don't lose packets, though you don't always have convenient 
+mechanisms for keeping track of packet boundaries, but you're always going 
+to write in block-size chunks anyway.
+
+
+>
+>>The rule of thumb is that you need at least twice as many bits of
+>>DH as you need of secure session key for your application, and you need
+>>at least as many bits of DH as you would need for RSA.
+>>You wouldn't want to use fewer than 1024 bits of RSA these days,
+>>so don't use fewer than 1024 bits of DH.  That's enough for multiple
+>>128-bit keys.
+>>There are various format proposals for turning the DH key into a session
+key,
+>>like using Hash(DHKey,YourIP,TheirIP,maybe-a-counter-or-Salt).
+>>4096 may be overkill, but it depends a lot on how often you'll be rekeying
+>>and how long you're willing to watch the CPU crunch to set up a connection.
+>
+>The D/H is going to be used just to generate a key to securely transfer a 
+>4096 bit key for use in symmetrical crypto routines later in the program, 
+>for actual encryption of the chat/voice/file data transfers.  Using 1024 
+>bits of D/H is fine to generate a key-encryption key to just transfer the 
+>4096bit key.  I chose 4096 because it's large enough to be used in any 
+>symmetric crypto algorithm to max out it's key length.
+
+Any symmetric algorithm will have maxed out by 256 bits, and most by 128,
+though you may want different keys for your two directions.
+So generating the DH key with 1024 bits is probably enough,
+though it doesn't hurt much to do 2048 or 4096 -
+no need for separately generating a key and shipping it.
+In particular, DH takes advantage of both machines' sources of randomness,
+which is a major win over something generated by one end
+unless you've got a good reason for it.
+
+>>If you don't have any other keying mechanism, you need to worry about
+>>man-in-the-middle attacks.  A simple approach is to use PGP public keys
+>>to sign the keyparts; that lets you reuse all the PGP infrastructure.
+>>There are alternatives, at least for voice, like reading the bits of the
+>>shared keys to each other.  See the PGPFONE docs for much discussion on
+>>user interfaces - and think about how much of their code you can rip
+>>off\\\\\\ reuse.
+>
+>Well, truth be told, everyone knows that there is the problem "If Mallory 
+>is God.." which in this world simply means, if Mallory is your upstream 
+>you're in some serious trouble.  He could just as easily intercept the PGP 
+>keys and replace them with his own if they didn't already exist on the 
+>server.. this would cause problems for keys signed outside mallorys realm, 
+>say if you could distribute your key outside his available channels... 
+>however, if you could do that, you could just as easily trade a PRNG and a 
+>list of seeds, or even discuss whatever it is you mean to discuss over a 
+>cup of coffee.. :)
+
+Sometimes Mallory _is_ your ISP - even without Carnivore.
+Public key technology only needs one untampered data transfer to happen,
+and PGP has a lot more infrastructure for that than trading PRNGs.
+Signing DH keyparts is a job for public-key signatures.
+
+>>Also read the Photuris internet drafts - there's a lot of experience
+>>on denial-of-service attacks that they've incorporated,
+>>and it doesn't take much work to prevent most of them.
+>
+>Ah, sorry.. how did we get on the topic of denial of service?
+
+By saying "I'm going to put this chat server on the Internet"....
+Crypto has its own special denial-of-service flavors in addition to
+the regular ones, and Photuris addresses a lot of it with minimal work.
+
+>Delphi can call C routines no problem, I have two problems with GMP that 
+>however have nothing to do with Delphi..
+>
+>First, It's GPL'd, or under a modified version of the GPL.  I find the GPL 
+>to be distasteful and it forms a barrier more than a bridge to continued 
+>software development.  The reason for this I think is pretty simple; the 
+>GPL (I refer to the classic GPL.. I am not sure of modifications to it that 
+>may have been made for it's application to GMP) has made it excruciatingly 
+>clear that any program or library using any GPL'd source code must itself 
+>be open source, and cannot be sold for profit, but only "at-cost". 
+
+The "Library GPL" was written to address just that problem.
+Stallman calls it the "Lesser GPL", because he doesn't like it (:-),
+but LGPL says you have to distribute source code for the LGPL'd libraries 
+you use or modify (or indicate where to download them) but doesn't GPLize the
+code you wrote that isn't part of the libraries.  So you can use it in
+your proprietary product without publishing your code, charge money for it,
+etc.
+
+
+
+
+				Thanks! 
+					Bill
+Bill Stewart, bill.stewart@pobox.com
+PGP Fingerprint D454 E202 CBC8 40BF  3C85 B884 0ABE 4639
+

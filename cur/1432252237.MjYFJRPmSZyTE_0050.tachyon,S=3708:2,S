@@ -1,0 +1,91 @@
+From owner-cypherpunks@al-qaeda.net  Fri Jun 22 12:00:18 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q5MFuw8p006065
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 22 Jun 2012 11:56:58 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q5MFuwYq006064
+	for cypherpunks-outgoing; Fri, 22 Jun 2012 11:56:58 -0400
+Date: Fri, 22 Jun 2012 17:56:55 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: Re: [tahoe-dev] tahoe-lafs 1.9.1 shipped in the next Debian
+  stable
+Message-ID: <20120622155655.GH17120@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Zooko Wilcox-O'Hearn <zooko@zooko.com> -----
+
+From: Zooko Wilcox-O'Hearn <zooko@zooko.com>
+Date: Fri, 22 Jun 2012 12:51:59 -0300
+To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+Subject: Re: [tahoe-dev] tahoe-lafs 1.9.1 shipped in the next Debian stable
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+Dear Bertagaz:
+
+We're almost ready to release Tahoe-LAFS v1.9.2, and I wonder if it is
+okay to take a couple more days for extra testing or if we should
+hurry and finalize it so you can package it for Debian?
+
+We've fixed all but one of the issues that we intended to fix. You can
+see the issue tickets here:
+
+https://tahoe-lafs.org/trac/tahoe-lafs/milestone/1.9.2
+
+The one serious issue that isn't fixed yet is
+
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1670# KeyError in mutable retrieve
+
+We know of a bug in the code (dict instead of tuple being returned
+from get_verinfo() of MDMFs), but we're not sure if that bug is
+causing that failure. There is no unit test currently demonstrating
+that failure.
+
+We prefer not to fix bugs when we don't have a unit test that goes
+from red to green by that fix, so if it won't make us miss the Debian
+deadline, I'd like to take a couple more days to figure out how to
+write a unit test of #1670. Then we'll find out if the
+dict-instead-of-tuple bug is causing #1670 or not.
+
+Also I'm doing an experiment of converting all of the existing unit
+tests from using SDMFs to using MDMFs as a way to find any bugs in
+MDMFs. So far I haven't found any more bugs in MDMFs that way.
+(Because there were already quite a few tests of MDMFs.)
+
+Also, it would be great to have some actual users try out 1.9.2 before
+we finalize it. Users! You can do this right now if you're willing to
+use darcs to fetch the source. This is actually painless -- you just
+acquire darcs (http://wiki.darcs.net/Binaries) and then you run
+
+darcs get --lazy https://tahoe-lafs.org/source/tahoe-lafs/1.9.2
+
+Then you never have to touch darcs again.
+
+That command takes about 60 seconds to run.
+
+Oh, but it might fail if the darcs binary you got is incapable of
+handling HTTPS. In that case, you give up and complain to us and we'll
+post some tar.gz files for you to try out...
+
+Regards,
+
+Zooko
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

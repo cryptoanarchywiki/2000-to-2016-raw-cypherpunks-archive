@@ -1,0 +1,145 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u5NJOqmx017729;
+	Thu, 23 Jun 2016 15:24:54 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=m9uSAxCk;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-vk0-f47.google.com (mail-vk0-f47.google.com
+ [209.85.213.47])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u5NJOmon017723
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 23 Jun 2016 15:24:50 -0400
+Received: by mail-vk0-f47.google.com with SMTP id j2so120811139vkg.2
+ for <cypherpunks@cpunks.org>; Thu, 23 Jun 2016 12:24:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to;
+ bh=N4t3Bfw+J794zqJobQLnJzIoAdmZbQNP/pE0fkNe8y0=;
+ b=m9uSAxCkGRTVVs6mC/gol5qGcD2YpSVTVehKup4I04Nm6wj10wAFyREz5w6bzjRl1k
+ yvJJpt/5moW7AIKStMpuexbsrD+rOCpgLD7qajn9TP+Am/1Cqy16DMwr3/AGa3a/79S4
+ spzrMGDZV8MtpsaqzYlJxYZ1OmuYHAqguD6Cdr6UXzSBo7Gq5W8b/aLiJJf/lo1z102E
+ txUMBtlp2kc8UtOLVXDGkbCDlPdu87pAzlzqW/H39WNg7yLFDPg/DvTtE19LJN/F8Oa+
+ E9MtiPpnLQ4mCDZBvJ5Ue1w2XfzI7PjexLZJVVkQf/JzCMqYjxnf4dyUH3j4Wzae6Pfd
+ 7vUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to;
+ bh=N4t3Bfw+J794zqJobQLnJzIoAdmZbQNP/pE0fkNe8y0=;
+ b=XWKHCPAYkB3mqrCgzksO8Lv5mU0fAUsFMWuKDOS/Tb9OgUmYqKhxl80sa7HIHXIf2U
+ SdQEX+28VsR11vwyjYEUPfddfjB9J85FwjgUq6cH80kC4uTClo8Nm0NentKQrzhW4a4a
+ 1IgsiwEOXJDsgbHnbOQGYqS5WAFLLGKj+a0C3JH3YcfUBm4QxW3vQ84dK2G27rx6WBL7
+ YrOZzadiZGDwGEWTzmCEcX/Z7grzBmqrItMmH/PGsJzG9kULSLDSnWnpvlO3HWhc1sjQ
+ MqyDofsGXz8E04BoPoTXd0jIbWAQBObkSt4gzzSZTQ0IP4EswF9X3XpS6HUkMqnJFLV3
+ dRcg==
+X-Gm-Message-State: ALyK8tJ6zNOaeuKad+fh2NSSOILjl4Z/7x/OarWn9Wp4ckjUqumHnBveGdI2nPe72mj4n+Wbwsk15MdKjEBpEA==
+MIME-Version: 1.0
+X-Received: by 10.176.7.102 with SMTP id h93mr35408uah.70.1466709883010; Thu,
+ 23 Jun 2016 12:24:43 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Thu, 23 Jun 2016 12:24:42 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Thu, 23 Jun 2016 12:24:42 -0700 (PDT)
+In-Reply-To: <576c2c08.cd00b00a.2f0e3.54f3@mx.google.com>
+References: <CAG2tMp6ifHKNoP6cfF7gMWp5eHVEwOJuBsGYVoGSvpPn72Vcbw@mail.gmail.com>
+ <d0e6db7279148f9eafdda74678adb972@cryptolab.net>
+ <CAG2tMp7EY3UtEE+eZZQJ_rvHFnM77dcjR-kAgQOK0KSV8LfhbA@mail.gmail.com>
+ <CAG2tMp5pyWsG_6doHL8i4yO+NN2X2fkENAJ0Qkz5=yidE-R2nQ@mail.gmail.com>
+ <576b0d29.c8249f0a.fdc44.32aa@mx.google.com>
+ <CAG2tMp5Yw4k2WQ05FEcQfQYtdvMqEve85XxinNmZ7bus6jqavg@mail.gmail.com>
+ <576b20a2.e701b00a.1d4b5.415d@mx.google.com>
+ <CAG2tMp4s1HTNOHw5Or7OKwcox1u9FPp9oUKJjcanb8Hb2rHi2w@mail.gmail.com>
+ <20160623122746.GA6268@x220-a02>
+ <576c2c08.cd00b00a.2f0e3.54f3@mx.google.com>
+Date: Thu, 23 Jun 2016 16:24:42 -0300
+Message-ID: <CAG2tMp7t1xi2PJStDZSdXRDFc--REG+nmiT7pdBi1xvrRh1Hmw@mail.gmail.com>
+Subject: Re: Hi, Boyce! (was Fwd: tor-talk subscription update)
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=94eb2c12335c90cbb70535f701e3
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 73
+
+--94eb2c12335c90cbb70535f701e3
+Content-Type: text/plain; charset=UTF-8
+
+On Jun 23, 2016 3:42 PM, "juan" <juan.g71@gmail.com> wrote:
+
+>         Cecilia said 'moderation' (that is censorship) was almost always
+bad, but sometimes 'justified'(or something like that).
+>
+>         Given the 'context' and as far as I'm concerned, Cecilia was
+saying that banning all the people that tor-fascists banned was 'justified'
+'ok' or whatever.
+
+Hey, I did not say it at all, hard headed Juan!  :P
+
+But it is their list and their rules, being unjust or not.  If they want to
+censor their list in a dishonest and stupid way, using bad excuses, they
+will lose credibility, respect and collaborators.  Their problems, not mine.
+
+>         By the way, Cecilia's 'argument'  is pretty much self-defeating.
+If censorship is OK 'sometimes', then she can't complain about being
+censored 'sometimes', like 'this' time.
+
+Sorry, I wanted to read the list and don't care about following rules to do
+it, if necessary.  Social rules, for example:  - In the Summer, I really
+prefer to be nude all the time, but I use clothes or I will be arrested.
+:-/
+
+Reading the tor-talk list is not possible because my personal positions are
+different?  Ok, what could I wait of a guy who can't simply admiss that was
+stupid, limited and cruel for calling a raped woman, a "ludicrous rape
+apologetics".
+
+I know it is a terrible bad karma, but I would love to graffitti these
+exact words in his house.  So Boyce would be able to understand how heavy
+and offensive were his words.
+
+--94eb2c12335c90cbb70535f701e3
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p>On Jun 23, 2016 3:42 PM, &quot;juan&quot; &lt;<a href=3D"mailto:juan.g71=
+@gmail.com">juan.g71@gmail.com</a>&gt; wrote:</p>
+<p>&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 Cecilia said &#39;moderation&#39; (that=
+ is censorship) was almost always bad, but sometimes &#39;justified&#39;(or=
+ something like that).<br>
+&gt;<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 Given the &#39;context&#39; and as far as =
+I&#39;m concerned, Cecilia was saying that banning all the people that tor-=
+fascists banned was &#39;justified&#39; &#39;ok&#39; or whatever.</p>
+<p>Hey, I did not say it at all, hard headed Juan!=C2=A0 :P</p>
+<p>But it is their list and their rules, being unjust or not.=C2=A0 If they=
+ want to censor their list in a dishonest and stupid way, using bad excuses=
+, they will lose credibility, respect and collaborators.=C2=A0 Their proble=
+ms, not mine.<br></p>
+<p>&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 By the way, Cecilia&#39;s &#39;argument=
+&#39;=C2=A0 is pretty much self-defeating. If censorship is OK &#39;sometim=
+es&#39;, then she can&#39;t complain about being censored &#39;sometimes&#3=
+9;, like &#39;this&#39; time.</p>
+<p>Sorry, I wanted to read the list and don&#39;t care about following rule=
+s to do it, if necessary.=C2=A0 Social rules, for example:=C2=A0 - In the S=
+ummer, I really prefer to be nude all the time, but I use clothes or I will=
+ be arrested.=C2=A0 :-/</p>
+<p>Reading the tor-talk list is not possible because my personal positions =
+are different?=C2=A0 Ok, what could I wait of a guy who can&#39;t simply ad=
+miss that was stupid, limited and cruel for calling a raped woman, a &quot;=
+ludicrous rape apologetics&quot;.</p>
+<p>I know it is a terrible bad karma, but I would love to graffitti these e=
+xact words in his house.=C2=A0 So Boyce would be able to understand how hea=
+vy and offensive were his words.=C2=A0 <br></p>
+
+--94eb2c12335c90cbb70535f701e3--
+

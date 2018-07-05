@@ -1,0 +1,70 @@
+From bear@sonic.net  Wed Oct 18 11:26:48 2000
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.72.0.53])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id LAA17458
+	for <kwantam@positron.mit.edu>; Wed, 18 Oct 2000 11:26:48 -0400
+Received: from marine.sonic.net (marine.sonic.net [208.201.224.37])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with SMTP id LAA15789
+	for <rsw@mit.edu>; Wed, 18 Oct 2000 11:26:46 -0400 (EDT)
+Received: (qmail 12782 invoked from network); 18 Oct 2000 15:26:41 -0000
+Received: from prop.sonic.net (208.201.224.193)
+  by marine.sonic.net with SMTP; 18 Oct 2000 15:26:41 -0000
+Received: from sonic.net (bolt [208.201.224.36])
+	by prop.sonic.net (8.11.0/8.8.5) with ESMTP id e9IFQfS28382;
+	Wed, 18 Oct 2000 08:26:41 -0700
+X-envelope-info: <bear@bolt.sonic.net>
+Received: from localhost (bear@localhost) by sonic.net (8.11.0/8.7.3) with ESMTP id e9IFTf216499; Wed, 18 Oct 2000 08:29:41 -0700
+Date: Wed, 18 Oct 2000 08:29:41 -0700 (PDT)
+From: Ray Dillinger <bear@sonic.net>
+To: "Riad S. Wahby" <rsw@mit.edu>
+cc: cypherpunks@einstein.ssz.com
+Subject: Re: CDR: Re: why should it be trusted?
+In-Reply-To: <20001018101550.B12491@positron.mit.edu>
+Message-ID: <Pine.LNX.4.21.0010180808410.15459-100000@bolt.sonic.net>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Status: O
+Content-Length: 1905
+Lines: 41
+
+
+
+On Wed, 18 Oct 2000, Riad S. Wahby wrote:
+
+>Sampo A Syreeni <ssyreeni@cc.helsinki.fi> wrote:
+>> I think addition is bounded by something more like o(n) - carry propagation
+>> limits it. Anyway, your point is accurate. There are proven NP-hard problems
+>> and there have even been attempts to find ones with easy inverses for use in
+>> crypto. I don't think any of them have succeeded.
+>
+>If you're talking about the carries actually falling through full
+>adders, there is a method called carry lookahead that computes carries
+>in a tree (with branching factor 2).  Computing the sum bits from the
+>carries is a constant time independent of the number of bits in the
+>adder, so the process is overall Theta(log(N)).
+
+Actually, even that's not quite true.  Carry lookahead guarantees 
+worst-case performance on addition of O(log2 N) where N is the 
+size of the numbers being addded.  However, there is a "shortcut" 
+available, on average, once per 2 bits in the addition where the 
+carry can be determined fully even before carry-lookahead gets 
+there.  These are the "base cases" of carry lookahead, where both 
+operand bits are equal to one, or both operand bits are equal to 
+zero.  You don't need to determine the carry into those places to 
+determine the carry bits out of them.
+
+ This means that you can build hardware, in practice, that 
+does addition in an average case proportional to the log of the 
+distance between (1,1)pairs in the operands.  In the worst case, 
+that's (log2 N) but in the average case it's (Log2 (log2 N)).
+The downside of this is that it involves an O((2^N)/N) number 
+of gates, where conventional carry lookahead involves only O(N^2)
+number of gates, and that it makes the amount of time required to 
+complete an addition depend on the arguments.  Chip designers 
+generally don't do this, more because of the second reason than 
+the first. 
+
+:-)  Math, anyone?
+
+				Bear
+
+

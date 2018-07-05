@@ -1,0 +1,54 @@
+From owner-cypherpunks@jfet.org  Mon Feb 19 13:28:17 2007
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.8/8.13.8/Debian-2) with ESMTP id l1JIS2Uo015691
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 19 Feb 2007 13:28:02 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.8/8.13.8/Submit) id l1JIS27f015690
+	for cypherpunks-outgoing; Mon, 19 Feb 2007 13:28:02 -0500
+DomainKey-Signature: a=rsa-sha1; c=nofws;         d=gmail.com; s=beta;  
+  h=received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+  b=e7mk1W9H1EnexWh8aqYYA+/rFp4bPcQ89bOFoTFFctlv4QodnIVYHRxSOjlnZTtRD42Ea3MLzFEMKLvB6LKwKk6ueJ9bSnVQl+0XV1dMwjuJl0Nf+tR9vfw3MdnALuNKup3WYYfwyZMfhdAnhQp8JYmoDKRjKAzU7z4OHjrGjjk=
+Message-ID: <4ef5fec60702191027j95b8744m4eaddf0de80909a8@mail.gmail.com>
+Date: Mon, 19 Feb 2007 10:27:59 -0800
+From: coderman <coderman@gmail.com>
+To: "Tyler Durden" <camera_lumina@hotmail.com>
+Subject: Re: Confirming Random numbers?
+Cc: cypherpunks@jfet.org
+In-Reply-To: <BAY116-F1925C8D22CBA23BEB2B0859B8A0@phx.gbl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+References: <E1HIDXA-000742-00@pop-savannah.atl.sa.earthlink.net> 	
+  <BAY116-F1925C8D22CBA23BEB2B0859B8A0@phx.gbl>
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 985
+Lines: 22
+
+On 2/19/07, Tyler Durden <camera_lumina@hotmail.com> wrote:
+> ...
+> Is it possible to verify that a remote random number generator is actually
+> random?
+
+remote or not doesn't add much to the difficulty of the question: "is
+it _truly_ random?"
+
+lots of statistical tests to confirm that a given distribution of bits
+IS NOT, but nothing to prove IT IS.  and by IS NOT, i mean
+sufficiently improbable to be random, thus considered not random.
+even a true hw rng could throw all bits set given enough chances.
+
+it's easy for a remote peer to fool such statistical tests: check the
+output of AES-CBC keyed with all zeros.  there is almost no actual
+entropy (in the keys) yet the output appears to be random, and you
+would (in theory) not be able to distinguish without the key used.
+
+if you look at the various hw rng daemons they often to some FIPS
+sanity checks on the input but leave it at that.  the idea is that
+failed hardware will start producing FIPS failures and can be
+detected.
+

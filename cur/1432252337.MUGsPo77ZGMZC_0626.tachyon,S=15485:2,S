@@ -1,0 +1,431 @@
+From owner-cypherpunks@Algebra.COM  Tue Mar  6 19:48:48 2001
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id TAA06358
+	for <kwantam@positron.mit.edu>; Tue, 6 Mar 2001 19:48:46 -0500
+Received: from ak47.algebra.com (root@ak47.algebra.com [208.233.99.160])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id TAA08541
+	for <rsw@mit.edu>; Tue, 6 Mar 2001 19:48:45 -0500 (EST)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f26NeXC04341
+	for cypherpunks-outgoing; Tue, 6 Mar 2001 17:40:33 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f26NeM304315
+	for <cypherpunks@algebra.com>; Tue, 6 Mar 2001 17:40:23 -0600
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id f26NeK518240
+	for cypherpunks@algebra.com; Tue, 6 Mar 2001 15:40:20 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id f26NeIo18230
+	for cypherpunks-goingout; Tue, 6 Mar 2001 15:40:18 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Received: (from ericm@localhost) by slack.lne.com (8.11.0/8.11.0) id
+  f26NeFw18222 for cypherpunks@lne.com; Tue, 6 Mar 2001 15:40:15 -0800
+Received: from mailsys01.intnet.net (tmail.wwc.com [198.252.32.143] (may
+  be forged)) by slack.lne.com (8.11.0/8.11.0) with SMTP id f26NBDd18013
+  for <cypherpunks@lne.com>; Tue, 6 Mar 2001 15:11:18 -0800
+Received: from [206.112.109.43] (HELO whysean) by mailsys01.intnet.net
+  (CommuniGate Pro SMTP 3.3.2) with SMTP id 4400262 for
+  cypherpunks@lne.com; Tue, 06 Mar 2001 18:10:28 -0500
+From: "Sean Hastings" <sean@hastings.ai>
+To: cypherpunks@lne.com
+X-Orig-To: <cypherpunks@lne.com>
+Old-Subject: Sectional Parameter Hashing
+Date: Tue, 6 Mar 2001 15:17:19 -0800
+Message-ID: <LOBBJCJJJBIOBEAFOIDCAEKLDBAA.sean@hastings.ai>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook IMO, Build 9.0.2416 (9.0.2910.0)
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Sectional Parameter Hashing
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 12924
+Lines: 378
+
+
+All,
+
+This past week I have been thinking about a document format and hashing
+method that allows arbitrary level partial disclosure of a verifiably signed
+document, as well as formal reference/reuse of subdocuments inside of larger
+documents. Basically it is a technique for using a hash tree within a
+standard document format.
+
+Below is a description of a system that satisfies some of my needs. I would
+appreciate some feed back. Thanks.
+
+--Sean Hastings
+--mailto:sean@havenco.com
+--vmsg/fax:1.800.why.sean
+
+ - - -
+
+<html>
+<head>
+<title>VOXP - Value and Obligation eXchange Processing</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body bgcolor="#FFFFFF">
+<h1>Sectional Parameter Hashing</h1>
+<p>A description of a possible format and uses for documents that are
+designed
+  to behave like Hash Trees.</p>
+<h2>0. Contents:</h2>
+<blockquote>
+  <p>0.) Contents</p>
+  <p>1.) Format</p>
+  <blockquote>
+    <p>1.1) Headings</p>
+    <p>1.2) Digests</p>
+    <p>1.3) White Space</p>
+  </blockquote>
+  <p>2.) Storage</p>
+  <blockquote>
+    <p>2.1) Parameterization</p>
+    <p>2.2) Text File</p>
+    <p>2.3) Database</p>
+  </blockquote>
+  <p>3.) Parameters</p>
+  <p>4.) Types</p>
+  <blockquote>
+    <p>3.1.) Signatures</p>
+    <p>3.2.) Certificates</p>
+    <p>3.3.) Vehicles</p>
+  </blockquote>
+  </blockquote>
+<h2></h2>
+<h2>1. Format:</h2>
+<blockquote>
+  <p>The system makes use of a document format and digest technique called
+Sectional
+    Parameter Hashing (SPH).</p>
+  <p>The general document format is designed to support hashing technique in
+which
+    the subdocuments under a heading may be reduced to (or expanded from) a
+text
+    representation of its digest, without altering the overall documents
+digest
+    value. This is done by having a structured document format, and an
+understood
+    technique for computing the document's digest.</p>
+  <h3>1.1 Sections:</h3>
+  <blockquote>
+    <p>A section is indicated with a heading followed by a colon followed by
+a
+      newline. This is followed by one or more lines of indented text, which
+may
+      include sub sections. Where no indented text follows the heading
+designation,
+      the section is considered to be empty. Where subsections are present,
+they
+      are always located after any original body text, and are ordered by
+numeric
+      character value of their heading's component characters. For
+example:</p>
+    <pre><code>report from alpha group
+received:
+	2001:02:25:21:52:07:258
+report:
+	We have met the enemy, and they have won.
+	Regrouping to await further orders.
+	casualties:
+		heavy
+	kia:
+		Sgt. Ben Kilroy
+		Pvt. John Brown
+		Gen. May Ham
+ 	mia:
+	situation:
+		fubar</code></pre>
+  </blockquote>
+  <h3>1.2 Digests:</h3>
+  <blockquote>
+    <p>The idea of a digest (or hash) function is that a section of text can
+be
+      reduced to a unique value. This is used in digital signatures, where
+the
+      document to be signed is first reduced to a unique number, and then
+that
+      number is encrypted with the signing party's private key. The
+resulting
+      cipher text can be decrypted with the corresponding public key to
+obtain
+      the digest value, and if the document is known, it can be used to
+recompute
+      the digest value and see that they match. This allows any party to
+verify
+      that the holder of a certain private key has signed a given document.
+It
+      also allows any party to hold the record of a signature, without (yet)
+having
+      access to the document that was signed. At a later time the document
+text
+      can be produced and the signature verified.</p>
+    <p>SPH uses a hashing by section protocol that allows a final hash of
+any
+      document (or subdocument) to be produced (and possibly signed) that
+does
+      not change with the expansion or collapse of a particular sub section
+to
+      its own unique digest value. This allows verifiable signatures to be
+produced
+      and disclosed with a great degree of variety as to how much of the
+document
+      needs be revealed to a particular party.</p>
+    <p>This is done as follows. The digest of the entire document is
+computed
+      after first reducing contained subdocuments to a
+HEADINGNAME:TEXTHASHCODE.
+      The digest of each subdocument is computed the same way, with the
+digests
+      of its subdocuments computed first. Where a subsection is already
+expressed
+      as a digest, no work is done. By following this recursive process, the
+same
+      digest is obtained for any document, regardless of which headings and
+sub
+      headings may be revealed in plain text, or represented only by their
+unique
+      digest value.</p>
+    <p>So our sample document above can be displayed as:</p>
+    <pre><code>report from alpha group
+received:
+	2001:02:25:21:52:07:258
+report:
+	We have met the enemy, and they have won.
+	Regrouping to await further orders.
+	casualties:TEXTHASHCODE
+	kia:TEXTHASHCODE
+	mia:TEXTHASHCODE
+	situation:TEXTHASHCODE</code></pre>
+    <p>OR:</p>
+    <pre><code>report from alpha group
+received:
+	2001:02:25:21:52:07:258
+report:TEXTHASHCODE</code></pre>
+    <p>OR:</p>
+    <pre><code>report from alpha group
+received:TEXTHASHCODE
+report:TEXTHASHCODE</code></pre>
+    <p> Whatever the combination of collapsed or expanded headings, the
+digest
+      computed for the entire document using the SPH technique will remain
+the
+      same. The final digest value will always represent a hash of the last
+example
+      above, regardless of how much or little of the document is known.</p>
+  </blockquote>
+  <h3>1.3 White Space:</h3>
+  <blockquote>
+    <blockquote>
+      <h2></h2>
+    </blockquote>
+    <p>Headings must not begin or end with a whitespace character, but they
+can
+      include white space inside of them, and they must be terminated by a
+colon.
+      Any text after the colon will be interpreted as a digest of the
+subdocument
+      under the heading. If this text does not fit the format of the hash
+(Sha1
+      hex - 40 characters 0-1,A-F), the line will be interpreted as body
+text,
+      but if it is not properly positioned at the beginning of an indented
+section
+      to be body text, or the heading is not in proper alphanumeric order,
+the
+      document will be considered malformed.</p>
+    <p>Indentation under each heading will take the form of a single
+additional
+      &lt;Tab&gt; character at the beginning of each line. Additional tabs
+or
+      whitespace beyond the expected level at the beginning of a document or
+sub
+      document before any headings will be considered part of body text.
+Anywhere
+      else, they will indicate a malformed document.</p>
+    <p>These rules of heading indentation, naming, and order by alphanumeric
+value
+      are designed to ensure that there is only one possible way to rebuild
+a
+      stored document.</p>
+  </blockquote>
+</blockquote>
+<h2>2. Storage:</h2>
+<blockquote>
+  <p>The text representation of the digest of a document can be used as a
+name
+    by which the document can be referenced. This allows SPH documents to be
+stored
+    in whole or part, broken into known component pieces.</p>
+  <p>In addition to the advantages mentioned above, concerning disclosure of
+only
+    some portions of a signed document, the other big reason for storing
+documents
+    in multiple pieces is document reference and reuse. For example, a party
+might
+    create a document to described himself, containing both a public key and
+personal
+    data such as name, adders, email, and so on. This document could then be
+referenced/included
+    in other documents to refer to that party. Stored documents take the
+form
+    of document references, with different trees possibly sharing some of
+the
+    same branches..</p>
+  <h3>2.1 Parameterization:</h3>
+  <blockquote>
+    <p>Document may be broken apart and stored internally as parameters with
+sub
+      parameters. The following represents a parameter breakdown of the
+sample
+      document above:</p>
+    <pre><code>DOC.VALUE=&quot;report from alpha group&quot;
+DOC.SEC1.NAME=&quot;received&quot;
+DOC.SEC1.VALUE=&quot;2001:02:25:21:52:07:258&quot;
+DOC.SEC2.NAME=&quot;report&quot;
+DOC.SEC2.VALUE=&quot;We have met the enemy, and they have won./nRegrouping
+to await further orders.&quot;
+DOC.SEC2.SEC1.NAME=&quot;casualties&quot;
+DOC.SEC2.SEC1.VALUE=&quot;heavy&quot;
+DOC.SEC2.SEC2.NAME=&quot;kia&quot;
+DOC.SEC2.SEC2.VALUE=&quot;Sgt. Ben Kilroy/nPvt. John Brown/nGen. May
+Ham&quot;
+DOC.SEC2.SEC3.NAME=&quot;mia&quot;
+DOC.SEC2.SEC3.VALUE=&quot;&quot;
+</code><code>DOC.SEC2.SEC4.NAME=&quot;situation&quot;
+DOC.SEC2.SEC4.VALUE=&quot;fubar&quot;</code></pre>
+  </blockquote>
+  <h3>2.2 Text Files:</h3>
+  <blockquote>
+    <p>Documents can be easily stored as text files, with filenames
+corresponding
+      to the text representation of the contained documents digest. The
+format
+      is as follows:</p>
+    <pre><code>FILENAME=TEXTHASHCODE.voxp
+  body text
+  heading1:TEXTHASHCODE-1
+  heading2:TEXTHASHCODE-2
+  headingN:TEXTHASHCODE-N</code></pre>
+  </blockquote>
+  <h3>2.3 Database:</h3>
+  <blockquote>
+    <p>Documents can be stored in two simple database tables defined as
+follows:</p>
+    <pre><code>TABLE documents
+  digest   CHAR(40)  #40 for hex SHA-1
+  bodytext VARCHAR
+
+TABLE sections
+  doc      CHAR(40)  #digest of parent document
+  heading  CHAR(80)  #80 arbitrary max length for heading name
+  sub      CHAR(40)  #digest of sub document</code></pre>
+  </blockquote>
+</blockquote>
+<h2>3. Parameters</h2>
+<blockquote>
+  <p>A number of standard parameters can be defined for general purposes.
+Some
+    possibilities are: Author, Title, Date, Version, Type. There is no real
+difference
+    between a Parameter and a section containing a sub document. The only
+obvious
+    difference would be that a parameter would be a much smaller piece of
+data
+    - for example a Date, a number, or a short string. Note that Author
+above
+    could be a full certificate that describes the author, or just a hash of
+same
+    certificate.</p>
+  <p>Since parameters like the number &quot;10&quot; would produce well
+known
+    digests, if concealing them is necessary, a protocol for adding random
+noise
+    to them should be included. For example, the number &quot;10&quot; and
+&quot;10
+    + 'SOMERANDOMENOISE'&quot; could be parsed the same by an application,
+but
+    the later would have an unrecognizable digest.</p>
+  <p>Use of a standard set of parameters such as Author and Title and
+Version
+    in storage of the documents, could create an additional mechanism of
+uniquely
+    identifying a document other than just its hash code. If the document
+storage
+    and transfer system defines some standard parameters for such purposes,
+it
+    might be a good idea to prefix them with a designation and version
+number
+    like &quot;SPH0.1-Title&quot; or some such...</p>
+</blockquote>
+<h2>4. Types:</h2>
+<blockquote>
+  <p>Once a standard parameter called &quot;Type&quot; is defined, it makes
+sense
+    to define a few types. A few possibly useful types are (somewhat)
+defined
+    here.</p>
+  <h3>4.1 Signatures:</h3>
+  <blockquote>
+    <p>Signature Documents make use of public key encryption techniques to
+show
+      that a party has digitally signed a given document. The body text
+represents
+      a digital signature of an SPH document digest. The defined headings
+following
+      this signature are Certificate and Document. The Certificate heading
+contains
+      a sub document identifying the signing party (see below). The Document
+heading
+      contains the document from which the signed SPH digest was
+computed.</p>
+  </blockquote>
+  <h3>4.2 Certificates:</h3>
+  <blockquote>
+    <p>Certificate Documents associate real world obligations and identities
+with
+      specific public keys. The body text of the certificate contains text
+representing
+      a public key. The subsections of the certificate are called the
+Assertions.
+      These are such things as Name, Address, Phone Number, Email, etc., and
+information
+      on how the certified party plays certain defined roles in Vehicle
+execution
+      or other defined document types - such as rates charged for certain
+services,
+      whom they are willing to trade with, or a definition of their currency
+and
+      the real world goods/services for which their issued currency. A
+currency
+      can therefore be expressed simply as the digest of the certificate
+that
+      defines it - or perhaps more appropriately a digest of a Signature
+document
+      self signing the certificate that defines it.</p>
+  </blockquote>
+  <h3>4.3 Vehicles:</h3>
+  <blockquote>
+    <p> Vehicles contain information concerning the exchange of obligations
+between
+      parties. A vehicle is an executable document that specifies exchanges
+of
+      a user defined currency. A vehicle may also contain an agreement
+binding
+      to some of the signing parties.</p>
+  </blockquote>
+</blockquote>
+<h1>etc... (work in progress)</h1>
+</body>
+</html>
+

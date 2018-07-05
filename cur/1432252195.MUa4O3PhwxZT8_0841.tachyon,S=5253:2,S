@@ -1,0 +1,103 @@
+From cypherpunks-bounces@cpunks.org  Tue Dec 17 00:25:05 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id rBH5OtZO007772;
+	Tue, 17 Dec 2013 00:24:57 -0500
+Authentication-Results: antiproton.jfet.org; dkim=fail
+	reason="verification failed; insecure key"
+	header.d=auckland.ac.nz header.i=@auckland.ac.nz header.b=oy1cuE9D;
+	dkim-adsp=none (insecure policy); dkim-atps=neutral
+Received: from mx2.auckland.ac.nz (mx2.auckland.ac.nz [130.216.125.245])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id rBH5OlAT007768
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Tue, 17 Dec 2013 00:24:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+ d=auckland.ac.nz; i=@auckland.ac.nz; q=dns/txt; s=uoa;
+ t=1387257890; x=1418793890;
+ h=date:message-id:from:to:subject:cc:in-reply-to;
+ bh=8U3nxDsrmlfre8HAI77wwzqoyY7fO6yK9E13crpZbaM=;
+ b=oy1cuE9DElMdXOZbLugjCSVpRB205Nefgr2YnuRN9/ar2Za/7+qKfO2U
+ n9d69EpUGxc87y6lfQtS1y4MTu1FuINZ0LUyqiCOblAKSuNVAqUg+zegz
+ Jv0x3b+Q/2v/aQDYbUYlcBu/LGkX5GJ5Nc3qxMf5WwOmWd2oNIJJ3qOSi s=;
+X-IronPort-AV: E=Sophos;i="4.95,499,1384254000"; d="scan'208";a="227276738"
+X-Ironport-HAT: UNIVERSITY - $RELAY-THROTTLE
+X-Ironport-Source: 130.216.34.40 - Outgoing - Outgoing
+Received: from login01.fos.auckland.ac.nz ([130.216.34.40])
+ by mx2-int.auckland.ac.nz with ESMTP/TLS/AES256-SHA; 17 Dec 2013 18:24:41 +1300
+Received: from pgut001 by login01.fos.auckland.ac.nz with local (Exim 4.72)
+ (envelope-from <pgut001@login01.fos.auckland.ac.nz>)
+ id 1Vsn8B-0003Cc-VG; Tue, 17 Dec 2013 18:23:43 +1300
+Date: Tue, 17 Dec 2013 18:23:43 +1300
+Message-Id: <E1Vsn8B-0003Cc-VG@login01.fos.auckland.ac.nz>
+From: Peter Gutmann <pgut001@cs.auckland.ac.nz>
+To: pgut001@cs.auckland.ac.nz, tom@ritter.vg
+Subject: Re: BlueHat v13 crypto talks - request for leaks ;)
+In-Reply-To: <CA+cU71mMhSKA+DJW5DBWyJvBbGk1LLJGCBjK4BPwgvGvRs-sog@mail.gmail.com>
+Cc: cypherpunks@cpunks.org, justin@justintroutman.com
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+Tom Ritter <tom@ritter.vg> writes:
+>On 14 December 2013 14:51, Peter Gutmann <pgut001@cs.auckland.ac.nz> wrote:
+>
+>> For example if you
+>>  follow DSA's:
+>>
+>>   k = G(t,KKEY) mod q
+>>
+>> then you've leaked your x after a series of signatures, so you need to know
+>> that you generate a large-than-required value before reducing mod q.  The
+>> whole DLP family is just incredibly brittle, a problem that RSA doesn't
+>> have.
+>
+>This is different from the normal 'repeated/non-random k leads to private
+>key', is it not?  Is there a paper/reference I can read more about this
+>attack?
+
+Yes, this is one of several variations of subtle leak-the-private-key issues,
+rather than the standard obvious-leak-the-private-key.  The code comment I've
+got has, alongside other observations:
+
+           The best reference for this is 
+           probably "The Insecurity of the Digital Signature Algorithm with 
+           Partially Known Nonces" by Phong Nguyen and Igor Shparlinski or 
+           more recently Serge Vaudenay's "Evaluation Report on DSA"
+
+Then there's tricks like:
+
+   Suppose that the
+   certificate contains a copy of the certificate signer's DSA parameters,
+   and the verifier of the certificate has a copy of the signer's public key
+   but not the signer's DSA parameters (which are shared with other keys).
+   If the verifier uses the DSA parameters from the certificate along with
+   the signer's public key to verify the signature on the certificate, then
+   an attacker can create bogus certificates by choosing a random u and
+   finding its inverse v modulo q (uv is congruent to 1 modulo q).  Then
+   take the certificate signer's public key g^x and compute g' = (g^x)^u.
+   Then g'^v = g^x.  Using the DSA parameters p, q, g', the signer's public
+   key corresponds to the private key v, which the attacker knows.  The
+   attacker can then create a bogus certificate, put parameters (p, q, g')
+   in it, and sign it with the DSA private key v to create an apparently
+   valid certificate.  This works with the DSA OID that makes p, q, and g
+   unauthenticated public parameters and y the public key, but not the one
+   that makes p, q, g, and y the public key
+
+That's not leaking the private key, but it allows signature forgery via
+another mechanism that's totally unrelated to "was the fundamental DSA
+algorithm implemented correctly".  As I said, the DLP algorithms are really,
+really brittle, you have to worry about all sorts of things that aren't a
+concern with RSA.
+
+Peter.
+

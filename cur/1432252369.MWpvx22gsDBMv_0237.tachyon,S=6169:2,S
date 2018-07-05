@@ -1,0 +1,132 @@
+From owner-cypherpunks-outgoing@ssz.com  Tue Nov  7 23:21:18 2000
+Received: from MIT.EDU (SOUTH-STATION-ANNEX.MIT.EDU [18.72.1.2])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id XAA12116
+	for <kwantam@positron.mit.edu>; Tue, 7 Nov 2000 23:21:18 -0500
+Received: from einstein.ssz.com by MIT.EDU with SMTP
+	id AA29313; Tue, 7 Nov 00 23:20:52 EST
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id WAA12792
+	for cypherpunks-outgoing; Tue, 7 Nov 2000 22:18:11 -0600
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id WAA12777
+	for cypherpunks@ssz.com; Tue, 7 Nov 2000 22:18:08 -0600
+Received: from mail.virtual-estates.net (root@video-collage.com [160.79.196.177])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id WAA11693
+	for <cpunks@ssz.com>; Tue, 7 Nov 2000 22:10:38 -0600
+Received: (from cpunks@localhost)
+	by mail.virtual-estates.net (8.9.3+3.2W/8.9.1) id UAA17383;
+	Tue, 7 Nov 2000 20:46:55 -0500 (EST)
+X-Authentication-Warning: video-collage.com: Processed from queue /var/spool/mqueue-majordomo
+X-Authentication-Warning: video-collage.com: Processed by cpunks with -C /usr/local/majordomo/sendmail.cf
+Received: from waste.minder.net (cpunks@fw.minder.net [216.25.149.98])
+	by mail.virtual-estates.net (8.9.3+3.2W/8.9.3) with ESMTP id UAA17373
+	for <cypherpunks@algebra.com>; Tue, 7 Nov 2000 20:46:54 -0500 (EST)
+X-Relay-Ip: 216.25.149.98
+Received: (from cpunks@localhost)
+	by waste.minder.net (8.9.3/8.9.3) id UAA29512
+	for cypherpunks@algebra.com; Tue, 7 Nov 2000 20:46:43 -0500
+Received: from domains.invweb.net (root@domains.invweb.net [198.182.196.32])
+	by waste.minder.net (8.9.3/8.9.3) with ESMTP id UAA29501
+	for <cpunks@minder.net>; Tue, 7 Nov 2000 20:46:42 -0500
+Received: (from openpgp@localhost)
+	by domains.invweb.net (8.9.3/8.9.3) id UAA31750;
+	Tue, 7 Nov 2000 20:43:31 -0500
+Date: Tue, 7 Nov 2000 20:43:31 -0500
+Message-Id: <200011080145.UAA00598@cypherspace.org>
+Originator: cypherpunks@openpgp.net
+From: Adam Back <adam@cypherspace.org>
+To: Multiple recipients of list <cypherpunks@openpgp.net>
+Old-Subject: Re: PipeNet protocol
+X-Listprocessor-Version: 6.0 -- ListProcessor by Anastasios Kotsikonas
+X-Comment: All list traffic is being monitored by the FEDS!!
+X-Loop: openpgp.net
+Old-Subject:  Re: PipeNet protocol
+Subject: CDR: Re: PipeNet protocol
+Sender: owner-cypherpunks@ssz.com
+Precedence: bulk
+Reply-To: cypherpunks@ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Language: English, Russian, German
+Status: O
+Content-Length: 3616
+Lines: 76
+
+
+Wei writes:
+> > [...] if many web servers supported
+> > connections from the freedom cloud using freedom protocol, and nodes
+> > in the network did per hop padding using a modified PipeNet scheduling
+> > algorithm where you would try to use PipeNet scheduling, but instead
+> > of delaying, if a packet didn't arrive in time, you would send some
+> > cover instead on a hop by hop basis.  [...]
+> 
+> I don't think that works very well. When you send some hop by hop
+> padding, every node downstream would be able to tell that some delay
+> occured somewhere upstream in the connection. 
+
+I think I phrased that badly.  The hop that didn't receive enough
+packets on a link would create padding, but the padding would be
+end-to-end between that hop and the end hop (the recipient node, be
+that client or freedom enabled web server).
+
+Clearly if you compromise enough exit nodes, you can then selectively
+DoS links and observe the padding as the exit node must see it.
+
+With freedom and to some extent with the freedom on servers variant
+(my earlier comment quoted above) I think 3 hops is roughly the
+maximum useful number of hops.  This is because it's a real-time
+protocol and it's not end-to-end padded.
+
+In the case of freedom it's simply not end-to-end padded, with the
+servers variant it could be end-to-end padded, but the attacker could
+compromise other nodes, induce delay and therefore persuade the node
+to pad and then correlate the padding with the compromised exit node.
+Hence in either case two compromised nodes gives you a lot of info.
+
+With PipeNet's synchronous mix-net you don't have this problem, but
+you have the performance and DoS problems.
+
+> So if either the receiver (the last node) or the next to last node
+> is compromised, the attacker would be able to trace the caller by
+> correlating between delays in the network and where hop by hop
+> padding occurs.
+
+I agree with this conclusion despite the ambiguous explanation -- the
+attack is a little more active, and requires more compromises, but
+still holds I think.  So this type of network is not secure against
+too many node compromises, where-as PipeNet's synchronous mix-net has
+more mix-net like properties.  However it offers reasonable security,
+it should have reasonable performance, be resistant to widespread DoS
+and have similar bandwidth overhead to PipeNet.
+
+You could use traffic shaping (in any of the networks we discussed) to
+reduce the bandwidth consumption in quiet periods as Lucky described
+in the past based on slowly moving average, typical period
+fluctuations etc.
+
+There is another parameter in the previous comparison I missed off:
+
+4. Bandwidth Cost
+
+With the server variant of freedom you could also mix different
+classes of traffic -- some with end-to-end padding and some with no
+padding.  The padding is fairly expensive in bandwidth.  Also one
+could have different route create and destroy rules -- PipeNet create
+and destroy mixing will make route setup quite slow.  In this way you
+could build a network which supports different performance, cost, DoS
+resistance and security trade-offs.  You could presumably allow
+PipeNet in the same network also.
+
+There is some advantage to having more people using the same protocol,
+because there will be limits to the cover provided to each other of
+different traffic classes.  Weaker things could be eliminated from the
+picture for example with higher level threat models, if the threshold
+of compromised nodes or capability of attacker is above the weaker
+higher performance routing protocol, but below that required to
+compromise the high security protocol.
+
+Adam
+
+

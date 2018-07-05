@@ -1,0 +1,107 @@
+From owner-cypherpunks@lne.com  Tue Nov 11 20:41:28 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p3/8.11.6-03-31-03) with ESMTP id hAC1fQq16755
+	for <rsw@jfet.org>; Tue, 11 Nov 2003 20:41:26 -0500
+Received: from slack.lne.com (slack.lne.com [127.0.0.1])
+	by slack.lne.com (8.12.10/8.12.10) with ESMTP id hAC1JS5E004583
+	(version=TLSv1/SSLv3 cipher=EDH-DSS-DES-CBC3-SHA bits=168 verify=NO)
+	for <cypherpunks-goingout345@slack.lne.com>; Tue, 11 Nov 2003 17:19:28 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.10/8.12.10/Submit) id hAC1JSCP004582
+	for cypherpunks-goingout345; Tue, 11 Nov 2003 17:19:28 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+X-Authentication-Warning: waste.minder.net: majordom set sender to
+  owner-cypherpunks@minder.net using -f
+User-Agent: Microsoft Outlook Express Macintosh Edition - 5.01 (1630)
+Date: Wed, 12 Nov 2003 01:17:09 +0000
+Old-Subject: Re: Deniable data storage
+From: Peter Fairbrother <zenadsl6186@zen.co.uk>
+To: Tarapia Tapioco <comesefosse@ntani.firenze.linux.it>,
+   <cypherpunks@minder.net>, <jamesd@echeque.com>
+Message-ID: <BBD73A95.3DF5C%zenadsl6186@zen.co.uk>
+In-Reply-To: <8a68127465263ac88c1b4db00de97f64@firenze.linux.it>
+Mime-version: 1.0
+Content-type: text/plain; charset="US-ASCII"
+Content-transfer-encoding: 7bit
+X-Originating-Heisenberg-IP: [62.3.121.225]
+Subject: Re: Deniable data storage
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2735
+Lines: 71
+
+Tarapia Tapioco wrote:
+
+> James A. Donald (jamesd@echeque.com) wrote on 2003-11-06:
+>> I want fully deniable information storage -- information
+>> theoretic deniable, not merely steganographic deniable, for
+>> stenography can never be wholly secure.
+
+Information-theoretic deniability is impossible (or impractical). You can
+have computationally-bounded secure deniability though.
+
+> 
+> So, StegFS is not "deniable enough"? I'm not much of a theory buff,
+> but it sure sounds nice from the paper...
+> 
+
+StegFS (if that's the one Markus Kuhn wrote, there is another program with a
+similar name which isn't as secure), and the other construction in Ross
+Anderson, Roger Needham and Adi Shamir's paper [1] are pretty good, at least
+as good as your outline construction.
+
+All hide ciphertext in random data, rather than in eg images, where there is
+no underlying pattern to the covertext which an adversary can use a better
+understanding of than the filing system has to extract and identify
+ciphertext.
+
+The moral? - hide ciphertext in random data, not "partly-random" data such
+as images.
+
+You might also want to look at Mnemosyne [2], but I haven't analysed it and
+have no idea whether it's any good.
+
+
+It also depends on whether your adversary is going to torture you, or take
+you to Court. There's not a great deal of difference in effect, but a
+torturer can harm you on suspicion only, whereby a Court can't jail you on
+suspicion alone but needs, at least in theory, proof beyond reasonable
+doubt.
+
+
+
+
+Getting a bit theoretical now, but still important:
+
+Two problems with all these systems are observability and secure deletion.
+If the database can be continuously observed (eg a NFS-based FS) then an
+adversary can ask why the SFS was modified. This can be overcome - I'm
+writing a paper on how to do that right now, but it's not finished yet.
+
+Secure deletion is harder - if someone can prove that some data is in the
+SFS (or, combining this with observability, that some data was at some time
+in the SFS) then they can demand a key - are you going to remember a zillion
+different keys/passwords, and what they refer to? If you store them
+somewhere then they can demand the key to the keys, so to speak.
+Problematic.
+
+I think secure deletion in observable SFS's is impossible, it seems obvious
+on information grounds - but there also seems to be just a teeny hint of a
+crack in that proof. I'm working on it.
+
+
+
+James, you might want to move this to eg the cryptography list if you want
+more technical answers. Or subject yourself to sci.crypt's abuse, which will
+at least stop some elementary mistakes.
+
+[1] http://www.cl.cam.ac.uk/ftp/users/rja14/sfs3.pdf
+
+[2] www.cs.rice.edu/Conferences/IPTPS02/107.pdf
+
+-- 
+Peter Fairbrother
+

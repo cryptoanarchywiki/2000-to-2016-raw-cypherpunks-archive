@@ -1,0 +1,395 @@
+From owner-cypherpunks@al-qaeda.net  Mon Jan 31 06:08:17 2005
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (majordomo@localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.3/8.13.3/Debian-3) with ESMTP id j0VC66km014608
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Mon, 31 Jan 2005 06:06:06 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.3/8.13.3/Submit) id j0VC66fn014607
+	for cypherpunks-outgoing; Mon, 31 Jan 2005 06:06:06 -0600
+Date: Mon, 31 Jan 2005 12:47:02 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: [IP] more on Simson Garfinkel analyses Skype - Open Society
+  Institute -- interesting set of comments djf (fwd from
+  dave@farber.net)
+Message-ID: <20050131114702.GD1404@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.4i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 17266
+Lines: 366
+
+----- Forwarded message from David Farber <dave@farber.net> -----
+
+From: David Farber <dave@farber.net>
+Date: Sun, 30 Jan 2005 11:40:09 -0500
+To: Ip <ip@v2.listbox.com>
+Subject: [IP] more on Simson Garfinkel analyses Skype -
+ Open Society Institute -- interesting set of comments djf
+User-Agent: Microsoft-Entourage/11.1.0.040913
+Reply-To: dave@farber.net
+
+
+------ Forwarded Message
+From: David Pollak <dpp@athena.com>
+Date: Sun, 30 Jan 2005 07:44:21 -0800
+To: <dave@farber.net>
+Cc: <slg@ex.com>
+Subject: Re: FW: [IP] more on Simson Garfinkel analyses Skype - Open Society
+Institute
+
+Dave,
+
+I've been following the Simson/Skype thread on IP and I've read the Columbia
+analysis of the Skype protocol
+(http://www1.cs.columbia.edu/~library/TR-repository/reports/reports-2004/cuc
+s-039-04.pdf) I've known Simson for 14 or so years and have a ton of respect
+for his technical skills. However, I think there are some significant Skype
+vulnerabilities and associated legal ramifications that Simson did not
+discuss in his article.
+
+Security is based on trust of the parties exchanging information that they
+are who they claim and that the data exchanged appears to be random to an
+untrusted observer. While Skype's use of encryption supports the second part
+of the definition, it does not support the first. Because it does not
+support the first, it is very easy to use the Skype network to intercept
+communications between any user or to pose as any user. This presents a
+problem as against both third parties and governmental agencies.
+
+A critical part of the Skype network is the "super-nodes." According to the
+Columbia paper, super-nodes perform 3 functions:
+* Designating the login authority
+* Media packet forwarding
+* Routing user search requests
+Super-nodes appear to "volunteer" to perform the function. Or put another
+way, they are nodes that are not under the control of Skype, but they
+perform all the routing functions necessary to discover a user and exchange
+information with the user. Super nodes run on any machine running the Skype
+program and the machines under Skype control have no way to determine if the
+super nodes are running unmodified Skype code.
+
+If one were skilled in reverse engineering x86 code and one were willing to
+violate Skype's user agreement, one could create a Skype node that
+volunteered to be a super-node. It would appear to all other Skype nodes as
+a normal super-node. It would perform all the functions of a Skype
+super-node. However, it would do a little bit more. Let's call one of these
+super-nodes a "bad seed."
+
+The bad seed could point users to another authentication server. Thus, the
+user would exchange username and authentication information with a "bad
+relay proxy" rather than the Skype server. That permits the "bad relay
+proxy" to deny Skype access to a user that I designate. Okay a denial of
+service attack is not great stuff, but for businesses that rely of Skype
+(http://news.com.com/No-cost+Skype+strikes+chord+with+businesses/2100-7352_3
+-5553053.html ), having the prospect of a DoS attack could be an issue.
+Further, the "bad relay proxy" could collect username/password challenge
+(I'm assuming that Skype's not sending the actual password, but performing a
+challenge/response method of verifying the password) data and do dictionary
+attacks on the passwords. This isn't a hardcore vulnerability you say.
+Yep... I agree.
+
+The bad seed routes some of the media requests if the two peers cannot see
+each other directly. Skype claims that because the packets are encrypted,
+the super-nodes are just routing agents. This is true unless the bad seed is
+part of the key exchange (see the next paragraph.) If the bad seed is part
+of the exchange of private AES keys that are used to encrypt the voice data,
+then they are able to decrypt the audio or text streams. Yikes. If a bad
+seed was a man in the middle of the private key exchange, then the bad seed
+could record your conversation with another user. Okay, that's not good.
+Given that any Skype node can become a super-node just by raising its hand
+and a skilled hacker can re-engineer a Skype node to perform bad acts, then
+if you connect to the Skype network, you don't know which nodes are
+listening in on your conversation. But wait, you say, the requirement for
+the above bit of scariness is doing a man-in-the-middle attack on the
+encryption key exchange. You're right. And here's where the Skype network is
+totally insecure.
+
+One function of the super-node in the Skype network is to route and respond
+to user search requests. If I want to connect to "other_dude" on the Skype
+network, my client sends out search requests to a series of super-nodes. The
+super-nodes either respond with the address of "other_dude" or forward the
+requests to other super-nodes. If one of the super-nodes is "bad seed", that
+node can respond that it is "other_dude." Because there is no cryptographic
+trust or any form of trust authority in the Skype network, any super node
+that returns the information about "other_dude" is trusted by my node.
+
+An aside... SSL certificates are signed by a trusted third party. That third
+party validates that the certificate is held by the organization that claims
+to hold the certificate. Using SSL insures that the party that I'm
+communicating with is the party that they claim to be within the bounds that
+I trust the signer of the SSL certificate *and* that once the connection is
+established that no one can understand the data exchanged with this party.
+That initial trust of the signed certification is a critical part of the
+security of the overall communication. If I do a session key exchange with
+an unknown party, the communication is *not* secure. This is the case with
+Skype.
+
+The Skype network relies on trusting the super-node. A bad seed can perform
+a man in the middle attack during the session key exchange by posing as the
+party being contacted (or forwarding the information of another compromised
+node) to a caller. So, my bad seed is able to route call requests to an
+untrusted node and do a man-in-the-middle during the key exchange and snoop
+into my call. The only question is how many bad seeds to you need in order
+to capture a significant percentage of the routing requests that go over the
+Skype network. My guess is that the number is in the hundreds. So, with a
+hundred machines located around the world, I could intercept any Skype call
+and record it. Pretty scary.
+
+The PSTN primarily uses pairs of copper wires to transmit voice
+communications from my house to the phone company central office. I can gain
+physical access to those copper pairs very easily as long as I have physical
+proximity to the location of the person I want to snoop on. It's not hard to
+do. Yeah, you have to paint a white van with "Verizon" or "SBC" so the
+police don't hassle you. But you can do it.
+
+If the government wants to do it, it's somewhat harder. The government has
+to get a warrant to listen to your phone conversations. Once they obtain a
+warrant, they present it to the phone company which makes an entry into
+their switch to record the call or send a real-time copy of it to the
+government.
+
+SIP is different. SIP supports encryption, but most SIP providers do not
+make use of it. The Microsoft SIP client libraries have the option of
+communicating with the SIP server via TLS (TLS is like SSL, but uses the
+same IP port for both encrypted and unencrypted traffic.) Additionally, the
+media portion of a SIP call can be encrypted by setting a flag in the media
+descriptor. While most SIP providers do not use this functionality, it's
+part of the SIP spec and can be turned on. Note that the machines that could
+play man-in-the-middle with an encrypted SIP call are controlled by your SIP
+provider (rather than any machine running Skype.) Thus, you can trust the
+security of your call as much as you trust your SIP provider.
+
+With unencrypted SIP calls, if you are able to intercept packets, then you
+can tap the call. Anybody on your LAN can listen into your call. This level
+of security is no different than anyone in your house can listen in on your
+phone calls and anyone in your office can probably do the same. Anyone who
+can intercept the packet stream outside your LAN can also listen in on the
+conversation. This is more of a challenge. UDP packets (the stuff that the
+media stream goes over) may or may not be routed through the same backbone
+during all parts of the conversation. There is a certain amount of security
+with the packets going over the backbone. The ability to snoop on an
+unencrypted SIP call is marginally more difficult that snooping on a PSTN
+call.
+
+For the government, it's more of a challenge. Because the media portion of a
+SIP call goes directly between the end points without going through the SIP
+providers network. This raises an interesting issues:
+http://news.com.com/2100-7352-5296417.html This is interesting for two
+reasons. First, SIP "telephone" companies like Vonage will have to provide a
+flag to allow them to intercept the media stream and decode it if the
+government has a warrant. Second, the government has acknowledged that SIP
+callers have the same expectation of privacy that copper-pair PSTN callers
+have. This is really important.
+
+Users of peer-to-peer file sharing programs don't have an expectation of
+privacy in their use of P2P programs. That's why so many folks are being
+sued
+(http://news.com.com/RIAA+files+754+new+file-swapping+suits/2110-1027_3-5494
+259.html?tag=nl ) Skype touts themselves as a P2P voice communications
+system (http://skype.com/products/explained.html ) That means that if you
+use Skype, you have the same expectation of privacy as a P2P user. Given
+that the government has the resources to build bad seeds and that P2P users
+have no expectation of privacy, you can bet that there are government run
+Skype nodes looking for Skype communications between Osama911 and
+Sleeper_in_Seattle and that the government doesn't have a warrant for these
+activities.
+
+To conclude my long rant, the Skype network is radically insecure because it
+relies on untrusted super-nodes to perform trusted functions, most notably
+user look-up. It's easy to build a compromised super-node (a bad seed.) With
+a limited number of bad seeds, the communications between any users can be
+intercepted or denied. It's something that a person with the resources to
+rent 100 servers in collocation facilities around the world could do (that's
+about $10,000 per month investment.) Given that Skype is a P2P network and
+users such networks are not afforded the same expectation of privacy that
+users of the PSTN and other telephone networks are afforded, the government
+could use such a mechanism to listen to Skype-based calls and have a
+reasonable legal argument that they do not need a warrant to do so.
+
+That's my 2 cents.
+
+Thanks,
+
+David
+
+PS -- I was CTO and VP Engineering for an Internet security company for a
+number of years and I'm a member of the Rhode Island bar.
+
+
+
+Annette Hurst wrote:
+>
+>
+> -----Original Message-----
+> From: owner-ip@v2.listbox.com [mailto:owner-ip@v2.listbox.com] On Behalf Of
+> David Farber
+> Sent: Saturday, January 29, 2005 2:11 AM
+> To: Ip
+> Subject: [IP] more on Simson Garfinkel analyses Skype - Open Society
+Institute
+>
+>
+>
+> ------ Forwarded Message
+> From: "Jonathan S. Shapiro" <shap@eros-os.org> <mailto:shap@eros-os.org>
+> Date: Fri, 28 Jan 2005 22:03:48 -0500
+> To: <dave@farber.net> <mailto:dave@farber.net>
+> Subject: Re: [IP] I more on Simson Garfinkel analyses Skype - Open Society
+> Institute
+>
+> I'm going to attempt to chime in on this, because I think Brad is saying
+> something that I feel is badly wrong.
+>
+>
+> The most important element of an encryption scheme is that there must be
+some
+> well-founded basis for a well-defined degree of confidence. The encryption
+may
+> be well done or poorly done. It may be sufficiently protective or it may
+not.
+> The thing is that the user has a right and a need to know where on the
+> spectrum it falls.
+>
+> The other alternative is ignorance. The first problem with this is that
+> *your* bad choices can have the effect of disclosing things that have
+negative
+> consequences for someone else! The second problem is that it describes the
+> majority of real users.
+>
+> In the case of Skype, the argument Brad is making is simply absurd. The
+> question is not whether something is better than nothing. The question is
+why
+> Skype chose to implement an undocumented and unqualified proprietary
+> encryption scheme at considerable expense rather than use one of the many
+> existing schemes that are well known, well characterized, and free for the
+> taking.
+>
+> When viewed from a business perspective, the only plausible rationale is
+> immediately apparent. Skype's objective isn't to protect conversations. It
+is
+> to render Skype users a captive audience by impeding interoperability.
+>
+> It is hardly a new precedent. I seem to remember AT&T trying to use
+allegedly
+> proprietary interfaces to impede the attachment of Tom Carter's
+Hush-a-Phone
+> in 1956 or so. Different method, same basic strategy.
+>
+>
+> Jonathan Shapiro
+>
+> On Fri, 2005-01-28 at 20:53 -0500, David Farber wrote:
+>
+>
+>>
+>> ------ Forwarded Message
+>> From: Brad Templeton <btm@templetons.com> <mailto:btm@templetons.com>
+>> Organization: http://www.templetons.com/brad
+>> Date: Fri, 28 Jan 2005 17:22:29 -0800
+>> To: David Farber <dave@farber.net> <mailto:dave@farber.net>
+>> Cc: <daw@cs.berkeley.edu> <mailto:daw@cs.berkeley.edu> ,
+<adam@shostack.com>
+>> <mailto:adam@shostack.com> ,
+>> <simsong@csail.mit.edu> <mailto:simsong@csail.mit.edu>
+>> Subject: Re: [IP] Simson Garfinkel analyses Skype - Open Society Institute
+>>
+>>
+>>
+>>>
+>>> I'm sorry to pick nits, but I have to stand by my statement.  No
+>>> matter how atrociously bad other systems may be, I don't see any
+>>> basis for saying that Skype is any better.  It might be better, or
+>>> it might be just as bad. We don't know.
+>>>
+>>>
+>>
+>> While I fully agree that one can have much more confidence in a
+>> security system which can be independently analysed and verified as
+>> secure, it is exactly the attitude above, common in the security
+>> community,  which I believe has stopped us from deploying security.
+>>
+>> "Some" security, even things like DES (which our own foundation proved
+>> can be crackable), poorly chosen keys, algorithms with flaws,
+>> protocols that are vulnerable to men in the middle, and proprietary
+>> encryption systems -- all of these are often declared to be "no
+>> better" than having no encryption at all.
+>>
+>> And so, people, buying that argument, often give us no encryption at
+>> all, because encryption is hard to do well, and if people keep telling
+>> you that you have to do it perfectly or you might as well not bother
+>> -- then people don't bother.
+>>
+>> The trut is, most people's threat models are not the same as a security
+>> consultants.   They accept that if the NSA wants to man-in-the-middle
+>> them, the NSA is going to succeed.
+>>
+>> Skype has resisted basic efforts by skilled reverse engineers to look
+>> at its protocols.  That doesn't mean they are secure, but it does mean
+>> they are secure from basic efforts.  If I wanted to listen in your
+>> your skype call and had a tap on your ethernet, I would at least have
+>> to put a lot of work into it, and possibly could not do it
+>> at all.    That is a _lot_ more than what is true with in-the-clear SIP,
+>> where I could slap a packet sniffer on your net and hear your call
+>> fairly trivially, and with certainty that I would succeed.
+>>
+>> This is, in fact, a huge difference.   Encryption is really about how
+>> hard you make it for the attacker.  Because above a certain level of
+>> hardness there are a lot of easier ways into your network and
+>> computer.
+>>
+>> So yes, let's decry that we can't verify Skype's encryption and must
+>> take their word that it is resistent to attack.  But let's not promote
+>> this attitude that it is no better than nothing.
+>>
+>> ------ End of Forwarded Message
+>>
+>>
+>> -------------------------------------
+>> You are subscribed as shap@cs.jhu.edu
+>> To manage your subscription, go to
+>>   http://v2.listbox.com/member/?listname=ip
+>>
+>> Archives at:
+>> http://www.interesting-people.org/archives/interesting-people/
+>>
+>>
+>
+>
+>
+> ------ End of Forwarded Message
+>
+>
+> -------------------------------------
+> You are subscribed as annette@lostlake.org
+> To manage your subscription, go to
+>   http://v2.listbox.com/member/?listname=ip
+>
+> Archives at: http://www.interesting-people.org/archives/interesting-people/
+>
+
+
+------ End of Forwarded Message
+
+-------------------------------------
+You are subscribed as eugen@leitl.org
+To manage your subscription, go to
+  http://v2.listbox.com/member/?listname=ip
+
+Archives at: http://www.interesting-people.org/archives/interesting-people/
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a>
+______________________________________________________________
+ICBM: 48.07078, 11.61144            http://www.leitl.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+http://moleculardevices.org         http://nanomachines.net
+
+[demime 1.01d removed an attachment of type application/pgp-signature]
+

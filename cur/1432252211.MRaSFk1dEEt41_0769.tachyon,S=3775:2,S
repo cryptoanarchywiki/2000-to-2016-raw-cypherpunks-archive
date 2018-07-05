@@ -1,0 +1,90 @@
+From owner-cypherpunks@lne.com  Thu Apr 24 18:53:50 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h3OMrmt05503
+	for <rsw@jfet.org>; Thu, 24 Apr 2003 18:53:48 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h3OMlO1j001923
+	for cypherpunks-goingout345; Thu, 24 Apr 2003 15:47:24 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Thu, 24 Apr 2003 23:47:21 +0100
+From: Adam Back <adam@cypherspace.org>
+To: Patrick Chkoreff <patrick@fexl.com>
+Cc: "R. A. Hettinga" <rah@shipwright.com>, lucrative-l@lucrative.thirdhost.com,
+   cypherpunks@lne.com
+Subject: Re: double-spending prevention w. spent coins (Re:
+  [Lucrative-L] lucrative accounts revisited)
+Message-ID: <20030424234721.A8027760@exeter.ac.uk>
+References: <20030424222736.A7938000@exeter.ac.uk>
+  <D9B7C19F-76A1-11D7-B4FF-000393D91E36@fexl.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <D9B7C19F-76A1-11D7-B4FF-000393D91E36@fexl.com>; from
+  patrick@fexl.com on Thu, Apr 24, 2003 at 06:12:34PM -0400
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2406
+Lines: 57
+
+> Although I have read some material on blinding etc., I do not see a 
+> need for it in my system.
+
+Your system as described is not in the slightest bit anonymous or
+private.  Or at least the user has no cryptographic assurances that
+the server is not logging everything, or that some adversary isn't
+logging everything that goes over the connection even though the
+server is not.
+
+> OK, if someone put a gun to my head and said "put in some code to
+> log everything" then they might be able to discern some pattern like
+> "this coin was issued to this IP address, and then three days later
+> that coin was swapped from this other IP address."  
+
+Right that is the linkability problem.  Plus of course as mentioned
+above the user has no reason to trust the server.  Or at least he
+would prefer a protocol where he did not need to trust the server.
+
+> OK, that sounds like a potential problem, but I don't see how you
+> can hide this information from the server ITSELF.  When you present
+> a coin to the server, it is going to know from which IP address it
+> came, and I don't see a way around that.
+
+That's where blinding comes into the picture.
+
+Probably the simplest one to understand is Chaum's original scheme,
+though there are others such as Brands, and Wagner's online system.
+
+serial-no               = (b^e).[R||h(R)] mod n
+proto-coin              = serial-no^d mod n
+                        = b.[R||h(R)]^d mod n
+coin                    = proto-coin . b^-1 mod n
+                        = [R||h(R)]^d mod n
+check-valid-coin(c)     = c^e mod n is of form [x||h(x)]
+check-double-spent(c)   = bank records spent coins
+trace-payee(c)          = payer gives bank b, bank records proto-coins as well
+
+so a blind signature in this scheme is that the bank has an RSA
+modules n, private key d, and public exponent e.
+
+The user sends b^e.M mod n to the bank (where b is a random blinding
+factor), the bank computes (b^e.M)^d mod n (a standard RSA siganture)
+and sends back to the user.  The user then unblinds by dividing by b,
+which works because:
+
+(b^e.M)^d = b^{e.d}.M^d = b.M^d mod n
+
+and b.M^d/b = M^d mod n
+
+plus some other detais to avoid existential forgeries.
+
+and so the bank can recognize it's signature later on a coin (because
+it's a valid RSA signature made with it's private key d), but it won't
+know which unspent coin it corresponds to because it doesn't know the
+blinding factors b.
+
+Adam
+

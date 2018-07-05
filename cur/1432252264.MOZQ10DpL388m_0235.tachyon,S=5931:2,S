@@ -1,0 +1,143 @@
+From owner-cypherpunks@Algebra.COM  Fri Oct 18 20:38:29 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g9J0cP527418
+	for <rsw@opamp.org>; Fri, 18 Oct 2002 20:38:29 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id UAA28142
+	for <rsw@mit.edu>; Fri, 18 Oct 2002 20:38:24 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g9INhFFF018825
+	for <cypherpunks-outgoing@ak47.algebra.com>; Fri, 18 Oct 2002 18:43:15 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g9INhF29018824
+	for cypherpunks-outgoing; Fri, 18 Oct 2002 18:43:15 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g9INhAFF018799
+	for <cypherpunks@ak47.algebra.com>; Fri, 18 Oct 2002 18:43:11 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g9INh3jR012621
+	for cypherpunks@ak47.algebra.com; Fri, 18 Oct 2002 16:43:03 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g9INf3Qg012606
+	for cypherpunks-goingout345; Fri, 18 Oct 2002 16:41:03 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+X-Originating-IP: [24.90.209.230]
+From: "Tyler Durden" <camera_lumina@hotmail.com>
+To: cypherpunks@lne.com
+Old-Subject: Re: Intel Security processor + a question
+Date: Fri, 18 Oct 2002 19:40:55 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; format=flowed
+Message-ID: <F173sSVhGOD6gx3lKy800004d66@hotmail.com>
+X-OriginalArrivalTime: 18 Oct 2002 23:40:55.0731 (UTC)
+  FILETIME=[CD902830:01C276FF]
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Re: Intel Security processor + a question
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 3633
+Lines: 94
+
+
+Well,I disagree about psuedo random number generation, sort of.
+First, if I have PSR sequence of the known variety (ie, ANSI or ITU), and if 
+it's mapped to some telecom standard (DS-1/3, OC-3/12/48/192), then my test 
+set can and should be able to lock onto that sequence. This is true whether 
+that telecom signal is raw PRBS, or if it has been mapped into the payload 
+(you use different test sets).
+
+In addition, PRBS have a very distinctive trace signature in the frequency 
+domain. SO if I run my PRBS-mapped telecom signal into an O/E (if it's 
+optical, for instance), and then into an Electrical Signal Analyzer, I'll be 
+able to see if the characteristic Electrical Frequency spectrum matches that 
+expected for, say PRBS-23.If it doesn't, I know something's up. If it does, 
+it CAN of course be something else, but that signal does have the right 
+amount of entropy.
+
+With encrypted info who knows? I would think that testing if there's monkey 
+business might boil down to algorithms--ie, if certain bit patterns happen 
+too often, then something's wrong...
+
+
+
+
+
+
+>From: "Major Variola (ret)" <mv@cdc.gov>
+>To: "cypherpunks@lne.com" <cypherpunks@lne.com>
+>Subject: Re: Intel Security processor + a question
+>Date: Fri, 18 Oct 2002 14:33:15 -0700
+>
+> > From: "Tyler Durden" <camera_lumina@hotmail.com>
+> > Subject: Re: Intel Security processor + a question
+> >
+> > OK...a follow up question (actually, really the same question in a
+>diferent
+> > form).
+> >
+> > Let's say I had a crypto chip or other encryption engine, the code of
+>which
+> > I could not see. Now what if someone had monkeyed with it so that
+>(let's
+> > say) the pool of prime numbers it drew from was actually a subset of
+>the
+> > real pool that should be available for encryption. Let's also say that
+>
+> > "somebody" knows this, and can search byte streams for known strings
+>of
+> > products of these primes. They can then break this cypherstream very
+>easily.
+>
+>Or consider someone who sells a "RNG" but won't let you examine it
+>physically...
+>(you might have been sold a long-sequence PRNG, and without either 1.
+>the algorithm & key
+>or 2. physical inspection of the circuit YOU CAN'T TELL.  )
+>
+> > Now don't get hung up on the details of what I'm saying here...I don't
+>know
+> > if this particular example is possible or not.
+>
+>Of course.  If you can't disassemble the code, or chip, you're fucked,
+>since you're trusting those who made and distributed the artifact.
+>
+>I'm just wondering iF it is
+> > possible to tamper with crypto code (particularly as embedded on a
+>chip) so
+> > that it appears to all regular users not to have been tampered with,
+>but
+> > meanwhile it allows certain privileged users to access encrypted
+>streams
+> > fairly easily.
+>
+>if ( !strcmp("backdoor", password_str)) let_me_in();
+>
+>is readily written in RTL and a comparator is not many gates.
+>
+> > AND if this is possible, is there some way to examine the encrypted
+>output
+> > and then, say, search for unusual frequency traces of certain
+>sequences, and
+> > determine tha the code has been tampered with? Or are there ways to
+>tamper
+> > with good cryptocode in ways that can never be detected with actually
+> > looking at the originating code?
+>
+>You can write clear code --in C or Verilog-- which does not permit much
+>room for hidden functionality.   However if you can't examine inside the
+>box, it is very very
+>easy to design backdoors you will never find in a thousand years.
+
+
+_________________________________________________________________
+Protect your PC - get McAfee.com VirusScan Online 
+http://clinic.mcafee.com/clinic/ibuy/campaign.asp?cid=3963
+

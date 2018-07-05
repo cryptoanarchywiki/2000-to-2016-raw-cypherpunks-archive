@@ -1,0 +1,242 @@
+From owner-cypherpunks@al-qaeda.net  Mon Jul 23 16:43:54 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q6NKeNod020297
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 23 Jul 2012 16:40:23 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q6NKeNRM020296
+	for cypherpunks-outgoing; Mon, 23 Jul 2012 16:40:23 -0400
+Date: Mon, 23 Jul 2012 22:40:16 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, tt@postbiota.org
+Subject: [tor-relays] Call for discussion: turning funding into more
+  exit 	relays
+Message-ID: <20120723204016.GZ12615@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Roger Dingledine <arma@mit.edu> -----
+
+From: Roger Dingledine <arma@mit.edu>
+Date: Mon, 23 Jul 2012 14:58:54 -0400
+To: tor-relays@lists.torproject.org
+Subject: [tor-relays] Call for discussion: turning funding into more exit
+	relays
+User-Agent: Mutt/1.5.20 (2009-06-14)
+Reply-To: tor-relays@lists.torproject.org
+
+For a few years now, funders have been asking if they can pay Tor to
+run more relays. I kept telling them their money was better spent on
+code and design improvements:
+https://blog.torproject.org/blog/why-tor-is-slow
+https://trac.torproject.org/projects/tor/wiki/org/roadmaps/Tor/Performance
+since a) network load would just grow to fill whatever new capacity we
+have, especially if we don't deal with the tiny fraction of users who
+do bulk downloads, and b) reducing diversity of relay operator control
+can harm anonymity.
+
+But lately the Tor network has become noticeably faster, and I think it
+has a lot to do with the growing amount of excess relay capacity relative
+to network load:
+https://metrics.torproject.org/network.html?graph=bandwidth&start=2010-06-01&end=2012-07-21#bandwidth
+
+At the same time, much of our performance improvement comes from better
+load balancing -- that is, concentrating traffic on the relays that can
+handle it better. The result though is a direct tradeoff with relay
+diversity: on today's network, clients choose one of the fastest 5 exit
+relays around 25-30% of the time, and 80% of their choices come from a
+pool of 40-50 relays.
+https://trac.torproject.org/projects/tor/ticket/6443
+
+Since extra capacity is clearly good for performance, and since we're
+not doing particularly well at diversity with the current approach,
+we're going to try an experiment: we'll connect funding to exit relay
+operators so they can run bigger and/or better exit relays.
+
+If we do it right (make more faster exit relays that aren't the current
+biggest ones, so there are more to choose from), we will improve the
+network's diversity as well as being able to handle more users.
+
+We've lined up our first funder (BBG, aka http://www.voanews.com/),
+and they're excited to have us start as soon as we can. They want to
+sponsor 125+ fast exits.
+
+----------------------------------------------------------------------
+
+Open questions we need to decide about:
+
+1) What exactly would we pay for?
+
+I think the right way to do it is to offer to reimburse bandwidth/hosting
+costs -- I don't want to get into the business of paying people to
+run relays, and I don't want people to be trying to figure out how to
+"profit". That leads to all sorts of horrible incentive structures.
+
+More broadly, we should keep in mind that the primary cost of running an
+exit relay is effort, not dollars: it takes dedication to find an ISP
+who will host it, and to hold that ISP's hand when an abuse complaint
+arrives. Or said another way, hosting costs are in many cases not the
+biggest barrier to running an exit relay.
+
+I think we should aim to constrain ourselves to talking about >=100mbit
+exits, assuming that turns out to give us enough choices. That said,
+we don't want to concentrate bandwidth too much in any given relay,
+so we should limit the amount we'll reimburse per relay.
+
+2) Should we fund existing relays or new ones?
+
+The worst failure mode here would be that we screw up the current
+community of relay operators. That's why it's extra important to keep
+them involved at each step of this discussion.
+
+I think the right answer is probably a balance of reimbursing costs from
+current exits and encouraging new exits to appear. Before we can get
+more precise though, we need to get a handle on how many current fast
+exits there are, and what their constraints are (whether their hosting
+situation could give them more bandwidth, whether they're paying now or
+getting a deal through a friend/employer, etc).
+
+Even then, there are interesting further questions like:
+
+- Should we prefer big collectives like torservers, noisetor, CCC,
+dfri.se, and riseup (which can get great bulk rates on bandwidth and are
+big enough to have relationships with local lawyers and ISPs), or should
+we prefer individuals since they maximize our operator diversity? I think
+"explore both approaches" is a fine first plan.
+
+- For existing relays who pay for hosting, should we prefer that our money
+go to covering their existing costs (and then we encourage them to save
+their money for use, say, after this experiment finishes), or should we
+aim to add additional funding so the relay can use more bandwidth? I'd
+say it comes down to the preferences of the relay operator. That said, if
+we have plenty to choose from, we should pick the relays that will make
+the network grow -- but we should take extra care to avoid situations
+where operators in the first category say "well, fine" and shut down
+their relay.
+
+More generally, we need to consider sustainability. Our current exit
+relay funding is for a period of 12 months, and while there's reason to
+think we will find continued support, the Tor network must not end up
+addicted to external funding. So long as everybody is running an exit
+relay because they want to save the world, I think we should be fine.
+
+4) What exactly do we mean by diversity?
+
+There's network diversity (AS / upstream network topology), organization
+and operator diversity, jurisdictional (country) diversity, funding
+diversity, data-center diversity, and more.
+
+We've started to answer some of these questions at
+https://trac.torproject.org/projects/tor/ticket/6232
+https://blog.torproject.org/blog/research-problem-measuring-safety-tor-network
+but this research topic will need ongoing attention. I'd love to get to
+the point where our diversity metrics can recommend network locations
+that best improve the various diversity scores.
+
+5) How much "should" an exit relay cost?
+
+Since we're aiming for diversity, we can't send all our volunteers to
+the same cut-rate German VPS provider. After all, much of the work in
+setting up an exit relay is finding a good provider that doesn't already
+host a bunch of Tor relays.
+
+But if we declare that we'll reimburse $50/month for 100mbit, we're going
+to attract a different set of volunteers -- and a different set of network
+locations -- than if we reimburse $100/month for 100mbit. We need to learn
+about current bandwidth pricing: I know there are 10 cheap hosting places
+that will tolerate exit relays, but are there 200? And do all of those
+200 turn out to overlap diversity-wise? Initial guesses appreciated. I'm
+inclined toward the $100 number to give our volunteers more flexibility.
+
+If we want to reimburse on a monthly basis, how do we handle situations
+where the ISP wants a longer-term contract? I think the answer will come
+down to how many choices we have.
+
+6) How exactly should we choose which exit relay operators to reimburse?
+
+It might be premature to speculate until we better understand what choices
+are available to us. But I think the answer must include doing it in a way
+that encourages continued growth of the relay operator _community_. People
+who are active in the Tor community, and well-known to many other people,
+should be part of the answer. At the same time, we should be willing to
+put some of the money into trying out new places and people, especially
+if they're in good locations diversity-wise.
+
+The broader answer is that we as a community need to figure out a good
+answer here. I definitely don't want it to be "Roger picks people in
+an opaque way". But I also don't want the answer to be "anybody on the
+Internet who offers to take our money". Maybe we should put together a
+consortium of current Tor activists who run fast exits?
+
+7) How do we audit / track the sponsored relays?
+
+How should we check that your 100mbit relay is really working? What do
+we measure to confirm its capacity? To a first approximation I'm fine
+assuming that nobody is going to try to cheat (say, by colluding with
+an ISP to write legit-looking invoices but then just split the money).
+
+But as the plan scales, we need good ways to track statistics on how
+many relays are being sponsored and how much bandwidth they're providing
+(so funders can see how effective their money is), and what fraction of
+the overall network these sponsored relays are (to keep an eye on the
+diversity questions).
+
+8) Legal questions?
+
+Tor exit relays raise plenty of legal questions already, especially when
+you consider jurisdiction variety. But reimbursing relays introduces
+even more excitement, such as:
+
+- Does such a relay operator end up in a different situation legally?
+- Does the overall Tor network change legal categories in some country,
+e.g. becoming a telecommunications service when it wasn't before?
+- Does The Tor Project Inc incur new liabilities for offering this money?
+
+Tor has a history of creating fascinating new challenges for legal
+scholars, and this exit relay funding experiment will be no exception.
+
+I believe if we position it correctly, we won't really change the legal
+context. But I encourage people to investigate these questions for
+their jurisdiction.
+
+----------------------------------------------------------------------
+
+Next steps:
+
+I'm going to do a short blog post pointing to this thread, since many
+interested parties aren't on tor-relays yet.
+
+Then I'll send individual emails to exit relay operators pointing them
+to it and asking for their feedback (on the list or private, whichever
+they prefer). I'll also try to get some sense of how much their hosting
+costs, whether they'd want to participate in our experiment, whether
+they're in a position to ramp up to a faster connection, etc.
+
+Once we have some concrete facts about how many current exit relays want
+to participate, how many new volunteers want to help, and how many ISPs
+could handle more exit relays and at what prices, we'll be in a better
+position to decide how to proceed.
+
+--Roger
+
+
+
+
+_______________________________________________
+tor-relays mailing list
+tor-relays@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-relays
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

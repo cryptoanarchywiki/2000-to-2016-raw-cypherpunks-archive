@@ -1,0 +1,52 @@
+Date: Wed, 29 Jul 2015 14:07:14 -0400
+From: "Riad S. Wahby" <rsw@jfet.org>
+To: cypherpunks@cpunks.org
+Subject: Re: Open Fabs
+Message-ID: <20150729180714.GA2509@antiproton.jfet.org>
+Mail-Followup-To: cypherpunks@cpunks.org
+References: <CAD2Ti29zN7j-1giNsYgHj1__9LMDAs1dobAnAAtR8_Cr+vCZJw@mail.gmail.com>
+ <CAD2Ti2-od9OHrLu37osw4Rve1S8s52QpL_DEn-=3+fm9WTZC5g@mail.gmail.com>
+ <CAHKdp-==WNiJBoJ5+sfLUut4w4AJ23EYCBq-6rvN8OBcVERkDQ@mail.gmail.com>
+ <55B9064E.5010903@virtadpt.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <55B9064E.5010903@virtadpt.net>
+
+The Doctor <drwho@virtadpt.net> wrote:
+> More likely, dump the contents of the EPROM some FPGAs read their gate
+> matrices out of when they power up.
+
+But that just gives away the bitstream describing the FPGA
+configuration (say, a trusted CPU). Is the CPU's *design* a secret? If
+not, I don't see why it matters that an evil cleaner might read out the
+FPGA's configuration. (Obviously, don't store secret keys in there!)
+
+If we really are worried about keeping the CPU's design a secret, it's
+possible with many FPGAs to encrypt the configuration bitstream such
+that the configuration is decrypted onboard the FPGA at power-on. This
+is intended to handle the case where I want to sell a product that uses
+an FPGA without revealing the contents of that FPGA's configuration to
+my customers or competitors.
+
+Of course, this doesn't really provide useful security guarantees
+against a sophisticated adversary. First, since the FPGA contains or
+automatically derives the secret key to decrypt this encrypted bitstream,
+the manufacturer of the FPGA likely also knows the key or how to derive
+it (as does anyone with sufficient dedication and a well-equipped lab).
+Second, we have no idea how well this system is designed or implemented,
+since the bitstream security system is itself a proprietary secret. And
+third, even if it's competently built, as I pointed out above, the threat
+model is "customer reads out my proprietary design," which means that,
+practically speaking, the technological barrier is only there to support
+a more comprehensive framework of legal recourse in the case that my
+customer or competitor tries to steal the secret sauce.
+
+Probably a reasonable evil cleaner attack against an FPGA-based
+"trusted" CPU is to overwrite the contents of the configuration
+ROM with a similar but subtly bugged design. This is more or less
+isomorphic to "the NSA signs bugged microcode for my Intel CPU."
+
+Cue the OTP / epoxy / physical security arms race, I guess.
+
+-=rsw

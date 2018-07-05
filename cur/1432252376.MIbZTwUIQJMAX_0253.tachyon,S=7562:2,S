@@ -1,0 +1,152 @@
+From owner-cypherpunks@al-qaeda.net  Sat Mar 13 06:46:12 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: (from majordomo@localhost)
+	by POSITRON.MIT.EDU (8.11.6p3/8.11.6-03-31-03) id i2DBjIP23059
+	for cypherpunks-outgoing; Sat, 13 Mar 2004 06:45:18 -0500
+X-Authentication-Warning: positron.mit.edu: majordomo set sender to owner-cypherpunks@al-qaeda.net using -f
+Date: Sat, 13 Mar 2004 12:45:17 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: [p2p-hackers] Ideas for an opensource Skype lookalike (fwd from
+  em@em.no-ip.com)
+Message-ID: <20040313114517.GM18046@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.4i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 6606
+Lines: 127
+
+----- Forwarded message from Enzo Michelangeli <em@em.no-ip.com> -----
+
+From: "Enzo Michelangeli" <em@em.no-ip.com>
+Date: Sat, 13 Mar 2004 19:03:17 +0800
+To: "Peer-to-peer development." <p2p-hackers@zgp.org>
+Subject: [p2p-hackers] Ideas for an opensource Skype lookalike
+X-Mailer: Microsoft Outlook Express 6.00.2800.1158
+Reply-To: "Peer-to-peer development." <p2p-hackers@zgp.org>
+
+Hello everybody,
+
+I just joined this list after lurking for a while on its archive at
+http://zgp.org/pipermail/p2p-hackers/.
+
+I'd like to gather opinions about using P2P techniques to support a type
+of application that never managed to become really popular: a secure
+internet phone. I have recently begun to monitor the development of
+Speakfreely on Sourceforge (http://speak-freely.sourceforge.net/ ) after
+its creator John Walker decided that the future of Internet was an
+inhospitable environment for it and abandoned further development
+(http://www.fourmilab.ch/speakfree/ ). I think that John overlooked the
+possibilities offered by P2P architectures, in two critical areas:
+
+- Directories for location and presence. Nothing fancy here, already done
+before for P2P chat systems.
+- Working around NAT routers. John says of implementing third-party
+reflectors:
+
+    "[...] no non-commercial site like mine could possibly
+    afford the unlimited demands on bandwidth that would
+    require. It's one thing to provide a central meeting
+    point like a Look Who's Listening server, which handles
+    a packet every five minutes or so from connected sites,
+    but a server that's required to forward audio in
+    real-time between potentially any number of
+    simultaneously connected users is a bandwidth killer."
+
+However, what a centralized system can't do, is a piece of cake for a
+distributed system ("_One_ can't, perhaps," said Humpty Dumpty, "but two
+can.[...]"). The fact that something like Skype does exist, works, and may
+claim an average of more than 150,000 users online at any given time,
+looks like a proof of feasibility to me!
+
+Unfortunately, Skype is closed-source (which is a showstopper for a crypto
+application), and Windows-only to boot. However, nothing prevents
+borrowing some ideas at http://www.skype.com/skype_p2pexplained.html for
+an opensource alternative.
+
+Speakfreely might not represent the best starting point, but it usually
+works out of the box (which is more than can be said for most other
+Internet phones), it's multi-platform, and already contains an RTP stack
+and bulk encryption code.  As an alternative to Speakfreely's code, one
+could assemble together an RTP stack such as oRTP
+(http://www.linphone.org/ortp/), a bulk encryption and authentication
+layer such as SRTP (http://srtp.sourceforge.net/srtp.html), a portable
+audio abstraction layer such as Portaudio (www.portaudio.com) and an
+unencumbered codec such as Speex (www.speex.org). It would be nice if all
+the components were or could be ported to WinCE, for use on wireless
+PDA's.
+
+What Speakfreely sorely lacks is a sensible session initiation protocol,
+and access to non-NATted reflectors to help NATted peers to find each
+other and exchange UDP traffic. That's where a P2P network (especially one
+supporting the concept of non-NATted "ultrapeers") can save the day.
+
+In my opinion, traditional server-based (i.e., non-P2P) session initiation
+protocols like SIP -not to mention H.323- represent a poor choice for a
+consumer-friendly application: they require an arsenal of infrastructural
+applications (directories, proxies, gatekeepers etc.) which make them
+attractive only to telcos and hardware vendors (hence Cisco's support for
+SIP, and the venom liberally spilled on Skype at
+http://www.voxilla.com/modules.php?op=modload&name=News&file=article&sid=18&m
+ode=thread).
+Besides, as I wrote on speak-freely-devel@lists.sourceforge.net, "the
+mechanisms that SIP/SDP use for session key negotiation range from the
+pathetic (key sent in cleartext!!) to the impractical (S/MIME CMS, which
+is a monster built on the clay feet of a PKI that isn't quite there)".
+Skype claims to use RSA-based key exchange, which is good for multi-party
+conferencing but does not preserve forward secrecy. Maybe some variant of
+ephemeral D-H authenticated by RSA signatures, with transparent
+renegotiation every time someone joins the conference, could do the job
+better.
+
+But the thing I particularly would like to discuss here is if, and how, to
+leverage on existing P2P networks. One could always implement a brand new
+network, using Distributed Hash Table algorithms such as Chord or
+Kademlia, but it would be much easier to rely from the very beginning upon
+a large number of nodes (at least for directory and presence
+functionality, if not for the reflectors which require specific UDP code).
+That would somehow repeat the approach initially adopted by Vocaltec when,
+in 1995, they launched their Iphone making use of IRC servers to publish
+dynamic IP addresses. Incidentally, the IRC users community didn't
+particularly appreciate ;-), triggering the Great Iphone War, which
+quickly led Vocaltec to set up its own dedicated IRC servers.
+
+>From what I see, Gnutella is pretty hopeless for that purpose because
+searches are only based on flooding, and therefore full-network searches
+are nearly impossible; on the other hand, Overnet (which relies upon the
+Kademlia algorithm) could perhaps be used as a sort of distributed
+presence/location "server", and also key server (perhaps it would be wise
+to use an OpenPGP key format to enjoy WoT features from day one). The
+Overnet protocol is unpublished, but it's been reverse-engineered at least
+in part by the mldonkey team.  Alternatively, Freenet or Entropy could
+perhaps provide similar services, but with a large code overhead (I'd like
+to keep the code small enough to be ported, one day, to a PDA) and perhaps
+slower propagation (?).
+
+Comments, as I said, are much welcome.
+
+Enzo
+
+_______________________________________________
+p2p-hackers mailing list
+p2p-hackers@zgp.org
+http://zgp.org/mailman/listinfo/p2p-hackers
+_______________________________________________
+Here is a web page listing P2P Conferences:
+http://www.neurogrid.net/twiki/bin/view/Main/PeerToPeerConferences
+
+----- End forwarded message -----
+-- Eugen* Leitl <a href="http://leitl.org">leitl</a>
+______________________________________________________________
+ICBM: 48.07078, 11.61144            http://www.leitl.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+http://moleculardevices.org         http://nanomachines.net
+
+[demime 1.01d removed an attachment of type application/pgp-signature]
+

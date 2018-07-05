@@ -1,0 +1,96 @@
+From owner-cypherpunks@Algebra.COM  Wed Aug 21 15:28:47 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7LJSkx12533
+	for <rsw@opamp.org>; Wed, 21 Aug 2002 15:28:46 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id PAA10157
+	for <rsw@mit.edu>; Wed, 21 Aug 2002 15:28:45 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7LHcBAM019388
+	for <cypherpunks-outgoing@ak47.algebra.com>; Wed, 21 Aug 2002 12:38:11 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g7LHcBij019387
+	for cypherpunks-outgoing; Wed, 21 Aug 2002 12:38:11 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7LHc7AM019370
+	for <cypherpunks@ak47.algebra.com>; Wed, 21 Aug 2002 12:38:08 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7LHc587028508
+	for cypherpunks@ak47.algebra.com; Wed, 21 Aug 2002 10:38:05 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7LHb7FO028480
+	for cypherpunks-goingout345; Wed, 21 Aug 2002 10:37:07 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Tue, 20 Aug 2002 22:48:58 -0700 (PDT)
+From: Len Sassaman <rabbi@abditum.com>
+X-Sender: <rabbi@thetis.deor.org>
+To: cypherpunks@lne.com
+X-Orig-To: <cypherpunks@lne.com>
+Old-Subject: Re: alternate dos pgp client?
+In-Reply-To: <5f4121ff5f0949004e48febb08a139d7@remailer.xganon.com>
+Message-ID: <Pine.LNX.4.30.QNWS.0208202231150.4139-100000@thetis.deor.org>
+X-AIM: Elom777
+X-icq: 10735603
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-DCC-meer-Metrics: inbound0.mv.meer.net 1011; Body=1 Fuz1=1 Fuz2=1
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Re: alternate dos pgp client?
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 2079
+Lines: 44
+
+
+On Tue, 20 Aug 2002, Anonymous wrote:
+
+> This got me thinking - has anyone tried hacking mixmaster to be a pgp
+> client?  I have compiled it under DOS before, so I know that is possible.
+> Does anyone know if mixmaster can use 'non-legacy' RSA keys?  Is there any
+> pgp functionality that it lacks?  I am looking for a pgp implementation that
+> will run on DOS, but will also be compatible with modern key types.
+
+It is possible to build a simple PGP client with the source you have --
+the file pgptest.c offers that, but it's really only for debugging
+purposes. Run "make mpgp" in the Src directory to try it.
+
+A better interface to the standalone PGP functions shouldn't be hard to
+write. We can look into that if there is demand for it. Note that
+Mixmaster has no concept of the web of trust, and doesn't do keychain
+management. It assumes that if you are placing a key on your keyring,
+you've determined it is valid.
+
+That said, Mixmaster does offer all the basic OpenPGP messaging
+capabilities, except for verification of clear-signed messages. (This
+wasn't needed for any of the features Mixmaster provides, so it wasn't
+added.) We'll be adding this capability soon, however. (The author of
+the QuickSilver Windows remailer client app has requested it. QuickSilver
+provides PGP capabilities through the Mixmaster .dll, sans clearsig
+verification.)
+
+Mixmaster does support RSA v4 keys, though it doesn't have Twofish support
+since it links against OpenSSL for its crypto, and OpenSSL doesn't have
+Twofish support. If you have OpenSSL 0.9.7, Mixmaster will support AES.
+
+(Also, Mixmaster now supports use of the Modification Code Detection
+packet in OpenPGP messages, which is used to prevent the attack Schneier,
+et al. recently wrote about.)
+
+As far as DOS goes -- I honestly haven't tried compiling for DOS. It
+"should" work. Please let me know if you run into any problems.
+
+(And, as always, we're in need of developers and testers. If you're
+interested in working on this project, please join the development mailing
+list. See mixmaster.sf.net for more info.)
+
+
+--Len.
+

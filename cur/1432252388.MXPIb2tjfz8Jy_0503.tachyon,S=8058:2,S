@@ -1,0 +1,173 @@
+From owner-cypherpunks@al-qaeda.net  Mon Mar 29 08:25:17 2010
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id o2TCOH6h020162
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 29 Mar 2010 08:24:17 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id o2TCOHIx020160
+	for cypherpunks-outgoing; Mon, 29 Mar 2010 08:24:17 -0400
+Date: Mon, 29 Mar 2010 14:24:12 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: can you still trust your NIC?
+Message-ID: <20100329122412.GE1964@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 7052
+Lines: 147
+
+http://www.ssi.gouv.fr/site_article185.html
+
+Can you still trust your network card ?
+ 
+24 March 2010
+
+During the CanSecWest international conference in Vancouver, members of ANSSI
+(French Network and Information Security Agency) described how an attacker
+could remotely take full control of a particular network card model.
+
+This page gives a summary of the materials that have been presented and aims
+at answering questions corresponding to this presentation.
+
+1. Summary
+
+The presentation was entitled bCan you still trust your network card?b. The
+talk explained how an attacker could be able to exploit a flaw to run
+arbitrary code inside some network controllers (NICs). The attack uses
+routable packets delivered to the victimbs NIC. Consequently, multiple
+attacks can be conducted including: Man in The Middle attacks on network
+connections, access to cryptographic keys on the host platform, or malware
+injection on the victimbs computer host platform (see B' 2).
+
+The presentation included a description of the flaw as well as a demo of the
+exploitation possibilities. The tools used for the demo, as well as the proof
+of concept code were not released during the conference, and will never be.
+
+The slides used for the presentation are available here.
+
+2. An unauthenticated remote attack on a network card! Is it as dangerous as
+it seems to be?
+
+An unauthenticated remote attack on a network card is almost the most
+efficient attack one can imagine. A remote attacker located anywhere on the
+network can take full control of the victimbs network in order to: intercept
+all packets sent to and from the victimbs machine and forwards them to an
+attacker on the network; perform man in the middle on all unauthenticated
+network connexion (such as ARP or DNS) to redirect traffic to target
+machines; remotely shutdown, reset or wake up the machine.
+
+Moreover, if no IOMMU is used (see below), the attacker can gain access to
+the victimbs computer memory and take full control of the machine.
+
+However, the attack presented only applies to a specific network card model
+(Broadcom NetXtreme) whenever a remote administration functionality (called
+ASF for Alert Standard Format 2.0) is turned on (it is off by default) and
+configured. According to vendors, this functionality is far from being widely
+used. As a consequence, this vulnerability is really likely to have a very
+limited impact in practice. The vendors issued a patch for this vulnerability
+(see B' 5).
+
+3. Is there a proof of concept?
+
+Yes. A proof of concept attack has been demoed during the CanSecWest
+conference. It showed how an attacker can remotely shutdown or wake up his
+victimbs machine, and fully compromise a COTS operating system machine (Linux
+for the demo, but all operating systems are vulnerable).
+
+Please note however that the tools used for the demo, the proof of concept
+code and network packets were not provided during the conference and will not
+be released.
+
+4. How can I find out if my machine is vulnerable?
+
+Any computer using Broadcom NetXtreme chips with ASF activated and configured
+is vulnerable. Users of such computers should apply the official patches (see
+B' 6). Other vendor cards and other cards models are not impacted by this
+vulnerability. Machines using Broadcom NetXtreme chips when ASF has never
+been configured (Requires to launch the Broadcom ASF configuration tool) are
+not vulnerable but patching is highly recommended.
+
+Readers are also advised to follow CERT advisories, e.g CERTA-2010-AVI-121
+
+5. How can I protect my computers from such an attack?
+
+If your computer is vulnerable to this attack you can either (in order of
+preference):
+
+apply the vendor patch (see B' 6) ; deactivate ASF. This should be done using
+the Broadcom ASF Configuration tool and not by turning off ASF in the BIOS of
+the machine; configure all your network packet-filters to filter UDP ports
+used by ASF (623 and 664).  Please note that some operating systems actually
+deactivate ASF at boot time. Some operating systems or hypervisors might also
+take advantage of hardware technologies such as Intel Vt-d and AMD I/OMMUs
+that would limit the impact of the attack.
+
+6. Where can I find the patch correcting the flaw?
+
+Patches are provided by OEMs in firmware updates for the NICs.
+
+Vendor patches: HP: http://h20000.www2.hp.com/bizsuppor...
+
+7. What is the purpose of publishing this in an international conference?
+
+Our goal is to raise awareness on the security problems related to hardware
+vulnerabilities. We believe that this kind of publication should lead to an
+improvement of the quality of low level embedded firmware. So far, no
+research was performed on network card vulnerabilities.
+
+8.Who might be able to carry a similar attack?
+
+Carrying out an attack similar to the one we presented requires: to identify
+a flaw in a NIC embedded firmware; to get sufficient knowledge of the
+hardware; to develop tools to identify if and how the flaw will be
+exploitable; to craft the correct attack packets and make the exploit stable
+on a non standard architecture.
+
+We do not expect to see many of these attacks around in the next few months
+of years, but we proved that carrying out such attacks was possible in
+practice.
+
+9. Are there other risks related to hardware vulnerabilities?
+
+Hardware components (CPUs, chipsets, graphic adapters, NICs; USB and PCI
+devices) generally run embedded software (firmware). Flaws in low level
+firmwares could be exploited by attackers for brootkitb concealment or
+privilege escalation purposes.
+
+10. What is the French government doing to improve the things as they are
+now?
+
+ANSSI has been repeatedly raising awareness in scientific and technical
+conferences about the attack vectors related to hardware components. ANSSI
+have been talking to hardware vendors to explain why they should care about
+security of their hardware and embedded firmware design.
+
+About ANSSI
+
+The ANSSI was established by a decree issued in the Journal Officiel de la
+RC)publique FranC'aise of July 8th, 2009. The creation of the French Network
+and Information Security Agency is a milestone in the process of improving
+Francebs capability to protect its sensitive information systems.
+
+The core missions of the new agency are: To detect and early react to cyber
+attacks, thanks to the creation of a strong operational center for cyber
+defence, working round-the-clock and being in charge of the continuous
+surveillance of sensitive Governmental networks, as well as the
+implementation of appropriate defence mechanisms; To prevent threats by
+supporting the development of trusted products and services for Governmental
+entities and economic actors; To provide reliable advice and support to
+Governmental entities and operators of Critical Infrastructure; To keep
+companies and the general public informed about information security threats
+and the related means of protection through an active communication policy.
+
+ANSSIbs work on trusted computing and low level security
+
+ANSSIbs scientific publication are collected here.
+

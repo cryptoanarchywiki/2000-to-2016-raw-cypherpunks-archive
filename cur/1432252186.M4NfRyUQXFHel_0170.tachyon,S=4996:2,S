@@ -1,0 +1,97 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Thu Apr  3 13:45:28 2003
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h33IjSE22366
+	for <rsw@opamp.org>; Thu, 3 Apr 2003 13:45:28 -0500
+Received: from mononoke.wasabisystems.com (mononoke.wasabisystems.com [166.84.0.13])
+	by fort-point-station.mit.edu (8.12.4/8.9.2) with ESMTP id h33IjRAS027268
+	for <rsw@mit.edu>; Thu, 3 Apr 2003 13:45:27 -0500 (EST)
+Received: by mononoke.wasabisystems.com (Postfix, from userid 96)
+	id C15E75E434; Thu,  3 Apr 2003 13:44:49 -0500 (EST)
+X-Original-To: cryptography@wasabisystems.com
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by mononoke.wasabisystems.com (Postfix) with ESMTP id 2ABFB5E40C
+	for <cryptography@wasabisystems.com>; Thu,  3 Apr 2003 13:44:49 -0500 (EST)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id B9410D97DC; Thu,  3 Apr 2003 13:44:48 -0500 (EST)
+X-Original-To: cryptography@wasabisystems.com
+Received: from zork.zork.net (zork.zork.net [66.92.188.166])
+	by mononoke.wasabisystems.com (Postfix) with ESMTP id 4F13C5E405
+	for <cryptography@wasabisystems.com>; Wed,  2 Apr 2003 21:16:28 -0500 (EST)
+Received: from schoen by zork.zork.net with local (Exim 3.35 #1 (Debian))
+	id 190uH4-0007nt-00; Wed, 02 Apr 2003 18:16:18 -0800
+Date: Wed, 2 Apr 2003 18:16:18 -0800
+From: Seth David Schoen <schoen@loyalty.org>
+To: cypherpunks@lne.com, cryptography@wasabisystems.com
+Subject: Re: Logging of Web Usage
+Message-ID: <20030403021618.GB15220@zork.net>
+Mail-Followup-To: Seth David Schoen <schoen@loyalty.org>,
+	cypherpunks@lne.com, cryptography@wasabisystems.com
+References: <3E8963CC.9070203@algroup.co.uk> <kjwuif8b90.fsf@romeo.rtfm.com> <200303311844.h2VIiZdd021188@new.toad.com> <kjwuif8b90.fsf@romeo.rtfm.com> <v0311072ebab104f1e47a@[192.168.1.5]>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <v0311072ebab104f1e47a@[192.168.1.5]>
+User-Agent: Mutt/1.4i
+X-Accept-Language: en,la,eo
+X-Broadcast-Flag: 1
+X-Consensus-at-Lawyerpoint: http://bpdg.blogs.eff.org/
+X-Cruelty-to-Analog: http://analog.blogs.eff.org/
+X-Modulation: 8/VSB Is Not A Crime
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 2532
+Lines: 49
+
+Bill Frantz writes:
+
+> The http://cryptome.org/usage-logs.htm URL says:
+> 
+> >Low resolution data in most cases is intended to be sufficient for
+> >marketing analyses.  It may take the form of IP addresses that have been
+> >subjected to a one way hash, to refer URLs that exclude information other
+> >than the high level domain, or temporary cookies.
+> 
+> Note that since IPv4 addresses are 32 bits, anyone willing to dedicate a
+> computer for a few hours can reverse a one way hash by exhaustive search.
+> Truncating IPs seems a much more privacy friendly approach.
+> 
+> This problem would be less acute with IPv6 addresses.
+
+I'm skeptical that it will even take "a few hours"; on a 1.5 GHz
+desktop machine, using "openssl speed", I see about a million hash
+operations per second.  (It depends slightly on which hash you choose.)
+This is without compiling OpenSSL with processor-specific optimizations.
+
+That would imply a mean time to reverse the hash of about 2100 seconds,
+which we could probably improve with processor-specific optimizations
+or by buying a more recent machine.  What's more, we can exclude from our
+search parts of the IP address space which haven't been allocated, and
+optimize the search by beginning with IP networks which are more
+likely to be the source of hits based on prior statistical evidence.  Even
+without _any_ of these improvements, it's just about 35 minutes on average.
+
+I used to advocate one-way hashing for logs, but a 35-minute search on
+an ordinary desktop PC is not much obstacle.  It might still be
+helpful if you used a keyed hash and then threw away the key after a
+short time period (perhaps every 6 hours).  Then you can't identify or
+link visitors across 6-hour periods.  If the key is very long,
+reversing the hash could become very hard.
+
+The logging problem will depend on what server operators are trying to
+accomplish.  Some people just want to try to count unique visitors;
+strangely enough, they might get more privacy-protective (and comparably
+precise) results by issuing short-lived cookies.
+
+-- 
+Seth David Schoen <schoen@loyalty.org> | Very frankly, I am opposed to people
+     http://www.loyalty.org/~schoen/   | being programmed by others.
+     http://vitanuova.loyalty.org/     |     -- Fred Rogers (1928-2003),
+                                       |        464 U.S. 417, 445 (1984)
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

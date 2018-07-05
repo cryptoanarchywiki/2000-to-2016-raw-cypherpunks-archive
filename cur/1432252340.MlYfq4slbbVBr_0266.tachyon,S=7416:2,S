@@ -1,0 +1,138 @@
+From owner-cypherpunks@al-qaeda.net  Wed Apr  4 12:57:34 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q34Gs6QR005440
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 4 Apr 2012 12:54:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1333558446;
+	bh=cUYPpTtG6jdm7x5yQc/9fDHY/XlE6LrOvMPczgVqZZ4=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=pOeAM0v3SiLtccZVBRW1vQafDbf+WcHFmgAJ+pv+lWVADFmU5VABGBXMxvNnbs79F
+	 fQ3WFYaj7kIZlVl7sL5vSC71fixMtm318Rxj8NFR+fz6UXIBO1nZZ/EK6U/JnezCta
+	 60VIJj53OJklSfwEyaDJanhlGLx/xpn+6cLjw7pU=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q34Gs6DQ005439
+	for cypherpunks-outgoing; Wed, 4 Apr 2012 12:54:06 -0400
+Date: Wed, 4 Apr 2012 18:54:02 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: tor-talk@lists.torproject.org, cypherpunks@al-qaeda.net,
+        info@postbiota.org
+Subject: Tor traffic disguised as Skype video calls to fool repressive 
+  governments
+Message-ID: <20120404165402.GB14482@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+http://arstechnica.com/tech-policy/news/2012/04/tor-traffic-disguised-as-skype-video-call-to-fool-repressive-governments.ars
+
+Tor traffic disguised as Skype video calls to fool repressive governments
+
+By Dan Goodin | Published April 3, 2012 3:51 PM
+
+Tor traffic disguised as Skype video calls to fool repressive governments
+
+An overview of the SkypeMorph architecture, which converts packet size
+distributions in Tor to those in Skype video calls.
+
+Computer scientists have released a tool that disguises communications sent
+through the Tor anonymity service as Skype video calls, a cloak that's
+intended to prevent repressive governments from blocking the anonymous
+traffic.
+
+SkypeMorph, as the application is called, is designed to remedy a fundamental
+limitation of Tor: While the communications are cryptographically secured,
+unique characteristics of their individual data packets make them easy to
+identify as they travel over the networks. In the past, for example, the
+cryptographic key exchange was different in Tor transactions and the
+certificates used were typically valid for only a matter of hours, compared
+with as long as a year or two for certificates used by most Web servers.
+These fingerprints made it possible for government censors in Iran, China,
+and elsewhere to block data traveling over Tor while leaving the rest of the
+country's communications intact.
+
+Tor developers have remedied those shortcomings, but other unique signatures
+still exist. The idea behind SkypeMorph is to camouflage Tor communications
+so they blend in as traffic that government censors are reluctant to
+restrict.
+
+"The goal is to make the traffic look like some other protocol that they are
+not willing to block," Ian Goldberg, a professor at the Cheriton School of
+Computer Science at the University of Waterloo, told Ars. "They could just
+shut off the Internet, of course, like Egypt did for a few days a year or so
+ago, but that, of course, would be extremely unpopular to their own people
+that are wondering why can't see pictures of cute cats." A censorship arms
+race
+
+The release of SkypeMorph comes a few months after a separate research team
+in Sweden uncovered changes the Chinese government made to its "Great
+Firewall" censorship infrastructure to make it harder for citizens to use
+Tor. Although their research paper (PDF) was only recently published, the
+findings have been public for a few months, said Goldberg, who sits on the
+Tor Project's board of directors. As censors in China and elsewhere devise
+increasingly sophisticated measures of detecting and blocking the anonymity
+service, it falls on Tor volunteers to find new ways to thwart them.
+
+"The whole point of SkypeMorph is exactly because the Great Firewall is so
+complex," said Goldberg, who refers to the jockeying between privacy
+advocates and governments as a censorship arms race. "You have to very
+convincingly pretend your traffic is something else, like Skype."
+
+SkypeMorph relies on the Microsoft-owned VoIP service to establish a
+cryptographically secured connection between an end user and unlisted entry
+points, known as bridges, to the Tor network. By sending a few short Skype
+messages to one of the bridges, a Tor user performs a Diffie Hellman key
+exchange to make sure the connection can be trusted. Once the handoff is
+completed, SkypeMorph initiates a Skype video call to the bridge and quickly
+drops it. The bridge and the end user then use the key to securely
+communicate using normal Tor protocols.
+
+To prevent the Tor traffic from being recognized by anyone analyzing the
+network flow, SkypeMorph uses what's known as traffic shaping to convert Tor
+packets into User Datagram Protocol packets, as used by Skype. The traffic
+shaping also mimics the sizes and timings of packets produced by normal Skype
+video conversations. As a result, outsiders observing the traffic between the
+end user and the bridge see data that looks identical to a Skype video
+conversation.
+
+The SkypeMorph developers chose Skype because the software is widely used
+throughout the world, making it hard for governments to block it without
+arousing widespread criticism. The developers picked the VoIP client's video
+functions because its flow of packets more closely resembles Tor traffic.
+Voice communications, by contrast, show long pauses in transmissions, as one
+party speaks and the other listens.
+
+"It's not enough just to send encrypted packets to a particular port,
+Goldberg explained. "You want to send them in patterns and sequences and
+sizes and distributions that look as realistic as possible. What our system
+does is go a step beyond traffic morphing and not only matches the packet
+size distributions but also matches the timing distributions."
+
+To prevent the Skype network from being overburdened, SkypeMorph sends data
+directly over the Internet once the VoIP client has been used to establish a
+secured connection.  Modular obfuscation plugins
+
+The application makes use of programming interfaces built into Tor that allow
+the program to work with obfuscation extensions called pluggable transports.
+Such add-ons appear as SOCKS proxies to the Tor client and allow data
+delivered to bridges to be sent in obfuscated ways. Developers can design
+pluggable transports for Tor in much the way people write add-ons for the
+Firefox or Chrome browsers.
+
+So far, the only pluggable transport available for Tor is known as obfsproxy.
+It passes traffic between end users and bridges through a stream cipher.
+SkypeMorph is designed to extend the benefit of this plugin "to address its
+limitation of not outputting innocuous-looking traffic," Goldberg's research
+paper (PDF) describing the software said.
+
+The SkypeMorph paper was co-authored by Hooman Mohajeri Moghaddam, Baiyu Li,
+and Mohammad Derakhshani, all of whom were students enrolled in a class
+taught by Goldberg titled Hot Topics in Privacy Enhancing Technologies.
+
+Photograph by Hooman Mohajeri Moghaddam, Baiyu Li, Mohammad Derakhshani, and
+Ian Goldberg
+

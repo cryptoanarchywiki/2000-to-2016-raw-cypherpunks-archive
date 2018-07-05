@@ -1,0 +1,124 @@
+From owner-cypherpunks@Algebra.COM  Sat Aug  3 21:44:32 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g741iWe08562
+	for <rsw@opamp.org>; Sat, 3 Aug 2002 21:44:32 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id VAA01197
+	for <rsw@mit.edu>; Sat, 3 Aug 2002 21:44:31 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g741QkV2008083
+	for <cypherpunks-outgoing@ak47.algebra.com>; Sat, 3 Aug 2002 20:26:46 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g741QkA9008082
+	for cypherpunks-outgoing; Sat, 3 Aug 2002 20:26:46 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g741QfV2008052
+	for <cypherpunks@ak47.algebra.com>; Sat, 3 Aug 2002 20:26:42 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g741QdZB000592
+	for cypherpunks@ak47.algebra.com; Sat, 3 Aug 2002 18:26:39 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g741PZA1000585
+	for cypherpunks-goingout345; Sat, 3 Aug 2002 18:25:35 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Sat, 3 Aug 2002 18:25:28 -0700
+From: AARG! Anonymous <remailer@aarg.net>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@aarg.net>.
+To: jamesd@echeque.com, cypherpunks@lne.com
+Old-Subject: Re: Other uses of TCPA
+Message-ID: <5c42704f47b04baebb34cfdea142680a@aarg.net>
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Re: Other uses of TCPA
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 3452
+Lines: 76
+
+
+James Donald writes:
+
+> James Donald writes:
+> > > I can only see one application for voluntary TCPA, and that is 
+> > > the application it was designed to perform:  Make it possible 
+> > > run software or content which is encrypted so that it will  
+> > > only run on one computer for one time period.
+>
+> On 3 Aug 2002 at 20:10, Nomen Nescio wrote:
+> > For TCPA, you'd have to have the software as a blob which is  
+> > encrypted to some key that is locked in the TPM.  But the  
+> > problem is that the endorsement key is never leaked except to  
+> > the Privacy CA ....
+>
+> (Lots of similarly untintellible stuff deleted)
+>
+> You have lost me, I have no idea why you think what you are  
+> talking about might be relevant to my assertion.
+
+I'm sorry, I'm just using the language and data structures from
+TCPA to try to understand how your assertion could relate to it.
+If you are making a claim about TCPA, perhaps you could express
+it in terms of those specific features which are supported by
+TCPA.
+
+> The TPM has its own secret key, it makes the corresponding public 
+> key widely available to everyone, and its own internal good known
+> time.
+
+No, the TPM public key is not widely available to everyone.  In fact,
+believe it or not, it is a relatively closely held secret.  This is
+because the public key is in effect a unique identifier like the Intel
+processor ID number, and we all know what a firestorm that caused.
+Intel is paranoid about being burned again, so they have created a very
+elaborate system in which the TPM's public key is exposed only as narrowly
+as possible.
+
+The TPM public key is called the Endorsement key - this is the key which
+is signed by the manufacturer and which proves that the TPM is a valid
+implementation of TCPA.  Here is what section 9.2 of the TCPA spec says
+about it:
+
+: A TPM only has one asymmetric endorsement key pair. Due to the nature of
+: this key pair, both the public and private parts of the key have privacy
+: and security concerns.
+:
+: Exporting the PRIVEK from the TPM must not occur. This is for security
+: reasons. The PRIVEK is a decryption key and never performs any signature
+: operations.
+:
+: Exporting the public PUBEK from the TPM under controlled circumstances
+: is allowable. Access to the PUBEK must be restricted to entities that
+: have a "need to know." This is for privacy reasons.
+
+The PUBEK is the public part of the TPM key and is not supposed to
+be widely available.  It is only for those who have a "need to know",
+which definitely does not include everyone who would like to send some
+software to the system.  In fact, it is only sent to Privacy CAs, which
+use it to encrypt a cert on a transient key that will be widely exposed.
+But I'm sorry, I'm going unintelligible again, aren't I?
+
+Also, nothing in the TCPA standard refers to securely knowing the time.
+Section 10.7 says "There is no requirement for a clock function in the
+TPM", so the date/time info comes from the normal, insecure hardware
+clock.
+
+> So  when your customer's payment goes through, you then
+> send him a  copy of your stuff encrypted to his TPM, a copy which
+> only his TPM  can make use of.  Your code, which the TPM decrypts
+> and executes,  looks at the known good time, and if the user is
+> out of time, refuses to play.
+
+Well, without using any jargon, I will only say that TCPA doesn't work
+like this, and if you don't believe me, you will have to read the spec
+and verify it for yourself.
+

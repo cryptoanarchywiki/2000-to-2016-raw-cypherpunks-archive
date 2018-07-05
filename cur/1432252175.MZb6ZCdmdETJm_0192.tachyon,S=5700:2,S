@@ -1,0 +1,116 @@
+From owner-cypherpunks@al-qaeda.net  Tue Apr  6 19:56:50 2010
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id o36Nu3pK015803
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 6 Apr 2010 19:56:03 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id o36Nu3uX015802
+	for cypherpunks-outgoing; Tue, 6 Apr 2010 19:56:03 -0400
+Message-ID: <4BBBCA0F.3020300@gmx.co.uk>
+Date: Wed, 07 Apr 2010 00:55:59 +0100
+From: Dave Howe <DaveHowe@gmx.co.uk>
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.24)
+  Gecko/20100228 Lightning/0.9 Thunderbird/2.0.0.24 Mnenhy/0.7.5.0
+MIME-Version: 1.0
+To: cypherpunks@al-qaeda.net
+Subject: Re: Fwd: [ PRIVACY Forum ]  Surveillance via bogus SSL      
+  certificates
+References: <81277.86389.qm@web33307.mail.mud.yahoo.com>
+In-Reply-To: <81277.86389.qm@web33307.mail.mud.yahoo.com>
+X-Enigmail-Version: 0.96.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4425
+Lines: 85
+
+Sarad AV wrote:
+> The first visit scenario is definitely an issue. that brings it to
+> the other question - why cannot CA's issue certificates to sites say
+> like 10 years or 20 years and get the corresponding money for that.
+
+They can. There is the revocation issue (once a certificate passes its
+validity date, they no longer need to store a revocation for it if it
+was revoked; for one and two year certificates that is only one or two
+years, but if it were longer than that the CRL would be correspondingly
+larger. certificates can *specify* where the CRL is, giving a mechanism
+to assign a different URL to each year's offerings, but surprisingly,
+many of the older CAs don't use it and rely on the browser having
+hard-coded data for the CRL.
+
+I think it is more that most sites don't want to pay that sort of cash
+up front for their cert - with the current crop of EV certificates
+exceeding #400/year, a 10 year cert would be in excess of #4K, and a 20
+year 9K or more. even with a discount, that's a *lot* of upfront cost
+for a business.
+
+Another factor is that prices for normal certificates have been steadily
+declining, year on year, for some time now - even given that money *now*
+is worth more than money this time next year, if the cert is going to be
+cheaper next year in absolute terms, you would be ill advised to to buy
+too many years up front at the higher price.
+
+EV is another good example of a factor; it didn't exist a few years ago,
+now it is a "must have" for big name sites. What will the next big thing
+be five years from now, and would it mean discarding your expensive 10
+year certificate for the new and more secure "we really really check you
+are who you claim to be, this time, honest" Super EV that is then
+considered a requirement?
+
+Finally, will you still be called the same thing ten years from now?
+companies change, their branding (and corporate image) changes, they
+merge and split; you may not wish to have five more years as
+www.superwidget.com if you no longer make widgets, and your company name
+has changed to megagadget...
+
+> Most certificates issued by CA's usually have 2-3 years validity.
+
+still a lot of one year certs out there - bigger sites may find the
+trouble of renewal on what is only a small difference in price an issue,
+and thus go with a longer certificate, but the default for most
+purchases is the One year cert. But regardless - the whole pricing
+structure of the CA market is commercial - certificates exist *only* to
+make money for commercial CAs; any actual security benefit is a side effect.
+
+> Incase of a significant mathematical breakthrough the CA should
+> provide an alternate secure certifying mechanism if the breakthrough
+> occurred within the service period (10/20 years). The question is why
+> do popular https sites not go for certificates that expire in 10/20
+> years if it helps security?
+
+Because it doesn't.
+
+the vast majority of browsers don't report a certificate that has
+changed since your last visit - because they don't keep a copy of the
+certificate to verify against. Those that do have been specifically
+modified for that purpose by their users - as is detailed in this
+thread, pretty much - and suffer from the first visit problem because
+there is no mechanism to say "if it is a cert I don't have, verify it
+against the CA, tell me which CA it is (and if that seems a sane choice)
+and then store a copy so next time I have my own standard to refer to".
+
+There is also no mechanism to chain from a trusted certificate that is
+due to expire (or already has) to a new, not yet verified one. But then,
+there is no commercial incentive for either of these features, as
+browsers are happy to support the commercial CA model, and certainly the
+commercial CAs don't want anyone to leave the hierarchical "CA as god"
+model.
+
+> Another question, this one is specific to gmail - which the entire
+> session is on https.
+
+> when i click a pdf in my gmail to be opened with google docs, the
+> certificate is signed by google(used a third part browser plugin to
+> check this). that is fine, however my browser never alerts me as a
+> potential untrusted certificate and if want to add it as an
+> exception. does that mean google is an intermediate CA or what does
+> that mean?
+
+You should be able to check the certificate chain on the object and see.
+I haven't tried this (and given its 1am I am not going to now, but I may
+do so when I get time :)
+

@@ -1,0 +1,150 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Wed Oct 30 19:48:15 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g9V0mEX07940
+	for <rsw@opamp.org>; Wed, 30 Oct 2002 19:48:14 -0500
+Received: from lion.ninthwonder.com (lion.ninthwonder.com [151.199.66.147])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id TAA12458
+	for <rsw@mit.edu>; Wed, 30 Oct 2002 19:48:13 -0500 (EST)
+Received: by lion.ninthwonder.com (Postfix, from userid 96)
+	id 7D21530715; Wed, 30 Oct 2002 19:46:12 -0500 (EST)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 262B930706
+	for <cryptography@wasabisystems.com>; Wed, 30 Oct 2002 19:46:11 -0500 (EST)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 9A07AD97FA; Wed, 30 Oct 2002 19:46:10 -0500 (EST)
+Received: from mercury.ex.ac.uk (mercury.ex.ac.uk [144.173.6.26])
+	by lion.ninthwonder.com (Postfix) with ESMTP id DF70230715
+	for <cryptography@wasabisystems.com>; Wed, 30 Oct 2002 19:29:13 -0500 (EST)
+Received: from cronus ([144.173.6.20] helo=cronus.ex.ac.uk)
+	by mercury.ex.ac.uk with esmtp (Exim 3.33 #1)
+	id 1873Cj-00A6Av-00; Thu, 31 Oct 2002 00:28:57 +0000
+Date: Thu, 31 Oct 2002 00:28:56 +0000
+From: Adam Back <adam@cypherspace.org>
+To: Jason Holt <jason@lunkwill.org>
+Cc: Cypherpunks <cypherpunks@minder.net>,
+   Digital Bearer Settlement List <dbs@philodox.com>,
+   cryptography@wasabisystems.com, Adam Back <adam@cypherspace.org>
+Subject: Re: patent free(?) anonymous credential system pre-print
+Message-ID: <20021031002856.A285862@exeter.ac.uk>
+References: <p05200e0db9e4d8c72ace@[66.149.49.6]>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <p05200e0db9e4d8c72ace@[66.149.49.6]>; from rah@shipwright.com on Tue, Oct 29, 2002 at 07:31:29PM -0500
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 5026
+Lines: 107
+
+Some comments on this paper comparing efficiency, and functionality
+with Camenisch, Chaum, Brands.
+
+On Tue, Oct 29, 2002 at 11:49:21PM +0000, Jason Holt wrote:
+> http://eprint.iacr.org/2002/151/
+> 
+> It mentions how to use the blinding technique Ben Laurie describes
+> in his Lucre paper, which I don't think has been mentioned in the
+> formal literature, and also describes what I call a non-interactive
+> cut and choose protocol which is new AFAICT.  Thanks again!
+
+- efficiency
+
+The non-interactive cut and choose protocol results in quite big
+messages in the issuing and showing protcols to attain good security.
+The user who wishes to cheat must create n/2 false attributes, and n/2
+true attributes.  (True attributes being the ones he will try to
+convince the CA are encoded in all the attributes).  The user can in
+an offline fashion keep trying different combinations of false and
+true attributes until he finds one where the attributes selected for
+disclosure during issuing are the n/2 true attributes.  Then in the
+showing protocol he can show the n/2 false attributes.
+
+But C(n,n/2) grows sub-exponentially and so the user has to for
+example encode 132 blinded hashed attributes to provide assurance of
+work factor of 2^128 to the CA.  (C(132,66) ~ 2^128).  Without looking
+in detail at what must be sent I presume each the issuing message for
+a single credential would be order of 10KB.  Similar for the showing
+protocol.
+
+Computational efficiency is probably still better than Camenisch
+credentials despite the number of attribute copies which must be
+blinded and unblinded, but of course less efficient than Brands.
+
+- functionality
+
+The credentials have a relatively inefficient cut-and-choose based
+issuing and showing protocol.  Brands has efficient issuing protocols
+which support offline showing.  Chaum's basic offline credentials are
+based on interactive cut-and-choose, but there is an efficient
+variant [1].
+
+As with Brands and Chaum's certificates if they are shown multiple
+times they are linkable.  (Camenisch offers unlinkable multi-show but
+they are quite inefficient).
+
+The credentials can be replayed (as there is no credential private
+key, a trace of a credential show offers no defense against replay).
+Brands credentials have a private key so they can defend against this.
+(Chaum's credentials have the same problem).
+
+The credentials unavoidably leave the verifier with a transferable
+signed trace of the transaction.  Brands credentials offer a
+zero-knowledge option where the verifier can not transfer any
+information about what he was shown.
+
+The credentials support selective disclosure of attributes, but only
+in a restricted sense.  Attributes can be disclosed with AND
+connectives.  However other connectives (OR, +, -, negation, and
+formulae) are not directly possible.  Brands supports all of these.
+
+The credentials do not support lending deterence (there is no option
+to have a secret associated with a credential that must necessarily be
+revealed to lend the credential as with Brands).
+
+The credentials are not suitable for offline use because they offer no
+possibility for a secret (such as user identity, account number etc)
+to be revealed if the user spends more times than allowed.
+
+Most of these short-falls stem from the analogous short-falls in the
+Wagner blinding method they are based on.  Of course (and the point of
+the paper) the credentials do offer over the base Wagner credentials
+(a restrictive) form of selective disclosure which the base
+credentials do not.
+
+On citations:
+
+> I've submitted a pre-print of my anonymous credential system to the
+> IACR ePrint server.  Thanks to all of you who responded to the
+> questions I posted here while working on it.  I'd love to hear
+> feedback from any and all before I sumbit it for publication;
+> particularly, I want to make sure I haven't forgotten to give proper
+> attribution for any previous work.
+
+Brands discusses the salted hash form of selective disclosure in his
+book [2], you might want to cite that.  He includes some related
+earlier reference also.  I reinvented the same technique before being
+aware of the Brands reference also -- it seems like an obvious
+construction for a limited hashing based form of selective disclosure.
+
+Adam
+--
+[1] Niels Ferguson, "Single Term Off-Line Coins", eurocrypt 93.
+
+[2] Stefan Brands, "Rethinking Public Key Infrastructures and Digital
+Certificates; Building in Privacy", MIT Press, Aug 2000
+
+viz p27: "Another attempt to protect privacy is for the CA to
+digitally sign (salted) oneway hashes of attributes, instead of (the
+concatenation of) the attributes themselves. When transacting or
+communicating with a verifier, the certificate holder can selectively
+disclose only those attributes needed.  Lamport [244] proposed this
+hashing construct in the context of one-time signatures."
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

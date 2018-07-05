@@ -1,0 +1,89 @@
+From owner-cypherpunks@jfet.org  Fri Nov  4 20:10:05 2005
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.4/8.13.4/Debian-3) with ESMTP id jA519ACb031915
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 4 Nov 2005 20:09:10 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.4/8.13.4/Submit) id jA519An8031914
+	for cypherpunks-outgoing; Fri, 4 Nov 2005 20:09:10 -0500
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;         s=beta;
+  d=gmail.com;        
+  h=received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+  b=L+XUjlXsgQ1jpZlj+c35eFNiYNBi34uYy57Gf+SF5h9fEU+vStc/tDW6FhK2qpVvJ7iG7qvb8Xnj5QWiM2ZE/QuSTPW4zGY0yldKFG2od8oh/ztRiRUC+hRGAEuhXPZVQ09Un5tfWizDlpQ8PKDZV68Em5RVtSbto6+adkSBuO8=
+Message-ID: <d4f1333a0511041709j48703e7aqe2d694b0366ccccc@mail.gmail.com>
+Date: Fri, 4 Nov 2005 19:09:07 -0600
+From: "Travis H." <solinym@gmail.com>
+To: John Kelsey <kelsey.j@ix.netcom.com>
+Subject: Re: On Digital Cash-like Payment Systems
+Cc: cyphrpunk <cyphrpunk@gmail.com>, "James A. Donald"
+  <jamesd@echeque.com>,
+        cryptography@metzdowd.com, cypherpunks@jfet.org
+In-Reply-To: <19275506.1130592050616.JavaMail.root@elwamui-karabash.atl.sa.earthlink.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+References: <19275506.1130592050616.JavaMail.root@elwamui-karabash.atl.sa.earthlink.net>
+Content-Transfer-Encoding: 7bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by proton.jfet.org
+  id jA5199SR031880
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2919
+Lines: 53
+
+By my calculations, it looks like you could take a keypair n,e,d and
+some integer x and let e'=e^x and d'=d^x, and RSA would still work,
+albeit slowly.  Reminds me of blinding, to some extent, except we're
+working with key material and not plaintext/ciphertext.
+
+Since I'm on the topic, does doing exponentiation in a finite field
+make taking discrete logarithms more difficult (I suspect so), and if
+so, by how much?
+
+Is there any similar property that could be used on e' and d' to make
+computing e and d more difficult?  Of course whatever algorithm is
+used, one would need to feed e' and d' to it en toto, but a really
+clever attacker might be able to take the xth root prior to
+exfiltrating them.
+
+Also, application of a random pad using something like XOR would be
+useful; could be done as a postprocessing stage independently of the
+main algorithm used to encrypt the data, or done as a preprocessing
+stage to the plaintext.  I prefer the latter as it makes breaking the
+superencryption much more difficult, and fixed headers in the
+ciphertext could give away some OTP material.  However, the
+preliminary encryption in something like gpg would suffer, so it would
+have the effect of making the ciphertext bigger.  Perhaps this is an
+advantage in your world.
+
+An alternate technique relies in specifying, say, 256 bits of key,
+then using a cryptographically strong PRNG to expand it to an
+arbitrary length, and storing that for use.  Pilfering it then takes
+more bandwidth, but it could be reconstructed based on the 256-bit
+seed alone, if one knew the details of the PRNG.  So the key could be
+"compressed" for transfer, if you know the secret seed.  Search for
+the seed would still be expensive, even if PRNG details are known. 
+Alternately, in a message encrypted with gpg-like hybrid ciphering,
+one could apply a secret, implicit PRNG to the message key seed before
+using it as a symmetric key.  For example, you could take a 256-bit
+message key, run it through the PRNG, create 3x256 bits, then use
+triple-AES to encrypt the message.  In this case, the PRNG buys
+forgery resistance without the use of PK techniques.  The PRNG
+expander could not be attacked without breaking the PK encryption
+(which supports arbitrarily large keys) of the seed or the triple-AES
+symmetric encryption of the message.
+
+You know, they specify maximum bandwidth of covert channels in bits
+per second, I wonder if you could use techniques like this to prove
+some interesting property vis-a-vis covert channel leakage.  It's
+remarkably difficult to get rid of covert channels, but if you inflate
+whatever you're trying to protect, and monitor flows over a certain
+size, then perhaps you can claim some kind of resilience against them.
+*shrug*
+--
+http://www.lightconsulting.com/~travis/  -><-
+"We already have enough fast, insecure systems." -- Schneier & Ferguson
+GPG fingerprint: 50A1 15C5 A9DE 23B9 ED98 C93E 38E9 204A 94C2 641B
+

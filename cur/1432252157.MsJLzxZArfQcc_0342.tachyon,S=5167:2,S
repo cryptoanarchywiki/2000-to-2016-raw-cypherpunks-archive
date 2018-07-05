@@ -1,0 +1,113 @@
+From owner-cypherpunks@al-qaeda.net  Tue Mar 29 00:08:56 2005
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.3/8.13.3/Debian-9) with ESMTP id j2T68kDd030162
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Tue, 29 Mar 2005 00:08:46 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.3/8.13.3/Submit) id j2T68k6W030161
+	for cypherpunks-outgoing; Tue, 29 Mar 2005 00:08:46 -0600
+From: "James A. Donald" <jamesd@echeque.com>
+To: cypherpunks@minder.net
+Date: Mon, 28 Mar 2005 21:31:37 -0800
+Subject: How email encryption should work
+Message-ID: <424877B9.1249.E5DF01F@localhost>
+In-reply-to: <6.0.1.1.0.20050328174523.04eca260@mail.comcast.net>
+References: <200503270635.j2R6ZNAF017280@artifact.psychedelic.net>
+X-mailer: Pegasus Mail for Windows (4.21c)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-1.5.6
+  (outlier.minder.net [65.75.150.100]); Tue, 29 Mar 2005 01:07:57 -0500
+  (EST)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-1.5.6
+  (waste.minder.net [127.0.0.1]); Tue, 29 Mar 2005 01:05:49 -0500 (EST)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-1.5.6
+  (waste.minder.net [127.0.0.1]); Tue, 29 Mar 2005 01:05:49 -0500 (EST)
+X-Greylist: Sender DNS name whitelisted, not delayed by
+  milter-greylist-1.5.6 (waste.minder.net [66.92.53.73]); Tue, 29 Mar
+  2005 01:05:45 -0500 (EST)
+X-Greylist: Delayed for 00:34:11 by milter-greylist-1.5.6
+  (outlier.minder.net [65.75.150.100]); Tue, 29 Mar 2005 01:05:38 -0500
+  (EST)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3381
+Lines: 75
+
+    --
+In my blog http://blog.jim.com/ I post "how email 
+encryption should work"
+
+I would appreciate some analysis of this proposal, which 
+I think summarizes a great deal of discussion that I 
+have read.
+
+Here is how email encryption should work:
+
+    * The user should automagically get his key and 
+    certificate when he sets up the email account, 
+    without having to do anything extra. We should allow 
+    him the option of doing extra stuff, but the default 
+    should be do nothing, and the option to do something 
+    should be labeled with something intimidating like 
+    Advanced custom cryptographic key management so 
+    that 99% of users never touch it.
+
+    * In the default case, the mail client, if there are 
+    no keys present, logs in to a keyserver using a 
+    protocol analogous to SPEKE, using by default the 
+    same password as is used to download mail. That 
+    server then sends the key for that password and 
+    email address, and emails a certificate asserting 
+    that holder of that key can be reached at that email 
+    address. Each email address, not each user, has a 
+    unique key, which changes only when and if the user 
+    changes the password or email address. Unless the 
+    user wants to deal with advanced custom options, 
+    his from address must be the address that the 
+    client downloads mail from  as it normally is.
+
+    * The email client learns the correspondent's public 
+    key by receiving signed email. It assigns petnames 
+    on a per-key basis. A petname is also shorthand for 
+    entering a destination address (Well it is shorthand 
+    if the user modified it. The default petname is the 
+    actual address optionally followed by a count.)
+
+    * The email client presents two checkboxes, sign and 
+    encrypt, both of which default to whatever was last 
+    used for this email address. If several addresses 
+    are used, it defaults to the strongest that was used 
+    for any one of them. If the destination address has 
+    never been used before, then encrypt is checked if 
+    the keys are known, greyed out if they are unknown. 
+    Sign is checked by default.
+
+    * The signature is in the mail headers, not the 
+    body, and signs the body, the time sent, the 
+    sender's address, and the recipient's address. If 
+    the email is encrypted, the signature can only be 
+    checked by someone who possesses the decryption key.
+
+    * If user is completely oblivious to encryption and 
+    completely ignores those aspects of the program, and 
+    those he communicates with do likewise, he sends his 
+    public key all over the place in the headers, signs 
+    everything he sends, and encrypts any messages that 
+    are a reply to someone using software that follows 
+    the same protocol, and neither he nor those he 
+    corresponds with notice anything different or have 
+    to do anything extra  other than that when he gets 
+    unsigned messages, a warning comes up  an 
+    unobtrusive and easily ignored warning if he has 
+    never received a signed message from that source, a 
+    considerably stronger warning if he has previously 
+    received signed mail from that source.
+
+    --digsig
+         James A. Donald
+     6YeGpsZR+nOTh/cGwvITnSR3TdzclVpR0+pr3YYQdkG
+     VvdTZKUxpdfcDRAGwBSupIYVIUGAAE5orXRkJl8q
+     4y7qVNj7u/H3nJLgyAs5pGM2tDFOcyCyC9L+vbbpa
+

@@ -1,0 +1,105 @@
+From owner-cypherpunks@Algebra.COM  Wed Mar 21 17:56:02 2001
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.72.0.53])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id RAA07804
+	for <kwantam@positron.mit.edu>; Wed, 21 Mar 2001 17:56:02 -0500
+Received: from ak47.algebra.com (root@ak47.algebra.com [208.233.99.160])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id RAA18879
+	for <rsw@mit.edu>; Wed, 21 Mar 2001 17:56:01 -0500 (EST)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f2LMLqd13295
+	for cypherpunks-outgoing; Wed, 21 Mar 2001 16:21:52 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from waste.minder.net (fw.minder.net [216.25.149.98])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f2LMLpv13281
+	for <cypherpunks@algebra.com>; Wed, 21 Mar 2001 16:21:51 -0600
+Received: (from cpunks@localhost)
+	by waste.minder.net (8.9.3/8.9.3) id RAA32436
+	for cypherpunks@algebra.com; Wed, 21 Mar 2001 17:21:35 -0500
+Received: from hq.pro-ns.net (hq.pro-ns.net [208.200.182.20])
+	by waste.minder.net (8.9.3/8.9.3) with ESMTP id RAA32425
+	for <cpunks@minder.net>; Wed, 21 Mar 2001 17:21:34 -0500
+Received: (from cpunks@localhost)
+	by hq.pro-ns.net (8.11.1/8.11.1) id f2LMLEa67838
+	for cpunks@minder.net; Wed, 21 Mar 2001 16:21:14 -0600 (CST)
+Received: from sirius.infonex.com (sirius.infonex.com [216.34.245.2])
+	by hq.pro-ns.net (8.11.1/8.11.1) with ESMTP id f2LMLE967831
+	for <cpunks@ds.pro-ns.net>; Wed, 21 Mar 2001 16:21:14 -0600 (CST)
+Received: (from majordom@localhost) by sirius.infonex.com (8.8.8/8.8.8) id OAA28007 for cypherpunks-outgoing; Wed, 21 Mar 2001 14:00:55 -0800 (PST)
+Received: from abraham.cs.berkeley.edu (abraham.CS.Berkeley.EDU [128.32.37.121]) by sirius.infonex.com (8.8.8/8.8.8) with ESMTP id OAA28002 for <cypherpunks@sirius.infonex.com>; Wed, 21 Mar 2001 14:00:49 -0800 (PST)
+Received: (from news@localhost)
+	by abraham.cs.berkeley.edu (8.8.6/8.8.6) id OAA22032;
+	Wed, 21 Mar 2001 14:00:27 -0800
+To: cypherpunks@sirius.infonex.com
+Path: not-for-mail
+From: iang@cs.berkeley.edu (Ian Goldberg)
+Newsgroups: isaac.lists.cypherpunks
+Old-Subject: Re: PGP flaw found by Czech firm allows dig sig to be forged
+Date: 21 Mar 2001 22:00:27 GMT
+Organization: ISAAC Group, UC Berkeley
+Distribution: isaac
+Message-ID: <99b89r$lgd$1@abraham.cs.berkeley.edu>
+References: <20010321133551.B2386@cluebot.com>
+NNTP-Posting-Host: abraham.cs.berkeley.edu
+X-Newsreader: trn 4.0-test66 (4 June 1998)
+Reply-To: iang@cs.berkeley.edu (Ian Goldberg)
+X-List: cypherpunks@cyberpass.net
+X-Loop: cypherpunks@cyberpass.net
+Old-Subject:  Re: PGP flaw found by Czech firm allows dig sig to be forged
+Subject:   Re: PGP flaw found by Czech firm allows dig sig to be forged
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 1799
+Lines: 45
+
+
+In article <20010321133551.B2386@cluebot.com>,
+Declan McCullagh  <declan@well.com> wrote:
+>
+>
+>http://www.wired.com/news/politics/0,1283,42553,00.html
+>   
+>   Your E-Hancock Can Be Forged
+>   by Declan McCullagh (declan@wired.com)
+>   10:20 a.m. Mar. 21, 2001 PST
+>   
+>   WASHINGTON -- A Czech information security firm has found a flaw in
+>   Pretty Good Privacy that permits digital signatures to be forged in
+>   some situations.
+>   
+>   Phil Zimmermann, the PGP inventor who's now the director of the
+>   OpenPGP Consortium, said on Wednesday that he and a Network Associates
+>   (NETA) engineer verified that the vulnerability exists.
+>   
+>   ICZ, a Prague company with 450 employees, said that two of its
+>   cryptologists unearthed a bug in the OpenPGP format that allows an
+>   adversary who breaks into your computer to forge your e-mail
+>   signature.
+
+Of course, if someone can modify your private keyring, I'd suspect your
+TCB is toast.  (Unless you're in the habit of shipping your private keyring
+around the Internet.)
+
+For the interested, this is my guess at the attack.
+
+Modify the encrypted value of p, somewhere near the middle.
+When decrypted, depending on the chaining mode, it's possible that
+only a couple of blocks of p will be mangled, and the remainder
+of the private key file will decrypt successfully.  Here's where
+PGP fails to do a MAC to verify integrity of the data.
+
+Then, it behaves just like DFA (Differential Fault Analysis).
+The idea is that to calculate a signature M^d mod n, we calculate
+M^d mod p and M^d mod q, and use the CRT to combine them to S = M^d mod n.
+
+If p is wrong, the result S' will be correct mod q but incorrect mod p.
+so S' ^ e mod q = M mod q, but S' ^ e mod p != M mod p.
+
+Therefore GCD(S' ^ e mod n, M) = q, and we're done.
+
+   - Ian
+

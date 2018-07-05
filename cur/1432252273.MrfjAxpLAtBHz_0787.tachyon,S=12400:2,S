@@ -1,0 +1,250 @@
+From owner-cypherpunks@al-qaeda.net  Thu Mar 29 10:03:15 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q2TE0XYa032752
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 29 Mar 2012 10:00:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1333029633;
+	bh=XbCoOajt2B7f3/2BoWcf4t+tt5P5S97iBSeRDW6FGYg=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=pTLfefNIbWHf0iHhC/UQnlpyXoQhR2Lgkfa3W+TfGaIvlHfuMUwd9jZtV/syw4wUV
+	 M9jTU+pXBOOzOBWVixMENkN41qwechf+XJOqKa/9vwPVbZGCzKbFiRfTyXt6+dtGbu
+	 Nz6wdBq2NpMaR4CWzPwOuJXSFqhlUG4Xn3pkbE/8=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q2TE0XsT032751
+	for cypherpunks-outgoing; Thu, 29 Mar 2012 10:00:33 -0400
+Date: Thu, 29 Mar 2012 16:00:30 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org,
+        doctrinezero@googlegroups.com
+Subject: Re: [tahoe-dev] erasure coding makes files more fragile, not
+  less
+Message-ID: <20120329140030.GP14482@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Brian Warner <warner@lothar.com> -----
+
+From: Brian Warner <warner@lothar.com>
+Date: Wed, 28 Mar 2012 13:54:19 -0700
+To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+Subject: Re: [tahoe-dev] erasure coding makes files more fragile, not less
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6;
+	rv:11.0) Gecko/20120313 Thunderbird/11.0
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+On 3/27/12 12:06 PM, Zooko Wilcox-O'Hearn wrote:
+
+> In fact, I think approximately 90% of all files that have ever been
+> stored on a Tahoe-LAFS grid have died. (That's excluding all of the
+> files of all of the customers of allmydata.com, which went out of
+> business.)
+
+That.. is a pretty broad and potentially disingenuous statement, and
+feels unsupported. I think I know what you mean, but it's a bit like
+saying "everybody dies" or "all programs crash eventually": maybe true,
+but kinda useless, and kinda deceptive, or at least distracting.
+
+[BTW folks: Zooko and I talk about this stuff all the time, and we know
+each other's opinions pretty well, so please don't misinterpret my words
+as indicating anger or annoyance. We're old pals, and this is a
+well-worn comfortable argument.]
+
+The metric that I'd find useful is what percentage of files *that people
+actively tried to keep around* were lost. Tahoe is a system for
+multiplying the durability of your servers, but it's not magic, and if
+you start with lousy unmaintained servers, then you aren't likely to
+have good results.
+
+> I came up with this provocative slogan (I know Brian loves my
+> provocative slogans): "erasure coding makes files more fragile, not
+> less".
+
+Ah, you do know how to provoke me :). That's like saying "seat belts,
+airbags, and helmets kill people", invoking haunting images of demonic
+safety gear stalking the last remaining humans through the forest,
+seatbelts to snare, airbags to suffocate, and helmets to keep watch for
+the desperate counterattack. Sometimes (I'm reminded of your alien
+toaster example) you imply things like "we should outlaw seatbelts, and
+mandate that car seats must be attached to the front bumper, so people
+feel scared enough to drive slower", which, although it might reduce the
+rate of car crashes, is not a workable solution.
+
+And what I think you should mean instead is "seat belts certainly save
+lives, but we should pay attention to whether people might be tempted to
+drive faster because of the feeling-of-safety they provide, and think
+about how to mitigate that".
+
+> The idea behind that is that erasure coding lulls people into a false
+> sense of security.
+
+That's the important part (if it's even true), and provocative
+soundbites which omit it are delivering the wrong message.
+
+> If K=N=1, or even if K=1 and N=2 (which is the same fault tolerance as
+> RAID-1), then people understand that they need to constantly monitor
+> and repair problems as they arise.
+
+You know, I'm not sure that's actually true. I have a feeling that any
+folks who lose data in a Tahoe grid (and I'm not accepting that claim
+yet: I haven't personally heard many examples of loss, although you talk
+to more users than I do) would be just as likely to lose data in a RAID
+array, or in a single-disk server. I.e. to study this properly, I'd want
+to separate the user population into "careful sysadmins" and "casual
+end-users", and examine failure rates (and experiences) in the two camps
+separately.
+
+> But if K=3 and N=10, then the beautiful combinatorial math tells you
+> that your file has lots of "9's" of reliability. The beautiful
+> combinatorial math lies!
+
+Hrm, we've had this argument before and I'm never sure where to go it.
+Yes, the math in our provisioning/reliability tool describes a somewhat
+unrealistic model with the usual because-it-makes-the-math-easier
+assumptions (Poisson processes, independent identically-distributed
+failures). Should we get rid of it? No, I think it still has value.
+Should we add some warning stickers that say "human error and
+non-independent failure modes will probably limit how close you can get
+to these numbers"? Sure. If people ignore those stickers and believe the
+fairy-tale math and drive too fast and crash and burn, should we throw
+out the math? No, I think the tools are still useful to people who
+understand the limits of the model.
+
+> If almost all of the files that have ever been stored on Tahoe-LAFS
+> have died, this implies one of two things:
+
+(ugh, just the way you phrase that claim makes it sound like Tahoe is a
+fundamentally flawed technology and any file that comes into contact
+with it catches the plague and falls deathly ill. How about "any
+potential file loss in Tahoe must come about because of one of the
+following:" instead?)
+
+> 1. The "reliability" of the storage servers must have been below K/N.
+> I.e. if a file was stored with 3-of-10 encoding, but if each storage
+> server had a 75% chance of dying, then the file would be *more* likely
+> to die due to the erasure coding, rather than less likely to die,
+> because a 75% chance of dying, a.k.a. a 25% chance of staying alive,
+> is worse than the 30% number of shares required to recover the file.
+
+Wait wait, the details are somewhat correct but the conclusion is wrong
+and the premise is off-base. Yes, k>1 on servers with <50% reliability
+is worse than k=1 on those same servers: bad servers are bad, relying
+upon more of them is worse. 3-of-10 on bad servers is worse than
+1-of-10. But 1-of-10 is way better than 1-of-2 or 1-of-1. And 3-of-10 is
+better than 3-of-3. 3-of-10 on good=25% servers has an 80.7% chance of
+failure, nearly the same as 1-of-1's 75% chance of failure. 2-of-10 on
+good=25% gets you a 24.4% chance of failure, way better than 75%, and
+1-of-10 is down to 5.6% failure[1]. So it's not
+erasure-coding/replication that's causing the problem, it's the
+combination of k>1 and horrifically bad servers.
+
+I'd rewrite your conclusion to be that the reliability must have been
+below 50%, not below k/N. I think we've always assumed that servers will
+have better than 50% reliability (you'd never pay a hosting provider for
+anything worse than that). Tahoe is a tool for making a great grid out
+of good servers, not for making a good grid out of lousy servers. If
+you're stuck with that, use 1-of-N and hope for the best.
+
+(If our goal had been to support lots-of-lousy-servers, we'd probably
+have built something else: implement replication and automatic repair
+first, then get around to things like mutable files and a web interface.
+The result would be inefficient on good servers.)
+
+> 2. The behavior of storage servers must not have been *independent*.
+
+Sure.
+
+But let's add some other possibilities, some of which we can improve
+with code, some of which depend upon sysadmins doing their jobs and grid
+members honoring commitments to their clients:
+
+3: people got bored, wandered away, took their servers with them
+4: hosts got rebooted and servers didn't automatically come back up
+5: failed servers weren't replaced
+6: files weren't repaired
+
+When there's no incentive to keep your server running (which could be as
+simple as knowing that other people will know when it's been offline),
+servers tend to go away, and using replication or FEC to mitigate that
+is expensive (the old problem of not knowing whether the server is
+coming back or not, therefore needing to treat it as permanent,
+triggering immediate repair, and eventually the repair bandwidth is so
+high that you can't use the grid for actual work).
+
+We need better OS-integration code to make it easy to get a server to
+come up on each reboot. On OS-X that means a LaunchAgent or something.
+On Debian/etc it means an init.d or upstart job. (we have this problem
+all the time with buildslaves: it's pretty easy to get one running by
+hand, but the energy barrier between that and having a real every-reboot
+service is high enough that a lot of folks don't bother).
+
+I've been saying forever that it's too hard/slow/inconvenient to get
+periodic repair to run automatically (cron jobs are soo gross, and
+suffer from the same energy-barrier problem). And I've been planning
+(and failing to complete) to move this functionality into the Tahoe
+client for nearly as long (#643, #483). I really think that having
+automatic repair of everything reachable from your rootcap(s) is
+necessary to get close to the enticing durability promise that
+erasure-coding provides.
+
+> My conclusion: if you care about the longevity of your files, forget
+> about erasure coding and concentrate on monitoring.
+
+My conclusion: we can't make serious claims about the benefits/etc of
+erasure coding until we've eliminated the confounders, by fixing known
+problems that hurt reliability and then collecting actual data[2]. I
+think that claiming "erasure coding makes files more fragile" is wrong.
+Getting good reliability out of a Tahoe grid requires just as much
+attention and effort as any other storage technology: it can't conjure
+reliability out of nothing. But I still believe that, for the same
+effort, you'll get much more durability out of Tahoe than out of simple
+replication/RAID (when Tahoe has the same level of automation as those
+other tools, which it doesn't yet).
+
+And I agree that building monitoring tools, and especially the automatic
+repair agent, is just as important as Zooko says. Note that monitoring
+by itself isn't enough: you need to take action when it's required,
+either on the small scale (repair) or on the large (replacing servers).
+But good tools to tell you when action is needed is the first step.
+
+
+yay provocation! :-)
+
+cheers,
+ -Brian
+
+
+
+[1]: 3-of-10 on p=25%, chance of failure is the sum of three cases:
+      Num(good servers)=0: 25%^10  = 5.6%
+      Num(good servers)=1: 10*25%^1*75%^9  = 18.8%
+      Num(good servers)=2: 10*9*25%^2*75%^8  = 56.3%
+     2-of-10 on p=25%: sum of the first two terms (Num=0,Num=1)
+
+[2]: this was in the plans for the "repair agent" at Allmydata before it
+     shut down: that would have been a good place to collect long-term
+     statistics on drive failure, share loss, repair bandwidth, and file
+     decay curves. The idea was to collect that data for a year or two,
+     including failures due to motherboards breaking and upgrades going
+     wrong, and then use it to justify a more deliberate choice of k and
+     N (minimizing cost while still meeting the reliability goals). This
+     project lost a lot of momentum when we lost the centralized place
+     to do that research, and the paycheck to build the supporting
+     tools.
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+http://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

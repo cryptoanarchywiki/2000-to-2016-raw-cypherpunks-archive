@@ -1,0 +1,167 @@
+From cypherpunks-bounces@cpunks.org  Fri Oct  4 13:44:58 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r94HiU3A030694;
+	Fri, 4 Oct 2013 13:44:34 -0400
+Received: from zooko.com (216-155-145-223.cinfuserver.com [216.155.145.223])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r94HiQHg030688
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Fri, 4 Oct 2013 13:44:27 -0400
+Received: by zooko.com (Postfix, from userid 1000)
+ id 44AE871E001; Fri,  4 Oct 2013 21:44:23 +0400 (MSK)
+Date: Fri, 4 Oct 2013 21:44:23 +0400
+From: zooko <zooko@zooko.com>
+To: Adam Back <adam@cypherspace.org>
+Subject: Re: how to use Tor securely (Re: Silk Road founder arrested ...)
+Message-ID: <20131004174422.GB21808@zooko.com>
+References: <CAHWD2rKfKJtvvxeAjCxWxsthanh2n5GPehrOCTVvz+Xs_Hz-ig@mail.gmail.com>
+ <1380740444.30026.18.camel@anglachel>
+ <20131002193108.GA11783@netbook.cypherspace.org>
+ <1380742664.5216.3.camel@anglachel>
+ <20131004002225.AB0F4DFB9@a-pb-sasl-quonix.pobox.com>
+ <20131004081652.GK15039@hexapodia.org>
+ <20131004090126.GA2045@netbook.cypherspace.org>
+ <524E9590.702@echeque.com> <20131004142202.GA19027@nestor.local>
+ <20131004144038.GA9295@netbook.cypherspace.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20131004144038.GA9295@netbook.cypherspace.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 6009
+Lines: 118
+
+On Fri, Oct 04, 2013 at 04:40:38PM +0200, Adam Back wrote:
+> Seems to me if people care about anonymous publication security and
+> robustness they need static content, distributed, encrypted and integrity
+> protected.  eg like say tahoeLAFS over Tor or something like that.
+
+Thanks for mentioning Tahoe-LAFS, Adam. I think combining Tahoe-LAFS with Tor
+is a good idea. It is already almost there. It is usable, but it doesn't
+yet protect your anonymity correctly. There is a recent burst of work to
+improve usability, security, and performance, and we need help.
+
+Also, below, I'll talk about the different, but complementary idea of
+"decentralized web apps" (i.e. Javascript apps hosted on Tahoe-LAFS).
+
+
+But before we get into decentralized web apps, here's the status of
+Tahoe-LAFS+Tor: it is currently working, by using a socks proxy that routes
+through Tor and configuring your Tahoe-LAFS instance to use it.  Here are some
+open issue tickets about tweaks to the Tahoe-LAFS software or documentation
+which are needed:
+
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1010# use only 127.0.0.1 as local address
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1349# Improve docs about Tahoe-LAFS+Tor
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/517# make tahoe Tor- and I2P-friendly
+
+Note that some of these tickets refer to I2P, which is another re-routing
+network sort of like Tor, but the ones I mentioned above are just as applicable
+to Tor as to I2P. The tickets mention I2P because I2P developers, in addition
+to Tor developers, are contributing bug reports and patches.
+
+There is a recent move to a better approach which doesn't require the user to
+configure a socks proxy. That approach is to switch Tahoe-LAFS to using a new
+network abstraction provided by the "Twisted" library which Tahoe-LAFS uses.
+That abstraction is named "Endpoints". The idea is to switch Tahoe-LAFS from
+IPv4 to "Endpoints", and then implement Tor and I2P routing as implementations
+of the "Endpoints" abstraction. This approach would also probably work with a
+cjdns transport, too. (Also it would help Tahoe-LAFS work over IPv6.)
+
+This approach would also allow other Twisted-based applications (besides
+Tahoe-LAFS) to use those interesting new transport layers.
+
+We could use help! If you know Python, please do code-review of these patches:
+
+http://foolscap.lothar.com/trac/ticket/203# switch to using Endpoints
+
+How to review patches:
+
+https://tahoe-lafs.org/trac/tahoe-lafs/wiki/PatchReviewProcess
+
+
+By the way, we LAFS hackers are well aware that anonymity is very hard. In
+fact, low-latency anonymity against a modern "global surveillance" threat model
+may be impossible. But even the anonymity properties that *are* possible, and
+the ones that are currently provided by Tor, might get ruined by some mistake
+that Tahoe-LAFS makes, so I wouldn't rely on the Tahoe-LAFS+Tor for anonymity
+until it has had a lot more study and testing. (Which we need help with!)
+
+
+> Of course not as jscript, form, click etc but thats just asking to be hacked
+> anyway.
+
+I don't quite follow this sentence. You can write code that uses Tahoe-LAFS
+from Javascript if you want. I think that is a *great* idea, and I think that
+it is inevitable that in the future "decentralized web apps" will be written in
+either Javascript + LAFS, or else Javascript + some-other-decentralized-
+storage-system.
+
+However, if you are not ready to accept the inevitable and start running
+Javascript in your web browser, you can also poke at Tahoe-LAFS from plain old
+HTML forms, or use Tahoe-LAFS from code (written in any programming language)
+running on your local machine.
+
+
+> As I recall Zooko mentioned you can actually do that - back a web server in
+> LAFS, then the webserver is nothing but a read-only consumer of LAFS data.
+> Presumably someone can figure out how to route encrypted, authenticated
+> change sets or form submussions back to the underlying LAFS over Tor.
+
+Here's a live demo of a "decentralized web app" in which all storage in an
+encrypted, decentralized, fault-tolerant storage network, and all computation
+is in the client -- in fact in the web browser. The demo is my blog:
+
+https://zooko.com/uri/URI:DIR2-MDMF-RO:jf3sqg535zufb43iafx7fpmszq:7icvjsf6ltqr47jdaejvhpguqcfv53k5hqo5hwylquejqf5zkgba/blog.html
+
+That link gives you read-only access to my blog. If you interact with it, for
+example by clicking on "Tags" or using the search box, then you're interacting
+with Javascript running in your web browser. When *I* interact with it (I have
+read-write access to my blog), for example by creating new entries or editing
+existing entries, then I too am interacting Javascript running in my browser.
+There is no server anywhere that has code for the functionality of my blog. All
+code that implements functionalit is in the client. The storage server does
+nothing but store ciphertext to which it doesn't have the decryption key.
+
+
+Now, there's a subtlety here that will probably confuse some people. To be
+truly *decentralized*, the URL you put into your browser has to start with
+"http://localhost/", rather than with "http://someone-elses-domain.com/",
+right? So when you look at the URL above, you aren't actually *using* a
+decentralized web app, you're looking at a demo of a decentralized web app.
+
+To put it another way, when *I* use https://zooko.com, I'm using a
+decentralized web app, because I control my own node in the network. When I
+allow *you* to use https://zooko.com, then you are not controlling your own
+node in the network -- you are relying on me and on my node.
+
+But if you install Tahoe-LAFS yourself and connect to the Public Test Grid,
+then you can join us in playing with true decentralized web apps. :-)
+
+Start with the newest version of TiddlyWiki, which comes with a Tahoe-LAFS
+plugin:
+
+https://github.com/Jermolene/TiddlyWiki5/blob/master/plugins/tiddlywiki/tahoelafs/saver.js
+
+(The demo above -- my blog -- is a much older and more kludgey combination of
+TiddlyWiki and Tahoe-LAFS.)
+
+Regards,
+
+Zooko
+

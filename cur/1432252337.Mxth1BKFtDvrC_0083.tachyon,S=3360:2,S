@@ -1,0 +1,69 @@
+From owner-cypherpunks@Algebra.COM  Tue Jul 23 13:57:21 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g6NHvKa05047
+	for <rsw@opamp.org>; Tue, 23 Jul 2002 13:57:20 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id SAA11852
+	for <rsw@mit.edu>; Tue, 23 Jul 2002 18:01:24 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g6NLJW3x012425
+	for <cypherpunks-outgoing@ak47.algebra.com>; Tue, 23 Jul 2002 16:19:32 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g6NLJWFD012417
+	for cypherpunks-outgoing; Tue, 23 Jul 2002 16:19:32 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (dns.lne.com [209.157.136.81] (may be forged))
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g6NLJQ3x012343
+	for <cypherpunks@ak47.algebra.com>; Tue, 23 Jul 2002 16:19:27 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id g6NLJPx15806
+	for cypherpunks@ak47.algebra.com; Tue, 23 Jul 2002 14:19:25 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id g6NLJ7B15799
+	for cypherpunks-goingout345; Tue, 23 Jul 2002 14:19:07 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Message-ID: <008a01c2328e$953ad1c0$01c8a8c0@p800>
+From: "Dave Howe" <DaveHowe@gmx.co.uk>
+To: "Email List: Cypherpunks" <cypherpunks@lne.com>
+References: <Pine.LNX.4.44.0207231800070.13165-100000@zayda.com> 
+  <20020723202426.A179288@exeter.ac.uk> <3D3DBF7E.8020705@algroup.co.uk>
+Old-Subject: Re: Tunneling through hostile proxy
+Date: Tue, 23 Jul 2002 22:18:56 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook Express 6.00.2600.0000
+X-Loop: cypherpunks@lne.com
+X-spam: 20 
+Subject:  Re: Tunneling through hostile proxy
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 938
+Lines: 19
+
+
+Ben Laurie wrote:
+|| Errr - its tricky anyway, coz the cert has to match the final
+|| destination, and, by definition almost, that can't be the proxy.
+provided you can impose a CA cert onto the user browser (not hard in a
+corporate environment) it isn't as if signing a certificate "on the fly"
+is hard - consider the following
+1. proxy has CA private key A and SSL public key B
+2. client requests connect to SSL on xxx.yyy.zzz.com
+3. proxy uses OpenSSL library to create certificate for xxx.yyy.zzz.com
+on the fly (with Public key B) signed by CA key A
+4. proxy opens SSL link to xxx.yyy.zzz.com
+5. if step 4 succeeds, proxy sends cert to client
+5. client checks cert against its own local copy of public key A (from
+its root cert dir) which claims to be "thawte, inc"
+6. client approves link and negotiates SSL with proxy
+7. proxy links its connection to xxx.yyy.zzz.com to inbound client
+connection
+8. proxy passes (and logs) packets
+

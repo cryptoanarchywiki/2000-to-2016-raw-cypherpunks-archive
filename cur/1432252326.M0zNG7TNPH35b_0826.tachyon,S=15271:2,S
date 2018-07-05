@@ -1,0 +1,319 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Mon Aug  5 09:36:48 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g75DalL03074
+	for <rsw@opamp.org>; Mon, 5 Aug 2002 09:36:48 -0400
+Received: from lion.ninthwonder.com (lion.ninthwonder.com [151.199.66.147])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id JAA11844
+	for <rsw@mit.edu>; Mon, 5 Aug 2002 09:36:46 -0400 (EDT)
+Received: by lion.ninthwonder.com (Postfix, from userid 96)
+	id 985273070A; Mon,  5 Aug 2002 09:29:22 -0400 (EDT)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 8CC8230706
+	for <cryptography@wasabisystems.com>; Mon,  5 Aug 2002 09:29:20 -0400 (EDT)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id E722ED97CB; Mon,  5 Aug 2002 09:29:19 -0400 (EDT)
+Received: from mercury.ex.ac.uk (mercury.ex.ac.uk [144.173.6.26])
+	by lion.ninthwonder.com (Postfix) with ESMTP id B22EB30706
+	for <cryptography@wasabisystems.com>; Mon,  5 Aug 2002 01:00:48 -0400 (EDT)
+Received: from cronus ([144.173.6.20] helo=cronus.ex.ac.uk)
+	by mercury.ex.ac.uk with esmtp (Exim 3.33 #1)
+	id 17bZyq-001Zwf-00; Mon, 05 Aug 2002 06:00:32 +0100
+Date: Mon, 5 Aug 2002 06:00:31 +0100
+From: Adam Back <adam@cypherspace.org>
+To: Cypherpunks <cypherpunks@minder.net>
+Cc: Cryptography <cryptography@wasabisystems.com>,
+   Adam Back <adam@cypherspace.org>
+Subject: dangers of TCPA/palladium
+Message-ID: <20020805060031.A518477@exeter.ac.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 13372
+Lines: 279
+
+Like anonymous, I've been reading some of the palladium and TCPA docs.
+
+I think some of the current disagreements and not very strongly
+technology grounded responses to anonymous are due to the lack of any
+concise and informative papers describing TCPA and palladium.
+
+Not everyone has the energy to reverse engineer a detailed 300-odd
+pages of TCPA spec [1] back into high-level design considerations; the
+more manageably short business level TCPA FAQs [2], [3] are too
+heavily PR spun and biased to extract much useful information from.
+
+So so far I've read Ross Anderson's initial expose of the problem [4];
+plus Ross's FAQ [5].  (And more, reading list continues below...).
+
+The relationship between TCPA, and Palladium is:
+
+- TCPA is the hardware and firmware (Compaq, Intel, IBM, HP, and
+Microsoft, plus 135+ other companies)
+
+- Palladium is a proposed OS feature-set based on the TCPA hardware
+(Microsoft)
+
+The main 4 features proposed in the TCPA/palladium scheme are:
+
+1. secure bootstrap -- checksums of BIOS, firmware, privileged OS code
+are used to ensure the machine knows whether it is running certified
+software or not.  This is rooted in hardware, so you can't by pass it
+by using virtualization, only by hardware hacking (*).
+
+2. software attestation -- the hardware supports attesting to a third
+party whether a call comes from a certified software component as
+assured by the hardware described in feature 1. 
+
+3. hardware assisted compartmentalization -- CPU can run privileged
+software, and RAM can contain information that you can not examine,
+and can not modify.  (Optionally the software source can be published,
+but that is not necessary, and if it's not you won't be able to
+reverse-engineer it as it can be encrypted for the CPU).
+
+4. sealing -- applications can store data that can only be read by
+that application.  This works based on more hardware -- the software
+state checksums developed in feature 1 are used by hardware to
+generate encryption keys.  The hardware will refuse to generate the
+key unless the same software state is running.
+
+One good paper to understand the secure bootstrap is an academic paper
+"A Secure and Reliable Bootstrap architecture" [6].
+
+It's interesting to see that one of the author's of [6] has said that
+TCPA as curently formed is a bad thing and is trying to influence TCPA
+to make it more open, to exhibit stronger privacy properties read his
+comments at [7].
+
+There are a lot of potential negative implications of this technology,
+it represents a major shift in the balance of power comparable in
+magnitude to the clipper chip:
+
+1. Potentially cedes control of the platform -- while the palladium
+docs talk about being able to boot the hardware with TCPA turned off,
+there exists possibility that with minor configuration change the
+hardware / firmware ensemble that forms palladium/TCPA could be
+configured to allow only certified OSes to boot, period.  It's
+intereseting to note, if I read correctly, that the X-box (based on
+celeron processor and TCPA / TCPA-like features) does employ this
+feature.  See for example: [8].  
+
+The documents talk about there being no barrier to certifying TCPA
+aware extensions to open-source OSes.  However I'm having trouble
+figuring out how this would work.  Perhaps IBM with it's linux support
+would build a TCPA extension for linux.  Think about it -- the
+extension runs in privileged mode, and presumably won't be certified
+unless it passes some audit enforcing TCPA policies.  (Such as keeping
+the owner of the machine from reading sealed documents, or reading the
+contents of DRM policy controlled documents without meeting the
+requirements for the DRM policy.)
+
+2. DSS over-again -- a big aspect of the DSS reverse-engineering was
+to allow DVDs to be played in software on linux.  The TCPA platform
+seems to have the primary goal of making a framework within which it
+is possible to build extensions to implement hardware tamper resistant
+DRM.  (The DRM implementation would run in a hardware assisted code
+compartment as described in feature 3 above).  So now where does that
+put open source platforms?  Will they be able to read such DRM
+protected content?  It seems likely that in the longer term the DRM
+platform will include video cards without access to video memory,
+perhaps encryption of the video signal out to the monitor, and of
+audio out to the speakers.  (There are other existing schemes to do
+these things which dovetail into the likely TCPA DRM framework.)  
+
+With the secure boot strap described in feature 1, the video card and
+so on are also part of the boot strap process, so the DRM system would
+have ready support from the platform for robustly refusing to play
+except on certain types of hardware.  Similarly the application
+software which plays these DRM policy protected files and talks to the
+DRM policy module in the hardware assisted code compartment will
+itself be an application which uses the security boot-strapping
+features.  So it won't be possible to write an application on for
+example linux to play these files without an audit and license etc
+from various content, DRM and OS cartels.  This will lead to exactly
+the kind of thing Richard Stallman talked about in his prescient paper
+on the coming platform and right to develop competing software control
+wars [9].
+
+3. Privacy support is broken -- the "privacy" features while clearly
+attempts to defuse a re-run at the pentium serial number debacle, have
+not really fixed it's problems.  You have to trust the "Trusted Third
+Party" privacy CA not to track you and not to collude with other CAs
+and software vendors.  There are known solutions to this particular
+sub-problem, for example Stefan Brands digital credentials [10], which
+can be used to build a cryptographically assured privacy preserving
+PKI avoiding the linking problems arising from identity based and
+attribute certificates.
+
+4. Strong enforcement for DMCA DRM excesses -- the types of DRM system
+which the platform enables stand a fair chance of providing high
+levels of enforcement for things which though strictly legally
+mandated (copyright licensing restrictions, limited number of plays of
+CDs / DVDs other disadvantageous schemes; inflexible and usurious
+software licensing), if enforced strictly would have deleterious
+effects on society and freedom.  Copyright violation is widely
+practiced to a greater or less extent by just about all individuals.
+It is widely viewed as acceptable behavior.  These social realities
+and personal freedoms are not taken into account or represented in the
+lobbying schemes which lead to the media cartels obtaining legal
+support for the erosion of users rights and expansionist power grabs
+in DMCA, WIPO etc.
+
+Some of these issues might be not so bad except for the track records,
+and obvious monopolistic tendencies and economic pressures on the
+entities who will have the root keys to the worlds computers.  There
+will be no effect choice or competition due to existing near
+monopolies, or cartelisation in the hardware, operating system, and
+content distribution conglomerates.
+
+5. Strong enforcement for the software renting model -- the types of
+software licensing policy enforcement that can be built with the
+platform will also start to strongly enable the software and object
+rental ideas.  Again potentially these models have some merit except
+that they will be sabotaged by API lock out, where the root key owners
+will be able to charge monopoly rents for access to APIs.
+
+6. Audits and certification become vastly more prevalent.  Having had
+some involvement with software certification (FIPS 140-1 / CC) I can
+attest that this can be expensive exercises.  It is unlikely that the
+open source community will be able to get software certified due to
+cost (the software is free, there is no business entity to claim
+ownership of the certification rights, and so no way to recuperate the
+costs).  While certification where competition is able to function is
+a good thing, providing users with a transparency and needed
+assurance, the danger with tying audits to TCPA is that it will be
+another barrier to entry for small businesses, and for open source
+particularly.
+
+7. Untrusted, unauditable software will be able to run without
+scrutiny inside the hardware assisted code compartments.  Some of the
+documentation talks about open sourcing some aspects.  While this may
+come to pass, but that sounded like the TOR (Trusted Operating Root);
+other extension modules also running in unauditable compartments will
+not be so published.
+
+8. Gives away root control of your machine -- providing potentially
+universal remote control of users machines to any government agencies
+with access to the TCPA certification master keys, or policies
+allowing them to demand certifications on hostile code on demand.
+Central authorities are likely to be the only, or the default
+controllers of the firmware/software upgrade mechanism which comes as
+part of the secure bootstrap feature.
+
+9. Provides a dangerously tempting target for government power-grabs
+-- governments will be very interested to be able to abuse the power
+provided by the platform, to gain access to it's keys to be able to
+insert remote backdoors, and/or to try to mandate government policy
+enforcement modules once such a platform is built.  Think this is
+unrealistic?  Recall clipper?  The TCPA is a generic extensible policy
+enforcement architecture which can be configured to robustly enforce
+policies against the interests of the machine owner.  Clipper,
+key-escrow the whole multi-year fight, at some point in the near
+future if some of the more egregious TCPA/Palladium framework features
+and configuration possibilities becomes widely deployed could be
+implemented after the fact, as a TCPA/Palladium policy extentsion
+which runs in the hardware assisted code compartment and is
+authenticated up to the hardware boot by the secure bootstrapping
+process.
+
+
+So what I've read so far, I think people's gut reactions are right --
+that it's an aggressive and abmitious power grab by the evil empire --
+the 3 cartels / monopolies surrounding PC hardware, Operating systems
+and Content Distribution.  The operating system near monoply will
+doubtless find creative ways to use and expand the increased control
+to control application interoperability (with the sealing function),
+to control with hardware assistance the access to undocumented APIs
+(no more reverse engineering, or using the APIs even if you do / could
+reverse engineer).
+
+
+So some of the already applications are immediately objectionable.
+The scope for them to become more so with limited recourse or
+technical counter-measures possible on the part of the user community
+is huge.  Probably the worst aspect is the central control -- it
+really effectively does give remote root control to your machine to
+people you don't want to trust.  Also the control _will_ be abused for
+monopolistic rent seeking and exclusionary policies to lock-out
+competition.  Don't forget the fact that microsoft views linux as a
+major enemy as revealed by documents uncovered some the anti-trust
+discovery process.
+
+In fact I'd say this is the biggest coming risk to personal freedom
+since the days during the onset of the clipper chip / key escrow
+looked like they stood some chance of becoming reality.
+
+Adam
+--
+http://www.cypherspace.org/adam/
+
+(*) It may be possible to hack the firmware, given access to source
+temporarily.
+
+[1] "Trusted Computing Platform Alliance (TCPA) Main Specification
+Version 1.1b", TCPA
+
+http://www.trustedcomputing.org/docs/main%20v1_1b.pdf
+
+[2] "TCPA Specification/TPM Q&A", TCPA
+
+http://www.trustedcomputing.org/docs/TPM_QA_071802.pdf
+
+[3] "TCPA Frequently Asked Questions Rev 5.0", TCPA
+
+http://www.trustedcomputing.org/docs/Website_TCPA%20FAQ_0703021.pdf
+
+[4] "Security in Open versus Closed Systems (The Dance of Boltzmann,
+Coase and Moore)", Ross Anderson, 
+
+(Sections 4 and 5 only, rest is unrelated)
+
+ftp://ftp.cl.cam.ac.uk/users/rja14/toulouse.pdf
+
+[5] "TCPA / Palladium Frequently Asked Questions Version 1.0"
+
+http://www.cl.cam.ac.uk/~rja14/tcpa-faq.html
+
+[6] "A Secure and Reliable Bootstrap Architecture"
+
+@inproceedings{Arbaugh:97:secure-bootstrap,
+  author = "Bill Arbaugh and Dave Farber and Jonathan Smith",
+  title = "A Secure and Reliable Bootstrap Architecture",
+  booktitle = "Proceedings of the IEEE Symposium on Security and Privacy",
+  pages = 65-71,
+  note = "Also available as \url{http://www.cis.upenn.edu/~waa/aegis.ps}"
+}
+
+[7] "The TCPA; What's wrong; What's right and what to do about",
+William Arbaugh, 20 Jul 2002
+
+http://www.cs.umd.edu/~waa/TCPA/TCPA-goodnbad.html
+
+[8] "Keeping Secrets in Hardware: the Micrsoft Xbox Case Study",
+Andre "bunnie" Huang, 26 May 2002
+
+http://web.mit.edu/bunnie/www/proj/anatak/AIM-2002-008.pdf
+
+[9] "The Right to Read", Richard Stallman, Feb 1997, Communications of
+the ACM (Volume 40, Number 2).
+
+http://www.gnu.org/philosophy/right-to-read.html
+
+[10] Stefan Brands 
+
+Book "Rethinking Public Key Infrastructures and Digital Certificates -
+Building in Privacy", MIT Press, Aug 2000.
+
+http://www.xs4all.nl/~brands/
+
+Number of other technical and semi-technical papers on that page.
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

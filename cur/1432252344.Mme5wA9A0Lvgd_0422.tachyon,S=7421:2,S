@@ -1,0 +1,134 @@
+From cypherpunks-bounces@cpunks.org  Wed Nov 13 03:54:22 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id rAD8sGTu008308;
+	Wed, 13 Nov 2013 03:54:17 -0500
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id rAD8sBo9008302
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Wed, 13 Nov 2013 03:54:13 -0500
+Received: by leitl.org (Postfix, from userid 1000)
+ id 52C03540F69; Wed, 13 Nov 2013 09:54:09 +0100 (CET)
+Date: Wed, 13 Nov 2013 09:54:09 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: Liberation Technologies <liberationtech@mailman.stanford.edu>,
+        cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: The second operating system hiding in every mobile phone
+Message-ID: <20131113085409.GO5661@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 5594
+Lines: 95
+
+
+http://www.osnews.com/story/27416/The_second_operating_system_hiding_in_every_mobile_phone
+
+The second operating system hiding in every mobile phone
+
+posted by Thom Holwerda	 on Tue 12th Nov 2013 23:06 UTC
+
+I've always known this, and I'm sure most of you do too, but we never really
+talk about it. Every smartphone or other device with mobile communications
+capability (e.g. 3G or LTE) actually runs not one, but two operating systems.
+Aside from the operating system that we as end-users see (Android, iOS,
+PalmOS), it also runs a small operating system that manages everything
+related to radio. Since this functionality is highly timing-dependent, a
+real-time operating system is required.
+
+This operating system is stored in firmware, and runs on the baseband
+processor. As far as I know, this baseband RTOS is always entirely
+proprietary. For instance, the RTOS inside Qualcomm baseband processors (in
+this specific case, the MSM6280) is called AMSS, built upon their own
+proprietary REX kernel, and is made up of 69 concurrent tasks, handling
+everything from USB to GPS. It runs on an ARMv5 processor.
+
+The problem here is clear: these baseband processors and the proprietary,
+closed software they run are poorly understood, as there's no proper peer
+review. This is actually kind of weird, considering just how important these
+little bits of software are to the functioning of a modern communication
+device. You may think these baseband RTOS' are safe and secure, but that's
+not exactly the case. You may have the most secure mobile operating system in
+the world, but you're still running a second operating system that is poorly
+understood, poorly documented, proprietary, and all you have to go on are
+Qualcomm's Infineon's, and others' blue eyes.
+
+The insecurity of baseband software is not by error; it's by design. The
+standards that govern how these baseband processors and radios work were
+designed in the '80s, ending up with a complicated codebase written in the
+'90s - complete with a '90s attitude towards security. For instance, there is
+barely any exploit mitigation, so exploits are free to run amok. What makes
+it even worse, is that every baseband processor inherently trusts whatever
+data it receives from a base station (e.g. in a cell tower). Nothing is
+checked, everything is automatically trusted. Lastly, the baseband processor
+is usually the master processor, whereas the application processor (which
+runs the mobile operating system) is the slave.
+
+So, we have a complete operating system, running on an ARM processor, without
+any exploit mitigation (or only very little of it), which automatically
+trusts every instruction, piece of code, or data it receives from the base
+station you're connected to. What could possibly go wrong?
+
+With this in mind, security researcher Ralf-Philipp Weinmann of the
+University of Luxembourg set out to reverse engineer the baseband processor
+software of both Qualcomm and Infineon, and he easily spotted loads and loads
+of bugs, scattered all over the place, each and every one of which could lead
+to exploits - crashing the device, and even allowing the attacker to remotely
+execute code. Remember: all over the air. One of the exploits he found
+required nothing more but a 73 byte message to get remote code execution.
+Over the air.
+
+You can do some crazy things with these exploits. For instance, you can turn
+on auto-answer, using the Hayes command set. This is a command language for
+modems designed in 1981, and it still works on modern baseband processors
+found in smartphones today (!). The auto-answer can be made silent and
+invisible, too.
+
+While we can sort-of assume that the base stations in cell towers operated by
+large carriers are "safe", the fact of the matter is that base stations are
+becoming a lot cheaper, and are being sold on eBay - and there are even open
+source base station software packages. Such base stations can be used to
+target phones. Put a compromised base station in a crowded area - or even a
+financial district or some other sensitive area - and you can remotely turn
+on microphones, cameras, place rootkits, place calls/send SMS messages to
+expensive numbers, and so on. Yes, you can even brick phones permanently.
+
+This is a pretty serious issue, but one that you rarely hear about. This is
+such low-level, complex software that I would guess very few people in the
+world actually understand everything that's going on here.
+
+That complexity is exactly one of the reasons why it's not easy to write your
+own baseband implementation. The list of standards that describe just GSM is
+unimaginably long - and that's only GSM. Now you need to add UMTS, HSDPA, and
+so on, and so forth. And, of course, everything is covered by a ridiculously
+complex set of patents. To top it all off, communication authorities require
+baseband software to be certified.
+
+Add all this up, and it's easy to see why every cellphone manufacturer just
+opts for an off-the-shelf baseband processor and associated software. This
+does mean that each and every feature and smartphone has a piece of software
+that always runs (when the device is on), but that is essentially a black
+box. Whenever someone does dive into baseband software, many bugs and issues
+are found, which raises the question just how long this rather dubious
+situation can continue.
+
+It's kind of a sobering thought that mobile communications, the cornerstone
+of the modern world in both developed and developing regions, pivots around
+software that is of dubious quality, poorly understood, entirely proprietary,
+and wholly insecure by design.
+

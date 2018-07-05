@@ -1,0 +1,101 @@
+From owner-cypherpunks-outgoing@ssz.com  Sat Oct 28 20:30:33 2000
+Received: from MIT.EDU (SOUTH-STATION-ANNEX.MIT.EDU [18.72.1.2])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id UAA05127
+	for <kwantam@positron.mit.edu>; Sat, 28 Oct 2000 20:30:33 -0400
+Received: from einstein.ssz.com by MIT.EDU with SMTP
+	id AA08545; Sat, 28 Oct 00 20:30:13 EDT
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id TAA15342
+	for cypherpunks-outgoing; Sat, 28 Oct 2000 19:23:55 -0500
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id TAA15319
+	for cypherpunks@ssz.com; Sat, 28 Oct 2000 19:23:47 -0500
+Received: from mail.virtual-estates.net (cpunks@video-collage.com [160.79.196.177])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id TAA15309
+	for <cpunks@ssz.com>; Sat, 28 Oct 2000 19:23:39 -0500
+Received: (from cpunks@localhost)
+	by mail.virtual-estates.net (8.9.3+3.2W/8.9.1) id UAA17996;
+	Sat, 28 Oct 2000 20:11:14 -0400 (EDT)
+X-Authentication-Warning: video-collage.com: Processed from queue /var/spool/mqueue-majordomo
+X-Authentication-Warning: video-collage.com: Processed by cpunks with -C /usr/local/majordomo/sendmail.cf
+Received: from ruby.ils.unc.edu (ruby.ils.unc.edu [152.2.81.1])
+	by mail.virtual-estates.net (8.9.3+3.2W/8.9.3) with ESMTP id UAA17980;
+	Sat, 28 Oct 2000 20:11:12 -0400 (EDT)
+X-Relay-Ip: 152.2.81.1
+Received: (from gbnewby@localhost)
+	by ruby.ils.unc.edu (8.9.3/8.9.0) id UAA09598;
+	Sat, 28 Oct 2000 20:15:22 -0400 (EDT)
+Date: Sat, 28 Oct 2000 20:15:22 -0400
+From: Greg Newby <gbnewby@ils.unc.edu>
+To: Igor Chudov <ichudov@Algebra.Com>
+Cc: cypherpunks@Algebra.Com
+Old-Subject: Re: Ho to KICK OUT Junkbusters users
+Message-Id: <20001028201521.G9082@ils.unc.edu>
+References: <200010281619.LAA29112@manifold.algebra.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2i
+In-Reply-To: <200010281619.LAA29112@manifold.algebra.com>; from ichudov@Algebra.Com on Sat, Oct 28, 2000 at 11:19:52AM -0500
+Subject: CDR: Re: Ho to KICK OUT Junkbusters users
+Sender: owner-cypherpunks@ssz.com
+Precedence: bulk
+Reply-To: cypherpunks@ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Language: English, Russian, German
+Status: O
+Content-Length: 2274
+Lines: 49
+
+On Sat, Oct 28, 2000 at 11:19:52AM -0500, Igor Chudov wrote:
+> 
+> I have a website (www.algebra.com) that makes money from banners. I have
+> a suspicion that a small percentage of my users uses Junkbusters proxy
+> in order to avoid seeing my banners.
+> 
+> I do not want to serve such users at all and I do not want them to use
+> my bandwidth.
+
+I don't think you're going to get a lot of sympathy by wanting to
+force people to view ads.  Although it's your bandwidth at the server
+end, it's the USER's bandwidth (& time) at their end.  I nearly always
+leave images turned off in Netscape so I don't need to wait for ads to
+download via a modem.
+
+> Is there any way to detect a user of Junkbusters in a CGI/mod_perl script?
+
+Good question, I'd say the answer is 'yes' but it's but probably not
+worth the effort.  Your basis would be what files they download (and
+yes, it seems you could automate assessing this).
+
+It seems that you could configure your Web server software to stop
+serving data to hosts that don't also download the banner images (if
+the images are coming from YOUR server; this isn't clear -- if not,
+you might be able to redirect through your server to get the images).
+
+This would also block:
+	- people using Lynx (e.g., many blind users or people at 
+public access text-only stations)
+	- people with their images turned off
+	- people who press their browser's STOP button before 
+everything is downloaded
+
+Let's assume you could catch Junkbusters users this way.  Their
+workaround might be to GET the banner file, but abort the connection
+before the file transfers.  Much tougher to catch..  You're be burning
+far more CPU cycles than just for regular Web serving.  It's not clear
+to me that the current Junkbusters (or their Guidescope) software
+could do be modified to work around such blocking.
+
+Your question was whether you could do this type of detection using a
+CGI/mod_perl script.  It seems you could "tail" the server log file to
+get the data you'd need (& combine with the regular client info you
+can get from the Web server).  You'd also need to maintain a state
+variable across multiple hits to the server so you know what clients
+have downloaded the whole set of files you're testing.  Seems
+feasible, but potentially error-prone.
+
+  -- Greg
+

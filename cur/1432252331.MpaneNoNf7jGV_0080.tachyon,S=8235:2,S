@@ -1,0 +1,191 @@
+From cypherpunks-bounces@cpunks.org  Sat Sep  7 14:49:48 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r87Inh8J017019;
+	Sat, 7 Sep 2013 14:49:43 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r87Inecx017015
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Sat, 7 Sep 2013 14:49:42 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id DE02B543DF9; Sat,  7 Sep 2013 20:49:39 +0200 (CEST)
+Date: Sat, 7 Sep 2013 20:49:39 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is,
+        cryptography@randombit.net,
+        Cryptography List <cryptography@metzdowd.com>
+Subject: Re: [tor-talk] NIST approved crypto in Tor?
+Message-ID: <20130907184939.GB29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 6401
+Lines: 151
+
+----- Forwarded message from Nick Mathewson <nickm@alum.mit.edu> -----
+
+Date: Sat, 7 Sep 2013 13:02:04 -0400
+From: Nick Mathewson <nickm@alum.mit.edu>
+To: "tor-talk@lists.torproject.org" <tor-talk@lists.torproject.org>
+Subject: Re: [tor-talk] NIST approved crypto in Tor?
+Reply-To: tor-talk@lists.torproject.org
+
+On Sat, Sep 7, 2013 at 5:25 AM, Sebastian G. <bastik.tor>
+<bastik.tor@googlemail.com> wrote:
+> Hi,
+>
+> Tor switches over to ECC what's a reasonable step.
+>
+> I'm unable to find the blog post (or maybe it was an official comment on
+> the blog) [With DDG and StartPage] where someone said that if the NIST
+> (I guess) is not lying ECC is safe.
+>
+> Is the ECC used by Tor in some way certified by NIST?
+
+The TLS ECDH groups P-256 and P-224 are NIST-certified.  For circuit
+extension, we use Dan Bernstein's non-NIST-certified curve25519 group.
+
+> Are other parts of Tor certified by NIST?
+
+NIST has certified tons of stuff, including AES and SHA1 and SHA256
+and SHA3.  If you're jumping ship from NIST, you need to jump ship
+from those as well.
+
+
+Of all the NIST stuff above, my suspicion is not that they are
+cryptographically broken, but that they are deliberately hard to
+implement correctly: see
+  * http://cr.yp.to/talks/2013.05.31/slides-dan+tanja-20130531-4x3.pdf
+(on the P groups)
+and
+  * http://cr.yp.to/antiforgery/cachetiming-20050414.pdf (on AES)
+
+Also, we're not using DSA, but DSA (as recommended by NIST) fits into
+this pattern: DSA (as recommended by NIST) requires a strong random
+number generator to be used when signing, and fails terribly in a way
+that exposes the private key if the random number generator is the
+least bit week or predictable. (see
+https://en.wikipedia.org/wiki/Digital_Signature_Algorithm#Sensitivity)
+
+To me, this suggests a trend of certifying strong cryptographic
+algorithms while at the same time ensuring that most implementations
+will be of poor quality.  That's just speculation, though.
+
+(And I'm probably falling to the fallacy where you assume that
+whatever results somebody gets are the ones they wanted.)
+
+
+
+Of course, the "deliberately" in "deliberately hard to implement
+correctly" is almost impossible to prove.  Is it nearly impossible to
+write a fast side-channel-free AES implemenation in C because because
+of a nefarious conspiracy, or simply because cryptographers in 2000
+didn't appreciate how multiplication in GF(2^8) wasn't as
+software-friendly a primitive?  (Looking at the other AES finalists, I
+see a bunch of other hard-to-do-right-in-fast-software stuff like
+GF(2^8) multiplication and table-based s-boxes.)   Are the ECC P
+groups shaped that way for nefarious reasons, or simply because the
+standards committee didn't have an adequate appreciation of the
+software issues?
+
+And it's not like NIST standards are the only ones that have problems.
+ TLS is an IETF standard, but TLS implementations today have three
+basic kinds of ciphersuirte: a fraught-with-peril CBC-based
+pad-MAC-then-encrypt kind where somebody finds a new active attack
+every year or so; a stream-cipher-based kind where the only supported
+stream cipher is the ridiculously bad RC4, and an authenticated
+encryption kind where the the AEAD mode uses GCM, which is also hard
+to do in a side-channel-free way in software.
+
+Conspiracy, or saboteurs in the (international) TLS working group, or
+international bureaucratic intertia? Who can say?
+
+And let's not mention X.509.  Let's just not, okay?  X.509 is
+byzantine in a way that would make any reasonable implementor's head
+spin, *and* the X.509 CA infrastructure is without a doubt one of the
+very worst things in web security today.  And it's an international
+standard.
+
+
+[...]
+> I understand that ECC used for Tor is different from what the essay is
+> about.
+>
+> However the NSA may found something it can exploit in ECC and made NIST
+> (maybe unknowingly) standardize the curve (or whatever) that is most
+> vulnerable or recommends for a weak one, or for too short keys.
+>
+> Does Tor use stuff certified or recommended by NIST?
+
+Yes; see above.  Also, there were once NIST recommendations for using
+TLS; I have no idea whether we're following them or not.  (There are
+NIST recommendations for nearly )
+
+> If so would it be reasonable to move to international standards
+> (whatsoever) without the involvement of NIST and NSA 'consultation'?
+> (Completely unrelated to what might be going on, just as defense-in-depth.)
+
+I'm not sure that there *are* international-standards recommendations
+for ECC groups or for ciphers that diverge from NIST's.  The IETF is
+an international body, after all, and TLS standards have been happily
+recommending SHA1, SHA256, AES, DSA, and the P groups for ages.  (See
+also notes above about the not-much-betterness of international
+stuff.)
+
+With any luck, smart cryptographers will start to push non-NIST curves
+and ciphers into prominence.  I've got some hopes for the EU here;
+ECRYPT and ECRYPT II produced some exceptionally worthwhile results; I
+hope that whoever makes funding decisions funds a nice targeted ECRYPT
+III some time.
+
+
+As I said on another mail, I've got a mind to move a lot of our crypto
+for other reasons, as well.
+
+The elephant in the room here is TLS itself.  Frankly, I'm starting to
+think we should cut the Gordian Knot here and start a little
+independent protocol group of our own if the TLS working group can't
+get its act together and have one really good ciphersuite some time
+soon.
+
+> The NSA likes playing around. [2][3] (found while searching)
+>
+> Oh and I'm not trying fear-mongering here or try to conspire whenever or
+> not the NSA has subverted cryptographic functions (in one way or another).
+
+Yeah, I know how it is.  I'm seeing conspiracies under every protocol
+and in every patch these days.  Gotta stay focused, write the best
+protocols and designs and software I can, and maintain.
+
+(And with that in mind I should really start on my weekend soon.)
+
+peace,
+-- 
+Nick
+-- 
+tor-talk mailing list - tor-talk@lists.torproject.org
+To unsusbscribe or change other settings go to
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-talk
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

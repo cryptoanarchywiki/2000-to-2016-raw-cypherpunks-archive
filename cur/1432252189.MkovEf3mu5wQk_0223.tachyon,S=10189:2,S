@@ -1,0 +1,214 @@
+From owner-cypherpunks@al-qaeda.net  Tue Jul 10 06:17:29 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q6AACxws020992
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 10 Jul 2012 06:12:59 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q6AACxeB020991
+	for cypherpunks-outgoing; Tue, 10 Jul 2012 06:12:59 -0400
+Date: Tue, 10 Jul 2012 12:12:55 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: Re: [Freedombox-discuss] FreedomBox/Unhosted/PageKite for
+  Access 	Innovation Prize 2012
+Message-ID: <20120710101255.GR12615@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from John Gilmore <gnu@toad.com> -----
+
+From: John Gilmore <gnu@toad.com>
+Date: Mon, 09 Jul 2012 17:52:05 -0700
+To: Michael Rauch <l15t@miranet.ch>
+Cc: freedombox-discuss@lists.alioth.debian.org
+Subject: Re: [Freedombox-discuss] FreedomBox/Unhosted/PageKite for Access
+	Innovation Prize 2012
+
+> > That's it.  Did I miss anything? :-)
+
+Sure.  Here are three more scenarios.  What all of them share is that
+YOU choose which friends with static IP addresses to trust, and that
+those friends' FreedomBoxes handle much of the setup and maintenance
+overhead.  These three scenarios don't require ANY centralized
+infrastructure other than a DNS provider that everyone needs anyway.
+
+Since FreedomBox is built out of standardized software, even friends
+who don't have FreedomBoxes can act as your friends, if they are
+already running, or willing to run, that software on their existing
+Linux servers.
+
+== Scenario DNS Redirect ==
+
+Offer an option to host your website on your freedombox, with a
+dynamic IP address, that is reached via one, two, or more friends'
+freedomboxes' static IP addresses who serve up your domain records.
+
+Domain records (also known as your "DNS zone") describe what IP
+addresses your web server (and other servers) are located on, the
+domain names of the servers that serve up your DNS zone, and possibly
+public keys and signatures that secure this and other information.  In
+the standard DNS protocol, these records can be changed dynamically
+and are globally cached for high performance and reliability.  (This
+is how the Internet already works.)
+
+Our software would provide both server and client implementations of a
+domain name server / redirector.  If you have a static IP address,
+your FreedomBox can host a domain server, which serves up your own
+domain name(s), and also serves up the name(s) of friends.  This DNS
+server would accept dynamic updates from your friends' FreedomBoxes,
+which would revise the IP address in the zone.
+
+The client software that runs in your FreedomBox would merely publish
+these dynamic updates (to your friends' FreedomBoxes) whenever your
+FreedomBox's public IP address changed.  These updates would be
+cryptographically signed to avoid unwanted changes.
+
+By choosing more than one friend to host your domain zone, you would
+avoid single points of failure.
+
+Web accesses would come directly from the world to your
+dynamically-addressed FreedomBox.
+
+Even friends who don't have a static IP address can improve your
+reachability/reliability, if they have a dynamic and publicly
+reachable IP address.  You should start with one friend with a static
+IP address as an "anchor" site.
+
+Once browsers support DNS-signed SSL certificates using the IETF DANE
+TLS protocol, the same software can securely publish your public key
+without making you interact with an SSL certificate provider (reducing
+the setup costs and making more of it automatable).
+
+Pros:  Relatively low setup overhead.  Works with SSL or without.
+       Requires minimal permanent storage in all participating FreedomBoxes.
+       Trivial ongoing overhead for your friend sites.
+       Web accesses from the world go straight to your box.
+       Can convert transparently to the Webproxy Redirect mode below,
+       or to the Friends Web Cache mode below.
+
+Cons:  Requires that you have at least ONE public IP address,
+       dynamically assigned.  Must find one or two friends.  Must
+       register those friends' domain names with your domain provider
+       as your NS servers.
+
+== Scenario Webproxy Redirect ==
+
+Same setup as above, except you don't even have a publicly reachable
+dynamic IP address.  All you have is a NAT address and your NAT
+redirector is completely oblivious to all attempts to punch a hole
+through it.  
+
+So you find two or more friends and they serve up your DNS records as
+before, but each of them advertise the entire set of friends' IP
+addresses as the address of your web site.  And each of them runs a
+web proxy that relays any incoming web accesses from their box, out
+over their ISP, to your box, using the PageKite protocol.
+
+FreedomBox software would again provide both the server software
+and the client software for this.
+
+Your FreedomBox would at all times keep a TCP connection up to each
+friend's FreedomBox so that web accesses can be relayed to you down
+that TCP connection.
+
+Incoming web accesses from the world would go at random to any of your
+friends' FreedomBoxes.  Those boxes would relay the traffic to yours.
+If you or the world can't reach some of your friends, those friends'
+proxies would not answer, and clients would try another address,
+making it possible to reach you anyway.
+
+As in DNS Redirect mode, can also publish IETF DANE TLS keys to
+eventually avoid SSL certificate setup overhead.
+
+Pros:  Relatively low setup overhead.  Works with SSL or without.
+       Requires minimal permanent storage in all participating FreedomBoxes.
+       Can convert transparently to the DNS Redirect mode above,
+       or to the Friends Web Cache mode below.
+
+Cons:  Must find one or two friends.  Must
+       register those friends' domain names with your domain provider
+       as your NS servers.  Your friends must be willing to have ALL
+       your web traffic go via their ISP connection.
+
+We could ship a FreedomBox with just one of these modes working, and
+then upgrade the software to transparently switch to the lower
+overhead mode whenever your FreedomBox is on a publicly reachable IP
+address.  Indeed, both modes could be combined: Your DNS zone could
+publish both your dynamic IP address (if you have one), and the static
+(or dynamic) IP addresses of your friends.  Accesses made from the
+world that randomly pick your own IP address would go directly; access
+that pick your friends' addresses would go via proxies at your
+friends.
+
+== Scenario Friends Web Cache == 
+
+Setup for this scenario is the same as in Web Redirect:  Your box
+is on the Internet, and can call out to public IP addresses, and maybe
+it even has a dynamic or static IP address of its own.
+
+In this scenario, again you pick one, two, or more friends who publish
+your DNS records, let you update the addresses in your DNS zone with
+your publicly reachable IP address if you have one, and also publish
+the whole collection of your friends' IP addresses as your web
+address.
+
+Your friends run a PageKite proxy that relays any incoming web access
+to your FreedomBox.  But this time that proxy also caches web page
+contents, using the standard HTTP web cacheing protocol, so that a
+second access to a page that Friend 1 has already served up, will not
+need to go to your box, but can be served up directly from Friend 1's
+box to many web requesters until it times out.  If you have a small web
+site, your friends end up cacheing the whole thing, such that accesses
+no longer have to go to your FreedomBox, saving 50% of the Internet
+traffic that is used in Scenario Webproxy Redirect.
+
+Your friends' FreedomBoxes would remember the pages that they have
+proxied, temporarily, either in RAM or in nonvolatile storage.  They
+are free to throw away these cached pages at any time; when they do,
+the next access to that page goes back to being proxied to your
+FreedomBox.
+
+There are complications for SSL web accesses.  The simplest thing to
+do is to always proxy them (only cache non-SSL accesses).  To enable
+cacheing for SSL accesses, two obvious approaches appear: either your
+friends' FreedomBoxes would need to store a temporary or permanent
+copy of your private key (so they could negotiate an SSL session on
+your website's behalf), with obvious security issues; or your friends
+could proxy the SSL/TLS session setup, and then be handed the secret
+key for just that SSL/TLS session, such that they could impersonate
+your web server (sending answers from their cache) only to that client
+(also with obvious security problems, but lesser ones).
+
+Pros:  Relatively low setup overhead.
+       Requires minimal permanent storage in all participating FreedomBoxes.
+       Can convert transparently to the DNS Redirect mode above,
+       or to the Webproxy Redirect mode above.  Uses only half
+       the bandwidth of the Webproxy Redirect mode, and improves
+       the latency of accesses to your website.
+
+Cons:  Must find one or two friends.  Must
+       register those friends' domain names with your domain provider
+       as your NS servers.  Your friends must be willing to have ALL
+       your web traffic go via their ISP connection.  Requires some
+       temporary storage (RAM or Flash) in your friends' FreedomBoxes.
+       Has complications and reduces security for SSL web accesses.
+
+	John
+
+_______________________________________________
+Freedombox-discuss mailing list
+Freedombox-discuss@lists.alioth.debian.org
+http://lists.alioth.debian.org/cgi-bin/mailman/listinfo/freedombox-discuss
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

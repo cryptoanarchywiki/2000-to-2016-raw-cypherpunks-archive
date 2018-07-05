@@ -1,0 +1,374 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u0HJkpb4001324;
+	Sun, 17 Jan 2016 14:46:55 -0500
+Authentication-Results: antiproton.jfet.org; dkim=fail
+	reason="verification failed; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=FetxnSvN;
+	dkim-adsp=none (unprotected policy); dkim-atps=neutral
+Received: from mail-lb0-f177.google.com (mail-lb0-f177.google.com
+ [209.85.217.177])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u0HJkkAG001318
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Sun, 17 Jan 2016 14:46:49 -0500
+Received: by mail-lb0-f177.google.com with SMTP id oh2so337779980lbb.3
+ for <cypherpunks@cpunks.org>; Sun, 17 Jan 2016 11:46:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :cc:content-type:content-transfer-encoding;
+ bh=YdIQHKEvx9qg2UKaMUCDtLhGnqRpgXUcz30vVHKt/28=;
+ b=FetxnSvNE6bwcw0ldKAwRgWnyXHEtJdXHE6NgSZrKmEDnVBeoDegvprx8GRPOKfQYW
+ fzY5dBBzdXkBJ9/3GocxOEMjq6XYuAuLsYVyW7pawJC31A4fJEpBd4AlxWlfhscVHvSC
+ CQ5mmb+FL07XPjui9Gto/qXM6rXh5Hg2FOVUW/exFTRC5030fmF9+eOXvwfJqSUq1Zyy
+ ADWp6HO5om5s+54Nda7PbblqxNh8//nLU5Luc+EWElh/lTaaOYYUjTO0A4xENWl/z6Na
+ 2kQJk+Vt42G88HGVGCgBGnDVK3v2sWNOLkkbcYXYqsQ7eUoI/6N8+i36tR6fuOveH8LK
+ EyTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to:cc:content-type
+ :content-transfer-encoding;
+ bh=YdIQHKEvx9qg2UKaMUCDtLhGnqRpgXUcz30vVHKt/28=;
+ b=INEupzhr9fCxWhPaOe7kWUpQEpnNLIoLq+tQLepdAurx9QAIsrrsOzse7AIvnrxTyq
+ fimJ9eNStN4SDx2Dh2c5/QaMWvEyBefkFiHk71zrb2/LL87c1J2Bv/CnHNz7iWThBSvK
+ 9Tq/JqX2s0OJtlBVUMGaZCKK5aemqPdmwUfkE9jYa02lrvT/P0Cmk2GkT8/79POdkIt8
+ cdXDaMws9A0pivV8YDe8IosYhrLZWrlJrJ0emhCt5IfvSU2vEOxLgb2gMXy1mxMKCBJ6
+ fcyLzW8AIvTQQdhYFd7ujmFQXSD8+s9T4jDOJk+hXQRmM7aYt927cH6+KO3Q3bEfuW/L
+ W95A==
+X-Gm-Message-State: ALoCoQkurRQKq9ZjFdXaotA+6U1DDfhuMssQf20R6rA/tQXqlZU9Dd23E4Yfh5LmJhPa1vLGPAhLKxcSP+tUg+tOutj9KALwig==
+MIME-Version: 1.0
+X-Received: by 10.112.165.69 with SMTP id yw5mr7021347lbb.1.1453060000841;
+ Sun, 17 Jan 2016 11:46:40 -0800 (PST)
+Received: by 10.25.87.207 with HTTP; Sun, 17 Jan 2016 11:46:40 -0800 (PST)
+In-Reply-To: <CAOsGNSRqYaN9=MjwgtV1X1EQVGdv0B2a-1nrm+jrj4ff8yXbpg@mail.gmail.com>
+References: <CAJVRA1TR=8yLxnqRia44uhLZhMhoRBNvHpMrWneNO7egi+mFtQ@mail.gmail.com>
+ <56928ad3.454d370a.dd4d3.ffffb84e@mx.google.com>
+ <CAJVRA1RU8htvg5Ygzv=PipAVrfzbn8SHAMSOPhgZDZTb_0PMjg@mail.gmail.com>
+ <5692f66e.08c48c0a.b1ea8.559b@mx.google.com>
+ <5695C7FB.7020906@videotron.ca>
+ <5695cfc4.45288c0a.c1440.787e@mx.google.com>
+ <CAOsGNSThry1R98=q=Sv1+uNPBDCS16UnLmR0f6b6_ZYaU5idTA@mail.gmail.com>
+ <CAJVRA1ScJkcu9vtBkAT4rxEOJQ8N6on8Mcv4tCz5=6woxAugvQ@mail.gmail.com>
+ <CAOsGNSRqYaN9=MjwgtV1X1EQVGdv0B2a-1nrm+jrj4ff8yXbpg@mail.gmail.com>
+Date: Sun, 17 Jan 2016 20:46:40 +0100
+Message-ID: <CAJVRA1RMq=Q5pCfnAJR+ZETEL14jBsmGjqT3GfuUif7SzB1WMQ@mail.gmail.com>
+Subject: Re: Self Preservation and Irreversible Decline [was: Electronic
+ Freedom Foundation selective in support of freedom]
+From: coderman <coderman@gmail.com>
+To: Zenaan Harkness <zen@freedbms.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by antiproton.jfet.org id
+ u0HJkkAG001318
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 297
+
+related:
+
+'''
+In Stayin’ Alive, his powerful history of the “last days” of the
+working class, the historian Jefferson Cowie describes how the proud
+blue-collar identity of previous generations disintegrated during the
+’70s. “Liberty has largely been reduced to an ideology that promises
+economic and cultural refuge from the long arm of the state,” he
+writes, “while seemingly lost to history is the logic that culminated
+under the New Deal: that genuine freedom could only happen within a
+context of economic security.” As working-class solidarity receded, an
+identity built on racial tribalism often swept in.
+'''
+ - https://www.theatlantic.com/business/archive/2016/01/white-working-class-poverty/424341/
+
+The Atlantic
+All Hollowed Out
+
+The lonely poverty of America’s white working class
+Eric Thayer / Reuters     Victor Tan Chen Jan 16, 2016 Business
+
+For the last several months, social scientists have been debating the
+striking findings of a study by the economists Anne Case and Angus
+Deaton.* Between 1998 and 2013, Case and Deaton argue, white Americans
+across multiple age groups experienced large spikes in suicide and
+fatalities related to alcohol and drug abuse—spikes that were so large
+that, for whites aged 45 to 54, they overwhelmed the dependable modern
+trend of steadily improving life expectancy. While critics have
+challenged the magnitude and timing of the rise in middle-age deaths
+(particularly for men), they and the study’s authors alike seem to
+agree on some basic points: Problems of mental health and addiction
+have taken a terrible toll on whites in America—though seemingly not
+in other wealthy nations—and the least educated among them have fared
+the worst.
+
+Meanwhile, other recent research has piled on the bad news for those
+without college degrees. A Pew study released last month found that
+the size of the middle class—defined by a consistent income range
+across generations—has shrunk over the last several decades. In part,
+this is because high-paying jobs for the less educated are vanishing.
+The study builds on other recent research that finds that almost all
+the good jobs created since the recession have gone to college
+graduates.
+
+The workers I interviewed after the recession for my book on
+unemployment—less-educated factory workers—offer some tentative clues
+about what might be driving the disquieting trends described by the
+Case and Deaton study. This is one of the groups hit hardest by the
+rising inequality and greater risk of unemployment and financial
+insecurity that have become features of today’s economy, and their
+experiences put in concrete terms how the economy and culture have
+become more hostile to workers not lucky enough to be working in posh
+offices on Wall Street or in Silicon Valley.
+
+One man I talked to was 47 years old, the son of a Detroit factory
+worker who headed into the plants himself. (As is standard in
+sociology, my interviewees were promised confidentiality.) He told me
+how he recently lost his $11-an-hour job: He was driving a forklift at
+his company’s plant when he accidentally crashed into a ladder. No one
+was hurt and nothing was damaged—but he was an at-will worker at a
+company with no union, and he was fired. Shortly afterward, his wife,
+who was making $8 an hour at a cleaning company, decided to leave him.
+The stress of failing to find a job and being alone made him too
+depressed to eat, and he started taking antidepressants.
+
+When it comes to explaining American economic trends, it is important
+to remember how critical a role manufacturing and unions have played
+in the building—and now dismantling—of a strong middle class. For
+generations, factories provided good jobs to people who never went to
+college, allowing families—first white ethnic immigrants, and then
+others—to be upwardly mobile. Bringing together large numbers of
+people under a single roof, factory jobs were also relatively easy to
+organize. As the sociologists Bruce Western and Jake Rosenfeld have
+argued, unions at their prime helped create a “moral economy” in which
+wages rose both in firms with unions and those without them, and in
+which the average worker had a notable voice—however compromised back
+then by nativism and other exclusionary tendencies—lobbying on their
+behalf in Washington.
+
+But in the late ’90s—the beginning of the crisis period that Case and
+Deaton identify—the number of manufacturing jobs in the U.S. dropped
+dramatically. Intensified by free-trade deals such as NAFTA, the
+hollowing-out of American industry then was much greater, in terms of
+the absolute number of jobs lost, than what the country experienced
+during its first wave of deindustrialization.
+
+Twenty years ago, union membership—in decline since the ’60s—fell to a
+level not seen since the Great Depression. For various reasons, it
+became much harder to pursue the sorts of collective action that
+unions once cultivated throughout the economy—that is, banding
+together to convince companies and governments to treat employees
+better. Free trade and automation undercut the bargaining positions of
+the working class. Political leaders, bankrolled by the wealthy,
+rolled back the interventionist policies of the New Deal and postwar
+period. Corporations, once relatively tolerant of unions, tapped a
+cottage industry of anti-union consultants and adopted unseemly
+tactics to crush any organizing drives in their workplaces.
+
+As organized labor in this country has withered, an extreme
+individualism has stepped in as the alternative—a go-it-alone
+perspective narrowly focused on getting an education and becoming
+successful on one’s own merit. This works well for some, but for
+others—especially the two-thirds of Americans over the age of 25 who
+don’t have a bachelor’s degree—it often means getting mired in an
+economy of contract work, low pay, and few, if any, benefits. These
+prospects suggest that this is an age of diminished expectations for
+the working class.
+
+Certainly, it cannot be said enough that African Americans and Latinos
+continue to fare significantly worse than whites in terms of their
+overall rates of death and disease, even if the racial gap has
+narrowed. Indeed, the broader story that many commentators seem to
+have neglected in recent months is the decline of the working class as
+a whole. In the decades after World War II, racial minorities were
+denied many of the jobs, loans, and other resources that allowed the
+white majority to buy homes and accrue wealth. If the gains of
+economic growth have gone largely to the rich in recent years, in that
+earlier period the white working class could count on hefty rises in
+living standards from generation to generation, and they grew
+accustomed to that upward trajectory of growing prosperity. When the
+labor market turned against them, they had the hardest fall.
+Many in the working class are going without marriage—a form of social support.
+
+Any explanation of the ominous trends in the Case and Deaton study is,
+at the moment, speculative. More research is needed, as social
+scientists like to say, and there are numerous caveats. For example,
+while the disappearance of high-paying jobs for those with little
+education is a large part of the overall story of a shrinking middle
+class, it can’t wholly account for the uptick of mortality identified
+in the Case and Deaton study. After all, other countries have not seen
+similar hikes in deaths, even though manufacturing and (to a lesser
+extent) union membership have crumbled abroad as well.
+
+Likewise, the groups that have been affected most viciously by these
+market trends in the U.S., African Americans and Latinos, have not
+suffered the dramatic increases in death by suicide or substance abuse
+that whites have. It may be that changes in the economy have affected
+these workers in different ways. For instance, whites are more likely
+to be employed in the declining manufacturing sector than African
+Americans or Hispanics—and for that matter, they’re more likely to
+live in the rural communities devastated by this most recent,
+post-NAFTA era of deindustrialization. Furthermore, whites are less
+likely to be union members than African Americans (though not Asians
+or Hispanics).
+
+Yet there is clearly more to the despair of the working class than
+empty wallets and purses. Patches of the social fabric that once
+supported them, in good times and bad, have frayed. When asked in
+national surveys about the people with whom they discussed “important
+matters” in the past six months, those with just a high-school
+education or less are likelier to say no one (this percentage has
+risen over the years for college graduates, too). This trend is
+troubling, given that social isolation is linked to depression and, in
+turn, suicide and substance abuse.
+Related Story
+
+Middle-Aged White Americans Are Dying of Despair
+
+One form of social support that many in the working class are going
+without is marriage. I’m reminded of another worker I interviewed, a
+jobless 54-year-old white woman who used to work at a Ford plant. Her
+husband left her, she says, when the paychecks stopped coming. “Jesus
+Christ,” she told him once. “I didn’t think that our relationship was
+based on the amount of money that I brought in.” Unable to pay her
+mortgage, she lost her home and had to move in, as she puts it, with a
+“man friend.” She is depressed, unable to sleep at night, and
+constantly worried about falling into poverty. “I’m a loser,” she
+says.
+
+As scholars of family life as politically distinct as Andrew Cherlin
+and Charles Murray have stressed, college graduates and the less
+educated have greatly diverged in terms of when and how they partner
+up and have kids. Nowadays, well-educated couples are much more likely
+to marry, stay married, and have children within marriage than those
+with less schooling. The white working class in particular is seeing
+sharp drops in these indicators—again, not to the levels of nonwhites,
+but a drastic reversal all the same, and one that has intensified over
+the last few decades.
+
+A large part of the explanation for this must be that society’s
+attitudes about the sanctity and permanence of marriage have changed.
+But it’s important to note that there is an economic dimension to
+these trends, too—as the frequent separations and divorces I saw among
+the long-term unemployed made plain to me. Those struggling
+financially are less likely to follow the traditional path of first
+comes marriage, then comes a baby. And if they do choose to get
+married, there is little room for unemployment. As the Detroit man who
+lost his job told me, he and his wife split up “because she’s working,
+and … I don’t have any money coming in.” They had been fighting over
+finances even before he lost his job, he points out, but the arguments
+grew more heated afterward. In a lone-wolf economy, as sociologists
+Kathryn Edin and Maria Kefalas have argued, why take a chance on a
+partner down on his luck when you’re just barely surviving yourself?
+
+The waning of religious belief may be another trend aggravating the
+modern malaise of the white working class. Since the ’90s, the number
+of Americans who declare no religious preference on surveys has almost
+tripled—from 8 percent at the beginning of that decade, to 21 percent
+in 2014. Whites fall disproportionately into this camp. The
+religiously unaffiliated are not necessarily secular in their outlook.
+Many of them are spiritually inclined but skeptical of organized
+religion—especially its intrusion into politics. However, in the
+absence of any other source of social support and collective meaning
+(say, unions), there’s less in the way of psychological protection
+from the slings and arrows of American society.
+
+This sort of isolation was common among the people I talked to. Many
+said their faith was helping them get through their ongoing troubles,
+yet they rarely or never went to church. Some felt ashamed to be
+around people because they were out of work. For others, their
+religious belief was somewhat a source of self-help, rather than a
+source of community. For example, one of the workers I interviewed
+said that being out of work for so long had filled him with a constant
+rage. To calm his mind, every night he would pick up his Bible and
+read a dozen verses. He had given up on the church and what he
+described as its superficial ways. “I want to go to hear the Word—I
+don’t want to go to see what you’re wearing,” says the man, 53 and
+from Flint, Michigan. The other way he copes is going outside for a
+smoke.
+
+For this man and many like him, there is no one to talk to, no one to
+rely on. “Nowadays, you got people you really can’t trust, man,” he
+says. “You can’t call everybody your friend.” As the ties that bind
+them to others have unraveled, the working class has become an ever
+lonelier crowd.
+Policies to keep people from sinking into poverty and long-term
+unemployment could make a huge difference.
+
+The larger context of this isolation and alienation is America’s
+culture of individualism. It, too, can worsen the despair. Taken to an
+extreme, self-reliance becomes a cudgel: Those who falter and fail
+have only themselves to blame. They should have gotten more education.
+They should have been more prepared. On this score, too, the U.S.
+deviates from other wealthy nations. America’s frontier spirit of
+rugged individualism is strong, and it manifests itself differently by
+race and education level, too. White Americans, for instance, are more
+likely to see success as the result of individual effort than African
+Americans are (though not Hispanics). The less educated, particularly
+less-educated whites, also share this view to a disproportionate
+degree.
+
+In Stayin’ Alive, his powerful history of the “last days” of the
+working class, the historian Jefferson Cowie describes how the proud
+blue-collar identity of previous generations disintegrated during the
+’70s. “Liberty has largely been reduced to an ideology that promises
+economic and cultural refuge from the long arm of the state,” he
+writes, “while seemingly lost to history is the logic that culminated
+under the New Deal: that genuine freedom could only happen within a
+context of economic security.” As working-class solidarity receded, an
+identity built on racial tribalism often swept in.
+
+With that in mind, it’s interesting that Americans tout the importance
+of getting an education—an inherently individualistic strategy—as the
+pathway to success. This view was the ideological backbone of the
+Clinton administration policies put forth in the ’90s, with their
+individual training accounts and lifetime-learning credits. To this
+day, the supreme value of education remains one of the few things that
+Americans of all persuasions (presidential candidates included) can
+agree on. But this sort of zeal can lead to the view that those who
+have less education—the working class—are truly to blame for their
+dire straits. While many of them will go on to obtain more education,
+many others will not—because they can’t afford it, aren’t good
+students, or just (as some of my workers said) prefer working with
+their hands. But if they don’t collect the educational degrees needed
+for today’s good jobs, they are made to feel that they have failed in
+a fundamental way.
+
+Some of the analysis of the Case and Deaton article has focused
+rightly on recent developments in this country’s drug crisis—namely,
+the surge in abuse of prescription opioids, and the resurgence in
+heroin use, notably among whites. There is clearly a pressing need to
+deal more vigorously with this drug problem and the epidemic of fatal
+overdoses and liver disease that has affected the poor and working
+class in particular.
+
+At the same time, it should be said that risky individual behaviors
+are shaped by broader social conditions. As the researchers Bruce Link
+and Jo Phelan have argued, effective health interventions need to
+consider the underlying factors that put people “at risk of
+risks”—specifically, socioeconomic status and social support. Seeing
+this big picture is important because blocking one pathway to disease
+or death—say, opioid abuse—may just lead to people to opt for another
+deadly means of coping with the pain of their poor life prospects.
+
+One parting observation, then, is that policies to keep people from
+sinking into poverty and long-term unemployment can make a huge
+difference. In advanced industrial nations that have stronger social
+safety nets, the working class is not experiencing the rising death
+rates that Case and Deaton identified. Abroad, many of the
+working-class unemployed benefit from a financial backstop of sorts
+that keeps them from hurtling into the deepest forms of desperation.
+Here in the U.S. they would too, if only there were such a thing.
+
+* This article originally named one of the co-authors of this paper as
+Susan Case. We regret the error.
+

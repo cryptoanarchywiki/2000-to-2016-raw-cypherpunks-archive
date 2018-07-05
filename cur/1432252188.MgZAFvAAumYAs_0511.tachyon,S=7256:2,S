@@ -1,0 +1,131 @@
+From owner-cypherpunks@Algebra.COM  Fri Jun 28 19:09:53 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g5SN9q412501
+	for <rsw@opamp.org>; Fri, 28 Jun 2002 19:09:52 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id TAA00531
+	for <rsw@mit.edu>; Fri, 28 Jun 2002 19:08:51 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g5SHUskf001467
+	for <cypherpunks-outgoing@ak47.algebra.com>; Fri, 28 Jun 2002 12:30:54 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g5SHUs1C001466
+	for cypherpunks-outgoing; Fri, 28 Jun 2002 12:30:54 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (dns.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g5SHUjkf001452
+	for <cypherpunks@ak47.algebra.com>; Fri, 28 Jun 2002 12:30:47 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id g5SHUhe02700
+	for cypherpunks@ak47.algebra.com; Fri, 28 Jun 2002 10:30:43 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id g5SHKcO02606
+	for cypherpunks-goingout; Fri, 28 Jun 2002 10:20:38 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+From: Nomen Nescio <nobody@dizum.com>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@dizum.com>.
+To: cypherpunks@lne.com, cryptography@wasabisystems.com
+Old-Subject: Re: privacy <> digital rights management
+Message-ID: <0a48434bb4bad36bf0ba49589e990032@dizum.com>
+Date: Fri, 28 Jun 2002 19:20:27 +0200 (CEST)
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Re: privacy <> digital rights management
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 4875
+Lines: 83
+
+
+Privacy means different things in different contexts.  In some cases you
+have to share data with someone else that you don't want them passing on
+widely.  Medical data is an obvious example.  So are credit card numbers.
+If you order books from Amazon, you have to give them your street address,
+and you don't necessarily want that shared.
+
+This kind of private data, which has to be shared with others, is what
+can be protected with a DRM system.  Let us consider how a TCPA compliant
+version of Amazon.com can enhance protection of your private data.
+
+When you make your first order from Amazon, you have to supply personal
+data such as credit card and address that you don't want them sharing.
+Of course they have a privacy policy promising not to do that, but with
+TCPA we can do better.
+
+Suppose Amazon is running TCPA compliant software for their OS and
+database.  Further suppose it is open source.  We will see that open
+source software works even better with TCPA than closed source.  Keep
+in mind that only Amazon is running a TCPA system in this example, the
+customers are not.  But the customers do have TCPA-aware software that
+they can use to check that Amazon is doing what it claims.
+
+Your TCPA-aware software which will upload your personal data to Amazon
+first requires Amazon to prove that it is running in trusted mode.
+The TPM chip provides a signed statement showing that Amazon booted into
+HP's Trusted Linux.  This is signed by a key which never leaves the
+TPM module; the key is certified by a TCPA root key so you know it is
+a valid TPM key.  The signed data includes a hash of the BIOS which was
+computed by the TPM before booting; a hash of the OS loader module which
+was computed by the BIOS before transferring control to that module;
+and a hash of relevant parts of the Trusted Linux OS which was computed
+by the OS loader before transferring control.
+
+Your software can check these hashes against published values which
+represent known good builds of these software modules.  In this way you
+can know that the remote system is running an unhacked version of Trusted
+Linux.
+
+The Linux software then similarly sends you a certification that it is
+running the TCPA compliant database application, again including a hash
+of the application before it was loaded.  This open source software has
+its own published hash of valid builds.  This assures you that you are
+talking to this particular program and no other.
+
+The TCPA compliant database program is special in that it has suppressed
+the large-scale database export features, and it saves the data in
+encrypted form.  No other program will be able to access the data once it
+is stored because of the encryption.  And this program with its missing
+export feature can only work on records one by one (as well as providing
+appropriate summary and accounting features).  It will not be possible
+to export the database en masse for importing into an insecure program.
+
+Of course, nothing can stop Amazon from entering your credit card data
+and/or address into another program.  They need to see this data in
+order to perform their normal business functions, and anyone can read
+it off the screen and type it into another computer.  But the point
+is, they can't do it to the entire database.  Amazon has millions
+of customers.  Your data is a needle in that haystack.  Business-wise,
+it makes no sense for Amazon to try to sell your data or illicitly pass
+it to business partners if they have to do it one record at a time.
+The important feature to prevent is large-scale export, and the TCPA
+compliant software is designed so that is impossible.
+
+Note how important the open-source element is in this security analysis.
+With closed source software, we have to trust Microsoft and the database
+vendor that their software performs as claimed.  If the database guys had
+a secret feature to allow for export, there would be no way for third
+parties to detect it.  But with open source, we have the source code,
+and we have a guarantee that a program built from that code is being
+run (we have a hash over the binary file).  We can know exactly what
+the capabilities are of that remote software.  The kind of guarantees
+provided by TCPA are much stronger and more convincing when the source
+code of the trusted software is publicly available.  Surprisingly,
+TCPA may therefore provide a boost to open source.
+
+Note that, as with the earlier DRM analysis, the TCPA in this example
+exists to help Amazon prove to people that they are behaving honestly.
+They already have a privacy policy which restricts what they will do
+with their database.  The TCPA lets them provide technical evidence that
+they are running software which will enforce those same restrictions.
+It makes it possible for customers to trust Amazon to follow through on
+their promises with much greater reliability than is possible today.
+

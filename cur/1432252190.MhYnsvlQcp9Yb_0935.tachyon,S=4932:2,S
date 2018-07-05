@@ -1,0 +1,161 @@
+From owner-cypherpunks@Algebra.COM  Sat Oct 13 05:47:39 2001
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.72.0.53])
+	by positron.mit.edu (8.11.6/8.9.3) with ESMTP id f9D9ldf11089
+	for <kwantam@positron.mit.edu>; Sat, 13 Oct 2001 05:47:39 -0400
+Received: from ak47.algebra.com (ak47.algebra.com [208.233.99.160])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id FAA05402
+	for <rsw@mit.edu>; Sat, 13 Oct 2001 05:44:22 -0400 (EDT)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f9D9dH806733
+	for cypherpunks-outgoing; Sat, 13 Oct 2001 04:39:17 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (dns.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f9D9dCS06719
+	for <cypherpunks@algebra.com>; Sat, 13 Oct 2001 04:39:14 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id f9D9d6I00577
+	for cypherpunks@algebra.com; Sat, 13 Oct 2001 02:39:06 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id f9D9cNH00569
+	for cypherpunks-goingout; Sat, 13 Oct 2001 02:38:23 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Message-Id: <200110130938.FAA01914@smtp10.atl.mindspring.net>
+X-Sender: jya@pop.pipeline.com
+X-Mailer: QUALCOMM Windows Eudora Pro Version 4.0
+Date: Sat, 13 Oct 2001 05:32:03 -0700
+To: cypherpunks@lne.com
+From: John Young <jya@pipeline.com>
+Old-Subject: RIAA Safeweb Proxy ID
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+X-Loop: cypherpunks@lne.com
+X-spam: 25 
+Subject:  RIAA Safeweb Proxy ID
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+X-spam: 25 
+Status: O
+Content-Length: 2907
+Lines: 115
+
+
+Thanks to SC:
+
+[SC's IP address replaced by xxx.xxx.xxx.xxx]
+
+-----
+
+I've tuned in late to the riaa/safeweb thing, but I'm chiming in 
+with my bit.
+
+Tracing from safeweb is an interesting exercise; the geography is
+very typical of the internet backbone and the router hops packets
+take.
+
+I wrote a script to mail all possible headers from a connecting
+browser to myself. I installed it on my server
+
+  http://xxx.xxx.xxx.xxx:8140, 
+
+and then connected from Safeweb. 
+
+This anonymizer uses a caching proxy server, listening for
+connections on several IPs; it preserves client headers while
+obviously changing the IP of the originating connection; it preserves
+many of the originating headers; it adds some new headers. 
+
+Here's the output:
+
+GATEWAY_INTERFACE..........CGI/1.1
+
+REMOTE_ADDR..........64.124.150.136
+
+DATE_LOCAL..........Saturday, 13-Oct-2001 01:22:45 EDT
+
+REQUEST_METHOD..........GET
+
+QUERY_STRING..........
+
+DOCUMENT_URI........../index.html
+
+HTTP_ACCEPT..........image/gif, image/x-xbitmap, image/jpeg,
+image/pjpeg, application/vnd.ms-powerpoint, application/vnd.ms-excel,
+application/msword, */*
+
+REMOTE_PORT..........2513
+
+SERVER_ADDR..........142.204.119.75
+
+HTTP_ACCEPT_LANGUAGE..........en-us
+
+HTTP_CACHE_CONTROL..........max-age=259200
+
+REDIRECT_STATUS..........200
+
+HTTP_ACCEPT_ENCODING..........gzip
+
+SERVER_NAME..........xxx.xxx.xxx.xxx
+
+HTTP_X_FORWARDED_FOR..........127.0.0.1
+
+SERVER_PORT..........8140
+
+DOCUMENT_NAME..........index.html
+
+HTTP_IF_MODIFIED_SINCE..........Sat, 13 Oct 2001 05:15:44 GMT;
+length=853
+
+REDIRECT_URL........../
+
+DATE_GMT..........Saturday, 13-Oct-2001 05:22:45 GMT
+
+SERVER_PROTOCOL..........INCLUDED
+
+HTTP_REFERER..........http://xxx.xxx.xxx.xxx
+
+HTTP_USER_AGENT..........Mozilla/4.0 (compatible; MSIE 6.0; Windows
+NT 5.0)
+
+HTTP_CONNECTION..........keep-alive
+
+REQUEST_URI........../
+
+HTTP_HOST..........xxx.xxx.xxx.xxx:8140
+
+HTTP_VIA..........1.0 anongo.com:3128 (Squid/2.3.STABLE3)
+
+The last one in the list is the flavour of proxy they use:
+
+  Squid/2.3.stable3
+
+And the DNS name of the source box for the HTTP request
+is anongo.com, which I don't believe showed up in your trace 
+logs. 
+
+Basically a caching proxy server's header set.
+
+The authoritative name servers for anongo.com are 
+
+  ns3.above.net
+
+
+www.anongo.com redirects to Safeweb. The boxes are standard
+unix/apache with ssl. They have written scripts to replace the
+originating address header and keep track of the connection, receive
+requested files to their cache, and then serve from that cache to
+your browser.
+
+The machines would absolutely be configured to do sophisticated
+logging; there is no free lunch on the net. While they appear to do a
+nice job, their server logs would be a goldmine. Everyone who uses a
+commercial web browser agrees to have their information gathered the
+first time they use that browser - do you want to continue? When you
+say yes, you mean it!
+
+-----
+

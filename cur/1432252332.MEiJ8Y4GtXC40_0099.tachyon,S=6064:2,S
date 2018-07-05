@@ -1,0 +1,121 @@
+From owner-cypherpunks@al-qaeda.net  Wed Mar 17 09:08:25 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: (from majordomo@localhost)
+	by POSITRON.MIT.EDU (8.11.6p3/8.11.6-03-31-03) id i2HE7Ox30769
+	for cypherpunks-outgoing; Wed, 17 Mar 2004 09:07:24 -0500
+X-Authentication-Warning: positron.mit.edu: majordomo set sender to owner-cypherpunks@al-qaeda.net using -f
+Message-ID: <40585A69.1080206@sunder.net>
+Date: Wed, 17 Mar 2004 09:02:17 -0500
+From: sunder <sunder@sunder.net>
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.6)
+  Gecko/20040113
+X-Accept-Language: en-us, en
+MIME-Version: 1.0
+To: Eugen Leitl <eugen@leitl.org>
+CC: cypherpunks@al-qaeda.net
+Subject: Re: Saving Opportunistic Encryption
+References: <20040317091656.GE28136@leitl.org>
+In-Reply-To: <20040317091656.GE28136@leitl.org>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5030
+Lines: 93
+
+Eugen Leitl wrote:
+
+> No, anything requiring publishing DNS records won't fly. OE is
+> *opportunistic*. It doesn't care about what the true identity of the opposite
+> party is. Any shmuck on dynamic IP should be able to use it instantly, with
+> no observable performance degradation, using a simple patch.
+> 
+> If it doesn't fit these minimal requirements, it will die, just the same way
+> FreeS/WAN did.
+
+I absolutely agree.  While it's possible to do things like MIM attacks if 
+you don't know who the other guy is, look at how successful SSH is over any 
+other kind of solution.  Its biggest competitor at the time it was 
+introduced was kerberized telnet/ftp.  How many networks do you know that 
+use Kerberos instead of ssh these days?
+
+Look at how many folks use PGP - those who really know it and want it, or 
+those who know enough about it and have some easily automated 
+implementation that plugs in to their mail client. (i.e. commercial pgp 
+with Eudora/Outlook plug in.  As an aside, I'm still pissed off that the 
+Mozilla mail client doesn't support PGP/GPG in addition to S/MIME or 
+whatever the hell..)
+
+Adding another infrastructure requirement that requires ISP layer changes 
+will exponentially raise resistance to its adoption.  While I do run my own 
+server for mail/web, 99.9% of the internet luser population doesn't - and 
+even so, I chose not to run my own DNS server.  (Allowing register.com to 
+do so makes it safer for me: it's one less service that might be 
+compromised due to possible bugs.)
+
+Making it optional to add that infrastructure layer - whether it's via DNS, 
+LDAP, signed public keys, web o' trust / pgp keyserver, finger, or even 
+something entirely new, is probably the safer way to go, BUT don't require it.
+
+There do exist transparent web caching proxies out there (usually 
+advertised as web accelerators.)  I ran across such a few months ago when 
+our satellite office couldn't connect to one of our servers.  We were using 
+private dns virtual host names to access management web pages on our 
+servers.  However the proxy intercepted those requests, and tried to 
+resolve DNS, but obviously couldn't, so everyone in the office got a DNS 
+error.  It took some pretty strong words to get the ISP to even admit that 
+they were using such a beast, much less disable it just for us.
+
+It's certainly possible to create a proxy to do MitM interception that 
+would foil even SSH.  This wouldn't work so well against mobile devices 
+which might fortuitously use a different route, but would work very well 
+one hop above the server if that's the only pipe the server has.
+
+There are ways to protect against this such as publishing a line for the 
+known-hosts entry by other means, but no one does this (yet?)  (i.e: 
+sneakernet, finger, web page, pgp signed/encrypted email, over the 
+telephone, etc.)   (Another useful thing is to use public keys for SSH 
+instead of passwords: this way the attacker won't be able to reuse your 
+password - but you're still compromised the second you login.)
+
+There are some rare cases where you absolutely want to know who you are 
+talking to.  For example an https server that allows control of financial 
+data.  Even in that case the server doesn't fully know who the client is, 
+and doesn't need to (in order to establish the secure link) -- until a 
+login (or CC info) is presented.  In the case of using OE to talk to a 
+server, the client already has some idea of the server's identity, and the 
+server will eventually have some idea of who the client is.
+
+
+As an aside: Just doing the above to encapsulate emails won't help at all 
+against spamming: the spammers will just randomly generate throw away 
+public keys, etc.  They've already written trojan spammers with their own 
+SMTP servers built in, it's only a few more (thousand?) lines of code to 
+incrementally bypass that layer as well.
+
+I've already seen a few years ago spam sites that return "yahoo.com" and 
+"msn.com" in reverse DNS, but doing traceroutes reveals that they're 
+actually in Korea or China, etc.  So you can't fully rely on (spoofable) 
+DNS info anyway.
+
+
+If any of you remember the recent virii attacks where the attachment is a 
+password protected zip file with the password in the body of the email, 
+guess what: the evil ones kicked it up a notch once more.
+
+Just yesterday, I saw a new form of this on cpunx: instead of a ZIP 
+attachment, the new malware uses a RAR archive, and instead of the password 
+being in clear text, it's inside an a randomly named attached .GIF file! 
+They've not obscured it, so it's possible to add OCR to the anti-virus 
+code, but it's now it's that much harder for the anti-virus to block.
+
+Just as the virus authors evolve their code to adapt their offenses to the 
+defenses of virus scanners, so will the spammers evolve their code to 
+bypass spam filters, and we've already seen that spammers use virii/worms 
+to spread their code...
+
+Distributed computing is already here.  Shame that it's biggest use is 
+currently for evil.  Ugh! :(
+

@@ -1,0 +1,83 @@
+From owner-cypherpunks@al-qaeda.net  Sun Dec  4 16:01:50 2011
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id pB4KtwNJ023684
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sun, 4 Dec 2011 15:55:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1323032159;
+	bh=eyAFoBFpuDG6HZoEhvDzYRx3Ytj7WDf4sb8MbGlrIyo=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=TVmrSDGfkZ57UYMBo8yolcuG8y9lVVYGHGUj98/jgk6Xx15sD7MJIyOs6kBEke371
+	 DJDaQRpe5IQ945z264Vq1cQHZzvA9jh3KqUsMDZ8bfJq6J+Sl5GGchAmU2WH2yMZiS
+	 KR3d4juBEHPlQ24/L5LAMU/BaGUzXzZ3SZdLgcR8=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id pB4Ktwb4023683
+	for cypherpunks-outgoing; Sun, 4 Dec 2011 15:55:58 -0500
+Date: Sun, 4 Dec 2011 21:55:54 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: From Facebook's Hackathon, TCP re-implemented over chat in a 
+  post-SOPA world
+Message-ID: <20111204205554.GS31847@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2461
+Lines: 50
+
+http://news.ycombinator.com/item?id=3310036
+
+>From Facebook's Hackathon, TCP re-implemented over chat in a post-SOPA world
+
+99 points by xxbondsxx 14 hours ago | 25 comments
+
+For Facebook's Hackathon finals between the finalists from 15 different
+colleges, myself and the two other hackers from UC Berkeley decided to
+imagine a post-apocalyptic world in which SOPA has passed and is enforced _to
+the letter_. We took it to the extreme by imagining that file transfer is no
+longer possible for US citizens. Corporations now control the internet, and
+we are forced to use only their products.
+
+To re-implement file transfer, we decided to hijack Facebook's speedy chat
+service to do our own packet transmission. This is the way it works:
+
+-A python localhost server converts binary data into base64 ASCII and forms
+packets with uuid's, timestamps, seqnums, and the whole 9 yards.
+
+-These packets get pumped over localhost to a user script (aka a Greasemonkey
+script) running on Facebook.com.
+
+-This user script handles the scrubbing of incoming chat messages (packets)
+and populating the chatbox with outgoing packets.
+
+-Facebook does _not_ make sending a chat message easy with custom JS, so in
+order to actually send a chat message, we signal the python localhost server
+to run a bash script that tells applescript to emulate a keydown event.
+Hacked up, I know, but it works! Also, this works for any application
+(desktop, flash embedded, etc) because it's as legit as a real keypress.
+
+Just pumping the packets was the first challenge which we finished around
+2am. The second obstacle was that facebook decides to drop about 50% of our
+packets after the first 15, so we then implemented a crude TCP style
+acknowledgement/handshake method that ensures each packet gets delivered.
+Implementing TCP inside of TCP... as meta as you get.
+
+If you want to watch a video of a nyan cat GIF transmission, go here:
+
+http://www.youtube.com/watch?feature=player_detailpage&v=tk5m0mqsrFs#t=74s
+
+The main point is that despite even the most extreme legal restrictions on
+the internet, the next generation will always find a way :D
+
+Github: https://github.com/pcottle/emotiface
+
+Happy to answer any questions. Techcrunch also showed up and filmed / walked
+around the office (which was surprising considering the relationship between
+the two). I remember the techcrunch guy specifically saying "I feel like I'm
+at the Deathstar" when he walked through Facebook's double doors.
+

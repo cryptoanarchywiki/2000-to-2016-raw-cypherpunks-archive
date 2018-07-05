@@ -1,0 +1,198 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t7EMr7eW032382;
+	Fri, 14 Aug 2015 18:53:12 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=vHHWOyx2;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-ig0-f171.google.com (mail-ig0-f171.google.com
+ [209.85.213.171])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t7EMr413032378
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Fri, 14 Aug 2015 18:53:05 -0400
+Received: by igui7 with SMTP id i7so21768431igu.0
+ for <cypherpunks@cpunks.org>; Fri, 14 Aug 2015 15:52:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :content-type; bh=pnW1YTHdVHNYl752esrfvO5ZM+78UibduTPhpf7TYXk=;
+ b=vHHWOyx2mbgj02rjR2XBSJXHyYZN4NEHRyhwuKzGPU0GqmCAeZjmneWLK9Cx7jwZSv
+ f1Plc15rfN1EFocGCfkl2HIClI0LkDhZYY44XjOS4JrLORORN+dBkb4prAlGaRtPDNOl
+ SGFCq/aY6IfQwxqOgMBjp9iUxv+vAC8l9XUMrIjewBQaxQC0NwLoeQIr8j1ZK/aLX6fm
+ 97FiZliPvbp5P2aZ5cAMpD9bnj5GZISsQi6Rh2hfe+tYXBhK0MowDegAlan59Jp5BLHj
+ jq4raNTS8A1p61XrDyPjnBubYh6Ahes2HhQ5MOxghOQNoFS/pPaEcRDcJAdm6cfwoWO+
+ XwCw==
+MIME-Version: 1.0
+X-Received: by 10.50.87.74 with SMTP id v10mr5315133igz.37.1439592777946; Fri,
+ 14 Aug 2015 15:52:57 -0700 (PDT)
+Received: by 10.36.44.69 with HTTP; Fri, 14 Aug 2015 15:52:57 -0700 (PDT)
+In-Reply-To: <CC931AE765AD47429A076D7009D4BCE198DF7844@UPDCHU15.easf.csd.disa.mil>
+References: <CC931AE765AD47429A076D7009D4BCE198DF7844@UPDCHU15.easf.csd.disa.mil>
+Date: Fri, 14 Aug 2015 18:52:57 -0400
+Message-ID: <CAD2Ti293CrGE9W4YvhysSA9-1WYzimJ6+KRQKKEjSd0Uy2qyEw@mail.gmail.com>
+Subject: Fwd: [Ntop-misc] PF_RING DAQ lowlevelbridge vs. tc? (UNCLASSIFIED)
+From: grarpamp <grarpamp@gmail.com>
+To: cypherpunks@cpunks.org
+Content-Type: multipart/mixed; boundary=089e0102f84a26fdc2051d4d501b
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 148
+
+--089e0102f84a26fdc2051d4d501b
+Content-Type: text/plain; charset=UTF-8
+
+---------- Forwarded message ----------
+From: Knick, Scott E CTR (US) <scott.e.knick.ctr@mail.mil>
+Date: Fri, Aug 14, 2015 at 9:16 AM
+Subject: [Ntop-misc] PF_RING DAQ lowlevelbridge vs. tc? (UNCLASSIFIED)
+To: "ntop-misc@listgateway.unipi.it" <ntop-misc@listgateway.unipi.it>
+
+
+CLASSIFICATION: UNCLASSIFIED
+
+I have a question someone may or may not be able to help answer.
+Basically, I have in the past used the "tc" utility of iproute2 to
+combine multiple network interfaces into one "dummy" interface for
+monitoring purposes. (Creating a bridge via brctl has led to broadcast
+storms in some network locations, so it's not an option.) Now that
+I've integrated PF_RING into my sensor build and integrated the
+PF_RING DAQ so that Snort uses it, I have the option to use the
+"lowlevelbridge" setting so that multiple interfaces are combined by
+PF_RING for Snort's purposes. The question is: Is there an advantage
+of using one over the other? If I stick with using iproute2 to create
+a dummy interface, am I losing capture performance that the PF_RING
+DAQ could otherwise provide? (I'm not 100% certain, but I believe that
+Snort is generally reporting more packet loss when using the "dummy"
+interface than when using the PF_RING DAQ's lowlevelbridge option.) If
+it helps, I'm following the approach d
+ escribed here for making the dummy interface using the iproute2
+package: http://backreference.org/2014/06/17/port-mirroring-with-linux-bridges/
+
+--
+Scott Knick
+
+CLASSIFICATION: UNCLASSIFIED
+
+_______________________________________________
+Ntop-misc mailing list
+Ntop-misc@listgateway.unipi.it
+http://listgateway.unipi.it/mailman/listinfo/ntop-misc
+
+--089e0102f84a26fdc2051d4d501b
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: 35961edd80fd2d51_0.0.1
+
+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
+RG9EMQwwCgYDVQQLEwNQS0kxGDAWBgNVBAMTD0RPRCBFTUFJTCBDQS0zMjCCASIwDQYJKoZIhvcN
+AQEBBQADggEPADCCAQoCggEBAKP6qobKihobA05xbUG22WWabv82Kj8C03yVZYhapPevY7dSxxr7
+u5VzB0Jhi0qme+lWBzYbqjcCIBykzvu20Gmr/DhMyNtGVveiXn7nMbTuwf/NZL95gkErd9L4fatM
+j/fGHjz4ji89FIPakpgJ2NDGWlk2i4eiid2+Sl7LzbZHfkGmCVRsQZZ0WwbD1MEuRn1eNt+NokZx
+rEq6xLH3yRcKL92j7IQhz6gF6rnjLm+ffn27HRZ1T5IdA+YROJg2eqHUADytEFivFcc2S+M7m021
+tJC+ravTwISz/NwViAmMEVBQL+Rw7LcKrkpT4jbEBW6AdRKNN0bySww4HEkfrIMCAwEAAaOCAhww
+ggIYMB0GA1UdDgQWBBQKsKo4Vkd7Fn2+q5OWvFTdhfvtLDAfBgNVHSMEGDAWgBRJdLsMXrp6/gJU
+73ugxpXGCYBwljASBgNVHRMBAf8ECDAGAQH/AgEAMAwGA1UdJAQFMAOAAQAwDgYDVR0PAQH/BAQD
+AgGGMGYGA1UdIARfMF0wCwYJYIZIAWUCAQsFMAsGCWCGSAFlAgELCTALBglghkgBZQIBCxEwCwYJ
+YIZIAWUCAQsSMAsGCWCGSAFlAgELEzAMBgpghkgBZQMCAQMaMAwGCmCGSAFlAwIBAxswNwYDVR0f
+BDAwLjAsoCqgKIYmaHR0cDovL2NybC5kaXNhLm1pbC9jcmwvRE9EUk9PVENBMi5jcmwwggEBBggr
+BgEFBQcBAQSB9DCB8TA6BggrBgEFBQcwAoYuaHR0cDovL2NybC5kaXNhLm1pbC9pc3N1ZWR0by9E
+T0RST09UQ0EyX0lULnA3YzAgBggrBgEFBQcwAYYUaHR0cDovL29jc3AuZGlzYS5taWwwgZAGCCsG
+AQUFBzAChoGDbGRhcDovL2NybC5nZHMuZGlzYS5taWwvY24lM2REb0QlMjBSb290JTIwQ0ElMjAy
+JTJjb3UlM2RQS0klMmNvdSUzZERvRCUyY28lM2RVLlMuJTIwR292ZXJubWVudCUyY2MlM2RVUz9j
+cm9zc0NlcnRpZmljYXRlUGFpcjtiaW5hcnkwDQYJKoZIhvcNAQEFBQADggEBAA+9j0f/ucm9Q+XO
+vrXzOctFFlmj37ZSJDwJVUvZv5V6vXbZ4DCHzUqpoy2e2SgExpauARSA0CVW8VgDVe/SqCJSq4Hv
+AP6vx0nSjCAupHGB9ybLDqVt1UF3ey0zu5uzfJw/Pf/C7nnyiQoQjJB0XTRncL4C/oBGGQfOfS+W
+qMQT0O+fKbE0qbmMpYk0s4w+R/hmjJHR7qvB6nGFyV+wqe7bANQwKkLOV2MQIjConIZBEl2+UHwT
++usoc19yM4lffw1opD39FiboCpP+ex+GgYAnvmdxhht9x2+3qXEBxmOzc30BazMi7XmJig7mcgJz
+Nz/LMYHtpPsLajtShLpM944xggMyMIIDLgIBATBkMF0xCzAJBgNVBAYTAlVTMRgwFgYDVQQKEw9V
+LlMuIEdvdmVybm1lbnQxDDAKBgNVBAsTA0RvRDEMMAoGA1UECxMDUEtJMRgwFgYDVQQDEw9ET0Qg
+RU1BSUwgQ0EtMzICAzIQVTAJBgUrDgMCGgUAoIIBozAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcB
+MBwGCSqGSIb3DQEJBTEPFw0xNTA4MTQxMzE2MzRaMCMGCSqGSIb3DQEJBDEWBBTPoGXG/A2xGS70
+likEOAiEvvlsUTBYBgkqhkiG9w0BCQ8xSzBJMAoGCCqGSIb3DQMHMA4GCCqGSIb3DQMCAgIAgDAH
+BgUrDgMCBzANBggqhkiG9w0DAgIBKDAHBgUrDgMCGjAKBggqhkiG9w0CBTBzBgkrBgEEAYI3EAQx
+ZjBkMF0xCzAJBgNVBAYTAlVTMRgwFgYDVQQKEw9VLlMuIEdvdmVybm1lbnQxDDAKBgNVBAsTA0Rv
+RDEMMAoGA1UECxMDUEtJMRgwFgYDVQQDEw9ET0QgRU1BSUwgQ0EtMzICAzIQVzB1BgsqhkiG9w0B
+CRACCzFmoGQwXTELMAkGA1UEBhMCVVMxGDAWBgNVBAoTD1UuUy4gR292ZXJubWVudDEMMAoGA1UE
+CxMDRG9EMQwwCgYDVQQLEwNQS0kxGDAWBgNVBAMTD0RPRCBFTUFJTCBDQS0zMgIDMhBXMA0GCSqG
+SIb3DQEBAQUABIIBAGjnkwtzLPG8FwpmvuAuyK7bUYuonDteaZVHG0R9ErQMZeGP5bgWHQcwZu+M
+IPFgqod258QUCFLkuD5nx0VTriY3MycP+daOBiqPqbZjYUhoGCbFw9bAYN6+Icl3irLVQ326H9aH
+RITCLJRKUobzq1furO9ZVwfJCV6Xfu0RUAEhJbQRfJFumrfQebC82DdUz/ETDkCpCUBSStE8uLju
+8YsS/fEX/f8Ek434WKrrDNKlkhz21FNTR2MhdkAHV+nksRWQPaYBUmLyQtdzhg5rqh9dCfI8KjzC
+rxVsW3Q7XwOjC4k2crUECNj/zsWI3ooVpQ0R5apBp4WP7qGGyk4zBkQAAAAAAAA=
+--089e0102f84a26fdc2051d4d501b--
+

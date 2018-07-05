@@ -1,0 +1,134 @@
+From owner-cypherpunks@Algebra.COM  Fri Aug 16 00:08:39 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7G48cp13277
+	for <rsw@opamp.org>; Fri, 16 Aug 2002 00:08:39 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id AAA17596
+	for <rsw@mit.edu>; Fri, 16 Aug 2002 00:08:38 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7FLqUkV002898
+	for <cypherpunks-outgoing@ak47.algebra.com>; Thu, 15 Aug 2002 16:52:30 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g7FLqUWg002897
+	for cypherpunks-outgoing; Thu, 15 Aug 2002 16:52:30 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g7FLqPkV002867
+	for <cypherpunks@ak47.algebra.com>; Thu, 15 Aug 2002 16:52:26 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7FLqN9C022131
+	for cypherpunks@ak47.algebra.com; Thu, 15 Aug 2002 14:52:23 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g7FLq45s022124
+	for cypherpunks-goingout345; Thu, 15 Aug 2002 14:52:04 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+X-Authentication-Warning: eskimo.com: eresrch owned process doing -bs
+Date: Thu, 15 Aug 2002 14:52:00 -0700 (PDT)
+From: Mike Rosing <eresrch@eskimo.com>
+To: cypherpunks@lne.com
+Old-Subject: Re: TCPA not virtualizable during ownership change (Re: 
+  Overcoming the potential downside of TCPA)
+In-Reply-To: <004e01c24497$eafb8da0$6601a8c0@josephas>
+Message-ID: <Pine.GSU.4.44.0208151434230.3950-100000@eskimo.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+Subject:  Re: TCPA not virtualizable during ownership change (Re: 
+  Overcoming the potential downside of TCPA)
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 3728
+Lines: 84
+
+
+On Thu, 15 Aug 2002, Joseph Ashwood wrote:
+
+> This is going to be a very long, and very boring message. But it should
+> highlight why we have differing opinions about so very many capabilities of
+> the TCPA system. For the sake of attempting to avoid supplying too little
+> information, I have simply searched for the term and will make comments on
+> each location that it appears.
+
+I actually read the whole thing.  Thanks for the effort.
+I just want to focus in on one part for now.
+
+> Page 183, hints that even the manufacturer is not allowed to known EK public
+> key, which complicates things no end, because the Privacy CA certainly
+> cannot at that point be permitted to view it. This would indicate that even
+> if the EK is shipped with the system, it can never leave the system. This
+> would limit the ability of the EK to simply certifying the owner, if that is
+> true then it confuses me even further.
+
+Then how can the manufacturer sign the endorsement key?  That can't make
+any sense - is a misprint maybe and they mean the private key?
+
+> Page 240, states "This is a dead TPM. It has failed it's startup smoke test.
+> It should not leave the factory floor." This indicates that the EK must be
+> created before the TPM leaves the factory.
+
+What's the context of the "smoke test"?
+
+> Section 9.2, page 261, states that TPM_CreateEndorsementKeyPair can only be
+> called once, but does not state if this is done by the owner, or by the
+> plant. Later on the page is a hint that it may be shipped with it. "The
+> PRIVEK and PUBEK MAY be created by a process other than the use of
+> TPM_CreateEndorsementKeyPair" and related statements, which indicate rather
+> well that the endorsement key created before shipping. It also states that
+> the credential could be stored after "an Owner has taken ownership of the
+> platform," confusing the matter even more. Of course at the end of this
+> section they change the mandatory return value for
+> TPM_CreateEndorsementKeyPair (beginning TCPA_FAIL, end TCPA_DISABLED_CMD).
+
+So the spec allows for a one time write option - the manufacturer
+MAY build a list of keys.  But they don't have to.
+
+> Result: I have no idea whatsoever about where/when the EK is created, there
+> are a number of conflicting statements regarding it, and at least once where
+> they even change the return value of a function.
+
+Yeah, that makes discussion difficult.  Obviously the spec is
+flawed!!
+
+> > The creation and certification process is 1) create
+> > endorsement key pair,
+>
+> > 2) export public key endorsement key,
+>
+> Only to the owner, the manufacturer is not supposed to have a copy
+
+Then anyone can create a TPM?  What does the manufacturer
+know about the thing it created?  If they know the endorsement key
+(since they put it in) they can compute the public key.  If they
+don't know either key, then anyone can create TPM's and get them
+certified!!
+
+I guess I can't argue with that :-)
+
+> > 3)
+> > hardware manufacturer signs endorsement public key to create an
+> > endorsement certificate (to certify that that endorsement public key
+> > belongs to this TPM), 4) the certificate is stored in the TPM (for
+> > later use in communications with the privacy CA.)
+>
+> The privacy CA never recieves a copy of the PUBEK, the PUBEK is only to be
+> seen by the owner.
+
+If the manufacturer signs the endorsement pubkey, how can they
+not see it?  I think there must be a lot of confusion in the
+spec about which key does what and where it is used.  That's a
+different kind of flaw, but clearly the spec has a lot of problems.
+
+Keep hacking at it guys.  Maybe the authors will re-write it
+so it makes sense (or give up and toss the whole thing in
+the trash).
+
+Patience, persistence, truth,
+Dr. mike
+

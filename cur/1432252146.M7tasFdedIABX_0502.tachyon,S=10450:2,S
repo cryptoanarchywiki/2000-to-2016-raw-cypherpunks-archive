@@ -1,0 +1,198 @@
+From owner-cypherpunks@al-qaeda.net  Fri Nov 14 09:41:55 2008
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id mAEEfOnT022617
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 14 Nov 2008 09:41:24 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id mAEEfN6E022616
+	for cypherpunks-outgoing; Fri, 14 Nov 2008 09:41:24 -0500
+Date: Fri, 14 Nov 2008 15:41:18 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: info@postbiota.org, cypherpunks@al-qaeda.net
+Subject: State of the Freenet, and tentative roadmap
+Message-ID: <20081114144118.GZ11544@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 9424
+Lines: 172
+
+http://archives.freenetproject.org/message/20081113.185252.f691bed8.en.html
+
+Author: Matthew Toseland
+Date:  
+To: Discussion of development issues, support
+Subject: [freenet-support] State of the Freenet, and tentative roadmap
+	
+Delete this message
+Reply to this message
+gpg: Signature made Thu Nov 13 18:52:57 2008 UTC using RSA key ID BEC4F4C3
+gpg: Can't check signature: public key not found
+CHANGES SINCE 0.7
+
+Lots of work has been done on Freenet since 0.7 was released. The main
+highlights in code already shipped and available are sdiz's new datastore
+(which should greatly improve CPU usage and I/O), lots of debugging,
+profiling and optimisation, and two major improvements to routing:
+friend-of-a-friend routing and turning off location swapping on opennet.
+These two should improve data retention and performance significantly. We
+have also implemented empirical measurements of network performance, which
+have proved useful although they give a rather noisy signal. And there are
+two major projects which have not yet been deployed, which are discussed
+below: the db4o branch, and the new Freetalk plugin. Other changes include
+better bandwidth limiting. The conference in July came up with many good
+ideas; some of these are already in 0.8, some will be postponed to later
+versions, but it was great to meet up with everyone and make sure we're all
+on the same page, including the theoreticians. All this, plus some small
+further changes and a lot of debugging, should make for a 0.8.0 some time in
+the next few months which will be a major improvement on 0.7.0, and will have
+taken much less than the nearly 3 years it took to reach 0.7.0!
+
+FINANCES
+
+We currently have $6863.24., including $4820 remaining from Google. This is
+shown live (updated hourly) on the web site. Emu costs around #80/month, I
+cost around #1440/month; the weak pound obviously helps matters, but when I
+started work on Freenet I only cost $1250/mo; now I cost nearly twice that
+(in a few months time I might be prepared to take a small pay cut, but it
+won't cover the difference). This makes keeping going from individual
+donations difficult, and over the last 18 months we've largely continued from
+large donations from individuals or companies - Google's and John Gilmore's
+being the biggest. Hopefully shipping 0.8 (or 0.8 alpha 1) combined with an
+urgent appeal for funds will generate us some more publicity and more cash,
+and more volunteers, but it's an open question whether we will make enough to
+keep going for more than a few months.
+
+DB4O STATUS
+
+The db4o branch is an attempt to put most of the client layer into a
+lightweight object database, so that we have no more hours of reloading the
+pending requests from the datastore after a restart, faster startups, and
+vastly less memory usage for large download queues. It has achieved most of
+these goals already, but it has taken far longer than anticipated, and this
+is why I haven't been working much on the mainstream stable Freenet over the
+last 5 months. However it should be ready soon: I will post a new jar for
+wider testing soon, and with a few more weeks of work it should be ready to
+merge.
+
+FREETALK (FORUMS IN FREENET) AND WEB INTERFACE USABILITY
+
+Chat is essential for any community, especially an anonymous one; without a
+good anonymous chat system, the chances of new users continuing to use
+Freenet are low IMHO. We had Frost, but an unknown person has effectively
+destroyed Frost with denial of service attacks (made possible by Frost's weak
+design). FMS is the chat system currently used most widely on Freenet, and
+its architecture should be immune to the attacks on Frost, but FMS has some
+serious problems: It is written in C++, so is difficult to bundle with
+Freenet, and cannot be an obvious part of the web interface or inlined in
+freesites; it uses both a newsreader and a web browser, so is hard to use;
+and it has had some exploitable bugs, and may still have them. I have stopped
+using FMS because I don't have time to do a proper code review (and I'm not
+sure I'm competent to do so), and nobody I trust has done one. So we clearly
+need a new chat system.
+
+Thanks to the massive efforts of batosai, saces and especially xor/p0s, the
+Freetalk plugin should be ready by the time we ship 0.8. This will be a menu
+item on the web interface, just under Browse Freenet, and will be an
+officially code reviewed and supported plugin. Hopefully its web interface
+will also be embeddable in freesites, as a site forums system. Freemail may
+also be added to the top level GUI, if and when it becomes sufficiently
+stable and has a good web interface; we had a Summer of Code student working
+on one but that didn't work out.
+
+There has been lots of discussion on making the user interface more friendly.
+The main principle here is to make what you can do with Freenet more obvious,
+and hide technical details in submenus. This of course means all the major
+functions of Freenet must be bundled and code reviewed as plugins, and
+accessible from Fproxy (experience suggests most users won't use them if
+they're not obvious and two clicks away!). Real time chat among darknet peers
+has also been discussed, with a more "social networking" feel for darknet,
+since that's exactly what it is. Dieppe has built some mockups (especially
+the first one):
+http://doc-fr.freenetproject.org/Fproxy_mockup
+http://amphibian.dyndns.org/freenet/browse-mockup/html/browse.html
+http://amphibian.dyndns.org/freenet/mockup2/mockup2/html/browse.html
+
+TENTATIVE ROADMAP
+
+0.8:
+- ALREADY IMPLEMENTED: New compression algorithms, FOAF, no swap on opennet,
+salted hash datastore, lots of minor refactoring, ...
+- Merge the db4o branch.
+- Some work on plugin dependancies, plugin updating.
+- More work on searching: adjacent word matching, fix the spider, make it look
+better, possibly make it embeddable in freesites and support adding indexes
+from freesites.
+- LOTS of debugging. Debug current network problems, debug bootstrapping
+taking ages ...
+- Hopefully bundle a working and reasonably easy to use Freetalk.
+0.9:
+- Rest of the UI refactoring.
+- Splitfile crypto randomization (greatly improves security for large
+inserts).
+- Tunnels. Greatly improve security, significant performance cost.
+- Bloom filters. Greatly improve performance, significant security cost.
+- BUT PUT THEM TOGETHER, and you get greatly improved security for the
+paranoid at a slighty performance cost, improved security and current
+performance or better for the moderately paranoid, and greatly improved
+performance for the not so paranoid.
+- Possibly some low level changes (e.g. streams, a proposal to greatly reduce
+the bandwidth cost of padding).
+0.10:
+- Passive requests: These are needed for efficient, large scale Web of Trust
+(a vital component of Freetalk, but also probably useful for filesharing and
+other things in future). They are also very helpful for other applications
+such as streaming, and can save significant amounts of bandwidth for
+downloads in many cases.
+- Long-term requests: Closely related to passive requests. Needed to deal with
+uptime issues, and some of the more serious steganographic transport plugins.
+Uptime issues are especially important: other p2p networks also have to deal
+with them, often not very well, and the problem will only get worse as more
+and more people only have laptops.
+- Possibly transport plugins: This would enable Freenet to pretend to be HTTP
+traffic, or Skype(tm), or whatever.
+1.0
+- DEBUG DEBUG DEBUG DEBUG
+
+Post 1.0:
+- Better support for sneakernet and other high latency transports. The main
+remaining issue is how to assign locations on a low uptime / high latency
+network.
+- Content filters for *everything* - PDFs for example are quite feasible, and
+strategically important, but a lot of work.
+- Better darknet support - targeted swapping, better fragmented network
+support, etc.
+
+SECURITY SUMMARY
+
+There are 3 main classes of attack on Freenet itself that are of particular
+concern: harvesting nodes, statistical attacks to find out what your peers
+are doing, and key-based searches where the attacker moves across the network
+and slowly closes in on the source of some large content. All of them are
+much harder if you use darknet mode and pick your Friends carefully. Right
+now Freenet's security is nowhere near what it should be; if you have to
+stake your freedom or worse on it, think carefully about the risks and the
+alternatives (which are usually much easier to block). The features mentioned
+for 0.9 should greatly improve security against these attacks. However, for
+many purposes, especially if you use a darknet, Freenet is still better than
+many of the alternatives.
+
+NEAR FUTURE/NEAR PAST
+
+On Saturday I released builds 1170, 1171, 1172 and 1173. 1170 included at
+least a month's worth of work on trunk, all since 1166, which wasn't released
+earlier as it was too unstable. 1173 was self-mandatory, meaning that every
+node had to upgrade immediately, or lose connectivity. This has caused some
+short term problems for the network; it was unavoidable, sorry folks. The
+1170 changes are quite significant: If you have a freesite, please reinsert
+it (it will load significantly faster in most cases). Much of the recent
+chaos (addressed to some degree in 1174 and 1175) may have been caused by my
+being absent from trunk development, building db4o. That's nearly finished
+and I'm spending some time on trunk at the moment. 
+

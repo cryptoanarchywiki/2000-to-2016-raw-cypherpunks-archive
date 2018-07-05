@@ -1,0 +1,139 @@
+From owner-cypherpunks@al-qaeda.net  Sun Feb 12 09:32:09 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q1CESf0T010034
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sun, 12 Feb 2012 09:28:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1329056921;
+	bh=6t4315Ma/1Xgq/sA++yF4KaB93ZZsbV7Ufke0UF/Qgg=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=rH76TeG1DoiUBURc8TVScvAFgbbKQeY4ZBq24QPKW0kmh8zHICEDv74WBnZCIDibL
+	 XR8Do18cqbzlFxKum0TQPga733BpeZKvo67AufPXhn16uB3go3xTkmoFQvzIVb4U+S
+	 AD/qUryIIFLE6fIMCwckAxsrpjKUsO/NmmVGGiCc=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q1CESfBV010033
+	for cypherpunks-outgoing; Sun, 12 Feb 2012 09:28:41 -0500
+Date: Sun, 12 Feb 2012 15:28:37 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: tt@postbiota.org, cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: [Freedombox-discuss] Freedombox For Cloud Services
+Message-ID: <20120212142837.GS7343@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5237
+Lines: 107
+
+----- Forwarded message from Zooko Wilcox-O'Hearn <zooko@zooko.com> -----
+
+From: Zooko Wilcox-O'Hearn <zooko@zooko.com>
+Date: Fri, 10 Feb 2012 16:42:47 -0700
+To: freedombox-discuss@lists.alioth.debian.org
+Subject: Re: [Freedombox-discuss] Freedombox For Cloud Services
+
+Hi! I'm a developer on the Tahoe-LAFS project.
+
+On Wed, Feb 8, 2012 at 3:57 AM, Josef Spillner <2005@kuarepoti-dju.net> wrote:
+>
+> A conceptual difference is that Tahoe is targeting homogeneous storage networks, where access to the servers is assumed because they also need to run Tahoe software, whereas NubiSave goes to great lengths (e.g. by contributing new FUSE modules to fuse.sf.net) to be able to talk to existing online storage providers despite their (often found) inability or unwillingness to be talked to in a uniform way.
+>
+> A second conceptual difference is that Tahoe is more of a (static) RAIC and NubiSave more of a (dynamic) RAOC, where means that security can be traded for cost or proximity can be traded for signup privacy. This mechanism relies on formal provider descriptions.
+
+I don't understand this, and can't say whether I think these two
+differences correctly apply to Tahoe-LAFS or not.
+
+> A practical difference is that Tahoe looks like a genuine engineering project, so it is available for more platforms, has better testing, and certainly an existing user base.
+
+Thank you! We certainly work hard at making it reliable and secure.
+We're also open to accepting patches that make Tahoe-LAFS better for
+your use-case, as long as it doesn't complicate or destabilize the
+use-cases of others.
+
+Also, I love the idea of the FreedomBox and would like to see it
+become useful to a large number of people.
+
+
+The basic idea of serving storage from a FreedomBox doesn't sound
+incompatible with Tahoe-LAFS architecture to me. One thing that I
+would be careful of is not to try to use adhoc storage servers whose
+only qualification is "they managed to turn it on and run the
+software". This sort of principle of inclusion works great for
+transfer, e.g. Bittorrent, but not for storage. Unqualified nodes are
+too numerous and too unreliable to be any use for storage. They do
+more damage than good. I speak from long and hard experience, having
+been an architect of several successive notable failed projects, each
+of which attempted to take advantage of unqualified, random nodes to
+provide storage.
+
+But, FreedomBox storage servers do not have to be adhoc, unqualified
+storage servers. Anything which serves to filter out most of the 99%
+of bad servers would do. Possible ways to filter which storage servers
+you'll upload your ciphertext to:
+
+1. The storage client has to manually add the storage server ID to a
+list of storage servers that she is willing to entrust ciphertext to.
+(This is basically what Tahoe-LAFS already offers, although it is
+currently mediated by a centralized thing called the "introducer".)
+
+2. The storage server has to be blessed by some trusted authority
+before the storage clients will use it. (Again, the current introducer
+could sort of be pressed into service for this, but we're actively
+working on upgrading that to a more decentralized, flexible, and
+secure solution.)
+
+3. The storage server has to have some aggregate "good reputation"
+among some collection of users.
+
+4. The storage server is owned by someone in your social network. :-)
+I like this idea. When you befriend someone, that automatically grants
+them a certain amount of storage space on your FreedomBox.
+
+6. The storage server has to demonstrate 30 consecutive days of better
+than 95% uptime before the storage client will entrust storage to it.
+
+7. The storage server has to give a micropayment, let's say one dollar
+or one Bitcoin, to the client before the client will start using it.
+Then, the client will start paying the server for service. Within a
+few weeks or months the server will have earned back its dollar plus
+more. But, the initial requirement of a payment in the wrong direction
+serves to filter out most of the 99% of servers that are completely
+useless. I just came up with this crazy notion just now.
+
+
+I would encourage people interested in hacking on FreedomBox to try
+installing Tahoe-LAFS on it and give it a spin. There's nothing like
+practical, hands-on experience to inform your ideas.
+
+However, while you're waiting for it to run its extensive and
+time-consuming unit tests, you could also browse some hifalutin ideas:
+
+https://tahoe-lafs.org/pipermail/tahoe-dev/2011-February/006150.html
+
+http://lists.zooko.com/pipermail/p2p-hackers/2011-February/002906.html
+
+http://lists.zooko.com/pipermail/p2p-hackers/2011-August/002979.html
+
+http://lists.zooko.com/pipermail/p2p-hackers/2011-August/002986.html
+
+
+Regards,
+
+Zooko
+
+_______________________________________________
+Freedombox-discuss mailing list
+Freedombox-discuss@lists.alioth.debian.org
+http://lists.alioth.debian.org/cgi-bin/mailman/listinfo/freedombox-discuss
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

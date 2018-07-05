@@ -1,0 +1,388 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u18EEYn7021997;
+	Mon, 8 Feb 2016 09:14:40 -0500
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=ghy2P/Ci;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-ig0-f180.google.com (mail-ig0-f180.google.com
+ [209.85.213.180])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u18EEU7K021993
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Mon, 8 Feb 2016 09:14:31 -0500
+Received: by mail-ig0-f180.google.com with SMTP id mw1so57480662igb.1
+ for <cypherpunks@cpunks.org>; Mon, 08 Feb 2016 06:14:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :cc:content-type;
+ bh=zHncna55NRSyl7UhhD7jVMkLQ0q9E8grOxEdR/+7p5E=;
+ b=ghy2P/CiyZ99/fdP2r4aLB4HXa6SrekgwFBYp+lio5Wdw0igxbuHms9wVuoh50xGMG
+ MhH7n9Vw932IEsO97RTPIZ3iMkEkv5Vy5IFs3ldfeXHWKZowDJBrhjSwU6tnIMG8xSLB
+ vKjqjkax0+RLx3yR2pJLPc6kag3EGKcUxgCX8B9pDPF7/N3hSLGQnadejguoWNFfsZEM
+ vmLmx/GQxh53c5l6qVVObmkdeRu81CeaF024hfusQ7iE47zkE5AfOIsoKwOjjg8v4LRO
+ LaV5UQA+wwWThMqfECLZBesZnuGzCsjLtRMXNggz6mQHKwnMa2PfavwgVwIAkf1XGc94
+ S2iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to:cc:content-type;
+ bh=zHncna55NRSyl7UhhD7jVMkLQ0q9E8grOxEdR/+7p5E=;
+ b=E+lsPTbzFKet/JYJEZk9EFtearkcWqOcGp1Z8X5yiCe5PxS0vRq7dkmfumy+mcP3HD
+ rQeliQn/nUnAJP+9cE+hGkQDjZGECS48MFRZq6RJT4lj+0rMxdIgqbwiehYoiN6QR6cP
+ zUkctylKnG0A2Rb+8qIkGjaj8xo1Ht3ycTHYUkMSGkE0v7heqLsFkOkyRIikF+blqjN6
+ XZDiLqDCdMckDNPWTpj2wnnHq9+FE/RLKvBbIN6b21kOPLkwjNRuLqiEaFHd5yVkYvyL
+ DHWAE4sktGklhfz5zlww0H+tQ1Yk2D8u1n7jW9yxTKquXd/xtK8VBTEFX9z2fbyT7wB8
+ OOzA==
+X-Gm-Message-State: AG10YOQXXIznHEZTvqBG0aNCZo+eydzgBQ1ohL8g6iHQnqyPNLJ5Hb/Y5+a7qTHYZYOEIr6A+ObgE0wKNQ4gFg==
+MIME-Version: 1.0
+X-Received: by 10.50.150.66 with SMTP id ug2mr22609538igb.33.1454940864226;
+ Mon, 08 Feb 2016 06:14:24 -0800 (PST)
+Received: by 10.107.145.70 with HTTP; Mon, 8 Feb 2016 06:14:22 -0800 (PST)
+Received: by 10.107.145.70 with HTTP; Mon, 8 Feb 2016 06:14:22 -0800 (PST)
+In-Reply-To: <56B83B54.5080705@pilobilus.net>
+References: <CAJVRA1TR=8yLxnqRia44uhLZhMhoRBNvHpMrWneNO7egi+mFtQ@mail.gmail.com>
+ <56928ad3.454d370a.dd4d3.ffffb84e@mx.google.com>
+ <CAJVRA1RU8htvg5Ygzv=PipAVrfzbn8SHAMSOPhgZDZTb_0PMjg@mail.gmail.com>
+ <5692f66e.08c48c0a.b1ea8.559b@mx.google.com>
+ <5695C7FB.7020906@videotron.ca>
+ <5695cfc4.45288c0a.c1440.787e@mx.google.com>
+ <CAJVRA1RVZjsfYZ2-ysi+omKTOxWCq13r8C176zOFnPreKz-jxA@mail.gmail.com>
+ <5696d3e5.118f8c0a.dcb70.7e81@mx.google.com>
+ <CAOsGNSSBbc4U3r5cEVPZS2eUGMwJ3LhK5Y0WcoX=2GQS-1oWSg@mail.gmail.com>
+ <569aa71a.4cd6370a.e7ed3.37bc@mx.google.com>
+ <569AAC8A.8040309@riseup.net>
+ <569ab27e.8e668c0a.8a3f.3d64@mx.google.com>
+ <CAOsGNSSUVgwgdF_OUEGZiDwp_hcK70Vvfmr6tgLVLaXVHA6Y5A@mail.gmail.com>
+ <569bfefa.0c30370a.877e4.ffffcae3@mx.google.com>
+ <56B83B54.5080705@pilobilus.net>
+Date: Mon, 8 Feb 2016 15:14:22 +0100
+Message-ID: <CAGRDzQWai=6m=8Hh83BP9h8jo2+0OV0QceAHHnNE7P4UbZD8Hw@mail.gmail.com>
+Subject: Re: Self Preservation and Irreversible Decline [was: Electronic
+ Freedom Foundation selective in support of freedom]
+From: Cari Machet <carimachet@gmail.com>
+To: Steve Kinney <admin@pilobilus.net>
+Content-Type: multipart/alternative; boundary=001a1134df6861adee052b42d1e5
+Cc: cpunks <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 308
+
+--001a1134df6861adee052b42d1e5
+Content-Type: text/plain; charset=UTF-8
+
+On Feb 8, 2016 8:59 AM, "Steve Kinney" <admin@pilobilus.net> wrote:
+>
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA1
+>
+> On 01/17/2016 03:51 PM, juan wrote:
+> > On Sun, 17 Jan 2016 12:05:34 +0000 Zenaan Harkness
+> > <zen@freedbms.net> wrote:
+> >
+> >> This highlights for me personally how programmed I am in my
+> >> think, and how useful it is to be perpetually reminded of at
+> >> least one or two of the limitations of said think. But shit,
+> >> it's embarrassing how programmed I am...
+> >
+> > Well, once you realize you are programmed, then you are not
+> > programmed anymore =P
+>
+> I so VERY much wish that was true!  I have worked on
+> 'deprogramming' myself since age 17 or 18, with some degree of
+> success - but only in proportion to the amount of effort expended
+> X the amount of time spent pushing, pushing, pushing.  Have I
+> moved off 'square one' yet?  I think so, but sometimes I have my
+> doubts.
+
+Completely agree
+
+And we dont live in a vacuum
+
+There are actually these beings that state a determinant life > everyone
+decides what happens to them > and this is just one aspect of what a
+self-actualized person is up against
+
+There are serious fucked up forces at work if you dont think so just look
+into the story of tesla
+
+>
+> Early on I arrived at the conclusion that "Knowing better changes
+> nothing."  Identifying a self defeating mental complex only
+> indicates a need to start programming its replacements.  Without
+> effective tools in hand, "knowing better" only leads to denial and
+> rationalization:  The higher one's verbal IQ and the broader one's
+> general information, the faster and better defensive self
+> deception works.
+>
+> The Zen aphorism "Before enlightenment, chop wood, carry water;
+> after enlightenment, chop wood, carry water" may apply here.  Even
+> a fundamental, revolutionary change in perceived personal identity
+> does not magically flush out a lifetime of beliefs, habits, and
+> information belonging to some hypothetical "old self" that has
+> supposedly been overturned.  Enlightenment does not stop the flow
+> of incoming propaganda, nor does it cancel the established
+> relationships and dependencies with the external world that define
+> a person as a social and economic entity.  That thunderous,
+> world-shattering AHA! moment, if it comes, will at best present a
+> series of new and more difficult mountains to climb.
+
+Yes ... have you seen the series > how we got to now > ???
+
+There arent really aha moments it is a build
+
+But i would say you take this too far its like the axiom of the alcoholic
+admitting there is a drinking problem is half the battle
+
+>
+> >> I sure f-ing hope -one- of these days I can give "the Juan
+> >> clarification" (at least to myself/ in my head) before you
+> >> yourself do so.
+> >
+> > I don't want to claim more credit than I deserve, which is
+> > basically...none.
+> >
+> > Wow. (Still there's no new thought under the Sun, but how hard
+> > is it to shake one's programming.)
+>
+> Bob Wilson got on that particular bus sometime in the 1960s.  By
+> the 1980s spreading the gospel of self-deprogramming became his
+> major mission in life.  I have gotten a lot of mileage out of the
+> cognitive tools presented here:
+> http://www.principiadiscordia.com/downloads/04%20Prometheus%20Rising
+> .pdf
+>
+> Yesterday someone asked me for a "Cliff Notes" version of Wilson's
+> video Maybe Logic, itself a condensed / introductory gloss of his
+> written works on self deprogramming.  I had to advise him that
+> "Cliff Notes" approaches to political and existential problems can
+> only make them worse...
+>
+> >>>> http://kickass-cookies.co.uk/the-ascendance-of-sociopaths-in-u-
+> s-governance/
+>
+> I
+> >>>>
+> like to define politics as the process flow of power
+> relationships in a society.  In this context, blaming systemic
+> political failures on broken State institutions or malicious
+> actors wielding State power can not produce practical solutions.
+> These problems arise mutually; neither can do its nefarious work
+> without the other, so repairing either allows the other to undo
+> the repair job - and creates an institutional memory to immunizing
+> the State against repetition of those repairs.
+
+And ignoring the repeat button played by the parasite of the mind in our
+own lives is never getting off the merry go round
+
+I would argue that the state has not only immunized itself against repair
+but learned work arounds in order to amp the build of state power
+
+See dick cheney - bombs panama ... experiences no lasting backlash as
+secretary of state then bombs iraq as vp with relative ease
+
+>
+> :o/
+>
+>
+>
+>
+>
+>
+>
+>
+> -----BEGIN PGP SIGNATURE-----
+> Version: GnuPG v1
+>
+> iQIcBAEBAgAGBQJWuDtSAAoJEDZ0Gg87KR0L5QEQAOZBQSR4bum5N9I8tV0mta6f
+> /lZoexRAAklQ9IFH8NxDFtbQHl7BB5EKMn9puMdIG4zzr93HCMwvBn8UUAjBlOwd
+> QFF6bprPnb8IX415GjtVlD5jlp6x+vsmCiKog2uJHr4Quu1TQi6r8g5Y7nqdWlAT
+> Szuif5G6kGdH/hrCYPiZZJ2sPKhMuWCjZ0tw1nkYfrt/cVKpi1t0aXgQPHi9wVue
+> OVD+LWYEMHSZ0iKlb9nP3nOkzVrcNE8U4ZcvRUFQnxsi6ZDwsFzxpBJYUKvzyCso
+> GVsTnsRZXmNI1Z4h09KEh5PBzmAW1qmptYuHzeudA/IeBSqnCK+scCUdrz4eqWaI
+> OD0sVhgrXeZmnRL2KO37eUBA2AAaE/TdtLlpb+k5wAITMf5wNaPPeLln1XAkoQ8Z
+> pC9mBxCMai0NfxpkcL4UgXuNkn91VRs0QKpPtEb8l6NFVPy7COev2qDUyId79NoJ
+> YLAyrfeWiAF5BMLffAv5umBhQWImQ3gon28zLTuS/GGw67dWA4peSlP3BW6aIFAl
+> GSn1etq1LqB4PrCBm/6CYGsbyxoJ77rBhH5/1rO8oDhXWkgjOBmnR5zEwXmSr1a9
+> arSHQMlhGFrB2LuIbVc1dg8C9yPxmzR8XemKX105f24f7c7keBP8qDoa/nYfJ636
+> OxsGtFQokidBiz+jSx8k
+> =wHlU
+> -----END PGP SIGNATURE-----
+
+--001a1134df6861adee052b42d1e5
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p dir=3D"ltr"><br>
+On Feb 8, 2016 8:59 AM, &quot;Steve Kinney&quot; &lt;<a href=3D"mailto:admi=
+n@pilobilus.net">admin@pilobilus.net</a>&gt; wrote:<br>
+&gt;<br>
+&gt; -----BEGIN PGP SIGNED MESSAGE-----<br>
+&gt; Hash: SHA1<br>
+&gt;<br>
+&gt; On 01/17/2016 03:51 PM, juan wrote:<br>
+&gt; &gt; On Sun, 17 Jan 2016 12:05:34 +0000 Zenaan Harkness<br>
+&gt; &gt; &lt;<a href=3D"mailto:zen@freedbms.net">zen@freedbms.net</a>&gt; =
+wrote:<br>
+&gt; &gt;<br>
+&gt; &gt;&gt; This highlights for me personally how programmed I am in my<b=
+r>
+&gt; &gt;&gt; think, and how useful it is to be perpetually reminded of at<=
+br>
+&gt; &gt;&gt; least one or two of the limitations of said think. But shit,<=
+br>
+&gt; &gt;&gt; it&#39;s embarrassing how programmed I am...<br>
+&gt; &gt;<br>
+&gt; &gt; Well, once you realize you are programmed, then you are not<br>
+&gt; &gt; programmed anymore =3DP<br>
+&gt;<br>
+&gt; I so VERY much wish that was true!=C2=A0 I have worked on<br>
+&gt; &#39;deprogramming&#39; myself since age 17 or 18, with some degree of=
+<br>
+&gt; success - but only in proportion to the amount of effort expended<br>
+&gt; X the amount of time spent pushing, pushing, pushing.=C2=A0 Have I<br>
+&gt; moved off &#39;square one&#39; yet?=C2=A0 I think so, but sometimes I =
+have my<br>
+&gt; doubts.</p>
+<p dir=3D"ltr">Completely agree </p>
+<p dir=3D"ltr">And we dont live in a vacuum </p>
+<p dir=3D"ltr">There are actually these beings that state a determinant lif=
+e &gt; everyone decides what happens to them &gt; and this is just one aspe=
+ct of what a self-actualized person is up against</p>
+<p dir=3D"ltr">There are serious fucked up forces at work if you dont think=
+ so just look into the story of tesla <br></p>
+<p dir=3D"ltr">&gt;<br>
+&gt; Early on I arrived at the conclusion that &quot;Knowing better changes=
+<br>
+&gt; nothing.&quot;=C2=A0 Identifying a self defeating mental complex only<=
+br>
+&gt; indicates a need to start programming its replacements.=C2=A0 Without<=
+br>
+&gt; effective tools in hand, &quot;knowing better&quot; only leads to deni=
+al and<br>
+&gt; rationalization:=C2=A0 The higher one&#39;s verbal IQ and the broader =
+one&#39;s<br>
+&gt; general information, the faster and better defensive self<br>
+&gt; deception works.<br>
+&gt;<br>
+&gt; The Zen aphorism &quot;Before enlightenment, chop wood, carry water;<b=
+r>
+&gt; after enlightenment, chop wood, carry water&quot; may apply here.=C2=
+=A0 Even<br>
+&gt; a fundamental, revolutionary change in perceived personal identity<br>
+&gt; does not magically flush out a lifetime of beliefs, habits, and<br>
+&gt; information belonging to some hypothetical &quot;old self&quot; that h=
+as<br>
+&gt; supposedly been overturned.=C2=A0 Enlightenment does not stop the flow=
+<br>
+&gt; of incoming propaganda, nor does it cancel the established<br>
+&gt; relationships and dependencies with the external world that define<br>
+&gt; a person as a social and economic entity.=C2=A0 That thunderous,<br>
+&gt; world-shattering AHA! moment, if it comes, will at best present a<br>
+&gt; series of new and more difficult mountains to climb.</p>
+<p dir=3D"ltr">Yes ... have you seen the series &gt; how we got to now &gt;=
+ ???</p>
+<p dir=3D"ltr">There arent really aha moments it is a build </p>
+<p dir=3D"ltr">But i would say you take this too far its like the axiom of =
+the alcoholic admitting there is a drinking problem is half the battle=C2=
+=A0 </p>
+<p dir=3D"ltr">&gt;<br>
+&gt; &gt;&gt; I sure f-ing hope -one- of these days I can give &quot;the Ju=
+an<br>
+&gt; &gt;&gt; clarification&quot; (at least to myself/ in my head) before y=
+ou<br>
+&gt; &gt;&gt; yourself do so.<br>
+&gt; &gt;<br>
+&gt; &gt; I don&#39;t want to claim more credit than I deserve, which is<br=
+>
+&gt; &gt; basically...none.<br>
+&gt; &gt;<br>
+&gt; &gt; Wow. (Still there&#39;s no new thought under the Sun, but how har=
+d<br>
+&gt; &gt; is it to shake one&#39;s programming.)<br>
+&gt;<br>
+&gt; Bob Wilson got on that particular bus sometime in the 1960s.=C2=A0 By<=
+br>
+&gt; the 1980s spreading the gospel of self-deprogramming became his<br>
+&gt; major mission in life.=C2=A0 I have gotten a lot of mileage out of the=
+<br>
+&gt; cognitive tools presented here:<br>
+&gt; <a href=3D"http://www.principiadiscordia.com/downloads/04%20Prometheus=
+%20Rising">http://www.principiadiscordia.com/downloads/04%20Prometheus%20Ri=
+sing</a><br>
+&gt; .pdf<br>
+&gt;<br>
+&gt; Yesterday someone asked me for a &quot;Cliff Notes&quot; version of Wi=
+lson&#39;s<br>
+&gt; video Maybe Logic, itself a condensed / introductory gloss of his<br>
+&gt; written works on self deprogramming.=C2=A0 I had to advise him that<br=
+>
+&gt; &quot;Cliff Notes&quot; approaches to political and existential proble=
+ms can<br>
+&gt; only make them worse...<br>
+&gt;<br>
+&gt; &gt;&gt;&gt;&gt; <a href=3D"http://kickass-cookies.co.uk/the-ascendanc=
+e-of-sociopaths-in-u-">http://kickass-cookies.co.uk/the-ascendance-of-socio=
+paths-in-u-</a><br>
+&gt; s-governance/<br>
+&gt;<br>
+&gt; I<br>
+&gt; &gt;&gt;&gt;&gt;<br>
+&gt; like to define politics as the process flow of power<br>
+&gt; relationships in a society.=C2=A0 In this context, blaming systemic<br=
+>
+&gt; political failures on broken State institutions or malicious<br>
+&gt; actors wielding State power can not produce practical solutions.<br>
+&gt; These problems arise mutually; neither can do its nefarious work<br>
+&gt; without the other, so repairing either allows the other to undo<br>
+&gt; the repair job - and creates an institutional memory to immunizing<br>
+&gt; the State against repetition of those repairs.</p>
+<p dir=3D"ltr">And ignoring the repeat button played by the parasite of the=
+ mind in our own lives is never getting off the merry go round </p>
+<p dir=3D"ltr">I would argue that the state has not only immunized itself a=
+gainst repair but learned work arounds in order to amp the build of state p=
+ower </p>
+<p dir=3D"ltr">See dick cheney - bombs panama ... experiences no lasting ba=
+cklash as secretary of state then bombs iraq as vp with relative ease</p>
+<p dir=3D"ltr">&gt;<br>
+&gt; :o/<br>
+&gt;<br>
+&gt;<br>
+&gt;<br>
+&gt;<br>
+&gt;<br>
+&gt;<br>
+&gt;<br>
+&gt;<br>
+&gt; -----BEGIN PGP SIGNATURE-----<br>
+&gt; Version: GnuPG v1<br>
+&gt;<br>
+&gt; iQIcBAEBAgAGBQJWuDtSAAoJEDZ0Gg87KR0L5QEQAOZBQSR4bum5N9I8tV0mta6f<br>
+&gt; /lZoexRAAklQ9IFH8NxDFtbQHl7BB5EKMn9puMdIG4zzr93HCMwvBn8UUAjBlOwd<br>
+&gt; QFF6bprPnb8IX415GjtVlD5jlp6x+vsmCiKog2uJHr4Quu1TQi6r8g5Y7nqdWlAT<br>
+&gt; Szuif5G6kGdH/hrCYPiZZJ2sPKhMuWCjZ0tw1nkYfrt/cVKpi1t0aXgQPHi9wVue<br>
+&gt; OVD+LWYEMHSZ0iKlb9nP3nOkzVrcNE8U4ZcvRUFQnxsi6ZDwsFzxpBJYUKvzyCso<br>
+&gt; GVsTnsRZXmNI1Z4h09KEh5PBzmAW1qmptYuHzeudA/IeBSqnCK+scCUdrz4eqWaI<br>
+&gt; OD0sVhgrXeZmnRL2KO37eUBA2AAaE/TdtLlpb+k5wAITMf5wNaPPeLln1XAkoQ8Z<br>
+&gt; pC9mBxCMai0NfxpkcL4UgXuNkn91VRs0QKpPtEb8l6NFVPy7COev2qDUyId79NoJ<br>
+&gt; YLAyrfeWiAF5BMLffAv5umBhQWImQ3gon28zLTuS/GGw67dWA4peSlP3BW6aIFAl<br>
+&gt; GSn1etq1LqB4PrCBm/6CYGsbyxoJ77rBhH5/1rO8oDhXWkgjOBmnR5zEwXmSr1a9<br>
+&gt; arSHQMlhGFrB2LuIbVc1dg8C9yPxmzR8XemKX105f24f7c7keBP8qDoa/nYfJ636<br>
+&gt; OxsGtFQokidBiz+jSx8k<br>
+&gt; =3DwHlU<br>
+&gt; -----END PGP SIGNATURE-----<br>
+</p>
+
+--001a1134df6861adee052b42d1e5--
+

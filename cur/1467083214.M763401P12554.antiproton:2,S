@@ -1,0 +1,179 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u5S36TH3012537;
+	Mon, 27 Jun 2016 23:06:31 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=pjK+XlK8;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-vk0-f54.google.com (mail-vk0-f54.google.com
+ [209.85.213.54])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u5S36QsZ012533
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Mon, 27 Jun 2016 23:06:27 -0400
+Received: by mail-vk0-f54.google.com with SMTP id j2so4830199vkg.2
+ for <cypherpunks@cpunks.org>; Mon, 27 Jun 2016 20:06:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to;
+ bh=f2euYp7oZBRcJsbxZcBkLL/NwAgQzGMM3kl7jrnb080=;
+ b=pjK+XlK83HRArf3j4LHckYvp/VSfQEy90qxC3eHqfwk+i3wvXDRefQIN5zbagio8tD
+ iyiflSjn8CBWLMx41InK9xGTOOpqTmJSY/T52w+tuVisqRfjJJCbnYl7JsWpJ8TfPqAA
+ cRXLvc7xwZtzjHQ68weW+AlEIbJc/MZqr/1/l0r1iTLDLTXE3hCeTwqgDSoq9eHXUhj/
+ BtMqTDykJax8zKFfaBXNot1LgL1HIirPTJr1zJEHVbq6x/tiUbhayzVJu1bHR3DS5kzY
+ XFu/Jy+Y1y6M2RnCcQKY7Wbyps+b7ldmwNnhnm2boDDmsTJL53lLY10ThCSTFastrSCf
+ RzfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to;
+ bh=f2euYp7oZBRcJsbxZcBkLL/NwAgQzGMM3kl7jrnb080=;
+ b=EFi9srOHCa8PI1lTQIapUdGBRA/nXiXazqqPTHT0I29Wj2331MqWY7HlF1MgKCkMjl
+ 6yF6M7Jbg4Jj8Fr2y7NuYFn2A8T+eJcTfbxTOwiYkorHQEtKkCRPumNeU1WQnIr0zGLl
+ LKEXU4VnSCseVH1UFFe96YA0V2UQl8IFVOodXuW2c1zmj9IYSWrVsf+tHWEk58zuoun+
+ 29z0jqthLTjsQmYdy6tMtNzaa9qKyZzXfdeaf7T547oRqcCqO5bZo2Ja7l2FG2dQR2QW
+ mlhQD13WRlLLsUzLI4L7Bi9peuq12NI9kkOB+lctlc5S5Uo/mXqycKGUK1PKSBCGTTuQ
+ WI4A==
+X-Gm-Message-State: ALyK8tJYb6Igoe4saL/1xQjN0n4cwtWLLNHYrp065A1E4HzDxAbEsiyqA7cl9QAj2G+TW1SC1Q2QUyjDZZXwmg==
+MIME-Version: 1.0
+X-Received: by 10.31.56.69 with SMTP id f66mr259991vka.135.1467083180458; Mon,
+ 27 Jun 2016 20:06:20 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Mon, 27 Jun 2016 20:06:19 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Mon, 27 Jun 2016 20:06:19 -0700 (PDT)
+In-Reply-To: <5771DEBD.7000803@riseup.net>
+References: <CAG2tMp4_AFAvpJc-6mzaCgfMVZjqbNdJyw+oZm-y+6ra2KCk+A@mail.gmail.com>
+ <CAG2tMp60mBvzY3mQg2jCEPzChVoWZS-cLi_ctgXN-8uYGSw-7Q@mail.gmail.com>
+ <CAG2tMp7oJmTUoRU1RME4mei_LerBQ=m5LmerJs-u+xL31sV8ug@mail.gmail.com>
+ <CAG2tMp513NmS4gcBZhM2JAxNGkpRr7c=JsZL+wQpEwCqsK7QdA@mail.gmail.com>
+ <CAG2tMp52AKKv+KiuwKBwA6iQGMVGuG=1AabtPGJuPPCjyvEFaA@mail.gmail.com>
+ <CAG2tMp40-3DpsEx=6Z5+XjoVKR7oCqQBJqxNSHaqPejOcBZN4A@mail.gmail.com>
+ <CAG2tMp5EWsXDPKcU_goW=ApqRdNFdEqMX3r05KfrEYsijgtfqA@mail.gmail.com>
+ <CAG2tMp77DA1Dwbz_Cq_A3yo2Th+NH6A2gp+D0Q=3ERgpM8RUgQ@mail.gmail.com>
+ <CAG2tMp7Fj73uvndcSLG3JqgM+x8P5DFNiZhOq3BYaYYxqs=X-Q@mail.gmail.com>
+ <CAG2tMp5t9Po62LYcAOJFvopjaeYQgQY4KpqaSkDqniX5ePoVTQ@mail.gmail.com>
+ <CAG2tMp64E2enGMFxO+Q2P44zmm-KbkAnjtWf4xhMbO5rDFaS+g@mail.gmail.com>
+ <CAG2tMp4iwP8vVW5qo-2h62km8ceZ_akrJCqKY+kaw47_3av-AA@mail.gmail.com>
+ <CAG2tMp6gygObFZvLY41H7jVjP27w-1ikBPUe7gE5t2ns35N+kg@mail.gmail.com>
+ <5771DEBD.7000803@riseup.net>
+Date: Tue, 28 Jun 2016 00:06:19 -0300
+Message-ID: <CAG2tMp5us0ZWyeN6=kmdzapZN-UuXCnGtBrXFWhthHcQR5J3oQ@mail.gmail.com>
+Subject: Re: [OT] Five Simple Rules
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=001a1143f0ecd3cd4905364deb3a
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 103
+
+--001a1143f0ecd3cd4905364deb3a
+Content-Type: text/plain; charset=UTF-8
+
+I am killing the English in all my messages, haha!!  Sorry for all my
+stupid Grammar errors!  ;)
+
+On Jun 27, 2016 11:34 PM, "Mirimir" <mirimir@riseup.net> wrote:
+>
+> > How did we escape from the prison?  It was the work of generation of
+searchers, who took 5 simple rules to heart.
+> >
+> > Question authority.  No idea is true just because someone says so,
+including me.  Think for yourself.
+>
+> Also, think about why they're saying that. What's the game?
+>
+> > Question yourself.  Don't believe anything just because you want to.
+Believing something doesn't make it so.
+>
+> I've wasted time on pet ideas, for sure :(
+
+Me too.  Probably much more than you, my dear Mirimir.  To find the truth,
+you must believe.  I always wanted to believe.  I still believe in a better
+world for everybody, but it is becoming pretty hard to discover what means
+a "better world" and "everybody", uh!  :-/
+
+> > Test ideas, by the evidence gained from observation and experiment.  If
+a favorite idea fails a well designed test, it's wrong.  Get over it.
+>
+> Yes. And if something can't be tested, forget about it. That includes
+theories with so many free variables that they can fit any result.
+
+Being a hard headed person makes me waste a lot of time following variables
+because Law is not an Exact Science and persons are not exact and precise
+at all, haha!!  ;)
+
+> > Follow the evidence, were ever it leads.  If you have no evidence,
+reserve judgement.
+>
+> That's how we get breakthroughs.
+>
+> > And perhaps even the most important rule of all, remember you could be
+wrong.   Even the best scientist have been wrong about somethings.  Newton,
+Einstein, and ever other great scientist in history.  They all made
+mistakes.  Of course they did, they were human."
+>
+> There is no truth. You can only know what's probably not true.
+
+No truth.  It hurts.  And it is probably true.  :(
+
+--001a1143f0ecd3cd4905364deb3a
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p>I am killing the English in all my messages, haha!!=C2=A0 Sorry for all =
+my stupid Grammar errors!=C2=A0 ;)<br></p>
+<p>On Jun 27, 2016 11:34 PM, &quot;Mirimir&quot; &lt;<a href=3D"mailto:miri=
+mir@riseup.net">mirimir@riseup.net</a>&gt; wrote:<br>
+&gt;<br>
+&gt; &gt; How did we escape from the prison?=C2=A0 It was the work of gener=
+ation of searchers, who took 5 simple rules to heart.<br>
+&gt; &gt;<br>
+&gt; &gt; Question authority.=C2=A0 No idea is true just because someone sa=
+ys so, including me.=C2=A0 Think for yourself.<br>
+&gt;<br>
+&gt; Also, think about why they&#39;re saying that. What&#39;s the game?<br=
+>
+&gt;<br>
+&gt; &gt; Question yourself.=C2=A0 Don&#39;t believe anything just because =
+you want to.=C2=A0 Believing something doesn&#39;t make it so.<br>
+&gt;<br>
+&gt; I&#39;ve wasted time on pet ideas, for sure :(</p>
+<p>Me too.=C2=A0 Probably much more than you, my dear Mirimir.=C2=A0 To fin=
+d the truth, you must believe.=C2=A0 I always wanted to believe.=C2=A0 I st=
+ill believe in a better world for everybody, but it is becoming pretty hard=
+ to discover what means a &quot;better world&quot; and &quot;everybody&quot=
+;, uh!=C2=A0 :-/</p>
+<p>&gt; &gt; Test ideas, by the evidence gained from observation and experi=
+ment.=C2=A0 If a favorite idea fails a well designed test, it&#39;s wrong.=
+=C2=A0 Get over it.<br>
+&gt;<br>
+&gt; Yes. And if something can&#39;t be tested, forget about it. That inclu=
+des theories with so many free variables that they can fit any result.</p>
+<p>Being a hard headed person makes me waste a lot of time following variab=
+les because Law is not an Exact Science and persons are not exact and preci=
+se at all, haha!!=C2=A0 ;)</p>
+<p>&gt; &gt; Follow the evidence, were ever it leads.=C2=A0 If you have no =
+evidence, reserve judgement.<br>
+&gt;<br>
+&gt; That&#39;s how we get breakthroughs.<br>
+&gt;<br>
+&gt; &gt; And perhaps even the most important rule of all, remember you cou=
+ld be wrong.=C2=A0 =C2=A0Even the best scientist have been wrong about some=
+things.=C2=A0 Newton, Einstein, and ever other great scientist in history.=
+=C2=A0 They all made mistakes.=C2=A0 Of course they did, they were human.&q=
+uot;<br>
+&gt;<br>
+&gt; There is no truth. You can only know what&#39;s probably not true.</p>
+<p>No truth.=C2=A0 It hurts.=C2=A0 And it is probably true.=C2=A0 :(</p>
+
+--001a1143f0ecd3cd4905364deb3a--
+

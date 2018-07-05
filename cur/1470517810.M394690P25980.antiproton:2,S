@@ -1,0 +1,105 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u76L9bYE025966;
+	Sat, 6 Aug 2016 17:09:38 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=CZ+RkwES;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-ua0-f176.google.com (mail-ua0-f176.google.com
+ [209.85.217.176])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u76L9XWW025961
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Sat, 6 Aug 2016 17:09:34 -0400
+Received: by mail-ua0-f176.google.com with SMTP id 35so220739758uap.1
+ for <cypherpunks@cpunks.org>; Sat, 06 Aug 2016 14:09:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
+ bh=j59olR8enE0pG1bko+FyLIEYopMhxVLp1O4StbHyGD8=;
+ b=CZ+RkwESU9fec7QDacTVamSYdw177JcZUnZqeXr9fEBTwYNu+TTx0Rfeh0Q3S0OKRz
+ dpobw6gCxoQRBdF1QHuMxmmMwEquCWXpBqhVSP2HcN1MCDnAeQBxEgMvZsfdZ0cg5ZtW
+ LcxykWCDOnREXlw/rZSekoxzXF787xoZnrd2UYTmCKRhIL6x6Xd0Gz62mHACy/WshD3R
+ 43Vi9xoYOaICyuwjxB83qIFZHhmHTOnp91ETVZGyaBjTIvADCRZl0hbuA6NqFK3IAUSu
+ 5KSoSp/vzXd/br2L2/dD8oaPrYMka7u8P+Rsz2SCzqQlVvpjSfZpOCdY15TM1qmejs3C
+ N8Cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+ :message-id:subject:to;
+ bh=j59olR8enE0pG1bko+FyLIEYopMhxVLp1O4StbHyGD8=;
+ b=VWB4rqa9+zAg0AjMqJpugKc7l8vq6r/cTW3Aw+Q2dZwW7AS+ow7wBCT/MVia4DQcpJ
+ 7mVe61P603uGuFBj0y/SexJJanK3sz8XnUOTpFEcF+hSoAb6ZFeEhMhEbqIUGOP/po3U
+ do9euZoPaAOsmEU4fl+dbouEhDq8IJr5UGYSKoWO/X+nQzNnyzLnapDijtKumYocsPY7
+ uDmRHQPYVItbdkr9/h0rBXbzSPtY5hEeKKVbCibf0lSNTnX4hosc0P8Y1EsCKNTRGWsA
+ MaZAsHKOaFbNAgKz6apPVQUvCVrFgE0bcissDMzO1mwCVj6xsqxH0y5sdmmOmIv9L1xd
+ 675A==
+X-Gm-Message-State: AEkoousgxdTwHTHaZZq53a0xwWoFnFf04wyHHUxmtCx6y5Z9FLTP2rGOrO6ZU9/3Uh+kbYqQT7H4pv/K5DWnnQ==
+X-Received: by 10.159.36.15 with SMTP id 15mr36940866uaq.79.1470517767283;
+ Sat, 06 Aug 2016 14:09:27 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.176.3.45 with HTTP; Sat, 6 Aug 2016 14:09:25 -0700 (PDT)
+Received: by 10.176.3.45 with HTTP; Sat, 6 Aug 2016 14:09:25 -0700 (PDT)
+In-Reply-To: <6ca7e336-02af-d5b9-cb09-51fb250e2fc6@pilobilus.net>
+References: <CAG2tMp6-KfNr0VgiddoLxHcHw6CzyU=uLJCdCsvo9EsBE8gTeQ@mail.gmail.com>
+ <CAG2tMp512JL9-6r+6Cgqp5n__Aa49WCPv+UmrKmAT7OXP7xwvg@mail.gmail.com>
+ <CAG2tMp5dWWyBcRUmO8EEoUjPZLGnBqBCX-B8mpzKKNsGsGWhUg@mail.gmail.com>
+ <CAG2tMp7R2Lo0RN11qkC_iC9-4=2gHzpbcZEOoLtRFkCJ6Cf_KA@mail.gmail.com>
+ <CAG2tMp70VXbY+0GJs3HApMq71TcBympeLg3QUuDDdHwmC6Cqwg@mail.gmail.com>
+ <CAG2tMp4=q0aFUjcS8Gei2J9FqYfQnsWg0E5Vh_OtGjVuJ-_V0Q@mail.gmail.com>
+ <CAG2tMp55nML9+v0hnLVfe+OqPsCMUNiB66FR-VjmTn3pkGSTRw@mail.gmail.com>
+ <CAG2tMp7M3BpOUOcv6fkOYK=cYvYCWmg3nFrL8QSGBF0JPr5pjg@mail.gmail.com>
+ <CAG2tMp5A5AxiYHR4JQ-ECFCy80nsa8-xxYw5gs5vMEfHtHKRgg@mail.gmail.com>
+ <CAG2tMp4HdMnuXO7K5OvAie1+f1bsU5_iDg-nEcy=PTvJfV+XFA@mail.gmail.com>
+ <CAG2tMp6sd1r-FwLWd2SmQTQ-JJJpCPyU9hDKKKkew8symGGtJQ@mail.gmail.com>
+ <CAG2tMp5CmWA9rzgwDpe9XDYbOcKooAq15PrDD1UtorcnPZo--Q@mail.gmail.com>
+ <CAG2tMp5VUSFrJJXVXU35VBkY4trmH8K+7yECpnQAvfX7iRF3qQ@mail.gmail.com>
+ <ee3edcb5-2e4a-afee-c757-315672195a3a@riseup.net>
+ <6ca7e336-02af-d5b9-cb09-51fb250e2fc6@pilobilus.net>
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+Date: Sat, 6 Aug 2016 18:09:25 -0300
+Message-ID: <CAG2tMp6AZyQwn-Gg8_NL5KXP029MTjUEiKureTK88w9AKt=HGg@mail.gmail.com>
+Subject: Re: Anarchist Bibliography, please? (was Re: Deconstructing an
+ Institutional Slander...)
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=001a113cd58627a99105396d9917
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 27
+
+--001a113cd58627a99105396d9917
+Content-Type: text/plain; charset=UTF-8
+
+Thank you for the references and links, Douglas and Steve.  Muuuaah!!!  :*
+
+I certainly will have fun reading all the suggestions of this thread.  Hope
+more people here too, hihi...  :)
+
+Kisses for all of you!  Have a good weekend, dreamers!  <3
+
+-  c.
+
+--001a113cd58627a99105396d9917
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p>Thank you for the references and links, Douglas and Steve.=C2=A0 Muuuaah=
+!!!=C2=A0 :*</p>
+<p>I certainly will have fun reading all the suggestions of this thread.=C2=
+=A0 Hope more people here too, hihi...=C2=A0 :)</p>
+<p>Kisses for all of you!=C2=A0 Have a good weekend, dreamers!=C2=A0 &lt;3<=
+/p>
+<p>-=C2=A0 c.</p>
+
+--001a113cd58627a99105396d9917--
+

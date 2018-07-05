@@ -1,0 +1,93 @@
+From owner-cryptography+rsw=mit.edu@metzdowd.com  Tue Dec 30 15:42:53 2003
+Return-Path: <owner-cryptography+rsw=mit.edu@metzdowd.com>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6p3/8.11.6-03-31-03) with ESMTP id hBUKgrK06853
+	for <rsw@opamp.org>; Tue, 30 Dec 2003 15:42:53 -0500
+Received: from red.metdow.com (209-166-243-235.dsl.cust.walrus.com [209.166.243.235])
+	by fort-point-station.mit.edu (8.12.4/8.9.2) with ESMTP id hBUKgpwf000618
+	for <rsw@mit.edu>; Tue, 30 Dec 2003 15:42:51 -0500 (EST)
+Received: by red.metdow.com (Postfix, from userid 1002)
+	id 8D919182F54; Tue, 30 Dec 2003 15:37:12 -0500 (EST)
+X-Original-To: cryptography@metzdowd.com
+Delivered-To: cryptography@metzdowd.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by red.metdow.com (Postfix) with ESMTP id A19DD182F0C
+	for <cryptography@metzdowd.com>; Tue, 30 Dec 2003 15:37:11 -0500 (EST)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id B7CA1D97CF; Tue, 30 Dec 2003 15:37:40 -0500 (EST)
+X-Original-To: cryptography@metzdowd.com
+Received: from vice.smarts.com (vice.smarts.com [198.49.114.150])
+	by red.metdow.com (Postfix) with ESMTP id 2B910182F35
+	for <cryptography@metzdowd.com>; Tue, 30 Dec 2003 10:41:43 -0500 (EST)
+Received: from frame (frame.smarts.com [10.1.8.222])
+	by vice.smarts.com (8.12.9/8.12.9/8.12.4-2002.07.17.1) with ESMTP id hBUFfJku012436;
+	Tue, 30 Dec 2003 10:41:19 -0500 (EST)
+Date: Tue, 30 Dec 2003 10:41:19 -0500 (EST)
+From: Jerrold Leichter <jerrold.leichter@smarts.com>
+X-X-Sender: leichter@frame
+To: Scott Nelson <scott@spamwolf.com>
+Cc: camram-spam@camram.org, cypherpunks@minder.net,
+   Adam Back <adam@cypherspace.org>, cryptography@metzdowd.com,
+   cypherpunks@lne.com
+Subject: Re: [camram-spam] Re: Microsoft publicly announces Penny Black  PoW
+ postage  project
+In-Reply-To: <aT5vaIe86J8qbrTpk02@x>
+Message-ID: <Pine.GSO.4.58.0312301020150.29666@frame>
+References: <aT5vaIe86J8qbrTpk02@x>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-cryptography@metzdowd.com
+Precedence: bulk
+Status: O
+Content-Length: 2826
+Lines: 48
+
+(The use of memory speed leads to an interesting notion:  Functions that are
+designed to be differentially expensive on different kinds of fielded hardware.
+On a theoretical basis, of course, all hardware is interchangeable; but in
+practice, something differentially expensive to calculate on an x86 will remain
+"expensive" for many years to come.)
+
+In fact, such things are probably pretty easy to do - as was determined during
+arguments over the design of Java.  The original Java specs pinned down
+floating point arithmetic exactly:  A conforming implementation was required
+to use IEEE single- and double-precision arithmetic, and give answers
+identical at the bit level to a reference implementation.  This is easy to do
+on a SPARC.  It's extremely difficult to do on an x86, because x86 FP
+arithmetic is done to a higher precision.  The hardware provides only one way
+to round an intermediate result to true IEEE single or double precision:
+Store to memory, then read back.  This imposes a huge cost.  No one could find
+any significantly better way to get the bit-for-bit same results on an x86.
+(The Java standards were ultimately loosened up.)
+
+So one should be able to define an highly FP-intensive, highly numerically
+unstable, calculation all of whose final bits were considered to be part of
+the answer.  This would be extremely difficult to calculate rapidly on an
+x86.
+
+Conversely, one could define the answer - possibly to the same problem - as
+that produced using the higher intermediate precision of the x86.  This would
+be very hard to compute quickly on machines whose FP hardware doesn't provide
+exactly the same length intermediate results as the x86.
+
+One can probably find problems that are linked to other kinds of hardware. For
+example, the IBM PowerPC chip doesn't have generic extended precision values,
+but does have a fused multiply/add with extended intermediate values.
+
+Some machines provide fast transfers between FP and integer registers; others
+require you to go to memory.  Vector-like processing - often of a specialized,
+limited sort intended for graphics - is available on some architectures and
+not others.  Problems requiring more than 32 bits of address space will pick
+out the 64-bit machines.  (Imagine requiring lookups in a table with 2^33
+entries.  8 Gig of real memory isn't unreasonable today - a few thousand
+dollars - and is becoming cheaper all the time.  But using it effectively on a
+the 32-bit machines out there is very hard, typically requiring changes to
+the memory mapping or segment registers and such, at a cost equivalent to
+hundreds or even thousands of instructions.)
+
+							-- Jerry
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+

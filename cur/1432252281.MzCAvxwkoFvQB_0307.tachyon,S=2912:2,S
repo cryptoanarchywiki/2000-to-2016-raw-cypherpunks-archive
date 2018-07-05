@@ -1,0 +1,65 @@
+From owner-cypherpunks@al-qaeda.net  Thu Sep  6 06:48:14 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q86Aj0rn032521
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 6 Sep 2012 06:45:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1346928300;
+	bh=nUs/cFB4+J3SF9JHYGf95z3tqt/taQfaRE3z32Ghze8=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=43z578TSvai63J+oZI6J0u4srwq9xQqcG0EpjXeb0kraJgC2fANXdhQ8VqHEBQw3G
+	 gZ+p2tovX8Z+ZhphY07ZjOiaIoYuUF7QXnKzzrT8bI8N8/rIEYBxjyxngI3eIGGEU+
+	 Sci4zBgh0b7JtG1KVFaXdPPLzraiztcYvALAN09w=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q86Aj0LP032520
+	for cypherpunks-outgoing; Thu, 6 Sep 2012 06:45:00 -0400
+Date: Thu, 6 Sep 2012 12:44:55 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: freedombox-discuss@lists.alioth.debian.org, cypherpunks@al-qaeda.net,
+        info@postbiota.org, zs-p2p@googlegroups.com
+Subject: gpg-mailgate is a gateway for Postfix that uses the GNU Privacy
+  	Guard application to encrypt e-mails before being sent to the next 
+  hop. 
+Message-ID: <20120906104455.GS12615@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 1348
+Lines: 30
+
+https://code.google.com/p/gpg-mailgate/
+
+gpg-mailgate is a gateway for Postfix that uses the GNU Privacy Guard application to encrypt e-mails before being sent to the next hop.
+INSTALLATION:
+
+    Ensure that GPG is installed and configured.
+        Make sure public keys for all of your potential recipients are available in the GPG home directory you use in step 2 
+    Configure /etc/gpg-mailgate.conf based on the provided sample config
+    Place gpg-mailgate.py in /usr/local/bin/
+    Place the GnuPG directory in /usr/local/lib/python2.5/site-packages
+    Add the following to the end of /etc/postfix/master.cf
+
+    gpg-mailgate    unix    -       n       n       -       -       pipe
+            flags= user=nobody argv=/usr/local/bin/gpg-mailgate.py
+
+    127.0.0.1:10028 inet    n       -       n       -       10      smtpd
+            -o content_filter=
+            -o receive_override_options=no_unknown_recipient_checks,no_header_body_checks
+            -o smtpd_helo_restrictions=
+            -o smtpd_client_restrictions=
+            -o smtpd_sender_restrictions=
+            -o smtpd_recipient_restrictions=permit_mynetworks,reject
+            -o mynetworks=127.0.0.0/8
+            -o smtpd_authorized_xforward_hosts=127.0.0.0/8
+
+    Add the following to /etc/postfix/main.cf
+
+    content_filter = gpg-mailgate
+
+    Restart postfix. 
+

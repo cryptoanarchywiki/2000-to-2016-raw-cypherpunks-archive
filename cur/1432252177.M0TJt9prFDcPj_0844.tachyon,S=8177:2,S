@@ -1,0 +1,167 @@
+From owner-cypherpunks@al-qaeda.net  Fri Jul 22 05:29:35 2011
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id p6M9Qu3f029764
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 22 Jul 2011 05:26:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1311326816;
+	bh=LnXkoA8aVFUGS1vnfDVEfjLYjA46cQhYKfbAxeF03tc=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=3bNfGlclY9GnXX7riKNFPALJUD392O73f73QNHgwKc6P9i56EM5IZKvEfWwcrLbKl
+	 Za8dJDj0re4TZbhT4CVV/rVdYYcncbIZJ85QmKVecWXDwUSEg6zGRDJ0PdW5VC8bck
+	 jaDQbpXmWThSlitAHcQzCHIJHbSmWV6A0xnDXnu4=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id p6M9QuYK029763
+	for cypherpunks-outgoing; Fri, 22 Jul 2011 05:26:56 -0400
+Date: Fri, 22 Jul 2011 11:26:53 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Re: [Freedombox-discuss] Hardware Crypto
+Message-ID: <20110722092653.GW16178@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 6808
+Lines: 135
+
+----- Forwarded message from John Gilmore <gnu@toad.com> -----
+
+From: John Gilmore <gnu@toad.com>
+Date: Thu, 21 Jul 2011 18:53:31 -0700
+To: "erik.e.harmon@gmail.com" <erik.e.harmon@gmail.com>
+Cc: freedombox list <freedombox-discuss@lists.alioth.debian.org>
+Subject: Re: [Freedombox-discuss] Hardware Crypto
+
+> Can someone detail the steps required to get hardware crypto
+> acceleration going on the Marvell platform so that its working in the
+> kernel, openssl, etc? Kernel config, system setup, and so-on. A blog
+> post would be excellent. Maybe it's just me, but it seems nonobvious.
+
+It *is* nonobvious.
+
+Which Marvell platform?
+
+It looks like the Marvell Kirkwood 88F6281 chip in the DreamPlug does
+include a crypto accelerator, that does AES, DES, 3DES, SHA-1 and MD5.
+No random number generator, apparently.  See:
+
+  http://www.marvell.com/processors/embedded/kirkwood/
+  http://www.marvell.com/processors/embedded/kirkwood/assets/88F6281-004_ver1.pdf
+  http://www.marvell.com/processors/embedded/kirkwood/assets/HW_88F6281_OpenSource.pdf
+  http://www.marvell.com/processors/embedded/kirkwood/assets/FS_88F6180_9x_6281_OpenSource.pdf
+
+Most hardware crypto accelerators are useless, because they were
+designed by hardware guys who know nothing about software.  The
+overhead required to use most of them is such that it's faster to do
+almost all crypto in the CPU directly.  For example, the accelerator
+in the OLPC XO-1's Geode LX processor required that you feed it with
+DMA, but DMA uses physical rather than virtual addresses, so doing a
+crypto operation requires a trip through the kernel.  By the time you
+get in and out, lock down the page, copy the whole operand elsewhere
+if it crosses a page boundary, set up the DMA, get it started, wait
+for the answer, unlock the pages, and return, you might as well have
+just computed the answer in userspace using ordinary instructions.
+
+This Marvell chip has both a "Cryptographic Engine" and a "Security
+Accelerator".  The Security Accelerator looks like the losing kind of
+DMA device I just described, so it should probably just be ignored.
+The Cryptographic Engine is managed by ordinary writes to registers in
+the chip.  However, these can probably not be done by userspace code
+or libraries.  No more than one process could have these registers
+mapped into its address space, otherwise one process could read out
+the keys loaded by another; the hardware lets keys be read out.  So
+doing each encryption or decryption probably requires a kernel ioctl()
+call, which adds significant overhead.
+
+The Linux kernel has an internal kernel interface for hardware crypto,
+which may already include support for this cryptographic engine.  Last
+time I looked (in 2007), there was a proposed user-process interface
+("/dev/crypto") that would match the interface on NetBSD and OpenBSD.
+This would allow all the library and application level code to stay
+the same on all three systems.  However, /dev/crypto hadn't been
+accepted upstream in Linux.  That may have changed since I last
+looked.  I do see a couple of recent Fedora Feature pages for this,
+but it looks like they are motivated by a stupid idea (forcing crypto
+users to push their keys into the kernel, even if it's slower, because
+the US Government tells them to - probably so they can be most easily
+wiretapped):
+
+  http://fedoraproject.org/wiki/Features/DevCrypto
+  http://fedoraproject.org/wiki/Features/CryptographyInKernel
+
+It's unclear how or whether this work is progressing.
+
+Even if a /dev/crypto interface existed and was faster for some kinds
+of operations than just doing the crypto manually, the standard crypto
+libraries would have to be portably tuned to detect when to use
+hardware and when to use software.  The libraries generally use
+hardware if it's available, since they were written with the
+assumption that nobody would bother with hardware crypto if it was
+slower than software.
+
+"Just make it fast for all cases" is hard when the hardware is poorly
+designed.  When the hardware is well designed, it *is* faster for all
+cases.  But that's uncommon.
+
+Making this determination in realtime would be a substantial
+enhancement to each crypto library.  Since it'd have to be written
+portably (or the maintainers of the portable crypto libraries won't
+take it back), it couldn't assume any particular timings of any
+particular driver, either in hardware or software.  So it would have
+to run some fraction of the calls (perhaps 1%) in more than one
+driver, and time each one, and then make decisions on which driver to
+use by default for the other 99% of the calls.  The resulting times
+differ dramatically, based on many factors, block size being one of
+the key ones in the case of the Geode.  So it would have to have
+infrastructure to make different decisions based on different block
+sizes of its input (not just based on different algorithms, for
+example).
+
+Another reason that a particular call to hardware might be slower than
+software is if there is competition for the hardware (i.e. if other
+processes are also using the hardware, and you have to wait in a
+queue).  There might be competition for the CPU itself, or you might
+have CPU cores lying around idle when the hardware crypto is busy.  Do
+you measure CPU time or realtime, or both, of the hardware
+implementation?  Ditto for the software implementation?  Both can be
+affected by competing processes.  For example, in this page:
+
+  http://www.docunext.com/wiki/My_Notes_on_Patching_2.6.22_with_OCF#The_Result
+
+it says things like:
+
+  /usr/local/ssl/bin/openssl speed -evp aes-128-cbc -engine cryptodev
+  Doing aes-128-cbc for 3s on 16 size blocks: 344779 aes-128-cbc's in 0.24s
+
+That 3s must be wall clock time, and 0.24s must be process CPU time.
+The rest of the 3 seconds was probably time spent in the kernel and in
+waiting for the DMA engine to do its work.  But library timing code won't
+be able to tell that kind of timing mismatch from the delays caused by
+sharing the processor, or the crypto processor, with another
+CPU-intensive job.
+
+One advantage of running some of the calls using both hardware and
+software is that the library can check that the results match exactly,
+and abort with a clear message.  That would likely have caught some bugs
+that snuck through in earlier crypto libraries.
+
+	John Gilmore
+
+
+_______________________________________________
+Freedombox-discuss mailing list
+Freedombox-discuss@lists.alioth.debian.org
+http://lists.alioth.debian.org/cgi-bin/mailman/listinfo/freedombox-discuss
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

@@ -1,0 +1,154 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u5NFR1B3012319;
+	Thu, 23 Jun 2016 11:27:03 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=NZfmzMvO;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-vk0-f44.google.com (mail-vk0-f44.google.com
+ [209.85.213.44])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u5NFQxox012315
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 23 Jun 2016 11:27:00 -0400
+Received: by mail-vk0-f44.google.com with SMTP id c2so80897433vkg.1
+ for <cypherpunks@cpunks.org>; Thu, 23 Jun 2016 08:27:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :cc; bh=MrlQSEGAn68xh/hmZfdu47/lJGA8uLat44bOSgghIkY=;
+ b=NZfmzMvOQgPp2MADHfCgcKbHjS+De5BaJ0sKQNWbBqGrJ4ZNVaLICy+zt6eG1EJ/Ez
+ R6AmgUhm4OHvpOfr9EBe9MnlVkAweobporpcS7IxLatdkVqvcZTZpPC5kg7IiPZTd0fJ
+ LZGqyI/iWkcy+q9fjCo5NSusvghyfbl9+W7RNsBn0Bbo2QZwxH6cLnsCOTefxzv1ZRU0
+ Nmx+kj+6mJg7WNt1+Gsjz8Ug/5SWwVHQl/7S+qyCRDbC1y73BKGFYFSJk9ryUo8rbNJ9
+ E5cOtmkAKdyyaeORhFdfon0wZFr991OwTHjH5tjx5d/QzFqQU4EQOXSAoJBNRVVoIOIO
+ Gr2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to:cc;
+ bh=MrlQSEGAn68xh/hmZfdu47/lJGA8uLat44bOSgghIkY=;
+ b=VN59rKwL6fAYLGe9opu0E9cGPNdlj/ocN7bejeN+PkgrEawN6pudgSACUOAxqRoIMJ
+ +Zv4mKzK1rb3t7od15uFexfXfOClJO9Ai/943fQMGlrNjbncANCzsTCTlkdckbCTsUUI
+ cYoLGpBVUOVtuGR7NKCXY7zKjMx3cAFKnpprcvfY2zsrNVU6xT6/uxunoJc1mEhrMVnG
+ ukER9rp3Dgy6Q9so/Lzx8L+dSAZoqurofXHL978xvN9ioyhQH8235lbCtp4UYwImMV3o
+ jfnrtv3pl4Kw9q8MrduNGk0VE51oA5yNWgfq2kJSNOHK+HV5jPTvo5MTtjPxStFj7AhW
+ PzqQ==
+X-Gm-Message-State: ALyK8tJvx5dCJstmy2LapjITPSHTtJce02VjHUE6KqizVCIBpAvU72jOc1Au6NCWj1W43XemMw3N/mcdroT7bA==
+MIME-Version: 1.0
+X-Received: by 10.31.56.69 with SMTP id f66mr1912257vka.135.1466695613512;
+ Thu, 23 Jun 2016 08:26:53 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Thu, 23 Jun 2016 08:26:52 -0700 (PDT)
+Received: by 10.176.0.136 with HTTP; Thu, 23 Jun 2016 08:26:52 -0700 (PDT)
+In-Reply-To: <1466688813.3365.13.camel@moonpatrol>
+References: <CAG2tMp6ifHKNoP6cfF7gMWp5eHVEwOJuBsGYVoGSvpPn72Vcbw@mail.gmail.com>
+ <d0e6db7279148f9eafdda74678adb972@cryptolab.net>
+ <CAG2tMp7EY3UtEE+eZZQJ_rvHFnM77dcjR-kAgQOK0KSV8LfhbA@mail.gmail.com>
+ <CAG2tMp5pyWsG_6doHL8i4yO+NN2X2fkENAJ0Qkz5=yidE-R2nQ@mail.gmail.com>
+ <576b0d29.c8249f0a.fdc44.32aa@mx.google.com>
+ <CAG2tMp5Yw4k2WQ05FEcQfQYtdvMqEve85XxinNmZ7bus6jqavg@mail.gmail.com>
+ <576b20a2.e701b00a.1d4b5.415d@mx.google.com>
+ <CAG2tMp4s1HTNOHw5Or7OKwcox1u9FPp9oUKJjcanb8Hb2rHi2w@mail.gmail.com>
+ <CAG2tMp4Pzg=4h9pXOZqX1cek8tpWNZbCJbN5XPtjAUu7zetahg@mail.gmail.com>
+ <CAEm6KbLxHJBPt1yYvf1ny=bgJMDKF514zhu=9nP9j=92ApWroQ@mail.gmail.com>
+ <20160623123854.GC6268@x220-a02>
+ <1466688813.3365.13.camel@moonpatrol>
+Date: Thu, 23 Jun 2016 12:26:52 -0300
+Message-ID: <CAG2tMp4gF4szVEzsT_xYPGivYWFJFEY3=48QEN+J8=hYugjCOQ@mail.gmail.com>
+Subject: Re: Hi, Boyce! (was Fwd: tor-talk subscription update)
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+To: skquinn@rushpost.com
+Content-Type: multipart/alternative; boundary=001a1143f0ec0982710535f3af0b
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 79
+
+--001a1143f0ec0982710535f3af0b
+Content-Type: text/plain; charset=UTF-8
+
+Quinn,
+
+Sorry, I respect neurotic people, it was pretty stupid, wow!  Federal
+court?  Hahaha!!!  I do love North-American ego trips, hahaha!!!  :D
+
+At least, a trial would be much more interesting and fun than another rape,
+yay!!!  :D
+
+I simply asked to Boyce if I could re-subscribe again and told him what is
+happening.  I told him I asked about the tor-talk list moderation rules
+weeks ago and had no answer about it.  I told him why I think it was really
+disgusting and sick to call me a "ludicrous rape apologetics".  I told him
+to put me under moderation, but permissing me to learn more about the Tor
+Project, reading the list.  I promised to be on topic only.  Answers?  No,
+I didn't receive any answer.
+
+I don't know if someone told lies about it, but he didn't answer to my
+messages and I gave up.  I said earlier that I won't waste more tears and
+time with a loser able of calling a "rape apologetics" a victim of rape.
+It was really unfair and cruel and, sorry, only a sick person makes this
+kind of thing.
+
+Boyce is the kind of guy able of telling lies to manipulate dumber people.
+Ja.group proved it is pretty easy.
+
+I know it can be really hard for you understand it, but some people around
+the world really like to avoid guns, lies and moralist hypocrite discourses.
+
+Ja.group members are still subscribed on tor-talk list and, as they did
+before, they simply will create another account to post there.  I said I
+want to use my real name and this personal account.  It is not hard to
+understand it, is it?  :)
+
+Take care and keep easy with the neurosis, please.  It is not healthy.
+
+Cecilia
+
+--001a1143f0ec0982710535f3af0b
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p>Quinn,</p>
+<p>Sorry, I respect neurotic people, it was pretty stupid, wow!=C2=A0 Feder=
+al court?=C2=A0 Hahaha!!!=C2=A0 I do love North-American ego trips, hahaha!=
+!!=C2=A0 :D </p>
+<p>At least, a trial would be much more interesting and fun than another ra=
+pe, yay!!!=C2=A0 :D</p>
+<p>I simply asked to Boyce if I could re-subscribe again and told him what =
+is happening.=C2=A0 I told him I asked about the tor-talk list moderation r=
+ules weeks ago and had no answer about it.=C2=A0 I told him why I think it =
+was really disgusting and sick to call me a &quot;ludicrous rape apologetic=
+s&quot;.=C2=A0 I told him to put me under moderation, but permissing me to =
+learn more about the Tor Project, reading the list.=C2=A0 I promised to be =
+on topic only.=C2=A0 Answers?=C2=A0 No, I didn&#39;t receive any answer.</p=
+>
+<p>I don&#39;t know if someone told lies about it, but he didn&#39;t answer=
+ to my messages and I gave up.=C2=A0 I said earlier that I won&#39;t waste =
+more tears and time with a loser able of calling a &quot;rape apologetics&q=
+uot; a victim of rape.=C2=A0 It was really unfair and cruel and, sorry, onl=
+y a sick person makes this kind of thing.=C2=A0 </p>
+<p>Boyce is the kind of guy able of telling lies to manipulate dumber peopl=
+e.=C2=A0 Ja.group proved it is pretty easy.</p>
+<p>I know it can be really hard for you understand it, but some people arou=
+nd the world really like to avoid guns, lies and moralist hypocrite discour=
+ses.</p>
+<p>Ja.group members are still subscribed on tor-talk list and, as they did =
+before, they simply will create another account to post there.=C2=A0 I said=
+ I want to use my real name and this personal account.=C2=A0 It is not hard=
+ to understand it, is it?=C2=A0 :)</p>
+<p>Take care and keep easy with the neurosis, please.=C2=A0 It is not healt=
+hy.=C2=A0=C2=A0 </p>
+<p>Cecilia</p>
+
+--001a1143f0ec0982710535f3af0b--
+

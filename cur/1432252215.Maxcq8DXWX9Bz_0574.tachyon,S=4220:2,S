@@ -1,0 +1,88 @@
+From cypherpunks-bounces@cpunks.org  Wed Aug 28 06:02:47 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r7SA1ivv000913;
+	Wed, 28 Aug 2013 06:01:51 -0400
+Authentication-Results: antiproton.jfet.org; dkim=fail
+	reason="verification failed; insecure key"
+	header.d=gmail.com header.i=@gmail.com header.b=fWI5Vi3I;
+	dkim-adsp=none (insecure policy); dkim-atps=neutral
+Received: from mail-vc0-f169.google.com (mail-vc0-f169.google.com
+ [209.85.220.169])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r7SA1fwg000909
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Wed, 28 Aug 2013 06:01:42 -0400
+Received: by mail-vc0-f169.google.com with SMTP id ib11so3946762vcb.14
+ for <cypherpunks@cpunks.org>; Wed, 28 Aug 2013 03:01:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :content-type:content-transfer-encoding;
+ bh=JtxQZqPlJkiaCmZ5fbEo+L2zN+NA9M2OYrdvjdu24HM=;
+ b=fWI5Vi3IfsBlRD9t8kKLMRigIcbY1QR4gk3a3W8Jvtj6gBQL8IB6V1KWb5IHUnWdTR
+ +2EmUFBwjA9YW/zx3fK3sSxz9AnkC0BvoxVgpWLBGlPyH2KcBneLD5dBUJ1OVTiylDeg
+ L8YVJdDSJDYMLwlhGP6h9Gdw2mJ/iyXkRyFmAlELqar1Ct/1cxr/P+0LEq2Qj2q2zWkT
+ +HuXahMMfl0BGu1L/TpQ0piY9UTJ5dYDmbWaAamLP/LBFGBNdWgKMUFGPft3OjCg1e0t
+ nvo2sRlc/LBXtwv+vdbwJngLl0Q2kTB4ddV7q08e6jRP5eJ5jwjynSQxHuXAmzEqWzCf
+ Cwlw==
+MIME-Version: 1.0
+X-Received: by 10.220.181.136 with SMTP id by8mr25461155vcb.11.1377684095435; 
+ Wed, 28 Aug 2013 03:01:35 -0700 (PDT)
+Received: by 10.58.66.162 with HTTP; Wed, 28 Aug 2013 03:01:35 -0700 (PDT)
+In-Reply-To: <CADGKjQXU04s92W_Xh3JdECw+DhRQQkn5_roRoJHAuYphb9wHDQ@mail.gmail.com>
+References: <CADGKjQXU04s92W_Xh3JdECw+DhRQQkn5_roRoJHAuYphb9wHDQ@mail.gmail.com>
+Date: Wed, 28 Aug 2013 06:01:35 -0400
+Message-ID: <CACXcFmmfWEbaX+XK40RomnOSsgqYPves3zVuQOWqSSa4BfJQ3g@mail.gmail.com>
+Subject: Re: Metadata anonymization through time delayed email messaging.
+From: Sandy Harris <sandyinchina@gmail.com>
+To: cypherpunks@cpunks.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by antiproton.jfet.org id
+ r7SA1fwg000909
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 1184
+Lines: 29
+
+Jeff Scofield <jscofiel@gmail.com> wrote:
+
+> A person walks into a computer café at 10am and sets an email to send at
+> around 4am the following morning (via cloud or machine).  The data gets sent
+> at 4am when the building is empty.  ...
+>
+> Any and all feed back regarding this idea is welcome.
+
+if you control the end-user sending machine & it runs some sort of Unix,
+this is trivial; the required command is just:
+
+at 04:00 mail whoever@example.net < message_file
+
+Writing a script to do this using a random time would not be hard.
+
+Of course this does not encrypt the file, though it could send a file
+that was already encrypted. Nor does it provide any sort of
+protection against someone who can snoop on the sending
+machine (nothing I know of does!), so it does not work in your
+Internet cafe example.
+
+Better to modify the mail server to introduce a random delay.
+This also does not look hard. Avoiding time stamps in the
+Received: lines in the headers would also be necessary,
+but that looks straightforward as well.
+
+To block tracking, you also want to avoid putting the client
+machine's IP address in the headers. Easily done, but it
+makes it harder to deal with spammers.
+

@@ -1,0 +1,267 @@
+From owner-cypherpunks@al-qaeda.net  Thu Nov 25 05:51:08 2010
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-5+lenny1) with ESMTP id oAPAmUf5025078
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 25 Nov 2010 05:48:30 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id oAPAmU3M025077
+	for cypherpunks-outgoing; Thu, 25 Nov 2010 05:48:30 -0500
+Date: Thu, 25 Nov 2010 11:48:27 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Re: Active Attacks - Already in Progress?
+Message-ID: <20101125104827.GJ9434@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 11997
+Lines: 241
+
+----- Forwarded message from Damian Johnson <atagar1@gmail.com> -----
+
+From: Damian Johnson <atagar1@gmail.com>
+Date: Wed, 24 Nov 2010 23:17:12 -0800
+To: or-talk@freehaven.net
+Subject: Re: Active Attacks - Already in Progress?
+Reply-To: or-talk@freehaven.net
+
+Hi Theodore.
+
+The reason the operators of the largest tor relays (Blutmagie,
+TorServers, and Amunet) operate multiple instance is because this is
+the best way in practice for utilizing large connections. Robert and
+others are right and you should call people out if they operate
+multiple relays without setting the family entry. However, both of the
+relays you cite [1][2] not only have their families set, but contact
+information too so you're perfectly able to ask them if you have
+concerns.
+
+In particular Moritz, the operator of TorServers, both discussed his
+plans to get funding for running large relays on this list [3] and
+with several of us at PETS. I for one am thilled he's had success with
+it!
+
+Lastly, it sounds like you're discussing a Sybil attack. This sort of
+threat is the reason I wrote a script for monitoring the consensus and
+sending alerts when large additions to the tor network are made. You
+are more than welcome to keep an eye on this too by subscibing to the
+script's email list [4]. Also, this script has discovered this type of
+attack in the past, so your concerns are certainly understandable. For
+details see the bit about trotsky on the bad exits wiki [5].
+
+So in short, we are well aware of this sort of attack and your
+vigilance would certainly be welcome. However, please try to
+investigate relays a bit and contact their operators before worrying
+too much about them. Cheers! -Damian
+
+[1] http://torstatus.blutmagie.de/router_detail.php?FP=cf91fba32fdac4c500f3a3565591f144d5074820
+[2] http://torstatus.blutmagie.de/router_detail.php?FP=34a46b317dcad4ca52c449d3af3786344ee75054
+[3] http://archives.seul.org/or/talk/May-2010/msg00058.html
+[4] https://lists.torproject.org/cgi-bin/mailman/listinfo/consensus-tracker
+[5] https://trac.torproject.org/projects/tor/wiki/badRelays
+
+On Wed, Nov 24, 2010 at 9:51 PM, Robert Ransom <rransom.8774@gmail.com> wrote:
+> On Wed, 24 Nov 2010 18:38:23 -0800
+> "Theodore Bagwell" <toruser1@imap.cc> wrote:
+>
+>> We recently discussed an attack on onion-routing anonymity, wherein a
+>> well-funded adversary overwhelms the network with compromised relays,
+>> thereby increasing his chances of monitoring anonymity-compromising
+>> data.
+>>
+>> I don't mean to alarm anyone, but I just did some quick-and-dirty
+>> research that suggests such an attempt may already be under way. I hope
+>> to be proven wrong.
+>>
+>> I postulated that such an attacker would mass-deploy his relays in a way
+>> that did not lend a whole lot of uniqueness to the name of each relay*.
+>> The relay names would probably be random characters, numbers, or words
+>> at best. At sloppiest, they would just be one name with sequential
+>> numbers after it - "AnonymityAttacker001, AnonymityAttacker002,
+>> AnonymityAttacker003, etc."
+>>
+>> So, I decided to look for such patterns in the list of Relays available
+>> in my Tor console. A quick scan revealed what appeared to be either (A)
+>> mass-deployments of Tor relays by a singular entity, or (B)
+>> astronomically-unlikely coincidental naming schemes adopted by dozens of
+>> disparate and unconnected individuals.**
+>
+> Several people and organizations run multiple Tor relays with obviously
+> similar names. B They generally do not try to hide their identities or
+> the connections between their relays. B See
+> <http://torstatus.blutmagie.de/> for an easily browsable list; click on
+> the name of a relay to see more detailed information about it,
+> including the ContactInfo value, if any, specified by the relay's
+> operator.
+>
+> Entities which operate multiple Tor relays can, usually should, and
+> often do use the MyFamily torrc option to indicate that their relays
+> are run by a common operator. B If two relays list each other in their
+> MyFamily directives, your Tor client will not include them in the same
+> circuit. Unless you have turned off the EnforceDistinctSubnets torrc
+> option, your Tor client will also not include two relays in the same /16
+> network in a single circuit.
+>
+>
+>> But it wasn't just finding these relays that concerned me. It was Tor's
+>> affinity for routing through them.
+>>
+>> See, I began closing my open circuits systematically. I kept records of
+>> any circuits which contained PPrivCom___ or torserversNet_ relays in it.
+>> I closed and recorded 43 circuits. Here are my findings:
+>>
+>> While Tor indicated it had 1665 relays to choose from, 79% of my
+>> circuits used one of the suspicious relays. 2% of my circuits used two
+>> suspicious relays. 0% of my circuits used three suspicious relays.
+>>
+>> Of the circuits I recorded, only 21% did not route through a suspicious
+>> relay.
+>
+> Tor weights its node selection according to node bandwidth, as
+> specified in the consensus. B The consensus, in turn, provides bandwidth
+> values measured by the bbandwidth authoritiesb. B This weighting is
+> necessary to balance load fairly throughout the Tor network.
+>
+> There should be multiple bandwidth authorities running, operated by
+> people whom the Tor Project and the directory authority operators
+> trust; as I understand it, there is currently only one running
+> bandwidth authority, but the Tor Project is working on getting others
+> back online.
+>
+>
+>> My conclusion is that someone (a security researcher? A hobbyist? A
+>> government?) is actively toying with the feasibility of attacking Tor's
+>> anonymity. According to my statistics, they may also be gaming Tor's
+>> affinity for choosing relays*** because they have, unquestionably,
+>> succeeded in relaying 79% of my circuits despite controlling a mere 2.8%
+>> of the relays in the Tor network.
+>
+> The relay families which you have complained about are most likely not
+> controlled by a single organization, and the organizations that control
+> them are most likely not trying or planning to attack Tor or its users.
+>
+>
+>> How dangerous is it if two of the three circuit relays are compromised?
+>
+> A passive attacker can use some combination of the following
+> capabilities to try to link you to the Internet server you access using
+> a Tor circuit:
+>
+> * The ability to monitor the TLS connection from your computer to your
+> B guard node for the circuit.
+> * The ability to monitor the Tor circuit at your middle node (by
+> B controlling the middle node and monitoring/logging its internal
+> B state).
+> * The ability to monitor the TCP connection from your exit node for the
+> B circuit to the server you are accessing.
+>
+> There are other capabilities which an attacker could have, but I think
+> the three I have listed are sufficient for this discussion.
+>
+>
+> An attacker who monitors the TLS connection from you to your guard node
+> and the TCP connection from your exit node to the server can link the
+> endpoints of your connection using timing alone. B There is no point in
+> considering the more precise attacks that can be performed by
+> controlling your guard node and/or exit node themselves; if an attacker
+> monitors both you and the server you are connecting to, you lose.
+>
+>
+> An attacker who monitors the Tor circuit at your middle node and the
+> TCP connection from your exit node to the server can link the
+> connection at the server to your guard node for the circuit. B This will
+> not provide your IP address to the attacker. B However:
+>
+> * An attacker who knows one of your guard nodes may be able to begin
+> B monitoring the guard node's incoming connections.
+> * An attacker who knows all three of your current guard nodes, can
+> B monitor the middle node on another Tor circuit, and sees that it
+> B originates from a guard node you are not currently using, can
+> B determine that you did not open that Tor circuit. B This is a
+> B surprisingly damaging attack, especially if your Tor client has
+> B chosen one or more low-bandwidth (and therefore relatively unpopular)
+> B guard nodes.
+>
+>
+> An attacker who monitors the TLS connection from you to your guard node
+> and the Tor circuit at your middle node may later gain access to logs
+> kept by the server you are accessing, match the IP address and times of
+> connections to the server with the times at which you opened TCP
+> connections through the Tor circuit, and thereby determine what
+> requests you sent to the server.
+>
+>
+>> What recourse do we have? Can someone more knowledgeable shed more light
+>> on this?
+>
+> There are several torrc options that you can set if you are afraid of
+> certain relays -- ExcludeNodes, ExcludeExitNodes, StrictNodes,
+> StrictExitNodes, NodeFamily, and perhaps others. B ExcludeExitNodes may
+> be useful if you find that an exit node is misbehaving and is not yet
+> flagged as a BadExit. B I strongly recommend that you DO NOT set any of
+> these directives, with the possible exception of ExcludeExitNodes, if
+> you are *very* certain that a particular exit node is actively
+> malicious.
+>
+> All of the above options will change the probability distribution from
+> which your Tor client chooses circuits. B If you blacklist a few
+> low-bandwidth relays, you probably won't change the distribution
+> noticeably, but you won't improve your security noticeably, either. B If
+> you blacklist one or more of the major families of high-bandwidth Tor
+> relays and/or exits, you will change the distribution quite noticeably,
+> and you will make yourself quite distinguishable from normal Tor users.
+>
+> The most obvious way in which choosing circuits from an unusual
+> probability distribution can hurt you is through the distribution from
+> which you choose exit nodes. B An adversary can capture and examine a
+> particularly sensitive server's logs, notice that someone is accessing
+> it only through relatively low-probability Tor exits, and then go look
+> for logs from less sensitive servers to which you might have given
+> information that readily identifies you. B If the adversary knows that
+> someone is posting information they want to suppress to a blog or forum
+> through low-probability Tor exits, and then finds that Fred Foobar
+> routinely accesses a shopping site through the same low-probability Tor
+> exits, Fred Foobar is in trouble.
+>
+> There is another, somewhat less obvious way in which choosing circuits
+> from an unusual distribution can hurt you -- if you routinely download
+> large files from an adversary-monitored server through high-bandwidth
+> exit nodes, but low-probability, low-bandwidth middle nodes, the
+> adversary may be able to detect this fact from the server alone, and
+> use it to link your connections together.
+>
+> I assume that choosing circuits from an unusual distribution can allow
+> other attacks as well. B In general, the Tor developers try to avoid
+> making different clients' circuit distributions distinguishable, and
+> would prefer that you not make your Tor client's circuit distribution
+> distinguishable yourself, even if there is no obvious way that your
+> particular change will allow an attack on your anonymity.
+>
+>
+>> * Of course, the well-organized attacker would go to the trouble to
+>> construct names that truly blended in with the Tor namescape - such
+>> as,"MrSpudRelays, QueenAnnesRevenge, SteveKenpIsMyHero, and so forth."
+>
+> The Adversary would like to thank you for providing those names. B They
+> will be *very* useful.
+>
+>
+> Robert Ransom
+>
+***********************************************************************
+To unsubscribe, send an e-mail to majordomo@torproject.org with
+unsubscribe or-talk    in the body. http://archives.seul.org/or/talk/
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

@@ -1,0 +1,85 @@
+From owner-cypherpunks@al-qaeda.net  Mon Mar 15 16:02:37 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: (from majordomo@localhost)
+	by POSITRON.MIT.EDU (8.11.6p3/8.11.6-03-31-03) id i2FL1h529153
+	for cypherpunks-outgoing; Mon, 15 Mar 2004 16:01:43 -0500
+X-Authentication-Warning: positron.mit.edu: majordomo set sender to owner-cypherpunks@al-qaeda.net using -f
+From: Tarapia Tapioco <comesefosse@ntani.firenze.linux.it>
+Comments: This message did not originate from the Sender address above. 
+  It was remailed automatically by anonymizing remailer software. 
+  Please report problems or inappropriate use to the 	remailer
+  administrator at <abuse@ntani.firenze.linux.it>.
+To: cypherpunks@minder.net
+Old-Subject: Saving Opportunistic Encryption
+Message-ID: <b25fbcdbdc17d83dd396e847fda3a074@firenze.linux.it>
+Date: Mon, 15 Mar 2004 22:00:44 +0100 (CET)
+Subject: Saving Opportunistic Encryption
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2613
+Lines: 61
+
+We've recently seen FreeS/WAN die, not least due to the apparent
+practical failure of Opportunistic Encryption. The largest blocking
+point for deployment of OE always seemed to be the requirement for
+publishing one's key in the reverse DNS space. While most tech-savvy
+people are able to get access to forward domain space, reverse DNS space
+is still more heavily centralized and thus inaccessible to the general
+public.
+
+So, the apparent solution for me seems to be the approach that the SPAM
+blacklists used - publish information in a subspace of the forward DNS
+space instead of using the authoritative in-addr.arpa area.
+
+A possible implementation looks like this:
+
+* Keys are kept in TEXT record like with old-style OE, as
+  a.b.c.d.opportunistic.net.
+
+  The format of the text record contains
+  * IKE authentication RSA key
+  * optional "secure" owner identity, as in x.509 or PGP sig.
+  * server signature.
+
+On the client side:
+
+* Keys are published via a TCP client. This ensures there's a
+  minimal level of authentication that the submitter of a key is
+  also in control of the IP address. Additionally, when an overwrite
+  is attempted, we could attempt to obtain an ICMP echo response over
+  the old SA and only accept the update when the old SA is dead.
+
+* J. Random libpcap application listens for traffic to different IP
+  addresses and checks said DNS repository, manipulates security policy
+  accordingly.
+
+This is just a dirty hack since it necessarily misses packets when the
+other node is first contacted, but it seems to be the easiest hack-me
+route, and it requires little to no platform integration, just
+ * a libpcap implemenation
+ * a command line interface to IPSEC security policies
+
+Check at least for Linux and Windows, probably *BSD too.
+
+* Linux/KAME's IKE daemon racoon is patched to attempt retrieval of an
+  RSA key from said DNS repository and generate appropriate security
+  policies.
+
+Cleaner solution, but more work probably.
+
+Obvious weaknesses: As the SPAM blacklists showed impressively, running
+an unpopular service on the net these days will get you DDoS'ed out of
+existence. Distributing the keys over the whole DNS space like FreeS/WAN
+OE did is the cleanest solution here, but I guess a cypherpunkly
+approach would also be "good enough" to get this thing started: Just use
+a configurable list of domains instead of just opportunistic.net, each
+with a different key, and publish these lists like those for remailers
+are currently published.
+
+Thoughts?
+
+(On a side note, minder.net has dropped a lot of my recent posts via remailers.
+Is there a better node for this?) 
+

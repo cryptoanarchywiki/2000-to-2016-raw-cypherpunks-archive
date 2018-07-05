@@ -1,0 +1,339 @@
+From owner-cypherpunks@al-qaeda.net  Thu Dec 13 14:48:53 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id qBDJigVc027679
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 13 Dec 2012 14:44:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1355427882;
+	bh=G3zA1lTNt5a76gZGvn9x+KVPzFh8lzUpfbE3C6yb+vA=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=S1cmtaGpljnc3cKfJPJLE5bS85wWrHZ1wGPluMJF3lg957vvF7rnabEcm7hBeE1Aa
+	 8fLvKy6cuvpIvAaEQgFGVHKn+eQo7MXXChOgFrUJCerlc8uCec5F+GoE48XCvPuacj
+	 YhC4dyv1E7ahaayB9KEz6okOw+1pv04iCyVzAWbs=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id qBDJigX1027678
+	for cypherpunks-outgoing; Thu, 13 Dec 2012 14:44:42 -0500
+Date: Thu, 13 Dec 2012 20:44:38 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org,
+        Liberation
+  Technologies <liberationtech@mailman.stanford.edu>
+Subject: Re: [serval-project-dev] Implementing a different routing
+  protocol
+Message-ID: <20121213194438.GJ9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 18067
+Lines: 304
+
+----- Forwarded message from Fraser Cadger <cadge01@googlemail.com> -----
+
+From: Fraser Cadger <cadge01@googlemail.com>
+Date: Thu, 13 Dec 2012 19:27:35 +0000
+To: serval-project-developers@googlegroups.com
+Subject: Re: [serval-project-dev] Implementing a different routing protocol
+Reply-To: serval-project-developers@googlegroups.com
+
+Jeremy,
+
+Thanks again for your help. I appreciate that as you said, it can be
+difficult trying to help people understand your own software. I decided to
+send my initial message because I had tried reading through the code
+several times, picking up bits and pieces, but being unsure about exactly
+how things fitted together. I genuinely found your previous comments very
+illuminating and useful, and when I compared your comments with the code a
+great deal of it made sense and I then started thinking about ways of
+implementing my own routing. In fact, I produced a short report for my
+supervisor based on this and detailing the steps I intended to take to
+implement our routing protocol on Serval. I was about to dive in with this
+when I realised that I did not really know how the update process worked
+and that this was a very important factor! So I looked at the code again
+and tried to work my way through, making notes, those notes were then used
+in my last post. As you said in your comment it is better to work with
+people who are making independent progress, so that was why I tried to
+explain my understanding instead of jumping straight in with questions.
+Actually, I have been meaning to check back with the current version of the
+software in repository, as I noticed a few functions were in different
+locations and you mentioned that the self announce had been redesigned, so
+this is something I'll look at.
+
+Ok, so I'll now try to explain what I intend to do with routing.
+
+Our overall aim is to develop a protocol called Geographic QoS Predictive
+Routing (GQPR) which uses geographic/location/mobility information as well
+as other context to make QoS predictions for neighbours, these predictions
+are then used as the basis for forwarding decisions. GQPR is intended to
+act as the routing element in a framework called Geographic QoS
+Peer-to-peer Streaming (GQP2PS) which will run on WiFi devices (at the
+moment a testbed of six Android phones + my own Android tablet)
+and facilitate the streaming of both live (i.e. video call) and on-demand
+(i.e. recorded video) between the devices. The intended use case is for
+disaster recovery scenarios, for instance someone with basic medical/first
+aid training comes across an injured person but is not exactly sure what
+course of action to take, so they can initiate a video call with a doctor
+located at base station (or anywhere else covered by the network) who is
+able to view the patient and perform a diagnosis and if necessary supervise
+the treatment. This is just on scenario, it could also be used for
+repairing infrastructure where an engineer supervises and guides the repair
+process. Indeed, the technology could be used for many purposes unrelated
+to disaster recovery, but we are focussing on this to give us a specific
+aim, although the ideas for the technology actually came before the idea
+for application.
+
+What we have at present is the building blocks of GQPR which we have called
+GPR - Geographic Predictive Routing - GPR contains some of the main
+elements of what will become GQPR but not all of the functionality. At
+present GPR uses location predictions (provided by an Artificial Neural
+Network) as well as some other factors (congestion level, radio range, a
+metric we'd developed called neighbour range (this relates to the positions
+of a neighbour's neighbours), amongst others to make forwarding decisions.
+I think explaining GPR would make the most sense if I first explained how
+basic geographic routing worked and then discussed our modifications to
+it. As the name implies, geographic routing makes forwarding decisions
+based on node's geographic locations instead of logical addresses. The most
+basic form of geographic routing is greedy geographic routing.
+
+Greedy geographic routing works as follows:
+
+   - A packet is received, the node inspects the packet and records the
+   location of the destination
+   - The node then calculates the physical distance between itself and the
+   destination
+   - All of the node's neighbours are then compared against this distance
+   - The one with the shortest distance to the destination is selected as
+   the next hop
+
+Greedy geographic routing does not create end-to-end routes (which is why
+some people prefer the term forwarding, although the terms are
+used interchangeably in literature), instead nodes are forwarded on a
+per-hop basis using the greedy criterion. This does seem a bit similar to
+BATMAN, where packets are also forwarded on a per-hop basis, however the
+big difference is that in greedy geographic routing nodes only have
+knowledge about their directly connected neighbours (i.e. those within
+their radio range) and they do not know about destinations. So while BATMAN
+nodes know of the destination node's existence (but only know the next hop
+to reach it and not a full route), greedy geographic routing nodes know
+nothing about the destination (aside from its address and location) and
+simply make the forwarding decision based on which neighbour is closest to
+that destination. The idea being that by shortening the geographic distance
+at each hop we are finding the quickest way to reach a destination.
+
+Obviously this does not always hold true in practice, and their is a
+problem known as the local maximum where nodes are forced to drop packets
+if they cannot find a neighbour closer to the destination than themselves
+(to prevent loops, the packet cannot travel physically backwards). However,
+greedy geographic routing is relatively lightweight, and highly localised
+as nodes are only required to know their directly connected neighbours and
+so are not affected by topology changes at the other side of the network
+(although this does mean nodes will sometimes forward packets to
+unreachable destinations). There have been quite a few modifications and
+variants to standard greedy geographic routing, some of which are more
+similar to conventional routing protocols by establishing end-to-end routes
+(but using geographic information to do so), while others focus on
+particular problems (QoS, energy consumption, security, etc.) I spent a
+large period of my first year surveying different geographic routing
+protocols and published this as a paper if you're interested in finding
+more about geographic routing (shameless plug for my own paper!!!);
+http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=6238283&tag=1 .
+
+Getting back to basic greedy routing, obviously nodes need a way of
+discovering their immediate neighbours as well as finding the locations of
+other nodes who they are not directly connected to. The first is achieved
+through the sending of beacon messages at set periods of time, beacons are
+just your bog standard hello-type messages except they contain the
+coordinates of the sending node. Neighbours are stored in a dedicated
+neighbour table along with their coordinates, this neighbour table is the
+only table nodes store. The second is more difficult, but typically
+involves the use of something called a location service which usually
+involves certain nodes being designated as location servers. Regular nodes
+periodically send location updates to these servers and when a node needs
+to send a packet to a destination it is not connected to it will query the
+relevant location server for that node's destination. Exactly how the
+location service works depends on the particular scheme being used.
+
+So now to talk about GPR.
+
+Structurally GPR is very similar to classical greedy geographic routing, it
+was originally implemented on top of the code developed by Karp and Kung
+for their protocol known as GPSR (Geographic Perimeter Stateless Routing).
+What we did was first implement a neural network algorithm which predicts
+the future location of a device based on two previous coordinates, and the
+times they were recorded at. Tests found that the location prediction
+algorithm was able to accurately predict the future locations of
+neighbouring devices with an error of less than 1m in most instances. At
+present the use of the location prediction algorithm is relatively simple,
+all we are doing is looking at our neighbours two previous locations (and
+timestamps) and using these to determine what position the neighbour will
+be in when we send the packet. This allows us to use greedy geographic
+routing, but with the ability to cope with changes in location. In order to
+avoid sending packets to nodes that are too far away, we always check their
+predicted location against our transmission range to ensure they are within
+it. So in addition to using the location predictions we developed a
+modified congestion control algorithm which weighs the neighbour's
+congestion level against the distance between the neighbour and other
+factors such as the reliability of the node's information. The calculation
+is stored as a value t, and then we evaluate the neighbour's neighbour
+range (i.e. the physical range covered by its own neighbours), and if that
+neighbour is the best it becomes the candidate node and the other node's
+values for t are compare against it, and so until we finish the loop and
+end up with the best neighbour (or none in which case we'll drop the
+packet).
+
+Another factor is that because we are using location predictions we do not
+need node updates as frequently as geographic routing normally dictates. So
+while ordinary geographic routing protocols usually send these messages
+over 0.5s we send them every 13.6s which reduces the amount of control
+traffic. This is a number based on ns-2 experimentation and it is likely
+that in real wireless network it will need to be more frequent, but we
+still expect it to be a lot less frequent than the conventional 0.5s.
+
+It might not seem like a huge modification, but it performs a lot better
+than unmodified greedy geographic routing in simulations of video calling
+and streaming traffic, and compares well with AODV, DSR, and DSDV. If you
+look at the bulletin points I typed above to describe greedy geographic
+routing, it is very similar except our means of calculating the best next
+hop is slightly different.
+
+As I said earlier, I had thought about and discussed with my supervisor how
+we could go about implementing GPR in Serval. We both decided that it was
+best to implement basic greedy geographic routing first and then work from
+there. There is a possibility that the NN algorithm we used in simulations
+will be too resource-intensive for the phones we are using and will either
+need to be modified or replaced with a different approach (we have some
+backups), so our plan is to implement basic geographic routing first,
+conduct separate experiments of the NN algorithm on the phones, and if
+everything goes well combine them, build GPR, and then continue working on
+the phones and simulations to create GQPR.
+
+In terms of implementing basic greedy geographic routing, I think making
+the forwarding decisions could be quite simple. When we are in
+overlay_stuff_packet(), instead of looking at the destination's next_hop
+field we would call a function which would loop through our list of
+neighbours and find the neighbour closest to the destination and select
+that as the next hop for the packet (or drop it if we can't find a suitable
+next hop). So that part seems quite simple.
+
+However, what seems a bit more complicated is implementing the beaconing
+messages. I can see two ways of doing this; keep the current Serval system
+of self announcements, self announcement acks, and node announcements and
+simply add locations to these messages. The other would be to get rid of
+node announcements, and just use self announcement and self announcement
+acks to transmit location information between directly connected nodes.
+This actually brings me to a question I forgot to ask; if self announce
+messages are regularly sent why do we need to ack these? If we are sending
+our own acks and receiving acks from other neighbours do we need an
+explicit reply? I.e. if we just send self announce messages, but after a
+period of time we don't get any self announce messages from neighour x, we
+remove them from our list of neighbours. Slight digression.
+
+Both of the two approaches I described have their advantages; the first
+is ostensibly simpler as we don't need to stop anything being sent, while
+the second means that we are getting something closer to the 'traditional'
+beacon approach used in geographic routing as well as avoiding the
+transmission of node announcements and the recording of indirect nodes
+which we will just ignore. On the other hand, if we keep node announcements
+this could actually act as a 'surrogate' for the location service if we
+include their locations. So if for instance we have three nodes; a, b, and
+with b being connected to a and c, a only being connected to b, and c only
+being connected to c. If b advertises c to a and a to c, then a is able to
+know the location of c (and vice versa) despite not being connected and
+without the need for a location service (obviously this is a trivial
+example as in this instance a can only reach c via b, so b is not really
+compared against anyone else).
+
+I realise that Serval's implementation of BATMAN is intended to limit the
+number of nodes a particular device knows about to avoid bandwidth going
+out of control, but as we only have a testbed of six this shouldn't be a
+problem for our experiments. Although we would obviously need to rethink
+for future uses which involve larger networks. So I imagine this would
+really be a temporary way of avoiding a location service, and in the long
+run we would still try to implement an explicit location service (possibly
+based on Serval Maps which Paul pointed me in the direction of). However, I
+did discuss the idea of retaining some BATMAN elements in our
+implementation (where we have some knowledge of nodes we are not directly
+connected to), instead of going for a pure greedy geographic routing
+approach (where we only know about our one-hop neighbours) as we are by no
+means obliged to use a particular approach and our ultimate aim is
+performance. Therefore it is possible that this will lead to us developing
+a hybrid approach between GPR/GQPR and BATMAN.
+
+However, I think for now the best approach might be for us to try both
+messages of messaging and see how they perform. I'm meeting my supervisor
+tomorrow, and I'm going to discuss this with him. I've read through your
+comments fully, so I think I should be able to start planning how I will
+modify Serval announcement/advertisement messages and then try to get
+something running next week. Unfortunately I am going back home for the
+Christmas holidays, and I will only have access to an Android tablet and a
+Windows laptop (which belongs to someone else!), so I'm not sure how much
+work I'll get done until January, but if I can get Android NDK up and
+running on the laptop I might be able to get some routing work done.
+
+Hopefully, the explanation of my work makes sense (or enough sense), and as
+I indicated before I am happy to share any code I develop myself (I have
+spoken about this with Paul). So in addition to developing my routing
+protocol I intend to work on video calling, and Paul stated this was
+something the Serval team wanted to include, so if I get that working I am
+more than happy to put the code in the repo.
+
+Regards,
+
+Fraser
+
+On 13 December 2012 07:12, Jeremy Lakeman <jeremy@servalproject.org> wrote:
+
+> > I'd much rather help someone who can demonstrate that they've tried to
+> > understand the problem on their own.
+>
+> I suppose I should clarify, just in case you take that sentence the
+> wrong way. It's very encouraging that you are showing an interest in
+> understanding our software for yourself. It can be very frustrating
+> working with people who fail to demonstrate any independent progress.
+>
+> Feel free to shoot off an email with any difficult unanswered
+> questions you have at the end of each day. With timezone differences
+> it's likely we can answer them before you start in the morning. I
+> don't mind taking half an hour here or there to solve a problem that
+> might take you a couple of days to solve otherwise.
+>
+> Also note that our software has been undergoing quite rapid changes
+> lately. Some of the research and understanding you have gained may
+> already be obsolete.
+>
+> If you can let me know some more details about your previous routing
+> experiments, I'll probably be able to refactor the interfaces to our
+> existing routing layer to make it easier for you to make the changes
+> you need. I'm intending to replace the routing layer eventually
+> anyway, so this will certainly be a productive use of my time.
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "Serval Project Developers" group.
+> To post to this group, send email to
+> serval-project-developers@googlegroups.com.
+> To unsubscribe from this group, send email to
+> serval-project-developers+unsubscribe@googlegroups.com.
+> For more options, visit this group at
+> http://groups.google.com/group/serval-project-developers?hl=en.
+>
+>
+
+-- 
+You received this message because you are subscribed to the Google Groups "Serval Project Developers" group.
+To post to this group, send email to serval-project-developers@googlegroups.com.
+To unsubscribe from this group, send email to serval-project-developers+unsubscribe@googlegroups.com.
+For more options, visit this group at http://groups.google.com/group/serval-project-developers?hl=en.
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

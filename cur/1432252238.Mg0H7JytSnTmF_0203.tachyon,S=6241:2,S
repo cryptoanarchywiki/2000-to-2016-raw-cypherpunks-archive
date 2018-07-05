@@ -1,0 +1,146 @@
+From owner-cypherpunks@Algebra.COM  Thu Oct 25 13:39:25 2001
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.mit.edu (8.11.6/8.9.3) with ESMTP id f9PHdPG32748
+	for <kwantam@positron.mit.edu>; Thu, 25 Oct 2001 13:39:25 -0400
+Received: from ak47.algebra.com (ak47.algebra.com [208.233.99.160])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id NAA07920
+	for <rsw@mit.edu>; Thu, 25 Oct 2001 13:39:05 -0400 (EDT)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f9PHFKM24563
+	for cypherpunks-outgoing; Thu, 25 Oct 2001 12:15:20 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from einstein.ssz.com (cpunks@einstein.ssz.com [204.96.2.99])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f9PHFG024549
+	for <cypherpunks@algebra.com>; Thu, 25 Oct 2001 12:15:17 -0500
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id MAA27235
+	for cypherpunks@algebra.com; Thu, 25 Oct 2001 12:22:16 -0500
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id MAA27211
+	for cypherpunks-outgoing; Thu, 25 Oct 2001 12:20:35 -0500
+Received: from anon7.arachelian.com (sunder@sdsl-66-80-46-164.dsl.nyc.megapath.net [66.80.46.164])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id MAA27205;
+	Thu, 25 Oct 2001 12:20:31 -0500
+Received: from localhost (sunder@localhost)
+	by anon7.arachelian.com (8.9.3/8.9.3) with ESMTP id KAA13671;
+	Thu, 25 Oct 2001 10:25:26 -0500 (EST)
+Date: Thu, 25 Oct 2001 11:25:26 -0400 (edt)
+From: Sunder <sunder@sunder.net>
+X-Sender: sunder@anon7.arachelian.com
+To: cypherpunks@einstein.ssz.com
+cc: cypherpunks@einstein.ssz.com
+Old-Subject: Re: CDR: Re: Why Plan-9?
+In-Reply-To: <Pine.LNX.3.96.1011021181258.337o-100000@einstein.ssz.com>
+Message-ID: <Pine.BSO.4.21.0110251110070.7139-100000@anon7.arachelian.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Reply-To: cypherpunks@ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Acceptable-Languages: English, Russian, German, French, Spanish
+Subject:  Re: Re: Why Plan-9?
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+X-spam: 5 
+Status: O
+Content-Length: 3696
+Lines: 90
+
+
+
+On Sun, 21 Oct 2001, Jim Choate wrote:
+
+> Transitive means that A mounts B, C mounts A and gets B free. Plan 9 does
+> this, managed by a set of authorization layers for fine control, native.
+
+This could be bad.  Say B doesn't want to allow access to C for its file
+systems. Then what?  Any mechanisms to prevent A from resharing it?  It's
+also bad depending on how it's implemented.
+
+Say A has a low bandwith connection to B such as ISDN, but it has a high
+bandwith connection to C.  If C uses A to get to B, that slows you
+down.  Does it treat the file systems differently or is it just resharing
+a mounted file system?
+
+
+> This means that when Hangar 18 goes online you can mount /hangar18 into
+> your filespace (via Plan 9 or Linux NFS services) and you will get all the
+> resources that Hangar 18 mounts through that point. ftp is a good example.
+
+Yeah, so now you're eating double the bandwith of hangar 18.  Say hangar
+18 is connected over a T1 and nothing else.  You mount it's file systems
+over nfs or whatever Plan 9 uses and do cd /ftp2.sourceforge.net, then you
+copy a file from there.  
+
+Well now, you've just effectively doubled the traffic to hangar18.  If the
+owner is paying a flat rate, it's not so bad, you're just wastng bandwith.  
+But if it's at a colocation it will be enough to go over the percentile
+rating and have to pay for extra usage.
+
+Even if the two boxes are on the same local network (broadcast domain),
+you'd still saturate your hubs/switches by doubling this traffic, and even
+slow down access (latency) as you're using plan-9 to translate from ftp to
+it's native scheme to nfs.  Further, you're eating lots of extra cpu
+cycles on the plan 9 box(es) while they do this. 
+
+What if hangar18 has a few ftp sites mounted and you run the equivalent of
+the find command (which recursively searches for files.)  It goes over the
+ftp connections and walks every single connection of the internet?  That's
+kind of insane.  It'll take forever and eat up bandwidth at both ends.
+
+
+
+And as you say below, it would even cache some of it... ugh...  hope there
+are limits to this.
+
+> In Plan 9 you 'mount' the ftp server to your file system. If you ever go
+> out and walk that part of the file space tree and request a file it only
+> then goes and gets it. You can control its lifetime (to manage disk space
+> for example) via local cache controls. A 'lazy update' mechanism, very
+> efficient of network and local resources.
+
+Yeah, it's "cool" but wasteful.
+
+> The network layer. The traffic between any two Plan 9 boxes is encrypted
+> with keys dependent upon the individual boxes (or larger classes if you
+> desire) if the system is so configured. You can also use this to encrypt
+> branches of your filesystem. Plan 9 provides SSH.
+
+Just DES? And no disk encryption????  What about swap?
+
+Any ip filtering / firewalling mechanisms?  Any routing mechanisms?  Any
+NATting mechanisms?
+
+The clustering / distributing computing aspects of it are
+cool.  But... I'm still not convinced...
+ 
+> > >  - Doesn't use passwords, Instead it uses tickets (ie certificates).
+> > 
+> > ...which are granted via...?
+> 
+> However the resource owner choses. I'm using 'small worlds network' models
+> for my 'web of trust'...
+
+So it's like kerberos in some ways?
+ 
+> It should be, X Windows sucks.
+
+Xwindows by itself without a window/desktop manager? yes that would suck
+balls.  XWindows with Ximian GNOME or KDE, nope - it rocks, though not on
+old hardware.
+
+> > What's Inferno?
+> 
+> Another OS, intended for real-time control of "Internet Appliances". You
+> run it along side Plan 9.
+
+Whoop. :)  You can control most internet appliances through a web gui or
+telnet/ssh command line anyway.
+

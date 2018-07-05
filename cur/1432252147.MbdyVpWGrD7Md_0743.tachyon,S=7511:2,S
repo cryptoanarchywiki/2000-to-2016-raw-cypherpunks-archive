@@ -1,0 +1,95 @@
+From cypherpunks-bounces@cpunks.org  Sat Aug  3 22:58:26 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r742viaF004991;
+	Sat, 3 Aug 2013 22:57:51 -0400
+Received: from oak.forest.a5775.uk0.bigv.io (lupine.me.uk [213.138.100.8])
+ by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r742veTo004987
+ (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Sat, 3 Aug 2013 22:57:41 -0400
+Received: from
+ 8.c.6.2.4.d.e.f.f.f.7.d.4.2.2.0.3.0.0.0.f.1.1.1.0.b.8.0.1.0.0.2.ip6.arpa
+ ([2001:8b0:111f:3:224:d7ff:fed4:26c8])
+ by oak.forest.a5775.uk0.bigv.io with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+ (Exim 4.72) (envelope-from <nick@lupine.me.uk>) id 1V5oVl-0003IQ-G1
+ for cypherpunks@cpunks.org; Sun, 04 Aug 2013 03:57:37 +0100
+Message-Id: <E1V5oVl-0003IQ-G1@oak.forest.a5775.uk0.bigv.io>
+Date: Sun, 04 Aug 2013 02:58:29 +0001
+From: Nick Thomas <nick@lupine.me.uk>
+Subject: Breaking PRISM and friends
+To: cypherpunks@cpunks.org
+X-Mailer: geary/0.3.1
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="=-fKv8Q1yTLGzlupGPfTxa"
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+--=-fKv8Q1yTLGzlupGPfTxa
+Content-Type: text/plain; charset=utf-8; format=flowed
+
+Hi all,
+
+Only a decade or two late to the party... anyway, in the past few days 
+since the PRISM / XKeyscore / etc leaks came to my attention, I've been 
+considering schemes that breaks the kind of passive, drag-net 
+collection of communications data from listening points on submarine 
+cables and the like. I think I've found one, so I thought I'd share.
+
+Code is in very, very early stages at the moment; 
+https://github.com/lupine/hide-eid has half of a first pass, and a bit 
+of documentation on why it might work. I'm hoping to have it in a state 
+where you could run a pair of VPN providers servicing a few customers 
+each within a few days. As-is, scalability is suspect, though.
+
+The short how-it-works is that it stops the IP header (which typically 
+reveals who is talking to whom, even if the IP payload is encrypted) 
+from being  personally-identifying information. If your access ISP 
+runs it, and your hosting ISP runs it too, you benefit from an 
+anonymity set equal to all the source's customers. As long as there's 
+no sniffing going on in the first and last mile, anyway.
+
+Combined with IPsec on those miles, or a vetted path if it's short 
+enough, you can reduce the amount of cable that personally-identifying 
+IP headers are sniffable on, from a few thousand miles, to perhaps a 
+couple of feet - on which you can focus CCTV, if you're *really* 
+paranoid; or even nothing at all, if you have the same box terminating 
+the IPsec tunnel and the hide-eid wrapper/unwrapper. 
+
+The theoretical background is from the location/identity separation 
+protocol stuff. Intermediaries don't actually need to know which person 
+(well, EID) the packet is from, or for; they just need to know where to 
+send it (which RLOC) so that a person can pick it up. This scheme is 
+basically that, imagined as a least-effort overlay on the existing IP 
+network. And it doesn't break as many protocols as cgNAT, since source 
+and destination both know the EID of destination and source.
+
+Feedback of any sort is extremely welcome. Particular areas of concern 
+are scaling it (especially given how the crypto works), how the crypto 
+works and if there's a more sensible way (key exchange with M:N 
+different ISPs to take advantage of symmetric ciphers is worrisome), 
+and whether there's a better way to get L/ISP with hidden EIDs deployed 
+to a subset of the internet  than a hack of this magnitude. I'm still 
+fairly skeptical that it can make a noticeable difference, but it seems 
+promising enough for me to keep it up in the short term, at least.
+
+If it ends up being useless, there's still tor. There's always tor.
+
+/Nick
+
+--=-fKv8Q1yTLGzlupGPfTxa
+Content-Type: text/html; charset=utf-8
+
+Hi all,<div><br></div><div>Only a decade or two late to the party... anyway, in the past few days since the PRISM / XKeyscore / etc leaks came to my attention, I've been considering schemes that breaks the kind of passive, drag-net collection of communications data from listening points on submarine cables and the like. I think I've found one, so I thought I'd share.</div><div><br></div><div>Code is in very, very early stages at the moment; <a href="https://github.com/lupine/hide-eid">https://github.com/lupine/hide-eid</a> has half of a first pass, and a bit of documentation on why it might work. I'm hoping to have it in a state where you could run a pair of VPN providers servicing a few customers each within a few days. As-is, scalability is suspect, though.</div><div><br></div><div>The short how-it-works is that it stops the IP header (which typically reveals who is talking to whom, even if the IP payload is encrypted) from being &nbsp;personally-identifying information. If your access ISP runs it, and your hosting ISP runs it too, you benefit from an anonymity set equal to all the source's customers. As long as there's no sniffing going on in the first and last mile, anyway.</div><div><br></div><div>Combined with IPsec on those miles, or a vetted path if it's short enough, you can reduce the amount of cable that personally-identifying IP headers are sniffable on, from a few thousand miles, to perhaps a couple of feet - on which you can focus CCTV, if you're *really* paranoid; or even nothing at all, if you have the same box terminating the IPsec tunnel and the hide-eid wrapper/unwrapper.&nbsp;</div><div><br></div><div>The theoretical background is from the location/identity separation protocol stuff. Intermediaries don't actually need to know which person (well, EID) the packet is from, or for; they just need to know where to send it (which RLOC) so that a person can pick it up. This scheme is basically that, imagined as a least-effort overlay on the existing IP network. And it doesn't break as many protocols as cgNAT, since source and destination both know the EID of destination and source.</div><div><br></div><div>Feedback of any sort is extremely welcome. Particular areas of concern are scaling it (especially given how the crypto works), how the crypto works and if there's a more sensible way (key exchange with M:N different ISPs to take advantage of symmetric ciphers is worrisome), and whether there's a better way to get L/ISP with hidden EIDs deployed to a subset of the internet &nbsp;than a hack of this magnitude. I'm still fairly skeptical that it can make a noticeable difference, but it seems promising enough for me to keep it up in the short term, at least.</div><div><br></div><div>If it ends up being useless, there's still tor. There's always tor.</div><div><br></div><div>/Nick</div>
+--=-fKv8Q1yTLGzlupGPfTxa--
+

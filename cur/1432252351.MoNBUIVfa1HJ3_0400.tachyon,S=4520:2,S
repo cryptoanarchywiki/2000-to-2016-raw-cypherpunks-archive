@@ -1,0 +1,104 @@
+From owner-cypherpunks-outgoing@EINSTEIN.ssz.com  Fri Oct  6 22:16:58 2000
+Received: from MIT.EDU (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.69.0.28])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id WAA06667
+	for <kwantam@positron.mit.edu>; Fri, 6 Oct 2000 22:16:58 -0400
+Received: from einstein.ssz.com by MIT.EDU with SMTP
+	id AA03817; Fri, 6 Oct 00 22:17:45 EDT
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id VAA15288
+	for cypherpunks-outgoing; Fri, 6 Oct 2000 21:10:51 -0500
+Received: from hcs.harvard.edu (hcs.harvard.edu [140.247.73.252])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id VAA15284
+	for <cypherpunks@EINSTEIN.ssz.com>; Fri, 6 Oct 2000 21:10:46 -0500
+Received: from localhost (dmolnar@localhost)
+	by hcs.harvard.edu (8.9.3/8.9.3) with ESMTP id WAA24339;
+	Fri, 6 Oct 2000 22:03:46 -0400 (EDT)
+Date: Fri, 6 Oct 2000 22:03:46 -0400 (EDT)
+From: dmolnar <dmolnar@hcs.harvard.edu>
+To: cypherpunks@einstein.ssz.com
+Cc: wmo@hq.pro-ns.net
+Subject: CDR: Re: Disposable remailers
+In-Reply-To: <200010070136.VAA17307@glitch.crosswinds.net>
+Message-Id: <Pine.OSF.4.05.10010062146420.18414-100000@hcs.harvard.edu>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-cypherpunks@EINSTEIN.ssz.com
+Precedence: bulk
+Reply-To: cypherpunks@EINSTEIN.ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Language: English, Russian, German
+Status: O
+Content-Length: 3066
+Lines: 68
+
+
+
+On Fri, 6 Oct 2000, despot wrote:
+
+> But, this disposable remailer idea is solid. As a quick example 
+> scheme, if there were some sort of remailer protocol that 
+> functioned like routing protocols, as disposable remailers came 
+> online, they could announce themselves to other remailers. 
+> Pseudorandom hopping from one disposable remailer to another could 
+> occur in a remailer-chained message, instead of manually 
+> encrypting a message for a chain of remailers. The sender could 
+
+This reminds me of something I was looking at this spring. Markus
+Jakobsson has two papers on "A Practical Mix" and "Flash Mixing" which
+look at mix-nets in a different way than we see in remailers. There,
+instead of a message being successively encrypted for a particular
+path through a series of remailers, the remailers pass a prepared
+encrypted message around and perform a distributed computation on it. At
+the end of the computation, the decrypted name of the recipient 
+automagically pops out. 
+
+These kinds of remailers are not original to Jakobsson - but previous
+efforts that I know about are ridiculously inefficient. The number I
+remember for one of them is 1600 modexps per message per server.
+Jakobsson's "Practical Mix" proposal is more like 160. The "Flash Mixing"
+paper investigates ways to use precomputation to get this to 160
+multiplications.
+
+I should mention here that Yvo Desmedt and Karou Kurosawa showed in
+Eurocrypt 2K that the original "Practical Mix" paper has a flaw -- an
+evil node can cause one of the distributed computations to abort without
+being caught. They noted that their results didn't extend to the "Flash
+Mixing" paper; it's been a back-burner project of mine to look at this
+for...well...too long. 
+
+Anyway, both papers deal with a collection of mix servers fixed in
+advance. It seems that disposable remailers would work well with
+extensions of these protocols modified to deal with dynamic leave and
+joins of servers. Add this to wireless and you have mobile disposable
+remailers. 
+
+Slightly related would be the idea of using commodity computation to do
+remailing -- just tell people to "go to this page, download this
+applet, become a remailer!" 
+(or have your HD erased, but...)
+
+There are massive issues with trusting new remailer nodes, unfortunately.
+Imagine what happens when your adversary decides to show up with
+polynomially many of her closest friends. 
+
+So a further question would be whether we can design a mix protocol
+which can 
+	a) take advantage of all these cheap, (hopefully) distinct
+	devices and their computation power
+but
+	b) doesn't give the commodity devices enough power to 
+	break the mix, even if many (almost all??) of them act in
+	concert. 
+
+> On a side note, what other throw-away internet-ready devices would 
+> be of interest? Motion detectors? Access control devices? Door 
+> locks?
+
+Pretty much everything, if you believe some people. The Oxygen project at
+MIT has a vision of computation in absolutely everything. Desmedt has an
+intriguing article about just what might happen then..
+
+-David
+

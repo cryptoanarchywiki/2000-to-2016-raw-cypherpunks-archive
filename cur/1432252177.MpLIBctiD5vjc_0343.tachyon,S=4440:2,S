@@ -1,0 +1,98 @@
+From owner-cypherpunks@al-qaeda.net  Thu Nov  1 07:18:18 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id qA1BEoKe024705
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 1 Nov 2012 07:14:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1351768490;
+	bh=ll66Q5yk6SsexnEe9I8DV2KAIzU60mZNMctpdDLh5AI=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=R6Q1yRhZRBXEswUKYUr6TWYSAclO5Nt250i/8N+Lv2WBeS5JHhykYqi8KZCR6CBz7
+	 20Ksc/mmQPw27mJTeze+3ovPij30pPvXP3YLMJ0CVG/A5fghcoLxj5SudMansQQbcX
+	 qt1rlMowV3FBxQndbdsR9Cc6jmkK2jU0FuPDzs9w=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id qA1BEon9024704
+	for cypherpunks-outgoing; Thu, 1 Nov 2012 07:14:50 -0400
+Date: Thu, 1 Nov 2012 12:14:45 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: [cryptography] Application Layer Encryption Protocols Tuned for
+  	Cellular?
+Message-ID: <20121101111445.GS9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3020
+Lines: 65
+
+----- Forwarded message from Jeffrey Walton <noloader@gmail.com> -----
+
+From: Jeffrey Walton <noloader@gmail.com>
+Date: Wed, 31 Oct 2012 18:23:57 -0400
+To: Randombit List <cryptography@randombit.net>
+Subject: [cryptography] Application Layer Encryption Protocols Tuned for
+	Cellular?
+Reply-To: noloader@gmail.com
+
+Hi All,
+
+Is anyone aware of of application layer encryption protocols with
+session management tuned for use on cellular networks? I need FIPS
+compliant ciphers, but that should be an implementation detail (I
+mention it because of setup and cipher text expansions).
+
+I have an application that performs classic Diffie-Hellman to key an
+channel using AES/CBC (or AES/CTR) with an HMAC, providing message
+level security. (it was written some time ago, before OpenSSL had
+Authenticated Encryption modes). The channel includes a counter for
+playbacks and insertions. So far, so good - its Crypto 101 stuff.
+
+The problem in practice is TCP/IP and later generation cellular
+networks (especially 4G and the "All IP" implementations). All appears
+OK when moving among cells if the IP address is forwarded and the
+device remains connected. All hell breaks loose when a device looses
+connectivity or gets a new IP. A device could get a new IP as users
+move between service providers.
+
+It appears the TCP/IP stack on both sides (device and server within
+the carriers network) will queue messages when device connectivity is
+lost. But the TCP/IP stack continues to operate as if all is
+succeeding. So neither the client nor server realize there are
+problems with underlying the socket. Its leading to a lot of session
+management problems, including excessive resource usage.
+
+In addition, I have an option to allow only one session per user (for
+paranoid folks). When the previous session does not die as expected, a
+new session cannot be started. Here, the device might realize the
+socket is really dead, but the server has not realized it yet because
+of the tricks that are being played in the TCP/IP stack on the server
+side. So the client tries to reconnect but the server refuses due to
+the "one session" rule.
+
+The problem is not isolated to my application. On the train from
+Washington to New York, it wreaks havoc on the VPN software I use. I
+often get my account suspended due to fraud triggers (reconnects and
+changing IPs). Ditto when using Acela's onboard WifFi and trying to
+maintain an SSL/TLS connection to GMail.
+
+TLDR: Is anyone aware of of application layer encryption protocols
+with session management tuned for use on cellular networks?
+
+Jeff
+_______________________________________________
+cryptography mailing list
+cryptography@randombit.net
+http://lists.randombit.net/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

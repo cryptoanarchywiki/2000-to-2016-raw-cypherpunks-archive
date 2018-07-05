@@ -1,0 +1,95 @@
+From cypherpunks-bounces@cpunks.org  Sun Mar 23 21:48:56 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id s2O1low5001518;
+	Sun, 23 Mar 2014 21:48:04 -0400
+Authentication-Results: antiproton.jfet.org; dkim=fail
+	reason="verification failed; unprotected key"
+	header.d=auckland.ac.nz header.i=@auckland.ac.nz header.b=TRhSSovZ;
+	dkim-adsp=none (unprotected policy); dkim-atps=neutral
+Received: from mx2.auckland.ac.nz (mx2.auckland.ac.nz [130.216.125.245])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id s2O1lgTd001511
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Sun, 23 Mar 2014 21:47:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+ d=auckland.ac.nz; i=@auckland.ac.nz; q=dns/txt; s=uoa;
+ t=1395625668; x=1427161668;
+ h=date:message-id:from:to:subject:cc:in-reply-to;
+ bh=PYDHcrpLwM6guk6jGbj4ou1lz2bE+UGQxOsDEfQkLrM=;
+ b=TRhSSovZ0BzRUJsoXkkTQHGKD33x1dx0hgUX2Vi6ULrCTIOc4T48o3NH
+ IR482gzmw4VTtqHP4HphBUqCh02anaE72XT1//TIdHcsYQ+/8FJ+nT/pL
+ UMMEpzzuYni4lptwBbDyP/MUW7p9TNpcInFS7TmmWnvyEVTQjI25hVipJ k=;
+X-IronPort-AV: E=Sophos;i="4.97,717,1389697200"; d="scan'208";a="242053858"
+X-Ironport-HAT: UNIVERSITY - $RELAY-THROTTLE
+X-Ironport-Source: 130.216.34.40 - Outgoing - Outgoing
+Received: from login01.fos.auckland.ac.nz ([130.216.34.40])
+ by mx2-int.auckland.ac.nz with ESMTP/TLS/AES256-SHA; 24 Mar 2014 14:47:31 +1300
+Received: from pgut001 by login01.fos.auckland.ac.nz with local (Exim 4.72)
+ (envelope-from <pgut001@login01.fos.auckland.ac.nz>)
+ id 1WRtyu-0002eY-90; Mon, 24 Mar 2014 14:47:16 +1300
+Date: Mon, 24 Mar 2014 14:47:16 +1300
+Message-Id: <E1WRtyu-0002eY-90@login01.fos.auckland.ac.nz>
+From: Peter Gutmann <pgut001@cs.auckland.ac.nz>
+To: iam@kjro.se, tpb-crypto@laposte.net
+Subject: Re: "Whew, wondered where we'd put those 200,000 BTC!"
+In-Reply-To: <CAFd=HCeF8_NG9d6Zx6LeAPkaphgeLhpzw+o5xe50SNpsD2jD7A@mail.gmail.com>
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.16
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 2313
+Lines: 41
+
+Kelly John Rose <iam@kjro.se> writes:
+
+>Having worked on some complex banking and accounting systems before, I know
+>there is a lot more to the equation than simple coding up some crappy ruby
+>code and putting fixes in place whenever it doesn't quite do what you want.
+>
+>Financial cryptography is expensive to do mostly because there is a strong
+>need to not only implement good code, but also make sure the engineering is
+>done correctly the first time and that it has the expensive physical security
+>to back it up.
+
+Absolutely.  Some time ago I had a long chat with someone who worked on large-
+scale financial processing systems.  Among other things his organisation tends
+to act as a stress test for any hardware or software they use since they push
+it beyond what anyone else ever manages (and no, it's not HFT, just standard
+banking clearing).  Their prime directive is that financial value can never be
+created or destroyed, so you can never have a situation in which a failure
+anywhere will result in one blob of financial value being recorded in two
+locations, or no locations.  Saying that you'll address this by rolling back
+transactions won't fly both because no standard database can handle the load
+they work at, and because the financial world isn't going to stop and wait
+while you perform a rollback.
+
+To give some examples of what this entails, they only use the outer sets of
+tracks on their disk arrays to maximise data throughput/minimise head
+movement, if they were to use the entire platter the system couldn't keep up.
+Cacheing doesn't help, they did try it with the most exotic cacheing
+technology that EMC could provide them and found that after X hours throughput
+dropped to a fraction of what it had been.  Although EMC had simulated this
+situation they never expected that anyone would be able to do it in real life.
+
+They also managed to figure out the computing power of a USG agency using a
+certain type of architecture because, when they wanted to buy the entire
+production run of a particular just-introduced CPU for several months they
+found that an unnamed US customer had already bought six months worth of
+production ahead of them.
+
+I think this is about as far from hacking together "some crappy ruby code" as
+you can get while still remaining on the same planet.
+
+Peter.
+

@@ -1,0 +1,70 @@
+From owner-cypherpunks@lne.com  Tue Jun 10 21:48:28 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h5B1mQ626350
+	for <rsw@jfet.org>; Tue, 10 Jun 2003 21:48:27 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h5B1e1Ek028822
+	for cypherpunks-goingout345; Tue, 10 Jun 2003 18:40:01 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Tue, 10 Jun 2003 21:36:10 -0400
+From: Anonymous <rebleep@bleep.dynip.com>
+X-Remailer-Contact: abuse@bleep.dynip.com
+To: cypherpunks@lne.com
+X-Orig-To: cypherpunks@lne.com
+Subject: Re: An attack on paypal --> secure UI for browsers
+Message-ID: <557dd8f2519377887312df07a5dd0977@rebleep>
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2456
+Lines: 46
+
+The problem to be solved is this.  Spoofed sites can acquire user
+credentials, especially passwords, and then use those to impersonate the
+user on the real sites.  With paypal and e-gold, this allows stealing
+real money.
+
+Using client certificates to authenticate would solve this, because
+even if the user got fooled and authenticated to the spoofed site, the
+attacker wouldn't learn the client cert secret key and so would not be
+able to masquerade as the user.
+
+The problem (among others) is that this allows a virus to steal the
+client cert.  If it is protected by a password, the malware must hang
+around long enough for the user to unlock the cert (perhaps because the
+malware sent a spoofed email calling for the user to visit the site,
+even the real site!).  It can then read the user's keystrokes and acquire
+the password.  Now it has the cert and password and can impersonate the
+user at will.
+
+The solution to this is Palladium (NGSCB).
+
+You'd want each ecommerce site to download a Nexus Computing Agent into
+the client.  This should be no more difficult than downloading an Active-X
+control or some other DLL.  The NCA has a manifest file associated with it
+that contains the ecommerce site's signing key.  This allows the NCA to be
+effectively locked to that key.
+
+The user's site-specific client certificate would be sealed to this NCA.
+That means that no other NCA could get access to the client cert for
+that site, nor could any legacy software.  All this is protected by the
+Palladium hardware and software.
+
+If a password is used for further security, to unlock the client cert
+(in addition to the NCA-specific encryption), it can use a secure
+channel to the NCA so that no keystroke loggers can steal the password.
+(However, as mentioned in a previous mail, this may not stop rogue NCA's
+from fooling the user by pretending to be the ecommerce site's NCA and
+picking up the password.  It's not clear that adding a password really
+increases security.  Fortunately the NCA security itself is already
+vastly stronger than anything available on a PC today.)
+
+In short, if Palladium comes with the ability to download site-specific
+DLLs that can act as NCAs, it should allow for solving the spoofed-site
+problem once and for all.  When you login to paypal or e-gold, you would
+authenticate yourself using a cert that only those sites could see.
+This can be done in the framework of standard SSL, but would require a
+Palladium-aware browser.
+

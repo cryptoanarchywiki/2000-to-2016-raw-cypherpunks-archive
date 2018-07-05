@@ -1,0 +1,218 @@
+From owner-cypherpunks@al-qaeda.net  Thu Jul  5 08:33:31 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q65CTung019619
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 5 Jul 2012 08:29:56 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q65CTudi019618
+	for cypherpunks-outgoing; Thu, 5 Jul 2012 08:29:56 -0400
+Date: Thu, 5 Jul 2012 14:29:53 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: zs-p2p@googlegroups.com, cypherpunks@al-qaeda.net
+Subject: [tahoe-lafs-weekly-news] TWN 35
+Message-ID: <20120705122953.GG12615@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Patrick R McDonald <marlowe@antagonism.org> -----
+
+From: Patrick R McDonald <marlowe@antagonism.org>
+Date: Mon, 2 Jul 2012 21:21:29 -0500
+To: tahoe-lafs-weekly-news@tahoe-lafs.org
+Subject: [tahoe-lafs-weekly-news] TWN 35
+User-Agent: Mutt/1.5.21 (2010-09-15)
+Reply-To: tahoe-dev@tahoe-lafs.org
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
+
+=====================================================
+Tahoe-LAFS Weekly News, issue number 35, July 02 2012
+=====================================================
+
+Welcome to the Tahoe-LAFS Weekly News (TWN).  Tahoe-LAFS_ is a secure,
+distributed storage system. `View TWN on the web`_ *or* `subscribe to TWN`_.
+If you would like to view the "new and improved" TWN, complete with pictures;
+please take a `look`_.
+
+.. _Tahoe-LAFS: https://tahoe-lafs.org
+.. _View TWN on the web: https://tahoe-lafs.org/trac/tahoe-lafs/wiki/TahoeLAFSWeeklyNews
+.. _subscribe to TWN: https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-lafs-weekly-news
+.. _look: https://tahoe-lafs.org/~marlowe/TWN35.html
+
+Glowing Quotes
+==============
+
+bAbsolutely, I've been very impressed with Tahoe-LAFS, both the
+underlying concepts and ideas and the implementation (I was playing with
+it just yesterday). It's fast, reliable, and has been making steady
+progress.b b Mourad De Clerck
+
+Tahoe-LAFS on Twitter
+=====================
+
+"Dear next MegaUpload-like entrepeneur: Use Tahoe-LAFS. Let the FBI have
+fun with that..." [`0`_]
+
+"Just thinking about how wonderful Tahoe-LAFS is. It's owners,
+contributors, core-concept, it's just all wonderment up in there.
+#tahoe-lafs" [`1`_]
+
+"Tahoe-LAFS newsletter. Neat! http://ur1.ca/9keef" [`2`_]
+
+.. _`0`: https://twitter.com/rockstar_/status/218772487989772288
+.. _`1`: https://twitter.com/kraeftig/status/218026035944501250
+.. _`2`: https://twitter.com/sameerverma/status/217397646111944704
+
+- From the tahoe-dev Mailing List
+===============================
+
+Keepalives
+- ----------
+
+erpo41 asked for `information regarding Tahoe-LAFS' use of keepalives`_
+over their TCP connections.  Brian Warner |warner| pointed out
+Tahoe-LAFS sends a keepalive packet once every eight (8) minutes.  This
+setting is configurable via "timeout.keepalive" as noted in
+"docs/configuration.rst".
+
+.. |warner| image:: warner.png
+   :height: 35
+   :alt: Brian Warner
+   :target: http://tahoe-lafs.org/trac/tahoe-lafs/wiki/AboutUs
+
+.. _`information regarding Tahoe-LAFS' use of keepalives`:
+   https://tahoe-lafs.org/pipermail/tahoe-dev/2012-July/007513.html
+
+Switching from Introducers to Gossip
+- ------------------------------------
+
+Brian `proposes switching from introducers to gossip`_.  Brian's idea is
+for all nodes to offer a "grid-control" service.  "grid-control" allows
+you to publish Announcements, either your own or ones you are forwarding
+for someone one else.  Brian proposes several approaches to this
+concept:
+
+* fully-connected mesh: every node makes a Foolscap connection to every
+  grid-control provider they hear about, subscribe to hear about all
+  announcements, and publish any announcements that the other side
+  doesn't already know about.
+* opportunistic: clients only connect to storage servers, and storage
+  servers don't make outbound connections to anybody, but if you *do*
+  happen to be connected to someone who also offers "grid-control", then
+  connect to their grid-control object too and exchange Announcements
+* cluster-of-Introducers: normal nodes don't offer grid-control, but
+  multiple Introducers do, and all of them know about each other. All
+  nodes connect to all grid-control providers (which means all
+  Introducers).
+* one Introducer: this is just a degenerate cluster-of-Introducers
+
+.. _`proposes switching from introducers to gossip`:
+   https://tahoe-lafs.org/pipermail/tahoe-dev/2012-July/007511.html
+
+grid-updates
+- ------------
+
+darrob `announced the release of grid-updates 1.1.3`_.  grid-updates is
+Tahoe-LAFS helper program.  Originally a shell script, darrob rewrote
+the program in Python, so it runs on all platforms supported by
+Tahoe-LAFS.  grid-updates helps manage volunteer grids.  It's core
+feature is downloading and uploading the node's introducer list and has
+a new feature of downloading lists for shares and repairing them.
+darrob is testing the program against 1.9.2a1.  The program is packaged
+for Windows, Arch and Debian.
+
+.. _`announced the release of grid-updates 1.1.3`:
+   https://tahoe-lafs.org/pipermail/tahoe-dev/2012-June/007505.html
+
+Patches Needing Review of the Week
+==================================
+
+There is one (1) ticket still needing review for 1.9.2:
+
+* `#1778`_: increase maximum mutable share size
+
+There are six (6) ticket still needing review for 1.10.0:
+
+* `#1777`_: cleanups to tests and mutables for 1.10
+* `#166`_: command line order is problematic
+* `#937`_: 'tahoe run' doesn't work for an introducer node
+* `#1539`_: stop putting pkg_resources.require() into .tac files
+* `#1159`_: stop using .tac files: make it possible to change appname,
+  Python package-directory name, perhaps other names
+* `#1693`_: flogtool doesn't get automatically provided
+
+There are two (2) tickets still needing review of 1.11.0:
+
+* `#1265`_: New Visualizer is insufficiently labelled/documented (plus
+  layout problem)
+* `#1382`_: immutable peer selection refactoring and enhancements
+
+.. _`#1778`: http://tahoe-lafs.org/trac/tahoe-lafs/ticket/1778
+.. _`#1777`: http://tahoe-lafs.org/trac/tahoe-lafs/ticket/1777
+.. _`#166`: http://tahoe-lafs.org/trac/tahoe-lafs/ticket/166
+.. _`#937`: http://tahoe-lafs.org/trac/tahoe-lafs/ticket/937
+.. _`#1539`: http://tahoe-lafs.org/trac/tahoe-lafs/ticket/1539
+.. _`#1159`: http://tahoe-lafs.org/trac/tahoe-lafs/ticket/1159
+.. _`#1693`: http://tahoe-lafs.org/trac/tahoe-lafs/ticket/1693
+.. _`#1265`: http://tahoe-lafs.org/trac/tahoe-lafs/ticket/1265
+.. _`#1382`: http://tahoe-lafs.org/trac/tahoe-lafs/ticket/1382
+
+- ----
+
+*The Tahoe-LAFS Weekly News is published once a week by The Tahoe-LAFS*
+*Software Foundation, President and Treasurer: Peter Secor* |peter|
+*. Scribes: Patrick "marlowe" McDonald* |marlowe| *, Zooko Wilcox-O'Hearn*
+|zooko| *, Editor: Zooko.* `View TWN on the web`_ *or* `subscribe to TWN`_
+*. Send your news stories to* `marlowe@antagonism.org`_ *b submission
+deadline: Friday night.*
+
+.. _marlowe@antagonism.org: mailto:marlowe@antagonism.org
+.. |peter| image:: psecor.jpg
+   :height: 35
+   :alt: peter
+   :target: http://tahoe-lafs.org/trac/tahoe-lafs/wiki/AboutUs
+.. |marlowe| image:: marlowe-x75-bw.jpg
+   :height: 35
+   :alt: marlowe
+   :target: http://tahoe-lafs.org/trac/tahoe-lafs/wiki/AboutUs
+.. |zooko| image:: zooko.png
+   :height: 35
+   :alt: Zooko
+   :target: http://tahoe-lafs.org/trac/tahoe-lafs/wiki/AboutUs
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP8lcmAAoJEAT4nRyi0elyo3wP/iliJM7Xe0N793L7L5qXPIQU
+r3JAsyn1XequYfjTVNpDzZ3v/HPieLsjhLWBhphvXHZpPLPFzkQLGgTsamLQTaz1
+pohvV03dCJwiUgo7LktdjS7fElscR3oU1GnABYfZp/63RrW1NHsdzzqsIGXs2YgG
+c7+XYrCAUyRNoIWPXV+ZeRy9NWXZftGKxhdibe1dKTfOIQYHF7cYEaTER2AzZv7a
+qaX+lluIaay18wiSWj8Ji8M8dR/u5iKJO4Rh0w8CAihs2pgXoT/q67rzJECdftE2
+hMMmyqAnxAn4b4LTTJAZqmiD+d5lEbxU73qLBLHJ05JgqNk1XCfdSAgBoutsCTFM
+a4Q6skZFlaLQqSpVHjpacUEqWH9BJViVoogi1mZAyX24fJbrSNT/iVq86zuMrXP9
+MYQjIAvpRCE6vQ71PhSM115q1G7VNeatNgXhjWF1x6+Wbev/bCAVj1uIA1I4Baqz
+qPFhLQ6aCWFReCPrIhV6rRsj/N/sL8DLt7X4cBOEao9GK/g1NGIYrtNtQlPIwBWN
+1e2CCD6hLB9IbA25vgIFKeE/mWNQP4FGQ3qNuP8JSYMqrXeXVhwirxtqFDCgdRKr
+x78BmsKmYTP5VnNmWxg82PA3QJvmGmtecFuS+QLLQXxbOJ2wqroFfMSWERZsbG3K
+VoSb2oEDhtY7G5p5mAe+
+=LGEZ
+-----END PGP SIGNATURE-----
+_______________________________________________
+tahoe-lafs-weekly-news mailing list
+tahoe-lafs-weekly-news@tahoe-lafs.org
+http://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-lafs-weekly-news
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

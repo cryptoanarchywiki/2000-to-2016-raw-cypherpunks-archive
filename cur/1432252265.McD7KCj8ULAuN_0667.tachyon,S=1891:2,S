@@ -1,0 +1,50 @@
+From owner-cypherpunks@jfet.org  Tue Nov 29 01:00:47 2005
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.5/8.13.5/Debian-3) with ESMTP id jAT60M6H008237
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 29 Nov 2005 01:00:22 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.5/8.13.5/Submit) id jAT60MII008236
+	for cypherpunks-outgoing; Tue, 29 Nov 2005 01:00:22 -0500
+Message-ID: <438BEE78.4862CDA1@cdc.gov>
+Date: Mon, 28 Nov 2005 22:00:24 -0800
+From: "Major Variola (ret)" <mv@cdc.gov>
+X-Mailer: Mozilla 4.8 [en] (Win98; U)
+X-Accept-Language: en
+MIME-Version: 1.0
+To: "cypherpunks@al-qaeda.net" <cypherpunks@jfet.org>
+Subject: avoiding replay attack resistance w/o seq nos or challenge
+  response
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 839
+Lines: 22
+
+I'm interested in avoiding replay attacks on a protocol that uses UDP.
+Assume a secret key is shared.
+
+As far as I can tell, it is *fundamental*  that you use
+either sequence numbers for a series of packets, or perform a
+challenge-response handshake for each packet.  (The latter is
+essentially a "sequence" of length 1
+re-established for each packet)
+
+Both methods require the maintenance of some state, essentially
+creating a "session", although that state is just the active sequence
+number
+(and a window given UDPs un-ordering), not a whole moby IPSEC security
+association.
+
+Yes, I'm aware that if you use UDP you end up reinventing TCP...
+
+My question is, are there less well known methods, or is this
+statefulness
+fundamentally *imposed* by replay attack resistance, by virtue of what
+it means to
+"re-play"?  (Which is my suspicion)
+

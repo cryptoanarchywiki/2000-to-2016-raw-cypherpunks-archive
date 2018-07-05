@@ -1,0 +1,132 @@
+From owner-cypherpunks@Algebra.COM  Fri Jun 22 18:32:01 2001
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id SAA31926
+	for <kwantam@positron.mit.edu>; Fri, 22 Jun 2001 18:32:01 -0400
+Received: from ak47.algebra.com (root@ak47.algebra.com [208.233.99.160])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id SAA06062
+	for <rsw@mit.edu>; Fri, 22 Jun 2001 18:31:41 -0400 (EDT)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f5MLcQ220770
+	for cypherpunks-outgoing; Fri, 22 Jun 2001 16:38:26 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from einstein.ssz.com (cpunks@einstein.ssz.com [204.96.2.99])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f5MLcOx20756
+	for <cypherpunks@algebra.com>; Fri, 22 Jun 2001 16:38:24 -0500
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id QAA16811
+	for cypherpunks@algebra.com; Fri, 22 Jun 2001 16:45:33 -0500
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id QAA16728
+	for cypherpunks-outgoing; Fri, 22 Jun 2001 16:44:06 -0500
+Received: from localhost (ravage@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) with SMTP id QAA16700;
+	Fri, 22 Jun 2001 16:43:58 -0500
+Date: Fri, 22 Jun 2001 16:43:57 -0500 (CDT)
+From: Jim Choate <ravage@einstein.ssz.com>
+To: cypherpunks@einstein.ssz.com
+cc: The Club Inferno <hell@einstein.ssz.com>, sci-tech@einstein.ssz.com,
+        austin-cpunks@einstein.ssz.com, alg@austinlug.org,
+        hangar18@einstein.ssz.com
+Old-Subject: CDR: OPT: Re: crypto flaw in secure mail standards (fwd)
+Message-ID: <Pine.LNX.3.96.1010622164339.24279g-100000@einstein.ssz.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Reply-To: cypherpunks@einstein.ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Acceptable-Languages: English, Russian, German, French, Spanish
+Subject:  OPT: Re: crypto flaw in secure mail standards (fwd)
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 3877
+Lines: 81
+
+
+
+---------- Forwarded message ----------
+Date: 22 Jun 2001 18:40:09 -0000
+From: lcs Mixmaster Remailer <mix@anon.lcs.mit.edu>
+To: cryptography@wasabisystems.com
+Subject: Re: crypto flaw in secure mail standards
+
+Don Davis writes,
+
+> All current secure-mail standards have a
+> significant cryptographic flaw.  There are several standard
+> ways to send and read secure e-mail.  The most well-known
+> secure mail systems are PGP and S/MIME.  All current public-
+> key-based secure-mail standards have this flaw.  Here are some
+> examples of the flaw in action:
+>
+> Suppose Alice and Bob are business partners, and are setting
+> up a deal together.  Suppose Alice decides to call off the
+> deal, so she sends Bob a secure-mail message: "The deal is off."
+
+The only thing protected in a signed message is that portion signed.
+Alice needs to say, "Bob, the deal is off."
+
+Actually this is not enough.  Suppose Alice sends this, or equivalently
+suppose we use an encryption scheme similar to what David Hopwood
+describes where the inner signed portion includes the outer key.
+
+There can still be trouble.  Suppose at some later time Alice and Bob
+negotiate a new contract, and Bob wants to get out of it.  He pulls out
+this old message of Alice's and stamps a new date on it, claiming that
+it was with regard to their new contract negotiation.  He says that
+Alice withdrew from the contract so he is not liable for any penalties.
+
+Again the problem is that only what is signed is protected.  If the date
+is not signed, it is not protected.  So the protocol has to include the
+date in the signature.  (Actually I think most email encryption protocols
+do this, but the point is that the formal description of what is signed
+may not show that.)  Only what is signed is protected.
+
+Even the date may not be enough.  Suppose Alice and Bob are separately
+negotiating two different contracts, using a threaded mail reader
+which uses Reply-To: or some similar fields in the mail header so
+that exchanges with regard to one contract are shown separately from
+exchanges with regard to the other.  Then Alice might send, "Bob, the
+deal is off," including a date in the signature, and expect it to apply
+just to the deal being negotiated in that thread, because that's how her
+mail software shows it.  However Bob can take the message and claim that
+it applied to the other thread.
+
+In this case, other context that was in the minds of Alice and Bob is
+not being covered by the signature.  This is really the general form of
+the issue being discussed.  What is in the minds of the participants,
+what assumptions are they making that are not being written down?
+
+This is why we have lawyers and contracts and fine print.  These
+institutions and practices are the result of centuries of people weaseling
+out of contracts in various ways.
+
+It is mistaken to think that we can solve this problem by a little
+cryptographic legerdemain involving copying a field from the outer
+encryption envelope into the inner signature.  That does not begin to
+cover all of the things that can go wrong.
+
+The only real solution is to use the advice and experience of the
+legal system when negotiating a contract which will bind the parties.
+Make sure everything is written down and sign a document which is as
+clear, specific and free of ambiguity as possible.
+
+It's not a cryptographic issue, and failures of this kind are not
+cryptographic failures.  Cryptography can't read the minds of the
+parties involved and know that all of their assumptions are included in
+the signed portion.  The real solution is for the communicants to take
+the responsibility to put everything there that is needed.  Only what
+is signed is protected.
+
+
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

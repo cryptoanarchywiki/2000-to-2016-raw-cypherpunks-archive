@@ -1,0 +1,140 @@
+Return-path: <cypherpunks-bounces@cpunks.org>
+Envelope-to: rsw@positron.jfet.org
+Delivery-date: Fri, 29 Jul 2016 02:01:47 -0700
+Received: from antiproton.jfet.org ([209.141.47.85])
+	by positron.jfet.org with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.87)
+	(envelope-from <cypherpunks-bounces@cpunks.org>)
+	id 1bT3fv-00070c-Dz
+	for rsw@positron.jfet.org; Fri, 29 Jul 2016 02:01:47 -0700
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u6T8pjXu020582;
+	Fri, 29 Jul 2016 04:51:46 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=qxWlcA3C;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-vk0-f43.google.com (mail-vk0-f43.google.com
+ [209.85.213.43])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u6T8pgSF020578
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Fri, 29 Jul 2016 04:51:44 -0400
+Received: by mail-vk0-f43.google.com with SMTP id s189so49925910vkh.1
+ for <cypherpunks@cpunks.org>; Fri, 29 Jul 2016 01:51:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to;
+ bh=gQpbOynFPl+5WAClHrXb9WVQn2fFDS2cZXYTCEQUoJs=;
+ b=qxWlcA3CUBd3hHtm+zMiw39+kgofNi25ORQFRiC1Qi67yKrAFDh68sWiqgr1ELGHlX
+ FOWt7X/X4gBel/0k/CX6B0U1A3pYUCkhrrFrNokjvw70IjvBYoBjd9pmR84l320kmlhK
+ cabTL+bklPMkIh2PpxW7X+4OnI6nadUm4hvk9FaxhACtq3nP8BNz37A90dq92d84lV6z
+ NH/eGqBlKd5kq2rNlO2py1Ll2UL4DMehSaPg7Mzp6xnlTQzVYkgNBchqR7hKGOB+gvvK
+ X8gxz0m7lPv3UywCjYfVyxYg62C1CnHgULPx7CXZ7PRDY3DcnjESlGq3yx9lnW3X+7hv
+ f7YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to;
+ bh=gQpbOynFPl+5WAClHrXb9WVQn2fFDS2cZXYTCEQUoJs=;
+ b=Ksl39Win37XqirmPpBbWNnjooOVPFRv7XloKCcoGg/CfJcdZqxKNagzEEo0SdNaeBt
+ Y/I9XGxD7eP0KaKvwq4AY573fRGzx9rip+Dd13XsWTmgf4Vt+dqNCq60c/u0FGfTYZTI
+ HdcJ33frytYxUFGxjjwQ3CmuQWLTtDk4LAxp0Ae/rYA6g3qVHYXuIRidzonBHwqUo14K
+ TcYJsmPOYVlpvw94yy+Fsi3P2eP2i8ekEZHyVakz/iR7QmvwFpnw07Ts7d5TRq4osry3
+ Kd3llNoYkjQpSHB01jBPFp0vqKJ6Z16CpeJgqMO/56eFRGMUVjoTWKKwky6u3POrG53R
+ qzLA==
+X-Gm-Message-State: AEkoouvPCaZ5fjQhy1/mp5zeYpfH6diOjqUfARV1GFpOInCiSZlSkirApyzFB3STOinVXuPDfTw7x4gdZO3txQ==
+MIME-Version: 1.0
+X-Received: by 10.31.56.73 with SMTP id f70mr17676268vka.135.1469782296368;
+ Fri, 29 Jul 2016 01:51:36 -0700 (PDT)
+Received: by 10.176.2.138 with HTTP; Fri, 29 Jul 2016 01:51:35 -0700 (PDT)
+Received: by 10.176.2.138 with HTTP; Fri, 29 Jul 2016 01:51:35 -0700 (PDT)
+In-Reply-To: <b0bd551e39b7186ac1b9e7051cf12c05@openmailbox.org>
+References: <4579aed2-1c44-553d-d37a-df440042166d@riseup.net>
+ <20160728053952.GN26012@x220-a02>
+ <579a5ad8.7724ed0a.f1ffa.8291@mx.google.com>
+ <20160728210249.GT26012@x220-a02>
+ <CAGRDzQW-NZnsXWcy77+B8jCED5ukdkEM_ANF3tYdhdTV7p4PVQ@mail.gmail.com>
+ <CAD2Ti28oekbZ_JC8azJijrvCOAMX4yKpnz-2JhjnjxSkpr_gyQ@mail.gmail.com>
+ <CAD2Ti2-ni+4k1PsmRK3KMzVHnGGTaPzM0KT2ZQZZycjT6G0mZw@mail.gmail.com>
+ <579af6c4.42bb370a.355fc.e93d@mx.google.com>
+ <CAG2tMp4RRVnpidd+dNV96pkMsJ=bn7en1KYSfpmcwVZBT47-ww@mail.gmail.com>
+ <b0bd551e39b7186ac1b9e7051cf12c05@openmailbox.org>
+Date: Fri, 29 Jul 2016 05:51:35 -0300
+Message-ID: <CAG2tMp71Yjfq-VY5g0wf-woKSVy7afUcgE_yA-dLAaNsQa3wfg@mail.gmail.com>
+Subject: Re: Deconstructing an Institutional Slander operation: @ioerror et
+ al...
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=001a11430922ac20690538c25bde
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 59
+
+--001a11430922ac20690538c25bde
+Content-Type: text/plain; charset=UTF-8
+
+On Jul 29, 2016 5:29 AM, "Spencer" <spencerone@openmailbox.org> wrote:
+>
+> Hi,
+>
+>>
+>> Cecilia Tanaka:
+>> migraine, insomnia, and really bad mood
+>>
+>
+> All them carbs!
+
+Already tried them.  Apparently, carbs are yummy, but don't make miracles.
+Juan can call me 'mal cogida' too, hahaha!!  ;D
+
+Had bad news and was banned in another list.  Some people are not original,
+meh!  :P
+
+Giving Jake any kind of public support means being excluded, banned,
+rejected, dumped, etc, etc.  Always the same noisy drama, bah!  ;P
+
+I am still the same person, doing and saying exactly the same things, but
+apparently, I am less charming now.  Considering that, one week ago, I was
+considered 'the cutest person' in that group, my 'awesomeness' ended very
+fast, hahaha!!!  ;)
+
+--001a11430922ac20690538c25bde
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p>On Jul 29, 2016 5:29 AM, &quot;Spencer&quot; &lt;<a href=3D"mailto:spenc=
+erone@openmailbox.org">spencerone@openmailbox.org</a>&gt; wrote:<br>
+&gt;<br>
+&gt; Hi,<br>
+&gt;<br>
+&gt;&gt;<br>
+&gt;&gt; Cecilia Tanaka:<br>
+&gt;&gt; migraine, insomnia, and really bad mood<br>
+&gt;&gt;<br>
+&gt;<br>
+&gt; All them carbs!</p>
+<p>Already tried them.=C2=A0 Apparently, carbs are yummy, but don&#39;t mak=
+e miracles.=C2=A0 Juan can call me &#39;mal cogida&#39; too, hahaha!!=C2=A0=
+ ;D</p>
+<p>Had bad news and was banned in another list.=C2=A0 Some people are not o=
+riginal, meh!=C2=A0 :P</p>
+<p>Giving Jake any kind of public support means being excluded, banned, rej=
+ected, dumped, etc, etc.=C2=A0 Always the same noisy drama, bah!=C2=A0 ;P</=
+p>
+<p>I am still the same person, doing and saying exactly the same things, bu=
+t apparently, I am less charming now.=C2=A0 Considering that, one week ago,=
+ I was considered &#39;the cutest person&#39; in that group, my &#39;awesom=
+eness&#39; ended very fast, hahaha!!!=C2=A0 ;)</p>
+
+--001a11430922ac20690538c25bde--
+

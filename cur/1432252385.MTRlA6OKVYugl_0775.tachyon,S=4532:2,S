@@ -1,0 +1,102 @@
+From owner-cypherpunks@al-qaeda.net  Mon May 10 19:08:17 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.mit.edu (localhost [127.0.0.1])
+	by positron.mit.edu (8.12.11/8.12.11/Debian-3) with ESMTP id i4AN6LP8010962
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.mit.edu>; Mon, 10 May 2004 19:06:21 -0400
+Received: (from majordomo@localhost)
+	by positron.mit.edu (8.12.11/8.12.11/Debian-3) id i4AN6LEp010961
+	for cypherpunks-outgoing; Mon, 10 May 2004 19:06:21 -0400
+Date: Mon, 10 May 2004 18:59:40 -0400
+From: Adam Back <adam@cypherspace.org>
+To: Jason Holt <jason@lunkwill.org>
+Cc: cryptography@metzdowd.com, Cypherpunks <cypherpunks@minder.net>,
+        Adam Back <adam@cypherspace.org>
+Old-Subject: Re: more hiddencredentials comments (Re: Brands' private
+  credentials)
+Message-ID: <20040510225940.GA26810@bitchcake.off.net>
+References: <20040510215459.GA22670@bitchcake.off.net>
+  <Pine.LNX.4.44.0405102209081.17720-100000@potato.zayda.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <Pine.LNX.4.44.0405102209081.17720-100000@potato.zayda.com>
+User-Agent: Mutt/1.4.1i
+X-Hashcash: 0:040510:jason@lunkwill.org:95c9862ce6553f068843b0e4
+X-Hashcash: 0:040510:cryptography@metzdowd.com:8f8063bd2c08aa6715f2e862
+X-Hashcash: 0:040510:cypherpunks@minder.net:c49052dcd3ca9f26396e9ae5
+X-Hashcash: 0:040510:adam@cypherspace.org:859e12baba8cc0660b36c284
+Subject: Re: more hiddencredentials comments (Re: Brands' private
+  credentials)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2870
+Lines: 65
+
+Gap may be I'm misunderstanding something about the HC approach.  
+
+We have:
+
+ P = (P1 or P2) is encoded HC_E(R,p) = {HC_E(R,P1),HC_E(R,P2)}
+
+so one problem is marking, the server sends you different R values:
+
+	{HC_E(R,P1),HC_E(R',P2)}
+
+so you described one way to fix that by using symmetric crypto (where
+it is difficult to get a message to decrypt 2 different ways with
+different keys and get other than line noise out of the 2nd key).
+
+But next problem you mentioned, server could simply lie and send you
+
+	{HC_E(R,P1),R2}
+
+for random value R2 now if you reply he knows you have property P1.
+
+So I was suggesting that after you decrypt HC_E(R,P1) you encrypt it
+again to check if R2 == HC_E(R,P2) which you should be able to do if
+you know P2, you have R (because you just decrypted it), and if you
+tweak the crypto system so that there is no non-deterministic aspect
+such as OAEP, randomization factors etc.
+
+> > Unless it's signifcantly less efficient, I'd say use it all the time.
+> 
+> Well, I wouldn't complain. :) (Although pairings are quite slow, on
+> the order of hundreds of milliseconds.)  Hilarie Orman presented it
+> at an IETF meeting to what was reportedly a lukewarm response, and
+> they also raised the patent issue.  Dan Boneh is sensitive to the
+> issue of patented crypto, and was quite considerate when I asked
+> about it, but www.voltage.com still has the same vague statement in
+> their FAQ about how they're not going to be evil with the patent, so
+> it's still up in the air whether IBE will be useful in IETF
+> standards.
+
+If one were not explicitly interested in the IBE communication
+pattern, and to avoid the patents in IETF protocol problems, I would
+think one could do something without IBE.
+
+eg. you mentioned earlier the problem of issuing one cert per
+attribute permutation.  Instead how about you issue one cert per
+attribute to psuedonym plus attribute.  In the case where you are not
+due the attribute, you just don't learn the corresponding private key.
+
+One problem with this is you have to avoid the server learning the
+private key for the one you don't.
+
+Now it might be possible eg. with Elgamal / DH to make an efficient
+non-interactive ZKP that convinces you that the server chose the
+private key fairly (and so does not know any corresponding private
+key).  But another way to side-step the issue is to have the CA issue
+you two certs per attribute.  You choose the private key for one it
+chooses the private key for the other.  Data is encrypted with both
+keys.  In the case of you not being due the attribute the CA does not
+give you the private key it generated.
+
+You could probably use some of the key gen stuff from multi-party
+signatures (where multiple parties are involved and each holds a
+private key fragment), however they tend to be inefficient I think so
+above is probably simple and efficient enough.
+
+Adam
+

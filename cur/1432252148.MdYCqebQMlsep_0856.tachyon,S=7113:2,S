@@ -1,0 +1,103 @@
+From cypherpunks-bounces@cpunks.org  Mon Sep  2 06:14:37 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r82AEasS020503;
+	Mon, 2 Sep 2013 06:14:36 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r82AEVFE020499
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Mon, 2 Sep 2013 06:14:33 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 64416543E2C; Mon,  2 Sep 2013 12:14:31 +0200 (CEST)
+Date: Mon, 2 Sep 2013 12:14:31 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: Re: [Cryptography] NSA and cryptanalysis
+Message-ID: <20130902101431.GW29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 5374
+Lines: 65
+
+----- Forwarded message from Jerry Leichter <leichter@lrw.com> -----
+
+Date: Mon, 2 Sep 2013 00:06:21 -0400
+From: Jerry Leichter <leichter@lrw.com>
+To: "Perry E. Metzger" <perry@piermont.com>
+Cc: "cryptography@metzdowd.com List" <cryptography@metzdowd.com>
+Subject: Re: [Cryptography] NSA and cryptanalysis
+X-Mailer: Apple Mail (2.1283)
+
+On Sep 1, 2013, at 6:06 PM, Perry E. Metzger wrote:
+> We know what they spec for use by the rest of the US government in
+> Suite B.
+> 
+> http://www.nsa.gov/ia/programs/suiteb_cryptography/
+> 
+>  AES with 128-bit keys provides adequate protection for classified
+>  information up to the SECRET level. Similarly, ECDH and ECDSA using
+>  the 256-bit prime modulus elliptic curve as specified in FIPS PUB
+>  186-3 and SHA-256 provide adequate protection for classified
+>  information up to the SECRET level. Until the conclusion of the
+>  transition period defined in CNSSP-15, DH, DSA and RSA can be used
+>  with a 2048-bit modulus to protect classified information up to the
+>  SECRET level.
+> 
+>  AES with 256-bit keys, Elliptic Curve Public Key Cryptography using
+>  the 384-bit prime modulus elliptic curve as specified in FIPS PUB
+>  186-3 and SHA-384 are required to protect classified information at
+>  the TOP SECRET level. Since some products approved to protect
+>  classified information up to the TOP SECRET level will only contain
+>  algorithms with these parameters, algorithm interoperability between
+>  various products can only be guaranteed by having these parameters as
+>  options.
+> 
+> We clearly cannot be absolutely sure of what they actually use, but
+> we know what they procure commercially. If you feel this is all a big
+> disinformation campaign, please feel free to give evidence for that. I
+> certainly won't exclude the possibility, but I find it unlikely.
+I'll make just a couple of comments:
+
+- Given the huge amount of material classified these days, SECRET doesn't seem to be a very high level any more, whatever its official definition.  TOP SECRET still means a great deal though.  But the really important stuff is compartmented (SCI), and Suite B is not approved for it - it has to be protected by unpublished Suite A algorithms.
+
+- To let's look at what they want for TOP SECRET.  First off, RSA - accepted for a transition period for SECRET, and then only with 2048 bit moduli, which until the last year or so were almost unknown in commercial settings - is completely out for TOP SECRET.  So clearly they're faith in RSA is gone.  (Same for DH and DSA.)  It looks as if they are betting that factoring and discrete logs over the integers aren't as hard as people had thought.
+
+The whole business of AES-128 vs. AES-256 has been interesting from day one.  Too many recommendations for using it are just based on some silly idea that bigger numbers are better - 128 bits is already way beyond brute force attacks. The two use the same transforms and the same key schedule.  The only clear advantage AES-256 has is 4 extra rounds - any attack against the basic algorithm would almost certainly apply to both.  On the other hand, many possible cracks might require significantly heavier computation for AES-256, even if the same fundamental attack works.  One wonders....
+
+NSA also wants SHA-384 - which is interesting given recent concerns about attacks on SHA-1 (which so far don't seem to extend to SHA-384).
+
+I don't want to get into deep conspiracy and disinformation campaign theories.  My read of the situation is that at the time NSA gave its approval to this particular combination of ciphers, it believed they were secure.  They seem to be having some doubts about RSA, DSA, and DH, though that could be, or could be justified as, ECC being as strong with much smaller, more practical, key lengths.
+
+Now, imagine that NSA really did find a way in to AES.  If they were to suddenly withdraw approval for its use by the government, they would be revealing their abilities.  A classic conundrum:  How do you make use of the fruits of your cryptanalytic efforts without revealing that you've made progress?  England accepted bombing raids on major cities to keep their crack of Enigma secret.  So the continuation of such support tells us little.  What will be interesting to see is how long the support continues.  With work under way to replace SHA, a new version of the NSA recommendations will eventually have to be produced.  Will it, for example, begin a phase-out of AES-128 for SECRET communications in favor of requiring AES-256 there as well?  (Since there's no call so far to develop a cipher to replace AES, it would be difficult for NSA to recommend something else.)
+
+It's indeed "a wilderness of mirrors", and we can only guess.  But I'm very wary of using NSA's approval of a cipher as strong evidence, as the overall situation is complex and has so many tradeoffs.
+                                                        -- Jerry
+
+_______________________________________________
+The cryptography mailing list
+cryptography@metzdowd.com
+http://www.metzdowd.com/mailman/listinfo/cryptography
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

@@ -1,0 +1,175 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Mon Aug 12 19:56:04 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7CNu4o21264
+	for <rsw@opamp.org>; Mon, 12 Aug 2002 19:56:04 -0400
+Received: from lion.ninthwonder.com (lion.ninthwonder.com [151.199.66.147])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id TAA02357
+	for <rsw@mit.edu>; Mon, 12 Aug 2002 19:56:03 -0400 (EDT)
+Received: by lion.ninthwonder.com (Postfix, from userid 96)
+	id D0C1A30716; Mon, 12 Aug 2002 19:47:50 -0400 (EDT)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by lion.ninthwonder.com (Postfix) with ESMTP id C7B2830712
+	for <cryptography@wasabisystems.com>; Mon, 12 Aug 2002 19:47:48 -0400 (EDT)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 7B3CFD97CB; Mon, 12 Aug 2002 19:47:48 -0400 (EDT)
+Received: from mercury.ex.ac.uk (mercury.ex.ac.uk [144.173.6.26])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 596623070A
+	for <cryptography@wasabisystems.com>; Mon, 12 Aug 2002 16:08:01 -0400 (EDT)
+Received: from cronus ([144.173.6.20] helo=cronus.ex.ac.uk)
+	by mercury.ex.ac.uk with esmtp (Exim 3.33 #1)
+	id 17eLTr-0029Ve-00; Mon, 12 Aug 2002 21:07:59 +0100
+Date: Mon, 12 Aug 2002 21:07:59 +0100
+From: Adam Back <adam@cypherspace.org>
+To: Tim Dierks <tim@dierks.org>
+Cc: cypherpunks@lne.com, cryptography@wasabisystems.com,
+   Adam Back <adam@cypherspace.org>
+Subject: trade-offs of secure programming with Palladium (Re: Palladium: technical limits and implications)
+Message-ID: <20020812210759.A846822@exeter.ac.uk>
+References: <699bcf9a15f57cec8e85fb08c0c02652@aarg.net> <699bcf9a15f57cec8e85fb08c0c02652@aarg.net> <20020812193000.A844266@exeter.ac.uk> <5.1.0.14.2.20020812150745.03d70748@dierks.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <5.1.0.14.2.20020812150745.03d70748@dierks.org>; from tim@dierks.org on Mon, Aug 12, 2002 at 03:28:15PM -0400
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 6805
+Lines: 133
+
+I think you are making incorrect presumptions about how you would use
+Palladium hardware to implement a secure DRM system.  If used as you
+suggest it would indeed suffer the vulnerabilities you describe.
+
+The difference between an insecure DRM application such as you
+describe and a secure DRM application correctly using the hardware
+security features is somewhat analogous to the current difference
+between an application that relies on not being reverse engineered for
+it's security vs one that encrypts data with a key derived from a user
+password.
+
+In a Palladium DRM application done right everything which sees keys
+and plaintext content would reside inside Trusted Agent space, inside
+DRM enabled graphics cards which retrict access to video RAM, and
+later DRM enabled monitors with encrypted digital signal to the
+monitor, and DRM enabled soundcards, encrypted content to speakers.
+(The encrypted contentt to media related output peripherals is like
+HDCP, only done right with non-broken crypto).
+
+Now all that will be in application space that you can reverse
+engineer and hack on will be UI elements and application logic that
+drives the trusted agent, remote attesation, content delivery and
+hardware.  At no time will keys or content reside in space that you
+can virtualize or debug.
+
+
+In the short term it may be that some of these will be not fully
+implemented so that content does pass through OS or application space,
+or into non DRM video cards and non DRM monitors, but the above is the
+end-goal as I understand it.
+
+As you can see there is still the limit of the non-remote
+exploitability of the trusted agent code, but this is within the
+control of the DRM vendor.  If he does a good job of making a simple
+software architecture and avoiding potential for buffer overflows he
+stands a much better chance of having a secure DRM platofrm than if as
+you describe exploited OS code or rogue driver code can subvert his
+application.
+
+
+There is also I suppose possibility to push content decryption on to
+the DRM video card so the TOR does little apart from channel key
+exchange messages from the SCP to the video card, and channel remote
+attestation and key exchanges between the DRM license server and the
+SCP.  The rest would be streaming encrypted video formats such as CSS
+VOB blocks (only with good crypto) from the network or disk to the
+video card.
+
+
+Similar kinds of arguments about the correct break down between
+application logic and placement of security policy enforcing code in
+Trusted Agent space apply to general applications.  For example you
+could imagine a file sharing application which hid the data the users
+machine was serving from the user.  If you did it correctly, this
+would be secure to the extent of the hardware tamper resistance (and
+the implementers ability to keep the security policy enforcing code
+line-count down and audit it well).
+
+
+At some level there has to be a trade-off between what you put in
+trusted agent space and what becomes application code.  If you put the
+whole application in trusted agent space, while then all it's
+application logic is fully protected, the danger will be that you have
+added too much code to reasonably audit, so people will be able to
+gain access to that trusted agent via buffer overflow.
+
+
+So therein lies the crux of secure software design in the Palladium
+style secure application space: choosing a good break-down between
+security policy enforcement, and application code.  There must be a
+balance, and what makes sense and is appropriate depends on the
+application and the limits of the ingenuity of the protocol designer
+in coming up with clever designs that cover to hardware tamper
+resistant levels the the applications desired policy enforcement while
+providing a workably small and pracitcally auditable associated
+trusted agent module.
+
+
+So there are practical limits stemming from realities to do with code
+complexity being inversely proportional to auditability and security,
+but the extra ring -1, remote attestation, sealing and integrity
+metrics really do offer some security advantages over the current
+situation.
+
+Adam
+
+On Mon, Aug 12, 2002 at 03:28:15PM -0400, Tim Dierks wrote:
+> At 07:30 PM 8/12/2002 +0100, Adam Back wrote:
+> >(Tim Dierks: read the earlier posts about ring -1 to find the answer
+> >to your question about feasibility in the case of Palladium; in the
+> >case of TCPA your conclusions are right I think).
+> 
+> The addition of an additional security ring with a secured, protected 
+> memory space does not, in my opinion, change the fact that such a ring 
+> cannot accurately determine that a particular request is consistant with 
+> any definable security policy. I do not think it is technologically 
+> feasible for ring -1 to determine, upon receiving a request, that the 
+> request was generated by trusted software operating in accordance with the 
+> intent of whomever signed it.
+> 
+> Specifically, let's presume that a Palladium-enabled application is being 
+> used for DRM; a secure & trusted application is asking its secure key 
+> manager to decrypt a content encryption key so it can access properly 
+> licensed code. The OS is valid & signed and the application is valid & 
+> signed. How can ring -1 distinguish a valid request from one which has been 
+> forged by rogue code which used a bug in the OS or any other trusted entity 
+> (the application, drivers, etc.)?
+> 
+> I think it's reasonable to presume that desktop operating systems which are 
+> under the control of end-users cannot be protected against privilege 
+> escalation attacks. All it takes is one sound card with a bug in a 
+> particular version of the driver to allow any attacker to go out and buy 
+> that card & install that driver and use the combination to execute code or 
+> access data beyond his privileges.
+> 
+> In the presence of successful privilege escalation attacks, an attacker can 
+> get access to any information which can be exposed to any privilige level 
+> he can escalate to. The attacker may not be able to access raw keys & other 
+> information directly managed by the TOR or the key manager, but those keys 
+> aren't really interesting anyway: all the interesting content & 
+> transactions will live in regular applications at lower security levels.
+> 
+> The only way I can see to prevent this is for the OS to never transfer 
+> control to any software which isn't signed, trusted and intact. The problem 
+> with this is that it's economically infeasible: it implies the death of 
+> small developers and open source, and that's a higher price than the market 
+> is willing to bear.
+> 
+>   - Tim
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

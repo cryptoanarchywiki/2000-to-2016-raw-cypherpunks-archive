@@ -1,0 +1,89 @@
+From cypherpunks-bounces@cpunks.org  Fri Aug  9 15:04:03 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r79J3C8j007915;
+	Fri, 9 Aug 2013 15:03:19 -0400
+Received: from oak.forest.a5775.uk0.bigv.io (lupine.me.uk [213.138.100.8])
+ by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r79J380L007908
+ (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Fri, 9 Aug 2013 15:03:10 -0400
+Received: from
+ f.c.c.c.4.5.0.e.e.0.2.0.2.b.d.a.3.0.0.0.f.1.1.1.0.b.8.0.1.0.0.2.ip6.arpa
+ ([2001:8b0:111f:3:adb2:20e:e054:cccf])
+ by oak.forest.a5775.uk0.bigv.io with esmtpsa (SSL3.0:RSA_AES_256_CBC_SHA1:32)
+ (Exim 4.72) (envelope-from <nick@lupine.me.uk>) id 1V7rxq-0004Yb-Hl
+ for cypherpunks@cpunks.org; Fri, 09 Aug 2013 20:03:06 +0100
+Message-ID: <1376074986.13542.25.camel@den.lupine.me.uk>
+Subject: hide-eid update
+From: Nick Thomas <nick@lupine.me.uk>
+To: cypherpunks@cpunks.org
+Date: Fri, 09 Aug 2013 20:03:06 +0100
+In-Reply-To: <1375611645.22095.18.camel@nlwork.lan>
+References: <E1V5oVl-0003IQ-G1@oak.forest.a5775.uk0.bigv.io>
+ <51FE1792.5090808@yahoo.com> <1375611645.22095.18.camel@nlwork.lan>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.4.4-3 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+On Sun, 2013-08-04 at 11:20 +0100, Nick Thomas wrote:
+
+> It may be misguided, but avoiding I^2 / M:N sessions was a goal. As
+> numbers go, it's big enough to be uncomfortable (there's ~40K ASNs).
+
+Quick update - the code is now in a state where it can tunnel arbitrary
+IPv4 datagrams, and does path MTU discovery / fragmentation as suggested
+by RFC6830. Traceroute doesn't work yet, though. IPv6 is TODO; it should
+be trivial to add support for IPv6 EIDs. IPv6 RLOCs are a tiny bit
+harder.
+
+Crypto is - very slowly -  starting to look sane:
+
+ - 160-bit EC private keys per RLOC
+ - public keys -> registry (for now)
+ - ECDH for shared secret generation for any RLOC pair
+ - SHA256 the secret, use as secret key for symmetric cipher
+ - Fragment packet into packets, if needed
+ - Each packet gets 128-bit pseudo-random IV ( RAND_pseudo_bytes() )
+ - aes256gcm block cipher on first 512 bytes of each packet 
+ - On the wire:
+   [ IP header, proto 99 ] [ len(iv+ciphertext+tag) ]
+   [ iv ] [ ciphertext ] [ tag ] [ plaintext ]
+
+Obviously, the current code doesn't scale at all well, but this is
+in-principle parallelisable, and amenable to hardware cypto use as well.
+Unloaded, it adds <1ms to rtt. I'm hoping to be able to get it running
+at ~100Mbit/sec sometime in the next week or two. If I can get it to
+gigabit rates, I can start talking to small ISPs about running it,
+opt-in, with a straight face. 
+
+If you fancy experimenting with a hide-eid node, just poke me with a
+public key and a range + RLOC IP (or set up your own pair, of course).
+I'd quite like to see it spanning large sections of the real Internet
+successfully. I'd also love to know if you can get it to break any IP
+protocols; I've only really been playing with TCP and ICMP so far. 
+
+More broadly, I've still not been dissuaded against the notion that it
+plugs a gap in the current range of tools against widespread,
+generalised internet surveillance. The value of being a member of even a
+small anonymity set can't be understated, especially when getting into
+the set is more-or-less zero effort and zero cost. If anyone can
+convince me otherwise, well, at least I'd get my evenings (and mornings)
+back :)
+
+/Nick
+
+

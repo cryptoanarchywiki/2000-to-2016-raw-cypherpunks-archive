@@ -1,0 +1,203 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t4PBtJXF009422;
+	Mon, 25 May 2015 07:55:20 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="1024-bit key; unprotected key"
+	header.d=cs.helsinki.fi header.i=@cs.helsinki.fi header.b=jw6z6kRY;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from script.cs.helsinki.fi (script.cs.helsinki.fi [128.214.11.1])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t4PBtCXn009418
+ (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Mon, 25 May 2015 07:55:17 -0400
+X-DKIM: Courier DKIM Filter v0.50+pk-2015-04-12 mail.cs.helsinki.fi Mon,
+ 25 May 2015 14:55:04 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cs.helsinki.fi;
+ h=message-id:date:from:mime-version:to:subject:references
+ :in-reply-to:content-type; s=dkim20130528; bh=WIsftqykQWg24CHBCK
+ UHK5HoDF+yP4rTJopo9JeMPBw=; b=jw6z6kRY28K2NfP/U02WAplBsC0Dq8q80q
+ QW0U7kATjdQ1pQN5X282q2q5NCo5QcQI+61kKV9UyXziEOvQViZ/rG1Kp0L4zsPt
+ U8MoMtLQAUfhEBuwzSavcv2oaRuQDZMIMwJNHUo5+N2W6IOaBywDvfBiZIs9pYaZ
+ tFBFPFaXI=
+Received: from [192.168.10.63] (a91-156-176-8.elisa-laajakaista.fi
+ [91.156.176.8])
+ (AUTH: PLAIN oottela, TLS: TLSv1/SSLv3,128bits,AES128-SHA)
+ by mail.cs.helsinki.fi with ESMTPSA; Mon, 25 May 2015 14:55:04 +0300
+ id 00000000005A0999.0000000055630D98.00004BE0
+Message-ID: <55630D90.2010205@cs.helsinki.fi>
+Date: Mon, 25 May 2015 14:54:56 +0300
+From: Markus Ottela <oottela@cs.helsinki.fi>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64;
+ rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+MIME-Version: 1.0
+To: cypherpunks@cpunks.org
+Subject: Re: TFC 0.5.5 out
+References: <55621BE8.5050901@cs.helsinki.fi>
+ <CAHWD2rKYQushRzL33L2ftuxnuVdO+cUgWwakQQLaqrD5LMZrQA@mail.gmail.com>
+In-Reply-To: <CAHWD2rKYQushRzL33L2ftuxnuVdO+cUgWwakQQLaqrD5LMZrQA@mail.gmail.com>
+Content-Type: multipart/alternative;
+ boundary="------------090309030109030502020802"
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 150
+
+This is a multi-part message in MIME format.
+--------------090309030109030502020802
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+You don't lose one bit for each message. The idea is that the average 
+length of cycle for a good 512 bit hash function is 2^256. So after 
+2^256 messages, keys might start to repeat. 2^256 keys last for 10^73 
+messages, or 10^56 years with 1TB/s continuous transfer speed.
+
+This however doesn't mean the ciphertext will repeat. That would require 
+that all four encryption keys are the same (Probability for that is 1 / 
+(256^4)) and that all nonces are same as well (even less likely).
+
+You can't guarantee all messages make it through, and there is no return 
+channel from either RxM to sender's TxM to tell if some message has not 
+been received. If more entropy would be transferred inside messages, 
+drop of packets could lead to keys getting out of sync. But since the 
+keyspace of current implementation effectively never runs out, this is 
+not necessary.
+
+I think the local testing version comes very close to the "microservice" 
+model you described. The local testing version runs all three programs 
+on same computer and messages are transmitted unidirectionally via 
+files. But whatever you can exploit on the single system, can lead to 
+exfiltration of keys so the HW data-diode model is infinite times more 
+secure. Malware isn't going to break the laws of physics inside data 
+diodes (removing other covert channels from audio to heat between TCB 
+units is of course required).
+
+Pidgin is currently the ideal client, mainly because it was fairly easy 
+to implement (readily available code) and because it's bundled with 
+Tails. If the constant transmission feature of TFC is combined with 
+hidden service XMPP server, the amount of metadata should be about as 
+low as you can make it.
+
+On 25.05.2015 07:18, Lodewijk andré de la porte wrote:
+> Cool! I like the cipher-cascade :)
+>
+> Regarding the FS: if Keccak loses some entropy in it's hashing, the 
+> entropy in the key used would slowly degrade. Certainly Keccak doesn't 
+> preserve all entropy, but it probably doesn't leak it fast enough to 
+> matter. You could probably add some new entropy from the random 
+> generators. To prevent padding, you could replace, say, merely the 
+> last bit as Keccak doesn't (seem to) lose a bit of entropy per cycle. 
+> Could someone more knowledgeable comment on this issue? It's probably 
+> inconsequential so long as Keccak is what it seems, but it's much 
+> weaker-looking than the cipher-cascade.
+>
+> I'm also impressed by the idea of data diodes. At first I thought they 
+> were in software, and already thought "what an effective way to limit 
+> risk!". Write a "microservice" that fronts two other processes, with 
+> separated user accounts, and allows only data in or data out. Formally 
+> prove the fronting microservice (it's small enough) and any error in 
+> your own code becomes far less harmful (side channels are still there; 
+> cache- ,DOS, timing-attacks, etc). Doing it in hardware is even 
+> better. It's highly likely that it works, and that's *very cool*.
+>
+> My biggest question is, why as a plugin for Pidgin?
+
+
+--------------090309030109030502020802
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+<html>
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+  </head>
+  <body text="#000000" bgcolor="#FFFFFF">
+    You don't lose one bit for each message. The idea is that the
+    average length of cycle for a good 512 bit hash function is 2^256.
+    So after 2^256 messages, keys might start to repeat. 2^256 keys last
+    for 10^73 messages, or 10^56 years with 1TB/s continuous transfer
+    speed. <br>
+    <br>
+    This however doesn't mean the ciphertext will repeat. That would
+    require that all four encryption keys are the same (Probability for
+    that is 1 / (256^4)) and that all nonces are same as well (even less
+    likely).<br>
+    <br>
+    You can't guarantee all messages make it through, and there is no
+    return channel from either RxM to sender's TxM to tell if some
+    message has not been received. If more entropy would be transferred
+    inside messages, drop of packets could lead to keys getting out of
+    sync. But since the keyspace of current implementation effectively
+    never runs out, this is not necessary.<br>
+    <br>
+    I think the local testing version comes very close to the
+    "microservice" model you described. The local testing version runs
+    all three programs on same computer and messages are transmitted
+    unidirectionally via files. But whatever you can exploit on the
+    single system, can lead to exfiltration of keys so the HW data-diode
+    model is infinite times more secure. Malware isn't going to break
+    the laws of physics inside data diodes (removing other covert
+    channels from audio to heat between TCB units is of course
+    required).<br>
+    <br>
+    Pidgin is currently the ideal client, mainly because it was fairly
+    easy to implement (readily available code) and because it's bundled
+    with Tails. If the constant transmission feature of TFC is combined
+    with hidden service XMPP server, the amount of metadata should be
+    about as low as you can make it.<br>
+    <br>
+    <div class="moz-cite-prefix">On 25.05.2015 07:18, Lodewijk andré de
+      la porte wrote:<br>
+    </div>
+    <blockquote
+cite="mid:CAHWD2rKYQushRzL33L2ftuxnuVdO+cUgWwakQQLaqrD5LMZrQA@mail.gmail.com"
+      type="cite">
+      <div dir="ltr">
+        <div class="gmail_extra">Cool! I like the cipher-cascade :)</div>
+        <div class="gmail_extra"><br>
+        </div>
+        <div class="gmail_extra">Regarding the FS: if Keccak loses some
+          entropy in it's hashing, the entropy in the key used would
+          slowly degrade. Certainly Keccak doesn't preserve all entropy,
+          but it probably doesn't leak it fast enough to matter. You
+          could probably add some new entropy from the random
+          generators. To prevent padding, you could replace, say, merely
+          the last bit as Keccak doesn't (seem to) lose a bit of entropy
+          per cycle. Could someone more knowledgeable comment on this
+          issue? It's probably inconsequential so long as Keccak is what
+          it seems, but it's much weaker-looking than the
+          cipher-cascade.</div>
+        <div class="gmail_extra"><br>
+        </div>
+        <div class="gmail_extra">I'm also impressed by the idea of data
+          diodes. At first I thought they were in software, and already
+          thought "what an effective way to limit risk!". Write a
+          "microservice" that fronts two other processes, with separated
+          user accounts, and allows only data in or data out. Formally
+          prove the fronting microservice (it's small enough) and any
+          error in your own code becomes far less harmful (side channels
+          are still there; cache- ,DOS, timing-attacks, etc). Doing it
+          in hardware is even better. It's highly likely that it works,
+          and that's <b>very cool</b>.</div>
+        <div class="gmail_extra"><br>
+        </div>
+        <div class="gmail_extra">My biggest question is, why as a plugin
+          for Pidgin?</div>
+      </div>
+    </blockquote>
+        <br>
+  </body>
+</html>
+
+--------------090309030109030502020802--
+

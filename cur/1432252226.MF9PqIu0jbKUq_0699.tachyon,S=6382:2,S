@@ -1,0 +1,125 @@
+From owner-cypherpunks@al-qaeda.net  Wed Mar 28 13:23:13 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q2SHJiht007458
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 28 Mar 2012 13:19:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1332955184;
+	bh=0j6djZC++Jo8N/LMEXglww9RPCk6ogmz/Fv6CDJCOSA=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=FescB2Z0+ax9Py5MVl7cFYUGnUn+604VX00vzho3PrAXP+aPVPJxd1VdyaTO83wdT
+	 bLh1dok17qhPCg8dtIFoU3XlGRX6mxMaSQyc0MWBVrWRDOiTrJjZwoxsOgf0+fsLKx
+	 0MrP4i2K58bwt/6oET93MEhbspQy8hKB+XbEiitA=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q2SHJibT007457
+	for cypherpunks-outgoing; Wed, 28 Mar 2012 13:19:44 -0400
+Date: Wed, 28 Mar 2012 19:19:41 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: [tahoe-dev] erasure coding makes files more fragile, not
+  less
+Message-ID: <20120328171941.GE14482@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Shawn Willden <shawn@willden.org> -----
+
+From: Shawn Willden <shawn@willden.org>
+Date: Wed, 28 Mar 2012 09:00:56 -0400
+To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+Subject: Re: [tahoe-dev] erasure coding makes files more fragile, not less
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+Although your provocative statement tries so hard to be provocative it
+fails to be true, there's clearly a kernel of truth there -- and there's no
+argument at all that Tahoe needs better monitoring and more transparency.
+
+The arguments make are the basis for the approach I (successfully) pushed
+when we started the VG2 grid:  We demand high uptime from individual
+servers because the math of erasure coding works against you when the
+individual nodes are unreliable, and we ban co-located servers and prefer
+to minimize the number of servers owned and administered by a single person
+in order to ensure greater independence.
+
+How has that worked out?  Well, it's definitely constrained the growth rate
+of the grid.  We're two years in and still haven't reached 20 nodes.  And
+although our nodes have relatively high reliability, I'm not sure we've
+actually reached the 95% uptime target -- my node, for example, was down
+for over a month while I moved, and we recently had a couple of outages
+caused by security breaches.
+
+However, we do now have 15 solid, high-capacity, relatively available (90%,
+at least) nodes that are widely dispersed geographically (one in Russia,
+six in four countries in Europe, seven in six states in the US; not sure
+about the other).  So it's pretty good -- though we do need more nodes.
+
+I can see two things that would make it an order of magnitude better:
+ monitoring and dynamic adjustment of erasure-coding parameters.
+
+Monitoring is needed both to identify cases where file repairs need to be
+done before they become problematic and to provide the node reliability
+data required to dynamically determine erasure coding parameters.
+
+Dynamic calculation of erasure coding parameters is necessary both to
+improve transparency and to provide more reliability.  The simple 3-of-7
+(shares.total is meaningless; shares.happy is what matters) default
+parameters do not automatically provide high reliability, even if server
+failure is independent (and the direct relationship between individual
+server reliability and K/N is meaningless; it's more complicated than that).
+
+The only way erasure coding parameters can be appropriately selected is by
+doing some calculations based on knowledge of the size of the available
+storage nodes and their individual reliabilities.  Since these factors
+change over time, therefore, the only way to know what the parameters
+should be at the moment of upload is calculate them dynamically.
+ Specifically, N/H should be set to the number of storage nodes currently
+accepting shares and K should be computed to meet a user-specified per-file
+reliability probability over a user-specified timeframe (the repair
+interval).
+
+Not only would this approach make it easier for users to specify their
+reliability goals (at the expense of less-predictable expansion), it would
+also make Tahoe inherently more robust, particularly if it actually
+observed and measured individual node reliabilities over time, with
+conservative initial assumptions.  It would likely reduce failure-to-upload
+errors, because rather than just giving up when there aren't "enough"
+storage nodes available, it would just increase redundancy.  At the same
+time, it would be able to properly fail uploads when it is simply
+impossible to meet the desired reliability goals.
+
+It would also simplify repair and monitoring, at least from a conceptual
+perspective.  The goal of a "reliability monitor" would be to check to see
+if, under current estimates of reliability of the nodes holding a file's
+shares, if that file's estimated reliability meets the stated user
+requirement (assuming independence of node failures -- interdependence
+actually could also be easily factored into the calculations, but
+configuration would be a bear and it would require lots of ad-hoc estimates
+of hard-to-measure probabilities).  It wouldn't even be difficult to
+include path-based considerations in reliability estimates.
+
+The biggest downside of this approach, I think, would be that it would
+still be hard to understand how the specified reliability relates to the *
+actual* file reliability, because it would be neither an upper bound nor a
+lower bound but an estimate with unknown deviation.
+
+-- 
+Shawn
+
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+http://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

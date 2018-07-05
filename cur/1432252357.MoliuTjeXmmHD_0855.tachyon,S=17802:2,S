@@ -1,0 +1,397 @@
+From rswatjfet.org+caf_=rsw=jfet.org@gmail.com  Sun Nov  2 13:11:45 2014
+Return-Path: <rswatjfet.org+caf_=rsw=jfet.org@gmail.com>
+Received: from mail-pa0-f49.google.com (mail-pa0-f49.google.com [209.85.220.49])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id sA2IBhf7021501
+	(version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+	for <rsw@jfet.org>; Sun, 2 Nov 2014 13:11:45 -0500
+Received: by mail-pa0-f49.google.com with SMTP id lj1so10713453pab.22
+        for <rsw@jfet.org>; Sun, 02 Nov 2014 10:11:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20130820;
+        h=x-original-authentication-results:delivered-to:date:subject:to
+         :message-id:in-reply-to:references:mime-version:content-type:cc
+         :precedence:list-id:list-unsubscribe:list-archive:list-post
+         :list-help:list-subscribe:errors-to:sender:from;
+        bh=4CcCWwbYnwgc3JRts665AxCFRBeHYmrkS364/vgmh7g=;
+        b=ehYY8W7KI32eTnH08oC6jV+FpoyIykLbFon7k/0jSDFSjJSnk+90LNG42DdNnu2M0W
+         jcGGZq3PS4O3e8hGgdVh1AXp15iLnW+JVGDbZ80nmaktyirrxZONoqj6wrmrkH0FmGXn
+         g9MYrd1+dL3s230BlfKz8dCrTHt43zarwph2GWY8JWmkw9s1s2eQyV3Q3dm7oDtwpAYc
+         kmcToGRIi5b/QN5UAkIWTaTh820pLmV7MNxU4exx1S/QcDGss46K8ioUxRi0JFQ5/l5Z
+         pO9zioUVYmA8tOI95mLyD6WCSoNaWXUG2n6LmVVFYMEMZsC4ZG1MOR32bLrDlqQ2RXnu
+         Eiig==
+X-Original-Authentication-Results: mx.google.com;       spf=neutral (google.com: 209.141.47.85 is neither permitted nor denied by domain of rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net) smtp.mail=rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net
+X-Received: by 10.68.90.34 with SMTP id bt2mr38212631pbb.29.1414951882358;
+        Sun, 02 Nov 2014 10:11:22 -0800 (PST)
+X-Forwarded-To: rsw@jfet.org
+X-Forwarded-For: rswatjfet.org@gmail.com rsw@jfet.org
+Delivered-To: rswatjfet.org@gmail.com
+Received: by 10.70.135.1 with SMTP id po1csp174825pdb;
+        Sun, 2 Nov 2014 10:11:21 -0800 (PST)
+X-Received: by 10.68.164.101 with SMTP id yp5mr38665366pbb.66.1414951881252;
+        Sun, 02 Nov 2014 10:11:21 -0800 (PST)
+Received: from localhost (antiproton.jfet.org. [209.141.47.85])
+        by mx.google.com with ESMTPS id on8si13645814pbb.85.2014.11.02.10.11.20
+        for <rswATjfet.org@gmail.com>
+        (version=TLSv1.2 cipher=RC4-SHA bits=128/128);
+        Sun, 02 Nov 2014 10:11:20 -0800 (PST)
+Received-SPF: neutral (google.com: 209.141.47.85 is neither permitted nor denied by domain of rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net) client-ip=209.141.47.85;
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 209.141.47.85 is neither permitted nor denied by domain of rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net) smtp.mail=rsw+cypherpunks-bounces=cpunks.org@gloop.phonon.net
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id sA2IBDdA021479;
+	Sun, 2 Nov 2014 13:11:14 -0500
+Received: from smtp-tls.etu.univ-nantes.fr
+ (smtptlsetu1-cha.cpub.univ-nantes.fr [193.52.103.133])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id sA2IBAbK021475
+ for <cypherpunks@cpunks.org>; Sun, 2 Nov 2014 13:11:12 -0500
+Received: from localhost (localhost [127.0.0.1])
+ by smtp-tls.etu.univ-nantes.fr (Postfix) with ESMTP id 4B622400157;
+ Sun,  2 Nov 2014 19:10:49 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at smtptlsetu1-lmb.cpub.univ-nantes.fr
+Received: from smtp-tls.etu.univ-nantes.fr ([127.0.0.1])
+ by localhost (smtptlsetu1-cha.cpub.univ-nantes.fr [127.0.0.1]) (amavisd-new,
+ port 10024)
+ with LMTP id lSnzuNf6Smna; Sun,  2 Nov 2014 19:10:49 +0100 (CET)
+Received: from [192.168.1.3] (77-173-104-232.ip.telfort.nl [77.173.104.232])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+ (No client certificate requested)
+ by smtp-tls.etu.univ-nantes.fr (Postfix) with ESMTPSA id C21514000A4;
+ Sun,  2 Nov 2014 19:10:48 +0100 (CET)
+Date: Sun, 02 Nov 2014 19:10:46 +0100
+Subject: Re: [tor-talk] Facebook brute forcing hidden services
+To: rysiek <rysiek@hackerspace.pl>
+Message-Id: <1414951846.30181.0@smtp.etu.univ-nantes.fr>
+In-Reply-To: <3182275.bF9ghnmCAF@lapuntu>
+References: <mailman.1.1414857601.9165.cypherpunks@cpunks.org>
+ <7D1CD80D-6C98-4796-BB2B-EF4903AD3FDA@gmail.com>
+ <1414927164.16756.1@smtp.etu.univ-nantes.fr> <3182275.bF9ghnmCAF@lapuntu>
+X-Mailer: geary/0.8.1
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="=-pXUs8jlF3gB6jd+ZylH/"
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+From: edhelas <edhelas@movim.eu>
+X-Gspam-Loop: antiproton.jfet.org
+Status: O
+Content-Length: 12518
+Lines: 306
+
+--=-pXUs8jlF3gB6jd+ZylH/
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+
+On dim., nov. 2, 2014 at 2:37 , rysiek <rysiek@hackerspace.pl> wrote:
+> Hi,
+>=20
+> okay, fuck that, I'm going to dive in, because the level of FUD is=20
+> strong in
+> this one.
+
+Well, thanks :)
+
+>=20
+>=20
+> Dnia niedziela, 2 listopada 2014 12:19:24 edhelas pisze:
+>>  I can resume this fragmentation issue by a simple sentence that I'm
+>>  saying more and more these days : "If you have a problem, do not=20
+>> write
+>>  an API, write a protocol".
+>=20
+> Sure:
+> https://xkcd.com/927/
+>=20
+> I don't understand why we need over9000 different, incompatible=20
+> federated
+> social web protocols. It would seem to me we need *ONE* with several=20
+> *GOOD*
+> implementations.
+>=20
+>>  The social federation protocol is already here : it's XMPP. And yes=20
+>> it
+>>  can support everything a social network has to offer (feeds,
+>>  subscriptions, profiles, contact list=E2=80=A6). There is already=20
+>> millions of
+>>  users on the XMPP network, and you can easily find several clients=20
+>> on
+>>  all the plateforms for it.
+>>=20
+>>  I'm working since 2008 on the Movim project (https://movim.eu/), to
+>>  build a full, good looking, "decentralized" (federated) and open=20
+>> source
+>>  social network on XMPP. And believe me, yes it's possible.
+>=20
+> I won't discuss that. I will however point out that "possible" is not=20
+> enough.
+
+It's possible to push it forward and try to not reinvent the wheel=20
+again and again by creating a new protocol.
+
+>=20
+>=20
+>>  I like the link that the guy made in the presentation with Firefox.=20
+>> Why
+>>  Firefox surpassed IE ? Because they just choose to implement the W3C
+>>  standards and try to improve it (and they offer some nice features=20
+>> too).
+>=20
+> Absolutely.
+>=20
+>>  Diaspora, GNU Social, Friendica are not trying to do that, they=20
+>> create
+>>  their own "proprietary" protocol
+>=20
+> Oh, wow. Do you even understand the words that you use? I mean,=20
+> "proprietary"?
+> It's documented, the code is open, the protocol has at least two FLOSS
+> implementations. Seriously, what were you trying to achieve here?
+
+Ok, the term "proprietary" was a little strong. Of course the=20
+sourcecode of theses projects is open. But can you give me any serious=20
+documentations (more than a Wiki or some ML links) that can help me to=20
+implement properly the Diaspora/Friendica/GNU Social protocols like=20
+RFC, IETF stuffs ?
+
+A protocol have to be stable in the time, most of theses project just=20
+create their own protocol from their need. The Diaspora protocol was=20
+re-written already one time (which totally broke the Friendica=20
+compatibility at this time), the guys from Status.net moved to=20
+Pump.io=E2=80=A6
+
+>=20
+>=20
+>>  to talk between each other and after that face the same issues than=20
+>> all the
+>>  others network : "Hey, we are not compatibles ! Lets create an API=20
+>> and the
+>>  other networks will be compatible with us".
+>=20
+> No. They created a protocol that other networks implement. For example
+> Friendica implements GNU Social's protocol, Diaspora's protocol and=20
+> their own
+> (documented, opensourced) protocol. Red similarily.
+
+No, they wrote their own protocol for their own project, and someone=20
+just try to implement it to try to be compatible. But it's a one way=20
+work, the guys from Diaspora will not adapt their protocol to help the=20
+guys from Friendica/GNU Social/whatever.
+
+>=20
+>=20
+> Reading a bit on it would be a good idea.
+>=20
+>>  So keep calm and implement XMPP ;)
+>=20
+> No. Come to The Federation assembly at #31C3, get involved in a more
+> meaningful way than calling open protocols "proprietary" just because=20
+> you
+> don't know them, and try working with quite a few projects that=20
+> already
+> cooperate and federate with common *protocols* (not APIs).
+>=20
+> The question is not "which protocol is better", because while we=20
+> bikeshed on
+> this question, people are still sitting on Failbroke and Shitter,=20
+> instead of
+> moving out of these walled gardens.
+>=20
+> The question is: "how can we *cooperate* to get people on the libre,=20
+> federated
+> side of social networks". 1.5 year ago I submitted to all the=20
+> fedsocnet devs a
+> simple question, here's the link again:
+> http://lists.w3.org/Archives/Public/public-fedsocweb/2013May/0058.html
+>=20
+> The answer was: "impossiburu, we won't, not invented here, my=20
+> protocol is
+> better than yours". So instead of trying to herd those cats, I am=20
+> grabbing the
+> opportunity arising from the fact that we already have The=20
+> Federation. Let's
+> expand it and build upon it, eh?
+
+What is your plan with The Federation ? To build a project to help all=20
+theses project to talk each others and find a way to "standardize" the=20
+communications between them to be compatible with eachothers ?
+
+Then you will define some basic schema of authentication/packet format=20
+(JSON/HTML/XML=E2=80=A6)/global architecture=E2=80=A6
+In the end it will looks like this : https://xkcd.com/927/
+
+If your aim is to ask theses project to have a public API to share=20
+stuffs between their different servers, well good luck.
+
+>=20
+> Shouting "XMPP! XMPP!" is not helping.
+
+No, but I prefer to contribute and improve a 15 years old protocol,=20
+with millions of users and hundred of implementations, managed by a=20
+strong Fundation that works with the IETF than on a 4 yo protocol=20
+implented by ~2 project where all the documentation you can find on it=20
+is here=20
+https://wiki.diasporafoundation.org/Federation_protocol_overview.
+
+>=20
+>=20
+> --
+> Pozdr
+> rysiek
+=
+
+--=-pXUs8jlF3gB6jd+ZylH/
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+On dim., nov. 2, 2014 at 2:37 , rysiek &lt;rysiek@hackerspace.pl&gt; wrote:=
+<br>
+<blockquote type=3D"cite"><div class=3D"plaintext" style=3D"white-space: pr=
+e-wrap;">Hi,
+
+okay, fuck that, I'm going to dive in, because the level of FUD is strong i=
+n=20
+this one.</div></blockquote><div><br></div><div>Well, thanks :)</div><br><b=
+lockquote type=3D"cite"><div class=3D"plaintext" style=3D"white-space: pre-=
+wrap;">
+
+Dnia niedziela, 2 listopada 2014 12:19:24 edhelas pisze:
+<blockquote> I can resume this fragmentation issue by a simple sentence tha=
+t I'm
+ saying more and more these days : "If you have a problem, do not write
+ an API, write a protocol".
+</blockquote>
+Sure:
+<a href=3D"https://xkcd.com/927/">https://xkcd.com/927/</a>
+
+I don't understand why we need over9000 different, incompatible federated=20
+social web protocols. It would seem to me we need *ONE* with several *GOOD*=
+=20
+implementations.
+
+<blockquote> The social federation protocol is already here : it's XMPP. An=
+d yes it
+ can support everything a social network has to offer (feeds,
+ subscriptions, profiles, contact list=E2=80=A6). There is already millions=
+ of
+ users on the XMPP network, and you can easily find several clients on
+ all the plateforms for it.
+=20
+ I'm working since 2008 on the Movim project (<a href=3D"https://movim.eu/"=
+>https://movim.eu/</a>), to
+ build a full, good looking, "decentralized" (federated) and open source
+ social network on XMPP. And believe me, yes it's possible.
+</blockquote>
+I won't discuss that. I will however point out that "possible" is not enoug=
+h.</div></blockquote><div><br></div><div>It's possible to push it forward a=
+nd try to not reinvent the wheel again and again by creating a new protocol=
+.&nbsp;</div><br><blockquote type=3D"cite"><div class=3D"plaintext" style=
+=3D"white-space: pre-wrap;">
+
+<blockquote> I like the link that the guy made in the presentation with Fir=
+efox. Why
+ Firefox surpassed IE ? Because they just choose to implement the W3C
+ standards and try to improve it (and they offer some nice features too).
+</blockquote>
+Absolutely.
+
+<blockquote> Diaspora, GNU Social, Friendica are not trying to do that, the=
+y create
+ their own "proprietary" protocol
+</blockquote>
+Oh, wow. Do you even understand the words that you use? I mean, "proprietar=
+y"?=20
+It's documented, the code is open, the protocol has at least two FLOSS=20
+implementations. Seriously, what were you trying to achieve here?</div></bl=
+ockquote><div><br></div><div>Ok, the term "proprietary" was a little strong=
+. Of course the sourcecode of theses projects is open. But can you give me =
+any serious documentations (more than a Wiki or some ML links) that can hel=
+p me to implement properly the Diaspora/Friendica/GNU Social protocols like=
+ RFC, IETF stuffs ?</div><div><br></div><div>A protocol have to be stable i=
+n the time, most of theses project just create their own protocol from thei=
+r need. The Diaspora protocol was re-written already one time (which totall=
+y broke the Friendica compatibility at this time), the guys from Status.net=
+ moved to Pump.io=E2=80=A6</div><br><blockquote type=3D"cite"><div class=3D=
+"plaintext" style=3D"white-space: pre-wrap;">
+
+<blockquote> to talk between each other and after that face the same issues=
+ than all the
+ others network : "Hey, we are not compatibles ! Lets create an API and the
+ other networks will be compatible with us".
+</blockquote>
+No. They created a protocol that other networks implement. For example=20
+Friendica implements GNU Social's protocol, Diaspora's protocol and their o=
+wn=20
+(documented, opensourced) protocol. Red similarily.</div></blockquote><div>=
+<br></div>No, they wrote their own protocol for their own project, and some=
+one just try to implement it to try to be compatible. But it's a one way wo=
+rk, the guys from Diaspora will not adapt their protocol to help the guys f=
+rom Friendica/GNU Social/whatever.<div><br><blockquote type=3D"cite"><div c=
+lass=3D"plaintext" style=3D"white-space: pre-wrap;">
+
+Reading a bit on it would be a good idea.
+
+<blockquote> So keep calm and implement XMPP ;)
+</blockquote>
+No. Come to The Federation assembly at #31C3, get involved in a more=20
+meaningful way than calling open protocols "proprietary" just because you=20
+don't know them, and try working with quite a few projects that already=20
+cooperate and federate with common *protocols* (not APIs).
+
+The question is not "which protocol is better", because while we bikeshed o=
+n=20
+this question, people are still sitting on Failbroke and Shitter, instead o=
+f=20
+moving out of these walled gardens.
+
+The question is: "how can we *cooperate* to get people on the libre, federa=
+ted=20
+side of social networks". 1.5 year ago I submitted to all the fedsocnet dev=
+s a=20
+simple question, here's the link again:
+<a href=3D"http://lists.w3.org/Archives/Public/public-fedsocweb/2013May/005=
+8.html">http://lists.w3.org/Archives/Public/public-fedsocweb/2013May/0058.h=
+tml</a>
+
+The answer was: "impossiburu, we won't, not invented here, my protocol is=20
+better than yours". So instead of trying to herd those cats, I am grabbing =
+the=20
+opportunity arising from the fact that we already have The Federation. Let'=
+s=20
+expand it and build upon it, eh?
+</div></blockquote><div><br></div><div>What is your plan with The Federatio=
+n ? To build a project to help all theses project to talk each others and f=
+ind a way to "standardize" the communications between them to be compatible=
+ with eachothers ?&nbsp;</div><div><br></div><div>Then you will define some=
+ basic schema of authentication/packet format (JSON/HTML/XML=E2=80=A6)/glob=
+al architecture=E2=80=A6&nbsp;</div><div>In the end it will looks like this=
+ : <a href=3D"https://xkcd.com/927/">https://xkcd.com/927/</a></div><div><b=
+r></div><div>If your aim is to ask theses project to have a public API to s=
+hare stuffs between their different servers, well good luck.</div><br><bloc=
+kquote type=3D"cite"><div class=3D"plaintext" style=3D"white-space: pre-wra=
+p;">
+Shouting "XMPP! XMPP!" is not helping.</div></blockquote><div><br></div><di=
+v>No, but I prefer to contribute and improve a 15 years old protocol, with =
+millions of users and hundred of implementations, managed by a strong Funda=
+tion that works with the IETF than on a 4 yo protocol implented by ~2 proje=
+ct where all the documentation you can find on it is here&nbsp;<a href=3D"h=
+ttps://wiki.diasporafoundation.org/Federation_protocol_overview">https://wi=
+ki.diasporafoundation.org/Federation_protocol_overview</a>.</div><br><block=
+quote type=3D"cite"><div class=3D"plaintext" style=3D"white-space: pre-wrap=
+;">
+
+<div>--=20
+</div>Pozdr
+rysiek</div></blockquote></div>=
+
+--=-pXUs8jlF3gB6jd+ZylH/--
+

@@ -1,0 +1,145 @@
+From owner-cypherpunks@Algebra.COM  Sun Jan 14 22:27:03 2001
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.72.0.53])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id WAA10949
+	for <kwantam@positron.mit.edu>; Sun, 14 Jan 2001 22:27:03 -0500
+Received: from ak47.algebra.com (root@ak47.algebra.com [208.233.99.160])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id WAA05612
+	for <rsw@mit.edu>; Sun, 14 Jan 2001 22:27:02 -0500 (EST)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f0F3NIj18096
+	for cypherpunks-outgoing; Sun, 14 Jan 2001 21:23:18 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from einstein.ssz.com (cpunks@einstein.ssz.com [204.96.2.99])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f0F3NHm18082
+	for <cypherpunks@algebra.com>; Sun, 14 Jan 2001 21:23:17 -0600
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id VAA06033
+	for cypherpunks@algebra.com; Sun, 14 Jan 2001 21:30:16 -0600
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id VAA06024
+	for cypherpunks-outgoing; Sun, 14 Jan 2001 21:30:09 -0600
+Received: from remailer.privacy.at (remailer.privacy.at [193.81.245.43])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id VAA06020
+	for <cypherpunks@einstein.ssz.com>; Sun, 14 Jan 2001 21:30:05 -0600
+Received: (from mixmaster@localhost)
+	by remailer.privacy.at (8.8.8/8.8.8) id EAA08226;
+	Mon, 15 Jan 2001 04:23:02 +0100
+Date: Mon, 15 Jan 2001 04:23:02 +0100
+From: Anonymous <nobody@remailer.privacy.at>
+Comments: This message did not originate from the Sender address above.
+	It was remailed automatically by anonymizing remailer software.
+	Please report problems or inappropriate use to the
+	remailer administrator at <abuse@remailer.privacy.at>.
+To: cypherpunks@einstein.ssz.com
+Old-Subject: CDR: Patches to make PGP 6.58 compile (and work) under Redhat 6.2
+Message-ID: <9b3fbe02996593cb4075fb1eeb7ff322@remailer.privacy.at>
+Reply-To: cypherpunks@einstein.ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Language: English, Russian, German
+Subject:  Patches to make PGP 6.58 compile (and work) under Redhat 6.2
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 3848
+Lines: 94
+
+
+---------- Forwarded message ----------
+Date: 12 Jan 2001 21:46:51 GMT
+From: Ian Goldberg <iang@cs.berkeley.edu>
+Newsgroups: alt.security.pgp
+Subject: Patches to make PGP 6.58 compile (and work) under Redhat 6.2
+
+So I've spent quite a while tracking down why the source code for PGP 6.58
+under Linux (Redhat 6.2):
+
+a) doesn't compile, and
+b) when I get it to compile, produces encrypted messages that the
+   standard binary can't read
+
+Len Sassaman and I finally got it working yesterday.  Here's a patch
+to make PGP 6.58 both compile *and work* under Redhat 6.2:
+
+diff -urN pgpsrc/libs/pgpcdk/priv/crypto/cipher/pgpCAST5.c pgpsrc-fixed/libs/pgpcdk/priv/crypto/cipher/pgpCAST5.c
+--- pgpsrc/libs/pgpcdk/priv/crypto/cipher/pgpCAST5.c	Mon Oct 13 21:48:14 1997
++++ pgpsrc-fixed/libs/pgpcdk/priv/crypto/cipher/pgpCAST5.c	Thu Jan 11 20:36:06 2001
+@@ -275,6 +275,7 @@
+ /* Some macros used in the encryption/decryption code */
+ #define ROL(x,r) ((x)<<(r) | (x)>>(32-(r)))
+ 
++#ifdef USE_BROKEN_GCC_ASM
+ #ifdef __GNUC__
+ #if __i386__
+ /* Redefine using GCC inline assembler */
+@@ -284,6 +285,7 @@
+ 	__asm__("rol %%cl,%0" : "=g" (_y) : "0" (x), "c" (r)); _y;})
+ #endif /* __i386__ */
+ #endif /* __GNUC__ */
++#endif
+ 
+ #define F1(x,xkey,i) (ROL((xkey)[2*(i)] + (x), (xkey)[2*(i)+1]))
+ #define F2(x,xkey,i) (ROL((xkey)[2*(i)] ^ (x), (xkey)[2*(i)+1]))
+diff -urN pgpsrc/libs/pgpcdk/priv/crypto/random/pgpRandomPool.c pgpsrc-fixed/libs/pgpcdk/priv/crypto/random/pgpRandomPool.c
+--- pgpsrc/libs/pgpcdk/priv/crypto/random/pgpRandomPool.c	Fri Aug  6 16:56:49 1999
++++ pgpsrc-fixed/libs/pgpcdk/priv/crypto/random/pgpRandomPool.c	Thu Jan 11 20:36:47 2001
+@@ -424,7 +424,7 @@
+  * #define UMULH_32(r,a,b) (r) = 0
+  */
+ #ifndef UMULH_32
+-#if defined(__GNUC__) && defined(__i386__)
++#if defined(__GNUC__) && defined(__i386__) && defined(USE_BROKEN_GCC_ASM)
+ /* Inline asm goodies */
+ #define UMULH_32(r,a,b) __asm__("mull %2" : "=d"(r) : "%a"(a), "mr"(b) : "ax")
+ #elif HAVE64
+diff -urN pgpsrc/libs/pgpcdk/unix/ui/PGPKeyServerDialogs.cpp pgpsrc-fixed/libs/pgpcdk/unix/ui/PGPKeyServerDialogs.cpp
+--- pgpsrc/libs/pgpcdk/unix/ui/PGPKeyServerDialogs.cpp	Tue Mar  9 21:52:17 1999
++++ pgpsrc-fixed/libs/pgpcdk/unix/ui/PGPKeyServerDialogs.cpp	Thu Jan 11 20:43:33 2001
+@@ -5,6 +5,7 @@
+ 	$Id: PGPKeyServerDialogs.cpp,v 1.2 1999/03/10 02:52:17 heller Exp $
+ ____________________________________________________________________________*/
+ #include <string.h>
++#include <stdlib.h>
+ 
+ #include "pgpDialogs.h"
+ #include "pgpKeyServerDialogCommon.h"
+
+
+
+And, as a bonus feature, here's a patch to fix a bug which prevented my
+PGP scripts from working under 6.x.  The bug is this: even when +compat
+and -force are given, PGP will ask you "are you sure you want to use this
+key?" where 2.6 didn't.  This breaks scripts, of course.  Here's the
+simple fix:
+
+
+diff -urN pgpsrc-fixed/clients/pgp/cmdline/doencode.c pgpsrc-ian1/clients/pgp/cmdline/doencode.c
+--- pgpsrc-fixed/clients/pgp/cmdline/doencode.c	Thu Sep 30 20:10:21 1999
++++ pgpsrc-ian1/clients/pgp/cmdline/doencode.c	Thu Jan 11 20:50:20 2001
+@@ -283,6 +283,7 @@
+     PGPBoolean batchmode = pgpenvGetInt( env, PGPENV_BATCHMODE, &pri, &err );
+     PGPBoolean verbose = pgpenvGetInt( env, PGPENV_VERBOSE, &pri, &err );
+     PGPBoolean quietmode = pgpenvGetInt( env, PGPENV_NOOUT, &pri, &err);
++    PGPBoolean force = pgpenvGetInt( env, PGPENV_FORCE, &pri, &err);
+     PGPKeySetRef tmpset;
+ 
+     err = PGPNewEmptyKeySet( toSet, &tmpset );
+@@ -317,7 +318,7 @@
+         if(verbose)
+             pgpShowKeyValidity( filebPtr, key );
+ 
+-        if( validity < kPGPValidity_Marginal ) {
++        if( validity < kPGPValidity_Marginal && !force) {
+             char useridstr[ kPGPMaxUserIDSize ];
+             PGPBoolean answer;
+             err = pgpGetUserIDStringFromKey( key, useridstr );
+
+
+Now all my scripts work again!  Yay!
+
+   - Ian
+

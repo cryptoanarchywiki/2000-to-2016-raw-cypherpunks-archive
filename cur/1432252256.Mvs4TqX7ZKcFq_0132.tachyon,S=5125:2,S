@@ -1,0 +1,120 @@
+From owner-cypherpunks@al-qaeda.net  Wed Jan 16 07:46:06 2013
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id r0GChP5X022060
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 16 Jan 2013 07:43:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1358340205;
+	bh=rwCxCTuf1kQjvDxQ2ZIkU24CX4hk4e/3RR6+fkQE2eQ=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=prMUzrtFXQIX0LYv+Q9t+X1f9UEscA2VnT9DIkEHEB4Ud70h1kGtCX5XThiodN8qP
+	 qHPahv5e21Dz7OtP6lPYtBU1z8eVqSBvipdtSNJEcfL6jFpW4sGn2Rg5h35g2FhYUr
+	 VhuLB3Q/HGXwLXWENVy58Ki5LA6XlspYfpGrcrFM=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id r0GChPvB022059
+	for cypherpunks-outgoing; Wed, 16 Jan 2013 07:43:25 -0500
+Date: Wed, 16 Jan 2013 13:43:22 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org,
+        Liberation
+  Technologies <liberationtech@mailman.stanford.edu>
+Subject: Removing watermarks from pdfs
+Message-ID: <20130116124322.GK6172@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3676
+Lines: 86
+
+----- Forwarded message from Bryan Bishop <kanzure@gmail.com> -----
+
+From: Bryan Bishop <kanzure@gmail.com>
+Date: Tue, 15 Jan 2013 18:34:33 -0600
+To: science-liberation-front@googlegroups.com,
+	Bryan Bishop <kanzure@gmail.com>
+Subject: Removing watermarks from pdfs
+Reply-To: science-liberation-front@googlegroups.com
+
+How about getting rid of those pesky watermarks in pdfs?
+
+As far as I can tell, there are only visible watermarks. Invisible
+watermarks can be detected by comparing the same pdf retrieved through
+two different gateways (like from two different libraries). I have
+checked Nature Publishing Group and Elsevier (specifically
+ScienceDirect) and found no checksum differences.
+
+But there are some culprits out there that do some nasty things to documents:
+
+* lines of text added to the document containing an ip address,
+timestamp, university name, etc. (IEEE Xplore)
+
+* entire pages added to documents with tracking information (Wiley? I
+can't remember exactly.)
+
+* possibly some might be using CVE-2010-0188 to phone home to
+publishers. PDF supports javascript and flash and other terrible
+things, so it would be interesting to check if any publishers have
+attempted to use these vulnerabilities to their advantage.
+
+* there might be "hidden" information inside a pdf that changes when
+you download a document, but so far no evidence of this has been found
+(so I don't believe it's likely, but it's worth keeping in mind).
+
+I think it would be useful to work on some ways to remove watermarks
+from pdfs. I am aware of largely two types of pdfs that publishers
+distribute. One is the feared "collection of images", which may or may
+not have extra images slapped on with ip address information. The
+second is a pdf with actual selectable text. The first type, with just
+images everywhere, can be de-watermarked by just drawing images over
+the offensive text. The second type requires some other creative
+thinking, maybe just a collection of regular expressions.
+
+For instance, here's a line that IEEE Xplore once added to a paper
+that I was reading:
+
+"Authorized licensed use limited to: University of Getting Schooled.
+Downloaded on July 39, 2009 at 15:10 from IEEE Xplore. Restrictions
+apply."
+
+In fact, you can see this line appearing in other (4,000) papers that
+other people have been reading:
+
+http://scholar.google.com/scholar?q=%22Authorized+licensed+use+limited+to%22
+
+Here's another example. AAAS/Science is of particular interest. They
+attach an entire front page and add text in the margins everywhere:
+
+"Downloaded from www.sciencemag.org on November 30, 1912"
+
+So I think a good first step would be to collect examples of text
+added to documents that need be detected by any eraser we write. In
+fact, maybe all identifying information for an article should be
+removed, and just replace it with an easy-to-copy-down text code (like
+"blue-apple-oranges" to refer to a specific document in an index).
+
+Does anyone else have some samples to share of nasty watermarks worth
+removing? Also, any favorite ways to manipulate pdfs?
+
+- Bryan
+http://heybryan.org/
+1 512 203 0507
+
+-- 
+You received this message because you are subscribed to the Google Groups "science-liberation-front" group.
+To unsubscribe from this group, send email to science-liberation-front+unsubscribe@googlegroups.com.
+For more options, visit https://groups.google.com/groups/opt_out.
+
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

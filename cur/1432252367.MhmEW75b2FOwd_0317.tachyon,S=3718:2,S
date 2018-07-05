@@ -1,0 +1,85 @@
+From owner-cypherpunks@al-qaeda.net  Mon Dec  6 02:12:24 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (majordomo@localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.1/8.13.1/Debian-18) with ESMTP id iB68BVbw003403
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Mon, 6 Dec 2004 02:11:31 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.1/8.13.1/Submit) id iB68BV7V003402
+	for cypherpunks-outgoing; Mon, 6 Dec 2004 02:11:31 -0600
+Date: Mon, 6 Dec 2004 09:10:11 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Tor 0.0.9rc6 is out (fwd from arma@mit.edu)
+Message-ID: <20041206081011.GH9221@leitl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.4i
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+X-Keywords:                  
+X-UID: 14719
+Status: O
+Content-Length: 2568
+Lines: 56
+
+----- Forwarded message from Roger Dingledine <arma@mit.edu> -----
+
+From: Roger Dingledine <arma@mit.edu>
+Date: Mon, 6 Dec 2004 02:00:23 -0500
+To: or-dev@freehaven.net
+Subject: Tor 0.0.9rc6 is out
+User-Agent: Mutt/1.2.5.1i
+Reply-To: or-dev@freehaven.net
+
+This release improves reliability for clients. It's not perfect yet,
+but I think it's better. Let me know if it breaks something.
+
+tarball:   http://tor.freehaven.net/dist/tor-0.0.9rc6.tar.gz
+signature: http://tor.freehaven.net/dist/tor-0.0.9rc6.tar.gz.asc
+win32 exe: http://tor.freehaven.net/dist/tor-0.0.9rc6-win32.exe
+win32 sig: http://tor.freehaven.net/dist/tor-0.0.9rc6-win32.exe.asc
+(use -dPr tor-0_0_9rc6 if you want to check out from cvs)
+
+  o Bugfixes on 0.0.9pre:
+    - Clean up some more integer underflow opportunities (not exploitable
+      we think).
+    - While hibernating, hup should not regrow our listeners.
+    - Send an end to the streams we close when we hibernate, rather
+      than just chopping them off.
+    - React to eof immediately on non-open edge connections.
+
+  o Bugfixes on 0.0.8.1:
+    - Calculate timeout for waiting for a connected cell from the time
+      we sent the begin cell, not from the time the stream started. If
+      it took a long time to establish the circuit, we would time out
+      right after sending the begin cell.
+    - Fix router_compare_addr_to_addr_policy: it was not treating a port
+      of * as always matching, so we were picking reject *:* nodes as
+      exit nodes too. Oops.
+
+  o Features:
+    - New circuit building strategy: keep a list of ports that we've
+      used in the past 6 hours, and always try to have 2 circuits open
+      or on the way that will handle each such port. Seed us with port
+      80 so web users won't complain that Tor is "slow to start up".
+    - Make kill -USR1 dump more useful stats about circuits.
+    - When warning about retrying or giving up, print the address, so
+      the user knows which one it's talking about.
+    - If you haven't used a clean circuit in an hour, throw it away,
+      just to be on the safe side. (This means after 6 hours a totally
+      unused Tor client will have no circuits open.)
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a>
+______________________________________________________________
+ICBM: 48.07078, 11.61144            http://www.leitl.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+http://moleculardevices.org         http://nanomachines.net
+
+[demime 1.01d removed an attachment of type application/pgp-signature]
+

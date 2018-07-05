@@ -1,0 +1,119 @@
+From owner-cypherpunks-outgoing@ssz.com  Thu Sep  7 00:54:23 2000
+Received: from MIT.EDU (SOUTH-STATION-ANNEX.MIT.EDU [18.72.1.2])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id AAA04390
+	for <kwantam@positron.mit.edu>; Thu, 7 Sep 2000 00:54:23 -0400
+Received: from einstein.ssz.com by MIT.EDU with SMTP
+	id AA22609; Thu, 7 Sep 00 00:53:49 EDT
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id AAA04434
+	for cypherpunks-outgoing; Thu, 7 Sep 2000 00:04:01 -0500
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id AAA04425
+	for cypherpunks@ssz.com; Thu, 7 Sep 2000 00:03:59 -0500
+Received: from sirius.infonex.com (sirius.infonex.com [216.34.245.2])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id AAA04404
+	for <cpunks@EINSTEIN.ssz.com>; Thu, 7 Sep 2000 00:03:55 -0500
+Received: (from cpunks@localhost) by sirius.infonex.com (8.8.8/8.8.8) id VAA28083; Wed, 6 Sep 2000 21:46:49 -0700 (PDT)
+Received: from cyberpass.net (cyberpass.net [216.34.245.3]) by sirius.infonex.com (8.8.8/8.8.8) with ESMTP id VAA28077 for <cpunks@sirius.infonex.com>; Wed, 6 Sep 2000 21:46:43 -0700 (PDT)
+Received: from toad.com (toad.com [140.174.2.1]) by cyberpass.net (8.8.8/8.7.3) with ESMTP id VAA19097 for <cypherpunks@cyberpass.net>; Wed, 6 Sep 2000 21:48:43 -0700 (PDT)
+Received: (from majordom@localhost) by toad.com (8.7.5/8.7.3) id VAA02560 for cypherpunks-unedited-outgoing; Wed, 6 Sep 2000 21:42:23 -0700 (PDT)
+Received: from ns1.venon.com (postfix@ns1.venon.com [64.7.7.83]) by toad.com (8.7.5/8.7.3) with ESMTP id VAA02555 for <cypherpunks@toad.com>; Wed, 6 Sep 2000 21:42:21 -0700 (PDT)
+Received: from megalomaniac.biosys.net (megalomaniac.venon.com [64.7.7.82])
+	by ns1.venon.com (Postfix) with ESMTP id 22DA9D142E
+	for <cypherpunks@toad.com>; Thu,  7 Sep 2000 00:44:34 -0400 (EDT)
+Message-Id: <4.3.2.7.2.20000907002505.00b2fbf8@mail.megapathdsl.net>
+X-Sender: alle@mail.megapathdsl.net
+X-Mailer: QUALCOMM Windows Eudora Version 4.3.2
+Date: Thu, 07 Sep 2000 00:45:04 -0400
+To: cypherpunks@toad.com
+From: Asymmetric <all@biosys.net>
+Subject: CDR: StoN, Diffie-Hellman, other junk..
+Mime-Version: 1.0
+Content-Type: text/plain
+Sender: owner-cypherpunks@ssz.com
+Precedence: bulk
+Reply-To: cypherpunks@ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Language: English, Russian, German
+Status: O
+Content-Length: 3795
+Lines: 75
+
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+First, I gotta say.. only been back on the list a day or two and the Signal 
+to Noise seems to have gotten nearly out of hand.. I don't know what 
+cypherpunks has to do with trying to listen in on cordless phone calls, or 
+how to give someone drugs.. but anyway.. something on topic.. :)
+
+I wrote a UDP based encrypted chat program a while back.. it worked well, 
+but I saw the following drawbacks..
+
+1) It used secret keys that had to be shared beforehand through a prior 
+secure channel.
+2) Being UDP based, I was forced to operate the ciphers in ECB instead of 
+CBC mode, just in case any of the packets got lost.
+
+To make the application more robust, I have started rewriting it to use TCP 
+instead.  It is still a peer-peer network, requiring no dedicated servers.. 
+while this increases overhead somewhat, I think it's worth it to keep the 
+system from relying on one particular server, or a group of them.  You 
+simply add the IP of the people you want to receive your messages to your 
+list.  If someone adds you, when you receive a message from them, it adds 
+them to your list automatically.  Downside is currently that everyone must 
+maintain an active TCP connection to everyone else.. but it's not meant to 
+be a replacement for IRC or anything like that, just a secure way to chat 
+and transfer other data such as files or voice.
+
+I have also decided to get rid of the key sharing mechanism, and instead 
+utilize D/H to generate a KEK, then transfer a 4096bit data block from the 
+initiating client to the serving client (I'll refer to them as C/S where 
+their role is appropriate, but keep in mind there is no real "server".. 
+much like gnutella or similar systems, every client is a server, and every 
+server a client.) to serve as a master key.  The first N bits are used 
+depending on which cipher is negotiated/selected, up to the max supported 
+by my implementation of each cipher.
+
+Now, my main question about D/H is quite simple.. what is considered a 
+"good" size for the prime and primitive used, in bits?  Obviously something 
+somewhat large, but how large is large enough?  64bits?  Less or more?  I 
+can't find much information on this anywhere, and my copy of Applied 
+Cryptography (2nd ed.) while covering D/H in detail, doesn't even mention this.
+
+An aside is that I'm writing the application in Delphi 5, and the maximum 
+native supported integer sizes are 32bit unsigned, and 64bit signed.. I've 
+been writing a math library of my own in assembler that at compile time 
+will allow you to specify the maximum bitsize you want it to support, but 
+this is proving to be a mind-numbing task.. ;)  If anyone is familiar with 
+Delphi and has any libraries like this already, I'd much appreciate hearing 
+about them.. or even some a web resource or paper Real Book (tm) resource 
+that explains in abstract terms how to go about something like this would 
+be appreciated.
+
+I had more to write.. but I'm exhausted.. fun crypting to everyone.. ;)
+
+
+- -------signature file-------
+
+"'There comes a time when the operation of the machine
+becomes so odious, makes you so sick at heart, that you
+can't take part; you can't even passively take part, and
+you've got to put your bodies upon the gears and upon the
+wheels, upon the levers, upon all the apparatus, and you've
+got to make it stop. And you've got to indicate to the people
+who run it, to the people who own it, that unless you're free,
+the machine will be prevented from working at all!"
+- -Mario Savio-  Founder of the Free Speech Movement.
+
+-----BEGIN PGP SIGNATURE-----
+Version: PGPfreeware 6.5.8 for non-commercial use <http://www.pgp.com>
+
+iQA/AwUBObcdUGvp1znMxX/XEQJ5RgCg0Z373RKrBi7fdVYgpUkulwmWcgUAoOia
+FifEVZ1Wp7PPH/XwBMeMCsID
+=kn5M
+-----END PGP SIGNATURE-----
+

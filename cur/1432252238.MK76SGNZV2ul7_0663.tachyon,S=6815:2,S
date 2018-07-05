@@ -1,0 +1,162 @@
+From owner-cypherpunks@al-qaeda.net  Thu Sep 24 14:48:26 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id n8OIlx77028735
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 24 Sep 2009 14:47:59 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id n8OIlxET028734
+	for cypherpunks-outgoing; Thu, 24 Sep 2009 14:47:59 -0400
+Date: Thu, 24 Sep 2009 20:47:56 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: Random chaff [was: more work for Grobbages]
+Message-ID: <20090924184756.GI27331@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Paul Syverson <syverson@itd.nrl.navy.mil> -----
+
+From: Paul Syverson <syverson@itd.nrl.navy.mil>
+Date: Thu, 24 Sep 2009 12:56:35 -0400
+To: or-talk@freehaven.net
+Subject: Re: Random chaff [was: more work for Grobbages]
+User-Agent: Mutt/1.5.17 (2007-11-01)
+Reply-To: or-talk@freehaven.net
+
+On Wed, Sep 23, 2009 at 11:12:07AM -0700, Jon McLachlan wrote:
+> *sigh*
+>
+> See below :)
+
+I did, but I don't get the sigh.
+
+>
+>
+> On Sep 23, 2009, at 8:29 AM, Paul Syverson wrote:
+>
+>> On Wed, Sep 23, 2009 at 11:11:29AM -0400, Praedor Atrebates wrote:
+>>> It would appear that the tor network should include some timing
+>>> randomization and reordering of packets to thwart such analysis.
+>>> Not so much to really slow things down but enough to throw up
+>>> uncertainty in the packet analyses.
+>>
+>>
+>> You're trying to turn it into a mix network.
+>
+> That's something that exists in "that box" over there, not "Tor's box" ;)
+
+I was trying to succinctly say that this is a component of a different
+system architecture with different assumptions. In the second
+generation onion routing system we developed, i.e., the one before
+Tor, we actually included mixing for experimental purposes.  The
+lessons so far has been that it isn't worth it and we did not bother
+to put that in Tor. That could change, but so far there are no
+positive indications from the research.
+
+>
+>> The order uncertainty
+>> doesn't matter at this level of latency.
+>
+> AKA, as little of latency as possible... which is still quite a bit 
+> actually, thank you bittorrent :(
+>
+>> The Bauer et al. research I
+>> mentioned showed how to do timing attacks based just on setting
+>> up the circuit. You don't even need to send any data.
+>
+> *shrugs*
+>
+> If all clients in the network created Tor circuits of the same length, all 
+> at the same time, wouldn't that mangle that analysis of who's telescoping 
+> circuit-extension request is who's?  I know that's not what cover traffic 
+> does... but if Tor has some sort of "heart beat" that would make it more 
+> difficult to distinguish between which circuit-extension request is 
+> who's... that's only feasible because all clients have a stake in circuits, 
+> not the same for external-to-to requests, like webpages etc etc...
+>
+
+Yes of course. You say that like it's trivial (to design, implement, etc.)
+rather than huge.
+
+Plus, keeping the existing network nodes synched even just to the point that
+things don't actually break has not been 100 percent successful, and
+this would imply much tighter synchronization not just across the
+nodes but across all the clients as well. And the synchronization is
+not just to keep things running but now becomes security-critical.  Wah!
+
+More importantly, it is trivial to beat this with an active attack.
+Just delay circuit setup packets slightly and watch for the pattern
+at the other end. Or if the circuit is established, stomp some bits
+at one end and see if the other end has junk come out shortly thereafter.
+
+I'm not saying it's forever hopeless. The things I've mentioned and
+more have been considered and people have design and evaluated
+countermeasures to them and continue to do so. As Nick said, the
+problem isn't that padding doesn't work. It's that it doesn't work
+nearly well enough (at least so far).
+
+>>
+>> Whatever solution (if one even exists) is out there, most of
+>> the straightforward ideas and many of the not so straightforward
+>> ideas have already been extensively researched.
+>
+> But not necessarily tested in the wild... Even the Bauer et al. 
+> demonstrates those ideas in a fake Tor network, yes, on recommendation from 
+> Tor not to do the experiment in Tor, but still.  And on PL, the VM 
+> environment is particularly prone to latency, so of course timing analysis 
+> attacks will stick out like a sore thumb...
+
+Ermm. The stuff that Lasse and I did _was_ on the deployed Tor
+network. Now that is not today's network. The network then was
+much smaller, it didn't have guard nodes, etc. 
+
+Testing in the wild in general is very tricky because Tor _is_ an
+operational network, and you don't want to do anything that would
+inadvertently create problems. This is also an ongoing research
+challenge. We would like to understand and improve performance by
+gathering data but without doing anything to increase risk to users or
+operators. Karsten and others have been working on that.
+
+>
+> so there might actually be something to deploying that exp on the real 
+> network...
+>
+
+Yes. There might be. But you would first have to justify the overhead
+cost to the network by giving at least some reasonable argument that
+it might work reasonably well, at least better than anything that's
+been considered to date.  "Hey we don't know this won't work unless we
+try," is not an adequate justification. Vetting ideas through the
+research community seems like a reasonable first step. You would also
+have to adequately analyze the impact on client and relay performance
+and security before deploying. Again, nobody's discouraging research
+into these questions. They just want answers before deploying. So far
+none of the research has been giving encouraging answers.
+
+
+>> Cf.
+>
+> what does that mean?  :)
+>
+
+Sorry. I thought that was standard. It means 'Cf.' means _confer_, i.e.,
+see here.  Woops, "i.e." stands for  'id est' which means _that is_.
+
+HTH,
+Paul
+***********************************************************************
+To unsubscribe, send an e-mail to majordomo@torproject.org with
+unsubscribe or-talk    in the body. http://archives.seul.org/or/talk/
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

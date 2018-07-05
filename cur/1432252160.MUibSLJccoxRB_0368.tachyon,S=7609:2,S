@@ -1,0 +1,153 @@
+From owner-cypherpunks@Algebra.COM  Wed Aug  8 21:29:12 2001
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id VAA18131
+	for <kwantam@positron.mit.edu>; Wed, 8 Aug 2001 21:29:12 -0400
+Received: from ak47.algebra.com (root@ak47.algebra.com [208.233.99.160])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id VAA01897
+	for <rsw@mit.edu>; Wed, 8 Aug 2001 21:20:55 -0400 (EDT)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f790of125342
+	for cypherpunks-outgoing; Wed, 8 Aug 2001 19:50:41 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from einstein.ssz.com (cpunks@einstein.ssz.com [204.96.2.99])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f790od425322
+	for <cypherpunks@algebra.com>; Wed, 8 Aug 2001 19:50:39 -0500
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id UAA20956
+	for cypherpunks@algebra.com; Wed, 8 Aug 2001 20:00:11 -0500
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id TAA20923
+	for cypherpunks-outgoing; Wed, 8 Aug 2001 19:57:20 -0500
+Received: from cpimssmtpu05.email.msn.com (cpimssmtpu05.email.msn.com [207.46.181.81])
+	by einstein.ssz.com (8.8.8/8.8.8) with ESMTP id TAA20919
+	for <cypherpunks@ssz.com>; Wed, 8 Aug 2001 19:57:18 -0500
+Received: from josephas ([199.182.192.223]) by cpimssmtpu05.email.msn.com with Microsoft SMTPSVC(5.0.2195.3779);
+	 Wed, 8 Aug 2001 17:46:29 -0700
+Message-ID: <023101c1205b$fa788640$dfc0b6c7@josephas>
+From: "Joseph Ashwood" <ashwood@msn.com>
+To: <cypherpunks@einstein.ssz.com>
+References: <44eccadca7fa386b679154e037f14959@paranoici.org>
+Old-Subject: CDR: Re: Re: Remailer Phases
+Date: Wed, 8 Aug 2001 17:46:04 -0500
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+X-MSMail-Priority: Normal
+X-Mailer: Microsoft Outlook Express 5.50.4133.2400
+X-MimeOLE: Produced By Microsoft MimeOLE V5.50.4133.2400
+X-OriginalArrivalTime: 09 Aug 2001 00:46:30.0396 (UTC) FILETIME=[BAB363C0:01C1206C]
+Reply-To: cypherpunks@EINSTEIN.ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Acceptable-Languages: English, Russian, German, French, Spanish
+Subject:  Re: Re: Remailer Phases
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 4927
+Lines: 95
+
+
+----- Original Message -----
+From: "Anonymous" <nobody@paranoici.org>
+To: <cypherpunks@lne.com>
+Sent: Wednesday, August 08, 2001 4:48 PM
+Subject: CDR: Re: Remailer Phases
+
+
+> An Unknown Party wrote:
+> > On Wed, 8 Aug 2001, Anonymous wrote:
+> > > We need a good mixmaster net.
+> > >
+> > > working remailer:
+> > >   1. Average latency less than 5 min
+> >
+> > Bad. See the papers done on threats of traffic analysis/spam attacks
+> > against remailers.
+>
+> "Average latency" exists.  What do you think it should be?
+>
+> a) 5 minutes
+> b) 5 hours
+> c) 5 days
+> d) 5 months
+> e) longer
+>
+> I like a).
+
+
+As has been pointed out it's not latency but latency/messages that matters.
+If there are 2 messages a day going through the system then 5 minutes is
+simply not enough, it will be completely traceable. OTOH if there are
+5000/sec going through the system then 5 minutes is arguably overkill. I
+think that with the current relatively low level of usage 24 hours is the
+minimum average latency that should be used. Of course this is across the
+entire Mixmaster net where messages could be dispersed enter at any location
+and leave at any location. Based on this I believe that each node should
+maintain a list l of known other nodes. It should of course select a delay
+time at random say up to t time. Assuming that the server will choose a new
+exit point at perfect random from itself (where it will exit immediately on
+timer expiration) and l this gives an equation for t in hours f(t) =
+necessaryDelay; f(t) = t + ((|l|-1)/|l|)f(t), by finding the solution for t
+you will find the necessary average t. I don't have the time to solve this
+right now but given a list l of magnitude 100 the value of t will be
+significantly greater than 5 minutes.
+
+So the remaining question is what value to use for necessary delay? This is
+also dependent on the number of known nodes. All nodes must be equally
+likely for the transfer for obvious reasons. Based on this I believe that
+necessaryDelay needs to be greater than the time needed to receive |l|
+messages. The reason for this is fairly simple, at the extreme we have only
+one possible message going through the system at once, this is obviously
+bad, an observer simply watches the output of the system, and what comes out
+is what they are looking for. with at least |l| messages going through a
+node and |l| necessary delay time (note that as the magnitude of l increases
+the entire system slows, this could be bad, I'm sure I'm missing something
+that will dominate on scaling) each message can be mistaken for other
+messages. Since it is expectable that the usage of remailers will increase
+at least as fast as the size of l the latency will likely decrease over
+time.
+
+If there is sufficient demand it is entirely reasonable to reduce from |l|
+to a value of at least 2, but I don't believe this is reasonable at 100 or
+even 1000 remailers. If the amount of remailer usage increases to the point
+where > 20% of email traffic goes through remailers it may become feasible
+to lower this limit, but probably unnecessary because this scaling would
+result in lowered delays as a matter of recomputation.
+
+What is surprising is that this can be automatically calculated in a rather
+interesting way. If each still maintains l it is entirely possible for a
+remailer to create a message pool of size |l| and when a new message arrives
+if the pool is full randomly select 1 entry to be flushed towards it's
+destination _prior_ to the insertion of the new message, with an autoflush
+happening every sqrt(|l|) hours (perhaps by insertion of null message). This
+would cause a ripple effect each time a message was sent which could be seen
+as a problem by the uninitiated because there would be a decided pattern of
+travel with each message entering the system causing activity along a random
+walk. To an amateur this would appear to be a flaw in the system, except
+that the message being sent by the ith node is not the message sent by the
+i-1th node, so the risk is non-existent, and since the average path length
+is going to be k=2((|l|-1)/|l|), and the random walk is going to choose from
+|l|^k paths, which we can approximate by |l|^2 this offers a sufficient
+growth rate to block tracing. If this growth rate is unacceptable we can
+also add a minimumHops value to the protocol increasing the number of paths
+to |l|^minimumHops + |l|^2, minimumHops should be chosen to be a suitable
+number, based on current assumptions I would recommend minimumHops =
+logbase|l|(2^128), making the |l|^2 only a footnote as the total would be
+greater than 2^128 giving an enormous difficulty in even selecting a
+duplicate path.
+
+Mitigating factors are present however, because each message can only exist
+in one of |l| locations, so the maximum difficulty in guessing is still
+bounded in that fashion, leaving the reasonable values for minimumHops at
+around 10 for a 100 node network.
+                        Joe
+

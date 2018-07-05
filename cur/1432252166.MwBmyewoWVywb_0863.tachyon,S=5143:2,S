@@ -1,0 +1,141 @@
+From cypherpunks-bounces@cpunks.org  Thu Feb 27 20:04:59 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id s1S14qBt007366;
+	Thu, 27 Feb 2014 20:04:52 -0500
+Received: from mail-oa0-f46.google.com (mail-oa0-f46.google.com
+ [209.85.219.46])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4.1) with ESMTP id s1S14jCu007362
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Thu, 27 Feb 2014 20:04:46 -0500
+Received: by mail-oa0-f46.google.com with SMTP id i7so1853451oag.19
+ for <cypherpunks@cpunks.org>; Thu, 27 Feb 2014 17:04:40 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:date
+ :message-id:subject:from:to:content-type;
+ bh=FeVYQlRTfqV2oYq2/FQ34Sj/81+uOrO6ceb3rhkzGMA=;
+ b=f35eFJrI8PPH6paNuOi9VSrc8JaQ4oBbzT7dwWW/g6YpHD9Vzu1Pm3slFncgeEjBpr
+ QK/audNddXk3+8fhC+AGVKSgDNz2MTzKa7Gc4HElIWk06MuvlT1Vo4+GBfH7JwOObKdg
+ 7m9ZUjs9aMqrajQaeXGo+a85PcR9EXRvfUDdIX8LnkgxOdAOZjZq7hxZ2sYkujHuSyja
+ slMyf6ReqDeUyZ0IDkvDPLTwcQPZvIfrrfwNJ72z9j9q1/M9AoF22KJrSnZ5g//epf6R
+ K6EG7xh4J2hZZFNzDW6sC1/k5JmHyhZwZdeuir3IYeaHvFGTauHp96X0FhQnqvtP1zjU
+ DVrA==
+X-Gm-Message-State: ALoCoQmWJwEHocQoxh+Si0vOCOeZM027BTJkkHR06upwKdafdHwh/KvCgqyaLshvyDjSLaSf+UGn
+MIME-Version: 1.0
+X-Received: by 10.182.166.40 with SMTP id zd8mr10750479obb.25.1393549480419;
+ Thu, 27 Feb 2014 17:04:40 -0800 (PST)
+Received: by 10.76.128.197 with HTTP; Thu, 27 Feb 2014 17:04:40 -0800 (PST)
+X-Originating-IP: [195.32.92.139]
+In-Reply-To: <92e6e17e1f1db50b11c13c4a4ca9c25c@remailer.privacy.at>
+References: <92e6e17e1f1db50b11c13c4a4ca9c25c@remailer.privacy.at>
+Date: Fri, 28 Feb 2014 01:04:40 +0000
+Message-ID: <CAEk7eQQ5Atx1k=D2vvSkEuBbKRyeE-t_fm-i_6eM2sf=QWHT7Q@mail.gmail.com>
+Subject: Re: Red Pike cipher
+From: Alfonso De Gregorio <adg@crypto.lo.gy>
+To: "cypherpunks@cpunks.org" <cypherpunks@cpunks.org>
+Content-Type: text/plain; charset=ISO-8859-1
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.16
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 2358
+Lines: 86
+
+Le limited information available on the Red Pike cipher are quite
+consistent with the code below: an ARX block cipher, no look-up
+tables, virtually no key schedule, and requiring only few lines of
+code [1].
+
+With a 64 bit key size the Alleged Red Pike (ARP) is insecure by
+modern standards. But it was possibly insecure also in the 1990s.
+
+ARP suffers from a large number of semi-weak keys. Actually, each key
+is a semi-weak key. A pair of ARP keys (K1, K2) is said to be
+semi-weak if E_K1(E_K2(M)) = M (i.e., encryption with K1 operates as
+does decryption with K2). With ARP Feistel structure and its key
+schedule,there are 2^63 such pairs, reducing the size of the key space
+to 2^63.
+
+The relationship between each semi-weak pairs is:
+
+  K2_L = K1_R - 2^32/phi * 17
+  K2_R = K1_L + 2^32/phi * 17
+
+where phi is the golden ratio.
+
+Being semi-weak keys a large fraction of the ARP key space,
+implementations cannot apply the standard countermeasures against this
+undesirable property. Picking a semi-weak key is inevitable.
+
+
+The question remains: Is the Alleged Red Pike the cipher designed by the GCHQ?
+
+
+[1] Anderson, Ross; Kuhn, Markus,  "Low Cost Attacks on Tamper
+Resistant Devices", in M. Lomas et al. (ed.), Security Protocols, 5th
+International Workshop, Paris, France, April 7{9, 1997, Proceedings,
+Springer LNCS 1361, pp 125-136, ISBN 3-540-64040-1,
+http://www.cl.cam.ac.uk/~rja14/Papers/tamper2.pdf
+
+
+On Thu, Feb 27, 2014 at 1:08 PM, Anonymous Remailer (austria)
+<mixmaster@remailer.privacy.at> wrote:
+>
+> /* Red Pike cipher source code */
+>
+> #include <stdint.h>
+>
+> typedef uint32_t word;
+>
+> #define CONST 0x9E3779B9
+> #define ROUNDS 16
+>
+> #define ROTL(X, R) (((X) << ((R) & 31)) | ((X) >> (32 - ((R) & 31))))
+> #define ROTR(X, R) (((X) >> ((R) & 31)) | ((X) << (32 - ((R) & 31))))
+>
+> void encrypt(word * x, const word * k)
+> {
+>   unsigned int i;
+>   word rk0 = k[0];
+>   word rk1 = k[1];
+>
+>   for (i = 0; i < ROUNDS; i++)
+>   {
+>     rk0 += CONST;
+>     rk1 -= CONST;
+>
+>     x[0] ^= rk0;
+>     x[0] += x[1];
+>     x[0] = ROTL(x[0], x[1]);
+>
+>     x[1] = ROTR(x[1], x[0]);
+>     x[1] -= x[0];
+>     x[1] ^= rk1;
+>   }
+>
+>   rk0 = x[0]; x[0] = x[1]; x[1] = rk0;
+> }
+>
+> void decrypt(word * x, const word * k)
+> {
+>   word dk[2] =
+>   {
+>     k[1] - CONST * (ROUNDS + 1),
+>     k[0] + CONST * (ROUNDS + 1)
+>   };
+>
+>   encrypt(x, dk);
+> }
+>
+

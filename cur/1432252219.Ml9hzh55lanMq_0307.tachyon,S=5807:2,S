@@ -1,0 +1,144 @@
+From owner-cypherpunks@lne.com  Mon Sep 22 03:43:47 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p3/8.11.6-03-31-03) with ESMTP id h8M7hiC09829
+	for <rsw@jfet.org>; Mon, 22 Sep 2003 03:43:45 -0400
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id h8M7U1hD023355
+	for cypherpunks-goingout345; Mon, 22 Sep 2003 00:30:01 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+X-Originating-IP: [64.175.37.120]
+X-Originating-Email: [ashwood@msn.com]
+Message-ID: <005701c380da$ae8407a0$6601a8c0@JOSEPHAS>
+From: "Joseph Ashwood" <ashwood@msn.com>
+To: <cypherpunks@einstein.ssz.com>
+References: <BAY7-F30kfkyjlKqwWi0000c290@hotmail.com>
+Subject: Re: Encrypted search?
+Date: Mon, 22 Sep 2003 00:20:19 -0700
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook Express 6.00.2800.1158
+X-OriginalArrivalTime: 22 Sep 2003 07:25:24.0271 (UTC)
+  FILETIME=[B02163F0:01C380DA]
+X-Unsubscription-Info: http://ssz.com/cdr
+X-Anonymous-Submissions: cpunks_anon@ssz.com
+Approved: LISTMEMBER CPUNK
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 4475
+Lines: 110
+
+----- Original Message ----- 
+From: "Tyler Durden" <camera_lumina@hotmail.com>
+To: <cypherpunks@minder.net>
+Sent: Sunday, September 21, 2003 3:45 PM
+Subject: Encrypted search?
+
+
+> Got a crypto question here.
+>
+> Let's say I push out a list I'd like to keep secret to some client
+machine.
+> The user of that machine must enter some ID or other piece of information.
+I
+> want the client machine to perform a search of that ID vs the contents of
+a
+> list (again, resident locally on that machine), but I don't want the user
+to
+> be able to see the other entries of that list.
+>
+> Possible? Remember, after the initial push of data out to the client
+> machine, no more messages are exchanged. This means the list must be sent
+in
+> encrypted form.
+
+Actually sending the list in encrypted form will create holes, the key is to
+not send the list, but to send the information that allows a member to see
+that they are on the list.
+
+>
+> When the search is performed, the "stupid" thing to do (I think...someone
+> correct me) is to take the user's ID, encrypt it, and then determine if
+> matches an encypted member of the list (and I don't see encrypted each
+entry
+> individually as a desirable thing). I am assuming that this allows a savvy
+> user to reverse-engineer the encryption.
+
+Correct that won't work. A smarter idea would be to use the user ID and
+password to key encryption of a quantity (see Unix password system which is
+very similar, but lacked the presence of the user ID).
+
+> Another option is one I don't have the background at this stage to
+> understand. Let's assume the entire list has been encrypted in one shot.
+Is
+> there some function such that when this encrypted list is convolved with
+the
+> user ID a "Yes" or "no" can be obtained (indicating presence or absence
+from
+> the list)?
+
+I believe the answer is no, at least not without leaking large quantities of
+information. It is possible I am wrong, but there are simpler, more straight
+forward solutions.
+
+>
+
+Based on my interpretation of the problem there are a number of solutions.
+One fairly straight forward one is:
+Assuming you have a single file to protect (or a single group of files), and
+don't need to protect the number of people who have access, the simple
+solution is to use a method very similar to PGP, but without the key
+identifiers. While this is just a quick sketch the file undergoes
+approximately the following:
+establish public keys for each member of the group (e.g. hash(passphrase,
+username) = priv, use priv as private key in ECC, everyone can use the same
+group)
+Choose 2 random keys (K1, K2), and 2 random IVs for CBC (IV1, IV2)
+MAC the plaintext file using CBC-MAC, key is K2, IV = IV2
+postpend the MAC to the file
+Encrypt the file using K1 in CBC mode, IV = IV1
+For each member in the group take their public key, and construct a shared
+secret (your choice how), that shared secret is used as the key to encrypt
+K1 and K2, this (known length) encrypted value is PersonalText[i]
+The new file format is:
+number of members of group (n)
+PersonalText[0]
+...
+PersonalText[n]
+IV1
+IV2
+encrypted file
+
+On each access the accessing person iterates through the PersonalText list,
+for each decrypted value (remember there is no authenticator on the value to
+save room, and raise the cost of determining membership in bulk) perform a
+full decrypt and MAC verification, if the MAC verifies the decryption is
+correct.
+
+This is rather similar to what PGP and others use for multi-target
+encryption, but to speed the process they include key ids of some kind, that
+is effectively the only change (assuming proper choices for omissions).
+Proving the security of this is more difficult as there is a possibility
+that the correlations given by PersonalText[0,n] may provide improved
+methods of breakage, this can be addressed using hashes and random numbers
+in the PersonalText. However assuming ECC is equivalent to DH key agreement
+(almost certainly), the determination of whether a given PersonalText[i] is
+for User U is a simple variation of the Decision Diffie-Hellman problem.
+
+> If the answer is yes, I'd also like to know if knowing this is farily
+basic
+> to most encryption professionals sphere of knowledge...
+
+Probably not, until they realize that it can be solved with a reuse of
+PGP-type messages without key ids, at which point it should be well within
+their knowledge.
+                Joseph Ashwood
+
+
+Trust Laboratories
+Changing Software Development
+http://www.trustlaboratories.com
+

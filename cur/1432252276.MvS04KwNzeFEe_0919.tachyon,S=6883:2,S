@@ -1,0 +1,139 @@
+From owner-cypherpunks@al-qaeda.net  Mon Nov 23 10:09:24 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id nANF8oMe028171
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 23 Nov 2009 10:08:50 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id nANF8oHk028170
+	for cypherpunks-outgoing; Mon, 23 Nov 2009 10:08:50 -0500
+Date: Mon, 23 Nov 2009 16:08:47 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Re: The Case for Banning Reduced Hop Count Implementations
+Message-ID: <20091123150847.GA17686@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5896
+Lines: 114
+
+----- Forwarded message from Paul Syverson <syverson@itd.nrl.navy.mil> -----
+
+From: Paul Syverson <syverson@itd.nrl.navy.mil>
+Date: Mon, 23 Nov 2009 10:05:49 -0500
+To: or-talk@freehaven.net
+Subject: Re: The Case for Banning Reduced Hop Count Implementations
+User-Agent: Mutt/1.5.17 (2007-11-01)
+Reply-To: or-talk@freehaven.net
+
+Thank you Lucky. I had been meaning to write something like your
+post.
+
+On Mon, Nov 23, 2009 at 02:43:47AM -0500, Gregory Maxwell wrote:
+> On Mon, Nov 23, 2009 at 12:29 AM, Lucky Green <shamrock@cypherpunks.to> wrote:
+> [snip]
+> > seeking higher anonymity. The end state, if lower than three hop
+> > implementations are permitted to use the Tor network, is that Tor's
+> > network performance will acceptable only to users of lower hop clients.
+> 
+> I presume you can back this assertion up with simulation results, at a minimum?
+> 
+> I look forward to reading your paper.
+
+Even if Lucky's basic points are eventually born out, you are right
+that more analysis of latency and incentives would be valuable.  To
+get an idea about incentive issues in anonymous communication in
+general and Tor in particular you might want to look at "On the
+Economics of Anonymity". Also "Anonymity Loves Company: Usability and
+the Network Effect" both available from the Freehaven anonbib. Also,
+"Deploying Low-Latency Anonymity: Design Challenges and Social
+Factors" which is available from the onion-router.net publications
+page.
+
+> 
+> [snip]
+> > origin. The protocols commonly used for such downloads can accept higher
+> > latency than the interactive protocols needed by the part of the user
+> 
+> Which is why twiddling the hop count isn't attractive for them.
+> 
+> It is attractive for IRC, for example, because with the current hop
+> counts it can be difficult to keep a TCP connection up for long.
+> Long lived connections don't benefit much from the longer paths in
+> any case because the provide ample opportunity to simply correlate
+> entry and exit traffic and ignore the interior path.
+
+This has nothing to do with how long the connections are. Onion
+routing going back even before Tor acknowledges that if the entry and
+exit nodes are controlled/observed then an adversary will quickly and
+trivially link them. The nutshell way we have said this is that onion
+routing [including Tor] guards against traffic analysis not traffic
+confirmation. This was acknowledged in the original Tor design paper
+and was later born out by analysis ("Passive Attack Analysis for
+Connection-Based Anonymity Systems") experiments on the live Tor
+network ("Locating Hidden Services") and in simulation on PlanetLab
+("Low-Resource Routing Attacks Against Tor"). These confirmed that
+correlation was fast and easy. "Sampled Traffic Analysis by
+Internet-Exchange-Level Adversaries" showed that it could also be done
+sampling a tiny fraction of the traffic passing through an IX.  This
+is also why onion routing's security is said to be roughly c^2/n^2,
+where c is the number of compromised nodes in the network and n is the
+total number of nodes. (Yes that is a little too quick, and you can
+raise questions. See "Towards an Analysis of Onion Routing Security",
+"A Model of Onion Routing with Provable Anonymity", and "Probabilistic
+Analysis of Onion Routing in a Black-box Model" for details.)
+
+The "Low-Resource" paper is especially telling wrt your point: the
+attacks were done during connection setup _before a single data cell
+was transmitted_ (and with vanishingly few false-positives). You just
+don't need to have a long-lived connection to fall victim to this.  So
+why bother with multiple hops? One part of the answer is already given
+above: it reduces the threat quadratically. But why three hops instead
+of just two? This comes back to Lucky's other point that you skipped
+over. And this one is not subtle at all. 
+
+Three hops is the minimum to guarantee that all an exit node knows is
+that a circuit came from someone using Tor. The exit cannot say even where
+in the Tor network the circuit started. Similarly, all an entry node
+knows is that the circuit is headed somewhere. (Yes, this too is
+actually more subtle; cf. "How Much Anonymity does Network Latency
+Leak?" But, a priori, given ordinary log information, it is correct.
+(Of course honest Tor nodes do not do any such logging.))
+
+So, reducing the number of hops means that exit nodes have
+significantly more information about connection origins. Reducing hops
+to one means that they know everything about the origin of a
+connection (up to the IP address from which the connection entered the
+Tor network, which is all that Tor is designed to hide.)  That makes
+their deniability of what they know about traffic exiting through them
+no longer plausible (because, well now it will be false). That any of
+the connections going through the network are single hop thus
+increases incentives to attack any exit node, also any entrance
+node---which basically means all the public nodes. Details would
+depend on likelyhood that a given circuit is one hop and on the
+incentives, legal considerations, resources, etc. of the
+adversary. But absent such details, it would be unwise to allow such a
+fundamental threat to the infrastructure itself.
+
+As Lucky observed, this is a threat to the public Tor network itself
+and should be treated as such. There are other drawbacks that could be
+noted, but that is the central one.
+
+HTH,
+Paul
+***********************************************************************
+To unsubscribe, send an e-mail to majordomo@torproject.org with
+unsubscribe or-talk    in the body. http://archives.seul.org/or/talk/
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

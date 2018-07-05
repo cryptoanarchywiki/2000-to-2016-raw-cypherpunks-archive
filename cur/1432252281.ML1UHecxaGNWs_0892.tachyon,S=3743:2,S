@@ -1,0 +1,75 @@
+From owner-cypherpunks@al-qaeda.net  Fri Aug 13 11:56:29 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i7DGu8cD029029
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Fri, 13 Aug 2004 11:56:08 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i7DGu8Vj029028
+	for cypherpunks-outgoing; Fri, 13 Aug 2004 11:56:08 -0500
+Date: Fri, 13 Aug 2004 18:53:08 +0200 (CEST)
+From: Thomas Shaddack <shaddack@ns.arachne.cz>
+To: "Major Variola \(ret\)" <mv@cdc.gov>
+cc: "cypherpunks@al-qaeda.net" <cypherpunks@al-qaeda.net>
+Subject: Re: Forensics on PDAs, notes from the field
+In-Reply-To: <0408120630100.10414@somehost.domainz.com>
+Message-ID: <0408131813530.0@somehost.domainz.com>
+References: <411AC636.230A1946@cdc.gov>
+  <0408120630100.10414@somehost.domainz.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2572
+Lines: 47
+
+On Thu, 12 Aug 2004, Thomas Shaddack wrote:
+
+> > The NIST CDROM also doesn't seem to include source code amongst its 
+> > sigs, so if you compile yourself, you may avoid their easy glance.
+> 
+> A cool thing for this purpose could be a patch for gcc to produce unique 
+> code every time, perhaps using some of the polymorphic methods used by 
+> viruses.
+> 
+> Just adding a chunk of data to make the hash unique will work against the 
+> current generation of the described tools. But we should plan to the 
+> future, what moves the adversary can do to counter this step.
+
+We can do some in-depth changes of the executable, using the 
+"Steganography in executable files" approach described here (and on 
+Slashdot) recently. See eg. here: 
+http://www.informit.com/articles/article.asp?p=102181&seqNum=6
+
+The difference is we don't want to store anything to the file itself but 
+just to change its content without changing its function. We can use the 
+Hydan approach, using random data as what to store inside. Adding a 
+command
+dd if=/dev/urandom count=<length/bs> | $HYDAN_STEGO $exefile
+(where $HYDAN_STEGO is the steganography-adding program and $exefile is 
+the product of the compilation by an unmodified compiler)
+into the makefile of the project could make the signatures unique for 
+every compilation. Same applies to installation scripts. As we shouldn't 
+trust our tools completely, a suite of suitable test vectors should be run 
+afterwards.
+
+This can be used in combination with executable packers (eg. UPX), or some 
+wrappers for "copy-protection", which wrap and optionally encrypt the 
+executable and refuse to run it when eg. a dongle (which can contain the 
+key) is not present in the computer. It doesn't work for copyprotection 
+too well, but can slow down the adversary (or making some of their attack 
+methods impossible or impractical to use) in other scenarios. If the usage 
+scenario is plausible, the deployment of the protection technology may 
+"make sense", so its presence won't have to necessarily raise suspicion. 
+(We have to always keep in mind that the presence of any given technology 
+can be a factor on its own.)
+
+The adversary then has to resort to heuristic analysis of the code 
+segments, or hashing data segments, or maintaining sets of characteristics 
+of the executables other than the hashes of the complete file (code/data 
+segments size, addresses of jumps...), or relying on the strings in the 
+file, or other options, all of them more difficult than hashing a file, 
+and potentially requiring better-trained forensics people...
+

@@ -1,0 +1,125 @@
+From owner-cypherpunks@al-qaeda.net  Thu Jan 26 10:30:23 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q0QFQiGA007079
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 26 Jan 2012 10:26:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1327591604;
+	bh=wrh3Iqn6k08YDuesgdCOU4pvDmq1k9MUuQIae3p6eIk=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=K1kpGjC6FkhcnH0/Fny983aCJVsG3ps/jkVlDu069J+D/ylrT3N8ewBLlt5r7bH/6
+	 OAt7Nd+kAATUrP8p4Q35ax6YHgAdCzy92f6oF3rojcGLReFgZYSvQsGm8oybbiwdAk
+	 Buq2rQjVA2EaowSTXDcAcgR8G8VAIgbEz6+zAtvs=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q0QFQiIu007078
+	for cypherpunks-outgoing; Thu, 26 Jan 2012 10:26:44 -0500
+Date: Thu, 26 Jan 2012 16:26:40 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Re: [tor-talk] Fwd: ANONdroid
+Message-ID: <20120126152640.GZ7343@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4740
+Lines: 93
+
+----- Forwarded message from Paul Syverson <syverson@itd.nrl.navy.mil> -----
+
+From: Paul Syverson <syverson@itd.nrl.navy.mil>
+Date: Thu, 26 Jan 2012 10:18:00 -0500
+To: tor-talk@lists.torproject.org
+Subject: Re: [tor-talk] Fwd: ANONdroid
+User-Agent: Mutt/1.5.17 (2007-11-01)
+Reply-To: tor-talk@lists.torproject.org
+
+On Thu, Jan 26, 2012 at 10:35:20AM +0200, Maxim Kammerer wrote:
+> On Thu, Jan 26, 2012 at 10:05, Karsten N. <kn@awxcnx.de> wrote:
+> 
+> > It is possible, to deanonymize a single user by some features (user IP
+> > address, website monitoring or user account). The idedentify feature for
+> > the malicious user has to be provided by the law enforcement agency and
+> > all operators have to get an official order in their country.
+> 
+> So there is no difference from Tor?
+> 
+
+JonDoNym and Tor have some significant aspects in common, but they are
+fundamentally different in the basis for their security. JonDoNym is a
+mix cascade design (or `MIX' as some would write it). This means that
+all the messages (packets/cells) that enter the network together
+(enter a node at roughly the same time) proceed through the network
+together in a batch and leave the network together (exit at a
+predictable but distinct node all at the same time). In principle,
+this means that an adversary will have a difficult time separating
+messages in a batch from one another.  (In practice, research
+indicates that the situation for low-latency traffic is, let's just be
+generous and say, more complicated.) This is the basis of the security
+they provide.  Onion routing designs like Tor derive their security
+primarily from the unpredictability of routes: just seeing a message
+from a client enter the network does not tell you where it is going to
+come out.
+
+The pros and cons of these are a matter of long debate. (I miss you,
+Andreas.) I come down strongly on the side of onion routing as an
+approach. Many detailed research papers address lots of the issues,
+but much of my position is captured in my "Why I'm not an Entropist."
+(Let me know if you want to see it and can't find it.)  The basic
+difference is roughly that mix cascades attempt to hide you well in a
+predictable 'anonymity set'. Onion routing networks attempt to make it
+hard to know where to look/attack if you want to de-anonymize, e.g.,
+what website someone is browsing. And the Tor network is intended to
+be big enough and in diverse enough jurisdictions that it is hard for
+any one adversary to look everywhere (thousands of nodes
+worldwide). That's the main idea, skipping a lot of aspects, such as
+the possible benefits (or not) of combining the two approachers.
+
+> > An scientific paper about the "Revocable Anonymity" impleneted by
+> > JonDonym
+> 
+> I see, so is that an optional feature that can be turned on by a MIX
+> router operator once served by a surveillance order? It seems to me
+> that it's an advantage over Tor, where relay operators can be served
+> with an order and some Tor patches that they wouldn't be able to turn
+> down to to the absence of a similar feature in Tor. Revocable
+> Anonymity seems to be designed to provide the minimum necessary
+> information to law enforcement.
+> 
+
+Many security researchers, including myself, are quite resistant to
+the idea of revocable anonymity. Designing, building, and deploying
+a system to be secure is incredibly hard even without the added burden
+of building in a systematic means to selectively remove its security
+properties. See, for example, Matt Blaze's work on key escrow. See
+http://www.acsac.org/2011/program/keynotes/ for his recent retrospective.
+
+But leaving that entire issue aside, from my above comment, I hope it
+is apparent that there is another important difference from mix
+cascades. For Tor such a surveillance order for purposes of tracking
+particular communicants would be pointless, and thus presumably
+unjustified. Unlike cascades, a message entering the network in one
+location might come out at any exit node, anywhere in the world. And
+if, e.g., one observes communication exiting a particular network node
+and arriving at a destination of interest, there is no reason to think
+that future communication, even from the same originating client is
+likely to emerge from that same node. In fact just the opposite.
+
+aloha,
+Paul
+_______________________________________________
+tor-talk mailing list
+tor-talk@lists.torproject.org
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-talk
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

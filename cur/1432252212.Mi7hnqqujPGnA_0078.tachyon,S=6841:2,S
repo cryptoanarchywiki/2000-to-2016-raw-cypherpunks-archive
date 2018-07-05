@@ -1,0 +1,156 @@
+From cypherpunks-bounces@cpunks.org  Sat Sep  7 05:46:39 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r879kE13011391;
+	Sat, 7 Sep 2013 05:46:17 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r879k9d1011386
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Sat, 7 Sep 2013 05:46:12 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 2DED1543DF9; Sat,  7 Sep 2013 11:46:09 +0200 (CEST)
+Date: Sat, 7 Sep 2013 11:46:09 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: [tor-talk] NIST approved crypto in Tor?
+Message-ID: <20130907094609.GX29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 5102
+Lines: 118
+
+----- Forwarded message from "Sebastian G. <bastik.tor>" <bastik.tor@googlemail.com> -----
+
+Date: Sat, 07 Sep 2013 11:25:24 +0200
+From: "Sebastian G. <bastik.tor>" <bastik.tor@googlemail.com>
+To: tor-talk@lists.torproject.org
+Subject: [tor-talk] NIST approved crypto in Tor?
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:17.0) Gecko/20130620 Thunderbird/17.0.7
+Reply-To: tor-talk@lists.torproject.org
+
+Hi,
+
+Tor switches over to ECC what's a reasonable step.
+
+I'm unable to find the blog post (or maybe it was an official comment on
+the blog) [With DDG and StartPage] where someone said that if the NIST
+(I guess) is not lying ECC is safe.
+
+Is the ECC used by Tor in some way certified by NIST?
+
+Are other parts of Tor certified by NIST?
+
+Recent leaks revealed that the NSA spends many resources in influencing
+standards to make their lives easier (or not too hard). NIST could be
+either participating or tricked into preferring standards that are weak
+in some regard. Note that I'm not saying that this is the case, but it
+could be.
+
+I was able (it was not a blog post, it was an essay) to find what Bruce
+Schneier wrote about the NSA preferring a weak random-number-generator. [1]
+
+Quotes [my comments, notes]:
+"The U.S. government released a new official standard for random-number
+generators this year [essay from 2007], and it will likely be followed
+by software and hardware developers around the world."
+
+"(...) the 130-page document contains four different approved
+techniques, called (...) "Deterministic Random Bit Generators." All four
+are based on existing cryptographic primitives. One is based on hash
+functions, one on HMAC, one on block ciphers and one on elliptic curves."
+
+" (...) one of those generators (...) Dual_EC_DRBG [elliptic], (...)
+three orders of magnitude slower than its peers."
+
+" It's in the standard only because it's been championed by the NSA,
+which first proposed it years ago in a related standardization project
+at the American National Standards Institute."
+
+"The math is complicated, but the general point is that the random
+numbers it produces have a small bias. [2006 knowledge]"
+
+"But today [2007] there's an even bigger stink brewing around
+Dual_EC_DRBG" (...) Dan Shumow and Niels Ferguson showed that the
+algorithm contains a weakness that can only be described as a backdoor."
+
+"There are a bunch of constants -- fixed numbers -- in the standard used
+to define the algorithm's elliptic curve. These constants are listed in
+Appendix A of the NIST publication, but nowhere is it explained where
+they came from."
+
+" (...) these numbers have a relationship with a second, secret set of
+numbers (...). If you know the secret numbers, you can predict the
+output of the random-number generator after collecting just 32 bytes of
+its output. (...) you only need to monitor one TLS internet encryption
+connection in order to crack the security of that protocol. If you know
+the secret numbers, you can completely break any instantiation of
+Dual_EC_DRBG."
+
+"The researchers don't know what the secret numbers are. (...) the way
+the algorithm works, the person who produced the constants might know;
+he had the mathematical opportunity to produce the constants and the
+secret numbers in tandem."
+
+" (...) we have no way of knowing whether the NSA knows the secret
+numbers that break Dual_EC-DRBG [or not, we can't know]"
+
+Read the full essay which contains links to papers if you are interested.
+
+And the NSA work on standards repeatedly.
+"The NSA has always been intimately involved in U.S. cryptography
+standards -- it is, after all, expert in making and breaking secret codes."
+
+That's also what comes out of the Snowden leaks.
+
+I understand that ECC used for Tor is different from what the essay is
+about.
+
+However the NSA may found something it can exploit in ECC and made NIST
+(maybe unknowingly) standardize the curve (or whatever) that is most
+vulnerable or recommends for a weak one, or for too short keys.
+
+Does Tor use stuff certified or recommended by NIST?
+
+If so would it be reasonable to move to international standards
+(whatsoever) without the involvement of NIST and NSA 'consultation'?
+(Completely unrelated to what might be going on, just as defense-in-depth.)
+
+The NSA likes playing around. [2][3] (found while searching)
+
+Oh and I'm not trying fear-mongering here or try to conspire whenever or
+not the NSA has subverted cryptographic functions (in one way or another).
+
+Best,
+Sebastian G.
+
+[1] https://www.schneier.com/essay-198.html
+[2] https://www.schneier.com/blog/archives/2008/01/nsa_backdoors_i.html
+[3] https://www.schneier.com/blog/archives/2013/07/simon_and_speck.html
+-- 
+tor-talk mailing list - tor-talk@lists.torproject.org
+To unsusbscribe or change other settings go to
+https://lists.torproject.org/cgi-bin/mailman/listinfo/tor-talk
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

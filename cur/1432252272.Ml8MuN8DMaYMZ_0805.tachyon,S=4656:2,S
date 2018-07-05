@@ -1,0 +1,110 @@
+From owner-cryptography+rsw=mit.edu@metzdowd.com  Tue Apr 29 21:06:53 2003
+Return-Path: <owner-cryptography+rsw=mit.edu@metzdowd.com>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h3U16rt17590
+	for <rsw@opamp.org>; Tue, 29 Apr 2003 21:06:53 -0400
+Received: from red.metdow.com (72.muf123.nycm.n54ny05r18.dsl.att.net [12.103.123.72])
+	by fort-point-station.mit.edu (8.12.4/8.9.2) with ESMTP id h3U16rJ0013214
+	for <rsw@mit.edu>; Tue, 29 Apr 2003 21:06:53 -0400 (EDT)
+Received: by red.metdow.com (Postfix, from userid 1002)
+	id 4334B182FC0; Wed, 30 Apr 2003 01:04:48 +0000 (UTC)
+X-Original-To: cryptography@metzdowd.com
+Delivered-To: cryptography@metzdowd.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by red.metdow.com (Postfix) with ESMTP id 83BFC182FBF
+	for <cryptography@metzdowd.com>; Wed, 30 Apr 2003 01:04:47 +0000 (UTC)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 2F225D97DC; Tue, 29 Apr 2003 21:04:47 -0400 (EDT)
+X-Original-To: cryptography@metzdowd.com
+Received: from mercury.ex.ac.uk (mercury.ex.ac.uk [144.173.6.26])
+	by red.metdow.com (Postfix) with ESMTP id C2ACC182FA7
+	for <cryptography@metzdowd.com>; Tue, 29 Apr 2003 22:36:31 +0000 (UTC)
+Received: from [144.173.6.20] (helo=cronus.ex.ac.uk)
+	by mercury.ex.ac.uk with esmtp (Exim 4.14)
+	id 19Adi4-00No5Z-Ht; Tue, 29 Apr 2003 23:36:24 +0100
+Date: Tue, 29 Apr 2003 23:36:21 +0100
+From: Adam Back <adam@cypherspace.org>
+To: "R. A. Hettinga" <rah@shipwright.com>
+Cc: Digital Bearer Settlement List <dbs@philodox.com>,
+   cryptography@metzdowd.com, cypherpunks@lne.com,
+   Adam Back <adam@cypherspace.org>
+Subject: Re: [Lucrative-L] double spends, identity agnosticism, and Lucrative
+Message-ID: <20030429233621.A8391604@exeter.ac.uk>
+References: <E19AdEC-0008FS-00@smtp10.atl.mindspring.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <E19AdEC-0008FS-00@smtp10.atl.mindspring.net>; from rah@shipwright.com on Tue, Apr 29, 2003 at 06:02:01PM -0400
+Sender: owner-cryptography@metzdowd.com
+Precedence: bulk
+Status: O
+Content-Length: 2415
+Lines: 65
+
+There are also existantial forgeries.
+
+Ie choose random x, compute y = x^e mod n, now x looks like a
+signature on y because y^d = x mod n; and when he verifies the
+verifier will just do x^e and see that it is equal to y.
+
+These may also look like valid coins to this code!
+
+It's missing a step: the coin should have some structure.  So it can't
+be a hash of a message chosen by the user but hashed by the signer
+(the normal practical RSA signature) because the server can't see that
+it or it would be linkable.
+
+What digicash did I think is something like c = [x||h(x)].  Then you
+can reject existential forgeries and unblinded coins because they
+won't have the right form.
+
+(If you look back to the post where I gave a summary of the math,
+you'll see I included that step.)
+
+Adam
+
+On Tue, Apr 29, 2003 at 06:02:01PM -0400, R. A. Hettinga wrote:
+> 
+> --- begin forwarded text
+> 
+> 
+> From: "Patrick" <patrick@lfcgate.com>
+> To: <lucrative-l@lucrative.thirdhost.com>
+> Subject: [Lucrative-L] double spends, identity agnosticism, and Lucrative
+> Date: Tue, 29 Apr 2003 14:46:48 -0600
+> Importance: Normal
+> Sender: owner-lucrative-l@lucrative.thirdhost.com
+> 
+> 
+> 	A quick experiment has confirmed the obvious: when a client
+> reissues a coin at the mint, both the blinded and its unblinded cousin
+> are valid instruments to the Lucrative mint.
+> 
+> 	Example: Alice uses the Mint's API to reissue a one-dollar note,
+> blinding the coin before getting a signature, and unblinding the
+> signature afterwards. She's left with both a blinded and a non-blinded
+> version of the coin. The mint believes they are both valid. Instant,
+> unlimited inflation.
+> 
+> 	I believe the solution to this is to have the mint track both
+> spent coins and issued coins (that is, it automatically cancels coins it
+> issues, before the client receives them). The client is left with no
+> choice but to go through a blinding and unblinding process in order to
+> have a usable coin.
+> 
+> 	This seems to make identity-agnostic cash difficult or
+> impossible, at least with Lucrative:
+> http://www.io.com/~cman/agnostic.html,
+> http://cypherpunks.venona.com/date/1995/09/msg00197.html .
+> 
+> 
+> Patrick
+> 
+> 
+> The Lucrative Project: http://lucrative.thirdhost.com
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+

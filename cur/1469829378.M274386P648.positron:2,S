@@ -1,0 +1,279 @@
+Return-path: <cypherpunks-bounces@cpunks.org>
+Envelope-to: rsw@positron.jfet.org
+Delivery-date: Fri, 29 Jul 2016 14:56:16 -0700
+Received: from antiproton.jfet.org ([209.141.47.85])
+	by positron.jfet.org with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.87)
+	(envelope-from <cypherpunks-bounces@cpunks.org>)
+	id 1bTFlQ-0000AB-HN
+	for rsw@positron.jfet.org; Fri, 29 Jul 2016 14:56:16 -0700
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u6TLeOQn024830;
+	Fri, 29 Jul 2016 17:40:26 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=B1WICsZi;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-it0-f49.google.com (mail-it0-f49.google.com
+ [209.85.214.49])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u6TLeLIX024826
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Fri, 29 Jul 2016 17:40:23 -0400
+Received: by mail-it0-f49.google.com with SMTP id u186so203552551ita.0
+ for <cypherpunks@cpunks.org>; Fri, 29 Jul 2016 14:40:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+ :cc; bh=A8yMxgDaYgDOC7BYupd5dHqQ6CvyZfyqClTB0Fxh1qM=;
+ b=B1WICsZi7S6u0keZtH26eySut0WP8eku4pW+ulFhBG0s5VNNGtZjN60o5U4R3geQpG
+ tw1s7LwwuMFaOjNd3heT0l9nXAYHyiUhsf29R+5oyGOqLkNsX5xrS2crd7Plp6XMnJ5P
+ bd6iJXMuUHGvMz9UtAjPMhBgyn54ulAxTaR1floxJo8E5YdGmDORaGg1+5P1+nST8XGL
+ qCIpTeQ7O276LWV0Oj66iqxKjVD+/AlnofZM4lMMrg9ljz/KXHaGRMSlZA6QhYUwKVqB
+ Sf1muC/NmzLh6zkjKtGE4swZMfvs8aDQ/UXqwr3ND/QNOBHdUVHvWGa8KyonOnAwgLwZ
+ Z5UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+ :message-id:subject:to:cc;
+ bh=A8yMxgDaYgDOC7BYupd5dHqQ6CvyZfyqClTB0Fxh1qM=;
+ b=dVtlkRF/MyBqQXkOE8I6SdMmN4utyLYXdQu+A+ZsG86mvNoW3xZv+JwE//4RsX/F8J
+ w09yJVviA0A4zdxmUJxfOtyfiUnjwW6d5tsMQUYuamjD9D8r4YuGNCCXUU/S8LknY6gn
+ P59xHIemI2Y1306PSVZbRTPBj/hwDIrDV+JAMg33dTNmPKTfPQTVP7F4PelcAHcEDVkq
+ vuCzwE26AO6kExcCQxYwa8O/sSidnwivHWk5Diu05cFQ6P9kqw2LCMHVk+QvGtXSOcp6
+ Ja6pTYioCzi0V+1DF1mcoNR2AuOgSLYi+nwDc1sAkNWwq7c/mv+0rrX4jvqgMZ1d8gu2
+ bU5w==
+X-Gm-Message-State: AEkoouvG/4Xwvsg2JwvFcLgzqBNUZx+l6f0b/IvG2r2Z+ewmpqX8dLutrnKNuwG0XKYLX20oRKK+NjxHm5xLkA==
+X-Received: by 10.36.44.204 with SMTP id i195mr3501535iti.12.1469828415936;
+ Fri, 29 Jul 2016 14:40:15 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.107.170.26 with HTTP; Fri, 29 Jul 2016 14:39:56 -0700 (PDT)
+In-Reply-To: <12b211f0-10cf-db45-6ed4-419aa0e8689a@riseup.net>
+References: <4579aed2-1c44-553d-d37a-df440042166d@riseup.net>
+ <20160728053952.GN26012@x220-a02> <579a5ad8.7724ed0a.f1ffa.8291@mx.google.com>
+ <20160728210249.GT26012@x220-a02>
+ <CAGRDzQW-NZnsXWcy77+B8jCED5ukdkEM_ANF3tYdhdTV7p4PVQ@mail.gmail.com>
+ <CAD2Ti28oekbZ_JC8azJijrvCOAMX4yKpnz-2JhjnjxSkpr_gyQ@mail.gmail.com>
+ <CAGRDzQU7Bk9zzn+78yybDqtk9-S4kx8orsVs-A=n41DyBoPa+w@mail.gmail.com>
+ <0164087bf8820ef4e6551e45a64b2f12@openmailbox.org>
+ <CAGRDzQVBVB_hpVXwGjOYKhh+FpqwipatOG-rEzSDRodGWZfdQQ@mail.gmail.com>
+ <CAGRDzQWhe-per3+dPrpNuM4wVcPD7aFKq8N_0vdZVky7XipK-w@mail.gmail.com>
+ <12b211f0-10cf-db45-6ed4-419aa0e8689a@riseup.net>
+From: Cari Machet <carimachet@gmail.com>
+Date: Sat, 30 Jul 2016 00:39:56 +0300
+Message-ID: <CAGRDzQVuxOnysczYMQodDjgOAue2UOhGUF4jFToQreYg+_NZgw@mail.gmail.com>
+Subject: Re: Deconstructing an Institutional Slander operation: @ioerror et
+ al...
+To: Rayzer <rayzer@riseup.net>
+Content-Type: multipart/alternative; boundary=001a113fc1329ce2f80538cd189f
+Cc: cpunks <cypherpunks@cpunks.org>
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 198
+
+--001a113fc1329ce2f80538cd189f
+Content-Type: text/plain; charset=UTF-8
+
+as usual rayzer you have to name call
+
+i get tired of getting drilled for info and told i dont know anything ...
+boring
+
+irritating
+
+should i just say google it ? no
+
+again read the informative link i sent in this thread
+
+On Fri, Jul 29, 2016 at 8:41 PM, Rayzer <rayzer@riseup.net> wrote:
+
+> On 07/29/2016 10:12 AM, Cari Machet wrote:
+>
+> If you read the link i sent you would know there is residual power left on
+> the device and an internal battery for specific tasks
+>
+> Also malware can be placed on your device
+>
+> Its sad that ppl on this list dont know tech
+>
+>
+>
+> Right. The REMOVABLE sim card needs to be phone powered and even flight
+> mode would kill anyone's ability to R/w access the card's data. What
+> happens when the phone is powered on? Well that's why they're called
+> "Smartphones"... because they're smarter than the typical user.
+>
+> Unless you expect an immediate drone strike as soon as they geo-locate
+> seconds after the first cellsite polls your phone, you buy a burner android
+> from tracphone or Virginmobile at your nearest 7-11. Use it, and burn it.
+> IF what you're doing is so fucking important and secretive, you can afford
+> the $29.95.
+>
+> Rr
+>
+> Ps. I've got the better part of an RF engineering degree under my belt. I
+> know electronics tech. You know shit. There's also a number of other peeps
+> around here with electronic-mechanical skills.
+>
+> Pps. It's sad that you're such a douche
+>
+>
+>
+>
+>
+> On Jul 29, 2016 7:32 PM, "Spencer" <spencerone@openmailbox.org> wrote:
+>
+> Hi,
+>
+>
+>> Cari Machet:
+>> sim card is detectable without power
+>>
+>>
+> This does not seem physically possible, at least without super villain
+> resources.
+>
+> Wordlife,
+> Spencer
+>
+>
+>
+>
+>
+>
+
+
+-- 
+Cari Machet
+NYC 646-436-7795
+carimachet@gmail.com
+AIM carismachet
+Syria +963-099 277 3243
+Amman +962 077 636 9407
+Berlin +49 152 11779219
+Reykjavik +354 894 8650
+Twitter: @carimachet <https://twitter.com/carimachet>
+
+7035 690E 5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187
+
+Ruh-roh, this is now necessary: This email is intended only for the
+addressee(s) and may contain confidential information. If you are not the
+intended recipient, you are hereby notified that any use of this
+information, dissemination, distribution, or copying of this email without
+permission is strictly prohibited.
+
+--001a113fc1329ce2f80538cd189f
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">as usual rayzer you have to name call=C2=A0<div><br></div>=
+<div>i get tired of getting drilled for info and told i dont know anything =
+... boring=C2=A0</div><div><br></div><div>irritating=C2=A0</div><div><br></=
+div><div>should i just say google it ? no</div><div><br></div><div>again re=
+ad the informative link i sent in this thread</div></div><div class=3D"gmai=
+l_extra"><br><div class=3D"gmail_quote">On Fri, Jul 29, 2016 at 8:41 PM, Ra=
+yzer <span dir=3D"ltr">&lt;<a href=3D"mailto:rayzer@riseup.net" target=3D"_=
+blank">rayzer@riseup.net</a>&gt;</span> wrote:<br><blockquote class=3D"gmai=
+l_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left=
+:1ex">
+ =20
+   =20
+ =20
+  <div bgcolor=3D"#FFFFFF" text=3D"#000000"><span class=3D"">
+    <p>On 07/29/2016 10:12 AM, Cari Machet wrote:<br>
+    </p>
+    <blockquote type=3D"cite">
+      <p dir=3D"ltr">If you read the link i sent you would know there is
+        residual power left on the device and an internal battery for
+        specific tasks</p>
+      <p dir=3D"ltr">Also malware can be placed on your device </p>
+      <p dir=3D"ltr">Its sad that ppl on this list dont know tech <br>
+        <br>
+        <br>
+      </p>
+    </blockquote>
+    <br></span>
+    Right. The REMOVABLE sim card needs to be phone powered and even
+    flight mode would kill anyone&#39;s ability to R/w access the card&#39;=
+s
+    data. What happens when the phone is powered on? Well that&#39;s why
+    they&#39;re called &quot;Smartphones&quot;... because they&#39;re smart=
+er than the
+    typical user.<br>
+    <br>
+    Unless you expect an immediate drone strike as soon as they
+    geo-locate seconds after the first cellsite polls your phone, you
+    buy a burner android from tracphone or Virginmobile at your nearest
+    7-11. Use it, and burn it. IF what you&#39;re doing is so fucking
+    important and secretive, you can afford the $29.95.<br>
+    <br>
+    Rr<br>
+    <br>
+    Ps. I&#39;ve got the better part of an RF engineering degree under my
+    belt. I know electronics tech. You know shit. There&#39;s also a number
+    of other peeps around here with electronic-mechanical skills.<br>
+    <br>
+    Pps. It&#39;s sad that you&#39;re such a douche<span class=3D""><br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <blockquote type=3D"cite">
+      <div class=3D"gmail_extra"><br>
+        <div class=3D"gmail_quote">On Jul 29, 2016 7:32 PM, &quot;Spencer&q=
+uot; &lt;<a href=3D"mailto:spencerone@openmailbox.org" target=3D"_blank">sp=
+encerone@openmailbox.org</a>&gt;
+          wrote:<br type=3D"attribution">
+          <blockquote style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid=
+;padding-left:1ex">Hi,<br>
+            <br>
+            <blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;bo=
+rder-left:1px #ccc solid;padding-left:1ex">
+              <br>
+              Cari Machet:<br>
+              sim card is detectable without power<br>
+              <br>
+            </blockquote>
+            <br>
+            This does not seem physically possible, at least without
+            super villain resources.<br>
+            <br>
+            Wordlife,<br>
+            Spencer<br>
+            <br>
+            <br>
+            <br>
+          </blockquote>
+        </div>
+        <br>
+      </div>
+    </blockquote>
+    <br>
+  </span></div>
+
+</blockquote></div><br><br clear=3D"all"><div><br></div>-- <br><div class=
+=3D"gmail_signature" data-smartmail=3D"gmail_signature"><div dir=3D"ltr"><d=
+iv>Cari Machet<br>NYC 646-436-7795<br><a href=3D"mailto:carimachet@gmail.co=
+m" target=3D"_blank">carimachet@gmail.com</a><br>AIM carismachet<br>Syria +=
+963-099 277 3243<br>Amman +962 077 636 9407<br>Berlin +49 152 11779219 <br>=
+Reykjavik +354 894 8650<br>Twitter: @carimachet &lt;<a href=3D"https://twit=
+ter.com/carimachet" target=3D"_blank">https://twitter.com/carimachet</a>&gt=
+;<br><br></div>7035 690E 5E47 41D4 B0E5 B3D1 AF90 49D6 BE09 2187<br><div><b=
+r>Ruh-roh, this is now necessary: This email is intended only for the <br>a=
+ddressee(s) and may contain confidential information. If you are not the <b=
+r>intended recipient, you are hereby notified that any use of this <br>info=
+rmation, dissemination, distribution, or copying of this email without <br>=
+permission is strictly prohibited.<br><br><br></div></div></div>
+</div>
+
+--001a113fc1329ce2f80538cd189f--
+

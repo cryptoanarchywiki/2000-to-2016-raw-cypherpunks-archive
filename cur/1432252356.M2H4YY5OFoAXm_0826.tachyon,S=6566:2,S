@@ -1,0 +1,134 @@
+From owner-cypherpunks@Algebra.COM  Sat Aug 11 22:54:09 2001
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.mit.edu (8.9.3/8.9.3) with ESMTP id WAA12892
+	for <kwantam@positron.mit.edu>; Sat, 11 Aug 2001 22:54:09 -0400
+Received: from ak47.algebra.com (root@ak47.algebra.com [208.233.99.160])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id WAA08697
+	for <rsw@mit.edu>; Sat, 11 Aug 2001 22:53:47 -0400 (EDT)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f7C2oCM27376
+	for cypherpunks-outgoing; Sat, 11 Aug 2001 21:50:12 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from einstein.ssz.com (cpunks@einstein.ssz.com [204.96.2.99])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f7C2o9j27361
+	for <cypherpunks@algebra.com>; Sat, 11 Aug 2001 21:50:10 -0500
+Received: (from cpunks@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id WAA20602
+	for cypherpunks@algebra.com; Sat, 11 Aug 2001 22:00:28 -0500
+Received: (from mdom@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) id VAA20581
+	for cypherpunks-outgoing; Sat, 11 Aug 2001 21:58:55 -0500
+Received: from localhost (ravage@localhost)
+	by einstein.ssz.com (8.8.8/8.8.8) with SMTP id VAA20574;
+	Sat, 11 Aug 2001 21:58:44 -0500
+Date: Sat, 11 Aug 2001 21:58:44 -0500 (CDT)
+From: Jim Choate <ravage@ssz.com>
+To: cypherpunks@einstein.ssz.com
+cc: sci-tech@einstein.ssz.com, hangar18@einstein.ssz.com, alg@austinlug.org
+Old-Subject: CDR: OPT: Re: Mixmaster Message Drops
+In-Reply-To: <007e01c122b3$03819980$8ac1b6c7@josephas>
+Message-ID: <Pine.LNX.3.96.1010811213345.23972L-100000@einstein.ssz.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Reply-To: cypherpunks@ssz.com
+X-Mailing-List: cypherpunks@ssz.com
+X-Unsubscription-Info: http://einstein.ssz.com/cdr
+X-List-Admin: list@ssz.com
+X-Loop: ssz.com
+X-Acceptable-Languages: English, Russian, German, French, Spanish
+Subject:  OPT: Re: Mixmaster Message Drops
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 4266
+Lines: 84
+
+
+
+On Sat, 11 Aug 2001, Joseph Ashwood wrote:
+
+> > On Sat, 11 Aug 2001, Joseph Ashwood wrote:
+> >
+> > > Actually you can start with just one trusted remailer.
+> >
+> > Bull.
+> 
+> Well technically you begin by granting trust to someone, the easiest being
+> yourself. Then you build trust in something else, use trust in one thing to
+> build trust in another. Regardless you have to establish trust in a single
+> location, before you can build trust in multiple.
+
+The point is that one remailer isn't sufficient (especially if you've got
+some sort of fixed latency, which is pretty much a given even if the
+window is 24 hours). Assume a single remailer. Both input and output
+stream are sampled. We must assume that the from: and to: are observable.
+To deny the from: implies a secondary anonymizing layer, contrary to our
+intial assertion. To deny to: implies that there is an additional layer
+between the last remailer and the recipient of the traffic. The goal of a
+remailer is to break the connection between a given incoming and a given
+out-going (ie mix the to:/from: relation) - not to hide either
+necessarily. So, even if we generate cover traffic a comparison of all
+outgoing with each incoming is clearly realizable using modest resources
+(not including the tap itself). As long as your sample window around each
+from: event is greater than the latency, you'll find a statistical
+correlation to the to: event. It takes at least two remailers and they
+must in addition talk with a shared keyset different than either from: or
+to: might use to encrypt the body.
+
+Now, let's talk about that cover traffic for a moment...
+
+It's random, so subsequent comparisons based around to: or from: events
+will cancel out because they won't be repeated often enough. There is the
+additional question of just exactly who we're sending that cover traffic
+to since we're the only remailer. In addition there is the problem of
+exactly how we produce all that bogus traffic. My suggestion is keep a
+steady flow of messages (ie #msg/t >= C, dmsg#/dt = 0) to a well known
+set of addresses (remailers of course) and then randomly replace the
+bogus traffic with real traffic in a round robin selection process.
+
+Any real-world realizible system requires(!) at least two remailers who
+are not(!) in collusion with each other, and they must share a different
+set of keys than either to: or from: might use.
+
+The only workable solution to that, which doesn't involve 'trust' per se,
+is to move to a distributed environment with autonomous process execution.
+There is of course a discussion of self-sufficiency w/ respect to e-cash
+schemes in here, but that's a different topic. Additionaly there is the
+Plan 9 process bidding mechanism that fits in here as well. Then you
+request a image of that program (which is running other images elsewhere)
+to run in your own process space. You can verify the signature of the
+image by comparing it to known good signatures (and the algorithm they
+were used). This way each image of the program gets 'paid' for by being
+run by the user directly (though they have zero control over its 
+environment mind you - excepting hacking the process mechanism in the OS 
+- which recurses to the remailer getting a signature of the OS and itself 
+to verify it hasn't been hacked. Some nifty problem/solution sets in
+here).
+
+You could of course do this today with the existing mix-masters to a
+certain extent. Linux would of course be a good example, though from a
+image used - signature perspective MS would be more stable with all the
+custom Linux kernel compiles (and over 180 distro's).
+
+(If any of these ideas are patentable then I put them in the public
+domain)
+
+
+ --
+    ____________________________________________________________________
+
+            natsugusa ya...tsuwamonodomo ga...yume no ato
+            summer grass...those mighty warriors'...dream-tracks
+
+                                            Matsuo Basho
+
+       The Armadillo Group       ,::////;::-.          James Choate
+       Austin, Tx               /:'///// ``::>/|/      ravage@ssz.com
+       www.ssz.com            .',  ||||    `/( e\      512-451-7087
+                           -====~~mm-'`-```-mm --'-
+    --------------------------------------------------------------------
+

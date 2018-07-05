@@ -1,0 +1,112 @@
+From owner-cypherpunks@al-qaeda.net  Mon May 10 18:33:34 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.mit.edu (localhost [127.0.0.1])
+	by positron.mit.edu (8.12.11/8.12.11/Debian-3) with ESMTP id i4AMVcxO010386
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.mit.edu>; Mon, 10 May 2004 18:31:38 -0400
+Received: (from majordomo@localhost)
+	by positron.mit.edu (8.12.11/8.12.11/Debian-3) id i4AMVcJq010385
+	for cypherpunks-outgoing; Mon, 10 May 2004 18:31:38 -0400
+Date: Mon, 10 May 2004 18:24:31 -0400
+From: Adam Back <adam@cypherspace.org>
+To: Jason Holt <jason@lunkwill.org>
+Cc: cryptography@metzdowd.com, Cypherpunks <cypherpunks@minder.net>,
+        Adam Back <adam@cypherspace.org>
+Old-Subject: Re: blinding & BF IBE CA assisted credential system (Re:
+  chaum's patent expiry?)
+Message-ID: <20040510222431.GA26225@bitchcake.off.net>
+References: <20040510100251.GA13618@bitchcake.off.net>
+  <Pine.LNX.4.44.0405101806480.17720-100000@potato.zayda.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <Pine.LNX.4.44.0405101806480.17720-100000@potato.zayda.com>
+User-Agent: Mutt/1.4.1i
+X-Hashcash: 0:040510:jason@lunkwill.org:6a3cfd8fe686b15f6807dbd7
+X-Hashcash: 0:040510:cryptography@metzdowd.com:032b878d1fff33838efff0f7
+X-Hashcash: 0:040510:cypherpunks@minder.net:0e0b316248010fed42605825
+X-Hashcash: 0:040510:adam@cypherspace.org:c0e15c456ffd84b1a40f8a37
+Subject: Re: blinding & BF IBE CA assisted credential system (Re:
+  chaum's patent expiry?)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3500
+Lines: 75
+
+But if I understand that is only half of the picture.  The recipient's
+IBE CA will still be able to decrypt, tho the sender's IBE CA may not
+as he does not have ability to compute pseudonym private keys for the
+other IBE CA.
+
+If you make it PFS, then that changes to the recipient's IBE CA can
+get away with active MITM rather than passive eavesdropping.
+
+An aside is that PKI for Psuedonym's is an interesting question.  The
+pseudonym can't exactly go and be certified by someone else as an
+introducer without revealing generally identifying things about the
+network of trust.  But ignoring this presuming that the identities
+were not subject to MITM from day one, and could build up a kind of
+WoT despite lack of out-of-band way to check info to base WoT
+signatures on.  It would still be interesting to defend the pseudonym
+against MITM colluding with IBE CA that at some point after the
+pseudonym has transferred keys without insertion of a MITM from.
+
+This problem of addressing the who goes first problem for pseudonymous
+communicants appears somewhat related to Public Key Steganography
+where there is a similar scenario and threat model.  (Anderson and
+Petitcolas"On The Limits of Steganography"
+http://www.petitcolas.net/fabien/publications/jsac98-limsteg.pdf).
+They also cite a "Prisoners' problem" which might be something you
+could extend involving a warden who is eavesdropping and prisoners who
+will be penalized if he can detect and identify communicants.
+
+My earlier comment:
+
+| Btw one other positive side-effect of IBE is the server can't
+| impersonate by issuing another certificate in a pseudonyms name
+| because there is definitionally only one certificate.
+
+may not be that useful a distinction as the IBE CA server also gets
+your private key, so he doesn't _need_ to generate a certificate
+impersonating you as a conventional rogue CA would.
+
+But if we could make the binding from pseudonym to the pseudonym's
+non-IBE public key strictly first come first served, so that the IBE
+CA's attemt to claim his later released non-IBE public key is the
+correct one would be detectable.  Either secure time-stamping,
+extending the psuedonym name to include fingerprint as
+self-authenticator would allow this.
+
+Adam
+
+On Mon, May 10, 2004 at 06:45:56PM +0000, Jason Holt wrote:
+> Well, he can always generate private keys for any pseudonym, just as in cash
+> systems where the bank can always issue bank notes.  Here's what I'm
+> suggesting, where "b" is a blinding function and n1... are random nyms:
+> [...]
+> (Alice generates random nonce na)
+> HC_E(na, "Bob:agent", FBI)--->
+> 
+>                          (Bob generates random nb)
+>                  <---HC_E(nb, "Alice:member", NRA)
+> 
+> Both generate session keys from Hash(na,nb).
+
+> The FBI can *always* impersonate an agent, because, well, they're
+> the CA and they can make up pseudonymous agents all day long. But in
+> this protocol, I believe they wouldn't be able to be a MITM and/or
+> just eavesdrop on Alice&Bob.
+
+> That's because Bob only wants to talk to NRA members, and the FBI can't
+> impersonate that.
+> 
+> Now, this is for an interactive session, rather than just sending a single
+> request/response round like I discuss in the paper.  But even then, policies
+> are always respected.  Just change "na" to "request" and "nb" to "response".  
+> Alice's policy is respected whether she talks to FBI-authorized-Bob or
+> FBI-authorized-FBI, and the FBI doesn't get to read Bob's NRA-Alice-only
+> repsonse.
+> 
+> 							-J
+

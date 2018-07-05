@@ -1,0 +1,141 @@
+From cypherpunks-bounces@cpunks.org  Sat Sep  7 16:27:05 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r87KQcSj017990;
+	Sat, 7 Sep 2013 16:26:41 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r87KQXVD017986
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Sat, 7 Sep 2013 16:26:35 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 9321E543DF9; Sat,  7 Sep 2013 22:26:32 +0200 (CEST)
+Date: Sat, 7 Sep 2013 22:26:32 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org,
+        Cryptography List <cryptography@metzdowd.com>
+Subject: Re: [cryptography] Random number generation influenced, HW RNG
+Message-ID: <20130907202632.GJ29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 5720
+Lines: 102
+
+----- Forwarded message from Thor Lancelot Simon <tls@panix.com> -----
+
+Date: Sat, 7 Sep 2013 15:36:33 -0400
+From: Thor Lancelot Simon <tls@panix.com>
+To: Eugen Leitl <eugen@leitl.org>
+Cc: cryptography@randombit.net
+Subject: Re: [cryptography] Random number generation influenced, HW RNG
+User-Agent: Mutt/1.5.20 (2009-06-14)
+
+On Sat, Sep 07, 2013 at 09:05:33PM +0200, Eugen Leitl wrote:
+> 
+> This pretty much rules out CPU-integral RNGs. It has to be
+> a third-party add-on (USB or PCIe), and it has to be open hardware.
+
+I think you take this more than a little too far.  I see CPU-integral
+RNGs as very valuable source to be mixed with other sources in a
+software pool of entropy.  Why should we reject them, unless we think
+the mixing functions themselves are useless?
+
+The lesson here seems to me to be that we should be far more
+assiduous in seeking out additional sources of entropy and in always
+ensuring software RNGs mix input from multiple such sources into
+all output.  We should abandon sacred cows like the notion of
+information-theoretic randomness (that we don't actually know how
+to measure, but in pursuit of which we hamstring our software RNGs
+by arranging that they refuse to produce any output unless, by some
+questionable criterion, there is enough of it) and pursue engineering
+goals we can actually achieve, like mixing enough other-source input,
+of whatever quality, with the output of fast generators we can no longer
+trust that the adversary must actually attack the mixing function, rather
+than iteratively guessing the few state bits he does not already know.
+
+Secondarily -- and sadly! -- we must now be very suspicious of devices
+that integrate random number generation and encryption.  Can we even
+trust raw hardware RNG output for the generation of IVs?  I would argue
+not, because the same device's AES engine could be leaking key bits into
+our explicit IVs, etc, and we couldn't ever know.  Devices that offload
+packet processing in its entirety (SSL accellerators, IPsec accellerators,
+etc.) have even more opportunity to do this sort of thing.  Hardware
+crypto offload may still be very useful -- random number generation perhaps
+in particular -- but we will have to apply it with extreme care, and with
+a deliberate eye towards eliminating covert channels put in place by
+people at least as smart as we are, and with far more time and experience
+thinking about the problem from the offensive point of view.
+
+Finally, we have to accept that the game might just be over, period.  So
+you use a pure software RNG, mixing in RdRand output or not as you may
+prefer.  How hard do you think it is to identify the datastructures used
+by that RNG if you can execute code on a coprocessor with access to host
+RAM?  Almost every modern server has such a coprocessor built in (its
+management processor) and you won't find the source code to its firmware
+floating around.  Intel even puts this functionality directly on its
+CPUs (Intel AMT).  Rather than beating up on the guy who put a lovely
+RNG instruction into every processor we're likely to use any time soon,
+it seems to me we ought to be beating up on ourselves for ignoring far
+simpler and more obvious risks like this one for well over a decade.
+
+Seriously, show of hands, who here has ever really put his or her foot
+down and insisted that a product they were purchasing _omit_ such
+functionality?  Not chosen not to pay for it, refused to buy server X
+or mainboard Y simply on the basis that management processor functionality
+was onboard?  Now, compare to the number of people complaining about
+backdoored RNGs here and elsewhere on the Internet.  Go figure.
+
+To me the interesting question, but one to which I don't expect to ever
+know the answer, is whether the adversary -- having, we can assume,
+identified high value devices to systematically compromise, and lower value
+devices to defer for later or simply ignore entirely -- went at those
+devices sniper-style, or shotgun-style.  Were a few key opportunities for
+tampering identified, and one or two attempted against each targeted
+device?  Or were a wide variety of avenues explored, and every single one
+that seemed relevant attempted everywhere, or at least against certain
+particularly high value devices?  If we knew that, in a way we might know,
+when we did finally see concrete evidence of a particular kind of
+tampering, how long to keep looking for more.
+
+But we aren't going to know that, no matter how much we might want to.
+Attacks on crypto hardware, attacks on management processors, attacks
+on supervisory or trusted execution modes seldom exercised in normal
+system operation, attacks on flash modules holding boot code, so that
+under the right circumstances they replace page P with evil page P',
+attacks on elements of IC vendors' standard cell libraries (DMA engines
+would seem promising); assume the adversaries are smart, and good at their
+jobs, and the sky would seem to be the limit.
+
+The sky will fall, of course, when various nation-states' agencies really
+start digging for the holes punched in all of our security by the agencies
+of others (not my own observation, I should note).  Too much of this stuff
+will become all-too-common knowledge.  It's going to be quite a ride.
+
+But I see no reason to beat up on hardware random number generators
+*in particular*.  They are, at least, tools we may still be able to
+figure out how to use in a safe way.
+
+Thor
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

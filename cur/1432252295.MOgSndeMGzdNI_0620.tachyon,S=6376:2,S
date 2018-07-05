@@ -1,0 +1,133 @@
+From owner-cypherpunks@al-qaeda.net  Mon Mar 19 12:14:40 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q2JGBQ2q024300
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 19 Mar 2012 12:11:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1332173486;
+	bh=6+xJrXALWRilMSsX90/du9FUmZ3Io3Yg+MG9XMZ59fA=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=upSR4pj5ds0a3nus1FPCzZB3xbnSQWHdqzU7AepF/ODabxmo1N3kjQfEzHNLfCFiN
+	 C3WXwK+pm7vJcjAnjRoVVKrPYzA4HA5JqYOubAWCO77wr7Lo6QSe69GYNmreIuGXam
+	 uZqBjy6S+Kxx5VVUHRWcBXUVlfGwfjzV+GU3lnqo=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q2JGBQOn024299
+	for cypherpunks-outgoing; Mon, 19 Mar 2012 12:11:26 -0400
+Date: Mon, 19 Mar 2012 17:11:22 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: doctrinezero@googlegroups.com, info@postbiota.org,
+        cypherpunks@al-qaeda.net
+Subject: Re: [tahoe-dev] Idea for a Publish/Subscribe Message System, 
+  on?Tahoe-LAFS
+Message-ID: <20120319161122.GZ9891@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4913
+Lines: 99
+
+----- Forwarded message from "Stuart W. Card" <stu.card@critical.com> -----
+
+From: "Stuart W. Card" <stu.card@critical.com>
+Date: Mon, 19 Mar 2012 12:10:08 -0400
+To: tahoe-dev@tahoe-lafs.org
+Subject: Re: [tahoe-dev] Idea for a Publish/Subscribe Message System,
+	on Tahoe-LAFS
+Organization: Critical Technologies Inc.
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US;
+	rv:1.9.1.5) Gecko/20091204 Lightning/1.0b2pre Thunderbird/3.0
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+all --
+
+Sorry to chime in late and initially without reference citations, but I
+wanted you all to be aware of some work we have been doing recently at
+Syracuse University and my company Critical Technologies Inc., using
+Tahoe-LAFS as a principal building block for a publish-subscribe-query
+distributed blackboard that will be the backbone of a framework for
+distributed sensing/computation/control. A unifying theme is use of
+capability based security throughout the stack, from the underlying
+microkernel-based hypervisor all the way up through the mobile agent
+based applications.
+
+We are working towards compliance with OMG Data Distribution Service
+(DDS) API specs, but initially have done only proof-of-concept work
+without regard for such specs. We are looking at plugging in Tahoe as an
+archival message store for OpenDDS, OpenSplice or RTI-DDS.
+
+I am limited in what I can say in public prior to obtaining specific
+permission from our funding sources, but as Tahoe is a community
+supported product that is central to our architecture, I believe I can
+discuss here those aspects directly related to Tahoe development.
+
+I will go out on a limb and say that I think the whole notion of mutable
+files is a mistake. We currently use them only for directories, and
+there only until such time as we develop a replacement based on our
+architecture. Instead of mutable files, we prefer revision control: once
+a message (file) is published, it is immutable for all time; but a new
+version can be published, as either a complete snapshot or a diff
+(respect to rsync), with suitable meta-data markups and pointers in
+directories (also to be immutable but version controlled).
+
+To provide notification of new publications (including revisions of old
+ones), we use the NACK Oriented Reliable Multicast (NORM) transport
+protocol, which is the _only_ IETF standards track reliable multicast
+protocol that offers both statistical reliability (erasure code FEC) and
+acknowledged delivery (ARQ), combining them in a Type II Hybrid ARQ/FEC
+(which can approach the Shannon limit despite dynamically varying
+channel error rates). Urgent short messages that do not require
+persistent archival can also be sent via NORM without the latencies and
+costs inherent to Tahoe. Long term, we also want to enable use of NORM
+as a multicast transport for Tahoe, in place of multiple unicast TCP
+connections.
+
+We have some notions about using URIs as capabilities, not only for
+Tahoe, but also for the microvisor and other subsystems. We want to
+define a syntax and semantics for extended capability URIs that can
+embed policies (including PKI based restrictions on who can exercise the
+capability, thus integrating Role Based Access Control with
+capabilities), and short "handle" URIs (that merely reference long URIs
+with their embedded information). We intend to develop capability
+middleware (including proxies subsuming the capability security notion
+of "membrane") that will enable programmers and admins who are not [yet]
+familiar with capability security to nonetheless utilize it with a
+minimum of unintended capability leaks.
+
+If any of you find any of the above interesting and want to discuss it,
+please e-mail me directly, as (unfortunately) I can't go into much more
+detail on the list (I must obtain specific approval of the text of each
+"public release of information" that I make).
+
+- -- 
+Stuart W. Card, PhD: VP & Chief Scientist, Critical Technologies Inc.
+* Creativity * Diversity * Expertise * Flexibility * Integrity *
+Suite 400 Technology Center, 4th Floor 1001 Broad St, Utica NY 13501
+315-793-0248 x141 FAX -9710 <Stu.Card@critical.com> www.critical.com
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (MingW32)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
+
+iEYEARECAAYFAk9nWmAACgkQS7PQ0a2weL7ZGwCgnPaITAgigg3PRPUhkNrul3pB
+Ur8An1ALUNdzXv76XlO18wkVnUpcjWN+
+=/iWs
+-----END PGP SIGNATURE-----
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+http://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

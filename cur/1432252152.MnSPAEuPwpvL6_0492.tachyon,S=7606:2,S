@@ -1,0 +1,166 @@
+From owner-cypherpunks@al-qaeda.net  Thu Nov 24 15:18:16 2011
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id pAOKCdF4003804
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 24 Nov 2011 15:12:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1322165559;
+	bh=H+3TPWYBmDSSOE2fPir5KeWT3dTht5FB3hu3jd3ReWA=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=i4diILsqgvFCOqLjr14sYt0OxDJo1XXp2TLvcBrTx7/qyVzN44+nBdz9jpGQhs5u2
+	 XBg3RgyIFDHfrqP6J5kxTdbSPbpTg+wXbLLTMRqFMN0ECUNiNjYUOV4dEXNb5wm589
+	 HVvIHFMkd26HhhytTvZjONq+/o7I6mvo2EOk711o=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id pAOKCdF7003803
+	for cypherpunks-outgoing; Thu, 24 Nov 2011 15:12:39 -0500
+Date: Thu, 24 Nov 2011 21:12:35 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: [serval-project-dev] Re: We have store-and-forward SMS working
+  on 	the mesh
+Message-ID: <20111124201235.GN31847@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 6137
+Lines: 131
+
+----- Forwarded message from Paul Gardner-Stephen <paul.gardner.stephen@gmail.com> -----
+
+From: Paul Gardner-Stephen <paul.gardner.stephen@gmail.com>
+Date: Thu, 24 Nov 2011 11:02:49 -0800 (PST)
+To: Paul <paul@paulcolmer.co.za>
+Cc: village-telco-dev@googlegroups.com,
+	serval-project-developers@googlegroups.com
+Subject: [serval-project-dev] Re: We have store-and-forward SMS working on the mesh
+User-Agent: G2/1.0
+Reply-To: serval-project-developers@googlegroups.com
+
+Hi Paul,
+"Paul" <p...@paulcolmer.co.za> wrote:> Firstly well done Paul, very
+cool !>> It is my understanding that if the target batphone is off the
+mesh, the> message will log with any available phone it can find on
+the mesh and the> 1st phone to find the target will deliver.
+Yes.
+> Is there any intelligence in the> network that informs a second phone finding the target that the message has> been delivered ?
+Yes, so again this will be described in more detail in the white
+paperI am working on, but the general idea is that each sender
+maintains alist of all messages they have sent, which has a version
+numberassociated with it in the Rhizome Manifest file.  If a
+recipientalready has that version of the file, then it doesn't refetch
+it.Else, it refetches the file.  We have a mechanism we have planned
+butnot yet implemented where only the new part of the file gets
+fetched,and also that expires the old part of the file that contains
+alreadydelivered messages, together working to minimise network
+traffic.
+> Likewise, will a 'mule' phone update the mesh when it comes back in range to> say ' I delivered ' all OK ! and delete the message on other potential mules> in the mesh ?
+So what happens here (or rather is planned, and being implementednow),
+is that the recipients phone may issue a receipt that spreads inthe
+same way as the original message. When the sender gets thereceipt,
+they know the message was delivered, which also means thatthey can
+advance the beginning point in their message log to excludethe
+received message (assuming there are no others before it that arestill
+pending).  That goes out in the form of an updated manifest fromthe
+sender.  When the recipient sees this new manifest that doesn'tinclude
+the original message, it can deduce that the message receiptwas
+acknowledged, and it can advance it's starting point in itsmessage
+file in the same way.  All this means that after a message isreceived,
+it will phase out from being carried by devices on the mesh.
+We are also planning various scope limiting features to stop
+messagesflooding too far or for too long.
+Paul.
+
+On Jan 1 2002, 8:57 pm, "Paul" <p...@paulcolmer.co.za> wrote:
+> Firstly well done Paul, very cool !
+>
+> It is my understanding that if the target batphone is off the mesh, the
+> message will log with any available phone it can find on the mesh and the
+> 1st phone to find the target will deliver. Is there any intelligence in the
+> network that informs a second phone finding the target that the message has
+> been delivered ?
+> Likewise, will a 'mule' phone update the mesh when it comes back in range to
+> say ' I delivered ' all OK ! and delete the message on other potential mules
+> in the mesh ?
+>
+> Paul Colmer
+> Paul Colmer & Associates
+>
+>
+>
+>
+>
+>
+>
+> -----Original Message-----
+> From: village-telco-dev@googlegroups.com
+>
+> [mailto:village-telco-dev@googlegroups.com] On Behalf Of Paul
+> Gardner-Stephen
+> Sent: 23 November 2011 01:15 AM
+> To: village-telco-dev
+> Subject: [vt-dev] Re: We have store-and-forward SMS working on the mesh
+>
+> Hello,
+>
+> In this prototype we don't have security in place, but the messages
+> will be encrypted using public-private crypto such that only the
+> recipient can receive the message.  We also offer the option of
+> encrypting the recipient so that there is confidentiality as to who
+> the recipient is -- although that protection is only partial, as it
+> wouldn't take too much analysis to observe the patterns of receiving
+> and sending messages to make some well informed guesses about social
+> network structure.
+>
+> Paul.
+>
+> On Nov 22, 11:23 pm, Outback Dingo <outbackdi...@gmail.com> wrote:
+> > On Tue, Nov 22, 2011 at 8:00 AM, Paul Gardner-Stephen
+>
+> > <p...@servalproject.org> wrote:
+>
+> Seehttp://servalpaul.blogspot.com/2011/11/demonstrating-serval-rhizome-s...
+> > > for some details, video and cartoon to explain a little of how it
+> > > works.  I am also working on a white paper that describes it in much
+> > > more detail.
+>
+> > Sounds nice in theory, but what about message security....... if
+> > someone elses phone contains the message as a courier device
+> > could it not be intercepted and read by a devious user?
+>
+> > > --
+> > > You received this message because you are subscribed to the Google
+> Groups "village-telco-dev" group.
+> > > To post to this group, send email to village-telco-dev@googlegroups.com.
+> > > To unsubscribe from this group, send email to
+> village-telco-dev+unsubscribe@googlegroups.com.
+> > > For more options, visit this group
+> athttp://groups.google.com/group/village-telco-dev?hl=en.
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "village-telco-dev" group.
+> To post to this group, send email to village-telco-dev@googlegroups.com.
+> To unsubscribe from this group, send email to
+> village-telco-dev+unsubscribe@googlegroups.com.
+> For more options, visit this group athttp://groups.google.com/group/village-telco-dev?hl=en.
+
+-- 
+You received this message because you are subscribed to the Google Groups "Serval Project Developers" group.
+To post to this group, send email to serval-project-developers@googlegroups.com.
+To unsubscribe from this group, send email to serval-project-developers+unsubscribe@googlegroups.com.
+For more options, visit this group at http://groups.google.com/group/serval-project-developers?hl=en.
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

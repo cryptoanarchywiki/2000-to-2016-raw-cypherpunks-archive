@@ -1,0 +1,94 @@
+From owner-cypherpunks@al-qaeda.net  Mon Mar  4 11:04:26 2013
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id r24Fx9XH027715
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 4 Mar 2013 10:59:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1362412749;
+	bh=ury9TbNIi0GCLOd05dcFP0YAi6/yrJs514EUR8fWHe8=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=siXsA697hPdQDsLPDRQlOWIcKx9fH5FxeyknWYba16b8p9RLt4cLiwdni82Om5IUx
+	 uMFOx2YYCLoiADAlQ5+oSy7R1YGxJXOnPDj7orUmxyD7jtEYeBuxNlK5JgOC6oSatE
+	 a1TrskAuExN1oKK3ioJZJWRVIj/KiNmxtqljPDrA=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id r24Fx9uR027714
+	for cypherpunks-outgoing; Mon, 4 Mar 2013 10:59:09 -0500
+Date: Mon, 4 Mar 2013 16:59:06 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Re: [liberationtech] Efficient digital one-way communication
+Message-ID: <20130304155906.GQ6172@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Jens Christian Hillerup <jens@hillerup.net> -----
+
+From: Jens Christian Hillerup <jens@hillerup.net>
+Date: Mon, 4 Mar 2013 16:56:12 +0100
+To: Michael Rogers <michael@briarproject.org>
+Cc: liberationtech <liberationtech@lists.stanford.edu>
+Subject: Re: [liberationtech] Efficient digital one-way communication
+Reply-To: liberationtech <liberationtech@lists.stanford.edu>
+
+On Mon, Mar 4, 2013 at 4:40 PM, Michael Rogers <michael@briarproject.org> wrote:
+> Last year I spent some time playing with audio encoding of data for
+> transmission over handheld radios. The state of the art here is dialup
+> modems - on a good day they can get 56,000 bits per second over a
+> channel designed for voice, but that requires advanced modulation and
+> error correction techniques. The radio hams have packet radio (AX.25
+> and APRS) running at 1,200-9,600 bps over long distances using simple
+> modulation and no error correction. Some early home computers used
+> audio cassettes for storage (300-1,200 bps, CUTS or Kansas City Standard).
+
+Nice information, thanks. Would it be wrong to assume larger data
+rates to be attainable on an FM "link" than over the telephone line?
+For music etc. FM has far superior sound quality in any case.
+
+> If you want to support purely one-way communication (no acks), you'll
+> need to forward error correct the data. Hamming codes and parity
+> checks are simple to implement but they'll eat a lot of your
+> bandwidth; Reed-Solomon codes are more bandwidth-efficient but also
+> more complex.
+
+Yes, I thought of that too in September. Luckily I've taken courses in
+abstract algebra and error-correcting codes at my university; I think
+I'd be able to write a working RS implementation from my theory books.
+
+Another thing I didn't tell in my first mail is that I've been wanting
+to design a protocol for metadata, too, since it doesn't really make
+sense to decode and save half files anyway. It would also make it
+possible to send the file names and file sizes beforehand so the
+receiver can know how much of the file s/he has already received.
+
+And yes, I want this to be truly one-way -- no acks. The idea is that
+I want the receiving end to need as little hardware as possible: one
+FM radio and one computer with a sound card (and this software). The
+sender obviously has access to an FM transmitter (or whatever becomes
+the sound carrier). This modulation algorithm should not provide
+authenticity of the sender, instead cryptographic signing of the data
+should happen at higher levels of the stack.
+
+> Some Java code for modulation, framing and error correction is here if
+> you're interested:
+>
+> http://briar.git.sf.net/git/gitweb.cgi?p=briar/sandpit;a=tree;f=src/net/sf/briar/sandpit/modem
+> http://briar.git.sf.net/git/gitweb.cgi?p=briar/sandpit;a=tree;f=src/net/sf/briar/sandpit/fec
+
+Thanks a lot! I'll have a look at it soon.
+
+JC
+--
+Too many emails? Unsubscribe, change to digest, or change password by emailing moderator at companys@stanford.edu or changing your settings at https://mailman.stanford.edu/mailman/listinfo/liberationtech
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

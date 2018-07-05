@@ -1,0 +1,79 @@
+From owner-cypherpunks@jfet.org  Sun Feb 19 16:46:33 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.5/8.13.5/Debian-3) with ESMTP id k1JLjaFQ007490
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sun, 19 Feb 2006 16:45:36 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.5/8.13.5/Submit) id k1JLjaLw007489
+	for cypherpunks-outgoing; Sun, 19 Feb 2006 16:45:36 -0500
+Date: Sun, 19 Feb 2006 22:45:33 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@jfet.org
+Subject: [arma@mit.edu: Tor 0.1.0.17 is released]
+Message-ID: <20060219214533.GL3873@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mutt/1.5.11
+X-Converted-To-Plain-Text: from multipart/signed by demime 1.01d
+X-Converted-To-Plain-Text: Alternative section used was text/plain
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2147
+Lines: 52
+
+----- Forwarded message from Roger Dingledine <arma@mit.edu> -----
+
+From: Roger Dingledine <arma@mit.edu>
+Date: Sun, 19 Feb 2006 16:14:31 -0500
+To: or-announce@freehaven.net
+Subject: Tor 0.1.0.17 is released
+User-Agent: Mutt/1.5.9i
+Reply-To: or-talk@freehaven.net
+
+Tor 0.1.0.17 fixes a crash bug for servers that enable hibernation,
+lets Windows servers scale better, and tries to reduce the bandwidth
+overhead from the old-style directory protocol. Both clients and servers
+are encouraged to upgrade.
+
+http://tor.eff.org/download
+
+Changes in version 0.1.0.17 - 2006-02-17
+  o Crash bugfixes on 0.1.0.x:
+    - When servers with a non-zero DirPort came out of hibernation,
+      sometimes they would trigger an assert.
+
+  o Other important bugfixes:
+    - On platforms that don't have getrlimit (like Windows), we were
+      artificially constraining ourselves to a max of 1024
+      connections. Now just assume that we can handle as many as 15000
+      connections. Hopefully this won't cause other problems.
+
+  o Backported features:
+    - When we're a server, a client asks for an old-style directory,
+      and our write bucket is empty, don't give it to him. This way
+      small servers can continue to serve the directory *sometimes*,
+      without getting overloaded.
+    - Whenever you get a 503 in response to a directory fetch, try
+      once more. This will become important once servers start sending
+      503's whenever they feel busy.
+    - Fetch a new directory every 120 minutes, not every 40 minutes.
+      Now that we have hundreds of thousands of users running the old
+      directory algorithm, it's starting to hurt a lot.
+    - Bump up the period for forcing a hidden service descriptor upload
+      from 20 minutes to 1 hour.
+
+
+
+
+----- End forwarded message -----
+--
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820            http://www.ativel.com
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+
+[demime 1.01d removed an attachment of type application/pgp-signature which had a name of signature.asc]
+

@@ -1,0 +1,91 @@
+From owner-cypherpunks@al-qaeda.net  Sun Jun 28 08:58:25 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id n5SCvZX8021465
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sun, 28 Jun 2009 08:57:35 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id n5SCvZBF021463
+	for cypherpunks-outgoing; Sun, 28 Jun 2009 08:57:35 -0400
+Date: Sun, 28 Jun 2009 14:57:31 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Re: 25 tbreg relays in directory
+Message-ID: <20090628125731.GQ23524@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2682
+Lines: 66
+
+----- Forwarded message from Pei Hanru <peihanru@gmail.com> -----
+
+From: Pei Hanru <peihanru@gmail.com>
+Date: Sun, 28 Jun 2009 20:09:25 +0800
+To: or-talk@freehaven.net
+Subject: Re: 25 tbreg relays in directory
+User-Agent: Thunderbird 2.0.0.22 (Windows/20090605)
+Reply-To: or-talk@freehaven.net
+
+On 2009-04-27 18:27 CST, Scott Bennett wrote:
+>      torstatus currently shows 25 different relays that are all named "tbreq"
+> and appear to be in China.  I wonder whether these are due to some benighted
+> user restarting tor after clearing its key files every time, or whether there
+> may be several that are all owned by one organization.  All but four are
+> marked as being "offline".
+
+I finally got a plausible answer a few days ago.
+
+The short answer is, someone are making use of Tor to do nasty things,
+and all "tbreg"s aren't aware they are running Tor relays.
+
+The long answer.
+
+"tbreg" stands for "TaoBao REGistrar". TaoBao is an eBay-like website in
+China. Some sellers want to quickly increase their reputations
+(so-called refresh) in order to attract more buyers. The first thing for
+them is to register multiple accounts. However, TaoBao is rigorous on
+this, a single IP is only allowed to register one or two accounts. So,
+someone realize this need and begin to sell softwares which
+automatically register large number of TaoBao accounts. Tor, together
+with Privoxy are used as a HTTP proxy to bypass the IP restriction. For
+some reasons I don't understand, this software will run Tor as a relay.
+
+I've downloaded the software and tested, the version of Tor in it is
+indeed 0.2.1.2-alpha, torrc in it is
+
+  SocksPort 9050 # what port to open for local application connections
+  SocksListenAddress 127.0.0.1 # accept connections only from localhost
+  ControlPort 9051
+  Nickname tbreg
+  ORPort 9001
+
+You may test yourself, the download link is
+http://www.wintaobao.com/download/tbreg_v1.3.8.msi (from
+http://bbs.wintaobao.com/viewthread.php?tid=135).
+
+Finally some random thoughts.
+
+1. We shall be reassured for a moment, these relays won't do much harm
+to the Tor network. I'm more concerned about the people running these
+relays, their computers aren't protected at all. But considering the
+things these guys are doing... well, let it go!
+
+2. Why Tor runs in a relay mode?
+
+3. Should these "tbreg"s be banned from the Tor network? If so, what's
+the best way to do?
+
+Hanru
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

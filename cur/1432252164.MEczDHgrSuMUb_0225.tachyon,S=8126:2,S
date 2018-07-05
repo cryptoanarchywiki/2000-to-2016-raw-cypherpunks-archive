@@ -1,0 +1,177 @@
+From cypherpunks-bounces@cpunks.org  Sat Oct 12 13:41:40 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9CHfdoj021576;
+	Sat, 12 Oct 2013 13:41:39 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9CHewHS021570
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Sat, 12 Oct 2013 13:41:00 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id ED54F543E43; Sat, 12 Oct 2013 19:40:57 +0200 (CEST)
+Date: Sat, 12 Oct 2013 19:40:57 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: Re: [Freedombox-discuss] Which mesh system should be included in the
+ Freedombox?
+Message-ID: <20131012174057.GW10405@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 6342
+Lines: 138
+
+----- Forwarded message from Paul Gardner-Stephen <paul@servalproject.org> -----
+
+Date: Sat, 12 Oct 2013 20:23:27 +1030
+From: Paul Gardner-Stephen <paul@servalproject.org>
+To: Petter Reinholdtsen <pere@hungry.com>
+Cc: freedombox-discuss <freedombox-discuss@lists.alioth.debian.org>
+Subject: Re: [Freedombox-discuss] Which mesh system should be included in the Freedombox?
+Message-ID: <CA+_T8-C5m-2+1snwQZpz4GUdHinqy1z19ixnuk=we6px3ghEiQ@mail.gmail.com>
+
+Hello all,
+
+
+On Sat, Oct 12, 2013 at 6:06 PM, Petter Reinholdtsen <pere@hungry.com>wrote:
+
+>
+> [Sandy Harris]
+> > As I see it, security has to be the first consideration for any Box
+> > component, including a mesh system. Given the stated project goals we
+> > should not even consider anything unless we have good reason to
+> > consider it secure.
+>
+> Well, I believe that is putting the cart in front of the horse, given
+> the current amount of people involved.  I believe we first need to get
+> something useful that can be located in the privacy of the users homes
+> to get that legal protection, and then we can continue improving that to
+> make it more and more "secure", which is a word that mean different
+> things to different people and thus hard to have as a fuzzy goal.
+>
+> This mean to me that we pick solutions already in common use and
+> integrate it into the Freedombox, and depend on the rest of the free
+> software community to audit it (with our help, if someone in the
+> Freedombox want to spend time on it).
+>
+> > If something looks desirable but has not had an audit for security,
+> > then auditing it and contributing fixes if needed is more important
+> > for the Box than things like getting it into Debian or making it run
+> > on a Dreamplug.
+>
+> I am happy to hear that you want to focus on that area, and suggest you
+> have a look at the batman-adv mesh routing system when you find time to
+> audit mesh systems.
+>
+> I've concluded I will focus on batman-adv for now, as it provide layer 2
+> mesh networking (as in both IPv4 and IPv6 will work) and is used by the
+> Serval project that provide a peer-to-peer phone system that allow phone
+> calls and "SMS" messaging without central infrastucture.  If the
+> freedombox provide mesh nodes compatible with the Serval project, we get
+> free software phone support for free. :)
+>
+
+So some clarification here:
+
+Serval used to use the original layer-3 batman, and can still coexist with
+batman, batman-adv, babel, olsrd etc.  But Serval now includes its own mesh
+routing protocol, for many of the reasons that are stimulating discussion
+here.
+
+Some of those reasons include the difficulty of making a secure fully
+distributed network, especially a mesh network.   Indeed, this was a major
+reason for us side-stepping IP, and creating our own mesh-oriented network
+layer.
+
+We started from the ground-up by using public cryptography keys as network
+addresses.  This means that we promiscuously share and exchange public keys
+on the network as part of its inherent operation.  It also means that
+end-to-end encryption is trivial, requires no key exchange, centralised
+authority or other complication. Indeed, encryption is so simple in the
+Serval network layer that we enable it by default: you need to set flags on
+a packet if you don't want it signed and encrypted.
+
+Careful choice of crypto system means that it is still fast, and doesn't
+need huge keys.  We also added an address abbreviation scheme that means
+that we typically have smaller network headers than IPv4, let alone IPv6.
+
+That leaves only key verification to ensure private man-in-the-middle-free
+communications with any party on the network -- a problem that the
+open-source community has largely solved with web of trust.
+
+This security platform was recently recognised at the Global Security
+Challenge grand-final in London where we received an Honourable Mention,
+coming a close second in the entire competition -- against entrants from
+the USA, UK, Israel and other major players in the security space.
+
+We do not rest on our laurels, nor do we take the praise of men as meaning
+that we have a perfect or vulnerability-free system.  But we do believe
+that we have created something that has great potential in the open-source
+world, and especially for projects like Freedom Box where private
+correspondence (text, voice and data) on a fully-distributed
+self-organising network is a major objective.
+
+As mentioned, because all Serval services operate in parallel to IP, this
+means you can mix and match Serval service with your favourite traditional
+mesh routing protocols should you wish to use them.
+
+It also means that we can use interesting radio platforms that are too slow
+to be useful on IP, e.g., ~100kbit/sec ISM band radios that have ranges 10x
+to 100x that of Wi-Fi.  We already have a working example of this in our
+Serval Mesh Extender hardware device, which also shares many common
+objectives with the Freedom Box.
+
+We think that we have some interesting technologies that are of use to this
+community, and of course since we develop them as free and open-source
+software, we encourage this community to take whatever they find useful,
+and perhaps even open a conversation for us to work out what activities and
+efforts are in the intersection of our needs and objectives, and apply some
+combined energy that will accelerate our mutual progress towards our goals.
+
+Paul.
+
+
+> See my blog post from yesterday,
+> <URL:
+> http://people.skolelinux.org/pere/blog/Oslo_community_mesh_network___with_NUUG_and_Hackeriet_at_Hausmania.html
+> >,
+> for more details of what I have found out so far.
+>
+> --
+> Happy hacking
+> Petter Reinholdtsen
+>
+> _______________________________________________
+> Freedombox-discuss mailing list
+> Freedombox-discuss@lists.alioth.debian.org
+> http://lists.alioth.debian.org/cgi-bin/mailman/listinfo/freedombox-discuss
+>
+
+_______________________________________________
+Freedombox-discuss mailing list
+Freedombox-discuss@lists.alioth.debian.org
+http://lists.alioth.debian.org/cgi-bin/mailman/listinfo/freedombox-discuss
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

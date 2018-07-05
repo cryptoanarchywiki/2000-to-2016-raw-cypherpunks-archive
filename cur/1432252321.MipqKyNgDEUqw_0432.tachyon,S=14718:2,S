@@ -1,0 +1,312 @@
+From owner-cypherpunks@Algebra.COM  Thu Aug  8 01:36:35 2002
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g785aYA17224
+	for <rsw@opamp.org>; Thu, 8 Aug 2002 01:36:34 -0400
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id BAA13763
+	for <rsw@mit.edu>; Thu, 8 Aug 2002 01:36:33 -0400 (EDT)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g77NuooA000642
+	for <cypherpunks-outgoing@ak47.algebra.com>; Wed, 7 Aug 2002 18:56:50 -0500
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id g77Nuo6Q000641
+	for cypherpunks-outgoing; Wed, 7 Aug 2002 18:56:50 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id g77NugoA000623
+	for <cypherpunks@ak47.algebra.com>; Wed, 7 Aug 2002 18:56:43 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g77NuecE026963
+	for cypherpunks@ak47.algebra.com; Wed, 7 Aug 2002 16:56:40 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.5/8.12.5) id g77NtNZt026956
+	for cypherpunks-goingout345; Wed, 7 Aug 2002 16:55:23 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Wed, 7 Aug 2002 16:55:11 -0700
+From: AARG! Anonymous <remailer@aarg.net>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@aarg.net>.
+To: adam@cypherspace.org, cypherpunks@lne.com, cryptography@wasabisystems.com
+Old-Subject: Re: Palladium: hardware layering model
+Message-ID: <1c9905949ee6ae242d2b3fd69f09eb24@aarg.net>
+X-Loop: cypherpunks@lne.com
+X-spam: 10 
+Subject:  Re: Palladium: hardware layering model
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 12313
+Lines: 264
+
+
+Adam Back writes:
+> some definitions:
+>
+> hw layer -- SCP which I think provides crypto key store, crypto
+>             co-processor for sealing, remote attesation
+>
+> ring 0 -- new layer which controls memory management unit and secured
+> code compartments
+>
+> supervisor mode -- normal supervisor mode, which can now only read
+> user space, but not trusted agents running in code compartments
+>
+> user mode -- legacy user level apps under complete control of
+> supervisor mode
+>
+> and some ASCII art:
+>
+> +---------------+------------+
+> | trusted-agent | user mode  |
+> |    space      | app space  |
+> |    (code      +------------+
+> | compartment)  | supervisor |
+> |               |    mode    |
+> +---------------+------------+
+> | ring-0  / Memory mgmt unit |
+> +----------------------------+
+> | hardware / SCP key manager |
+> +----------------------------+
+>
+> each layer below can decide policy and information disclosure through
+> APIs to the layer above.  
+
+I don't think this is right, as Peter said that the Palladium stuff could
+load many days after boot.  So I don't think the "ring-0" mode underlies
+normal supervisor mode as you have shown it.  Instead I think they are
+relatively orthogonal.
+
+I'm not sure how to draw it, but I would envision the TOR as a device
+driver which controls two devices: the trusted execution space, which
+is some special memory (on the cpu?), and the SCP, the crypto processor.
+
+Let us suppose that there is a special instruction to load a block of
+code into the trusted execution space and give it a new process ID.
+At the same time this causes the SCP to hash it so that it can attest
+to it later.  Let us also suppose that the ring-0 mode is used only when
+running code out of the trusted execution space (TE space).
+
+What is special about ring-0?  Two things: first, it can see the code
+in the TE space so that it can execute it.  And second, it doesn't
+trap into supervisor mode for things like debugger single-stepping.
+I'm not familiar with the details of the Pentium family but on most CPUs
+the debugger single-steps things by setting a flag and returning into
+the code.  The code executes one instruction and then automatically traps
+into supervisor mode, which hands off to the debugger.  This process must
+be suppressed in ring-0 mode, and likewise for any other features which
+can force a ring-0 process to trap involuntarily into supervisor mode,
+which exposes the registers and such.
+
+The TOR would then manage the various processes running in the TE space,
+and their interactions with ordinary code, and possibly the interactions
+of both with the SCP.  I'm not sure if the TOR runs in ring-0 mode and
+in the TE space; probably it does, as the SCP can attest to it, and we
+wouldn't want non-Palladium processes to debug it.
+
+So really the whole TOR/SCP/TE-space/trusted-agents stuff is relatively
+orthogonal to the rest of windows.  It's almost like you had a fully
+functional 2nd CPU in there that you could load code into and have it run;
+that CPU's memory is the TE space, its mode is the ring-0, it has access
+to the SCP, and it runs the TOR and trusted agents.  But Palladium has
+to use the regular CPU for this so they firewall it off with the ring-0
+mode which locks it into this restrictive mode.
+
+That's just a guess, probably wrong in many details, but consistent
+with what I understand so far.  Mostly I am hoping to encourage Peter
+to come forward and correct our misconceptions.
+
+
+> The implications of which are:
+>
+> - the SCP can implement sealing with data separation against ring-0
+> (ring-0 can't bypass sealing data separation)
+
+I have this as well; loading a user agent into TE space creates the hash
+"fingerprint" which will be used for sealing and attestation; other ring-0
+agents will have their own fingerprints and won't be able to unseal what
+this agent does.  The SCP compares fingerprints at unseal time to what
+it was at seal time and (optionally) won't unseal if they don't match.
+(This is one of multiple sealing options.)
+
+> - ring-0 can read all superviser, user, and trusted agent space, but
+
+I don't think so; not necessary in my model, would require significant
+re-architecting of Windows which won't happen, and inconsistent with
+the claim that Palladium can load days after boot.
+
+
+> - ring-0 and MMU can compartmentalize trusted agents so they can't
+> tamper with each other, and
+
+Must be true.  Some questions: how big is the TE space?  How many agents
+can live there at once?  Do they swap in/out?  Does data go there, or
+just code?
+
+> - ring-0 and MMU can exclude supervisor mode from trusted agent space
+> and ring-0 space; supervisor mode is itself just another
+> compartmentalized trusted-agent level space.  Therefore ring-0 can
+> restrict what supervisor mode (where the normal OS is located) can do.
+
+But ring-0 cannot make arbitrary restrictions on sup. mode.  Remember
+they can't afford to re-architect either the entire CPU nor the entire
+OS for this.  The simplest is that in ring-0 mode you disable certain
+functions that could trap you into supervisor mode thereby losing control
+of the CPU, and this ring-0 mode gains you access to the TE space.
+
+
+> whereas the normal protected CPU architecture is just:
+>
+> +------------+
+> | user mode  |
+> | app space  |
+> +------------+
+> | supervisor |
+> |   mode     |
+> +------------+
+
+I'm not much of artist but I would put the new stuff off to the side of
+this in its own tower.  Ring-0 mode at the bottom, running the TOR which
+is shown above it, which manages the user agents which would be on top.
+The SCP is further off to the side, perhaps managed by the TOR.
+
+
+> - from these assumptions it appears an OS could be implemented so that
+> all OS calls pass through ring-0 APIs and mediation to get to
+> supervisor mode OS.  In this case the OS could observe system calls
+> the trusted agent makes, but not in general read, debug, modify
+> virtualize or modify trusted-agent code.  The non-virtualization
+> presumes encrypted trusted-agent code, which Peter said is not done,
+> so this can't be how it works.
+
+I'm not sure what you mean by the OS observing system calls.
+By definition, system calls go into the OS.  So I don't think that will
+ever stop happening.  But it does mean that when a ring-0 trusted agent
+makes a system call, we change to normal supervisor mode which makes
+the trusted space invisible.
+
+The point we are dancing around is this.  How does it protect the
+data, along the whole path from the remote machine, through where it is
+processed locally, until it is sealed on the local disk?  It seems that
+it must be in the clear for a while on the local machine.  Where is that -
+in regular memory, or TE space?
+
+It's not that big a deal to be unable to read TE *code*.  From what
+Peter says, that is typically not encrypted on the disk.  So the code
+is no secret.  What we must be unable to read are the data being handled
+by this code: the registers, the contents of memory that are sensitive.
+And by the registers I include the PC, since that would leak information
+about the data.  We can't single-step it, we can't put breakpoints into
+it, we can't change it while it is running.
+
+
+> I would be interested to hear what model takes for Palladium mapping
+> the interactions and restrictions between Trusted Agents, user space,
+> OS kernel, TOR to the hardware.  We need this kind of detail to reason
+> about limits of the Palladium and make distinctions between what is
+> possible with Palladium implementation choices vs what other types of
+> OSes could be built from the hardware features.
+
+I am curious about this from the technical perspective.  I think this is
+one of the most interesting developments in many years on the security
+front.
+
+But frankly I don't think it will do them much good to tell you and most
+other cypherpunks about it, because whatever they say, you and others will
+twist it and lie if necessary a la Lucky to turn it into some horrible
+perversion.  Even if the design were totally benign, that doesn't mean
+Microsoft/Intel couldn't change it someday, right?  They could put a
+machine gun into every PC aimed at the user, and a camera over his head.
+That's the level of reasoning in Lucky's Defcon presentation, except
+that he says that they've already done it.  I applaud Peter's patience
+but pity him for his naive belief that he is engaging in a good faith
+exchange where he will get a fair hearing.
+
+
+> One idea I think would be interest is as follows:
+>
+> - the TOR (which lives in ring-0) _could_ be used together with the OS
+> to force all trusted-agent in-flows and out-flows (network traffic) to
+> go through code under supervisor mode control.  
+
+I think this is pretty likely, but with the data encrypted by the time
+the supervisor mode sees it.
+
+> I don't think this is likely in the current design; but this change
+> would be an improvement: 
+>
+> - it would at least allow user audit and control of in-flows and
+> out-flows;
+
+If the data is in the clear, it would undermine the security guarantees!
+Look at my online poker game - if the dealer can tap into the data going
+out, he will learn what everyone else's hands are.  Look at the anonymous
+network - an eavesdropper can learn where all the data is and how it
+is flowing.  The data must not be made available in the clear anywhere
+the user can get at it, to provide the proper security.
+
+> - the user could block suspicious phone-home information out-flows,
+
+Well, he *does* know at least the address the data is going to.  There's
+no way to hide that (short of anonymous message forwarding).
+
+
+> - the user could read out-flows and demand un-encrypted documented
+> formats, or if encrypted, encrypted with keys the supervisor mode gets
+> copies of.
+
+There are some applications which will still work if all the users can
+*see* all of the data, but just not modify it.  Maybe my digital cash
+example would fall into that category.  You can see how much you're
+spending, but you can't manipulate your wallet.  But there are many
+others, such as those above, where being able to hide even information
+disclosure from network participants adds tremendous power.
+
+You remember the Eternity network, how one concept had files being
+shared across multiple nodes such that no one knew which files were on
+his own computer.  That was crucially important for non-repudiation and
+censorship-resistance.  This was done with cryptography, but the point
+is the same: hiding information from network participants can greatly
+increase security.  With TCPA/Palladium you can get some of the same
+security properties with much simpler ode (with admittedly lower levels
+of security until hardware improves).
+
+Skipping down...
+
+> > And of course remote attestation will not work either, if the app
+> > has been meddled with.
+>
+> Remote attestation, which is not itself general -- just a remote
+> dongle thing -- if not tied to remote dongle controlled sealing which
+> is necessary for the main application function could be nopped out.
+
+I am assuming that you are attesting to the remote system, and you only
+can control your local one.  You want to get something from the remote,
+and it will only give it if you are running "clean" on real hardware.
+So you can't virtualize and still attest, since ultimately you don't
+have a TPM endorsement key (or Palladium equivalent) with a nice TPME
+endorsement certificate issued on it.
+
+Of course if you have control of the server machine, you can ignore
+attestation.  But that just says that the operator of the remote machine
+can choose for himself which apps to run.  He can run an app that checks
+remote client integrity or he can run one which doesn't care.
+
+> So in the general case it seems that remote attestation is also
+> effectively virtualizable, modifiable and debuggable by first nopping
+> out remote attestation checks.  (This is not strictly virtualizable as
+> the remote dongle call nopping modification makes it no longer the
+> same application, but as I said unless this is necessary for the
+> application it doesn't otherwise change it's behavior, so it's
+> effectively virtualizable).
+
+I'm not sure I follow this, but it sounds like you are talking about
+manipulating the server machine doing the checks, while in most cases
+you can only manipulate the client machine making the request.
+

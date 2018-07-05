@@ -1,0 +1,104 @@
+From owner-cypherpunks@lne.com  Tue Nov 25 16:23:01 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p3/8.11.6-03-31-03) with ESMTP id hAPLMxd23020
+	for <rsw@jfet.org>; Tue, 25 Nov 2003 16:22:59 -0500
+Received: from slack.lne.com (slack.lne.com [127.0.0.1])
+	by slack.lne.com (8.12.10/8.12.10) with ESMTP id hAPKvSOA012364
+	(version=TLSv1/SSLv3 cipher=EDH-DSS-DES-CBC3-SHA bits=168 verify=NO)
+	for <cypherpunks-goingout345@slack.lne.com>; Tue, 25 Nov 2003 12:57:28 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.10/8.12.10/Submit) id hAPKvSut012363
+	for cypherpunks-goingout345; Tue, 25 Nov 2003 12:57:28 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Mime-Version: 1.0
+X-Sender: mukve@pop3.wiu.edu
+Message-Id: <p06002000bbe96f39f158@[192.168.1.100]>
+In-Reply-To: <p0601023cbbdc6ee8cb9f@[66.149.49.5]>
+References: <p0601023cbbdc6ee8cb9f@[66.149.49.5]>
+Date: Tue, 25 Nov 2003 12:57:22 -0800
+To: cypherpunks@lne.com
+From: Kevin Elliott <k-elliott@wiu.edu>
+Subject: Re: [Mac_crypto] MacOS X (Panther) FileVault
+Content-Type: text/plain; charset="us-ascii" ; format="flowed"
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 3479
+Lines: 73
+
+At 19:01 -0500  on  11/15/03, R. A. Hettinga wrote:
+>--- begin forwarded text
+>
+>
+>Status:  U
+>Date: Sat, 15 Nov 2003 13:03:33 +0100
+>From: "Ralf-P. Weinmann" <weinmann@cdc.informatik.tu-darmstadt.de>
+>To: Nicko van Someren <nicko@ncipher.com>
+>Cc: mac_crypto@vmeng.com, "R. A. Hettinga" <rah@shipwright.com>
+>Subject: Re: [Mac_crypto] MacOS X (Panther) FileVault
+>
+>On Thu, Nov 13, 2003 at 01:15:03PM +0000, Nicko van Someren wrote:
+>>  This is basically correct.  FileVault uses an auto-mounting version of
+>>  the encrypted disk image facility that was in 10.2, tweaked to allow
+>>  the image to be opened even before your main key chain is available
+>>  (since the key chain is stored inside your home directory).  The
+>>  standard encrypted image format uses a random key stored on your key
+>>  chain, which is itself encrypted with a salted and hashed copy of the
+>>  keychain pass phrase, which defaults to your login password.  My
+>>  suspicion is that for the FileVault there is some other key chain file
+>>  in the system folder which stores the key for decrypting your home
+>>  directory disk image and that the pass phrase for that is just your
+>>  login password.
+>
+>Ahhhh... So FileVault actually is just a marketing term for the encrypted
+>disk images! Thanks for the explanation! I just hope my login password can
+>be longer than 8 characters then.
+
+Yes/no.  When your not logged in your home folder is stored as an 
+encrypted DiskImage.  In addition part of enabling FileVault was a 
+complete rework of how login authentication was handled, part of 
+which included removing the 8 char limitation.  For the record, apple 
+has always allowed passwords longer than 8 char, prior to 10.3, 
+however, only the first 8 char were used to log you in, though the 
+other characters were used to unlock your keychain.
+
+>>  > File Vault will automatically expand or contract the disk image at
+>>  > certain points. It creates a new image, copies everything over, and
+>>  > deletes the old image.
+>>
+>>  Yup, it essentially does an "hdiutil compact" command when you log out.
+>
+>Do you know whether the source code to hdiutil and hdid respectively its
+>10.3 kernel equivalent is available? I can't seem to find it in the
+>Darwin 7.0 public source.
+
+No they are not.  Apple considers DiskImages to be a proprietary 
+competitive advantage.
+
+>>  > I don't know what mode of AES-128 it uses.
+>>
+>>  I believe that it uses counter mode, since it's efficient when doing
+>>  random access to the encrypted data.
+>
+>Of course counter mode would be ideally suited for this application. The
+>question is whether the people at Apple implementing this feature knew this :)
+
+It is a virtual certainty that Apple used Security.framework which 
+includes a variety of algorithms (including AES) and secure/peer 
+reviewed operation modes.  I believe the security framework is open 
+source, and in fact based on a broader standard (CDSA).  If you'd 
+like to know for certain I'd suggest you email dts@apple.com and/or 
+file a bug report at bugreporter.apple.com (requires free 
+registration) on the documentation.
+-- 
+__________________________________________
+Arguing with an engineer is like wrestling with a pig in mud.
+After a while, you realize the pig is enjoying it.
+__________________________________________
+Kevin Elliott   <mailto:kelliott@mac.com>
+ICQ#23758827               AIM ID: teargo
+iChatAV: kelliott@mac.com  (video chat available)
+__________________________________________
+

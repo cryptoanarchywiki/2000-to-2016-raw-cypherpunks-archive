@@ -1,0 +1,125 @@
+From owner-cypherpunks@al-qaeda.net  Fri Nov 26 05:27:05 2010
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-5+lenny1) with ESMTP id oAQAOQOn011552
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 26 Nov 2010 05:24:26 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id oAQAOQMg011551
+	for cypherpunks-outgoing; Fri, 26 Nov 2010 05:24:26 -0500
+Date: Fri, 26 Nov 2010 11:24:23 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Tor 0.2.1.27 is released
+Message-ID: <20101126102423.GT9434@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 4796
+Lines: 100
+
+----- Forwarded message from Roger Dingledine <arma@mit.edu> -----
+
+From: Roger Dingledine <arma@mit.edu>
+Date: Fri, 26 Nov 2010 03:27:40 -0500
+To: or-announce@torproject.org
+Subject: Tor 0.2.1.27 is released
+User-Agent: Mutt/1.5.18 (2008-05-17)
+
+Tor 0.2.1.27 makes relays work with OpenSSL 0.9.8p and 1.0.0.b --
+yet another OpenSSL security patch broke its compatibility with Tor.
+We also took this opportunity to fix several crash bugs, integrate a
+new directory authority, and update the bundled GeoIP database.
+
+If you operate a relay, please upgrade.
+
+https://www.torproject.org/download/download
+
+Changes in version 0.2.1.27 - 2010-11-23
+  o Major bugfixes:
+    - Resolve an incompatibility with OpenSSL 0.9.8p and OpenSSL 1.0.0b:
+      No longer set the tlsext_host_name extension on server SSL objects;
+      but continue to set it on client SSL objects. Our goal in setting
+      it was to imitate a browser, not a vhosting server. Fixes bug 2204;
+      bugfix on 0.2.1.1-alpha.
+    - Do not log messages to the controller while shrinking buffer
+      freelists. Doing so would sometimes make the controller connection
+      try to allocate a buffer chunk, which would mess up the internals
+      of the freelist and cause an assertion failure. Fixes bug 1125;
+      fixed by Robert Ransom. Bugfix on 0.2.0.16-alpha.
+    - Learn our external IP address when we're a relay or bridge, even if
+      we set PublishServerDescriptor to 0. Bugfix on 0.2.0.3-alpha,
+      where we introduced bridge relays that don't need to publish to
+      be useful. Fixes bug 2050.
+    - Do even more to reject (and not just ignore) annotations on
+      router descriptors received anywhere but from the cache. Previously
+      we would ignore such annotations at first, but cache them to disk
+      anyway. Bugfix on 0.2.0.8-alpha. Found by piebeer.
+    - When you're using bridges and your network goes away and your
+      bridges get marked as down, recover when you attempt a new socks
+      connection (if the network is back), rather than waiting up to an
+      hour to try fetching new descriptors for your bridges. Bugfix on
+      0.2.0.3-alpha; fixes bug 1981.
+
+  o Major features:
+    - Move to the November 2010 Maxmind GeoLite country db (rather
+      than the June 2009 ip-to-country GeoIP db) for our statistics that
+      count how many users relays are seeing from each country. Now we'll
+      have more accurate data, especially for many African countries.
+
+  o New directory authorities:
+    - Set up maatuska (run by Linus Nordberg) as the eighth v3 directory
+      authority.
+
+  o Minor bugfixes:
+    - Fix an assertion failure that could occur in directory caches or
+      bridge users when using a very short voting interval on a testing
+      network. Diagnosed by Robert Hogan. Fixes bug 1141; bugfix on
+      0.2.0.8-alpha.
+    - Enforce multiplicity rules when parsing annotations. Bugfix on
+      0.2.0.8-alpha. Found by piebeer.
+    - Allow handshaking OR connections to take a full KeepalivePeriod
+      seconds to handshake. Previously, we would close them after
+      IDLE_OR_CONN_TIMEOUT (180) seconds, the same timeout as if they
+      were open. Bugfix on 0.2.1.26; fixes bug 1840. Thanks to mingw-san
+      for analysis help.
+    - When building with --enable-gcc-warnings on OpenBSD, disable
+      warnings in system headers. This makes --enable-gcc-warnings
+      pass on OpenBSD 4.8.
+
+  o Minor features:
+    - Exit nodes didn't recognize EHOSTUNREACH as a plausible error code,
+      and so sent back END_STREAM_REASON_MISC. Clients now recognize a new
+      stream ending reason for this case: END_STREAM_REASON_NOROUTE.
+      Servers can start sending this code when enough clients recognize
+      it. Bugfix on 0.1.0.1-rc; fixes part of bug 1793.
+    - Build correctly on mingw with more recent versions of OpenSSL 0.9.8.
+      Patch from mingw-san.
+
+  o Removed files:
+    - Remove the old debian/ directory from the main Tor distribution.
+      The official Tor-for-debian git repository lives at the URL
+      https://git.torproject.org/debian/tor.git
+    - Stop shipping the old doc/website/ directory in the tarball. We
+      changed the website format in late 2010, and what we shipped in
+      0.2.1.26 really wasn't that useful anyway.
+
+------------------------------------------------------------------------
+
+This is the Tor announcements list. If you want to unsubscribe, send
+mail to majordomo@seul.org with "unsubscribe or-announce" as your message.
+
+
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

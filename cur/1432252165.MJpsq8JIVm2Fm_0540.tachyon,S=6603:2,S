@@ -1,0 +1,134 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Sun Aug 18 12:20:27 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g7IGKRJ01479
+	for <rsw@opamp.org>; Sun, 18 Aug 2002 12:20:27 -0400
+Received: from lion.ninthwonder.com (lion.ninthwonder.com [151.199.66.147])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id MAA29597
+	for <rsw@mit.edu>; Sun, 18 Aug 2002 12:20:26 -0400 (EDT)
+Received: by lion.ninthwonder.com (Postfix, from userid 96)
+	id AB2863070F; Sun, 18 Aug 2002 12:17:20 -0400 (EDT)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 0D7BB3070C
+	for <cryptography@wasabisystems.com>; Sun, 18 Aug 2002 12:17:19 -0400 (EDT)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id AD394D97C9; Sun, 18 Aug 2002 12:17:18 -0400 (EDT)
+Received: from mercury.ex.ac.uk (mercury.ex.ac.uk [144.173.6.26])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 4F97030706
+	for <cryptography@wasabisystems.com>; Sun, 18 Aug 2002 11:59:08 -0400 (EDT)
+Received: from cronus ([144.173.6.20] helo=cronus.ex.ac.uk)
+	by mercury.ex.ac.uk with esmtp (Exim 3.33 #1)
+	id 17gSSI-002FIQ-00; Sun, 18 Aug 2002 16:59:06 +0100
+Date: Sun, 18 Aug 2002 16:58:56 +0100
+From: Adam Back <adam@cypherspace.org>
+To: Cypherpunks <cypherpunks@minder.net>
+Cc: cryptography@wasabisystems.com, Adam Back <adam@cypherspace.org>
+Subject: Re: Cryptographic privacy protection in TCPA
+Message-ID: <20020818165856.A991609@exeter.ac.uk>
+References: <0b9f4829b10ce20154d1cca436a26860@aarg.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <0b9f4829b10ce20154d1cca436a26860@aarg.net>; from remailer@aarg.net on Fri, Aug 16, 2002 at 03:56:09PM -0700
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 4514
+Lines: 93
+
+With Brands digital credentials (or Chaums credentials) another
+approach is to make the endorsement key pair and certificate the
+anonymous credential.  That way you can use the endorsement key and
+certificate directly rather than having to obtain (blinded) identity
+certificates from a privacy CA and trust the privacy CA not to issue
+identity certificates without seeing a corresponding endorsement
+credential.
+
+However the idea with the identity certificates is that you can use
+them once only and keep fetching new ones to get unlinkable anonymity,
+or you can re-use them a bit to get pseudonymity where you might use a
+different psuedonym for a different service where you are anyway
+otherwise linkable to a given service.
+
+With Brands credentials the smart card setting allows you to have more
+compact and computationally cheap control of the credential from
+within a smart card which you could apply to the TPM/SCP.  So you can
+fit more (unnamed) pseudonym credentials on the TPM to start with.
+
+You could perhaps more simply rely on Brands credential lending
+discouraging feature (ability to encode arbitrary values in the
+credential private key) to prevent break once virtualize anywhere.
+
+For discarding pseudonyms and when you want to use lots of pseudonyms
+(one-use unlinkable) you need to refresh the certificates you could
+use the refresh protocol which allows you to exchange a credential for
+a new one without trusting the privacy CA for your privacy.
+
+Unfortunately I think you again are forced to trust the privacy CA not
+to create fresh virtualized credentials.  Perhaps there would be
+someway to have the privacy CA be a different CA to the endorsement CA
+and for the privacy CA to only be able to refresh existing credentials
+issued by the endorsement CA, but not to create fresh ones.
+
+Or perhaps some restriction could be placed on what the privacy CA
+could do of the form if the privacy CA issued new certificates it
+would reveal it's private key.
+
+"Also relevant is An Efficient System for Non-transferable Anonymous
+Credentials with Optional Anonymity Revocation", Jan Camenisch and
+Anna Lysyanskaya, Eurocrypt 01
+
+	http://eprint.iacr.org/2001/019/
+
+These credentials allow the user to do unlinkable multi-show without
+involving a CA.  They are somewhat less efficient than Chaum or Brands
+credentials though.  But for this application does this removes the
+need to trusting a CA, or even have a CA: the endorsement key and
+credential can be inserted by the manufacturer, can be used
+indefinitely many times, and are not linkable.
+
+> A secondary requirement is for some kind of revocation in the case
+> of misuse.
+
+As you point out unlinkable anonymity tends to complicate revocation.
+
+I think Camenisch's optional anonymity revocation has similar
+properties in allowing a designated entity to link credentials.
+
+Another less "TTP-based" approach to unlinkable but revocable
+credentials is Stubblebine's, Syverson and Goldschlag, "Unlinkable
+Serial Transactions", ACM Trans on Info Systems, 1999:
+
+	http://www.stubblebine.com/99tissec-ust.pdf
+
+(It's quite simple you just have to present and relinquish a previous
+pseudonym credential to get a new credential; if the credential is due
+to be revoked you will not get a fresh credential.)
+
+
+I think I would define away the problem of local breaks.  I mean the
+end-user does own their own hardware, and if they do break it you
+can't detect it anyway.  If it's anything like playstation mod-chips
+some proportion of the population would in fact would do this.  May be
+1-5% or whatever.  I think it makes sense to just live with this, and
+of course not make it illegal.  Credentials which are shared are
+easier to revoke -- knowledge of the private keys typically will
+render most schemes linkable and revocable.  This leaves only online
+lending which is anyway harder to prevent.
+
+Adam
+
+On Fri, Aug 16, 2002 at 03:56:09PM -0700, AARG!Anonymous wrote:
+> Here are some more thoughts on how cryptography could be used to
+> enhance user privacy in a system like TCPA.  Even if the TCPA group
+> is not receptive to these proposals, it would be useful to have an
+> understanding of the security issues.  And the same issues arise in
+> many other kinds of systems which use certificates with some degree
+> of anonymity, so the discussion is relevant even beyond TCPA.
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

@@ -1,0 +1,200 @@
+From owner-cypherpunks@Algebra.COM  Wed Sep 12 14:58:28 2001
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.mit.edu (8.11.6/8.9.3) with ESMTP id f8CIwSE23974
+	for <kwantam@positron.mit.edu>; Wed, 12 Sep 2001 14:58:28 -0400
+Received: from ak47.algebra.com (ak47.algebra.com [208.233.99.160])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id OAA07750
+	for <rsw@mit.edu>; Wed, 12 Sep 2001 14:53:17 -0400 (EDT)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f8CIoxw00909
+	for cypherpunks-outgoing; Wed, 12 Sep 2001 13:50:59 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (dns.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f8CIorc00892
+	for <cypherpunks@algebra.com>; Wed, 12 Sep 2001 13:50:54 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id f8CIopC09099
+	for cypherpunks@algebra.com; Wed, 12 Sep 2001 11:50:51 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id f8CIoQ309090
+	for cypherpunks-goingout; Wed, 12 Sep 2001 11:50:26 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+From: Nomen Nescio <nobody@dizum.com>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@dizum.com>.
+To: gbroiles@well.com, cypherpunks@lne.com,
+   remailer-operators@anon.lcs.mit.edu
+Old-Subject: mix patches for OpenBSD (was Re: [Remops] Re: FC: Anonymous
+  remailer op	 offline)
+Message-ID: <195e8a5fa1a74597eef443ef74b0d07c@dizum.com>
+Date: Wed, 12 Sep 2001 20:50:17 +0200 (CEST)
+X-Loop: cypherpunks@lne.com
+X-spam: 100 
+Subject:  mix patches for OpenBSD (was Re: [Remops] Re: FC: Anonymous
+  remailer op	 offline)
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+X-spam: 35 
+Status: O
+Content-Length: 4826
+Lines: 151
+
+
+Are one or both of these still necessary?
+
+----- CUT HERE ------------
+
+Mixmaster 2.9b23 still searches for opensslv.h in a nonexistent
+/usr/include/ssl/openssl directory on OpenBSD 2.6 and 2.7.  The patch to
+the Install routine below hopefully fixes the hardcoded directory in a
+manner that does not break on other OSes.
+
+Also, OpenBSD's OpenSSL installation lacks the patented IDEA routines. 
+Copy OpenSSL's i_cbc.c, i_cfb64.c, i_skey.c, idea.h, and idea_lcl.h to
+Src.  The patch to the Makefile.in below adds them to the build.
+
+*** Install.orig	Thu Mar 16 09:34:02 2000
+--- Install	Thu Jun 29 16:39:01 2000
+***************
+*** 383,389 ****
+  
+   opensslinfo="Please get OpenSSL 0.9.4 from http://www.openssl.org/"
+   LIBDIR=/usr/local/ssl/lib
+!  INCDIR="/usr/include /usr/include/ssl /usr/lib/ssl/include /usr/local/ssl/include"
+   SRCDIR="openssl*"
+  
+   if [ "$system" = win32 ]
+--- 383,389 ----
+  
+   opensslinfo="Please get OpenSSL 0.9.4 from http://www.openssl.org/"
+   LIBDIR=/usr/local/ssl/lib
+!  INCDIR="/usr/include /usr/include/ssl /usr/include/ssl/openssl /usr/lib/ssl/include /usr/local/ssl/include"
+   SRCDIR="openssl*"
+  
+   if [ "$system" = win32 ]
+***************
+*** 421,429 ****
+   fi 
+  
+   # Find the OpenSSL version header
+!  if [ -f $INCDIR/openssl/opensslv.h ]
+   then
+!   version=`grep 'SSL.*_VERSION_NUMBER.*0x' $INCDIR/openssl/opensslv.h | sed 's/.*0x0*//;s/[ 	].*//;s/L$//'`
+   fi
+   if [ "$version" = "" ]
+   then
+--- 421,429 ----
+   fi 
+  
+   # Find the OpenSSL version header
+!  if [ -f $INCDIR/opensslv.h ]
+   then
+!   version=`grep 'SSL.*_VERSION_NUMBER.*0x' $INCDIR/opensslv.h | sed 's/.*0x0*//;s/[ 	].*//;s/L$//'`
+   fi
+   if [ "$version" = "" ]
+   then
+
+*** Src/Makefile.in.orig        Thu Mar 16 09:34:02 2000
+--- Src/Makefile.in     Thu Jun 29 16:34:35 2000
+***************
+*** 23,29 ****
+  RANLIB = ranlib
+  #MAKE = make
+  
+! OBJ = mix.o rem.o rem1.o rem2.o rem3.o chain.o chain1.o chain2.o chain3.o nym.o pgp.o pgpdb.o pgpdata.o pgpget.o pgpcreat.o pool.o mail.o rfc822.o mime.o keymgt.o compress.o stats.o crypto.o random.o util.o buffers.o
+  
+  MIXOBJ = rndseed.o menu.o menusend.o menunym.o menuutil.o
+  NOMENUOBJ = rndseed.o dummy.o
+--- 23,29 ----
+  RANLIB = ranlib
+  #MAKE = make
+  
+! OBJ = mix.o rem.o rem1.o rem2.o rem3.o chain.o chain1.o chain2.o chain3.o nym.o pgp.o pgpdb.o pgpdata.o pgpget.o pgpcreat.o pool.o mail.o rfc822.o mime.o keymgt.o compress.o stats.o crypto.o random.o util.o buffers.o i_cfb64.o i_skey.o i_cbc.o
+  
+  MIXOBJ = rndseed.o menu.o menusend.o menunym.o menuutil.o
+  NOMENUOBJ = rndseed.o dummy.o
+
+
+----- CUT HERE ------------
+
+OpenSSL versions are actually hexadecimal numbers, though in the past we
+have been OK using them as decimals for comparison, at least in release
+versions.
+
+Now, we are using them as hexadecimal numbers to encode beta vs final
+status.  This breaks Mixmaster 2.9's Install script.
+
+The patch below fixes the version comparison so it should work with
+future OpenSSL versions as well.
+
+/* Numeric release version identifier:
+ * MMNNFFPPS: major minor fix patch status
+ * The status nibble has one of the values 0 for development, 1 to e for betas
+ * 1 to 14, and f for release.  The patch level is exactly that.
+ * For example:
+ * 0.9.3-dev      0x00903000
+ * 0.9.3-beta1    0x00903001
+ * 0.9.3-beta2-dev 0x00903002
+ * 0.9.3-beta2    0x00903002 (same as ...beta2-dev)
+ * 0.9.3          0x0090300f
+ * 0.9.3a         0x0090301f
+ * 0.9.4          0x0090400f
+ * 1.2.3z         0x102031af
+ *
+ * For continuity reasons (because 0.9.5 is already out, and is coded
+ * 0x00905100), between 0.9.5 and 0.9.6 the coding of the patch level
+ * part is slightly different, by setting the highest bit.  This means
+ * that 0.9.5a looks like this: 0x0090581f.  At 0.9.6, we can start
+ * with 0x0090600S...
+ *
+ * (Prior to 0.9.3-dev a different scheme was used: 0.9.2b is 0x0922.)
+ * (Prior to 0.9.5a beta1, a different scheme was used: MMNNFFRBB for
+ *  major minor fix final patch/beta)
+ */
+
+*** Install.orig        Thu Mar 16 09:34:02 2000
+--- Install     Thu Jun 29 15:41:00 2000
+***************
+*** 383,385 ****
+  
+!  opensslinfo="Please get OpenSSL 0.9.4 from http://www.openssl.org/"
+   LIBDIR=/usr/local/ssl/lib
+--- 383,385 ----
+  
+!  opensslinfo="Please get OpenSSL 0.9.4 or 0.9.5a final from http://www.openssl.org/"
+   LIBDIR=/usr/local/ssl/lib
+***************
+*** 436,438 ****
+    fi
+!  elif [ "$version" -lt "920" ]
+   then
+--- 436,438 ----
+    fi
+!  elif [ "16#$version" -lt "16#0920" ]
+   then
+***************
+*** 441,443 ****
+    exit 1
+!  elif [ "$version" -lt "903100" ]
+   then
+--- 441,443 ----
+    exit 1
+!  elif [ "16#$version" -lt "16#00903100" ]
+   then
+***************
+*** 446,448 ****
+    exit 1
+!  elif [ "$version" -gt "906000" ]
+   then
+--- 446,448 ----
+    exit 1
+!  elif [ "16#$version" -gt "16#00906000" ]
+   then
+

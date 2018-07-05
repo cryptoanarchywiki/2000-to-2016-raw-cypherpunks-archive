@@ -1,0 +1,260 @@
+From cypherpunks-bounces@cpunks.org  Wed Nov 13 03:25:55 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id rAD8P1A3008078;
+	Wed, 13 Nov 2013 03:25:07 -0500
+Authentication-Results: antiproton.jfet.org; dkim=fail
+	reason="verification failed; insecure key"
+	header.d=gmail.com header.i=@gmail.com header.b=k0U1TIVP;
+	dkim-adsp=none (insecure policy); dkim-atps=neutral
+Received: from mail-qa0-f50.google.com (mail-qa0-f50.google.com
+ [209.85.216.50])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id rAD8Owic008061
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Wed, 13 Nov 2013 03:25:00 -0500
+Received: by mail-qa0-f50.google.com with SMTP id f11so260639qae.9
+ for <cypherpunks@cpunks.org>; Wed, 13 Nov 2013 00:24:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :content-type:content-transfer-encoding;
+ bh=iVBBufM6gdFcNfrfJBBxGYNzS8tu+b64VdU9bRs+8Nc=;
+ b=k0U1TIVPcAbPsVWgTflAAOag1nUoXI5RdxE0yOdN+nxt22+izPtF5yK09e9nSOW9DX
+ LXXazLVqnjJaqwTuU/nSJk0g9z4BFldyq5tPFCjHM1mNDqGO+pgDtZPX5A/oRdxWubkt
+ 92Xm9VzmWedtpzuIOoSg0UKmXvotAAm3aIrXU4pbzhoooKjAjM9dFo4d4ua7UDWh2t7s
+ 7lAwpy3NzGwv2RcucA4SDfSQvg27BF0cHy5YRR/xbiqS8lD/p41UKoyjT0AsKR4C1IG+
+ vDVO6fKMZu2BAEeg5kk7COlZ8tjReUHRzzvEWR5RBZ4/nIHuw5uToWY7tKq943IOVVHq
+ aUiw==
+MIME-Version: 1.0
+X-Received: by 10.224.65.199 with SMTP id k7mr66475224qai.24.1384331092516;
+ Wed, 13 Nov 2013 00:24:52 -0800 (PST)
+Received: by 10.96.198.71 with HTTP; Wed, 13 Nov 2013 00:24:52 -0800 (PST)
+In-Reply-To: <CANdZDc5siYm1n0GFgaywFwbT_J1K_NKYCX3xOBa4-VhUVuCGgQ@mail.gmail.com>
+References: <CANdZDc5siYm1n0GFgaywFwbT_J1K_NKYCX3xOBa4-VhUVuCGgQ@mail.gmail.com>
+Date: Wed, 13 Nov 2013 00:24:52 -0800
+Message-ID: <CAJVRA1TOHnseBDYWhmZW1pbM07tgCsvLsHGAQ0uf2m4mE8nYcw@mail.gmail.com>
+Subject: Fwd: the new 2014 Add-Only Sets
+From: coderman <coderman@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by antiproton.jfet.org id
+ rAD8Owic008061
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 9800
+Lines: 201
+
+---------- Forwarded message ----------
+From: Zooko O'Whielacronx <zookog@gmail.com>
+Date: Tue, Nov 12, 2013 at 11:09 PM
+Subject: the new 2014 Add-Only Sets
+To: tahoe-dev <tahoe-dev@tahoe-lafs.org>
+
+
+Folks:
+
+(This is a copy of
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/795#comment:13 .)
+
+Here's my rendition of our discussion of add-only sets at the
+Tahoe-LAFS Summit today. (As usual, I altered and embellished this
+story significantly while writing it down, and people who were present
+to witness the original discussion are invited to chime in.)
+
+An add-only cap doesn't have to also be a write-only cap. It might be
+good for some use cases that you can give someone a cap that lets them
+read the whole set, and add elements into the set, without letting
+them remove elements or change previously-added elements. It might be
+good in some other use cases to have an "add-only&write-only" cap,
+which allows you to add elements into the set but doesn't let you read
+elements of the set, nor remove nor change previously-added elements.
+We agreed to focus on the former case for now, because it is easier to
+design and implement a solution to it. (See #796 for discussion of
+write-only caps.)
+
+We agreed to forget about erasure-coding, which makes an
+already-confusing problem (how to implement add-only sets without
+allowing a few malicious servers, adders, or set-repairers to perform
+rollback attack or selection attack), into a very-confusing problem
+that exceeded my brain's ability to grapple with it.
+
+So, for now, assume that add-only sets don't use erasure-coding at all.
+
+Now, the basic design we came up with is like this. I'll explain it in
+multiple passes of successive refinement of the design.
+
+FIRST PASS: DESIGN "0"
+
+An authorized adder (someone who holds an add-cap) can generate
+"elements", which are bytestrings that can be added into the set. (I
+mispronounced "elements" as "elephants" at one point, and from that
+point forward the design was expressed in terms of a circus act
+involving elephants.)
+
+Elephants have an identity as well as a value (bytestring), so:
+
+    aos = DistributedSecureAddOnlySet()
+    aos.add_elephant(b"\xFF"*100)
+    aos.add_elephant(b"\xFF"*100)
+
+results in aos containing two elephants, not one, even though each
+elephant has the same value (the bytestring with one hundred 0xFF
+bytes in it).
+
+aos.add_elephant() generates a random 256-bit nonce to make this
+elephant different from any other elephant with the same value. I call
+this "putting a tag on the elephant's ear" — a "tagged elephant" is a
+value plus a nonce. Even if two elephants are identical twins, they
+can be distinguished by the unique nonce written on their ear-tags.
+
+aos.add_elephant() then puts a digital signature on the
+tagged-elephant (using the add-only-cap, which contains an Ed25519
+private key), and sends a copy of the tagged-elephant to every one of
+N different servers. Putting a digital signature on a tagged-elephant
+is called "wrapping a net around it".
+
+A reader downloads all the tagged-elephants from all the servers,
+checks all the signatures, takes the union of the results, and returns
+the resulting set of elephants.
+
+Design "A" relies on at least one of the servers that you reach to
+save you from rollback or selection attacks. Such a server does this
+by knowing, and honestly serving up to you, a fresh and complete set
+of tagged-elephants. “Rollback” is serving you a version of the set
+that existed at some previous time, so the honest server giving you a
+copy of the most recent set protects you from rollback attack.
+“Selection” is omitting some elephants from the set, so the honest
+server giving you a complete copy of the set protects you from
+selection attack.
+
+SECOND PASS: DESIGN "1"
+
+We can extend Design "0" to make it harder for malicious servers to
+perform selection attacks on readers, even when the reader doesn't
+reach an honest server who has a complete copy of the most recent set.
+
+The unnecessary vulnerability in Design "0" is that each
+tagged-elephant is signed independently of the other tagged-elephants,
+so malicious servers can deliver some tagged-elephants to a reader and
+withhold other tagged-elephants, and the reader will accept the
+resulting set, thus falling for a selection attack. To reduce this
+vulnerability, adders will sign all of the current tagged-elephants
+along with their new tagged-elephant with a single signature. More
+precisely, let the "identity" of a tagged-elephant be the secure hash
+of the tagged-elephant (i.e. the secure hash of the nonce concatenated
+with the value). The signature on a new tagged-elephant covers the
+identity of that tagged-elephant, concatenated with the identities of
+all extant tagged-elephants, under a single signature. In circus
+terms, you add the new tagged-elephant into a pile of tagged-elephants
+and throw a net over the entire pile, including the new
+tagged-elephant.
+
+Now, malicious servers can't omit any of the older tagged-elephants
+without also omitting the new tagged-elephant. Readers will not accept
+the new tagged-elephant unless they also have a copy of all of the
+other tagged-elephants that were signed with the same signature. This
+limits the servers's options for selection attacks.
+
+THIRD PASS: DESIGN "2"
+
+We can refine Design "1" to make it cleaner and more CPU-efficient and
+network-efficient. This will also lay the groundwork for an efficient
+network protocol.
+
+The unnecessary "dirtiness" in Design "1" is that the digital
+signatures on older tagged-elephants become extraneous once you add a
+new digital signature. We have a mass of tagged-elephants, we throw a
+net over the whole mass, then later when we add a new tagged-elephant
+to the pile, we throw a new net on top of the new (slightly larger)
+pile. Now the underlying net has become redundant: once you've
+verified the signature of the outermost net, there is no need to check
+the signature of the inner net. In fact, if one implementation checks
+the signature of the inner net and another implementation does not
+check it, then a malicious adder colluding with a malicious server
+could cause the implementations to differ in their results, by putting
+an invalid net (an invalid signature) topped by a new tagged-elephant
+with a valid net. (Daira was the one who noticed that issue.)
+
+To make this cleaner and more efficient, we will never put a net
+around a net, and instead we'll keep each tagged-elephant in a box.
+When you want to add a new tagged-elephant to a set, you rip off and
+throw away any extant nets, then you put the new tagged-elephant in a
+box which is nailed on top of the previous topmost box. Then you wrap
+a net around the new topmost box. "Nailing" box Y on top of box X
+means taking the secure hash of box X and appending that to box Y
+(before signing box Y). A "box" is a tagged-elephant concatenated with
+any number of "nails", each of which is the secure hash of a previous
+box.
+
+(Note that you can sometimes have two or more boxes precariously
+perched at the top of a stack, when two adders have simultaneously
+added a box before each saw the other's new box. That's okay — the
+next time an adder adds a box on top of this stack, he'll nail his new
+box to each of the previous topmost boxes.)
+
+Boxes are a lot more CPU-efficient than nets, and more importantly
+nobody (neither readers, adders, nor servers) needs to revisit a
+lower-down box in order to add a new top-most box. Once you nail box Y
+on top of box X, then you can later add box Z just by taking the hash
+of box Y, without revisiting box X.
+
+Note that we need two different secure hashes here: one is the
+identity of a tagged-elephant, which is the secure hash of: the nonce
+concatenated with the value. The other is the hash of the box, which
+is the secure hash of: the identity of a tagged-elephant concatenated
+with the hashes of any previous boxes. We need the identity of a
+tagged-elephant for finding out whether a certain tagged-elephant
+already exists in a stack (regardless of what position it occupies
+within that stack), and we need the hash of the box for efficiently
+verifying that all the tagged-elephants in a stack were approved by an
+authorized adder.
+
+This also leads to the efficient network protocol: an adder can
+remember (cache) the Directed Acyclic Graph of boxes which a given
+server previously told the adder about. When the adder wants to add a
+new tagged-elephant or a set of new tagged-elephants to that server,
+he can send just the boxes which would be new to that server, assuming
+that the server hasn't learned anything new since the last time they
+talked. Readers can do likewise, remembering what each server
+previously told them about, and asking the server to just tell them
+about things that are not already covered the topmost box(es) that the
+reader already knows about.
+
+CONCLUSION
+
+Okay, that's it! I think Design "2" is a good one. It has good
+security against rollback or selection attacks by malicious servers
+(assuming some kind of whitelisting of servers! Which is ticket #467
+and is not yet implemented.) And, it doesn't go too far over the top
+in terms of complexity; it seems more intuitive to me than (my vague
+memories of) previous attempts to design add-only sets for LAFS.
+
+(By the way, there are a few other possible ways to strengthen
+defenses against rollback attack, which we've previously considered in
+the context of mutable files, but they probably also apply to add-only
+sets.)
+
+I'm excited about this design being feasible, because I think add-only
+sets could be a critical building block in valuable use-cases such as
+secure logging, secure email, secure backup, and more.
+
+Regards,
+
+Zooko
+
+P.S. Thanks to Isis and Mike for showing up today and, when asked what
+Tahoe-LAFS improvements they were interested in, suggesting add-only
+sets.
+

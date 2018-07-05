@@ -1,0 +1,247 @@
+From owner-cypherpunks@jfet.org  Mon Feb 27 14:56:54 2006
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.5/8.13.5/Debian-3) with ESMTP id k1RJupli002743
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Mon, 27 Feb 2006 14:56:51 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.5/8.13.5/Submit) id k1RJupvF002742
+	for cypherpunks-outgoing; Mon, 27 Feb 2006 14:56:51 -0500
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;         s=beta;
+  d=gmail.com;        
+  h=received:message-id:date:from:to:subject:mime-version:content-type:content-transfer-encoding:content-disposition;
+  b=ri6Luj3sqNew9Yc1togKURgcNkx9yzEY4G/HbR8zJx07PZEas1QY6VXl9WtNmcLB/Sw+7UvbYnQQ57ORxkU53NUWDla/mZqbyv5WW5M2XpIyFV3yLv4vDg4qYOq4BdI2CXNQp/ivKrN0H4dKMkjmSJHJwraNKbn78Lp01P37ZU0=
+Message-ID: <4ef5fec60602271156h7978e66fr2557460962601bbc@mail.gmail.com>
+Date: Mon, 27 Feb 2006 11:56:48 -0800
+From: coderman <coderman@gmail.com>
+To: cypherpunks@jfet.org, "Peer-to-peer development."
+  <p2p-hackers@zgp.org>
+Subject: hamachi p2p vpn nat-friendly protocol details
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by proton.jfet.org
+  id k1RJuoJV002698
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 7335
+Lines: 215
+
+--- various interesting forwards related to decentralized (p2p)
+authenticity and privacy
+
+favorite quote:
+">> Designing security protocols is hard...
+
+Yes, it is. This is why I like it."
+
+---
+
+'Cypherpunks Write [Secure] Code!'
+
+An open question for anyone reading this:
+
+is the critically wounded, barely beating cypherpunks list languishing
+in such a sad state due to apathy or impending irrelevance/death?  i
+see embers of life awaiting some minimal votes of confidence (i'd go
+so far as to offer sexual favors for a toad node back* :) but any kind
+of renewed interest is meager at best.  [would a public list archive
+help? an rss feed? a abridged list / digest? [ala kernel trap]]
+
+such volatile times, so little interest...
+
+----
+
+http://www.mail-archive.com/cryptography@metzdowd.com/msg05790.html
+
+""
+Alex Pankratov
+Sun, 26 Feb 2006 07:18:15 -0800
+...
+Tero Kivinen wrote:
+
+>> Travis H. writes:
+>>
+>
+>>>>http://www.hamachi.cc/security
+>>>>
+>>>>Based on a cursory look over this, I'm impressed by both the level of
+>>>>detail and the level of security apparently afforded.  Too bad I can't
+>>>>see the source code.
+>
+>>
+>>
+>> I can see couple of problems in the system. Firstly it seems it uses
+>> same key for both directions for the encryption and for
+>> authentication, i.e. the KEYMAT is only split to Ke and Ka keys, which
+>> are used for encryption and authentication. In general using same keys
+>> for different directions is bad.
+
+
+The description on a page was not updated properly. Recent clients
+use per-direction keys after they complete P2P KE.
+
+
+>> Secondly I cannot find where it
+>> authenticates the crypto suite used at all (it is not included in the
+>> signature of the AUTH message).
+
+
+Crypto suite is essentially just a protocol number. It requires
+no authentication. If the server side responds with HELO.OK, it
+means that it can comprehend specified protocol revision. Similar
+to what happens during the SSH handshake.
+
+
+>> Also it seems that the identity itself
+>> is not authenticated at all, as it (or it's MACed form) is not
+>> included in the signature.
+
+
+It is not.
+
+
+>> There might be (I am not sure whether AUTH
+>> packet is encrypted and MACed) a MAC over it, but the MAC key is not
+>> yet authenticated as it is generated from the anonymous
+>> Diffie-Hellman. That might give it some protection, but I am not sure
+>> if that is enough.
+
+
+A protection against what kind of attack ?
+
+Identity is used to specify which public key the client wants
+to be authenticated with on the server side. Assuming it is
+swapped in transition by a man in the middle, it would still
+require an attacker to re-sign authentication hash in the
+message.
+
+Assuming he has a private key to do that, he will effectively
+succeed in authenticating under substituted ID. He then will
+need to re-sign server's auth hash to complete the attack,
+which is not going to happen.
+
+There is an off chance that the attacker might swapped the
+identity to one that has the same public key. The chances
+of this happening are infinitely small unless an attacker
+also has an access to victim's keypair, which becomes a
+trivial attack case.
+.
+.
+.
+>> The protocol is also tied to use SHA1.
+
+
+If you are referring to HMAC-SHA1 for authentication hashes, it
+is a part of a crypto suite (protocol revision) spec.
+
+
+>> In general it would be much better to use standard protocol, instead
+>> of generating your own.
+
+
+This is the second revision of Hamachi system. First revision
+was using SSL for cli-srv and IKE/ESP for p2p security. It was
+a prototype and it soon become obvious that both SSL and IKE
+were overkills for our purposes. We did not need certificate
+authentication of SSL, we did not want to run our own auth
+protocol over SSL/AnonDH, which would've increased the number
+of packets per login sequence. We didn't need the flexibility
+(ie complexity) of IKE either.
+
+After stripping down IKE (ie removing SA negotiation, reworking
+ID payloads and not doing quick mode), we essentially ended up
+with a protocol that was also fit for securing cli-srv session.
+It was further tweaked and replaced SSL.
+
+I should probably add that I implemented IKE (v1) keying daemon
+from scratch with all bells and wistles (NATT, extended MODP
+groups, etc) at some point in the past. Some remnants of it
+are still floating around, the library name was libike.
+
+
+>> Designing security protocols is hard...
+
+
+Yes, it is. This is why I like it.
+""
+
+
+=====
+
+http://www.mail-archive.com/cryptography@metzdowd.com/msg05796.html
+
+Travis H.
+Sun, 26 Feb 2006 07:22:06 -0800
+
+> Crypto suite is essentially just a protocol number. It requires
+> no authentication. If the server side responds with HELO.OK, it
+> means that it can comprehend specified protocol revision. Similar
+> to what happens during the SSH handshake.
+
+In SSL, the lack of authentication of the cryptosuite could be used to
+convince a v3 client that it is communicating with a v2 server, and
+the v3 server that it is communicating with a v2 client, causing them
+to communicate using SSL v2, which is called the "version rollback
+attack".  This is not relevant to the hamachi protocol because there
+is no negotiation.  Nevertheless, authenticating the previous
+plaintext fields once a secure channel is established is considered
+good form.
+
+In Schneier's "Practical Cryptography", he suggests computing the MAC
+over the entire history of sent messages, which ensures that any
+tampering is detected at the next MAC.  This is eventually what was
+done in SSLv3, for reasons Tero alluded to and which are successfully
+thwarted for the reasons you describe.
+.
+.
+.
+I sort of wonder at the utility of a TCP implementation of the p2p
+VPN... tunnelling TCP over TCP is well known to be a Bad Thing with
+regard to interaction of the TCP timeouts.
+
+Aside:  Can anyone tell me why the constants used in ipad and opad for
+HMAC were chosen?  If they're not arbitrary, I'd like to know the
+rationale behind them.
+
+
+=====
+
+http://www.mail-archive.com/cryptography@metzdowd.com/msg05801.html
+
+Alex Pankratov
+Sun, 26 Feb 2006 07:24:20 -0800
+
+> Presumably he wants to make sure that the messages like the following
+> have an unambiguous interpretation:
+> AUTH Identity Signature(Ni | Nr | Gi | Gr, Kpri_cli)
+> Merely concatenating them is insufficient unless all but one have a
+> fixed length.
+> I think a terse "unambiguous representation" rationale is the whole
+> reason for ASN.1, although it seems awfully complex for such a simple
+> goal.
+
+Nonces and DH exponents are serialized using PER-style ASN.1 encoding.
+So the whole concatenation is unambigious.
+
+> I sort of wonder at the utility of a TCP implementation of the p2p
+> VPN... tunnelling TCP over TCP is well known to be a Bad Thing with
+> regard to interaction of the TCP timeouts.
+
+Just to be clear, Hamachi tunnels VPN/P2P traffic over UDP. TCP is
+used for client-server session only.
+
+VPN over TCP is bad for two reasons. One you listed, and another
+is that it becomes trivial to DoS this kind of VPN. TCP packets
+are not authenticated (unless MD5/BGP extension is used, which
+is unlikely), so the state of VPN transport layer and consequently
+the state of a tunnel can be altered by 3rd party.
+
+That's why SSL VPNs make very little sense in non-proxied setups
+and that's why (I'd guess) OpenVPN 'tweaked' SSL to run over UDP
+instead.
+
+---end-cut---
+

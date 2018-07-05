@@ -1,0 +1,70 @@
+From owner-cypherpunks@al-qaeda.net  Wed Mar  2 12:45:23 2005
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost.localdomain [127.0.0.1])
+	by positron.jfet.org (8.13.3/8.13.3/Debian-7) with ESMTP id j22Ij31n006552
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Wed, 2 Mar 2005 12:45:03 -0600
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.13.3/8.13.3/Submit) id j22Ij3YO006550
+	for cypherpunks-outgoing; Wed, 2 Mar 2005 12:45:03 -0600
+To: cypherpunks@al-qaeda.net
+Subject: Re: [FoRK] X.509 certificate collision via MD5 collisions (fwd
+  from jeff@k2.com)
+Message-Id: <20050302184039.D20DE57EE6@finney.org>
+Date: Wed,  2 Mar 2005 10:40:39 -0800 (PST)
+From: hal@finney.org ("Hal Finney")
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 2258
+Lines: 47
+
+Eugen forwards from FoRK:
+> >Colliding X.509 Certificates version 1.0
+> >1st March 2005
+> >Arjen Lenstra, Xiaoyun Wang, and Benne de Weger
+> >
+> >http://eprint.iacr.org/2005/067
+> >
+> >We announce a method for the construction of pairs of valid X.509
+> >certificates in which the ?to be signed? parts form a collision for
+> >the MD5 hash function. As a result the issuer signatures in the
+> >certificates will be the same when the issuer uses MD5 as its hash
+> >function.
+
+The real news of the paper was the announcement that Wang's techniques
+will be revealed this May at Eurocrypt.  I'm looking forward to finding
+out what the secret is!  Presumably everyone will receive MD5 collision
+finding software at around that time.
+
+The cert collision is not a surprise, people anticipated this possibility
+shortly after the MD5 collisions were announced.  And notice that Xiaoyun
+Wang was an author of this paper; she was of course the lead author
+on the original MD5 collision paper and presumably the originator of
+the technique for finding MD5 collisions.  Using her technology it is
+straightforward to do this kind of thing.  But no one else could have
+written this paper at this time.
+
+The only nontrivial part (given the remarkable ability to generate MD5
+collisions) was arranging that both keys were valid RSA moduli with
+known factors.  The did this by generating random bignums and trying to
+factor them.
+
+And keep in mind that her methods find random-ish collisions.  They don't
+find matches to existing hashes, and (as far as we know) they don't
+find structured collisions as would be necessary to get two certs with
+different and plausible-sounding names in them.
+
+>From what I've read (mostly http://eprint.iacr.org/2004/264), the way
+these collisions are found is to start with analysis of the structure
+of the hash, and decide on an XOR difference between the two inputs.
+This implicitly makes certain assumptions about where and when carries
+and other nonlinearities will occur in the hash calculation.  Then you
+do a search for inputs which match that pattern of carries and for
+which the pre-determined XOR difference yields an actual collision.
+This doesn't give you much ability to control the content of the two
+inputs that you create.
+
+Hal
+

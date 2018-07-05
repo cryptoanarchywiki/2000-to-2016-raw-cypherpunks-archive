@@ -1,0 +1,111 @@
+From owner-cypherpunks@Algebra.COM  Mon Feb 10 16:28:41 2003
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id h1ALSd410183
+	for <rsw@opamp.org>; Mon, 10 Feb 2003 16:28:40 -0500
+Received: from ak47.algebra.com ([209.120.156.51])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id QAA27236
+	for <rsw@mit.edu>; Mon, 10 Feb 2003 16:24:03 -0500 (EST)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id h1AKbT7I002164
+	for <cypherpunks-outgoing@ak47.algebra.com>; Mon, 10 Feb 2003 14:37:29 -0600
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id h1AKbTnr002163
+	for cypherpunks-outgoing; Mon, 10 Feb 2003 14:37:29 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id h1AKU48e000958
+	for <cypherpunks@ak47.algebra.com>; Mon, 10 Feb 2003 14:37:24 -0600
+Received: (from cpunk@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h1ABqYJX017845
+	for cypherpunks@ak47.algebra.com; Mon, 10 Feb 2003 03:52:34 -0800
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h1ABobE7017823
+	for cypherpunks-goingout345; Mon, 10 Feb 2003 03:50:37 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Message-ID: <00f701c2d0fa$5af4f6c0$c71121c2@sharpuk.co.uk>
+From: "David Howe" <DaveHowe@gmx.co.uk>
+To: "Email List: Cypherpunks" <cypherpunks@lne.com>
+References: <Pine.LNX.4.33.0302092104050.1222-100000@einstein.ssz.com>
+Old-Subject: Re: Putting the "NSA Data Overwrite Standard" Legend to        
+  Death... (fwd)
+Date: Mon, 10 Feb 2003 11:18:34 -0000
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook Express 5.50.4522.1200
+X-Loop: cypherpunks@lne.com
+X-spam: 50 
+X-Spam-Status: No, hits=1.9 required=10.0
+	tests=QUOTED_EMAIL_TEXT,REFERENCES,SPAM_PHRASE_00_01,
+	      SUBJ_HAS_SPACES,USER_AGENT_OE,X_AUTH_WARNING,X_LOOP
+	version=2.43
+X-Spam-Level: *
+Subject:  Re: Putting the "NSA Data Overwrite Standard" Legend to        
+  Death... (fwd)
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 3116
+Lines: 55
+
+
+at Monday, February 10, 2003 3:09 AM, Jim Choate
+<ravage@einstein.ssz.com> was seen to say:
+> On Mon, 10 Feb 2003, Dave Howe wrote:
+>> no, lilo is. if you you can mount a pgpdisk (say) without software,
+>> then you are obviously much more talented than I am :)
+> Bullshit. lilo isn't doing -anything- at that point without somebody
+> or something (eg dongle) being present that has the -plaintext- key.
+> Without the key the disk isn't doing anything. So no, lilo isn't
+> mounting the partition. It -is- a tool to do the mount.
+I don't understand why this concept is so difficult for you - software
+*must* perform the mount; there is absolutely no way you could
+personally inspect every byte from the disk and pass decrypted data to
+the os at line speed yourself.  lilo is the actor here.  If you gave a
+program spec to a programmer and said "write this" you wouldn't be able
+to claim you wrote the code yourself, no matter how good or essential
+the program spec was.
+
+> As to mounting the disk without software, not a problem it could be
+> done all in hardware. Though you'd still need the passphrase/dongle.
+you couldn't *mount* a disk in hardware; you *could* decrypt on-the-fly
+and make the physical disk look like a unencrypted one, but you would
+still need non-crypto software to mount it.
+
+>> for virtual drives, the real question is at what point in the boot
+>> process you can mount a drive - if it is not until the os is fully
+>> functional, then you are unable to protect the os itself. if the
+>> bootstrap process can mount the drive before the os is functional,
+>> then you *can* protect the os.
+> No you can't. If the drive is mounted before the OS is loaded you can
+> put the system into a DMA state and read the disk (screw the OS)
+> since it's contents are now in plaintext.
+no, you can't. data from the hardware is *still* encrypted; only the
+output of the driver is decrypted, and a machine no longer running
+bootstrap or os is also incapable of decryption. you *could*, if good
+enough, place the processor in a halt state and use DMA to modify the
+code to reveal the plaintext, but it would be a major pain to do so and
+would require both physical access to the machine *while powered up and
+without triggering any anti-tamper switches* after the password has been
+supplied. This is actually a weakness in firmware cryptodrives (as I
+have seen advertised recently) - once the drive is "unlocked" it can
+usually be swapped over to another machine and the plaintext read.
+
+> You can also prevent the
+> default OS from being loaded as well.
+Indeed so, yes. however, usually that decision has to be made before the
+password would be entered - so making more awkward. you *could* finangle
+the bootstrap though; there must *always* be part of the code outside
+the crypto envelope (but of course this can be removable media such as
+the usb drive mentioned, and stored securely when not in use)
+
+> Clue: If you own the hardware, you own the software.
+indeed so. however, if that applied to machines not already running, the
+police wouldn't be so upset when they find encrypted files on seized
+hardware.
+

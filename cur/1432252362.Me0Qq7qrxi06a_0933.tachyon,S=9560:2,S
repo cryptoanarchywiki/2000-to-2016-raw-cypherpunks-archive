@@ -1,0 +1,191 @@
+From owner-cypherpunks@al-qaeda.net  Thu Sep 20 12:57:12 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q8KGsRfJ006456
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 20 Sep 2012 12:54:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1348160067;
+	bh=ouux9P4sJwJWEzcygphS+XG2J15HwbCWK56e3nwxOdU=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=LXfc9zpTLP1vU/BBq4UT+fCNDTtp4edSdLYlH7xKpiBWe0KYmqotfFdcTK7j58lCk
+	 oH19uo3pZpeU97SwJFHjI0tlN1Ry8BuVwVR3SiCaaE8Y2Sfl1phj7sWWwWlhb3O4g+
+	 dVuX5SNjedjWamFKjlQIZlLTUDoQtDh9ybAELxYo=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q8KGsRLI006455
+	for cypherpunks-outgoing; Thu, 20 Sep 2012 12:54:27 -0400
+Date: Thu, 20 Sep 2012 18:54:23 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: tt@postbiota.org, cypherpunks@al-qaeda.net
+Subject: Re: [ZS] ZS reboot seed
+Message-ID: <20120920165423.GA9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 8191
+Lines: 159
+
+----- Forwarded message from Bryce Lynch <virtualadept@gmail.com> -----
+
+From: Bryce Lynch <virtualadept@gmail.com>
+Date: Thu, 20 Sep 2012 12:49:35 -0400
+To: doctrinezero@googlegroups.com
+Subject: Re: [ZS] ZS reboot seed
+Reply-To: doctrinezero@googlegroups.com
+
+On Thu, Sep 20, 2012 at 11:59 AM, Dirk Bruere <dirk.bruere@gmail.com> wrote:
+
+> Given that you know vastly more about it than most of us, including
+> me, could you put together some suggestions as to how we proceed, with
+> recommendations?
+
+I'll take a crack at it:
+
+A lot of the Zero State notes and docs are online in Google Pages.
+That's pretty much a wiki.  The usual wiki software (MediaWiki, Trac,
+MoinMoin, et cetera) is nice, but not distributed.  One server, one
+database, one wiki.  While it's possible to cluster the databases not
+all software plays nicely that way, and in fact a lot of database
+software we're likely to get hold of has serious hardcoded limitations
+on the number of nodes (MySQL, I'm looking at you).  There are
+alternative wiki implementations that do the same thing but make it
+possible to share the whole shebang across arbitrary numbers of nodes,
+potentially more one per member of the Zero State, potentially more
+than one per member.
+
+The first thing that comes to mind is Ward Cunningham's Smallest
+Federated Wiki (https://github.com/WardCunningham/Smallest-Federated-Wiki).
+ It's a web application (Ruby/Sinatra/JavaScript) which runs on a
+machine and is accessible through a web browser.  It's designed such
+that multiple instances of the server can connect to one another over
+a network and synch up, so it's really one wiki spread across lots of
+machines at the same time.  Multiple people can browse the wiki,
+create and edit pages.  I dont' see why we can't have instances
+communicating over a darknet.
+
+The one that I keep coming back to (and not just because I suck at
+Ruby apps) is called Fossil
+(https://www.fossil-scm.org/index.html/doc/trunk/www/index.wiki),
+which is a distributed revision control system, bug/ticket tracker,
+blog, and wiki.  It uses many of the same techniques as (and in fact
+is compatible with) the revision control system Git
+(http://git-scm.org/).  Again, it's accessed with a web browser,
+everything is versioned, and multiple instances can synch up with one
+another in a by-any-means-necessary approach.  Revision control is
+good for more than just source code - a lot of us use it to help
+manage our configuration files as well as things we write.  We can
+check stuff we're working on into revision control if we wanted to.
+We could definitely use the wiki and blog.  The ticket tracker could
+be used to assign and keep track of tasks (ticket #31337: Create
+Friendly AGI) that we're working on.  Fossil can automatically synch
+off of a single server, or instances can synch off of each other and
+merge the data.  It's cross platform.  And, if something does happen,
+all it takes is a single instance of Fossil to re-bootstrap because
+every node has... well.. everything.
+
+We could import everything important into one of these systems and
+others could set up and synch their own copies of the whole Zero State
+superstructure.
+
+Chat isn't particularly difficult: While we could set up our own
+servers we could also just as easily take advantage of any and all
+XMPP services out there.  There are skillions of them, and most of
+them can cross-chat between one another.  I do that a lot with friends
+aorund the world: My jabber.ccc.de account can talk to the endno.de
+folks, the Blackbird folks, and so on.  If we really wanted to we
+could set up our own XMPP servers.  But there are other ways.
+
+Lately I've been experimenting with Litter
+(https://github.com/ptony82/litter), a distributed microblogging
+system written in Python.  Unpack it, run it, and it does pretty much
+what you'd expect of Twitter.. save that it automatically seeks out
+and finds other instances of Litter on the network using IP
+multicasting and exchanges messages with them.  It's pretty nifty and
+very lightweight.  I haven't tested it with Tor or I2P yet, though.
+
+Torchat (https://github.com/prof7bit/TorChat) is actually implemented
+in a number of languages, but they all do pretty much the same thing:
+If you're running Tor on your laptop or workstation it'll set up a
+hidden service that is uniquely yours.  Other Torchat users can, if
+they know the address, add you as a friend and you can IM over the Tor
+network.  It's a pretty nice IM client.
+
+Tahoe-LAFS (https://tahoe-lafs.org/trac/tahoe-lafs) is a massively
+distributed file storage and sharing grid.  The idea is that you
+install it and join a grid, and you donate a portion of your disk
+space to the grid that people can use to share and back up files.  If
+some number of members built a grid we could put Zero State related
+materials into it for us to access - Fossil trees, documents, videos,
+audio recordings, whatever we needed to replicate and make available,
+we could.
+
+The next question is how to network all this stuff together. Tor
+(https://torproject.org/) is the first thing that comes to mind
+because it's the most popoular and heavily worked on right now.  There
+isn't a whole lot that we couldn't set up so that it's available only
+to Zero State members through the Tor network who know the .onion
+addresses.
+
+If we wanted to go about it another way, we could use something like
+SocialVPN (https://socialvpn.wordpress.com/).  It's written in C# but
+designed to be Mono-compatible, and it's a peer to peer VPN that
+connects users over... XMPP.  Rather than hunting for IP addresses of
+other nodes to connect to, the addresses are usernames of some people
+you probably already have in your IM friends list.  As I recall, their
+primary test transport for this project is GChat.  However, my concern
+is that it implicitly exposes your socnet because the usernames and
+addresses of your IM friends/VPN nodes might be in the clear.  I'm not
+sure yet, I haven't looked into it.  It also hasn't shown a lot of
+development in the past year.
+
+For whatever software development we do in the long run, we'll need
+someplace to put it all.  If we go with Fossil we'll have a very
+useful hosting environment already.  However, there are some
+alternatives which should be explored (though they're not as
+distributed-friendly as Fossil).  Gitlab (http://gitlabhq.com/) does
+pretty much what Github (https://github.com/) is, though it's F/OSS,
+meaning we can set up as many instances of it as we like, anywhere we
+like.  It does project management, Git repository hosting and
+management, bug tracking, fork and merge management, it has a wiki...
+It's written with Ruby On Rails.  We can also clone Github with
+Redmine (http://xdissent.com/2010/05/04/github-clone-with-redmine/).
+I have personal reservations about Redmine (because I suck at Ruby and
+have been fighting with it at work for most of a year now) but if
+someone here is good with it, feel free to consider it as an option.
+
+So, how do we search all this stuff?  I've been running a YaCy
+(http://yacy.de/) node for over a year as part of their grid and I'm
+quite pleased with how well it works as a search engine.  It's
+basically a distributed search engine that you can either proxy your
+traffic through (and it'll index everything you browse through it -
+it's privacy aware, too), or it can be fed links that it'll index,
+follow, index, follow...  It can be run as part of a private search
+grid (Crusoe Mode), so we could set up a private YaCy network (and run
+the traffic over Tor) to index all of our resources.  It's written in
+Java but installs pretty easily, though the indices are pretty big so
+disk space will be necessary.  I'm long overdue to add a couple of
+terabytes to my YaCy box.
+
+-- 
+The Doctor [412/724/301/703] [ZS]
+https://drwho.virtadpt.net/
+"I am everywhere."
+
+-- 
+-- 
+Zero State mailing list:
+http://groups.google.com/group/DoctrineZero
+
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

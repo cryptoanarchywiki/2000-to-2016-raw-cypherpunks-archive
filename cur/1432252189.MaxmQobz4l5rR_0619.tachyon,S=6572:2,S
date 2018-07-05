@@ -1,0 +1,138 @@
+From owner-cypherpunks@al-qaeda.net  Sat Nov 24 03:35:18 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id qAO8Vn1h011978
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sat, 24 Nov 2012 03:31:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1353745909;
+	bh=+Z+0LhHJCrWgSWorQsrsSbxjMTFwmiJPo+2Yi2Vyw+0=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=xoYQzsUhLbQy5oaepYPW5fpnOkOfcYZIq/0V68Io4NVui37b7ZErJ8SgajAPcIZkk
+	 wOoX0kpH0mUtMV2CB5YBF3wWCvDXV9oiTQsSABP64Jb1bJx4OXwbLB+4H5lYOnWvgd
+	 nPC1hYIZPjVCRVvzxiwMXR+aA6RMkmxXY3FdiGOU=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id qAO8Vnkj011977
+	for cypherpunks-outgoing; Sat, 24 Nov 2012 03:31:49 -0500
+Date: Sat, 24 Nov 2012 09:31:44 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: decentralized chat using CouchDB
+Message-ID: <20121124083144.GX9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5167
+Lines: 106
+
+----- Forwarded message from Kragen Javier Sitaker <kragen@canonical.org> -----
+
+From: Kragen Javier Sitaker <kragen@canonical.org>
+Date: Fri, 23 Nov 2012 22:21:04 -0500
+To: kragen-tol@canonical.org
+Subject: decentralized chat using CouchDB
+User-Agent: Mutt/1.5.20 (2009-06-14)
+Reply-To: kragen-discuss@canonical.org
+
+I just sent this message to the CouchDB User mailing list instead of sleeping
+like I ought to be doing.
+
+----- Forwarded message from Kragen Javier Sitaker <kragen@canonical.org> -----
+
+Date: Fri, 23 Nov 2012 22:14:18 -0500
+From: Kragen Javier Sitaker <kragen@canonical.org>
+To: user@couchdb.apache.org
+Subject: decentralized chat
+User-Agent: Mutt/1.5.20 (2009-06-14)
+
+Hi.  I'm new to CouchDB, but I was just chatting with Noah on IRC about
+how IRC sucks and we need to replace it and whether we could do that
+using CouchDB.  He mentioned this thing Chris did four years ago called
+Toast:
+
+<http://jchrisa.net/drl/_design/sofa/_list/post/post-page?startkey=%5B%22Simple-Wins%22%5De>
+
+Right now Skype chat is basically the best thing out there that I've
+seen, but it's proprietary.  It has the following features I like:
+
+* Real-time: people normally see your lines within less than a second
+  after you send them.
+* Peer-to-peer: you don't have to install or manage software on a server
+  to make it work, and it knows how to traverse NATs.  (Skype, Inc.,
+  does maintain a centralized authentication service, which I regard as
+  a significant drawback.)
+* Replicated: you can look at chat history and add chat lines when
+  you're offline.  When you reconnect to the people you're talking to,
+  all the lines get sent.  This is important not mostly because I'm
+  trying to chat while I'm on an airplane but because I don't want to
+  lose messages when my network gets disconnected, and because I switch
+  between devices and want to be able to see messages I typed on my
+  laptop on my cellphone and vice versa.  (As far as I can tell, the
+  POP-not-IMAP nature of XMPP makes this impossible for XMPP chats.)
+* Unified-UI: you can chat with many different people or groups of
+  people at once using the same app, and see e.g. a list of chat
+  channels where you have unread messages.
+* Encrypted: your ISP can't read your chat messages.
+* Secure: the people you're chatting with can't subvert your chat
+  software to e.g. snoop on your other chats.
+* Correct: unlike IRC, doesn't truncate your lines at arbitrary places
+  if they get too long.
+* File transfers: you can send screenshots and stuff to other people,
+  including everybody in a group chat.
+* Cross-platform: versions for both GNU/Linux and Android.
+
+So I'm trying to get a sense of whether there's something out there that
+would make this feature set easy to replicate.  And maybe CouchDB is it?
+Or do I need to build something from scratch?
+
+[Noah suggested](http://swhack.com/logs/2012-11-24#T02-25-22) making
+each chat line a new document, using continuous replication, creating a
+mapreduce view using datetime as a key and pulling the most recent 40
+messages, and using the _changes feed to get Comet updates to the
+browser asynchronously.  That sounds pretty reasonable to me, but the
+following questions occur to me:
+
+* I'm behind NAT.  If you're behind NAT too, how can we set up
+  continuous replication between our CouchDB instances?  Is there STUN
+  support for CouchDB replication yet?
+* Do I need to create a new CouchDB database for every chat room?  Is
+  there any problem with having 20 or 30 databases on my netbook talking
+  at once?
+* How about if I want to have a single Comet connection from my browser
+  to all of them at once?  (Browsers won't let you have 30 Comet
+  connections to localhost.)
+* Are there security concerns I need to think about?  Like, how do I
+  make it so that I can update my DHTML UI, and maybe even automatically
+  get updates from someone else, but not *everybody* I chat with can
+  update my DHTML UI to a version that spies on my chats?  What are the
+  security properties of the replication protocol?  What if I need to
+  kick someone out of a chat channel because they're spamming it?
+
+I think the ability to automatically update application code is
+necessary for decentralized applications (like email) to start to
+successfully compete with centralized ones (like Facebook) again, but
+although I have some ideas about how to do that securely, I don't feel
+like I've solved the problem because I haven't tried them in practice
+yet.
+
+Anyway, I don't know if anybody else thinks it's an interesting project,
+but it seems to me like every chat system out there today is basically
+unusably bad, and decentralized database replication with automatically
+incrementally updating views seems like the right substrate to build it
+on.  
+
+----- End forwarded message -----
+-- 
+To unsubscribe: http://lists.canonical.org/mailman/listinfo/kragen-tol
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

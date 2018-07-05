@@ -1,0 +1,53 @@
+From owner-cypherpunks@al-qaeda.net  Sat Mar 20 03:14:38 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: (from majordomo@localhost)
+	by POSITRON.MIT.EDU (8.11.6p3/8.11.6-03-31-03) id i2K8Dla08599
+	for cypherpunks-outgoing; Sat, 20 Mar 2004 03:13:47 -0500
+X-Authentication-Warning: positron.mit.edu: majordomo set sender to owner-cypherpunks@al-qaeda.net using -f
+Message-Id: <6.0.3.0.0.20040320000711.037f6938@pop.idiom.com>
+X-Sender: wcs@pop.idiom.com
+X-Mailer: QUALCOMM Windows Eudora Version 6.0.3.0
+Date: Sat, 20 Mar 2004 00:13:31 -0800
+To: Thomas Shaddack <shaddack@ns.arachne.cz>
+From: Bill Stewart <bill.stewart@pobox.com>
+Subject: Re: Challenge-response port knocking for TCP
+Cc: Cypherpunks <cypherpunks@al-qaeda.net>
+In-Reply-To: <0403200814060.-1196695644@somehost.domainz.com>
+References: <0403200814060.-1196695644@somehost.domainz.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 1093
+Lines: 27
+
+At 11:21 PM 3/19/2004, Thomas Shaddack wrote:
+>The idea of advertising opportunistic crypto presence in TCP/SYN inspired
+>me to another one: authenticated connection handshake for TCP protocol.
+>
+>Scenario: Application listening on port P of server S, only for
+>authenticated users.
+>
+>Unknown user sends TCP/SYN to S:P, gets back TCP/RST, with challenge in
+>MD5 field of TCP options. The user doesn't support this scheme, so
+>considers the port closed.
+>
+>Unknown-now known user sends TCP/SYN, gets back TCP/RST with the
+>challenge, sends another TCP/SYN, this time with calculated response using
+>a shared secret, again in TCP MD5 option field, gets back TCP/SYNACK.
+
+
+Firewalls may munge the TCP headers, and if you're just protecting the 
+session setup,
+you still need to worry about eavesdroppers and session hijackers.
+Also, this doesn't strike me as the right protocol layer to address the 
+problem at.
+
+
+If you want to be secure, either use IPSEC (in which case this isn't that 
+necessary),
+or else use SSL if you'd rather wrap things in Layer 4.
+Alternatively, do the job at Layer 7.
+

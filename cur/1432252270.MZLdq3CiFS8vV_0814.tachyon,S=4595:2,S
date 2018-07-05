@@ -1,0 +1,104 @@
+From owner-cypherpunks@al-qaeda.net  Wed May 12 07:31:42 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.mit.edu (localhost [127.0.0.1])
+	by positron.mit.edu (8.12.11/8.12.11/Debian-3) with ESMTP id i4CBTbS8009285
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.mit.edu>; Wed, 12 May 2004 07:29:37 -0400
+Received: (from majordomo@localhost)
+	by positron.mit.edu (8.12.11/8.12.11/Debian-3) id i4CBTbGR009284
+	for cypherpunks-outgoing; Wed, 12 May 2004 07:29:37 -0400
+Date: Wed, 12 May 2004 07:20:33 -0400
+From: Adam Back <adam@cypherspace.org>
+To: Jason Holt <jason@lunkwill.org>
+Cc: cryptography@metzdowd.com, Cypherpunks <cypherpunks@minder.net>,
+        Adam Back <adam@cypherspace.org>
+Old-Subject: Re: who goes 1st problem
+Message-ID: <20040512112033.GA1651@bitchcake.off.net>
+References: <20040511193825.GA16834@bitchcake.off.net>
+  <Pine.LNX.4.44.0405111949060.6891-100000@potato.zayda.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <Pine.LNX.4.44.0405111949060.6891-100000@potato.zayda.com>
+User-Agent: Mutt/1.4.1i
+X-Hashcash: 0:040512:jason@lunkwill.org:9ffa7a32ecf39ce030d996c7
+X-Hashcash: 0:040512:cryptography@metzdowd.com:490dfc540fdaa1e36c0f2350
+X-Hashcash: 0:040512:cypherpunks@minder.net:6928430f198f12a348992b7a
+X-Hashcash: 0:040512:adam@cypherspace.org:59641fd6d3b43b920b5a3325
+Subject: Re: who goes 1st problem
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 3030
+Lines: 69
+
+On Tue, May 11, 2004 at 09:10:35PM +0000, Jason Holt wrote:
+> [...] issue [...] would be how you actually get your certs to the
+> other guy.  Hidden credentials, as Ninghui pointed out, assume you
+> have some means for creating the other guy's cert,
+> [...]
+> The OSBE paper, OTOH, assumes we're going to exchange our
+> certificates, just without the CA signatures.  Then I can send you
+> messages you can only read if you really do have a signature on that
+> cert.
+
+I think this is ok.  Would suggest you remove the nym field, have
+one-use credentials (to avoid linkability across provers), and only
+reveal separate nym cert after have satisfied policy.
+
+> But I've always thought that was problematic, since why would honest
+> people bother to connect then use fake certs?
+
+Again ok.  You send either fake cert, or real cert for as many
+attributes as the CA issues.  You may not even know what some of the
+attributes that the CA issues are, all you know is the number of them.
+
+You use and / or connectives between them (using k xor r, k; or r, r
+respectively) but using OBSE algorithm (xor refers to improved HC
+scheme by HC authors in http://eprint.iacr.org/2004/109/).
+
+> The attacker doesn't need to see the signature - he believes you.
+> So honest users would need to regularly give out fake certs so they
+> can hide their legit behavior among the fake connects.
+
+Yes, that works, but is defined required part of protocol; that way
+optimal cover (within limits of partial policy concealment) is given
+for sensitive attributes, policies etc.
+
+> But maybe Robert's improved secret sharing scheme from the new HC paper can 
+> give us some ideas:
+> 
+> 1. Alice sends blinded signatures for each of her relevant certs, not
+> revealing which signature goes with each cert, and not revealing the cert
+> contents.
+
+Sounds same as above.
+
+> 2. Bob generates the contents of each of Alice's certs relevant to
+> his policy, and simply generates each possible combination of
+> hash-of-cert-contents and blinded-signature.  One from each row will
+> be a match-up between contents and signature, and Alice will have to
+> figure out which.  Unfortunately, this requires n^2 multiplies and
+> exponentiations.
+
+That's true.  Think there is a trade-off between degree of
+concealment, and amount of permutations prover has to try.  
+
+You could perhaps define an ordering of attributes safely, followed by
+dealing with unordered undeclared attributes.  
+
+
+Other thought perhaps a FPGA like layout where all possible
+connectives patterns are represented, might allow to specify arbitrary
+boolean formulae with and / or connectives with full policy
+concealment but less space and time efficient.
+
+
+(Calling it prover is kind of odd I find when the prover convinces only
+himselfhe satisfies policy by default and optionally chooses whether
+to disclose that to verifier.  And "the prover" is the passive entity
+receiving encrypted comms, which is back-to-front to usual
+prover-verifier comms pattern.  Maybe sender and recipient is better.)
+
+Adam
+

@@ -1,0 +1,123 @@
+From owner-cypherpunks@Algebra.COM  Sat Sep 15 04:55:59 2001
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.mit.edu (8.11.6/8.9.3) with ESMTP id f8F8txx08937
+	for <kwantam@positron.mit.edu>; Sat, 15 Sep 2001 04:55:59 -0400
+Received: from ak47.algebra.com (ak47.algebra.com [208.233.99.160])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id EAA03347
+	for <rsw@mit.edu>; Sat, 15 Sep 2001 04:50:24 -0400 (EDT)
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.11.1/8.11.1) id f8F8kbl21340
+	for cypherpunks-outgoing; Sat, 15 Sep 2001 03:46:37 -0500
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (dns.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.11.1/8.11.1) with ESMTP id f8F8kVc21326
+	for <cypherpunks@algebra.com>; Sat, 15 Sep 2001 03:46:32 -0500
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id f8F8kRc31373
+	for cypherpunks@algebra.com; Sat, 15 Sep 2001 01:46:27 -0700
+Received: (from majordom@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id f8F8jqc31365
+	for cypherpunks-goingout; Sat, 15 Sep 2001 01:45:52 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Sat, 15 Sep 2001 01:43:48 -0700
+From: Scott Renfro <scott@renfro.org>
+To: Greg Broiles <gbroiles@well.com>
+Cc: remops@lexx.shinn.net, cypherpunks@lne.com, mix-l@yahoogroups.com
+Old-Subject: Re: Compiling Mixmaster 2.9 beta under FreeBSD
+Message-ID: <20010915014348.C95688@bonsai.home.renfro.org>
+References: <5.1.0.14.2.20010914150930.046a7110@pop3.norton.antivirus>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.5i
+In-Reply-To: <5.1.0.14.2.20010914150930.046a7110@pop3.norton.antivirus>;
+  from gbroiles@well.com on Fri, Sep 14, 2001 at 03:17:42PM -0700
+X-Loop: cypherpunks@lne.com
+X-spam: 60 
+Subject:  Re: Compiling Mixmaster 2.9 beta under FreeBSD
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+X-spam: 40 
+Status: O
+Content-Length: 1956
+Lines: 73
+
+
+On Fri, Sep 14, 2001 at 03:17:42PM -0700, Greg Broiles wrote:
+> 
+> I suspect that the OpenBSD fix will be similar, but it may take some
+> time to track it all down.
+
+The following seems to work on OpenBSD-2.8; 2.9 shouldn't be terribly
+different.
+
+  cd /usr/src/lib/libssl/src/crypto/objects
+  perl obj_dat.pl objects.h obj_dat.h
+  cd /usr/src/lib/libssl/crypto
+  patch < ~/libcrypto-makefile.diff
+  make
+  make install
+  cd
+  tar -zxvf mix-2.9b23.tar.gz
+  patch < ~/mix-openssl-2.8.diff
+  cd Mix-2.9beta23
+  ./Install
+
+The patch files are included below.
+
+cheers,
+--Scott
+
+-- 
+Scott Renfro <scott@renfro.org>
+
+
+Here's libcrypto-makefile.diff:
+
+--- Makefile.orig	Fri Sep 14 17:35:34 2001
++++ Makefile	Fri Sep 14 17:35:44 2001
+@@ -24,7 +24,7 @@
+ .endif
+ .endif 
+ 
+-CFLAGS+= -DNO_IDEA -DTERMIOS -DANSI_SOURCE -DNO_ERR -DNO_WINDOWS_BRAINDEATH
++CFLAGS+= -DTERMIOS -DANSI_SOURCE -DNO_ERR -DNO_WINDOWS_BRAINDEATH
+ CFLAGS+= -DNO_RC5
+ CFLAGS+= -I${.CURDIR}/../${SSLEAYDIST}
+ CFLAGS+= -I${LCRYPTO_SRC}
+@@ -58,9 +58,9 @@
+ #CFLAGS+= -I${LCRYPTO_SRC}/rc5
+ #SRCS+=	rc5_skey.c rc5_ecb.c rc5cfb64.c rc5cfb64.c 	
+ #SRCS+=	rc5ofb64.c rc5_enc.c
+-#CFLAGS+= -I${LCRYPTO_SRC}/idea
+-#SRCS+=	i_cbc.c i_cfb64.c i_ofb64.c i_ecb.c		
+-#SRCS+=	i_skey.c							
++CFLAGS+= -I${LCRYPTO_SRC}/idea
++SRCS+=	i_cbc.c i_cfb64.c i_ofb64.c i_ecb.c		
++SRCS+=	i_skey.c							
+ CFLAGS+= -I${LCRYPTO_SRC}/bf
+ SRCS+=	bf_skey.c bf_ecb.c bf_cfb64.c bf_ofb64.c bf_enc.c		
+ CFLAGS+= -I${LCRYPTO_SRC}/cast
+
+And here's mix-openssl-2.8.diff:
+
+diff -ru Mix-2.9beta23/Install Mix-2.9beta23.sgr/Install
+--- Mix-2.9beta23/Install	Thu Mar 16 08:34:02 2000
++++ Mix-2.9beta23.sgr/Install	Fri Sep 14 18:20:41 2001
+@@ -382,8 +382,8 @@
+  fi
+ 
+  opensslinfo="Please get OpenSSL 0.9.4 from http://www.openssl.org/"
+- LIBDIR=/usr/local/ssl/lib
+- INCDIR="/usr/include /usr/include/ssl /usr/lib/ssl/include /usr/local/ssl/include"
++ LIBDIR=/usr/lib
++ INCDIR="/usr/include"
+  SRCDIR="openssl*"
+ 
+  if [ "$system" = win32 ]
+

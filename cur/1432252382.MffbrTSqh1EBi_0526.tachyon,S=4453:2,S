@@ -1,0 +1,88 @@
+From owner-cypherpunks@Algebra.COM  Mon Jan 27 17:35:06 2003
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id h0RMZ6H22493
+	for <rsw@opamp.org>; Mon, 27 Jan 2003 17:35:06 -0500
+Received: from ak47.algebra.com ([209.120.156.51])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id RAA07390
+	for <rsw@mit.edu>; Mon, 27 Jan 2003 17:35:03 -0500 (EST)
+Received: from ak47.algebra.com (majordom@localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id h0RM9ole015681
+	for <cypherpunks-outgoing@ak47.algebra.com>; Mon, 27 Jan 2003 16:09:50 -0600
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id h0RM9ocB015680
+	for cypherpunks-outgoing; Mon, 27 Jan 2003 16:09:50 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id h0RM9hle015649
+	for <cypherpunks@ak47.algebra.com>; Mon, 27 Jan 2003 16:09:43 -0600
+Received: (from cpunk@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h0RM9gk2021574
+	for cypherpunks@ak47.algebra.com; Mon, 27 Jan 2003 14:09:42 -0800
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h0RM9E7I021567
+	for cypherpunks-goingout345; Mon, 27 Jan 2003 14:09:14 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Mon, 27 Jan 2003 23:08:37 +0100 (CET)
+From: Thomas Shaddack <shaddack@ns.arachne.cz>
+X-X-Sender: <shad@Zeta>
+To: Eugen Leitl <eugen@leitl.org>
+cc: Michael Motyka <mmotyka@lsil.com>, <cypherpunks@lne.com>
+Old-Subject: Re: Secure voice app: FEATURE REQUEST: RECORD IPs
+In-Reply-To: <Pine.LNX.4.33.0301272150560.1196-100000@localhost.localdom
+  ain>
+Message-ID: <Pine.LNX.4.33.0301272254240.24927-100000@Zeta>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Loop: cypherpunks@lne.com
+X-spam: 0 
+X-Spam-Status: No, hits=-1.8 required=10.0
+	tests=IN_REP_TO,QUOTED_EMAIL_TEXT,SPAM_PHRASE_00_01,
+	      USER_AGENT_PINE,X_AUTH_WARNING,X_LOOP
+	version=2.43
+Subject:  Re: Secure voice app: FEATURE REQUEST: RECORD IPs
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+Status: O
+Content-Length: 1924
+Lines: 34
+
+
+> I used to run a crontabbed script that queried a cgi-bin giving back the
+> remote address
+
+I use a very similar system (in PHP), activated by a wget request from
+/etc/ppp/ip-up.local (Linux). Another tactics I use occassionally when
+having to improvise is a remote syslog and a crontab entry that each 5
+minutes spits a heartbeat message into the log (so each 5 minutes I get an
+UDP packet telling me the address on which the machine currently is; brute
+force, reliable, small overhead, abuse-resistant).
+
+> built-in this is now much more painless (no need to hack ddclient to parse
+> your router's status page). More interesting, current wireless routers
+> seem to support VPN tunnelling (IPsec, specifically). Given the
+> capabilities, it would be a piece of cake to slip a VoIP package such as
+> Speak Freely into it. With a headset/USB connection and a web interface to
+> control the app it would certainly provide some added value and be immune
+> to firewalling woes.
+
+Works, proven experimentally. One fateful day my ISP cut off all UDP
+traffic above and including port 1024 (they reinstated it two days later,
+so I suppose it was a hasty defense against a DDoS attack). I had a VPN
+connection to my office LAN, so I opened the two UDP ports on the firewall
+and set up portforwarding in iptables, and after some wrestling caused by
+my relative inexperience I got it working. Was surprisingly reliable.
+
+By the way - thought a bit about the ringing and authentication. Why we
+have to unite the call request system with the rest of the IP phone
+application? Couldn't we use it as an entirely separate process, maybe
+something simple based on eg. SSL or HTTPS, employing client certificates?
+This way we reduce the modifications of the VoIP component itself to bare
+minimum or perhaps none at all. Maybe it could be as simple as a perl or
+PHP script on the listening side, and a script calling curl on the other
+side.
+

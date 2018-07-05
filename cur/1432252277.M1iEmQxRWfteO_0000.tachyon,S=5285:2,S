@@ -1,0 +1,108 @@
+From owner-cypherpunks@Algebra.COM  Mon Dec 24 14:46:02 2001
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.mit.edu (8.11.6/8.9.3) with ESMTP id fBOJk2D03408
+	for <kwantam@positron.mit.edu>; Mon, 24 Dec 2001 14:46:02 -0500
+Received: from ak47.algebra.com (ak47.algebra.com [208.233.99.160])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id OAA18430
+	for <rsw@mit.edu>; Mon, 24 Dec 2001 14:45:12 -0500 (EST)
+Received: from ak47.algebra.com (localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id fBOJZqeu032686
+	for <cypherpunks-outgoing@ak47.algebra.com>; Mon, 24 Dec 2001 13:35:52 -0600
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id fBOJZqxa032685
+	for cypherpunks-outgoing; Mon, 24 Dec 2001 13:35:52 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (dns.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id fBOJZleu032670
+	for <cypherpunks@ak47.algebra.com>; Mon, 24 Dec 2001 13:35:49 -0600
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id fBOJZkm22123
+	for cypherpunks@ak47.algebra.com; Mon, 24 Dec 2001 11:35:46 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id fBOJZ2022115
+	for cypherpunks-goingout; Mon, 24 Dec 2001 11:35:02 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Mon, 24 Dec 2001 19:34:41 +0000
+From: Ryan Lackey <ryan@havenco.com>
+To: cypherpunks@lne.com
+Old-Subject: Re: simplest possible ecash mint
+Message-ID: <20011224193440.GA7910@atreides.havenco.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.3.24i
+X-Loop: cypherpunks@lne.com
+X-spam: 10 
+Subject:  Re: simplest possible ecash mint
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+X-spam: 10 
+Status: O
+Content-Length: 3053
+Lines: 59
+
+
+I don't believe "normal users" should ever interact directly with the
+mint; using the mint as a reissue server only in normal operation is a
+key optimization -- especially when coupled with tamper-resistant mint 
+hardware.  Easier to develop, easier to operate, easier to audit.
+Users should purchase cash from change makers; the issuer could also
+operate a change maker, and can handle sales to change-makers separately.
+
+The mint should be able to report to the world exactly how many coins
+it has issued -- for without this figure, it would be difficult for
+users to trust that an issuer has not inflated the currency (I think
+free banking theory would disagree with this, proposing instead that
+competitors attempt to test withdrawals regularly, but I still think
+publishing a float figure is important).  This also demands that
+certain keys be generated on the mint and only under the mint's
+control, not under even the issuer's control, except through logged
+and proscribed actions.
+
+I simply want there to be a way for the issuer of a currency to
+increase the authorized amount and withdraw the tokens, in a way which
+is logged by the mint itself.  Otherwise, you need an external means
+of generating the initial batch of signed currency, the problem with
+currency withering away over time, etc.  Much better to make it a
+clean part of the design.
+
+The issuer of the currency would be able to increase or decrease the
+authorized amount of cash (treasury), and could request from the mint 
+an amount of tokens up to that amount.  The issuer could also send coins and
+have them destroyed, and they would be subtracted from float.
+
+The reason for doing this explicitly is that in the future one may
+replace "issuer manually sets the treasury" with
+"mint directly contacts an external server to see account balance,
+publishing that as treasury", with rules internal to the mint on how
+much of various assets must be held to issue a currency -- perhaps you
+could have a derivative instrument issued against another token-based
+currency, where the mint itself held a single large coin in another
+issue.  If you made it a single step (increase treasury directly
+results in increase in float, by sending coins to the treasury) it
+would make automatic/external changes to the treasury more difficult,
+due to the need for a multi-stage blinding protocol.
+
+A multi-currency mint would just have multiple accounts of this form,
+two for each currency, plus associated keys.  This makes it very easy
+to separate mint-operator from currency issuer, etc.
+
+
+> > [linkage of signing keys and external keys]
+
+I'd like there to be a way for a textual description of the issue, the
+issuer signing keys, and external means of reputation/identity to be
+verified; this is just a question of what keys sign what and how to
+present it.  
+
+-- 
+Ryan Lackey [RL7618 RL5931-RIPE]	ryan@havenco.com
+CTO and Co-founder, HavenCo Ltd.	+44 7970 633 277 
+the free world just milliseconds away	http://www.havenco.com/
+OpenPGP 4096: B8B8 3D95 F940 9760 C64B  DE90 07AD BE07 D2E0 301F
+

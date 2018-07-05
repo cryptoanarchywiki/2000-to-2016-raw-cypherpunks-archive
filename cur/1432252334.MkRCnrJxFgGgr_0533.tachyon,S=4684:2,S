@@ -1,0 +1,97 @@
+From owner-cypherpunks@al-qaeda.net  Tue Jun 12 06:36:41 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q5CAXZlI000959
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 12 Jun 2012 06:33:35 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q5CAXZOF000958
+	for cypherpunks-outgoing; Tue, 12 Jun 2012 06:33:35 -0400
+Date: Tue, 12 Jun 2012 12:33:32 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: doctrinezero@googlegroups.com, cypherpunks@al-qaeda.net,
+        info@postbiota.org
+Subject: Re: [tahoe-dev] Resurrecting Mojo Nation
+Message-ID: <20120612103332.GA17120@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Jack Byer <ftn768@gmail.com> -----
+
+From: Jack Byer <ftn768@gmail.com>
+Date: Mon, 11 Jun 2012 20:04:22 -0500
+To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+Subject: Re: [tahoe-dev] Resurrecting Mojo Nation
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+(This is a cross-post from: https://bitcointalk.org/index.php?topic=86384)
+
+
+
+A market mechanism for buying and selling hard drive space would look
+a lot like the commodity markets. If you express a contract in a
+standard form they can be traded on an exchange to achieve price
+discovery. The following is not a complete specification but just an
+example of how such a system might work.
+
+Contract trading could be done on #bitcoin-otc or a similar platform
+(including the reputation function). Contracts will be priced in
+bitcoins. Storage is expressed in blocks of 1 MiB and the base time
+interval is one increment of the Bitcoin block chain.
+
+Block servers (nodes that sell space) can list the contracts they are
+willing to accept in human and machine-readable form as something like
+this: "BLOCKSTORAGE,O,10,10000,144,0.001,0.0005,0.00025"
+
+This means that the node is offering (O) to contract with any node
+with a reputation of 10 or more. Up to 10000 blocks are available for
+144 time units. The total cost of the contract is 0.001 BTC per block.
+Of this total cost 0.0005 is due up front and 0.00025 is due at the
+completion of the contract. The remainder is due in periodic intervals
+(perhaps as often as every time increment).
+
+When a node that is looking to sell storage can express the contract
+it is looking for as a bid (B). It could either work as both the block
+server and the client can scan the order book to look for a matching
+contract or the exchange can handle the matching. There would need to
+be a means to express what should happen to the data at the end of the
+contract. It can either be deleted (the client no longer needs it) or
+it can be transferred to another block server or it can be returned to
+the client.
+
+At the end of each contract the client and the block server both leave
+feedback on each other which will either increase or decrease their
+respective reputations. Block servers with high reputations will be
+able to charge more up front because the clients can be more confident
+they will actually be able to get their data back at the end of the
+contract. Clients with high reputation won't need to pay as much up
+front because the block servers can be more confident they will be
+paid at the end of the contract. In general a higher reputation will
+lead to better prices for both a client and a block server.
+
+The client should have a method of verifying that the block server
+actually retained the data instead of just tossing it into the
+bitbucket. One possible way to do this is to periodically transmit a
+block number and two offsets and ask for the hash of the data between
+the two offsets. The client could pre-select this verification blocks
+before transmitting the data and have enough hashes stored ahead of
+time for the number of verification it expects to need.
+
+This is just a rough draft and probably still has holes that need to
+be filled in but how does it look as a basic outline?
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

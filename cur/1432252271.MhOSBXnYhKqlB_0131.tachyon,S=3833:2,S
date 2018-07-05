@@ -1,0 +1,80 @@
+From owner-cryptography+rsw=mit.edu@metzdowd.com  Fri Jun  6 22:42:33 2003
+Return-Path: <owner-cryptography+rsw=mit.edu@metzdowd.com>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h572gX602639
+	for <rsw@opamp.org>; Fri, 6 Jun 2003 22:42:33 -0400
+Received: from red.metdow.com (72.muf123.nycm.n54ny05r18.dsl.att.net [12.103.123.72])
+	by pacific-carrier-annex.mit.edu (8.12.4/8.9.2) with ESMTP id h572gVWO008185
+	for <rsw@mit.edu>; Fri, 6 Jun 2003 22:42:32 -0400 (EDT)
+Received: by red.metdow.com (Postfix, from userid 1002)
+	id E3F02182FCB; Sat,  7 Jun 2003 02:40:03 +0000 (UTC)
+X-Original-To: cryptography@metzdowd.com
+Delivered-To: cryptography@metzdowd.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by red.metdow.com (Postfix) with ESMTP id D5564182FC9
+	for <cryptography@metzdowd.com>; Sat,  7 Jun 2003 02:40:02 +0000 (UTC)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 70716D97DC; Fri,  6 Jun 2003 22:40:02 -0400 (EDT)
+X-Original-To: cryptography@metzdowd.com
+Received: from mta5.snfc21.pbi.net (mta5.snfc21.pbi.net [206.13.28.241])
+	by red.metdow.com (Postfix) with ESMTP id EEC07182F64
+	for <cryptography@metzdowd.com>; Sat,  7 Jun 2003 00:24:52 +0000 (UTC)
+Received: from amd-1900 ([64.160.55.57])
+ by mta5.snfc21.pbi.net (iPlanet Messaging Server 5.1 HotFix 1.6 (built Oct 18
+ 2002)) with ESMTP id <0HG30052P55F6Z@mta5.snfc21.pbi.net> for
+ cryptography@metzdowd.com; Fri, 06 Jun 2003 17:24:51 -0700 (PDT)
+Date: Fri, 06 Jun 2003 17:24:55 -0700
+From: "James A. Donald" <jamesd@echeque.com>
+Subject: Re: Maybe It's Snake Oil All the Way Down
+In-reply-to: <6.0.0.9.2.20030606145813.04ac4850@127.0.0.1>
+To: Eric Rescorla <ekr@rtfm.com>, Tim Dierks <tim@dierks.org>
+Cc: cryptography@metzdowd.com, cypherpunks@lne.com
+Message-id: <3EE0CE67.32442.25CB3263@localhost>
+X-Mailer: Pegasus Mail for Windows (v4.01)
+References: <3EDE43EB.29325.1BDDA647@localhost>
+Sender: owner-cryptography@metzdowd.com
+Precedence: bulk
+Status: O
+Content-Length: 1720
+Lines: 39
+
+    --
+James A. Donald:
+> > Certificate caching is not the problem that needs solving.
+> > The problem is all this spam attempting to fool people into
+> > logging in to fake BofA websites and fake e-gold websites,
+> > to steal their passwords or credit card numbers
+
+On 6 Jun 2003 at 15:04, Tim Dierks wrote:
+> I don't think this problem is easier to solve (or at least I
+> sure don't know how to solve it).
+
+It is a hard problem with many well known solutions, none of
+which have to my knowledge been implemented in HTTPS.  For
+example one can use SPEKE, in which case setting up the account
+involves sharing (or issuing) a password, but logging in to the
+account does not require one to reveal the password to the site
+where one is logging in.   In this case the fake website would
+gain no useful information by luring the user to login to it.
+
+The most HTTPS like solution would be to generate a keyfile
+containing a self signed private key on one's computer, and
+whenever one hit the website, it would do the HTTPS handshake
+to log you in to that website's account for the public key
+corresponding to your private key, however HTTPS does not seem
+to directly support this model.   In this case the bogus web
+site could log you in, but this would not leak any information
+that would enable the operators of the bogus web site to login
+to the real web site. 
+
+    --digsig
+         James A. Donald
+     6YeGpsZR+nOTh/cGwvITnSR3TdzclVpR0+pr3YYQdkG
+     /JhekrYM+sQCMQKXhiWzhB3RnOv6PZROgxYwprXj
+     4LHJfuGlcn7fO4tcfo20/t0cdEy/HyK++XiBVvMFy
+
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+

@@ -1,0 +1,93 @@
+From owner-cypherpunks@al-qaeda.net  Wed Jun 13 05:13:21 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q5D99R94019057
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 13 Jun 2012 05:09:27 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q5D99RHd019056
+	for cypherpunks-outgoing; Wed, 13 Jun 2012 05:09:27 -0400
+Date: Wed, 13 Jun 2012 11:09:24 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@googlegroups.com
+Subject: Re: [tahoe-dev] verification of subset of file == proof of 
+  retrievability
+Message-ID: <20120613090924.GK17120@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Brian Warner <warner@lothar.com> -----
+
+From: Brian Warner <warner@lothar.com>
+Date: Tue, 12 Jun 2012 23:34:45 -0700
+To: tahoe-dev@tahoe-lafs.org
+Subject: Re: [tahoe-dev] verification of subset of file == proof of
+	retrievability
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6;
+	rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+On 6/12/12 10:57 PM, Zooko Wilcox-O'Hearn wrote:
+> Folks:
+> 
+> Over on the Bitcoin discussion forums (warning: wretched hive of scum
+> and villainy), someone was asserting that they wanted a "proof of
+> retrievability" protocol and saying that, while they hadn't looked,
+> they were pretty sure Tahoe-LAFS didn't do it right:
+> 
+> https://bitcointalk.org/index.php?topic=2236.msg847771#msg847771
+> 
+> I was mildly annoyed by this, because actually we have some extremely
+> strong features along those lines.
+
+Well, we've never implemented a POR because we've never really wanted
+one. "Proof-of-retrievability" is achieved by just retrieving the data.
+What the cryptography literature calls proof-of-retention (or
+-retrievability, -data-posession, or -ownership) gives you is a way to
+*cheaply* (i.e. using less storage and bandwidth than the whole file)
+assert that some remote server still has the data they claimed to have,
+and haven't found some clever (i.e. cheaper) way to just pass the test
+without really holding the whole file.
+
+There's a number of protocols already out there. In general the verifier
+can assert that either the server is holding the full original file, or
+a collection of calculated verification data that is at least as large
+as the original file (so if they want to pass the test, they might as
+well be honest). http://www.rsa.com/rsalabs/node.asp?id=3357 is one
+example.
+
+The simplest way to do this, however, is for the verifier to hold the
+whole file too. When we've discussed this in the Tahoe "one grid to rule
+them all" context, we've talked about "share buddies": two
+non-collaborating servers, each purportedly holding a copy of the same
+share. They check up on each other by asking for keyed hashes of random
+sections of the share (or the whole thing, if they're willing to spend
+the disk IO on it). The idea was part of a larger server-driven-repair
+thing we were thinking of: servers check up on the files they're helping
+to store, and if they notice problems, they can trigger repair all by
+themselves. Distributed reputation measurements are involved too:
+servers can boost their reputation by delivering POR proofs on a timely
+basis, and share-buddies can vouch for each other.
+
+Anyways, it's sort of a neat idea, but we probably need some more
+extensive accounting / server-reputation frameworks in place before
+it'll be super useful in the Tahoe context.
+
+cheers,
+ -Brian
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+https://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

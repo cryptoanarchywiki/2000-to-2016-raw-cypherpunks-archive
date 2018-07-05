@@ -1,0 +1,131 @@
+From owner-cypherpunks@jfet.org  Wed Oct 26 00:41:02 2005
+Return-Path: <owner-cypherpunks@jfet.org>
+Received: from proton.jfet.org (localhost [127.0.0.1])
+	by proton.jfet.org (8.13.4/8.13.4/Debian-3) with ESMTP id j9Q4eQW9001731
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 26 Oct 2005 00:40:26 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.13.4/8.13.4/Submit) id j9Q4eQ1g001730
+	for cypherpunks-outgoing; Wed, 26 Oct 2005 00:40:26 -0400
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;         s=beta;
+  d=gmail.com;        
+  h=received:message-id:date:from:to:subject:cc:in-reply-to:mime-version:content-type:content-transfer-encoding:content-disposition:references;
+  b=sIFwHMTCibhGIjM7heIJ61Qd5nflIAip50G33I5a6sKAUka6SeNAcAJNcogdDXJxBbJM3T45ezPZGv2YM4G6oZ+y0t2KvGOL+LOay4cn+V/lJzBXyKLpNJpMeMnL8TJKa2b2BoupRw7ulpvoBcCWKlngtE1qBDWHbRpqkI3OAiQ=
+Message-ID: <d4f1333a0510252140t29fffe61nb8aa0871fb48aabc@mail.gmail.com>
+Date: Tue, 25 Oct 2005 23:40:24 -0500
+From: "Travis H." <solinym@gmail.com>
+To: cyphrpunk <cyphrpunk@gmail.com>
+Subject: Re: [PracticalSecurity] Anonymity - great technology but hardly
+  used
+Cc: cypherpunks@jfet.org, cryptography@metzdowd.com,
+        PracticalSecurity@hbarel.com
+In-Reply-To: <792ce4370510242218h12985e18ua62efb15f9e25590@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+References: <p06230967bf8325224617@68.167.57.91> 	
+  <792ce4370510242218h12985e18ua62efb15f9e25590@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by proton.jfet.org
+  id j9Q4ePR9001704
+Sender: owner-cypherpunks@jfet.org
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5090
+Lines: 94
+
+Part of the problem is using a packet-switched network; if we had
+circuit-based, then thwarting traffic analysis is easy; you just fill
+the link with random garbage when not transmitting packets.  I
+considered doing this with SLIP back before broadband (back when my
+friend was my ISP).  There are two problems with this; one, getting
+enough random data, and two, distinguishing the padding from the real
+data in a computationally efficient manner on the remote side without
+giving away anything to someone analyzing your traffic.  I guess both
+problems could be solved
+by using synchronized PRNGs on both ends to generate the chaff.  The
+two sides getting desynchronzied would be problematic.  Please CC me
+with any ideas you might have on doing something like this, perhaps it
+will become useful again one day.
+
+On packet-switched networks, running full speed all the time is not
+very efficient nor is it very friendly to your neighbors.  Again, if
+you have any ideas on how to deal with this, email me.
+
+Many of the anonymity protocols require multiple participants, and
+thus are subject to what economists call "network externalities".  The
+best example I can think of is Microsoft Office file formats.  I don't
+buy MS Office because it's the best software at creating documents,
+but I have to buy it because the person in HR insists on making our
+timecards in Excel format.  In this case, the fact that the HR person
+(a third party to the transaction) is using it forces me to buy it
+from Microsoft.  Similarly, the more people use digital cash, the more
+likely I am to decide to use it.  The more Tor nodes we have, the more
+high speed and close nodes there will be, and the more enjoyable the
+experience will be (assuming Tor is smart enough to use the close,
+fast nodes).  For more information on network externalities, see the
+book "Information Rules", available from Amazon for just over $4. 
+Everyone working in IT or interested in computers should read that
+book.
+
+Another issue involves the ease of use when switching between a
+[slower] anonymous service and a fast non-anonymous service.  I have a
+tool called metaprox on my website (see URL in sig) that allows you to
+choose what proxies you use on a domain-by-domain basis.  Something
+like this is essential if you want to be consistent about accessing
+certain sites only through an anonymous proxy.  Short of that, perhaps
+a Firefox plug-in that allows you to select proxies with a single
+click would be useful.
+
+It would be nice if the protocols allowed you to specify a chain of
+proxies, but unfortunately HTTP only allows you to specify the next
+hop, not a chain of hops. Perhaps someone could come up with an
+encapsulation method and cooperative proxy server that is more like
+the old cpunk remailers, using nested encrypted "envelopes" in the
+body of the request.  Perhaps crowds or Tor already does this, I don't
+know.
+
+Where anonymizing facilities fail are fairly obvious to anyone who has
+used them, listed in descending order of importance:
+ease of configuration (initial setup cost)
+ease of use
+locator services for peers or servers
+network effects (not enough people using it)
+efficient use of resources (see quote in sig about why this is the
+least important)
+
+There are some technical concerns limiting their security:
+resistance to traffic analysis or trojaned software
+ad-hoc systems for crypto key updates or revocation
+
+I think one way to encourage adoption is to amortize the cost of setup
+over a group of people.  For example, everyone who reads this could
+set up a hardened co-loc box and install all the relevant software,
+then charge their friends a small fee to use it.  An ISP could make
+these services available to their customers.  An ASP could make them
+available to customers over the web.  People could start creating
+open-source Live! CD distributions* with all the software clients
+installed and preconfigured (or configured easily through a
+wizard-like set of menus invoked automatically at bootup).  With Live!
+CDs in particular, you'd have a bit of a problem with generating
+crypto keys since the RNG fires up in the same state for everyone, but
+perhaps you could seed it by hashing the contents of a disk drive, or
+the contents of memory-mapped hardware ROMs (e.g. ethernet MAC
+address), network traffic, and/or with seed state persisted on a
+removable USB drive.
+
+[*] See http://www.frozentech.com/content/livecd.php
+
+I don't see a distro specifically for anonymity; if you have friends
+who want to create Yet Another Linux Distro, perhaps they could fill
+this niche.  Two alternatives suggest themselves; a client distro for
+end-users and a server distro for people with a machine that's not
+doing anything.  You'd just pop in the CD and it announces its
+availability to various locator services to act as a Tor, mixmaster,
+or whatever node.  Again, keep me informed if anyone starts work on
+this.
+--
+http://www.lightconsulting.com/~travis/  -><-
+"We already have enough fast, insecure systems." -- Schneier & Ferguson
+GPG fingerprint: 50A1 15C5 A9DE 23B9 ED98 C93E 38E9 204A 94C2 641B
+

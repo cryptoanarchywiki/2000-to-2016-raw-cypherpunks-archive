@@ -1,0 +1,384 @@
+From owner-cypherpunks@al-qaeda.net  Tue Nov  3 13:38:23 2009
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id nA3Ibs2J025909
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 3 Nov 2009 13:37:54 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id nA3IbsJx025908
+	for cypherpunks-outgoing; Tue, 3 Nov 2009 13:37:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com;
+  s=s1024; t=1257273466;
+  bh=j//qVszeKZAt53Olfq6/SS7CRO4E/04B4WM7lv8ffIs=;
+  h=Message-ID:X-YMail-OSG:Received:X-Mailer:Date:From:Subject:To:In-Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding;
+  b=wfqfFkqqEMxLdJiJqitpngCenTWZwiuKnwxWBnbBmoXMGuzfxLkL/1zoIHAH+1zZ6FMTTHJHLxtkk0xKt7SzfmXovA0pJBOOa78Gwgt379eZoZ3rMIJkFnJRgRGt6twV1dcjbycXfosx/7IGPFtrgTGtbNEEdJ2Ra0KiXa8oUpQ=
+Message-ID: <369797.43581.qm@web33308.mail.mud.yahoo.com>
+X-YMail-OSG: nzSo6R4VM1lC3LjND5cyf75hmz1MGvfyNuhdw8ZsR9CyE3hMeZmT7vbM
+X-Mailer: YahooMailClassic/7.0.14 YahooMailWebService/0.7.361.4
+Date: Tue, 3 Nov 2009 10:37:45 -0800 (PST)
+From: Sarad AV <jtrjtrjtr2001@yahoo.com>
+Subject: Re: bruteforcing PGP passwords in the cloud
+To: cypherpunks@al-qaeda.net
+In-Reply-To: <20091103142509.GJ17686@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 11118
+Lines: 351
+
+hi,
+
+
+i remember the  removal of PGP banners from Elcomsoft's booth.
+This and this below
+http://blog.crackpassword.com/2009/04/from-infosecurity-the-number-one-in-eur
+ope/
+
+http://blog.pgp.com/index.php/2009/04/lies-damned-lies-and-marketing/
+
+It's still not clear why they call it" bruteforcing PGP passwords in the
+cloud" when it should be called "bruteforcing passwords in the cloud". Anyway
+its bruteforce and is not specific to PGP. Anythong can be bruteforced.
+
+Sarad.
+
+
+--- On Tue, 11/3/09, Eugen Leitl <eugen@leitl.org> wrote:
+
+> From: Eugen Leitl <eugen@leitl.org>
+> Subject: bruteforcing PGP passwords in the cloud
+> To: cypherpunks@al-qaeda.net
+> Date: Tuesday, November 3, 2009, 7:55 PM
+> http://news.electricalchemy.net/2009/10/cracking-passwords-in-cloud.html
+>
+> Friday, October 30, 2009 Cracking Passwords in the Cloud:
+> Breaking PGP on EC2
+> with EDPR Cloud Computing has enabled some interesting
+> projects:
+> undertakings that wouldn't have been attempted without the
+> cheap, flexible,
+> easy to provision and simple to release computing power
+> that "cloud"
+> delivers.
+>
+> The New York Times used Amazon EC2 and S3 to create PDF's
+> of 15M scanned news
+> articles.  NASDAQ  uses Amazon S3 to deliver
+> historical stock information.
+> We recently tapped into the power of the cloud to perform
+> brute force
+> password cracking attacks which simply aren't feasible
+> using traditional IT
+> infrastructure.
+>
+> We at EA are "pro-cloud" and have been assessing the
+> security of various
+> incarnations of cloud for some time now.  However,
+> until recently we had not
+> had an opportunity to leverage the massive scalability that
+> cloud promises.
+> That changed a few months ago when we were approached by a
+> client who needed
+> several PGP ZIP archives decrypted through brute force.
+>
+> When faced with the task of brute forcing PGP passphrases,
+> we immediately
+> thought of Elcomsoft.  We had witnessed the drama at
+> Infosec 2009 in London
+> when PGP had banners removed from Elcomsoft's booth, and
+> that made a lasting
+> impression.  We downloaded the trial version of
+> Elcomsoft's Distributed
+> Password Recovery software,  but found that
+> unfortunately it was not able to
+> properly parse the old PGP ZIP files.
+>
+> Luckily, Andrey Belenko, the Elcomsoft wizard who gave the
+> world GPU
+> accelerated password cracking was able to get us a patch
+> for the EDPR dll
+> which handles PGP ZIP's. We were in business! 
+> Unfortunately,  on a fast dual
+> core Windows7 box we were looking at something like 2100
+> days to brute force
+> a reasonably long complex passphrase for these PGP ZIPs.
+>
+> This was clearly unacceptable, so we looked to the cloud
+> for salvation.
+>
+> This post goes into significant detail about how to get the
+> Elcomsoft EDPR
+> solution working on Amazon EC2, so if you are interested in
+> the process and
+> want to build your own personal NSA style distributed
+> cracker keep reading.
+>
+> During the course of this project, we had some interesting
+> insights regarding
+> the relative strengths of password length versus
+> complexity.  Feel free to
+> skip over the implementation details and get straight to
+> the analysis.
+>
+> If you're still with us, thanks for tuning in.  Let's
+> continue.
+>
+>
+> Per NIST's cloud presentation, the definition of cloud is
+> as follows:
+>
+>     "Cloud computing is a model for enabling
+> convenient, on-demand network
+> access to a shared pool of configurable computing resources
+> (e.g., networks,
+> servers, storage, applications, and services) that can be
+> rapidly provisioned
+> and released with minimal management effort or service
+> provider interaction.
+> "
+>
+> Using a cloud provider was ideal for a project such as
+> this, as the client
+> really had no residual use for a massive physical cluster
+> of Windows machines
+> once the passwords were recovered.  Thus we moved
+> forward with Amazon EC2,
+> but in order to capitalize on the "rapid provisioning"
+> promised by cloud we
+> wanted to be sure that we could rapidly deploy a large
+> number of EDPR
+> cracking agents without manually configuring each one.
+>
+> Elcom's EDPR runs only on Windows, so our first chore was
+> picking an EC2 AMI
+> which was fit for the purpose of creating a template
+> instance to clone (or
+> bundle, in EC2 speak).  EDPR is a 32 bit Windows app,
+> so there was no need to
+> use a 64bit Windows AMI.  We selected ami-df20c3b6-g
+> and then started an
+> instance from a Linux shell using the EC2 API Tools as
+> follows:
+>
+>     ec2-run-instances -k ssh-keypair
+> ami-df20c3b6-g default
+>
+> Once the instance was up and running, we enumerated the
+> instance ID and
+> public IP address of the running instance with the command
+>
+>     ec2-describe-instances
+>
+> Once the instance status has changed from "pending" to
+> "running" we can
+> extract the administrator password for the instance, using
+> the command
+>
+>     ec2-get-password -k ssh-keypair.pem
+> $instanceID
+>
+> AWS Windows AMI's output the (generated) encrypted
+> administrator password for
+> the instance to the system console.  This API Tool
+> works by grabbing this
+> encrypted console output, and decrypting it with the
+> private key specified on
+> the command line.  This private key must match the
+> public key which was used
+> when the instance was spawned.
+>
+> With the administrator password in hand, we now must
+> configure the EC2
+> firewall to permit inbound RDP traffic to the instance.
+>
+>     ec2-authorize default -p 3389 -s
+> $trusted_ip_address/32
+>
+> Now we can RDP into the instance and configure EDPR.
+>
+>
+> As mentioned previously, the ec2-describe-instances command
+> will provide the
+> public IP address of the running instance.
+>
+> Use the administrator password obtained from the
+> ec2-get-password command to
+> login to the instance.
+>
+> Start IE and download http://www.elcomsoft.com/download/agent_setup.exe to
+> somewhere convenient.  Note that we made the
+> architectural decision to use
+> EC2 for EDPR agents, but not the manager.  This was
+> for two reasons.  One is
+> that the encrypted files we were setting out to crack were
+> client
+> confidential, and thus there was no desire to upload them
+> to systems outside
+> our ultimate control.  Secondly, EC2 instances have a
+> limited concept of
+> state, and we didn't want to mess around with EBS volumes
+> to persist the
+> target files across instance generations.
+>
+> We also configured the firewall in front of the EDPR
+> manager system to permit
+> TCP/12121 from anywhere, as it was difficult to pin down a
+> sane range of
+> public source addresses for EC2 instances.
+>
+> Now launch the EDPR agent installer, and accept the license
+> and all the
+> default options.
+>
+> Once the installation is complete, the EDPR agent will
+> start.  Go to the
+> General tab, and configure the public IP address or
+> hostname of the EDPR
+> manager you have configured.
+>
+> On the Interface tab set the Start-up Mode to "At Windows
+> Start-up".
+>
+> EDPR creates a pair of registry values which are used to
+> uniquely identify
+> the agent when checking in to the manager.  We need to
+> scrub these values
+> before cloning this instance, otherwise every single
+> instance we spawn will
+> appear to be the same agent to the manager, and the job
+> handling will be
+> totally corrupted.
+>
+> To clear these out, Start, Run, regedt32 and then navigate
+> to the following
+> key: HKEY_LOCAL_MACHINE\Software\ElcomSoft\Distributed
+> Agent\UID
+>
+> Set the value of the UID key to null, but DO NOT DELETE THE
+> KEY.
+>
+> With the EDPR agent installed and configured, we can now
+> bundle the EC2
+> instance.  This action is akin to creating a
+> 'template' in VMware land.  To
+> do this, we first need to install and configure the EC2 AMI
+> Tools.
+>
+> The syntax for the ec2-bundle-instance command is as
+> follows:
+>
+>     ec2-bundle-instance $instance_id -b
+> $bucket_name -p $bundle_name  -o
+> $access_key_id -w $secret_access_key
+>
+> Bucket name and bundle name can be whatever you like, just
+> remember them
+> because we will need to those values again when we register
+> the bundled AMI
+> in the next step.
+>
+> The bundling process basically runs sysprep on the Windows
+> instance, and then
+> compresses and copies the instance to S3.
+>
+>     ec2-describe-bundle-tasks
+>
+> Can be used to check on the progress of the task.  It
+> will take several
+> minutes.  Once the bundle task is complete, the
+> following command will
+> register the bundled AMI, which allows it to be used to run
+> instances.
+>
+>     ec2-register
+> $bucket_name/$bundle_name.manifest.xml
+>
+> The registration command will return an AMI ID, which we
+> will use to spawn
+> instances of the EDPR agent.
+>
+>     IMAGE   ami-54f3103d
+>
+> Now start the EDPR manager, and configure a task.  For
+> the purposes of this
+> example, we configure a task to brute an password composed
+> of uppercase
+> letters, lowercase letters, and the numbers 0-9, with a
+> length of between 1
+> to 8 characters (heretofore represented as ([A-Za-z0-9] ^
+> 8) against one of
+> our client's PGPZIP files.
+>
+> To start working on this job, we start a single instance of
+> our EDPR agent
+> with the following command:
+>
+>     ec2-run-instances -k $ssh-keypair
+> ami-54f3103d -g default
+>
+> Shortly after the instance status changes from 'pending' to
+> 'running', we see
+> the agent check in with the EDPR manager.
+>
+> This instance was started with the default parameters, and
+> so is an EC2
+> "small" instance.  Sure it costs only $0.10 USD per
+> hour, but as we see here
+> it is only trying about ~500K keys per second.  How
+> long will it take to
+> brute force the key space?
+>
+> What?  ~3600 days?  Ten years? 
+> Unacceptable!
+>
+> We now use the following command to deploy ten additional
+> instances:
+>
+>     ec2-run-instances -n 10 -k ssh-keypair
+> ami-54f3103d -g default -t
+> c1.medium
+>
+> The -n 10 parameter tells EC2 to launch 10 instances. 
+> We also specify the
+> c1.medium instance type, which is a "High CPU" instance,
+> and raises the price
+> from $0.10 per hour to $0.30 per hour.  According to
+> Amazon's documentation,
+> these instances provide "5 EC2 Compute Units (2 virtual
+> cores with 2.5 EC2
+> Compute Units each)", compared to the "1 EC2 Compute Unit
+> (1 virtual core
+> with 1 EC2 Compute Unit)" provided by the small instance we
+> initially
+> spawned.
+>
+> We now see that we have now invited many more cracking
+> agents to the party.
+> We also note that these instances report two CPU's, and are
+> benchmarking in
+> at 2+M keys/second.  Sounds like the high cpu
+> instances are in fact
+> delivering on their promised additional horsepower.
+>
+> What has this done to the time required to brute force the
+> keyspace?
+>
+> Down to ~122 days.  Still unacceptable, but we're
+> moving in the right
+> direction.  We kick off another 89 instances (to bring
+> our total to 100,
+> which is presently the upper limit of our Elcomsoft EDPR
+> license), but run
+> into a snag:
+>
+>     ec2-run-instanc keyspaces.  This
+> analysis may be insightful as you
+> develop your enterprise password policies, or choose your
+> personal passwords.
+>
+> Next Page: Results & Analysis
+

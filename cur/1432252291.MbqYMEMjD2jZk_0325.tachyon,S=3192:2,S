@@ -1,0 +1,62 @@
+From owner-cypherpunks@lne.com  Tue Jun  3 09:21:34 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h53DLVq28029
+	for <rsw@jfet.org>; Tue, 3 Jun 2003 09:21:32 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h53D5jHp003666
+	for cypherpunks-goingout345; Tue, 3 Jun 2003 06:05:45 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Date: Wed, 4 Jun 2003 01:04:39 +1200
+Message-Id: <200306031304.h53D4dl25250@medusa01.cs.auckland.ac.nz>
+From: pgut001@cs.auckland.ac.nz (Peter Gutmann)
+To: ericm@lne.com, iang@systemics.com
+Subject: Re: Maybe It's Snake Oil All the Way Down
+Cc: bill.stewart@pobox.com, cryptography@metzdowd.com, cypherpunks@lne.com,
+   ekr@rtfm.com, rsalz@datapower.com, sguthery@mobile-mind.com
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2163
+Lines: 38
+
+Ian Grigg <iang@systemics.com> writes:
+
+>It's also very much oriented to x.509 and similar certificate/PKI models,
+>which means it is difficult to use in web of trust (I know this because we
+>started on the path of adding web of trust and text signing features to x.509
+>before going back to OpenPGP), financial and nymous applications whereby
+>trust is bootstrapped a different way.
+
+That's a red herring.  It happens to use X.509 as its preferred bit-bagging
+format for public keys, but that's about it.  People use self-signed certs,
+certs from unknown CAs [0], etc etc, and you don't need certs at all if you
+don't need them, <blatant self-promotion>I've just done an RFC draft that uses
+shared secret keys for mutual authentication of client and server, with no
+need for certificates of any kind</blatant self-promotion>, so the use of
+certs, and in particular a hierarchical PKI, is merely an optional extra.
+It's no more required in SSL than it is in SSHv2.
+
+>Has anyone read Ferguson and Schneier's _Practical Cryptography_ ?  Does it
+>address this issue of how an outsider decides how to "make or buy"?  I just
+>read the reviews on Amazon, they are ... entertaining!
+
+They spend a nontrivial portion of the book reinventing SSL/SSHv2.  I guess
+they lean towards the roll-your-own side of the argument :-).  I'm firmly in
+the opposite camp (see "Lessons Learned in Implementing and Deploying Crypto
+Software", links off my home page at http://www.cs.auckland.ac.nz/~pgut001/).
+I think that providing an abstract description of a fairly complex security
+protocol *in a book targeted at security novices* and then hoping that they
+manage to implement it correctly is asking for trouble.  OTOH it's fun going
+through the thought processes involved in designing the protocol.  I just wish
+they'd applied the process to SSL or SSHv2 instead, so that at the end of it
+they could tell the reader to go out and grab an implementation that someone
+else has got right for them.
+
+Peter.
+
+[0] The vendor of one widely-used MTA once told me that 90% of the certs they
+    saw used in STARTTLS applications were non-big name CA-issued ones (self-
+    signed, etc etc).
+

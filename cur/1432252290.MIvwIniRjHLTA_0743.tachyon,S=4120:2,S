@@ -1,0 +1,87 @@
+From owner-cryptography+rsw=mit.edu@metzdowd.com  Fri May 16 12:12:04 2003
+Return-Path: <owner-cryptography+rsw=mit.edu@metzdowd.com>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h4GGC3t06118
+	for <rsw@opamp.org>; Fri, 16 May 2003 12:12:03 -0400
+Received: from red.metdow.com (72.muf123.nycm.n54ny05r18.dsl.att.net [12.103.123.72])
+	by pacific-carrier-annex.mit.edu (8.12.4/8.9.2) with ESMTP id h4GGBnbO027132
+	for <rsw@mit.edu>; Fri, 16 May 2003 12:11:50 -0400 (EDT)
+Received: by red.metdow.com (Postfix, from userid 1002)
+	id 5E7C5182FB0; Fri, 16 May 2003 15:53:10 +0000 (UTC)
+X-Original-To: cryptography@metzdowd.com
+Delivered-To: cryptography@metzdowd.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by red.metdow.com (Postfix) with ESMTP id 966C4182FAC
+	for <cryptography@metzdowd.com>; Fri, 16 May 2003 15:53:09 +0000 (UTC)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id DE6B9D97DB; Fri, 16 May 2003 11:53:08 -0400 (EDT)
+X-Original-To: cryptography@metzdowd.com
+Received: from turkey.mail.pas.earthlink.net (turkey.mail.pas.earthlink.net [207.217.120.126])
+	by red.metdow.com (Postfix) with ESMTP id B102B182FBC
+	for <cryptography@metzdowd.com>; Wed, 14 May 2003 18:15:28 +0000 (UTC)
+Received: from h-68-164-242-29.snvacaid.covad.net ([68.164.242.29] helo=[192.168.1.5])
+	by turkey.mail.pas.earthlink.net with esmtp (Exim 3.33 #1)
+	id 19G0mc-0002Xe-00; Wed, 14 May 2003 11:15:20 -0700
+X-Sender: frantz%pwpconsult.com@pop.business.earthlink.net
+Message-Id: <v03110707bae8346802e5@[192.168.1.5]>
+In-Reply-To: <Pine.BSO.4.21.0305140943210.1920-100000@anon7.arachelian.com>
+References: <20030513232944.A19967@cluebot.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Date: Wed, 14 May 2003 11:14:09 -0700
+To: Sunder <sunder@sunder.net>
+From: Bill Frantz <frantz@pwpconsult.com>
+Subject: Re: A Trial Balloon to Ban Email?
+Cc: cypherpunks@lne.com, cryptography@metzdowd.com
+Sender: owner-cryptography@metzdowd.com
+Precedence: bulk
+Status: O
+Content-Length: 1975
+Lines: 45
+
+If you go to an ISP collects model, see how this changes the picture.
+
+At 6:57 AM -0700 5/14/03, Sunder wrote:
+>Yes, but how will you stop the spammer from double spending the same $0.25
+>micropayment on all of his 170,000 email addresses?  Depending on whether
+>you check that there is a payment attached or not, and also check it with
+>the bank before delivering it, you'd have already wasted your bandwith and
+>possibly have accepted a spam into your mail spool.
+
+ISP receives mail header.  As soon as the coin appears, it:
+
+(1) Check it against the in-memory Bloom filter of already seen coins.  If
+it passes, goto collect.
+
+(2) Check it against the local database of already seen coins.  (Because
+Bloom filters can give false positives.)  If it is in the database, drop
+the mail and the connection.  Result: no mail in the spool, and minimum
+bandwidth lost.
+
+(collect) Add the coin to the Bloom filter and to the database.  Collect
+the money from the bank.  If the bank says, "double spent", drop the
+connection and the mail as above.
+
+Note that this system will work well against spammers who blast out
+identical coins to a lot of addresses at an ISP.
+
+Now spammers can engage in a DOS attack against this system by using junk
+coins.  It won't help them get the spam thru, and it will be detected when
+there is a TCP connection between their machine/open relay/etc. and the ISP
+machine.  That will go a long way toward locating them in meat space, so
+fraud charges can be brought.
+
+Cheers - Bill
+
+
+-------------------------------------------------------------------------
+Bill Frantz           | Due process for all    | Periwinkle -- Consulting
+(408)356-8506         | used to be the         | 16345 Englewood Ave.
+frantz@pwpconsult.com | American way.          | Los Gatos, CA 95032, USA
+
+
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+

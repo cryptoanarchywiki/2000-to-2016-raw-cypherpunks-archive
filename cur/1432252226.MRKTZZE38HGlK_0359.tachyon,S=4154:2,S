@@ -1,0 +1,91 @@
+From cypherpunks-bounces@cpunks.org  Tue Oct 22 14:27:23 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9MIRMMD008368;
+	Tue, 22 Oct 2013 14:27:22 -0400
+Received: from straum.hexapodia.org (straum.hexapodia.org [66.109.99.53])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r9MIRHaX008362
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Tue, 22 Oct 2013 14:27:18 -0400
+Received: by straum.hexapodia.org (Postfix, from userid 22448)
+ id D998C4288; Tue, 22 Oct 2013 11:27:16 -0700 (PDT)
+Date: Tue, 22 Oct 2013 11:27:16 -0700
+From: Andy Isaacson <adi@hexapodia.org>
+To: =?iso-8859-1?Q?Kriszti=E1n_Pint=E9r?= <pinterkr@gmail.com>
+Subject: Re: DIY RNGs [was: Re: Curious RNG stalemate [was: use of cpunks]]
+Message-ID: <20131022182716.GX15525@hexapodia.org>
+References: <CAD2Ti2_Y4V+d_kLEmoyUmUXLXvA8CCg8Hi50GW2ZGAZZ+eb0Rg@mail.gmail.com>
+ <CACXcFmkd0agP7z=OAAj6Fdx55xc67pgXPZsBN9qYW==vhD5ktw@mail.gmail.com>
+ <20131022070715.GW15525@hexapodia.org>
+ <1382454909.16118.32.camel@anglachel>
+ <1475165977.20131022184740@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1475165977.20131022184740@gmail.com>
+X-Old-GPG-Fingerprint: 1914 0645 FD53 C18E EEEF C402 4A69 B1F3 68D2 A63F
+X-GPG-Fingerprint: A5FC 6141 F76D B6B1 C81F  0FB7 AFA0 A45F ED3D 116D
+X-GPG-Key-URL: http://web.hexapodia.org/~adi/gpg.txt
+X-Domestic-Surveillance: money launder bomb tax evasion
+User-Agent: Mutt/1.5.20 (2009-06-14)
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 1735
+Lines: 41
+
+On Tue, Oct 22, 2013 at 06:47:40PM +0200, Krisztián Pintér wrote:
+> once you have your data stream in memory, you just need to use some
+> whitening. that is the easy part. virtually every cryptographic
+> primitive can be turned into a secure whitener.
+> 
+> for example, i have implemented a small toy/tool to generate random
+> data from the noise of the sound card. it is pretty much the same
+> thing, you just replace the line-in with your data source, and the
+> whitening part is done. it is for windows only. check it out here:
+> 
+> https://github.com/krisztianpinter/rnd_wavein
+
+It seems that rnd_wavein uses a small window (you document 256 samples
+as the default).  One common silent-failure mode of video capture
+interfaces is to intermittently provide the same frame (around 1 MiB of
+data) twice!
+
+If your whitener doesn't chain blocks and you use the output directly as
+random data (worst case, as an OTP) then a long-term repeat like that is
+completely catastrophic, giving you a modern reprise of the Venona
+break:
+http://www.nsa.gov/about/_files/cryptologic_heritage/publications/coldwar/venona_story.pdf
+
+If you do chain, it's merely reducing the entropy of the stream
+significantly.  Also it's entirely possible that an attacker can
+influence the behavior of the system; depending on your threat model
+either through direct physical access or by causing CPU starvation
+through a network or algorithmic DoS to trigger misbehavior in the
+driver.
+
+It would be much better to implement a multi-stage entropy pool design
+with catastrophic mixing, such as Schneier et al's Fortuna:
+
+https://en.wikipedia.org/wiki/Fortuna_%28PRNG%29
+
+> disclaimer: the old rule "don't roll your own crypto" is still in
+> effect.
+
+Indeed.
+
+-andy
+

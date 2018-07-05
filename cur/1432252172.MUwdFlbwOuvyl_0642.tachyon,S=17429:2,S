@@ -1,0 +1,348 @@
+From owner-cypherpunks@al-qaeda.net  Fri Sep  3 13:06:19 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i83I6Ar4027585
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Fri, 3 Sep 2004 13:06:10 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i83I6AWS027584
+	for cypherpunks-outgoing; Fri, 3 Sep 2004 13:06:10 -0500
+Mime-Version: 1.0
+X-Sender: rah@bullae.ibuc.com
+Message-Id: <p0611040dbd5e6166c91c@[4.240.87.121]>
+X-Clips-URL: <http://www.pgp.com/resources/ctocorner/identitymgmt.html>
+Date: Fri, 3 Sep 2004 12:04:17 -0600
+To: cypherpunks@al-qaeda.net, cryptography@metzdowd.com
+From: "R. A. Hettinga" <rah@shipwright.com>
+Subject: PGP Identity Management: Secure Authentication and
+  Authorization  over the Internet
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 16273
+Lines: 320
+
+<http://www.pgp.com/resources/ctocorner/identitymgmt.html>
+
+
+Click for illustrations, etc...
+
+Cheers,
+RAH
+--------
+
+PGP Corporation - Resources - CTO Corner
+
+United States | International?
+
+
+  
+
+
+  Resources > CTO Corner > Guest Contributors > PGP Identity Management
+ Welcome CTO Corner
+Data Sheets
+Flash Government Regulations Webcasts White Papers
+
+
+
+PGP Identity Management:
+ Secure Authentication and Authorization over the Internet
+
+ By Vinnie Moscaritolo,
+ PGP Cryptographic Engineer
+
+3 September 2004
+Abstract
+Access to computer services has conventionally been managed by means of
+secret passwords and centralized authentication databases. This method
+dates back to early timeshare systems. Now that applications have shifted
+to the Internet, it has become clear that the use of passwords is not
+scalable or secure enough for this medium. As an alternative, this paper
+discusses ways to implement federated identity management using strong
+cryptography and the same PGP key infrastructure that is widely deployed on
+the Internet today.
+
+Beyond Passwords
+ The inherent security weakness and management  complexities of
+password-based authentication and centralized authorization  databases make
+such systems inadequate for the real-world requirements  of today's public
+networks. However, by applying the same proven cryptographic technology
+used today for securing email, we can construct a robust authentication
+system with the following goals in mind:
+	* 	 Provide a single sign-on experience in which users only need to
+remember one password, yet make it less vulnerable to "cracking" (hacking)
+attempts.
+	* 	 Employ strong user authentication, extendable to multi-factor
+methods such as tokens or smart cards. The only copy of the authenticating
+(secret) material is in the possession of the user.
+	* 	 Design such a system so it does not depend on any trusted
+servers and so that the compromise of any server does not affect the
+security of other servers or users.
+	* 	 Build on existing and well-accepted infrastructures that scale
+to fit a very large base of users and servers.
+	* 	 Enable users to sign on to the networks of more than one
+enterprise securely to conduct transactions.
+
+ Authentication with Cryptographic Signatures
+Email communications  via the Internet face a security challenge similar to
+network user authentication.  Messages traveling through public networks
+can be eavesdropped or counterfeited  without much effort. Yet we have been
+able to successfully mitigate  these risks by using public key cryptography
+to digitally sign and authenticate  email messages.
+
+ With public key cryptography, each user generates a pair of mathematically
+related cryptographic keys. These keys are created in such a way that it is
+computationally infeasible to derive one key from the other. One of the
+keys is made publicly available to anyone who wishes to communicate with
+that user. The other key is kept private and never revealed to anyone else.
+This private key can be further secured by either placing it in a hardware
+token, encrypting it to a passphrase, or sometimes both. The holder uses
+the private key to digitally sign data. This digital signature can later be
+checked with the matching public key to ensure the data has not been
+tampered with and that it originated from the holder of the private key.
+
+ Because the holder of the private key is the only entity that can create a
+digital signature that verifies with the corresponding public key, there is
+a strong association between a user's identity and the ability to sign with
+that private key. Thus, a digital signature is strong testimony to the
+authenticity of the sender.
+
+Cryptographic Challenge-Response
+ Because the public key functions  as a user's identity in cyberspace, we
+can apply digital signatures  to strongly authenticate users of network
+services. One way to do this  is to challenge the user to sign a randomly
+generated message from the  server. The server then verifies the identity
+of the user with the public  key. This process is illustrated below.
+
+	1.  	The user initiates network service access.
+	2.  	The server looks up the user's public key in its authentication
+database. The server then generates a random challenge string and sends the
+challenge to the client.
+	3.  	The client digitally signs the challenge string and returns the
+cryptographic signature to the server. The client also sends a
+counter-challenge string, which is used to verify the server's authenticity.
+	4.  	The server then checks the client's signature, and if successful,
+grants access. It also signs and returns the client's counter-challenge.
+
+ The use of such cryptographic user authentication offers a number of
+advantages over password-based systems. For example, if we employ the same
+key used to sign email, user authentication becomes as strong as the
+applied cryptographic digital signature algorithm. This approach reduces
+the need for users to periodically change the password, yet means they only
+need to remember one passphrase for all servers using this system. In
+addition, because the user maintains the only secret material in the
+system, compromising a server's user database results in only limited
+damage. All this can be accomplished without the risks associated with
+passphrase caches or key chains.
+
+ PGPuam - Proof of Concept
+A public key login system was originally  prototyped by the author as
+PGPuam and later distributed as sample code  by Apple Computer in 1998
+[PGPUAM]. Consisting of an AppleShare-IP client  and server plugin, the
+system enabled a user to perform two-way strongly  authenticated logins to
+an AppleShare-IP server from a Mac OS client.  The cryptographic routines
+were provided by the PGP Software Development  Kit (SDK) shipped with PGP
+6.0. The user interface was an extension  of the existing AppleShare login
+and is illustrated below.
+Although entirely functional, the PGPuam sample was never intended to be a
+shipping product. Rather, it was meant to be a practical demonstration of
+why public key cryptography should be treated as a core operating system
+component. Unfortunately in the late 1990s, cryptography was mired in both
+commercial and political constraints and widespread public key
+infrastructure (PKI) was slow to solidify. Nevertheless, PGPuam was
+successful in demonstrating that cryptography could be used for more than
+encrypting email. (Note that AppleShare-IP was just a convenient test
+platform. This concept is portable to file servers that support plugin
+authentication modules such as Apache modules or Windows GINA
+Authentication DLL.)
+
+Authentication vs. Authorization
+ Although the PGPuam authentication  effectively addresses most password
+management and single sign-on issues,  it does nothing for user
+authorization. File servers still have to maintain  some form of user-file
+access control database. Managing and maintaining  these user authorization
+databases securely quickly become cumbersome  for server administrators
+when more than a handful of servers are involved.
+
+ Consider, for example, what happens when a new user wishes to gain access
+to a server. The system administrator must create an account and add the
+user's name and access information to the appropriate server database. If
+the user wishes to access a number of servers, this process must be
+duplicated and kept synchronized on each server. This process is further
+exacerbated when the servers are owned by different organizations.
+Conversely, when a user departs from an organization, each of the servers
+must then be updated to reflect this change. Often, removed users are
+overlooked and left active on servers managed by different departments,
+thus creating a security risk.
+
+Although have been a number of attempts to create automated systems to
+replicate or centralize the authorization databases, such as Kerberos, they
+all seem to share the following drawbacks:
+	* 	 The authorization server itself must be physically secure and is
+a critical link in the security chain.
+	* 	 Each server must be in communication with the authorization
+server to verify user identity and authorizations. This could be an
+unreasonable requirement for remote sites or devices such as a door badge
+reader, for example.
+	* 	 The authorization server is an ideal target for
+denial-of-service attacks because they affect all the servers managed by it.
+
+ PGPticket - Secure Federated User Authorization
+A number of papers  have described ingenious alternatives for distributing
+network service  authorization [BFL] [SPKI]. In particular, the Simple
+Public Key Infrastructure  (SPKI) model introduces a change in how
+authorization is performed for  network services. Instead of maintaining a
+per-server database of users'  names, passwords, and their corresponding
+access rights, we can apply  digital-signature technology to create an
+authorization certificate.  Think of this certificate as a digital
+"permission slip," valid  only for a specific user's key over a certain
+period of time. The authorization certificate is signed by the organization
+or a proxy that owns the  server and presented by the user upon accessing a
+restricted service.
+
+ One way to encapsulate these certificates is in the form of an OpenPGP
+standalone signature packet [OPENPGP]. These packets, known as PGPtickets ,
+form the basis of a lightweight but very secure federated authorization
+protocol [PGPTICKET]. Each PGPticket contains the following fields:
+	* 	 The ISSUER who generates and signs the certificate, represented
+by a PGP Key-ID.
+	* 	 The SUBJECT, the principal or set of principals to which the
+certificate grants its authorization. A combination of KeyID, algorithm ID
+and key fingerprint is used to represent the subject.
+	* 	 VALIDITY is some combination of dates or online tests specifying
+the validity period/conditions of the certificate-typically, a creation and
+expiration date. This field might be useful for a school that wants to
+allow access to facilities for a limited period such as a term.
+	* 	 AUTHORIZATION is a structured field expressing the authorization
+this certificate grants to the subject. This data could be represented as
+SAML or some form of XML.
+	* 	 DELEGATION is a flag that indicates if the subject is allowed to
+delegate the specified authorization further.
+
+ PGPtickets can be issued in or out of band and are uniquely identified by
+the hash of the ticket packet, known as its Ticket-ID. The issuer verifies
+the subject's key information through standard practice, such as key
+fingerprint. Unless there is a specific requirement to encrypt the signed
+tickets, they can be returned via cleartext email or even placed on a
+public website and accessed by the Ticket-ID. The subject can even store
+the ticket in a database, smart card, or token.
+ The following illustrates the process of accessing a service with a PGPticket:
+
+	1.  	The user requests server access from the system admin. The user
+provides either a copy of his/her public key or makes the key available on
+a keyserver. The issuer verifies the validity of this key.
+	2.  	 The administrator generates the PGPticket with appropriate
+authorizations and validity information, signing the ticket with the server
+admin key. The ticket is either posted in a public place or sent by email
+to the user.
+	3.  	 The user retrieves the PGPticket and stores it in a local ticket
+database.
+	4.  	When the user attempts to access a network service, the client
+searches its ticket database for the appropriate ticket and sends a copy of
+it along with the access request.
+	5.  	 The server checks the validity of the ticket by verifying the
+admin signature and expiration date of the ticket. The server then
+generates a random challenge string and sends the challenge to the client,
+requesting that the key specified in the ticket sign it.
+	6.  	 The client signs and returns the challenge, which is checked by
+the server and, if successful, access is granted with the authorizations
+specified in the ticket.
+
+ The server only requires a copy of the root issuer's public key. It does
+not need to store copies of the subject's public keys because the key
+fingerprint is signed into the ticket body. The subject public key can be
+provided by request from the client and cached for later use. The same is
+true for delegated tickets. There is no specific requirement for a
+certifying authority, although its use is certainly not precluded and would
+make PGPtickets usable for small sites as well as enterprises.
+
+ One of the more interesting features of this design is that it enables the
+servers to function without access to a keyserver, independent of outside
+influences and resilient to denial-of-service attacks. This approach allows
+the use of PGPtickets for standalone devices where no network connection is
+practical, which opens a number of possibilities. PGPtickets can be
+transported in a token or Bluetooth device, and not only used for such
+things as Web Service or VPN access but also for restricted door access. In
+essence, PGPtickets could extend the usefulness of the PGP PKI to the
+physical world.
+
+PGPcoupon - Building on XML Web Services
+ Other interesting possibilities  occur when you consider that PGPticket
+piggybacks on the flexibility  of the PGP key infrastructure. Consider a
+system that produced tickets  automatically through some pay-per-use
+service and combine that with  anonymous keys. Or what about using the
+key-splitting features to create  a ticket that needs a certain amount of
+shares for service access?
+
+ Another possibility is to mix the technologies of PGPticket and XML object
+Web Services. A client could post a Web request for a proposal whereby
+vendors could reply with a PGP-signed coupon that would be honored by
+various distributors for a given period.
+
+ For example, imagine a school wants to purchase a number of books; various
+vendors compete for the order and send replies. In the replies is a 20% off
+PGPcoupon that Amazon or BN.com would honor. The client could then present
+this coupon upon purchase and have the transaction processed automatically.
+
+ Conclusion
+ I have outlined a number of alternate uses for PGP  technology that go far
+past email encryption. Most of these designs  have been around for a number
+of years, but were untapped because of  political or commercial restraints
+and, at times, lack of vision. Fortunately,  the environment has changed
+and cryptographic technology can be used  to solve a number of real-world
+identity management problems today.
+
+References
+ [OPENPGP]
+ Callas, J., Donnerhacke, L., Finney, H., Thayer, R. "OpenPGP  Message
+Format." RFC 2440, November 1998
+
+[SPKI]
+ Ellison, C. "SPKI Requirements." RFC 2692, September 1999
+
+Ellison, C., Frantz, B., Lampson, B., Rivest, R. "SPKI Certificate Theory."
+RFC 2693, September 1999
+
+[BFL]
+ Blaze, M., Feigenbaum, J., and Lacy, J. "Decentralized Trust Management."
+Proceedings 1996 IEEE Symposium on Security and Privacy.
+
+ [PGPTICKET]
+ Moscaritolo, V. "PGPticket - A Secure Authorization Protocol." Mac-Crypto
+Workshop, October 1998
+
+Moscaritolo, V., Mione, A. draft-ietf-pgpticket-moscaritolo-mione-02.txt
+
+ [PGPUAM]
+ Moscaritolo, V. "PGPuam - Public Key Authentication for AppleShare-IP."
+Mac-Crypto Workshop, October 1998
+
+"Now that applications have shifted to the Internet, the use of secret
+passwords is not scalable or secure enough. Instead, there are ways to
+implement federated identity management using strong cryptography and same
+PGP key infrastructure that is widely deployed on the Internet today."
+
+ - Vinnie Moscaritolo, PGP Cryptographic Engineer
+
+Related Links
+	* 	Expert  advice from Jon Callas: "Encryption 101 - Triple DES
+Explained"
+	* 	Video:  HNS interview with Jon Callas
+	* 	 Summary:  HNS interview with Jon Callas
+Company | Privacy Statement | Legal Notices | Site Map )2002-2004 PGP
+Corporation. All Rights Reserved.
+
+
+-- 
+-----------------
+R. A. Hettinga <mailto: rah@ibuc.com>
+The Internet Bearer Underwriting Corporation <http://www.ibuc.com/>
+44 Farquhar Street, Boston, MA 02131 USA
+"... however it may deserve respect for its usefulness and antiquity,
+[predicting the end of the world] has not been found agreeable to
+experience." -- Edward Gibbon, 'Decline and Fall of the Roman Empire'
+

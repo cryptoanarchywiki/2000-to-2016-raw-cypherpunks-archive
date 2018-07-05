@@ -1,0 +1,96 @@
+From owner-cypherpunks@lne.com  Mon Nov 10 18:11:54 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from slack.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p3/8.11.6-03-31-03) with ESMTP id hAANBqq09621
+	for <rsw@jfet.org>; Mon, 10 Nov 2003 18:11:52 -0500
+Received: from slack.lne.com (slack.lne.com [127.0.0.1])
+	by slack.lne.com (8.12.10/8.12.10) with ESMTP id hAAMnTmu023153
+	(version=TLSv1/SSLv3 cipher=EDH-DSS-DES-CBC3-SHA bits=168 verify=NO)
+	for <cypherpunks-goingout345@slack.lne.com>; Mon, 10 Nov 2003 14:49:29 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.12.10/8.12.10/Submit) id hAAMnTwf023152
+	for cypherpunks-goingout345; Mon, 10 Nov 2003 14:49:29 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Message-ID: <3FB0154F.4217B7FE@cdc.gov>
+Date: Mon, 10 Nov 2003 14:46:39 -0800
+From: "Major Variola (ret)" <mv@cdc.gov>
+X-Mailer: Mozilla 4.75 [en] (Win95; U)
+X-Accept-Language: en
+MIME-Version: 1.0
+To: "cypherpunks@lne.com" <cypherpunks@lne.com>
+Subject: Re: Disguising the Key length (Was...Has a change taken place
+  in   factoring RSA keys)
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2335
+Lines: 64
+
+At 02:09 PM 11/10/03 -0500, Tyler Durden wrote:
+>My first question is, how easy is it for them to estimate the key size
+of an
+>encrypted message?
+
+Its not secret.  But lets look at twiddling what the message header
+encodes.
+
+Suppose you relabel a 2Kbit key as a 1Kbit.  Then what are the extra
+bits for,
+Eve will wonder.
+
+Suppose you claim a 1Kbit RSA key is 2Kbits.
+Now, the math works if you treat a 1Kbit key as 2Kbit.  But the
+decrypt won't work unless the recipient modifies
+the header to specify 1Kbit to ignore the fake extra key bits.  Which
+requires a secure OOB channel, see below.
+
+
+>Can they do this without actually "chewing" on the message for a while?
+(ie,
+>if it doesn't crack in x minutes then there's a 99% probability of the
+key
+>being Y in length...)
+
+"How can you have any pudding if you don't eat your meat? "
+
+Lets think about DES, which also has a publicly-visible keylength.
+If you've run through *all* the 56 bit keys, and found
+no solution, you know that either DES wasn't the algorithm (perhaps
+3DES was, perhaps DES-X, perhaps Blowfish, AES, Skipjack, etc.
+You need to reconfigure your FPGAs for each algorithm.)  And if you
+haven't
+run through all the keys, it could always be the *last* key you try.
+
+So although given *large sets of messages* you can say that 99% would
+have been cracked "by now", this kind of stats isn't really useful.
+"Close" is for hand grenades, horseshoes, and proximity fuzes; there is
+no "close" in crypto.
+
+>Second question: Is it possible to make a message appear to have been
+>encrypted with a shorter key than was actually used?
+
+That would cause the decrypting code to truncate significant digits
+which would not permit decryption.  Suppose you did this and the
+recipient
+fixed the length so it would work.  This wouldn't matter: Eve would
+wonder what
+all those extra random bits are for.
+
+A better approach *might* be to lie about the symmetric encryption
+you've
+used.  Encrypt with AES-256, use RSA on that 256 bit key, but modify
+the message to claim you've used AES-128 or 3DES.
+
+However, this requires a secure out of band channel to communicate this
+to
+your recipient.  And if you have such a channel, you may as well give
+them
+a nonstandard S-box initialization (eg "e times your SSN number" vs.
+"pi" in Blowfish) or a OTP.
+
+---
+A SAM a day keeps the invaders away.
+

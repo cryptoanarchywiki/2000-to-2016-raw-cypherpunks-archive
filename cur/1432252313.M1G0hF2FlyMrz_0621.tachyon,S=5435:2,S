@@ -1,0 +1,103 @@
+From owner-cypherpunks@lne.com  Wed Jun  4 12:35:27 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h54GZMq01725
+	for <rsw@jfet.org>; Wed, 4 Jun 2003 12:35:24 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h54GAcfl015130
+	for cypherpunks-goingout345; Wed, 4 Jun 2003 09:10:38 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Message-Id: <4.2.2.20030604094322.00d5ed90@mail.earthlink.net>
+X-Sender: lynnnet@mail.earthlink.net
+X-Mailer: QUALCOMM Windows Eudora Pro Version 4.2.2 
+Date: Wed, 04 Jun 2003 10:12:04 -0600
+To: "Dave Howe" <DaveHowe@gmx.co.uk>
+From: Anne & Lynn Wheeler <lynn@garlic.com>
+Subject: Re: Maybe It's Snake Oil All the Way Down
+Cc: "Email List: Cypherpunks" <cypherpunks@lne.com>,
+   "Email List:
+  Cryptography" <cryptography@metzdowd.com>
+In-Reply-To: <008701c32a88$cde93f00$c71121c2@exchange.sharpuk.co.uk>
+References: <000101c3298e$cf6edd30$6401a8c0@VAIO650>
+  <v03110729bb02cd26c820@[192.168.1.5]>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 4110
+Lines: 71
+
+At 12:02 PM 6/4/2003 +0100, Dave Howe wrote:
+>For that matter, our system here discards the CC after use (the pre-auth
+>step with the merchant bank agent gives us back a "fulfillment handle" that
+>can only be used to fulfill or cancel that individual transaction - but of
+>course Amazon *want* to keep your CC details so they can do their
+>fast-checkout patented thingy.
+
+the ground rules given the x9a10 working group for the x9.59 standard was 
+to preserve the integrity of the financial infrastructure for all (credit, 
+debit, stored-value, POS, internet, non-internet, aka ALL) electronic 
+retail payments. it was one of the things that led us down the path of 
+certless operation. We had previously done the work on the original payment 
+gateway and had to perform various kinds of due diligence on all the major 
+CA vendors .... which started to dawn on us that stale, static certificates 
+were actually redundant and superfluous in the financial business process.
+http://www.garlic.com/~lynn/aadsm5.html#asrn2
+http://www.garlic.com/~lynn/aadsm5.html#asrn3
+
+sort of the clinker was starting to do operational and performance profile 
+on any of the existing payment networks .... and it was evident that there 
+was a huge mismatch between the existing payment transaction payload size 
+and any of the commonly used certificates (even the drastically simplified 
+replying-party-only certificates carrying only an account number and public 
+key).
+
+Two major characteristics of X9.59 was that it would provide 1) end-to-end 
+authentication (aka the consumers financial institution would be the one 
+responsible for performing authentication) and 2) account numbers used in 
+X9.59 transactions could not be used in unauthenticated transactions.
+
+Some of the '90s digitally signature oriented specifications had 
+authentication occurring at the internet boundary and stripping off the 
+certificate (avoiding the extreme certificate payload penalty in the 
+payment network). The downside was that the party performing the 
+authentication didn't necessarily have the consumer's interest in mind and 
+Visa subsequently presented statistics at a ISO standards meeting on the 
+number of transactions flowing through the network 1) with a flag claiming 
+to have been digitally signature authenticated and 2) they could prove that 
+no digital signature technology was ever involved.
+
+Evesdropping, sniffing or harvesting account numbers in the current 
+infrastructure (at any point in the process, by insiders or outsiders, 
+traditionally financial exploits have been 90 percent insiders) can result 
+in fraudulent transactions. As a result, existing account numbers 
+effectively become a form of shared-secret and need to be protected. With 
+the X9.59 business rule requiring the account number to only be used in 
+authenticated transactions, simple harvesting of a X9.59 account number 
+doesn't result in fraud. Issuing financial institutions then can use 
+existing business processes that support mapping of different account 
+numbers to the same account.  A discussion of the security proportional to 
+risk with regard to credit card transactions:
+http://www.garlic.com/~lynn//2001h.html#61 Net banking, is it safe?
+
+The issue with the use of SSL for protecting credit card transactions isn't 
+addressing all or even the major vulnerability to the infrastructure. 
+Eliminating the account number as a form of shared secret addresses all of 
+the vulnerabilities, not just the transaction-in-flight vulnerability 
+addressed by SSL. As a byproduct of addressing all of the shared-secret 
+related vulnerabilities, it also eliminates the need to use SSL for 
+protecting the shared secret while being transmitted.
+
+Detailed report of its use in the NACHA debit network trials can be found at
+http://internetcouncil.nacha.org/News/news.html
+scroll down to "July 23, 2001: Digital Signatures Can Secure ATM Card Payments"
+
+More details of X9.59 standard:
+http://www.garlic.com/~lynn/index.html#x959
+
+--
+Anne & Lynn Wheeler    http://www.garlic.com/~lynn/
+Internet trivia 20th anv http://www.garlic.com/~lynn/rfcietff.htm
+

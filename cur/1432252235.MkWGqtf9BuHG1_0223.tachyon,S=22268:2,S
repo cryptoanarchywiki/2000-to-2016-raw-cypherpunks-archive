@@ -1,0 +1,397 @@
+From owner-cypherpunks@al-qaeda.net  Fri Aug  6 17:45:18 2004
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from positron.jfet.org (localhost [127.0.0.1])
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) with ESMTP id i76Mj1Hx032160
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@positron.jfet.org>; Fri, 6 Aug 2004 17:45:01 -0500
+Received: (from majordomo@localhost)
+	by positron.jfet.org (8.12.11/8.12.11/Debian-3) id i76Mj1On032159
+	for cypherpunks-outgoing; Fri, 6 Aug 2004 17:45:01 -0500
+Mime-Version: 1.0
+X-Sender: rah@bullae.ibuc.com
+Message-Id: <p061104e3bd3937d4c626@[66.149.49.5]>
+X-Clips-URL: <http://www.sys-con.com/story/print.cfm?storyid=45690>
+Date: Fri, 6 Aug 2004 18:34:49 -0400
+To: cryptography@metzdowd.com, cypherpunks@al-qaeda.net
+From: "R. A. Hettinga" <rah@shipwright.com>
+Subject: Propagating Security Context Across a Distributed Web Services 
+  Environment
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 21125
+Lines: 369
+
+<http://www.sys-con.com/story/print.cfm?storyid=45690>
+
+SYS-CON
+
+Propagating Security Context Across a Distributed Web Services Environment
+Why, when, and how
+August 4, 2004
+
+By Scott Morrison 
+
+
+
+It's a problem as old as networked computing. Consider two applications.
+They negotiate a level of trust. How can that trust - or security context -
+be transferred to a third application, one that may exist in an entirely
+different security domain from the first?
+
+This problem has been solved before, but is limited by proprietary
+solutions that resist integration. The challenge now, which is a
+significant one, is to solve it again, but this time for Web services - a
+task complicated by the need to accommodate a broad range of established
+security procedures and legacy technologies.
+
+ Context in Context
+Security context is an ambiguous term. Take, for example, the SSL protocol.
+Here, security context is largely cryptographic metadata - the master key,
+derived session keys, ciphers and hashes, etc. - which are associated by a
+public SSL session ID. The session ID exists precisely to allow reuse of
+these across independent connections and thus avoid the expensive public
+key-based handshakes that would be necessary to re-establish them.
+Authentication might not even be involved; such is the case with the
+Diffie-Hellman cipher suite.
+
+ In this article, we will explore the more fundamental problem of
+transferring the security context established by an act of authentication -
+that is, a sufficiently substantiated claim of principle identity - between
+applications in a Web services environment. In doing so, we will use two
+important OASIS Web services standards, WS-Security (WSS) and the Security
+Assertions Markup Language (SAML).
+
+ WSS and the Security Token Mechanism
+Back when I was still in high school, my parents gathered up the family and
+spent a summer traveling in China. During a few days in Beijing, I had a
+chop, or signature seal, carved with my name rendered phonetically in
+Chinese. In China, chops have been used as a means of signature and
+identity since the period of the Warring States, nearly 2500 years ago.
+
+ The chop implements a security model called proof of possession. It is
+something physical you have, something you need to protect, and something
+you can use to create a security token that binds another object - a
+contract, a painting, etc. - to yourself. The binding consists of a stamp,
+most commonly rendered in red ink, of the name carved into the chop. The
+artistry of the carving establishes uniqueness and is a simple guard
+against forgery.
+
+ Shortly after we returned home, thieves broke into our house. Along with
+the usual targets for theft - items like TVs and stereos - they took, oddly
+enough, my chop. I've always thought that this was a strange thing to
+steal: were they drawn to it because it was shiny and elegant; or was it an
+early example of identity theft? Perhaps there are checking accounts open
+in my name somewhere in Fujian.
+
+ The real problem with my chop is that it really wasn't bound to my
+identity. It was fine for creating security tokens while I possessed it,
+but once lost, the thieves could create unlimited identity tokens with no
+real means for me to stop them.
+
+ Security tokens, of course, come in many different forms and with varied
+purposes. A token could transport credentials; it might describe an
+authorization decision; it may encapsulate a key for a cryptography
+session. This diversity is one of the challenges faced by the technical
+committee developing WS Security. To this end, their specification does not
+attempt to mandate one form of security token over another; instead, it
+defines a simple encapsulation mechanism that should be able to accommodate
+most existing methods and technologies. Thus, in WSS, applications can make
+claims to identity, supported by tokens. The details of how to support a
+particular token mechanism is defined outside the main specification, in a
+separate document called a token profile.
+
+ Security tokens appear as elements subordinate to the <Security> header,
+the block in a SOAP message under which all WS-Security related parameters
+appear. Most of the currently existing profiles are concerned with
+establishing a security context around identity. Consider, for example,
+username and password, probably the most familiar of all security token
+schemes. WSS defines a profile called - not surprisingly - the Web Services
+Security Username Token Profile. It defines a very simple and logical
+organization for usernames, passwords, and nonces; the latter enabling
+digest authentication schemes to provide credential validation without
+direct password transmission. WSS calls this type of token a
+proof-of-possession claim. Listing 1, taken directly from the
+specification, is an example. (the code is online at
+www.sys-con.com/websphere/sourcec.cfm)
+
+ But what about transferring an existing context? You could argue against
+the need for this - after all, if you have a means of authentication, why
+not simply re-authenticate continuously with every independent transaction?
+HTTP basic authentication works in this way. When a browser successfully
+meets an authentication challenge, it will proactively insert credentials
+into the HTTP Authorize header for every subsequent request in the same
+realm.
+
+ For some Web services applications, this is sufficient. For others, it can
+be tremendously expensive - the overhead of continuous credential
+validation can bring a directory to it knees. Furthermore, it may be
+unrealistic to believe that every server is capable of performing this
+operation. Often, this is because of access restrictions placed on central
+directories, perhaps due to topology, but often due to politics.
+
+ Transferring a previously established identity context, then, is a
+valuable thing. But it's also difficult to carry out securely. WSS provides
+a means to do this within its abstract token profile mechanism. Under this
+use case, the tokens don't establish initial identity, but describe an
+existing security context. These tokens have to be authoritative, so that
+if a token is stolen - like my chop - it can't be used to hijack or destroy
+an existing application or cryptography session. This challenge is
+addressed by the WSS SAML profile.
+
+ SAML and Context Transfer
+SAML is designed to pass security information between systems. The basis of
+SAML is a markup language for declaring assertions. Assertions are
+declarations of facts about a subject. You can think of a subject as the
+binding of an entity, such as a person or a computer, to an identity in a
+security domain. Assertions are generated by an issuing authority, which
+may front an existing identity server such as an LDAP directory. In SAML,
+there are three distinct kinds of assertions:
+	* 	 Authentication assertions: These statements describe acts of
+authentication that have already taken place. An authentication assertion
+does not describe another method to perform authentication, such as using
+an X509 certificate; it simply affirms that a subject S was authenticated
+by means M at time T. In listing 2, the authentication assertion declares
+that subject smorrison authenticated against the Layer 7 Technologies
+corporate directory using a password.
+	* 	 Authorization assertions: An SAML issuing authority can make an
+authorization decision to allow or deny access for a subject to a
+particular resource.
+	* 	 Attribute assertions: These assert that a subject is associated
+with a collection of attributes, represented as simple name/value pairs.
+For example, an SAML authority might declare that subject Scott is
+associated with group=developers and company=Layer 7 Technologies.
+ By providing a generalized attribute mechanism, SAML makes an important
+point: that security context is more than just authentication and
+authorization, but also includes associated metadata that might be
+important in a security decision, such as a subject holding gold status in
+a frequent flyer system.
+
+ In addition to assertions, SAML defines a request/response protocol for
+obtaining assertions from SAML authorities, bindings to protocols such as
+SOAP for transporting assertions and queries, and profiles, which take a
+more holistic approach to integrating SAML within an existing framework,
+such as SOAP messaging or conventional, HTML-oriented HTTP.
+
+ While the vision behind SAML has been to produce a general-purpose
+language for communicating security context between distributed systems,
+its initial focus, growing out of a widespread and immediate need, has been
+on browser-based communications - in particular, single sign on (SSO) for
+the Web. SAML defines two additional profiles to address this, and in
+these, we can find a model for how SAML will ultimately support Web
+services (see Figures 1 and 2).
+
+ Both scenarios are functionally similar. The user, authenticated on system
+A, clicks on a URL addressing content that resides on system B. The user
+should not have to re-authenticate on system B (thus establishing a
+separate, independent security context), but instead should transfer the
+existing context completely to B. To complicate matters further, B may
+reside in a different security domain from A, so B literally may not be
+able to validate the subject's credentials even if they are made available.
+Therefore, a trust relationship must be established between A and B, so
+that B relies on A's word that a subject has been necessarily and
+sufficiently identified. Virtually every large organization attempting to
+integrate their internal Web servers has encountered this problem.
+
+ The difference between these profiles appears in implementation. Figure 1
+depicts a pull scenario, in which a security token, called an SAML
+artifact, is passed to system B as a query parameter affixed to the URL.
+System B uses the artifact as a handle to take complete ownership of the
+security context from A; this is illustrated in the figure as a SOAP call
+from B to A, requesting control of the context and taking delivery as a
+collection of SAML assertions. SAML ensures that the server-side half of
+the context can only exist in a single place at any given instant.
+
+ In contrast is the push scenario, which transports the context entirely
+within a message - in this instance, the assertions reside as a hidden
+field that's POSTed in a form. This eliminates the need for system B to
+retrieve the context from A, but requires that the assertions be signed to
+prevent tampering. This is actually closer to a typical Web services
+scenario, where context is a security token rendered into a SOAP message,
+but more on that later.
+
+ In practice, this process usually involves a centralized issuing authority
+and clever use of HTTP redirects. But what is noteworthy here is the
+security model. These browser profiles rely on SSL and HTTP authentication
+mechanisms as a means to protect the confidentiality, integrity, and trust
+of assertions (or artifacts). It uses existing Web security to ensure that
+assertions are relayed only through the subject they describe. This
+eliminates the threat of replay attacks and session hijacking. It's a
+crucial point: an assertion, even signed by an issuing authority, needs to
+be bound to the subject presenting it. Otherwise, what's to stop an
+intruder from simply copying a signed authentication assertion and using
+this to stake claim to that assertion's correlated security context?
+Unbound from identity, an assertion is like my stolen chop.
+
+ In the browser profiles, secure, authenticated channels are necessary to
+ensure that security tokens only pass between trusted entities. In Web
+services, where security is implemented on a message-by-message basis and
+no secure channel exists, there needs to be a different approach.
+
+ WSS SAML Profile
+SAML, of course, fits cleanly into the WSS Security token structure. The
+real challenge, though, is more subtle than syntactic contracts. WSS is
+about providing security on a message-by-message basis. Furthermore, it is
+concerned with absorbing security into the message itself and decoupling it
+from channel strategies like SSL to be able to provide continuity in
+encryption, integrity, authentication, and reliability across a diverse set
+of transports and intermediates - from SMTP to MOM to plain text files, in
+as many hops as the application demands.
+
+ The challenge, therefore, is binding a subject's identity to an assertion
+so that it is verifiable by the ultimate receiver of a SOAP message. SAML
+addresses this with an assertion element we have not encountered yet,
+<SubjectConfirmation>.
+
+ An SAML issuing authority uses SubjectConfirmation to bind a particular
+subject's identity to an assertion. There are various strategies for this,
+such as including Kerberos service tickets, and these are left for
+specification in the relevant profile. The WSS SAML Token Profile adopts an
+interesting approach. Within this element, the issuing authority can insert
+the subject's public key. Remember, the issuing authority is making a
+definitive statement about an act of authentication that has already taken
+place, so it's likely to hold the subject's public key. If the subject
+authenticated using its certificate under the WSS x509 Token Profile, the
+key is there. Alternatively, it should be able to retrieve the key from a
+trusted certificate server after firmly establishing the subject's identity
+under a different authentication scheme, such as username/password. The key
+resides within the SubjectConfirmation element, inside a standard
+<ds:KeyInfo> block, a rich structure already described in the W3C XML
+Digital Signature specification.
+
+ The issuing authority then signs the entire assertion, thus
+authoritatively binding assertion and key. In this way, it's not unlike a
+certificate, which uses the signature of a trusted party to bind a public
+key to an identity (represented as a DN). Consider also, what often makes a
+certificate useful is the additional information residing within it. An SSL
+certificate binds a DNS name to the CN, thus allowing clients to verify
+that the TCP socket they've opened is indeed connected to the Internet
+entity described in the certificate. E-mail addresses were added to support
+similar trust validation, and v3.0 extension fields in the x509
+specification promote still richer models of trust.
+
+ Listing 3 shows an authentication assertion, generated and signed by an
+SAML issuing authority. This signature binds the subject of the assertion
+to its DSA public key. It also includes its X509 certificate against which
+a receiver can compare a pre-existing trust relationship.
+
+ So why is this useful? Precisely because now the subject can create an
+undeniable association between any SOAP message it authors and this
+assertion. Our problem up until now has been that, even though it is signed
+by the issuing authority, a plain assertion could be intercepted and used
+by anyone. In this way, it's like the thieves who stole my chop, and could
+forge unlimited new messages claiming to come from me. Suppose we are a
+SOAP receiver - say some arbitrary service downstream - and we take
+delivery of a SOAP message containing an assertion claiming that Scott was
+authenticated at noon on Tuesday. How can we be confident that the sender
+of the SOAP message really is subject Scott, described in the assertion?
+SubjectConfirmation is the key - or perhaps better, holds the key.
+WS-Security calls this an endorsed claim, as it's been sanctioned by a
+trusted third party.
+
+ Figure 3 is a block diagram of a SOAP message that shows how it all comes
+together. It maps a typical message that a Web services consumer would
+compose while participating in an SSO scenario. Fundamentally, this is the
+same as the browser SSO model illustrated in Figure 2, with SOAP service
+invocations substituted for HTTP/HTML. In this use case, System A might be
+a centralized authentication service that consumes username and password
+credentials (under the WSS token profile described previously), and returns
+a signed SAML SSO assertion (an aggregate of an authentication assertion,
+time of validity, and other optional attribute fields). Bound in this
+assertion is the public key of the authenticated subject.
+
+ To compose the message in Figure 3, the consumer copies the signed
+assertion into the SOAP message unchanged. To prove rightful ownership of
+this assertion, the subject signs the message body. Remember, only the
+actual can do this, as only the subject possesses the private key paired
+with the public key in the assertion. This establishes an irrefutable
+connection between the author of the SOAP message and the assertion
+describing an authentication event.
+
+ It is the receiver's responsibility to process this message appropriately
+and take action on it based on its predetermined trust relationship with
+the SAML issuing authority. Under SAML, the ultimate receiver of the
+message is called the relying party - a logical piece of nomenclature, as
+the receiver relies on the trust it has with an issuing authority.
+
+ Listing 4 shows what the SOAP message looks like, as it might be delivered
+to the receiver. It's becoming complex, because we now have signatures from
+two different parties: the SAML issuing authority (over the assertion
+only); and the SOAP sender (over the message body). The sender, could, of
+course, extend its signature across the entire envelope if that is the
+level of integrity that the application required. In the subject's
+signature block, the SecurityTokenReference element contains a reference
+back to the assertion, where we can retrieve the public key for signature
+validation. Ultimately, what we have created in a chain to a trust root,
+not unlike a certificate chain. It might help to refer back to the block
+diagram in Figure 3 to help navigate through this complexity.
+
+ There's one important detail we have yet to cover. Find the
+<SubjectConfirmation> element in the authentication assertion in Listing 4.
+It has a subordinate element called <ConfirmationMethod>. In the example,
+ConfirmationMethod takes the value of the SAML-defined identifier
+urn:oasis:names:tc:SAML:1.0:cm:holder-of-key. This informs a receiver that,
+when processing any SOAP message containing this assertion, the attesting
+entity must prove their association with the assertion using a signature.
+
+ An alternative processing model is called sender-vouches, indicated by the
+constant urn:oasis:names:tc:SAML:1.0:cm:sender-vouches. This addresses an
+issue found in another common Web services scenario. In sender-vouches, the
+attesting entity is not the subject described in the SAML assertion.
+However, it is acting on behalf of that subject. The receiver, therefore,
+must trust that this is indeed the case, that the sender has validated the
+true subject in some way and is working on its behalf. To make this work,
+the attesting entity must protect both the relevant parts of the SOAP
+message and the assertion itself to prove that it has made that association
+(after all, with nothing to conjoin these data, the aggregation could have
+come from anyone).
+
+ Figure 4 depicts a typical scenario where this might take place. It's very
+similar to the classic three tier browser-based application - just
+substitute SOAP for HTTP/HTML, RMI or IIOP, and JDBC. System A is a Web
+services client. System B consumes and validates its credentials against an
+issuing authority. System C trusts that B validated A accurately, and
+processes messages from B with confidence that they are a consequence of an
+initial request of A.
+
+ Conclusion
+Inside the WSS SAML token profile, we find the basic mechanism necessary to
+transfer one type of security context between applications using Web
+services. But don't lose sight of its limitations in scope and maturity.
+SAML - and by extension, WSS - does not deal with larger issues like
+cryptography or application sessions, global sign-out, or account linking.
+Some of these are more appropriately addressed in federation specifications
+like WS-Federation and Liberty. Some are addressed in other emerging
+standards efforts like WS-Secure Conversation and WS-Trust. Others will see
+light in SAML v2.0. Nevertheless, there is some very valuable work here by
+people who deeply understand the issues in distributed computing security,
+and elements of the specifications are relevant today. Which is good,
+because we've needed this for a long time.
+
+
+About the author
+
+
+Scott Morrison is director of Architecture at Layer 7 Technologies. Layer 7
+provides technology for managing and coordinating Web services security and
+transaction policy across loosely coupled systems (more)
+
+Related Sites
+ 7 Figure 1
+7 Figure 2
+7 Figure 3
+7 Figure 4
+7 Source Code
+
+-- 
+-----------------
+R. A. Hettinga <mailto: rah@ibuc.com>
+The Internet Bearer Underwriting Corporation <http://www.ibuc.com/>
+44 Farquhar Street, Boston, MA 02131 USA
+"... however it may deserve respect for its usefulness and antiquity,
+[predicting the end of the world] has not been found agreeable to
+experience." -- Edward Gibbon, 'Decline and Fall of the Roman Empire'
+

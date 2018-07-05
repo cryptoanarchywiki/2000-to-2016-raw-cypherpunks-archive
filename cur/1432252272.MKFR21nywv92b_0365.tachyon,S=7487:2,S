@@ -1,0 +1,146 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Thu Nov  7 14:48:49 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id gA7JmnW07281
+	for <rsw@opamp.org>; Thu, 7 Nov 2002 14:48:49 -0500
+Received: from mononoke.wasabisystems.com (mononoke.wasabisystems.com [166.84.0.13])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id OAA09939
+	for <rsw@mit.edu>; Thu, 7 Nov 2002 14:48:48 -0500 (EST)
+Received: by mononoke.wasabisystems.com (Postfix, from userid 96)
+	id 184CA5E6A2; Thu,  7 Nov 2002 14:41:06 -0500 (EST)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by mononoke.wasabisystems.com (Postfix) with ESMTP id 701855E696
+	for <cryptography@wasabisystems.com>; Thu,  7 Nov 2002 14:41:05 -0500 (EST)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 441D6D97FE; Thu,  7 Nov 2002 14:41:05 -0500 (EST)
+Received: from VL-MS-MR004.sc1.videotron.ca (relais.videotron.ca [24.201.245.36])
+	by mononoke.wasabisystems.com (Postfix) with ESMTP id 9AEF95E65C
+	for <cryptography@wasabisystems.com>; Thu,  7 Nov 2002 13:52:29 -0500 (EST)
+Received: from stefanhome ([24.201.179.57]) by VL-MS-MR004.sc1.videotron.ca
+ (iPlanet Messaging Server 5.2 HotFix 0.9 (built Jul 29 2002))
+ with ESMTP id <0H5700F2LZ4VO7@VL-MS-MR004.sc1.videotron.ca> for
+ cryptography@wasabisystems.com; Thu, 07 Nov 2002 13:53:22 -0500 (EST)
+Date: Thu, 07 Nov 2002 13:51:45 -0500
+From: Stefan Brands <sbrands@videotron.ca>
+Subject: Re: "patent free(?) anonymous credential system pre-print" - a
+ simpleattack and other problems
+To: cryptography@wasabisystems.com, dbs@philodox.com, cypherpunks@minder.net,
+   jason@lunkwill.org, "'Adam Back'" <adam@cypherspace.org>
+Cc: "'Stefan Brands'" <brands@credentica.com>
+Message-id: <000001c2868e$ba693410$6401a8c0@stefanhome>
+MIME-version: 1.0
+X-MIMEOLE: Produced By Microsoft MimeOLE V5.50.4807.1700
+X-Mailer: Microsoft Outlook, Build 10.0.3416
+Content-type: text/plain; charset=us-ascii
+Content-transfer-encoding: 7BIT
+Importance: Normal
+X-Priority: 3 (Normal)
+X-MSMail-priority: Normal
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 5145
+Lines: 100
+
+Hello Jason:
+
+>"Page 193 and 210 do talk about having an identifying 
+>value encoded in the credentials which the holder can 
+>prove is or isn't the same as in other credentials. However, 
+>the discussion on page 193 is with respect to building 
+>digital pseudonyms"
+
+No, not at all. The paragraph on page 193 that I referred to is the one
+starting with "In some PKIs it is desirable that certificate holders can
+anonymously prove to be the originator of several showing protocol
+executions." It _preceeds_ the paragraph on digital pseudonyms, which
+starts with "A special application of the latter technique are
+credential systems in which certificate holders [...] establish digital
+pseudonyms with organizations". 
+
+>I can think of ways in which this feature might be leveraged to 
+>create otherwise-unlinkable sets of credentials from different 
+>(distrusting) CAs, but it's never addressed directly that I can 
+>see, and would need some specifics filled in."
+
+There are no specifics to be filled in, the paragraph on 193 states
+everything there is to it. If the credential holder engages in several
+showing protocols (whether in sequence or in parallel, and regardless of
+whether at the same time or at different times -- the paragraph applies
+to any situation), all that is needed to prove that no pooling is going
+on is the abovementioned proof that the credentials all contain the same
+hidden identifier. 
+
+Note that the prover can _hide_ this identifier, thereby allowing him to
+prevent linkability with other showing protocol executions for which no
+link needs to be established. Of course, the technique also works if
+there are many Cas. The user can even prevent the CAs from learning the
+built-in identifier that is central to all (or a subset of) his/her
+credentials.  (A special CA could issue restrictively blindeded versions
+of the user's "identity", which the user then submits to different Cas
+who encode it into the certificates they issue.)
+
+>Page 211 of your book talks about discouraging lending, which doesn't
+>help in the case when Bob answers in Alice's behalf when she shows his
+>credentials. 
+
+Discouraging lending is not the same as preventing pooling. The lending
+prevention technique was not intended to address pooling, the technique
+on page 193 does a much more effective job at that. However, in your
+approach, what prevents me from giving my credentials to someone else
+who then uses them to gain access to a service without needing to pool
+in any other credentials than the one I lent to him? 
+
+Note also that when all credential attributes are specified within the
+same certificate, and the verifier requires authorization information to
+be contained within a single attribute certificate, pooling is
+inherently prevented. 
+
+>What do you mean by "forced to leave behind digital signatures"?  
+
+There is no zero-knowledge variant of your protocol; the verifier ends
+up with undisputable evidence (towards third parties) of the
+transaction, and in particular of which attribute values have been shown
+by the credential holder. Any digital signatures that are made by
+certificate holders can be added to their dossiers; they form
+self-signed statements that cannot be repudiated, proving to the whole
+world who is the originator of a message and possibly what information
+they were willing to give up in return for a service. Doing a
+zeroknowledge variant of your proposal requires one to prove knowledge
+in zk of various elements rather than showing them in the clear; this
+requires extrmely inefficient zk techniques, such as for proving
+knowledge of a pre-image under a specific hash function.
+
+>I'll expand my related work section to point out that your system and
+>others have lots of features which my system doesn't attempt to
+provide. 
+>My apologies if my terse treatment mischaracterized your work.
+
+I realize that many of the features of my work are described in a very
+dense manner in the book, and therefore it is easy to overlook them. For
+example, on the same page 193 there is a sentence "Using our techniques
+it is also straightforward for several certificate holders to jointly
+demonstrate that their showing protocol executions did not all originate
+from
+the same certificate holder, or for one certificate holder to show that
+he or she was
+not involved in a fraudulent transaction." The same applies to my
+describtion of the simple hash selective disclosure technique on page
+27, which only gets two sentences, and many others
+techniques/functionalities. The only excuse I have for this is that the
+book is a minor revision of my PhD thesis, and so the technical parts
+had to be targetted towards an expert audience; while skilled
+cryptographers will indeed find the dense statements more than
+sufficient, and may even consider some of them as trivial applications
+of the general techniques, I can see that this may not always be the
+case for readers in general. 
+
+Good luck with your research!
+Stefan Brands
+
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

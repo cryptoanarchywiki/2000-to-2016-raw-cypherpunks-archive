@@ -1,0 +1,77 @@
+From owner-cryptography+rsw=mit.edu@metzdowd.com  Thu Jun 12 10:49:08 2003
+Return-Path: <owner-cryptography+rsw=mit.edu@metzdowd.com>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h5CEn7632732
+	for <rsw@opamp.org>; Thu, 12 Jun 2003 10:49:07 -0400
+Received: from red.metdow.com (72.muf123.nycm.n54ny05r18.dsl.att.net [12.103.123.72])
+	by fort-point-station.mit.edu (8.12.4/8.9.2) with ESMTP id h5CEn7U8026085
+	for <rsw@mit.edu>; Thu, 12 Jun 2003 10:49:07 -0400 (EDT)
+Received: by red.metdow.com (Postfix, from userid 1002)
+	id DD7F6182F8D; Thu, 12 Jun 2003 14:45:10 +0000 (UTC)
+X-Original-To: cryptography@metzdowd.com
+Delivered-To: cryptography@metzdowd.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by red.metdow.com (Postfix) with ESMTP id 9DD0D182F59
+	for <cryptography@metzdowd.com>; Thu, 12 Jun 2003 14:44:58 +0000 (UTC)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 661B4D97DB; Thu, 12 Jun 2003 10:44:57 -0400 (EDT)
+X-Original-To: cryptography@metzdowd.com
+Received: from gungnir.fnal.gov (gungnir.fnal.gov [131.225.80.1])
+	by red.metdow.com (Postfix) with ESMTP id 92D05182FE0
+	for <cryptography@metzdowd.com>; Thu, 12 Jun 2003 14:34:08 +0000 (UTC)
+Received: from gungnir.fnal.gov (localhost [127.0.0.1])
+	by gungnir.fnal.gov (8.12.8/8.12.8) with ESMTP id h5CEUHV1011905;
+	Thu, 12 Jun 2003 09:30:17 -0500 (CDT)
+Message-Id: <200306121430.h5CEUHV1011905@gungnir.fnal.gov>
+To: pgut001@cs.auckland.ac.nz (Peter Gutmann)
+Cc: sunder@sunder.net, cryptography@metzdowd.com, cypherpunks@lne.com
+From: "Matt Crawford" <crawdad@fnal.gov>
+Subject: Re: An attack on paypal 
+In-reply-to: Your message of Thu, 12 Jun 2003 16:35:11 +1200.
+             <200306120435.h5C4ZB428720@medusa01.cs.auckland.ac.nz> 
+Date: Thu, 12 Jun 2003 09:30:17 -0500
+Sender: owner-cryptography@metzdowd.com
+Precedence: bulk
+Status: O
+Content-Length: 1724
+Lines: 38
+
+> "Matt Crawford" <crawdad@fnal.gov> writes:
+> >... Netscrape ind Internet Exploder each have a hack for
+> >honoring the same cert for multiple server names.  Opera seems to honor at
+> >least one of the two hacks, and a cert can incorporate both at once.
+> >
+> >       /C=US/ST=Illinois/L=Batavia/O=Fermilab/OU=Services
+> >       /CN=(alpha|bravo|charlie).fnal.gov/CN=alpha.fnal.gov
+> >       /CN=bravo.fnal.gov/CN=charlie.fnal.gov
+> 
+> Just to clarify this, so you need a multivalued CN, with one containing the
+> expression "(a|b|c)" and the remaining containing each of "a", "b", and "c"?
+> Is it multiple AVAs in an RDN, or multiple RDNs?   (Either of these could be
+> hard to generate with a lot of software, which can't handle multiple AVAs in
+> an RDN or multiple same-type RDNs).  Which hack is for MSIE and which is for
+> Netscape?
+
+Each CN is in a single-element RDN as usual. Netscape honors only the
+first CN in the SubjectDN, but will treat it as a restricted regex
+(shell-like * wildcard, alternation and grouping). IE checks the
+server name against each CN's individually.
+
+This was mainly determined by experimentation.  I think we did find a
+limit on how long that first regex could be, but I don't remember
+what it was.  Longer than my example, but short enough that some of
+our bigger virtual-hosting servers were inconvenienced by it.
+
+Openssl has no qualms about multiple same-type components.  You just
+have to use the somewhat documented
+
+0.commonName = ...
+1.commonName = ...
+2.commonName = ...
+
+in the configuration file.
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+

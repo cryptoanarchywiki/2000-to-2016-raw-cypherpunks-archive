@@ -1,0 +1,177 @@
+From owner-cypherpunks@al-qaeda.net  Sun Nov 25 03:39:44 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id qAP8atFg030676
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sun, 25 Nov 2012 03:36:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1353832615;
+	bh=69SX6T9/igtAR8HLPbrFi8e+HqsAz5CzrpFWOiLrXUM=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=gTQLVPTNJWLlOMujTslZOE3jzJ2Ytq4qeCdfpAo20zW7BQUQ2J6Kn3idSaPlxD4Zv
+	 /EsRgAZwgFGx9nf6UVF/2Kcun3CxNSjFHqKEGBmVvwnuiEVNZWp4W+NXslpHtG+fT0
+	 2lPF2bqAW2fXcv+TkyEyrVdqgwhTng4U4VOckks8=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id qAP8atsr030675
+	for cypherpunks-outgoing; Sun, 25 Nov 2012 03:36:55 -0500
+Date: Sun, 25 Nov 2012 09:36:51 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, tt@postbiota.org
+Subject: Re: OT: cheap colo space in Southern Germany/Munich
+Message-ID: <20121125083651.GQ9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5331
+Lines: 145
+
+----- Forwarded message from Caleb James DeLisle <calebdelisle@lavabit.com> -----
+
+From: Caleb James DeLisle <calebdelisle@lavabit.com>
+Date: Sat, 24 Nov 2012 22:06:10 -0500
+To: Eugen Leitl <eugen@leitl.org>
+Subject: Re: OT: cheap colo space in Southern Germany/Munich
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:13.0) Gecko/20120614 Thunderbird/13.0.1
+
+Oh hi..
+Interesting criticism.
+
+On 11/24/2012 02:03 PM, Eugen Leitl wrote:
+> On Sat, Nov 24, 2012 at 06:46:12PM +0000, Nick Hilliard wrote:
+>> On 24/11/2012 17:38, Eugen Leitl wrote:
+>>> E.g. see 
+>>> https://github.com/cjdelisle/cjdns/blob/master/rfcs/Whitepaper.md
+>>> which is an instance of street technology to address
+>>> multiple issues the current networks don't deal with.
+>>
+>> cjdns is certainly an interesting approach, but its inventor doesn't appear
+>> to understand:
+> 
+> I think you have several excellent points (those, that I could
+> understand, at least) and in fact I'll let cjd know.
+> 
+> Again, I don't claim that this particular design is
+> going to work. Just that is an instance of a coming
+> series of approaches which will result in a functional
+> system, eventually, some 10-15 years downstream.
+>  
+>> - scaling issues
+
+It's incumbent on me to prove that it scales but if there are obvious theoretical
+scaling inadequacies then maybe you would care to bring them up?
+
+>>
+>> - point to multipoint networking
+
+Grandma doesn't use it.
+
+>>
+>> - that deterministic reachability is usually considered a good thing
+
+I'd love for it to be more deterministic but I don't see how to make the design do that.
+
+>>
+>> - non-local connectivity lookup introduces hilarious denial of service
+>> mechanisms
+
+Yeap, DoS is a serious issue with this design.
+It's also a serious issue (although less serious) with the Internet as it is today.
+My plan is to introduce a market based flood management system integrated with congestion control logic.
+What's your plan?
+Just hoping that that botnets never reach terrabit capacity isn't an answer.
+
+>>
+>> - the value of bitfield qos
+
+Grandma doesn't use it.
+
+>>
+>> - that the use of bEncoding for connectivity lookup is a degree or two
+>> worse than using TLVs for the same means
+
+bEncoding sucks. But it sucks less than the alternatives which I saw at the time.
+What's necessary is simplicity and ability to add keys to a message without breaking old nodes.
+
+>>
+>> - full independence from traditional ip protocols ("Router messages are
+>> sent as normal UDP/IPv6 packets except that their UDP source and
+>> destination port numbers are zero and the hop limit (TTL) field in the IPv6
+>> header is set to zero.")
+
+It's probably not the best design but it's an asthetic issue, cjdns weeds the control packets
+out of the stream en route, it doesn't "bind to port 0".
+
+>>
+>> - that strictly symmetric routing is a bug, not a feature
+
+Good to hear that cjdns isn't missing a feature.
+
+>>
+>> - that 64 bits as a routing path mechanism is woefully insufficient for
+>> modern networking
+
+/me snickers at the fact that it was said on an IPv6 mailing list.
+
+>>
+>> - that separation of control plane and data plane on a router is probably a
+>> good idea
+
+If you mean what I think you mean, that's already done ("cjdns weeds the packets out of
+the stream").
+
+>>
+>> - throwing out the book on existing networking models is only valid if the
+>> proposed replacement is measurably better
+
+Bullshit.
+
+Throwing out the book is always valid, at best you invent the next big thing, at worst
+you have a great learning experience. In the middle, the good ideas are integrated into
+existing technologies and the bad ideas serve as a case study.
+
+>>
+>> What's left in cjdns is a poorly specified mishmash of curious ideas which
+>> will work fine on the author's playpen network and which will break
+>> horribly on large networks, regardless of how hard the author waves the
+>> "hey look at me, i'm having a revolution" flag.
+
+If I was in charge of a major AS, I wouldn't implement *anything* which was developed
+with an R&D budget of 0. There are some potentially interesting components but as a whole,
+cjdns is not intended to work on large networks.
+
+In places like where I live, it's not cost effective for cable and phone companies to
+provide fast internet.
+
+I believe that people are willing to spend money on a pole and a few directional radio
+links if they can install the equipment and it will just work. I also think they'll be willing
+to share the data downstream if they can get a discount on their bill for the data they shared.
+
+What I need is a way to separate infrastructure, billing, and IP4 gateway provision.
+I want to put up a pole, make a directional radio link to my neighbor, sign up with a billing
+provider that takes major credit cards, and be online. I don't want to worry about my neighbor
+spying on my traffic and if someone links to my pole, I want a discount for carrying their bits.
+
+
+IMO the most important role of cjdns is not in offering an answer but in introducing a question.
+
+
+Thanks,
+Caleb
+
+
+>>
+>> Nick
+>>
+
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

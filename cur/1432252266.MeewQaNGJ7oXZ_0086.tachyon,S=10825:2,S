@@ -1,0 +1,216 @@
+From owner-cypherpunks@al-qaeda.net  Sat Mar 31 16:21:29 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q2VKICGS020858
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Sat, 31 Mar 2012 16:18:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1333225092;
+	bh=O1w0Bo4NIbpJZY1q56m1u+P0tqRxAPqx0FUKzVrJJ88=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=Bv/OBZivcWLyMBAS/j4cLPHR4TUWnYzaId+s/oq8L1e2KoPnqQWK2NY34yUfh6uVB
+	 zH07RAKBo6QYT6nhyNzjfKsA/mYJErEJUEL2AAA8Q9JnsLCV/CIr9SKdxfoR7vE9XD
+	 pP3Es+kZ7XBj0EB/E6P34RhFojpVM4Sb6l8ZHv9g=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q2VKICnx020857
+	for cypherpunks-outgoing; Sat, 31 Mar 2012 16:18:12 -0400
+Date: Sat, 31 Mar 2012 22:18:08 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: [tahoe-dev] Hack Fest Day One report
+Message-ID: <20120331201808.GT14482@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+----- Forwarded message from Zooko Wilcox-O'Hearn <zooko@zooko.com> -----
+
+From: Zooko Wilcox-O'Hearn <zooko@zooko.com>
+Date: Sat, 31 Mar 2012 14:15:16 -0600
+To: tahoe-dev <tahoe-dev@tahoe-lafs.org>
+Subject: [tahoe-dev] Hack Fest Day One report
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+Folks:
+
+Here are some notes about Hack Fest Day One.
+
+b" David-Sarah did a lot of trac ticket gardening. You can see their
+changes by browsing the Trac Timeline B9 (which, by the way, is one of
+my favorite ways of keeping up with Tahoe-LAFS development). I haven't
+looked at all of their updates to tickets yet.
+
+b" Andrew Miller wrote a unit test for his path to make "tahoe backup"
+follow a limited number of symlinks, and updated his patch on #641. He
+didn't set the "review-needed" flag. I'm not sure why not -- perhaps
+that means he doesn't think the patch is (yet?) suitable for trunk.
+
+We have a conversation about how to handle symlinks. There are three
+possible features:
+
+1. Traverse symlinks when doing a "tahoe backup". That's what
+amiller's patch does, and it raises the question of how to handle
+cycles encountered while traversing the local filesystem to do a
+backup. The main use case for this is amiller's desire to use symlinks
+as a way to specify which directories should be backed up -- he can
+put symlinks into one directory pointing to several other directories,
+then ask tahoe to backup that one directory.
+
+2. Have a special file to notify "tahoe backup" to skip the current
+directory. It could be named ".tahoeignore" (analogous to .gitignore)
+and "tahoe backup" would refuse to backup any directory containing a
+.tahoeignore file, nor traverse through that one to others.
+
+3. A way to restore filesystem details other than the names and
+contents of files, such as symlinks, ownership, permissions,
+timestamps, etc. This is the topic of ticket #1325.
+
+b" There was some discussion of whether people wanted "tahoe backup"
+(which stores your files and directories individually so that you can
+browse, restore, and share access to them separately) to handle more
+and more of the local filesystem metadata (#1325) or if instead people
+who want that should just switch to using a more "archive oriented"
+backup tool like duplicity, which bundles all of your files and
+directories, along with their metadata, into a tarball before storing
+it on Tahoe-LAFS. I tend to "not want to go there" and send people off
+to use duplicity or Shawn Willden's Grid Backup or something if that's
+what they want, but everyone else seemed to think it would be a good
+idea to add more of these features to "tahoe backup".
+
+The reason I gave at the time for not wanting to go there is that
+there is such a mismatch between the Tahoe-LAFS model, with immutable
+files, capability access control, metadata on edges rather than on
+nodes, a full graph instead of a tree, etc., and the traditional Unix
+filesystem with its mutable files, ownership and permission bits,
+metadata on nodes instead of on edges, tree-plus-symlinks, etc.
+
+I later thought that there is another reason I don't like the idea
+extending "tahoe backup" in that direction, which is that I like for
+the data which lives in Tahoe-LAFS to be meaningful independent of any
+given "source machine" (for example things like "UID of owner" are
+either meaningless or incorrect unless you decide to interpret them in
+the context of a "source system" which happens to have the right
+meaning for that UID), and also independent of any given source
+operating system type. For example a long-standing bug that really
+annoys me (someone fix it during Hack Fest!) is that "tahoe backup"
+reads the "metadata-change-time" if on Unix, or else reads the
+"file-creation-time" if on Windows, and then sticks the resulting
+timestamp into an field named "ctime" in Tahoe-LAFS (#897). The result
+is meaningless unless you choose to interpret in terms of being either
+"in Unix" or "in Windows". Annoying! The thing is in the cloud -- it
+isn't in either Unix or Windows while it is there.
+
+I guess in general, I think of the data stored in Tahoe-LAFS as being
+shareable among multiple people, and meaningful within different
+contexts -- different "source machines" and even different "source
+operating system types", and being meaningful outside of the context
+of any source machine at all -- just purely "in the cloud". It is
+perhaps not impossible, but certainly more work, to handle extended
+filesystem metadata correctly, compared to making a traditional
+"backup and restore" app. In a traditional "backup and restore" app
+like duplicity, the data "in the cloud" can't be shared or used other
+than by first restoring it to a system that is of a sufficiently
+similar type to its source system.
+
+b" On the topic of issue 1., above, I suggested an alternative way to
+prevent cycling endlessly through the local filesystem. The primary
+proposal -- already partially implemented by amiller -- is to have a
+limit on how many symlinks you'll cross over before you stop. If you
+stop, you should probably print out a complete listing of how you got
+to where you are, and which steps were traversing symlinks, so that
+the user can figure out if this was really a cycle and if so how they
+want to break the cycle.
+
+My alternative proposal is that for each directory that you visit,
+learn its device id and inode number and use those as a unique
+identifier for this directory in the context of this run of "tahoe
+backup", and if you encounter a directory for the second time then use
+the same within-tahoe-lafs-directory that you created for it the first
+time.
+
+That's way better! It is almost elegant. But as Brian then pointed
+out, it can't work. Because all directories (except for the root dir)
+that are produced by a "tahoe backup" are immutable. You can't have a
+cycle of immutable directories, because it is impossible to get a link
+to an immutable directory before providing the initial and final
+contents of it.
+
+b" This led me to off-handedly comment that such a thing would be
+possible with Petrification a.k.a. revocation of write authority
+(#954) which inspired David-Sarah to announce that they were going to
+implement #954 during Hack Fest. That would be very ambitious, but
+David-Sarah often says that they will do ambitious things and then
+does them. I remember that the "Drop-Upload" feature was implemented
+in a single afternoon by David-Sarah at The Second Tahoe-LAFS Summit.
+Anyway, I'm pretty excited about the possibility of getting #954 soon.
+It would be the first big addition to the vocabulary of what you can
+express with Tahoe-LAFS caps.
+
+b" I started this tutorial on "How To Write Tests": B2, because of the
+increasing number of patches that are ready except for tests B3. The
+tutorial is already enough to get you started, but you'll probably
+come to a spot where you say "Hey NOW WHAT?". Please do that, so that
+I -- or someone -- will extend the tutorial.
+
+b" I did a lot of tinkering with packaging and build system and docs. I
+care a lot about this stuff, and I hope you do too, and I could use
+help, but I'm not going to explain it all in this letter because
+currently new work is being done at Hack Fest faster than I'm
+finishing this letter describing the work that is being done. :-) You
+can find out all about it by reading the trac Timeline. One thing I
+definitely need help with is building binary packages of dependencies
+on various platforms, especially with Python 2.7. Please see the table
+of precompiled packages hosted on tahoe-lafs.org: b4.
+
+b" Lebek did some wiki gardening and fixed a bug in FTP -- #1688.
+
+b" Brian posted a fix for #1689, which is good to see as #1689 was one
+of those regressions in handling of mutables that we shipped in
+v1.9.x.
+
+b" Marlowe reviewed some docs patches and resumed working on the
+Tahoe-LAFS Weekly News. Yay!
+
+b" John Dougherty posted his first review. b:
+
+Okay, that's at least part of what we've done so far. There are still
+approximately 48 hours of Hack Fest to go. Jump in!
+
+Regards,
+
+Zooko
+
+B9 https://tahoe-lafs.org/trac/tahoe-lafs/timeline?from=03%2F31%2F12&daysback=3&authors=&ticket=on&ticket_details=on&changeset=on&milestone=on&wiki=on&update=Update
+B2 https://tahoe-lafs.org/trac/tahoe-lafs/wiki/HowToWriteTests
+B3 https://tahoe-lafs.org/pipermail/tahoe-dev/2012-March/007205.html
+b4 https://tahoe-lafs.org/source/tahoe-lafs/deps/tahoe-lafs-dep-eggs/README.html
+
+tickets mentioned in this email:
+
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/641# tahoe backup should
+be able to backup symlinks
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/954# revocable write authority
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/897# "tahoe backup"
+thinks "ctime" means "creation time"
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1325# make `tahoe
+backup` keep more filesystem metadata
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1688# ftpd returns 0 for
+all timestamps
+https://tahoe-lafs.org/trac/tahoe-lafs/ticket/1689# assertion failure
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+http://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

@@ -1,0 +1,129 @@
+From owner-cypherpunks@al-qaeda.net  Thu Jul 10 13:24:08 2008
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id m6AHNWQ6017133
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 10 Jul 2008 13:23:32 -0400
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id m6AHNWeq017132
+	for cypherpunks-outgoing; Thu, 10 Jul 2008 13:23:32 -0400
+Date: Thu, 10 Jul 2008 19:23:04 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: FARC pwned by MITM
+Message-ID: <20080710172304.GS9875@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5988
+Lines: 103
+
+http://www.wired.com/politics/security/commentary/securitymatters/2008/07/securitymatters_0710
+
+How a Classic Man-in-the-Middle Attack Saved Colombian Hostages
+
+Commentary by Bruce Schneier Email 13 hours ago
+
+Last week's dramatic rescue of 15 hostages held by the guerrilla organization
+FARC was the result of months of intricate deception on the part of the
+Colombian government. At the center was a classic man-in-the-middle attack.
+
+In a man-in-the-middle attack, the attacker inserts himself between two
+communicating parties. Both believe they're talking to each other, and the
+attacker can delete or modify the communications at will. The Wall Street
+Journal reported how this gambit played out in Colombia.  The plan had a
+chance of working because, for months, in an operation one army officer
+likened to a "broken telephone," military intelligence had been able to
+convince Ms. Betancourt's captor, Gerardo Aguilar, a guerrilla known as
+"Cesar," that he was communicating with his top bosses in the guerrillas'
+seven-man secretariat. Army intelligence convinced top guerrilla leaders that
+they were talking to Cesar. In reality, both were talking to army
+intelligence.
+
+This ploy worked because Cesar and his guerrilla bosses didn't know each
+other well. They didn't recognize each others' voices, and didn't have a
+friendship or shared history that could have tipped them off about the ruse.
+Man-in-the-middle is defeated by context, and the FARC guerillas didn't have
+any.
+
+And that's why man-in-the-middle, abbreviated MITM in the computer security
+community, is such a problem online: Internet communication is often stripped
+of any context. There's no way to recognize someone's face. There's no way to
+recognize someone's voice. When you receive an e-mail purporting to come from
+a person or organization, you have no idea who actually sent it. When you
+visit a website, you have no idea if you're really visiting that website. We
+all like to pretend that we know who we're communicating with -- and for the
+most part, of course, there isn't any attacker inserting himself into our
+communications -- but in reality, we don't. And there are lots of hacker
+tools that exploit this unjustified trust, and implement MITM attacks.
+
+Even with context, it's still possible for MITM to fool both sides -- because
+electronic communications are often intermittent. Imagine that one of the
+FARC guerillas became suspicious about who he was talking to. So he asks a
+question about their shared history as a test: "What did we have for dinner
+that time last year?" or something like that. On the telephone, the attacker
+wouldn't be able to answer quickly, so his ruse would be discovered. But
+e-mail conversation isn't synchronous. The attacker could simply pass that
+question through to the other end of the communications, and when he got the
+answer back, he would be able to reply.
+
+This is the way MITM attacks work against web-based financial systems. A bank
+demands authentication from the user: a password, a one-time code from a
+token or whatever. The attacker sitting in the middle receives the request
+from the bank and passes it to the user. The user responds to the attacker,
+who passes that response to the bank. Now the bank assumes it is talking to
+the legitimate user, and the attacker is free to send transactions directly
+to the bank. This kind of attack completely bypasses any two-factor
+authentication mechanisms, and is becoming a more popular identity theft
+tactic.
+
+There are cryptographic solutions to MITM attacks, and there are secure web
+protocols that implement them. Many of them require shared secrets, though,
+making them only useful in situations where people already know and trust
+each other.
+
+The NSA-designed STU-III and STE secure telephones solve the MITM problem by
+embedding the identity of each phone together with its key. (The NSA creates
+all keys and is trusted by everyone, so this works.) When two phones talk to
+each other securely, they exchange keys and display the other phone's
+identity on a screen. Because the phone is in a secure location, the user now
+knows who he is talking to, and if the phone displays another organization --
+as it would if there were a MITM attack in progress -- he should hang up.
+
+Zfone, a secure VoIP system, protects against MITM attacks with a short
+authentication string. After two Zfone terminals exchange keys, both
+computers display a four-character string. The users are supposed to manually
+verify that both strings are the same -- "my screen says 5C19; what does
+yours say?" -- to ensure that the phones are communicating directly with each
+other and not with an MITM. The AT&T TSD-3600 worked similarly.
+
+This sort of protection is embedded in SSL, although no one uses it. As it is
+normally used, SSL provides an encrypted communications link to whoever is at
+the other end: bank and phishing site, alike. And the better phishing sites
+create valid SSL connections, so as to more effectively fool users. But if
+the user wanted to, he could manually check the SSL certificate to see if it
+was issued to "National Bank of Trustworthiness" or "Two Guys With a Computer
+in Nigeria."
+
+No one does, though, because you both have to remember and be willing to do
+the work. (The browsers could make this easier if they wanted to, but they
+donbt seem to want to.) In the real world, you can easily tell a branch of
+your bank from a money changer on a streetcorner. But on the internet, a
+phishing site can be easily made to look like your bank's legitimate website.
+Any method of telling the two apart takes work. And that's the first step to
+fooling you with a MITM attack.
+
+Man-in-the-middle isn't new, and it doesn't have to be technological. But the
+internet makes the attacks easier and more powerful, and that's not going to
+change anytime soon.
+
+---
+
+Bruce Schneier is chief security technology officer of BT, and author of
+Beyond Fear: Thinking Sensibly About Security in an Uncertain World. 
+

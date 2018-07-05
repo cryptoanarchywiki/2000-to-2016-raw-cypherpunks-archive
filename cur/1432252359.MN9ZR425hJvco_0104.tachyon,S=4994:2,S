@@ -1,0 +1,105 @@
+From owner-cypherpunks@lne.com  Sat Apr 26 14:31:23 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h3QIVLt16274
+	for <rsw@jfet.org>; Sat, 26 Apr 2003 14:31:21 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h3QIMffu019361
+	for cypherpunks-goingout345; Sat, 26 Apr 2003 11:22:41 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+Message-Id: <5.2.0.9.0.20030426001207.04449430@pop.ix.netcom.com>
+X-Sender: kelsey.j@pop.ix.netcom.com
+X-Mailer: QUALCOMM Windows Eudora Version 5.2.0.9
+Date: Sat, 26 Apr 2003 08:37:07 -0400
+To: Patrick Chkoreff <patrick@fexl.com>, Adam Back
+  <adam@cypherspace.org>
+From: John Kelsey <kelsey.j@ix.netcom.com>
+Subject: Re: double-spending prevention w. spent coins
+Cc: "R. A. Hettinga" <rah@shipwright.com>, lucrative-l@lucrative.thirdhost.com,
+   cypherpunks@lne.com
+In-Reply-To: <726015E0-76CB-11D7-B4FF-000393D91E36@fexl.com>
+References: <20030424234721.A8027760@exeter.ac.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 3685
+Lines: 74
+
+At 11:10 PM 4/24/03 -0400, Patrick Chkoreff wrote:
+...
+>Bill Frantz wrote:
+>
+>>The server is in a position to keep track of the money transfer by
+>>recording the serial numbers of the old and new coins as the exchanges take
+>>place.  The server is perfectly capable of making the linkage.  If you
+>>don't trust the server, then you must believe that all your transfers are
+>>know.
+>
+>This is good too, Bill.
+>
+>All right, I can generally understand the purpose here, to make it 
+>impossible to correlate an old coin with a new one issued in its place.
+
+Right.  You actually can get reasonable anonymity with the kind of scheme 
+you're proposing, assuming anonymous communications and heavy use of the 
+system.  When you get a coin issued, you just keep it in limbo for awhile, 
+and then "spend" it with yourself, iterating until your paranoia level is 
+satisfied.  If the system is heavily used for real stuff, and the uses are 
+over an anonymous communications network, there should be no way for the 
+bank to tell when you're transferring the coin to yourself, vs. when you're 
+transferring it to someone else.  The bank can tell that you have coin X 
+today, and that 20 iterations ago, that was coin Y.  But that isn't going 
+to give very much information about whether the coin is still in the 
+possession of the same person.  The user effectively pays for his level of 
+anonymity with float, because he has to maintain a random, plausible 
+spending pattern for enough transfers to leave the bank with very little 
+information about whether his coins are his.  Less paranoid users can use 
+coins immediately, or after one or two iterations, for less security but 
+faster access to their money.  (It seems like I've seen this kind of idea 
+discussed on cypherpunks before....)
+
+If you play with this protocol a bit, you can do a surprising amount with 
+it--use multiple banks to allow unlinkability with your coins that is 
+similar in strength to the anonymity you get with remailer networks, for 
+example.  (You still end up having to trust your bank not to steal the 
+money, but that's pretty common.)
+
+...
+>That I can see.  I was starting to get the impression that somehow the 
+>Chaumian techniques were attempting to address the problem of preventing 
+>double spends even when doing a long chain of spends without contact with 
+>a server.  In fact they are trying to address a more modest goal than 
+>that, and double spends are still something that must be detected by 
+>contact with the server.
+
+In general, if I know enough to spend a coin once, I know enough to spend 
+it several times.  Every solution to this I've ever heard of comes down to 
+one of:
+
+a.  Embedding an identity in the coins in a way that comes out when they're 
+double-spent, and handling double-spending offline by getting someone arrested.
+
+b.  Using some locally trusted device on the spender's machine to prevent 
+double-spending pre-emptively, e.g., because the code on your 
+tamper-resistant token won't permit it.
+
+c.  Checking the status of the coin online when the transaction is made. 
+(Sometimes this is done only for some random subset of the coins, for 
+efficiency.)
+
+The techniques for doing (a) are brilliant, but they still leave you with 
+"and then someone goes to jail" as one of your protocol steps, which makes 
+the protocols that use them a lot less interesting.  And once you're doing 
+online clearing, there's little point to messing around with the 
+complicated stuff you have to do to get the spender's identity embedded in 
+pairs of double-spent coins.
+
+>-- Patrick
+>http://fexl.com
+
+--John Kelsey, kelsey.j@ix.netcom.com
+PGP: FA48 3237 9AD5 30AC EEDD  BBC8 2A80 6948 4CAA F259
+

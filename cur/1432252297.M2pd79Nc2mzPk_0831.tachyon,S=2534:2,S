@@ -1,0 +1,56 @@
+From rsw@jfet.org Mon Jan 20 14:44:14 2014
+Date: Mon, 20 Jan 2014 14:44:15 -0500
+From: "Riad S. Wahby" <rsw@jfet.org>
+To: cypherpunks@cpunks.org
+Subject: Re: CDRv2 discussion (was: Re: Al-qaeda.net deprecated)
+Message-ID: <20140120194414.GA4557@antiproton.jfet.org>
+Mail-Followup-To: cypherpunks@cpunks.org
+References: <Pine.LNX.4.64.1401191130250.27039@mx1.mfn.org>
+ <20140119181507.GA22336@antiproton.jfet.org>
+ <Pine.LNX.4.64.1401191330420.27039@mx1.mfn.org>
+ <E1W4zEK-0003c6-QZ@elasmtp-banded.atl.sa.earthlink.net>
+ <1390174697.11793.72791097.3940EAF2@webmail.messagingengine.com>
+ <20140120004239.4E674F6E6@a-pb-sasl-quonix.pobox.com>
+ <Pine.LNX.4.64.1401191948230.27039@mx1.mfn.org>
+ <20140120174842.GA1034@antiproton.jfet.org>
+ <Pine.LNX.4.64.1401201244110.27039@mx1.mfn.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.64.1401201244110.27039@mx1.mfn.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+Status: RO
+Content-Length: 1520
+Lines: 30
+
+"J.A. Terranson" <measl@mfn.org> wrote:
+> 	Everyone sends to the node of their choice, the node sends to a 
+> broadcast repeater that knows the source, and sends to everyone else, 
+> after stipping any mailman specific things like tags, etc.  The down side 
+> to this kind of dumb repeater is in the case of outages - the repeater 
+> will not know (or would it? I need to look at this in postfix) what to 
+> forward.
+
+As far as I can tell this doesn't (yet) solve the problem of
+whitelisting subscribers to other nodes.
+
+However, we can add one more step and solve this: when a node receives
+an email from the repeater whose sender is a member of the node's local
+subscriber list, it bounces the message back to the repeater with an
+added header saying, in effect, "I vouch for this sender."
+
+Other nodes employing sender whitelisting would ignore the first email,
+since its sender isn't locally whitelisted and it lacks the
+aforementioned node-auth header, but would presumably forward the second
+email, assuming they chose to trust the node that is vouching for the
+sender. Nodes with no whitelisting policy could safely ignore the second
+email by filtering out duplicate msgids or something similar.
+
+I'm not totally in love with the master repeater scheme, though.
+Notwithstanding my previous comments regarding the supposed threat model
+behind the CDR's original conception, as long as we're paying the fixed
+cost of setting up a new system we may as well get *some* additional
+reliability out of it, right?
+
+-=rsw
+

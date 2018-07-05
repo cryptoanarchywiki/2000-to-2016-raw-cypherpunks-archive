@@ -1,0 +1,109 @@
+From cypherpunks-bounces@cpunks.org  Mon Jul 22 11:49:41 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r6MFnKFK006352;
+	Mon, 22 Jul 2013 11:49:23 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by proton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r6MFnGAl006347
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Mon, 22 Jul 2013 11:49:18 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 8CACD543E26; Mon, 22 Jul 2013 17:49:15 +0200 (CEST)
+Date: Mon, 22 Jul 2013 17:49:15 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is
+Subject: remotely rooting SIM cards
+Message-ID: <20130722154915.GG29404@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 3601
+Lines: 70
+
+
+https://srlabs.de/rooting-sim-cards/
+
+Rooting SIM cards
+
+SIM cards are the de facto trust anchor of mobile devices worldwide. The
+cards protect the mobile identity of subscribers, associate devices with
+phone numbers, and increasingly store payment credentials, for example in
+NFC-enabled phones with mobile wallets.
+
+With over seven billion cards in active use, SIMs may well be the most widely
+used security token in the world. Through over-the-air (OTA) updates deployed
+via SMS, the cards are even extensible through custom Java software. While
+this extensibility is rarely used so far, its existence already poses a
+critical hacking risk.
+
+Cracking SIM update keys. OTA commands, such as software updates, are
+cryptographically-secured SMS messages, which are delivered directly to the
+SIM. While the option exists to use state-of-the-art AES or the somewhat
+outdated 3DES algorithm for OTA, many (if not most) SIM cards still rely on
+the 70s-era DES cipher. DES keys were shown to be crackable within days using
+FPGA clusters, but they can also be recovered much faster by leveraging
+rainbow tables similar to those that made GSM’s A5/1 cipher breakable by
+anyone.
+
+To derive a DES OTA key, an attacker starts by sending a binary SMS to a
+target device. The SIM does not execute the improperly signed OTA command,
+but does in many cases respond to the attacker with an error code carrying a
+cryptographic signature, once again sent over binary SMS. A rainbow table
+resolves this plaintext-signature tuple to a 56-bit DES key within two
+minutes on a standard computer.
+
+Deploying SIM malware. The cracked DES key enables an attacker to send
+properly signed binary SMS, which download Java applets onto the SIM. Applets
+are allowed to send SMS, change voicemail numbers, and query the phone
+location, among many other predefined functions. These capabilities alone
+provide plenty of potential for abuse.
+
+In principle, the Java virtual machine should assure that each Java applet
+only accesses the predefined interfaces. The Java sandbox implementations of
+at least two major SIM card vendors, however, are not secure: A Java applet
+can break out of its realm and access the rest of the card. This allows for
+remote cloning of possibly millions of SIM cards including their mobile
+identity (IMSI, Ki) as well as payment credentials stored on the card.
+
+Defenses. The risk of remote SIM exploitation can be mitigated on three
+layers:
+
+Better SIM cards. Cards need to use state-of-art cryptography with
+sufficiently long keys, should not disclose signed plaintexts to attackers,
+and must implement secure Java virtual machines. While some cards already
+come close to this objective, the years needed to replace vulnerable legacy
+cards warrant supplementary defenses.
+
+Handset SMS firewall. One additional protection layer could be anchored in
+handsets: Each user should be allowed to decide which sources of binary SMS
+to trust and which others to discard. An SMS firewall on the phone would also
+address other abuse scenarios including “silent SMS.”
+
+In-network SMS filtering. Remote attackers rely on mobile networks to deliver
+binary SMS to and from victim phones. Such SMS should only be allowed from a
+few known sources, but most networks have not implemented such filtering yet.
+“Home routing” is furthermore needed to increase the protection coverage to
+customers when roaming. This would also provide long-requested protection
+from remote tracking.
+
+This research will be presented at BlackHat on Jul 31st and at the OHM
+hacking camp on Aug 3rd 2013
+
+Questions? – sim@srlabs.de
+

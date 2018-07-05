@@ -1,0 +1,191 @@
+From owner-cypherpunks@al-qaeda.net  Fri Oct  5 02:24:31 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q956Lrus001131
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Fri, 5 Oct 2012 02:21:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1349418113;
+	bh=cJOINGIC5BOCFDs0+J+v5mOuBPAsVnxAnVOo17zmv5k=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=HA5Q8prRkHXh4ECk7gGiOBzsCbksJLCa5tPP5Tge3wq7ivbGwSdU5fDmAfrASqn/K
+	 4qz4i/WQOq6RdwxaWCkbI9+SK2Mmw5MwJQueljlhn2DnZNaXKIfqIvu5+RJ0qaa+Ky
+	 WzW+qVzkZteWKY/6tHN7bifAiXjA7iCqk9EW4NyU=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q956Lr42001130
+	for cypherpunks-outgoing; Fri, 5 Oct 2012 02:21:53 -0400
+Date: Fri, 5 Oct 2012 08:21:50 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net
+Subject: Re: [liberationtech] CryptoParty Handbook
+Message-ID: <20121005062150.GE9750@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 7886
+Lines: 157
+
+----- Forwarded message from Seth David Schoen <schoen@eff.org> -----
+
+From: Seth David Schoen <schoen@eff.org>
+Date: Thu, 4 Oct 2012 17:06:27 -0700
+To: liberationtech <liberationtech@lists.stanford.edu>
+Subject: Re: [liberationtech] CryptoParty Handbook
+User-Agent: Mutt/1.5.21 (2010-09-15)
+Reply-To: liberationtech <liberationtech@lists.stanford.edu>
+
+Andrew Mallis writes:
+
+> FYI
+>
+> This 392 page, Creative Commons licensed handbook is designed to help
+> those with no prior experience to protect their basic human right
+> to Privacy in networked, digital domains. By covering a broad array
+> of topics and use contexts it is written to help anyone wishing to
+> understand and then quickly mitigate many kinds of vulnerability using
+> free, open-source tools. Most importantly however this handbook is
+> intended as a reference for use during Crypto Parties.
+>
+>
+> PDF available for download and more info:
+>
+> https://cryptoparty.org/wiki/CryptoPartyHandbook
+
+I'm grateful to people for doing this (and happy that it built upon some
+prior sprints that I was part of!) but I'm a bit worried about errors.
+Starting from the end of the book I fairly quickly came upon two things
+that concerned me:
+
+"Quantum cryptography is the term used to describe the type of cryptography
+that is now necessary to deal with the speed at which we now process
+information and the related security measures that are necessary.  Essentially
+it deals with how we use quantum communication to securely exchange a key
+and its associated distribution.  As the machines we use become faster the
+possible combinations of public-key encryptions and digital signatures
+becomes easier to break and quantum cryptography deals with the types of
+algorithms that are necessary to keep pace with more advanced networks."
+
+I think the first and third sentences of this paragraph are completely
+mistaken.  (The second sentence is right to assert that quantum cryptography
+deals with key-exchange mechanisms.)  First, quantum cryptography for key
+exchange is unrelated to "the speed at which we now process information".
+In fact, conventional encryption has scaled well and more than kept pace
+with increases in communications data rates, particularly since our CPUs
+have gotten faster much faster than our communications links have.  That's
+one reason that it's now much more feasible to use HTTPS routinely for web
+services -- current CPUs can handle the ciphers involved efficiently, and
+some CPUs even have hardware acceleration for AES.  It's also not clear that
+using quantum cryptography is "necessary" for anyone today.  QKD still
+requires strong authentication
+
+https://en.wikipedia.org/wiki/Quantum_key_distribution#Man-in-the-middle_attack
+
+so although it could reduce the need to make assumptions about the difficulty
+of solving math problems that are used in other forms of key distribution,
+it does _not_ make the authentication problem go away.  The authentication
+problem is the logistically difficult thing about using all distributed
+cryptosystems, so when you use QKD you still encounter these logistical
+difficulties, in addition to (in most existing implementations) the extra
+major logistical difficulty of needing a physically directly connected
+fiber optic cable (!) between the parties who are trying to establish a key.
+Yikes!
+
+The book's suggestion that "[a]s the machines we use become faster the
+combinations of public-key encryptions and digital signatures becomes easier
+to break" is also not an argument for using quantum cryptography, just
+appropriate key lengths.  See
+
+http://www.keylength.com/
+
+NIST and others have thought about what appropriate cryptographic key lengths
+are to respond to the phenomenon of computers getting faster.  That's why
+current NIST recommendations call for using 2048-bit RSA instead of 1024-bit
+RSA -- not a quantum cryptosystem, just a stronger key length.
+
+I was also concerned by the "Securely Destroying Data" section.  Although it
+acknowledges some situations under which erased data (or even overwritten
+data) could be recovered, it seems to treat these situations as exceptional
+and multiple-overwrite tools generally reliable.  It doesn't mention that
+these tools are potentially quite untrustworthy on current filesystems even
+under normal conditions, because of data journaling.  (I first learned about
+this problem from John Gilmore.)  In fact, even the man page for shred gives
+a warning about this:
+
+       CAUTION: Note that shred relies on a very important assumption:
+       that the file system overwrites data in place. This is the
+       traditional way to do things, but many modern file system designs
+       do not satisfy this assumption. The following are examples
+       of file systems on which shred is not effective, or is not
+       guaranteed to be effective in all file sysb tem modes:
+
+       * log-structured or journaled file systems, such as those
+       supplied with AIX and Solaris (and JFS, ReiserFS, XFS, Ext3,
+       etc.)
+
+       * file systems that write redundant data and carry on even if
+       some writes fail, such as RAID-based file systems
+
+       * file systems that make snapshots, such as Network Appliance's
+       NFS server
+
+       * file systems that cache in temporary locations, such as NFS
+       version 3 clients
+
+       * compressed file systems
+
+       In the case of ext3 file systems, the above disclaimer applies
+       (and shred is thus of limited effectiveness) only in data=journal
+       mode, which journals file data in addition to just metadata. In
+       both the data=ordered (default) and data=writeback modes, shred
+       works as usual. Ext3 journaling modes can be changed by adding
+       the data=something option to the mount options for a particular
+       file system in the /etc/fstab file, as documented in the mount
+       man page (man mount).
+
+The wipe man page says
+
+       Journaling filesystems (such as Ext3 or ReiserFS) are now being
+       used by default by most Linux distributions. No secure deletion
+       program that does filesystem-level calls can sanitize files
+       on such filesystems, because sensitive data and metadata can
+       be written to the journal, which cannot be readily accessed.
+       Per-file secure deletion is better implemented in the operating
+       system.
+
+Some people see this concern as hypothetical, but it's pretty easy to
+test with loopback mounting.  I just made a 100 MB file, initialized it
+with zeroes, created an ext4 filesystem in it, and loopback mounted the
+filesystem.  Then I created several very large text files with repeating,
+easy-to-recognize contents, and then deleted the files with shred -u.
+It was still possible to find a small number of copies of the text file
+contents in the underlying storage file afterward -- probably because of
+data journaling in ext4.
+
+The book spends several pages describing how to make GUI interfaces for
+wipe and shred under GNOME, remarks that wipe is "a little more secure"
+than shred, and doesn't mention that (according to their own official
+documentation) neither program can be assumed to work properly on a modern
+system! :-(
+
+Things like this make me worry that this book needs some more work.
+
+-- 
+Seth Schoen  <schoen@eff.org>
+Senior Staff Technologist                       https://www.eff.org/
+Electronic Frontier Foundation                  https://www.eff.org/join
+454 Shotwell Street, San Francisco, CA  94110   +1 415 436 9333 x107
+--
+Unsubscribe, change to digest, or change password at: https://mailman.stanford.edu/mailman/listinfo/liberationtech
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

@@ -1,0 +1,128 @@
+From owner-cryptography+rsw=mit.edu@metzdowd.com  Fri Jun  6 17:38:49 2003
+Return-Path: <owner-cryptography+rsw=mit.edu@metzdowd.com>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h56Lcm601881
+	for <rsw@opamp.org>; Fri, 6 Jun 2003 17:38:48 -0400
+Received: from red.metdow.com (72.muf123.nycm.n54ny05r18.dsl.att.net [12.103.123.72])
+	by pacific-carrier-annex.mit.edu (8.12.4/8.9.2) with ESMTP id h56LcfAo018238
+	for <rsw@mit.edu>; Fri, 6 Jun 2003 17:38:41 -0400 (EDT)
+Received: by red.metdow.com (Postfix, from userid 1002)
+	id 414D2182F9D; Fri,  6 Jun 2003 21:35:53 +0000 (UTC)
+X-Original-To: cryptography@metzdowd.com
+Delivered-To: cryptography@metzdowd.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by red.metdow.com (Postfix) with ESMTP id 46940182F92
+	for <cryptography@metzdowd.com>; Fri,  6 Jun 2003 21:35:52 +0000 (UTC)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id C8ED7D97C5; Fri,  6 Jun 2003 17:35:51 -0400 (EDT)
+X-Original-To: cryptography@metzdowd.com
+Received: from conure.mail.pas.earthlink.net (conure.mail.pas.earthlink.net [207.217.120.54])
+	by red.metdow.com (Postfix) with ESMTP id 7D054182F85
+	for <cryptography@metzdowd.com>; Fri,  6 Jun 2003 19:36:23 +0000 (UTC)
+Received: from dialup-67.31.153.220.dial1.denver1.level3.net ([67.31.153.220] helo=lynnpc)
+	by conure.mail.pas.earthlink.net with esmtp (Exim 3.33 #1)
+	id 19OMzr-0004Xu-00; Fri, 06 Jun 2003 12:35:32 -0700
+Message-Id: <4.2.2.20030606130542.034dc680@mail.earthlink.net>
+X-Sender: lynnnet@mail.earthlink.net
+X-Mailer: QUALCOMM Windows Eudora Pro Version 4.2.2 
+Date: Fri, 06 Jun 2003 13:34:41 -0600
+To: EKR <ekr@rtfm.com>
+From: Anne & Lynn Wheeler <lynn@garlic.com>
+Subject: Re: Maybe It's Snake Oil All the Way Down
+Cc: "James A. Donald" <jamesd@echeque.com>,
+   pgut001@cs.auckland.ac.nz (Peter Gutmann), bill.stewart@pobox.com,
+   cryptography@metzdowd.com, cypherpunks@lne.com, rsalz@datapower.com,
+   sguthery@mobile-mind.com
+In-Reply-To: <kjd6ht8l5j.fsf@romeo.rtfm.com>
+References: <3EDE1D79.8791.1B477836@localhost>
+ <3EDD06EF.2850.17076FA5@localhost>
+ <3EDE1D79.8791.1B477836@localhost>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Sender: owner-cryptography@metzdowd.com
+Precedence: bulk
+Status: O
+Content-Length: 4802
+Lines: 80
+
+At 04:42 PM 6/4/2003 -0700, Eric Rescorla wrote:
+>Nonsense. One can simply cache the certificate, exactly as
+>one does with SSH. In fact, Mozilla at least does exactly
+>this if you tell it to. The reason that this is uncommon
+>is because the environments where HTTPS is used
+>are generally spontaneous and therefore certificate caching
+>is less useful.
+
+
+there are actually two scenarios .... one is to pre-cache it (so that its 
+transmission never actually has to happen) and the other is to compress it 
+to zero bytes. detailed discussion of certificate pre-caching and 
+certificate zero byte compression:
+http://www.garlic.com/~lynn/ansiepay.htm#aadsnwi2
+
+the typical use for HTTPS for e-commerce is to hide the account number on 
+its way to the financial institution. for the most part the merchant is 
+primarily interested in the response from the consumer's financial 
+institution on whether or not the merchant gets paid. If it weren't for the 
+associated business processes, the merchant could get by with never knowing 
+anything at all about the consumer (the merchant just passes the account 
+number on ... and gets back what they are really interested in .... the 
+notification from the bank that they will get paid).
+
+So a HTTPS type solution is that the consumer pre-caches their bank's 
+certificate (when they establish a bank account). .... and they transmit 
+the account number "hidden" using the bank's public key. This happens to 
+pass thru the merchants processing .... but for purposes of the 
+authorization, the merchant never really has to see it. The protocol would 
+require minor issues of replay attacks .... and be able to be done in a 
+single round trip .... w/o all the SSL protocol chatter. Actually, is isn't 
+so much pre-caching their bank's certificate .... as loading their bank's 
+public key into a table .... analogous to the way CA public keys are 
+loading into tables (aka using out-of-band processing .... the convention 
+that they may be self-signed and encoded in a certificate format is an 
+anomoly of available software and in no way implies a PKI). The primary 
+purpose of HTTPS hasn't been to have a secure channel with the merchant, 
+the primary purpose of the HTTPS is to try and hide the consumer's account 
+number as it makes its way to the consumer's financial institution.
+
+The other solution is the X9.59 standard (preserve the integrity of the 
+financial infrastructure for all electronic retail payments, not just 
+internet, not just POS, not just credit, ALL; credit, debit, stored value, 
+etc) that creates authenticated transactions and account numbers that can 
+only be used in authenticated transaction. The consumer's public key is 
+registered in their bank account (out of band process, again no PKI). X9.59 
+transactions are signed and transmitted. Since the account number can only 
+be used in authenticated transactions .... it changes from needing 
+encryption to hide the value as part of a shared-secret paradigm to purely 
+a paradigm that supports integrity and authentication. As in the above, 
+scenario, the merchant passes the value thru on its way to the consumer's 
+financial institution; and is focused on getting the approved/disapproved 
+answer back about whether they will be paid. As in the bank HTTPS scenario 
+where the bank's pubilc key is pre-cached at the consumer, the pre-caching 
+of the consumer's public key is pre-cached at the bank .... involves no PKI 
+business processes (although their may be some similarities that the 
+transport of the public key involves encoding in a certificate defined 
+format).  misc. x9.59 refs:
+http://www.garlic.com/~lynn/index.html#x959
+
+Both pre-caching solutions are between the business entities that are 
+directly involved; the consumer and the consumer's financial institution 
+based on having an established business relationship.
+
+The invention of PKI was primarily to address the issue of an event between 
+two parties that had no prior business relationship and possibly weren't 
+going to have any future business relationship and that they would conclude 
+their business relying on some mutual trust in the integrity of a 3rd party 
+w/o actually having to resort to an online environment. The e-commerce 
+scenario is that there is real-time, online transaction with the trusted 
+3rd party (the consumer's financial institution) involving prior business 
+relationship. This negates the basic original assumptions about the 
+environment that PKIs are targeted at addressing.
+--
+Anne & Lynn Wheeler    http://www.garlic.com/~lynn/
+Internet trivia 20th anv http://www.garlic.com/~lynn/rfcietff.htm
+   
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@metzdowd.com
+

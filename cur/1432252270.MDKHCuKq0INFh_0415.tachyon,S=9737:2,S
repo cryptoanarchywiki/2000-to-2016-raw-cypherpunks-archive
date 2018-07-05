@@ -1,0 +1,207 @@
+From owner-cypherpunks@al-qaeda.net  Wed Mar  7 04:16:04 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q279DJNm005306
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 7 Mar 2012 04:13:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1331111599;
+	bh=czPEQ7WQyc4H+Zu0arp6F/K//8EWQrkqQ747xWWUfo8=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:Sender;
+	b=xRQZqkYXb2rPiFeavSgnCqUHJO725hmKWl8i1/brYXx95y+Bc1toEeRBEUdK+UeQU
+	 eY4FOaHpbKHnC+990Vqf+niIAvFp/w3Gwvi6vBWBizgFcLq0/k6+eGY5G+TsJ4UgfM
+	 T0dL7LaELb9SPM7SEAVlfjIcoP0UYQNNatAI7lB4=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q279DIRc005305
+	for cypherpunks-outgoing; Wed, 7 Mar 2012 04:13:18 -0500
+Date: Wed, 7 Mar 2012 10:13:15 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org,
+        doctrinezero@googlegroups.com,
+        freedombox-discuss@lists.alioth.debian.org
+Subject: Re: [tahoe-dev] Idea for a Publish/Subscribe Message System on 
+  Tahoe-LAFS
+Message-ID: <20120307091315.GE9891@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 8225
+Lines: 172
+
+----- Forwarded message from Brian Warner <warner@lothar.com> -----
+
+From: Brian Warner <warner@lothar.com>
+Date: Tue, 06 Mar 2012 19:23:39 -0800
+To: tahoe-dev@tahoe-lafs.org
+Subject: Re: [tahoe-dev] Idea for a Publish/Subscribe Message System on
+	Tahoe-LAFS
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6;
+	rv:10.0.2) Gecko/20120216 Thunderbird/10.0.2
+Reply-To: Tahoe-LAFS development <tahoe-dev@tahoe-lafs.org>
+
+>> On Sat, Feb 11, 2012 at 11:08 AM, darrob <darrob@i2pmail.org> wrote:
+>> 
+>> I'd like to discuss my idea for a messaging system on Tahoe with you.
+>> As far as I know there is currently no such thing.
+
+Great idea! We've discussed this a bit in the past, in the context of
+helping AllMyData users send files to each other, but never got around
+to building most of it. (We did build a tinyurl-like service that
+pointed at filecaps, with some Javascript in the frontend that acted
+upon the link by inserting the filecap into your root directory, but it
+was mostly out-of-band).
+
+Our thought was to give each pair of users a pair of directories. Each
+one would be an "inbox" for one of them and an "outbox" for the other.
+You'd give your friend the writecap to your inbox, and they'd add things
+to it. Then you'd read from it later. A user agent could notice when
+something was added to the inbox and move it somewhere else (sort of
+like maildir's new/ and cur/ directories), to keep the inbox tidy.
+
+>> The file naming scheme here is <username>-<user_ID>-<timestamp>
+>> -<message_hash>. The user_ID could be the directory URI or a shorter
+>> hash of it etc.
+
+You could just use the file's filecap: those are unique. Or the
+storage-index if you wanted to show someone else the directory listing
+without revealing the filecaps.
+
+>> [1]: A text file containing a list of URIs would work, too, I
+>> suppose. I don't know which will be more efficient.
+
+The benefit of using a dircap to track them is that you could fetch your
+messages from a different machine by just remembering the dircap,
+instead of the whole list of URIs.
+
+>> [4]: A quick Google search brought up
+>> http://muffinresearch.co.uk/archives/2010/10/15/fake-smtp-server-with-python/
+
+Twisted has a lot of SMTP functionality built-in, which would make it
+easier to integrate into the Tahoe process, if that ended up being
+useful.
+
+
+
+On 3/5/12 9:26 PM, David Reid wrote:
+
+> I've so far considered the problem from a fairly email centric point
+> of view.   My ideas also require the so far non-existant append-only
+> capability and draw inspiration from systems like StubMail[1] and
+> Internet Mail 2000[2].
+> 
+> You see an email address, is capability in it's own right.  It's a
+> transferable (practically) non-revocable append-only capability for a
+> message queue that is directly linked to your attention span.  At this
+> point I should hope that the negative properties of an email address
+> are obvious.
+
+You've read my http://petmail.lothar.com/ paper, right? It probably
+won't surprise you that some of these ideas influenced Tahoe too.
+
+> Alice has bob's append-cap.
+> Alice creates a new message on the grid.
+> Alice takes the read-cap for that message and writes that (perhaps
+> with other metadata) into bob's append-cap.
+
+As above, you can mostly avoid the need for append-caps by using
+pairwise inbox/outbox directories.
+
+Drawbacks:
+* Giving Alice a one-inbox writecap allows her to cancel messages
+  (deleting it before Bob has a chance to read it), but you could
+  actually argue this is a feature
+* For long-term storage, Bob might want to have a user agent (or a cron
+  job) copy/move messages out of the inbox and into some archive
+  directory where Alice can't delete them any longer
+
+Advantages:
+* it's clear where the message came from: Alice cannot write into the
+  inbox that Bob has created for Carol
+* append-only caps are, cryptographically speaking, really hard
+
+> Bob then uses the read-cap to his inbox to look at all the message
+> metadata and download the messages he wants to read. This is where the
+> system resembles Internet Mail 2000, in a grid with accounting the
+> cost of storing the unread sent message is pushed to the sender.
+
+Yeah, my problem with IM2k was always that storage of the message body
+is not the important cost: as you pointed out, it's the recipient's
+attention that really matters. In IM2k, or this scheme, you have to give
+the recipient enough information about the message (typically the
+subject line) to decide whether to download the rest. It'll take the
+spammers at most an hour before every subject line is "Help I've been
+mugged and lost my wallet", or "Hi sweetie", or "Important your account
+has been suspended", and the recipient has to download every message (or
+ignore them and suffer false-positives). Actually, I take it back, every
+spam I get already has those subject lines :).
+
+What you really need is to rate-limit attention-grabbing behavior that
+comes from outside a "social contract". New connections (people who
+learn about me out-of-band, from a conference or a blog post or on the
+street) are only enabled by allowing strangers to consume your time, but
+if you can require them to spend their time too, then you can keep
+things to a comfortably civilized level. That rate-limiting could take
+the form of CAPTCHA, or money (either a refundable bond or outright
+payment), or proof of membership in some group, whatever fits your
+tastes.
+
+You also want reciprocal access and easy third-party introductions to
+reduce the barrier to natural human communication patterns, and you want
+gradual revocation to discourage abuse by otherwise normal
+correspondents (that uncle who keeps forwarding chain letters to you).
+
+> My ideas sort of hinge on something which is not quite possible in
+> Tahoe today, the revocable append-only capability. Sadly I don't even
+> feel I have a good understanding of how hard it is. But if it existed
+> it would be an incredibly powerful primitive for all sorts of
+> applications.
+
+Append-only caps are possible but tricky: we've had them sketched out
+for years. They need pubkey-encryption (which we don't currently have or
+need in Tahoe), but that's not too hard. The biggest part is deciding
+how much complexity we're willing to accept in exchange for reducing the
+server-attacker's ability to selectively roll-back individual records.
+There's a big fun multi-way tradeoff here. Zooko is keen on using
+client-side storage to remember the most-recent state of the mutable
+object (so they can reject attempts to roll it back). I keep fantasizing
+about a per-share DAG of record dependencies to make it hard for N-1 of
+the servers to convince you that a record has gone away. And there's a
+funny lattice of caps (append+write+read, append-only, append-and-read,
+write-only, read-only, verify) that need some thought. It gets even
+weirder when you consider the failure modes: if each record is
+erasure-coded, and you get 4 shares that show evidence of record A being
+added, and 3 with record B added, but k=5 and neither is enough to
+recover the new records.. what should a new record-appender do?
+
+Adding revocation to append-only caps is more complicated, but not
+horribly so. You'd keep a list of pubkeys (verifiying keys) in each
+share, signed by a master key (which gets to add/revoke append-caps). It
+adds an extra dimension of failure modes. The server needs to be more
+aware of the share format (to enforce some of the writer restrictions,
+to prevent simple availability-threatening graffiti), but that's the
+case for irrevocable appendcaps too.
+
+> Of course, I leave the UX model of interacting with these long random
+> cryptographic URLs as address for contacting people as an exercises
+> for the reader.
+
+Bah (/me waves hands), that's what petnames are for :).
+
+cheers,
+ -Brian
+_______________________________________________
+tahoe-dev mailing list
+tahoe-dev@tahoe-lafs.org
+http://tahoe-lafs.org/cgi-bin/mailman/listinfo/tahoe-dev
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://www.ativel.com http://postbiota.org
+8B29F6BE: 099D 78BA 2FD3 B014 B08A  7779 75B0 2443 8B29 F6BE
+

@@ -1,0 +1,150 @@
+From owner-cypherpunks@al-qaeda.net  Tue Sep 25 17:29:58 2012
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id q8PLQLFE008713
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Tue, 25 Sep 2012 17:26:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1348608381;
+	bh=ayru+2r0oSp9tE3JmtXkOdddC6m/sh2RBVaYBXnNiB0=;
+	h=Message-ID:Date:From:MIME-Version:To:Subject:References:
+	 In-Reply-To:Content-Type:Content-Transfer-Encoding:Sender;
+	b=hop8dP3fUei907AJpF5I1KUU3XXrDpgUpRyA0+hueoSyR+Z85ZQj7tq+HQtAKiMco
+	 PhnkXp3Io98uCPFnKMuHRdgOPDwgv8dHkSqW/0OrZyw6nGiox+2JS3PvXZ+0jCVQSj
+	 GmYJ6AnJqsUjCr1tMK3DbXzb56AENjlMCeWJ6rK0=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id q8PLQLsI008712
+	for cypherpunks-outgoing; Tue, 25 Sep 2012 17:26:21 -0400
+Message-ID: <5062217E.3090001@littledystopia.net>
+Date: Tue, 25 Sep 2012 17:26:22 -0400
+From: "b. brewer" <bbrewer@littledystopia.net>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:10.0)
+  Gecko/20120206 Thunderbird/10.0
+MIME-Version: 1.0
+To: cypherpunks@al-qaeda.net
+Subject: Fwd: [cryptography] Data breach at IEEE.org: 100k plaintext
+  passwords.
+References: <CAH8yC8=TZu8z8EY2mOrh=oSEffBgUbxsR5w7aQgOUM-zNSxTnA@mail.gmail.com>
+In-Reply-To: <CAH8yC8=TZu8z8EY2mOrh=oSEffBgUbxsR5w7aQgOUM-zNSxTnA@mail.gmail.com>
+X-Forwarded-Message-Id: <CAH8yC8=TZu8z8EY2mOrh=oSEffBgUbxsR5w7aQgOUM-zNSxTnA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 5465
+Lines: 111
+
+Wow. This is extremely stupid.
+
+-------- Original Message --------
+Subject: [cryptography] Data breach at IEEE.org: 100k plaintext passwords.
+Date: Tue, 25 Sep 2012 13:39:34 -0400
+From: Jeffrey Walton <noloader@gmail.com>
+Reply-To: noloader@gmail.com
+To: Randombit List <cryptography@randombit.net>
+
+In case anyone on the list might be affected... [Please note: I am not
+the "I' in the text below]
+
+http://ieeelog.com
+
+IEEE and the log story
+
+IEEE (Institute of Electrical and Electronics Engineers) is renowned
+as one of the world-leading organizations in standard development and
+the promotion of scientific and educational development within the
+Electrical, Electronics, Communications, Computer Engineering,
+Computer Science and related fields. The organization has more than
+415,000 members all over the world, almost half of them in the United
+States [1].
+
+By the nature of the organization, IEEE members are highly specialised
+individuals, many of them working in critical industry, governmental
+and military projects. Furthermore, it would be reasonable to assume,
+that an organization publishing leading security-focused publications
+[2], would value the privacy of its members, and be proactive in
+keeping their data secure.
+
+Due to several undoubtedly grave mistakes, the ieee.org account
+username and plaintext password of around 100,000 IEEE members were
+publicly available on the IEEE FTP server for at least one month.
+Furthermore, all the actions these users performed on the ieee.org
+website were also available. Separately, spectrum.ieee.org visitor
+activity is also publicly available.
+
+The simplest and most important mistake on the part of the IEEE web
+administrators was that they failed to restrict access to their
+webserver logs for both ieee.org and spectrum.ieee.org allowing these
+to be viewed by anyone going to the address
+ftp://ftp.ieee.org/uploads/akamai/ (closed on September 24 around
+13:00 UTC, after I reported it). On these logs, as is the norm, every
+web request was recorded (more than 376 million HTTP requests in
+total). Web server logs should never be publicly available, since they
+usually contain information that can be used to identify users
+(sometimes even after the log was anonymized as in the "AOL incident"
+[3]). However, this case is much worse, since 411.308 of the log
+entries contain both usernames and passwords. Out of these, there seem
+to be 99.979 unique usernames.
+
+If leaving an FTP directory containing 100GB of logs publicly open
+could be a simple mistake in setting access permissions, keeping both
+usernames and passwords in plaintext is much more troublesome. Keeping
+a salted cryptographic hash of the password is considered best
+practice, since it would mitigate exactly such an access permission
+mistake. Also, keeping passwords in logs is inherently insecure,
+especially plaintext passwords, since any employee with access to logs
+(for the purpose of analysis, monitoring or intrusion detection) could
+pose a threat to the privacy of users.
+
+Log analysis
+
+It is certainly unfortunate this information was leaked out, and who
+knows who got it before it got fixed. Maybe there are access logs for
+the FTP so the damage can be assessed. Anyway, the affected users will
+probably have to be informed, since it is my understanding that the
+law requires it. In Europe there is Article 4 of the Directive on
+privacy and electronic communications (Directive 2002/58/EC) and its
+amendment (Directive 2009/136/EC). In the US, 46 states seem to have
+similar requirements [4].
+
+While the cause of the data breach has been solved, one must point out
+the value of this dataset from a research perspective. It is rare that
+researchers gain access to such rich datasets. Various ethical and
+privacy-related considerations must be evaluated before such datasets
+can be publicly released. Deciding on how to anonymize the data is no
+easy challenge. Simply excluding any information making users directly
+identifiable is not enough, as past dataset releases have shown that
+some users can still be pinpointed. This resulted in lawsuits in the
+case of Netflix [5] and AOL [6], or the withdrawal of the data, like
+in the recent Wikipedia case [7]. For this reason, companies such as
+Google prefer to keep such data for study by internal researchers and
+do not release it to the public [3]. Furthermore, some companies
+release data to a trusted researcher with the condition to remain
+anonymous, like an unnamed European mobile phone operator did for
+Albert-LC!szlC3 BarabC!si [8]. This means academic researchers working in
+such fields as Information Retrieval have limited access to fresh
+real-world data, being at a disadvantage to their industrial
+counterparts.
+
+For these reasons, I cannot not give in to the urge to perform a basic
+analysis of this serendipitously acquired data, although I acknowledge
+this might be ethically dubious. However, I did not, and plan not to
+release the raw log data to anyone else.
+
+Data overview
+
+Log data time span:  01/Aug/2012:20:46:28 +0000b to 18/Sep/2012:08:47:17 
++0000
+Total number of log entries: 376.021.496
+log entries for ieee.org: 301.319.566
+log entries for spectrum.ieee.org: 74.701.930
+log entries with password details: 411.308 (of which 17.157 are
+password reset requests and have no username field)
+...
+_______________________________________________
+cryptography mailing list
+cryptography@randombit.net
+http://lists.randombit.net/mailman/listinfo/cryptography
+

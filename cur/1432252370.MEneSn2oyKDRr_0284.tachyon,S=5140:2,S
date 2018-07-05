@@ -1,0 +1,101 @@
+From owner-cypherpunks@Algebra.COM  Mon Dec 24 16:26:40 2001
+Return-Path: <owner-cypherpunks@Algebra.COM>
+Received: from pacific-carrier-annex.mit.edu (PACIFIC-CARRIER-ANNEX.MIT.EDU [18.7.21.83])
+	by positron.mit.edu (8.11.6/8.9.3) with ESMTP id fBOLQes03835
+	for <kwantam@positron.mit.edu>; Mon, 24 Dec 2001 16:26:40 -0500
+Received: from ak47.algebra.com (ak47.algebra.com [208.233.99.160])
+	by pacific-carrier-annex.mit.edu (8.9.2/8.9.2) with ESMTP id QAA11374
+	for <rsw@mit.edu>; Mon, 24 Dec 2001 16:25:49 -0500 (EST)
+Received: from ak47.algebra.com (localhost [127.0.0.1])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id fBOLMdeu006054
+	for <cypherpunks-outgoing@ak47.algebra.com>; Mon, 24 Dec 2001 15:22:39 -0600
+Received: (from majordom@localhost)
+	by ak47.algebra.com (8.12.1/8.12.1/Submit) id fBOLMduE006053
+	for cypherpunks-outgoing; Mon, 24 Dec 2001 15:22:39 -0600
+X-Authentication-Warning: ak47.algebra.com: majordom set sender to owner-cypherpunks@Algebra.COM using -f
+Received: from slack.lne.com (dns.lne.com [209.157.136.81])
+	by ak47.algebra.com (8.12.1/8.12.1) with ESMTP id fBOLMYeu006037
+	for <cypherpunks@ak47.algebra.com>; Mon, 24 Dec 2001 15:22:35 -0600
+Received: (from cpunk@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id fBOLMXF22643
+	for cypherpunks@ak47.algebra.com; Mon, 24 Dec 2001 13:22:33 -0800
+Received: (from majordom@localhost)
+	by slack.lne.com (8.11.0/8.11.0) id fBOLKRC22631
+	for cypherpunks-goingout; Mon, 24 Dec 2001 13:20:27 -0800
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+From: Nomen Nescio <nobody@dizum.com>
+Comments: This message did not originate from the Sender address above.
+  It was remailed automatically by anonymizing remailer software. Please
+  report problems or inappropriate use to the remailer administrator at
+  <abuse@dizum.com>.
+To: cypherpunks@lne.com
+Old-Subject: Re: simplest possible ecash mint
+Message-ID: <ad29d6aafce03150d8726ad4ac72102c@dizum.com>
+Date: Mon, 24 Dec 2001 22:20:20 +0100 (CET)
+X-Loop: cypherpunks@lne.com
+X-spam: 15 
+Subject:  Re: simplest possible ecash mint
+X-Algebra: <A HREF=http://www.algebra.com>Algebra</A>
+Sender: owner-cypherpunks@Algebra.COM
+Precedence: bulk
+X-Mailing-List: cypherpunks@algebra.com
+X-List-Admin: ichudov@algebra.com
+X-Loop: cypherpunks@algebra.com
+X-spam: 15 
+Status: O
+Content-Length: 2767
+Lines: 52
+
+
+Ryan Lackey writes:
+>
+> I don't believe "normal users" should ever interact directly with the
+> mint; using the mint as a reissue server only in normal operation is a
+> key optimization -- especially when coupled with tamper-resistant mint 
+> hardware.  Easier to develop, easier to operate, easier to audit.
+> Users should purchase cash from change makers; the issuer could also
+> operate a change maker, and can handle sales to change-makers separately.
+
+You're using some of these terms without defining them clearly:
+mint, issuer, and change maker.  Earlier you said the change maker was
+responsible for changing between ecash and something of value, presumably
+including other currencies.  Presumably the mint is the cryptographic
+engine which issues ecash coins.  The issuer is apparently someone
+who is allowed to force the mint to issue coins at will, although the
+mint is supposed to log and report on such interventions.  (Anyone can
+destroy coins, so an issuer is not needed for that functionality.)
+
+Can you explain how these three roles would work in a transaction where
+Alice gets some ecash for dollars, pays Bob in ecash, who turns the
+ecash back into dollars?
+
+Here is how it seems like it should work.  The change maker Carol has a
+bunch of ecash she stands ready to sell.  Alice gives her $X in dollars,
+along with blinded data to become Alice's ecash.  The change maker does an
+exchange operation at the mint, giving the mint $X in the change maker's
+own coins, along with the blinding factors from Alice.  The mint gives
+back new blinded coins which Carol passes to Alice, who unblinds them
+to get her ecash.
+
+Alice passes the ecash to Bob.  He does an exchange operation at the
+mint to get new coins and to verify that Alice's cash is good.  He
+then delivers whatever goods or service Alice has paid for.
+
+Bob later wants dollars, so he goes to change maker Carol and delivers
+to her ecash.  She does an exchange at the mint to verify that Bob's
+coins are good, and then sends Bob dollars in return for his ecoins.
+
+This sequence conflicts somewhat with your model.  Bob had to interact
+directly with the mint, and you said that normal users would not.
+But only the mint can verify the validity of coins so it seems to be
+necessary.
+
+The issuer was not involved in this transaction.  Apparently he is
+only there to inflate the currency.  You should consider eliminating
+the issuer, who can easily cause trouble.  At startup time let the
+mint generate its keys and emit a single high-value coin.  That will
+be the money supply for all time.  Allow a banking system to grow
+around this "high-powered" currency and fractional reserve bank loans
+will automatically adjust the money supply as needed.  See Selgin,
+http://www.terry.uga.edu/~selgin/.
+

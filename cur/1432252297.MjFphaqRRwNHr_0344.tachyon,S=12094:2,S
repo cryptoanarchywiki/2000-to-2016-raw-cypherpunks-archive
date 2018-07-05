@@ -1,0 +1,265 @@
+From owner-cryptography+rsw=mit.edu@wasabisystems.com  Wed Aug  7 14:36:27 2002
+Return-Path: <owner-cryptography+rsw=mit.edu@wasabisystems.com>
+Received: from fort-point-station.mit.edu (FORT-POINT-STATION.MIT.EDU [18.7.7.76])
+	by positron.jfet.org (8.11.6/8.9.3) with ESMTP id g77IaRa14970
+	for <rsw@opamp.org>; Wed, 7 Aug 2002 14:36:27 -0400
+Received: from lion.ninthwonder.com (lion.ninthwonder.com [151.199.66.147])
+	by fort-point-station.mit.edu (8.9.2/8.9.2) with ESMTP id OAA14513
+	for <rsw@mit.edu>; Wed, 7 Aug 2002 14:36:25 -0400 (EDT)
+Received: by lion.ninthwonder.com (Postfix, from userid 96)
+	id 5DFCD30721; Wed,  7 Aug 2002 14:25:32 -0400 (EDT)
+Delivered-To: cryptography@wasabisystems.com
+Received: from snark.piermont.com (snark.piermont.com [166.84.151.72])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 9CDF730723
+	for <cryptography@wasabisystems.com>; Wed,  7 Aug 2002 14:25:30 -0400 (EDT)
+Received: by snark.piermont.com (Postfix, from userid 1000)
+	id 3B22FD97C9; Wed,  7 Aug 2002 14:25:30 -0400 (EDT)
+Received: from mercury.ex.ac.uk (mercury.ex.ac.uk [144.173.6.26])
+	by lion.ninthwonder.com (Postfix) with ESMTP id 12E1C30706
+	for <cryptography@wasabisystems.com>; Wed,  7 Aug 2002 13:54:36 -0400 (EDT)
+Received: from cronus ([144.173.6.20] helo=cronus.ex.ac.uk)
+	by mercury.ex.ac.uk with esmtp (Exim 3.33 #1)
+	id 17cV0x-001pm1-00; Wed, 07 Aug 2002 18:54:31 +0100
+Date: Wed, 7 Aug 2002 18:54:31 +0100
+From: Adam Back <adam@cypherspace.org>
+To: "Peter N. Biddle" <peternbiddle@hotmail.com>
+Cc: Cryptography <cryptography@wasabisystems.com>,
+   Cypherpunks <cypherpunks@minder.net>, Adam Back <adam@cypherspace.org>
+Subject: Palladium: technical limits and implications (Re: more TCPA stuff (Re: "trust me" pseudonyms in TCPA))
+Message-ID: <20020807185431.B594649@exeter.ac.uk>
+References: <20020805064801.A532566@exeter.ac.uk> <Pine.GSU.4.44.0208050726420.13883-100000@eskimo.com> <20020805222628.A512885@exeter.ac.uk> <DAV29zJf1Mv84akKwhr00019a48@hotmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.2.2i
+In-Reply-To: <DAV29zJf1Mv84akKwhr00019a48@hotmail.com>; from peternbiddle@hotmail.com on Tue, Aug 06, 2002 at 08:06:04PM -0700
+Sender: owner-cryptography@wasabisystems.com
+Precedence: bulk
+Status: O
+Content-Length: 9762
+Lines: 223
+
+I have one gap in the picture: 
+
+In a previous message in this Peter Biddle said:
+
+> In Palladium, SW can actually know that it is running on a given
+> platform and not being lied to by software. [...] (Pd can always be
+> lied to by HW - we move the problem to HW, but we can't make it go
+> away completely).
+
+But what feature of Palladium stops someone taking a Palladium enabled
+application and running it in a virtualized environment.  ie They
+write software to emulate the SCP, sealing and attestation APIs.
+
+Any API calls in the code to verify non-virtualization can be broken
+by putting a different endoresment root CA public key in the
+virtualized SCP.
+
+The Palladium application (without the remote attestation feature) has
+no way to determine that it is not virtualized.  If the Palladium
+application contains the endoresement root CA key that can be changed.
+If the application relies on the SCP to contain the endoresmenet key
+but doesn't verify it that can be virtualized with a replacement fake
+endoresment root CA public key using the existing SCP APIs.
+
+Then Palladiumized application could be debugged and it's features
+used without the Palladium non-virtualization guarantee.
+
+Am I free to do this as the owner of palladium compatible hardware
+running a version of windows with the proposed palladium feature set?
+
+If so how does this reconcile with your earlier statement that:
+
+> In Palladium, SW can actually know that it is running on a given
+> platform and not being lied to by software
+
+
+Then we also have the remote attestation feature which can't be so
+fooled, but for local attestation does the above break work, or is
+there some other function preventing that?
+
+Does that imply that the BORA protections only apply to:
+
+- applications which call home to use remote attestation before
+functioning
+
+  - and even here the remote attestation has to be enforced to data
+    separation levels -- ie it has to be that the server provides a
+    required and central part of the application -- like providing the
+    content, or keys to the content -- otherwise the remote
+    attestation call can also be nopped out with no ill-effect (much
+    as calls to dongles with no other effect than to check for
+    existance of a dongle could be nopped)
+
+- applications which are encrypted to a machine key which is buried in
+  the SCP and endorsed by the hardware manufacturer
+
+  - however you said in your previous mail that this is not planned
+
+* now about my attempts to provide a concise, representative and
+  readily understandable summary of what the essence of palladium is:
+
+my previous attempt which you point out some flaws in:
+
+> Adam Back wrote:
+> > Effectively I think the best succinct description of the platforms
+> > motivation and function is that:
+> >
+> > "TCPA/Palladium is an extensible, general purpose programmable dongle
+> > soldered to your mother board with centralised points belonging to
+> > Microsoft/IBM/Intel/".
+> 
+> The Pd SCP isn't extensible or programable. 
+
+OK that is true.  I presume you focussed on SCP because you took the
+dongle to mean literally the SCP component alone.
+
+Let's me try to construct an improved succint Palladium motivation and
+function description.  We need to make clear the distinction that the
+programmability comes from the hardware/firmware/software ensble
+provided by:
+
+hardware: the SCP, new ring0 and code compartmentatlization
+
+(btw what are the Palladium terms for the new ring0 that the TOR runs
+in, and what is the palladium term for the code compartment that
+Trusted Agents run in -- I'd like to use consistent terminology)
+
+super-kernel: TOR operating in new ring0
+
+software: palladium enabled applications using the features such as
+software attestation, and sealing with control rooted in hardware and
+the TOR
+
+
+So would it be fair to characterize the negative aspects of Palladium
+as follows:
+
+"Palladium provides an extensible, general purpose programmable
+dongle-like functionality implemented by an ensemble of hardware and
+software which provides functionality which can, and likely will be
+used to expand centralised control points by OS vendors, Content
+Distrbuters and Governments."
+
+So I think that statement though obviously less possitively spun than
+Microsoft would like perhaps addresses your technical objections with
+the previous characterization.
+
+btw I readily concede of course that Palladium platform offers the
+security compartmentalization and software assurance aspects anonymous
+and Peter Biddle have described; I am just mostly examining the
+flip-side of the new boundary of applications buildable to data
+separation standards of security with this platform.  One could
+perhaps construct a more balanced characterization covering both
+positive features and negative risks, but I'll let Palladium
+proponents work on the former.
+
+So to discuss your objections to the previous version of my attempted
+Palladium characterization:
+
+- as you say the hardware platform does not itself provide control
+  points (I agree)
+
+- as you say, the TOR being publicly auditable does not itself provide
+  control points
+
+however the platform can, and surely you can admit the risk, and even
+the likelihood that it will in fact be used to continue and further
+the existing business strategies of software companies, the content
+industry and governments.
+
+The dongle soldered to your motherboard can conspire with the CPU and
+memory management unit to lock the user out of selected processes
+running on their own machine.  
+
+If you focus on the subset of buildable applications which operate in
+the users interests you can call this a good thing.  If you look at
+the risks of buildable applications which can be used to act against
+the users interests it can equally be a very dangerous thing.  Also if
+you look at historic business practices, legal trends, and the wishes
+of the RIAA/MPAA there are risks that these bad practices and trends
+will be futher accelerated, exarcerbated and more strongly enforced.
+
+I'd be interested to see you face and comment on these negative
+aspects rather than keep your comments solely on beneficial user
+functions, claim neutrality of low level features, and disclaim
+negative aspects by claiming at a low level user choice.  The low
+level user choice may in the long run prove impractical or almost
+impossible for novice users, or even advanced users without hardware
+hacking tools, to technically exercise.  (I elaborated on the
+possiblities for robust format compatibility prevention, and related
+possibilities a previous mail.)
+
+> I wouldn't say that it is "general purpose" either, but I am not
+> sure what you mean by this.
+
+I mean it is programmable in the sense that software attestation,
+certification and the endoresed new privileged ring0 code, together
+with the hardware enforced code compartments allow the protections of
+the firmware and hardware running in the SCP to be extended up to
+complete applications -- the Trusted Agents running in code
+compartments.
+
+That makes it general purpse because it is programmable.  It could be
+used to build many classes of application across a spectrum of good,
+debatable and evil:
+
+- more flexibile and secure anonymity systems (clear user
+  self-interest as anonymous suggested)
+
+- DRM (mixed positive and negative, debatable depends on your point of
+  view)
+
+- and for example key-escrow of SCP support crypto functions
+  implemented in the TOR accessed with say CAPI (very negative)
+
+> > >From my current understanding, the worst problem is the centralised
+> > control of this platform.  If it were completely open, and possible to
+> > fix it's potential dangers, it would bring about a new framework of
+> > secured computing and could be a net positive.  In it's current form
+> > with centralised control and other problems it could be a big net
+> > negative.
+> 
+> There isn't centralized control in Pd. Users are in control. It is
+> up to whomever cares about the trust on a given system to decide if
+> they trust it, and this obviously must start with the user.
+
+You're focussing on the low level platform specifics, not on the
+bigger implications of the overall hardware, TOR, OS and software
+ensemble which I was talking about.  Yes you can run different TORS.
+But using a specific (and audited published) TOR which the user may
+find himself choosing to run in order to run Palladium-enabled
+applications, all the applications, file formats, services and content
+which are tied to doing that -- control points could and likely will
+be built.
+
+It is my opinion that the directions and business pressures are such
+that meaningful distributed control is unlikely to be the long term
+result of the things that will be built using the Palladium
+hardware/software ensemble.
+
+This seems a fairly clearly consistent and predictable outcome, unless
+the software, IP law, RIAA/DMCA and legal systems all make an
+_astounding_ complete U-turn in policy and tacitcs coincident with the
+deployment of Palladium.  
+
+Can you defend the arguement that Palladium and TCPA don't change the
+balance of control against the user and against personal control in
+our current balance between technical feasibility of building software
+systems enforcing third party control and law?
+
+(btw I'll stop nagging about documentation now, previous mail crossed
+with your reply on the topic).
+
+Adam
+--
+"You do not examine legislation in the light of the benefits it will
+convey if properly administered, but in the light of the wrongs it
+would do and the harms it would cause if improperly administered." 
+	-- Lyndon Johnson
+
+---------------------------------------------------------------------
+The Cryptography Mailing List
+Unsubscribe by sending "unsubscribe cryptography" to majordomo@wasabisystems.com
+

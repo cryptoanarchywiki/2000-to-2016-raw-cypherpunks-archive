@@ -1,0 +1,262 @@
+Return-path: <cypherpunks-bounces@cpunks.org>
+Envelope-to: rsw@positron.jfet.org
+Delivery-date: Sun, 14 Aug 2016 07:19:58 -0700
+Received: from antiproton.jfet.org ([209.141.47.85])
+	by positron.jfet.org with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.87)
+	(envelope-from <cypherpunks-bounces@cpunks.org>)
+	id 1bYwGb-0002eA-DK
+	for rsw@positron.jfet.org; Sun, 14 Aug 2016 07:19:57 -0700
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u7EE9B8p011369;
+	Sun, 14 Aug 2016 10:09:13 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=Ko2I8Fkv;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-ua0-f170.google.com (mail-ua0-f170.google.com
+ [209.85.217.170])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id u7EE98wY011363
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@cpunks.org>; Sun, 14 Aug 2016 10:09:10 -0400
+Received: by mail-ua0-f170.google.com with SMTP id n59so42996377uan.2
+ for <cypherpunks@cpunks.org>; Sun, 14 Aug 2016 07:09:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
+ bh=mmPx802lQmkER30nilZXFACASnva/bF2HS5YYLd+dc8=;
+ b=Ko2I8FkvDb2wCDo5hM6avwctoK+w6OtofOz0o4GvBd0zo6B8Mew7mYCZUYgS+Vvm7v
+ Inzq0hTyOd7W6Ds6Sv3vqt+E2DKmo4fKW+ZGgo58wuNLOjbFgFm+raDbpJ7h3WtNcxoR
+ c8DAvJZkGw+YzBF8CY/cgz9/GZaDwrD6H8qFGPJ2RenyWhJFoawsITKkVE+zKtmX8jKB
+ 1e0fRudOb9AQ/m3SWMJKxtCm4w3hlbFLKZjCNe831qnalbAn0+Br0F7x6nFS/JJX5hKl
+ tMgFUFTqu55iPYkDkK13W8j/ypxMT8pHnu2CbZ+HibXnhg362XX8UQfTDQU8xl3SKo1B
+ K8Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+ :message-id:subject:to;
+ bh=mmPx802lQmkER30nilZXFACASnva/bF2HS5YYLd+dc8=;
+ b=DtYC8vqSQuK0m7V5Ln/wARpuOzCHgGEnM37uHW4dmT8y7sSdQf7bVZlpsFwGhqT7Xs
+ Ax1giJUj62v3yPeslajsobMvSW8Zw64LDwvR6ezAoZ3LVCAlMO6MzOXkCiJpmi0rIdCG
+ uuZAYnEt23/KLCTNddU3JR9glkezkMBkdNCDc7EZdJA8pAqlw0uoaxt2vuX3SgwH0qDR
+ mgSNaP/VISiz6HiOnv0Zj8fLg3BmZ40hqo0DMQ4JC7sLDvoAlCUg4zTFLn/iZ7iDtIlb
+ Vr1dGA249aAd4pGbywHHqeSeWWAVR7xAGe+pTXqj/oaOsoJ12eKPuc2tQh05nzIHPD4n
+ 4ZEw==
+X-Gm-Message-State: AEkoous9sVnfPH87GS+FOiRv2bVDIRUS8+Aejo5PNuK/2E7LzSWrg15rocwDV4jG9lP0jjvBFWZ/lkt/QmhHow==
+X-Received: by 10.176.0.212 with SMTP id 78mr1743497uaj.107.1471183742484;
+ Sun, 14 Aug 2016 07:09:02 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.176.3.45 with HTTP; Sun, 14 Aug 2016 07:09:00 -0700 (PDT)
+Received: by 10.176.3.45 with HTTP; Sun, 14 Aug 2016 07:09:00 -0700 (PDT)
+In-Reply-To: <CAG2tMp5txzXKY-cs28VYEC7dY3+1C5iJ+Z7R96yN8p=Lzgeq_A@mail.gmail.com>
+References: <CAG2tMp55nML9+v0hnLVfe+OqPsCMUNiB66FR-VjmTn3pkGSTRw@mail.gmail.com>
+ <CAG2tMp7M3BpOUOcv6fkOYK=cYvYCWmg3nFrL8QSGBF0JPr5pjg@mail.gmail.com>
+ <CAG2tMp5A5AxiYHR4JQ-ECFCy80nsa8-xxYw5gs5vMEfHtHKRgg@mail.gmail.com>
+ <CAG2tMp4HdMnuXO7K5OvAie1+f1bsU5_iDg-nEcy=PTvJfV+XFA@mail.gmail.com>
+ <CAG2tMp6sd1r-FwLWd2SmQTQ-JJJpCPyU9hDKKKkew8symGGtJQ@mail.gmail.com>
+ <CAG2tMp5CmWA9rzgwDpe9XDYbOcKooAq15PrDD1UtorcnPZo--Q@mail.gmail.com>
+ <CAG2tMp5VUSFrJJXVXU35VBkY4trmH8K+7yECpnQAvfX7iRF3qQ@mail.gmail.com>
+ <20160809194322.GA24863@synfin.org> <770311470819794@web20h.yandex.ru>
+ <7b8410ac-c780-1d5e-e074-672c9160bfaf@pilobilus.net>
+ <20160811154619.GA2957@x220-a02>
+ <1901740634.15491731.1470940533090.JavaMail.yahoo@mail.yahoo.com>
+ <CAG2tMp5txzXKY-cs28VYEC7dY3+1C5iJ+Z7R96yN8p=Lzgeq_A@mail.gmail.com>
+From: Cecilia Tanaka <cecilia.tanaka@gmail.com>
+Date: Sun, 14 Aug 2016 11:09:00 -0300
+Message-ID: <CAG2tMp4CQV8B2OE+4AF1sPRmnTWY35d_-KavWsfb_Hpb7wL_fw@mail.gmail.com>
+Subject: Re: Anarchist Bibliography, please? (was Re: Deconstructing an
+ Institutional Slander...)
+To: cpunks <cypherpunks@cpunks.org>
+Content-Type: multipart/alternative; boundary=001a113ac77a5ec955053a08a83e
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 179
+
+--001a113ac77a5ec955053a08a83e
+Content-Type: text/plain; charset=UTF-8
+
+Thank you for all who sent me musics in private.  It was very sweet!  <3
+
+I love music.  It warms my heart and  - wow! -  there are zillions of
+beautiful musics in the world that I never heard before.  :D
+
+Sorry, I confess I asked for "help" just to renew a bit my soundtrack,
+haha!  ;)
+
+A beautiful music to wish you all an excellent day!  <3
+
+I really love Ed Sheeran's cover of Bob Dylan's protest song "Masters of
+War".  The lyrics are very powerful, really beautiful and intense.  I love
+this song.
+
+<http://youtu.be/aHMlAYeFeYw>
+
+"Masters Of War"  (Bob Dylan)
+
+Come you masters of war
+You that build all the guns
+You that build the death planes
+You that build all the bombs
+You that hide behind walls
+You that hide behind desks
+I just want you to know
+I can see through your masks.
+
+You that never done nothin'
+But build to destroy
+You play with my world
+Like it's your little toy
+You put a gun in my hand
+And you hide from my eyes
+And you turn and run farther
+When the fast bullets fly.
+
+Like Judas of old
+You lie and deceive
+A world war can be won
+You want me to believe
+But I see through your eyes
+And I see through your brain
+Like I see through the water
+That runs down my drain.
+
+You fasten all the triggers
+For the others to fire
+Then you set back and watch
+When the death count gets higher
+You hide in your mansion'
+As young people's blood
+Flows out of their bodies
+And is buried in the mud.
+
+You've thrown the worst fear
+That can ever be hurled
+Fear to bring children
+Into the world
+For threatening my baby
+Unborn and unnamed
+You ain't worth the blood
+That runs in your veins.
+
+How much do I know
+To talk out of turn
+You might say that I'm young
+You might say I'm unlearned
+But there's one thing I know
+Though I'm younger than you
+That even Jesus would never
+Forgive what you do.
+
+Let me ask you one question
+Is your money that good
+Will it buy you forgiveness
+Do you think that it could
+I think you will find
+When your death takes its toll
+All the money you made
+Will never buy back your soul.
+
+And I hope that you die
+And your death'll come soon
+I will follow your casket
+In the pale afternoon
+And I'll watch while you're lowered
+Down to your deathbed
+And I'll stand over your grave
+'Til I'm sure that you're dead.
+
+--001a113ac77a5ec955053a08a83e
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p>Thank you for all who sent me musics in private.=C2=A0 It was very sweet=
+!=C2=A0 &lt;3</p>
+<p>I love music.=C2=A0 It warms my heart and=C2=A0 - wow! -=C2=A0 there are=
+ zillions of beautiful musics in the world that I never heard before.=C2=A0=
+ :D</p>
+<p>Sorry, I confess I asked for &quot;help&quot; just to renew a bit my sou=
+ndtrack, haha!=C2=A0 ;)</p>
+<p>A beautiful music to wish you all an excellent day!=C2=A0 &lt;3</p>
+<p>I really love Ed Sheeran&#39;s cover of Bob Dylan&#39;s protest song &qu=
+ot;Masters of War&quot;.=C2=A0 The lyrics are very powerful, really beautif=
+ul and intense.=C2=A0 I love this song.</p>
+<p>&lt;<a href=3D"http://youtu.be/aHMlAYeFeYw">http://youtu.be/aHMlAYeFeYw<=
+/a>&gt;</p>
+<p>&quot;Masters Of War&quot;=C2=A0 (Bob Dylan)</p>
+<p>Come you masters of war<br>
+You that build all the guns<br>
+You that build the death planes<br>
+You that build all the bombs<br>
+You that hide behind walls<br>
+You that hide behind desks<br>
+I just want you to know<br>
+I can see through your masks.</p>
+<p>You that never done nothin&#39;<br>
+But build to destroy<br>
+You play with my world<br>
+Like it&#39;s your little toy<br>
+You put a gun in my hand<br>
+And you hide from my eyes<br>
+And you turn and run farther<br>
+When the fast bullets fly.</p>
+<p>Like Judas of old<br>
+You lie and deceive<br>
+A world war can be won<br>
+You want me to believe<br>
+But I see through your eyes<br>
+And I see through your brain<br>
+Like I see through the water<br>
+That runs down my drain.</p>
+<p>You fasten all the triggers<br>
+For the others to fire<br>
+Then you set back and watch<br>
+When the death count gets higher<br>
+You hide in your mansion&#39;<br>
+As young people&#39;s blood<br>
+Flows out of their bodies<br>
+And is buried in the mud.</p>
+<p>You&#39;ve thrown the worst fear<br>
+That can ever be hurled<br>
+Fear to bring children<br>
+Into the world<br>
+For threatening my baby<br>
+Unborn and unnamed<br>
+You ain&#39;t worth the blood<br>
+That runs in your veins.</p>
+<p>How much do I know<br>
+To talk out of turn<br>
+You might say that I&#39;m young<br>
+You might say I&#39;m unlearned<br>
+But there&#39;s one thing I know<br>
+Though I&#39;m younger than you<br>
+That even Jesus would never<br>
+Forgive what you do.</p>
+<p>Let me ask you one question<br>
+Is your money that good<br>
+Will it buy you forgiveness<br>
+Do you think that it could<br>
+I think you will find<br>
+When your death takes its toll<br>
+All the money you made<br>
+Will never buy back your soul.</p>
+<p>And I hope that you die<br>
+And your death&#39;ll come soon<br>
+I will follow your casket<br>
+In the pale afternoon<br>
+And I&#39;ll watch while you&#39;re lowered<br>
+Down to your deathbed<br>
+And I&#39;ll stand over your grave<br>
+&#39;Til I&#39;m sure that you&#39;re dead.</p>
+
+--001a113ac77a5ec955053a08a83e--
+

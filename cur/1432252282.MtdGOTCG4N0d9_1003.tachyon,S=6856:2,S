@@ -1,0 +1,154 @@
+From cypherpunks-bounces@cpunks.org  Mon Oct  7 17:27:44 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r97LRY7t032519;
+	Mon, 7 Oct 2013 17:27:35 -0400
+Received: from leitl.org (v8.ativel.com [164.177.174.8])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id r97LRUvv032512
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <cypherpunks@al-qaeda.net>; Mon, 7 Oct 2013 17:27:32 -0400
+Received: by leitl.org (Postfix, from userid 1000)
+ id 5B114543E7F; Mon,  7 Oct 2013 23:27:29 +0200 (CEST)
+Date: Mon, 7 Oct 2013 23:27:29 +0200
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org, zs-p2p@zerostate.is,
+        cryptography@randombit.net
+Subject: [zfs] [Review] 4185 New hash algorithm support
+Message-ID: <20131007212729.GT10405@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Status: O
+Content-Length: 5045
+Lines: 114
+
+----- Forwarded message from Zooko Wilcox-OHearn <zooko@leastauthority.com> -----
+
+Date: Mon, 7 Oct 2013 21:17:14 +0000
+From: Zooko Wilcox-OHearn <zooko@leastauthority.com>
+To: zfs@lists.illumos.org
+Subject: [zfs] [Review] 4185 New hash algorithm support
+Message-ID: <CAM_a8JxVeY4LNhmmXFzAFWOfgN0Z0KxLkENTCVrhq_moG481Cg@mail.gmail.com>
+Reply-To: zfs@lists.illumos.org
+
+Hi folks:
+
+I just joined this list because I saw this thread. I'm one of the
+architects of a distributed storage system named Tahoe-LAFS
+(https://Tahoe-LAFS.org). It has quite a few things in common with
+ZFS, architecturally, but it is also very different from ZFS, because
+it's not so much a real *filesystem* as it is like a BitTorrent that
+has an upload button as well as a download button. But it is like ZFS
+inasmuch as they both involve a heck of a lot of hashing for
+error-detection.
+
+I'm also an author of a secure hash function which has been designed
+for this kind of usage and which you should consider as an alternative
+to SHA-256, Edon-R, or Skein for use in ZFS. It is named BLAKE2. Here
+are the slides I presented about BLAKE2 at a recent academic crypto
+conference: ¹.
+
+¹ https://blake2.net/acns/slides.html
+
+The slides mention ZFS. ZFS is mentioned on a slide with a list of
+tools that use secure hash functions for data-intensive purposes. Out
+of the list there, Tahoe-LAFS and ZFS are the only ones that use a
+hash function which is actually secure — SHA-256. The others all use
+hash functions that are known to be more or less unsafe — MD5 and
+SHA-1.
+
+So, before I go on with my pitch for why you should consider BLAKE2,
+first please clarify for me whether ZFS really needs a
+collision-resistant hash function, or whether it needs only a MAC. I
+had thought until now that ZFS doesn't need a collision-resistant hash
+unless dedup is turned on, and that if dedup is turned on it needs a
+collision-resistant hash.
+
+But this thread seems to indicate that even when dedup is turned on,
+it might be possible to use a MAC, by having a pool-wide secret to use
+for the MAC key… If I understand correctly (which I probably don't),
+that would make it impossible for anyone who doesn't know the secret
+to cause collisions during dedup, but still possible for someone who
+knows the secret (presumably root on that system, or someone who stole
+the secret) to generate blocks that would collide during dedup. If you
+used a collision-resistant hash for that purpose, then nobody would be
+able to cause collisions.
+
+If you need a MAC, I suggest Poly1305-AES. It is very efficient, has a
+nice proof that it is as secure as AES is, and it is part of a new
+proposed cipher suite for TLS ².
+
+² http://tools.ietf.org/html/draft-agl-tls-chacha20poly1305-01
+
+If you need a collision-resistant hash function, I suggest BLAKE2. It
+is more efficient than SHA-256, Skein, or Keccak (see ³), and it has a
+better reputation among cryptographers than Edon-R has. In fact,
+BLAKE2's parent, BLAKE, was rated by NIST as being even more
+well-studied than Keccak was — see my slides, linked above, for quotes
+from NIST's final report on the SHA-3 contest.
+
+³ http://bench.cr.yp.to/results-hash.html#amd64-hydra8
+
+I get the impression that BLAKE2 has gotten a certain "mind-share"
+among cryptographers, because after this article ⁴ from the Center for
+Democracy and Technology came out, questioning NIST's plans to modify
+SHA-3 to improve its performance, there has been a heated discussion
+on the SHA-3 mailing list, and several of the cryptographers in that
+discussion (including the inventors of Keccak) have mentioned BLAKE2
+as an example of a high-performance hash function. There has been one
+academic research paper analyzing BLAKE2 so far: ⁵ (in addition to a
+ton of them analyzing its predecessor, BLAKE, during the SHA-3
+contest).
+
+⁴ https://www.cdt.org/blogs/joseph-lorenzo-hall/2409-nist-sha-3
+
+⁵ http://eprint.iacr.org/2013/467
+
+In addition to being high-performance in normal single-stream mode,
+BLAKE2 comes with parallelized modes, so that you can use 4 or 8 CPU
+cores to compute a hash up to 4- or 8- times as fast.
+
+You can get the academic papers, source code (both simple reference
+implementations and optimized implementations in various languages),
+test vectors, and so on:
+
+https://blake2.net
+
+Regards,
+
+Zooko Wilcox-O'Hearn
+
+Founder, CEO, and Customer Support Rep
+https://LeastAuthority.com
+Freedom matters.
+
+
+-------------------------------------------
+illumos-zfs
+Archives: https://www.listbox.com/member/archive/182191/=now
+RSS Feed: https://www.listbox.com/member/archive/rss/182191/22842876-6fe17e6f
+Modify Your Subscription: https://www.listbox.com/member/?member_id=22842876&id_secret=22842876-a25d3366
+Powered by Listbox: http://www.listbox.com
+
+----- End forwarded message -----
+-- 
+Eugen* Leitl <a href="http://leitl.org">leitl</a> http://leitl.org
+______________________________________________________________
+ICBM: 48.07100, 11.36820 http://ativel.com http://postbiota.org
+AC894EC5: 38A5 5F46 A4FF 59B8 336B  47EE F46E 3489 AC89 4EC5
+

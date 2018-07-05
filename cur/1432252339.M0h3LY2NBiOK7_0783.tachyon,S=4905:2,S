@@ -1,0 +1,99 @@
+From owner-cypherpunks@al-qaeda.net  Wed Jan 20 10:01:10 2010
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (majordomo@localhost [127.0.0.1])
+	by proton.jfet.org (8.14.1/8.14.1/Debian-9) with ESMTP id o0KF0YxQ026049
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Wed, 20 Jan 2010 10:00:34 -0500
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.1/8.14.1/Submit) id o0KF0YT9026048
+	for cypherpunks-outgoing; Wed, 20 Jan 2010 10:00:34 -0500
+Date: Wed, 20 Jan 2010 16:00:29 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: tt@postbiota.org, cypherpunks@al-qaeda.net
+Subject: GoogleSharing is a special kind of anonymizing proxy service
+Message-ID: <20100120150029.GQ17686@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+User-Agent: Mutt/1.5.13 (2006-08-11)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+
+http://www.googlesharing.net/
+
+About
+
+GoogleSharing is a special kind of anonymizing proxy service, designed for a
+very specific threat. It ultimately aims to provide a level of anonymity that
+will prevent google from tracking your searches, movements, and what websites
+you visit. GoogleSharing is not a full proxy service designed to anonymize
+all your traffic, but rather something designed exclusively for your
+communication with Google. Our system is totally transparent, with no special
+"alternative" websites to visit. Your normal work flow should be exactly the
+same.  The Basic Problem
+
+Google thrives where privacy does not. If you're like most internet users,
+Google knows more about you than you might be comfortable with. Whether you
+were logged in to a Google account or not, they know everything you've ever
+searched for, what search results you clicked on, what news you read, and
+every place you've ever gotten directions to. Most of the time, thanks to
+things like Google Analytics, they even know which websites you visited that
+you didn't reach through Google. If you use Gmail, they know the content of
+every email you've ever sent or received, whether you've deleted it or not.
+
+They know who your friends are, where you live, where you work, and where you
+spend your free time. They know about your health, your love life, and your
+political leanings. These days they are even branching out into collecting
+your realtime GPS location and your DNS lookups. In short, not only do they
+know a lot about what you're doing, they also have significant insight into
+what you're thinking.
+
+Where GoogleSharing Comes In
+
+GoogleSharing is a system that mixes the requests of many different users
+together, such that Google is not capable of telling what is coming from
+whom. GoogleSharing aims to do a few very specific things:
+
+   1. Provide a system that will prevent Google from collecting information
+about you from services which don't require a login.
+
+   2. Make this system completely transparent to the user. No special
+websites, no change to your work flow.
+
+   3. Leave your non-Google traffic completely untouched, unredirected, and
+unaffected. 
+
+The GoogleSharing system consists of a custom proxy and a Firefox Addon. The
+proxy works by generating a pool of GoogleSharing "identities," each of which
+contains a cookie issued by Google and an arbitrary User-Agent for one of
+several popular browsers. The Firefox Addon watches for requests to Google
+services from your browser, and when enabled will transparently redirect all
+of them (except for things like Gmail) to a GoogleSharing proxy. There your
+request is stripped of all identifying information and replaced with the
+information from a GoogleSharing identity.
+
+This "GoogleShared" request is then forwarded on to Google, and the response
+is proxied back to you. Your next request will get a different identity, and
+the one you were using before will be assigned to someone else. By "sharing"
+these identities, all of our traffic gets mixed together and is very
+difficult to analyze.
+
+The GoogleSharing proxy even constantly injects false but plausible search
+requests through all the identities.
+
+The result is that you can transparently use Google search, images, maps,
+products, news, etc... without Google being able to track you by IP address,
+Cookie, or any other identifying HTTP headers. And only your Google traffic
+is redirected. Everything else from your browser goes directly to its
+destination.  
+
+GoogleSharing Transport
+
+Where Google has failed to provide universal HTTPS support, we have. All
+requests to a GoogleSharing proxy are sent via HTTPS. These eventually have
+to be proxied out as HTTP from GoogleSharing to Google, but your traffic is
+encrypted on the first path.  Running A GoogleSharing Proxy
+
+We've made the proxy code available so that anyone can run a GoogleSharing
+proxy instance in addition to the one that we're running. 
+

@@ -1,0 +1,104 @@
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t7S7Opfv002920;
+	Fri, 28 Aug 2015 03:24:56 -0400
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; unprotected key"
+	header.d=gmail.com header.i=@gmail.com header.b=My192hsW;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-ig0-f170.google.com (mail-ig0-f170.google.com
+ [209.85.213.170])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-8) with ESMTP id t7S7OmNZ002916
+ (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Fri, 28 Aug 2015 03:24:50 -0400
+Received: by igcse8 with SMTP id se8so12420019igc.1
+ for <cypherpunks@cpunks.org>; Fri, 28 Aug 2015 00:24:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+ :cc:content-type;
+ bh=qEkOfALl9W3WtSFwxefIjl+EzTDyK6yibRwP/Cefm8Q=;
+ b=My192hsWMMqUYWQlt7W+1sQ73PaCEd5/MffTHxyaACFaDMFs7qIwEn4YLe5UM+KQvj
+ 16ZNDsh3BoiwZ2DMCH8SuNJ3FkKW8D93HFKP/l4c7sStgsuZE3EKVyv/DTDqIKdXvIsg
+ KhIMLd/COkfD+QmHOiv4+1J7Ehn6NU7h5PYWTef2TEvNoN01nMq7dwS0LaHemK7fc9pW
+ hXIYFgjTrk7TBrmkMLQTPsjvxSeOQ5Gu4AxV2Lg/rZKGslcVwIY4eUFRxYaJ1VUVR7fh
+ DApUQ7jJ22tus3jW5lBMGdhojytfr/V4qZsVfE/MD9xt5AsR+MqykiEKJ0/J+LQjJcwG
+ 9G9Q==
+X-Received: by 10.50.87.74 with SMTP id v10mr2281783igz.37.1440746683191; Fri,
+ 28 Aug 2015 00:24:43 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.36.104.202 with HTTP; Fri, 28 Aug 2015 00:24:23 -0700 (PDT)
+In-Reply-To: <20150821043032.GB5822@torproject.org>
+References: <55C59BBA.2020700@openmailbox.org>
+ <CAD2Ti2963Oiin8ZWdR5Pc4RrmEfteN2X0MtBAUMdQ6uQuPm1jA@mail.gmail.com>
+ <CAAd2PDJSmAR8UBLa62yzQTd4tF9S46q2cZgH0ErxtOyYH531Ww@mail.gmail.com>
+ <1439101342-sup-8277@metis.syd1.tesser.org>
+ <20150812234512.GE2384@torproject.org>
+ <CAD2Ti28+=dSmwqe_ZtJSDMZ1N-AJ5Lp=5OA6HpNHakhfwe1uMg@mail.gmail.com>
+ <20150813074017.GF2384@torproject.org>
+ <CAD2Ti2_0JFRw7NBhXUL2J6P7vpmjPE-sxN_Jb6=Z6YGpiB=qPA@mail.gmail.com>
+ <20150821043032.GB5822@torproject.org>
+From: grarpamp <grarpamp@gmail.com>
+Date: Fri, 28 Aug 2015 03:24:23 -0400
+Message-ID: <CAD2Ti29LQZ3Xo_71cVe3i2pP880GH5J4Y0cLknDrsHo8dYZJ3Q@mail.gmail.com>
+Subject: Re: [tor-relays] clarification on what Utah State University exit
+ relays store ("360 gigs of log files")
+To: tor-relays@lists.torproject.org
+Content-Type: text/plain; charset=UTF-8
+Cc: cypherpunks@cpunks.org
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+Lines: 43
+
+While reducing network traffic to various accounting schemes such
+as netflow may enable some attacks, look at just one field of it...
+bytecounting.
+
+Assume you've got a nice global view courtesy of your old bed buddies
+AT&T, Verizon, Sprint, etc and in addition to your own bumps on the
+cables.
+
+You know the IP's of all Tor nodes (and I2P, etc).
+So you group them into one "cloud" of overlay IP's.
+For the most part any traffic into that cloud from an IP on the
+left, after it bounces around inside, must terminate at another IP
+on the right.
+
+There are roughly 7000 relays, but because many of them are aggregable
+at the ISP/colohouse, peering and other good vantage point levels,
+you don't need 7000 taps to see them all.
+
+You run your client and start loading and unloading the bandwidth
+of your target in one hour duty cycles for a few days.
+Meanwhile, record the bytecount every minute for every IP on the
+internet into some RRD.
+
+There are only about 2.8 billion IPv4 in BGP [Potaroo].
+Some usage research says about 1.3 billion of 2.6 billion BGP
+actually in use [Carna Census 2012].
+IPv6 is minimal, but worth another 2.8 billion if mapped today.
+Being generous at 3.7 billion users (half the world [ITU]),
+that's 2^44 64-bit datapoints every three days... 128TiB.
+
+Now, can you crunch those 3.7B curves to find one
+whose bytecount deltas match those of your datapump?
+
+How fast can you speed it up?
+
+And can you find Tor clients of clearnet services using similar
+method since you are not the datapump there?
+
+What if you're clocking out packets and filling all the data links
+on your overlay net 24x7x365 such that any demand loading is now
+forced to ride unseen within instead of bursting out the seams?
+

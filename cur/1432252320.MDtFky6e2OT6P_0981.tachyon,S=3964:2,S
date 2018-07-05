@@ -1,0 +1,83 @@
+From cypherpunks-bounces@cpunks.org  Sat Dec 14 12:26:17 2013
+Return-Path: <cypherpunks-bounces@cpunks.org>
+Received: from antiproton.jfet.org (localhost.localdomain [127.0.0.1])
+	by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id rBEHPvHS007383;
+	Sat, 14 Dec 2013 12:26:00 -0500
+Authentication-Results: antiproton.jfet.org; dkim=pass
+	reason="2048-bit key; insecure key"
+	header.d=gmail.com header.i=@gmail.com header.b=OJsoc139;
+	dkim-adsp=pass; dkim-atps=neutral
+Received: from mail-qc0-f180.google.com (mail-qc0-f180.google.com
+ [209.85.216.180])
+ by antiproton.jfet.org (8.14.4/8.14.4/Debian-4) with ESMTP id rBEHPtxd007379
+ (version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+ for <cypherpunks@cpunks.org>; Sat, 14 Dec 2013 12:25:57 -0500
+Received: by mail-qc0-f180.google.com with SMTP id w7so2541818qcr.11
+ for <cypherpunks@cpunks.org>; Sat, 14 Dec 2013 09:25:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20120113;
+ h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+ :content-type; bh=eJ0NuFFbCzYH0kzWM+PIc0PqcMy5SWcfJmcpes9kW8g=;
+ b=OJsoc139XeJJ/ts7D7oxamlbZukBlMLbLtZa1Pi90j/15LsESner4wxcGuRm66KNDP
+ 33Ojlwjpu7AvJCyejavgbEjLSD3EjdZ8FnjmOH3rx8o3MynFr/r4Kzu8GN8v3qPiDPPq
+ FXYeTuIkB+i1bl2JU2FauqsCt+Dggt2oZrtvmh5j9DkMm07X7mnO+8Ou5Q0+kB/lCWZr
+ ZPworMUswxUsjH3+xPaHf+7X/tVRTC5q+cnOkc974U5uTq3OKNrqYvzWhsl/qGdqfMV4
+ SqDdK2Wki7gonb2VrHh6PuqA8ig/lAP6BVADvsMn2RENCAg3EaoLOOoiOLuLjvZMLG6H
+ wkWw==
+MIME-Version: 1.0
+X-Received: by 10.49.86.199 with SMTP id r7mr16541269qez.23.1387041949774;
+ Sat, 14 Dec 2013 09:25:49 -0800 (PST)
+Received: by 10.96.94.68 with HTTP; Sat, 14 Dec 2013 09:25:49 -0800 (PST)
+In-Reply-To: <CAJVRA1RZJgO2wOKsY8pMxnwpHPnLgx9DiW4_1CzxotT==f3rFw@mail.gmail.com>
+References: <CAJVRA1RZJgO2wOKsY8pMxnwpHPnLgx9DiW4_1CzxotT==f3rFw@mail.gmail.com>
+Date: Sat, 14 Dec 2013 09:25:49 -0800
+Message-ID: <CAJVRA1SdJoG1gh-hkT9CHaYwUkWWUUYeX=X=uefAYMdxwsdXxA@mail.gmail.com>
+Subject: Re: RDRAND used directly when default engines loaded in
+ openssl-1.0.1-beta1 through openssl-1.0.1e
+From: coderman <coderman@gmail.com>
+To: cpunks <cypherpunks@cpunks.org>,
+        Full Disclosure <full-disclosure@lists.grok.org.uk>
+Content-Type: text/plain; charset=ISO-8859-1
+X-BeenThere: cypherpunks@cpunks.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: The Cypherpunks Mailing List <cypherpunks.cpunks.org>
+List-Unsubscribe: <https://cpunks.org/mailman/options/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=unsubscribe>
+List-Archive: <http://cpunks.org/pipermail/cypherpunks/>
+List-Post: <mailto:cypherpunks@cpunks.org>
+List-Help: <mailto:cypherpunks-request@cpunks.org?subject=help>
+List-Subscribe: <https://cpunks.org/mailman/listinfo/cypherpunks>,
+ <mailto:cypherpunks-request@cpunks.org?subject=subscribe>
+Errors-To: cypherpunks-bounces@cpunks.org
+Sender: "cypherpunks" <cypherpunks-bounces@cpunks.org>
+
+On Sat, Dec 14, 2013 at 4:33 AM, coderman <coderman@gmail.com> wrote:
+> ...
+> if you are using an application linked with openssl-1.0.1-beta1
+> through openssl-1.0.1e you should do one of the following:
+>...
+> b.) call RAND_set_rand_engine(NULL) after ENGINE_load_builtin_engines().
+
+correction:
+this won't leave you vulnerable, but it will crash your app.  not
+broken convention:
+
+      /* If we are using a version of OpenSSL that supports native RDRAND
+         make sure that we force disable its use as sole entropy source.
+         See https://trac.torproject.org/projects/tor/ticket/10402 */
+      if (SSLeay() > OPENSSL_V_SERIES(1,0,0)) {
+        t = ENGINE_get_default_RAND();
+        if (t &&
+            (strcmp(ENGINE_get_id(t), "rdrand") == 0)) {
+          log_warn(LD_CRYPTO, "OpenSSL is using RDRAND by default."
+                   " Attempting to force disable.");
+          ENGINE_unregister_RAND(t);
+          ENGINE_register_all_complete();
+        }
+      }
+
+see https://peertech.org/dist/tor-latest-rdrand-disable.patch
+
+
+best regards,
+

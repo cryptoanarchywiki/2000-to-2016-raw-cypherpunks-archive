@@ -1,0 +1,227 @@
+From owner-cypherpunks@al-qaeda.net  Thu Feb  7 05:35:41 2013
+Return-Path: <owner-cypherpunks@al-qaeda.net>
+Received: from proton.jfet.org (localhost.localdomain [127.0.0.1])
+	by proton.jfet.org (8.14.3/8.14.3/Debian-9.4) with ESMTP id r17AUDTa012501
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <cypherpunks-outgoing@proton.jfet.org>; Thu, 7 Feb 2013 05:30:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=al-qaeda.net;
+	s=cpunks; t=1360233013;
+	bh=xKyXFZholc7CmN9wHP7w5zzK6FZ+xtNkDEQgfgFX1Yc=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Sender;
+	b=eqA6KE2VVF7XoFrk4fWaKuWohBpUf6tf3NVdxJLEgMZy9CtJXkbd3cyB+8U5t8e4j
+	 faT9rksZKLcVCsvaq/7UCADsWIvEeVrLW33A1IKakbVnj+egdf6eOpZe1uHbrk2WrL
+	 Wgx1VZn9dHIigCjY9vFjZ/0g6fnam3bp5LHIgmM8=
+Received: (from majordomo@localhost)
+	by proton.jfet.org (8.14.3/8.14.3/Submit) id r17AUDnB012500
+	for cypherpunks-outgoing; Thu, 7 Feb 2013 05:30:13 -0500
+Date: Thu, 7 Feb 2013 11:30:10 +0100
+From: Eugen Leitl <eugen@leitl.org>
+To: cypherpunks@al-qaeda.net, info@postbiota.org
+Subject: Remotely Exploiting the PHY Layer
+Message-ID: <20130207103010.GK6172@leitl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.18 (2008-05-17)
+Sender: owner-cypherpunks@al-qaeda.net
+Precedence: bulk
+X-Loop: al-qaeda.net
+Status: O
+Content-Length: 10436
+Lines: 193
+
+http://travisgoodspeed.blogspot.de/2011/09/remotely-exploiting-phy-layer.html
+
+THURSDAY, SEPTEMBER 1, 2011
+
+Remotely Exploiting the PHY Layer
+
+or, Bobby Tables from 1938 to 2011 
+
+by Travis Goodspeed <travis at radiantmachines.com> 
+
+concerning research performed in collaboration with 
+
+Sergey Bratus, Ricky Melgares, Rebecca Shapiro, and Ryan Speers.
+
+The following technique is a trick that some very good neighbors and I
+present in Packets in Packets: Orson Welles' In-Band Signaling Attacks for
+Modern Radios (pdf) at Usenix WOOT 2011. As the title suggests, Orson Welles
+authored and implemented the attack in 1938 as a form of social engineering,
+but our version acts to remotely inject raw frames into wireless networks by
+abuse of the PHY layer. As that paper is limited to a formal, academic style,
+I'd like to take the opportunity to describe the technique here in my
+people's native language, which has none of that formal mumbo-jumbo and
+high-faluttin' wordsmithin'. This being just a teaser, please read the paper
+for full technical details. 
+
+The idea is this: Layer 1 radio protocols are vulnerable injections similar
+to those that plague naively implemented SQL websites. You can place one
+packet inside of another packet and have the inner packet drop out to become
+a frame of its own. We call the technique Packet-in-Packet, or PIP for short. 
+
+As I've mentioned in my article on promiscuously sniffing nRF24L01+ traffic,
+every modern digital radio has a Layer 1 form that consists of a Preamble,
+followed by a Sync, followed by a Body. The Body here is Layer 2, and that is
+the lowest that a normal packet sniffer will give you. (Keykeriki, Ubertooth,
+and GoodFET/NRF give a bit more.) 
+
+In the specific case of IEEE 802.15.4, which underlies ZigBee, the Preamble
+consists of the 0 symbol repeated eight times, or 00000000. The Sync is A7.
+After that comes the Body, which begins with a byte for the length, a few
+bytes for flags, the addresses, and some sort of data. Suppose that an
+attacker, Mallory, controls some of that data, in the same way that she might
+control an HTTP GET parameter. To cause a PIP injection of a Layer 2 packet,
+she need only prepend that packet with 00000000A7 then retransmit a
+large--but not unmanageably large--number of times. I'm not joking, and I'm
+not exaggerating. It actually works like that. 
+
+Below is a photograph of the first packet capture in which we had this
+technique working. The upper packet capture shows those packets addressed to
+any address, while the lower capture only sniffs broadcast (0xFFFF) messages.
+The highlighted region is a PIP injection, a broadcast packet that the
+transmitter intended to only be data within the payload of an outer packet. 
+
+
+How it works.
+
+When Alice transmits a packet containing Mallory's PIP to Bob, Bob's
+interpretation can go one of three ways, two of which are depicted in the
+diagram below. In the first case, as shown in the left column, Bob receives
+every symbol correctly and interprets the packet as Alice would like him to,
+with Mallory's payload sitting harmlessly in the Body. In the second case,
+which is not depicted, a symbol error within the Body causes the packet's
+checksum to fail, and Mallory's packet is dropped along with the rest of
+Alice's. 
+
+ 
+
+The third interpretation, shown above in the right column, is the interesting
+one. If a symbol error occurs before the Body, within the Preamble or the
+Sync, then there's no checksum to cause the packet to be dropped. Instead,
+the receiver does not know that it is within a packet, and Mallory's PIP is
+mistaken as a frame of its own. Mallory's Preamble and Sync will mark the
+start of the frame, and Mallory's Body will be returned to the receiver. 
+
+In this way, Mallory can remotely inject radio frames from anywhere on the
+network to which she can send her payload. That is, this is a PHY-Layer radio
+vulnerability that requires no physical access to the radio environment. Read
+the WOOT paper for complications that arise when applying this to IEEE
+802.11, as well as the conditions under which a PIP injection can succeed on
+every attempt. 
+
+War of the Worlds
+
+In 1938, Orson Welles implemented a similar exploit as a form of social
+engineering in order to cause panic with his War of the Worlds (mp3,
+transcript) performance. 
+
+Recall that PIP injection works by having the victim miss the real start of
+frame marker, then fraudulently including another start of frame marker
+inside of the broadcast. As per the FCC requirements of his time, Orson
+begins with a real start of broadcast marker: 
+
+ANNOUNCER: The Columbia Broadcasting System and its affiliated stations
+present Orson Welles and the Mercury Theatre on the Air in The War of the
+Worlds by H. G. Wells. 
+
+(MUSIC: MERCURY THEATRE MUSICAL THEME) 
+
+ANNOUNCER: Ladies and gentlemen: the director of the Mercury Theatre and star
+of these broadcasts, Orson Welles . . . 
+
+ORSON WELLES: We know now that in the early years of the twentieth century
+this world was being watched closely by intelligences greater than man's and
+yet as mortal as his own. We know now that as human beings busied themselves
+about their various concerns they were scrutinized and studied, perhaps
+almost as narrowly as a man with a microscope might scrutinize the transient
+creatures that swarm and multiply in a drop of water. With infinite
+complacence people went to and fro over the earth about their little affairs,
+serene in the assurance of their dominion over this small spinning fragment
+of solar driftwood which by chance or design man has inherited out of the
+dark mystery of Time and Space. Yet across an immense ethereal gulf, minds
+that to our minds as ours are to the beasts in the jungle, intellects vast,
+cool and unsympathetic, regarded this earth with envious eyes and slowly and
+surely drew their plans against us. In the thirty-ninth year of the twentieth
+century came the great disillusionment.  It was near the end of October.
+Business was better. The war scare was over. More men were back at work.
+Sales were picking up. On this particular evening, October 30, the Crosley
+service estimated that thirty-two million people were listening in on radios. 
+
+That introduction is two minutes and twenty seconds long, and it was
+scheduled to begin while a popular show on another station was still in
+progress. Many of the listeners tuned in late, causing them to miss the Sync
+and not know which show they were listening to, just as in a PIP injection!
+What follows is thirty-eight minutes of a first act, without a single word
+out of character or a single commercial message from a sponsor. The play
+begins in the middle of a weather report, followed by repeated false station
+and show announcements, a few of which follow. 
+
+We now take you to the Meridian Room in the Hotel Park Plaza in downtown New
+York, where you will be entertained by the music of Ramsn Raquello and his
+orchestra. 
+
+>From the Meridian Room in the Park Plaza in New York City, we bring you the
+music of Ramsn Raquello and his orchestra. 
+
+Ladies and gentlemen, we interrupt our program of dance music to bring you a
+special bulletin from the Intercontinental Radio News.  We are now ready to
+take you to the Princeton Observatory at Princeton where Carl Phillips, or
+commentator, will interview Professor Richard Pierson, famous astronomer. 
+
+Good evening, ladies and gentlemen. This is Carl Phillips, speaking to you
+from the observatory at Princeton.  Just a moment, ladies and gentlemen,
+someone has just handed Professor Pierson a message. While he reads it, let
+me remind you that we are speaking to you from the observatory in Princeton,
+New Jersey, where we are interviewing the world- famous astronomer, Professor
+Pierson. 
+
+By repeatedly lying to the listeners about the station and the program,
+Welles was able to convince them that they were listening to legitimate news
+broadcasts of an alien invasion. Ensuring that the listener missed the
+starting broadcast announcement breaks the encapsulation that was intended to
+prevent such confusion, just as a PIP injection relies upon the start of
+frame to be missed in order to break OSI model encapsulation. 
+
+How the hell did this happen?
+
+This class of vulnerability is a really, really big deal. An attacker can use
+it to inject raw frames into any wireless network that lacks cryptography,
+such as a satellite link or an open wifi hotspot. Not only that, but because
+the injection is remote, the attacker needs no radio to perform the
+injection! Not only that, but this vulnerability has sat unexploited in
+nearly every unencrypted digital radio protocol that allows for variable
+frame length since digital radio began! So why did no one notice before 2011? 
+
+Packet in Packet injection works because when Bob forwards a wrapped string
+to Alice over the air, he is trusting Mallory to control the radio symbols
+that are broadcast for that amount of time. The potential for abusing that
+trust wasn't considered, despite communications experts knowing full well
+that sometimes a false Sync was detected or a true Sync missed. This is
+because a symbol error in the Sync field causes the packet to be implicitly
+dropped, with the same behavioral effect that would be had if the error were
+later in the packet and it were explicitly dropped. Except when faced with a
+weaponized PIP injection, nothing seems strange or amiss. Sync errors were
+just a nuisance to communications engineers, as we security guys were staying
+a few layers higher, allowing those layers of abstraction to become
+boundaries of competence. 
+
+That same trust is given in wired networks and busses, with the lesser
+probability of missing a Sync being the only defense against PIP injection.
+Just as PIP has shown that unencrypted wireless networks are vulnerable even
+when the attacker is not physically present, I expect wired networks to be
+found vulnerable as soon as an appropriate source of packet errors is
+identified. Packet collisions provide this in unswitched Ethernet networks,
+and noisy or especially long links might provide it for more modern wired
+networks. 
+
+If I've not yet convinced you that this attack is worth studying, I probably
+won't be able to. For the rest of you, please print and read the paper and
+extend this research yourself. There's a hell of a lot left to be done at the
+PHY layer, and it might as well be you who does it. 
+
+Thank you kindly, 
+
+--Travis Goodspeed 
+

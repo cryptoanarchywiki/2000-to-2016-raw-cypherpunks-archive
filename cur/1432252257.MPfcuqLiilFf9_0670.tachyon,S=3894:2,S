@@ -1,0 +1,79 @@
+From owner-cypherpunks@lne.com  Tue Apr 22 10:28:15 2003
+Return-Path: <owner-cypherpunks@lne.com>
+Received: from gw.lne.com (gw.lne.com [209.157.136.81])
+	by positron.jfet.org (8.11.6p2/8.11.6-03-31-03) with ESMTP id h3MESDt23235
+	for <rsw@jfet.org>; Tue, 22 Apr 2003 10:28:13 -0400
+Received: (from majordom@localhost)
+	by gw.lne.com (8.12.5/8.12.5) id h3MEG0Bq007633
+	for cypherpunks-goingout345; Tue, 22 Apr 2003 07:16:00 -0700
+X-Authentication-Warning: slack.lne.com: majordom set sender to owner-cypherpunks@lne.com using -f
+X-Authentication-Warning: waste.minder.net: majordom set sender to
+  owner-cypherpunks@minder.net using -f
+X-Originating-IP: [12.10.219.46]
+X-Originating-Email: [camera_lumina@hotmail.com]
+From: "Tyler Durden" <camera_lumina@hotmail.com>
+To: shields@msrl.com
+Cc: cypherpunks@minder.net
+Old-Subject: Re: Internet dies if GPS dies?
+Date: Tue, 22 Apr 2003 10:15:28 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; format=flowed
+Message-ID: <BAY7-F49crVoD7Ou7Xp0000eaf1@hotmail.com>
+X-OriginalArrivalTime: 22 Apr 2003 14:15:29.0045 (UTC)
+  FILETIME=[A0843450:01C308D9]
+Subject: Re: Internet dies if GPS dies?
+Sender: owner-cypherpunks@lne.com
+Precedence: bulk
+X-Loop: cypherpunks@lne.com
+Status: O
+Content-Length: 2637
+Lines: 47
+
+Michael Shields wrote...
+
+"I'm not a SONET guru, but my understanding is that even with the
+internal clocks, you would see at worst an occasional error burst for
+a few ms.  No credible engineer would make a network that fell over
+without GPS anyway, since it's just too easy for someone to
+accidentally knock over your antenna while installing another, or nick
+the cable with a saw, or who knows what.  In a nutshell, this isn't
+something I'd worry about."
+
+SONET Synchronization is not a thing that can easily be discussed in any 
+short amount of time. Synch in a SONET network is "provisioned", NE-by-NE, 
+and if its done right then the chances of timing slips are very low.
+
+However, in certain cases you can have a big timing "island", and in this 
+case over the course of days you'll start to see more and more slips until 
+that whole Island pretty much disconnects from the rest of the network. 
+(This can happen when the primary reference fails, and when the reamining 
+NEs all get their timing from each other in a big loop, like a snake eating 
+its tail. The whole clock for this island begins to drift wrt the rest of 
+the network, and in some cases there can eventually be enough slips as to 
+cause some NEs to declare AIS. However, if Synch was provisioned correctly 
+this won't be seen.)
+
+The existence of possible timing islands, owever, should not be strongly 
+associated with the loss of GPS. Traditionally, SONET networks use Cesium 
+clocks as their primary reference source.GPSs have only started to 
+proliferate in order to simplify synch. So in order for GPS cancellation to 
+do anything at all to the internet, you'd have to have a network that has no 
+access to ANY stratum1 clock (Cesium or GPS), you'd have to have old NEs in 
+that network (ie, with a poor internal SONET clock), AND you'd have to have 
+a timing island. And even then, only this island would be affected. If this 
+island were in the middle of UUNet, you might see some slowdown.
+
+As for routers I'll take it that they can read timing out of the Synch 
+Status Byte (S1 in the SONET overhead), so they'll "know" what the problem 
+is at least (ie, that byte will tell them what the quality of the synch is). 
+If the line clock is bad, I'd guess that the big Cisco routers will go into 
+"holdover" (or whatever router heads call holdover), and that's the time 
+they'll use to stamp the flows with.
+
+So, no problem I'm 99.9% sure. (And I'm rarely that sure of anything.)
+-TD
+
+_________________________________________________________________
+Add photos to your e-mail with MSN 8. Get 2 months FREE*.  
+http://join.msn.com/?page=features/featuredemail
+
